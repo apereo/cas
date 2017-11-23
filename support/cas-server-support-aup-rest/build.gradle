@@ -1,0 +1,10 @@
+description = "Apereo CAS AUP REST Support"
+dependencies {
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-ticket")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-aup-core")
+    
+}

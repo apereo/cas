@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -60,7 +59,7 @@ public interface TicketGrantingTicket extends Ticket {
      *
      * @return the proxy granting tickets
      */
-    Collection<ProxyGrantingTicket> getProxyGrantingTickets();
+    Map<String, Service> getProxyGrantingTickets();
 
     /**
      * Remove all services of the TGT (at logout).
@@ -114,6 +113,6 @@ public interface TicketGrantingTicket extends Ticket {
      * @since 5.1
      */
     default Collection<String> getDescendantTickets() {
-        return new HashSet<>();
+        return new HashSet<>(0);
     }
 }

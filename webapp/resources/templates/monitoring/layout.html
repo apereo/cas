@@ -4,14 +4,17 @@
     <head>
         <meta charset="UTF-8"/>
         <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        
         <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
         <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">Central Authentication Service</title>
 
         <link rel="stylesheet" th:href="@{#{webjars.fontawesomemin.css}}"/>
         <link type="text/css" rel="stylesheet" th:href="@{#{webjars.bootstrapmin.css}}"/>
         <link rel="stylesheet" th:href="@{${#themes.code('admin.custom.css.file')}}" />
-
+        
         <script type="text/javascript" th:src="@{#{webjars.jquerymin.js}}"></script>
+        <script type="text/javascript" th:src="@{#{webjars.semanticui.semantic.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
         <script type="text/javascript" th:src="@{#{webjars.jquerycookie.js}}"></script>
 

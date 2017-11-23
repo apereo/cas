@@ -1,0 +1,29 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput [matDatepicker]="startPicker"
+           i18n-placeholder="services.form.label.sas.starttime"
+           [placeholder]="messages.services_form_label_sas_starttime"
+           [(ngModel)]="accessStrategy.startingDateTime">
+    <mat-datepicker-toggle matSuffix [for]="startPicker"></mat-datepicker-toggle>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.sas.starttime"
+           [matTooltip]="messages.services_form_tooltip_sas_starttime">help
+  </mat-icon>
+  <mat-datepicker #startPicker></mat-datepicker>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput [matDatepicker]="endPicker"
+           i18n-placeholder="services.form.label.sas.endtime"
+           [placeholder]="messages.services_form_label_sas_endtime"
+           [(ngModel)]="accessStrategy.endingDateTime">
+    <mat-datepicker-toggle matSuffix [for]="endPicker"></mat-datepicker-toggle>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.sas.endtime"
+           [matTooltip]="messages.services_form_tooltip_sas_endtime">help
+  </mat-icon>
+  <mat-datepicker #endPicker></mat-datepicker>
+</div>

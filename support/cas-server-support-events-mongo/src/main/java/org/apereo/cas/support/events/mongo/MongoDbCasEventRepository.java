@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -25,22 +24,9 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
-    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName,
-                                     final boolean dropCollection) {
+    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-
-        Assert.notNull(this.mongoTemplate);
-
-        if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
     }
 
     @Override

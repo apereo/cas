@@ -23,7 +23,7 @@ public class ChainingPrincipalResolverTests {
     private final PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     @Test
-    public void examineSupports() throws Exception {
+    public void examineSupports() {
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("a");
 
@@ -39,7 +39,7 @@ public class ChainingPrincipalResolverTests {
     }
 
     @Test
-    public void examineResolve() throws Exception {
+    public void examineResolve() {
         final Principal principalOut = principalFactory.createPrincipal("output");
         final Credential credential = mock(Credential.class);
         when(credential.getId()).thenReturn("input");
@@ -54,7 +54,7 @@ public class ChainingPrincipalResolverTests {
         when(resolver2.supports(any(Credential.class))).thenReturn(true);
         when(resolver2.resolve(any(Credential.class), any(Principal.class),
                 any(AuthenticationHandler.class)))
-                .thenReturn(principalFactory.createPrincipal("output", Collections.<String, Object>singletonMap("mail", "final@example.com")));
+                .thenReturn(principalFactory.createPrincipal("output", Collections.singletonMap("mail", "final@example.com")));
 
         final ChainingPrincipalResolver resolver = new ChainingPrincipalResolver();
         resolver.setChain(Arrays.asList(resolver1, resolver2));

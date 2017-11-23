@@ -1,0 +1,53 @@
+<mat-card class="tabCard">
+  <mat-card-title>
+    <h5>Properties</h5>
+  </mat-card-title>
+  <div class="cardContent">
+    <mat-table [dataSource]="dataSource">
+
+      <ng-container cdkColumnDef="source">
+        <mat-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</mat-header-cell>
+        <mat-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
+          <mat-form-field>
+            <input matInput #text [matAutocomplete]="auto"
+                   [ngModel]="row.key" (click)="selectedRow = row"
+                   (change)="doChange(row,$event.target.value)">
+          </mat-form-field>
+
+        </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="mapped">
+        <mat-header-cell *cdkHeaderCellDef [ngClass]="'valueWidth'">Value</mat-header-cell>
+        <mat-cell *cdkCellDef="let row" [ngClass]="'valueWidth'">
+          <mat-form-field>
+            <input matInput [disabled]="row.key == ''"
+                   [ngModel]="data.service.properties[row.key] ?  data.service.properties[row.key].values : ''"
+                   (ngModelChange)="data.service.properties[row.key].values = $event.split(',')">
+          </mat-form-field>
+        </mat-cell>
+      </ng-container>
+
+      <ng-container cdkColumnDef="delete">
+        <mat-header-cell *cdkHeaderCellDef [ngClass]="'actionWidth'"></mat-header-cell>
+        <mat-cell *cdkCellDef="let row" [ngClass]="'actionWidth'">
+          <button mat-icon-button (click)="delete(row)"><mat-icon style="font-size: medium">delete</mat-icon></button>
+        </mat-cell>
+      </ng-container>
+
+      <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+      <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+
+
+    </mat-table>
+    <div style="height:25px;padding-top: 5px;">
+      <button mat-mini-fab (click)="addRow()" style="float:right;">+</button>
+    </div>
+  </div>
+
+
+</mat-card>
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selection($event)">
+  <mat-option *ngFor="let opt of formData.registeredServiceProperties" [value]="opt">{{ opt.propertyName }}</mat-option>
+</mat-autocomplete>
+

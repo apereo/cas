@@ -34,17 +34,17 @@ public class MetadataUIUtils {
      * @return the SP SSO descriptor
      */
     public static SPSSODescriptor getSPSsoDescriptor(final EntityDescriptor entityDescriptor) {
-        LOGGER.debug("Locating SP SSO descriptor for SAML2 protocol...");
+        LOGGER.trace("Locating SP SSO descriptor for SAML2 protocol...");
         SPSSODescriptor spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (spssoDescriptor == null) {
-            LOGGER.debug("Locating SP SSO descriptor for SAML11 protocol...");
+            LOGGER.trace("Locating SP SSO descriptor for SAML11 protocol...");
             spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML11P_NS);
         }
         if (spssoDescriptor == null) {
-            LOGGER.debug("Locating SP SSO descriptor for SAML1 protocol...");
+            LOGGER.trace("Locating SP SSO descriptor for SAML1 protocol...");
             spssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML10P_NS);
         }
-        LOGGER.debug("SP SSO descriptor resolved to be [{}]", spssoDescriptor);
+        LOGGER.trace("SP SSO descriptor resolved to be [{}]", spssoDescriptor);
         return spssoDescriptor;
     }
 
@@ -92,31 +92,31 @@ public class MetadataUIUtils {
                                                                             final HttpServletRequest requestContext) {
         final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
         if (entityDescriptor == null) {
-            LOGGER.debug("Entity descriptor not found for [{}]", entityId);
+            LOGGER.trace("Entity descriptor not found for [{}]", entityId);
             return mdui;
         }
 
         final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
-            LOGGER.debug("SP SSO descriptor not found for [{}]", entityId);
+            LOGGER.trace("SP SSO descriptor not found for [{}]", entityId);
             return mdui;
         }
 
         final Extensions extensions = spssoDescriptor.getExtensions();
         if (extensions == null) {
-            LOGGER.debug("No extensions in the SP SSO descriptor are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+            LOGGER.trace("No extensions in the SP SSO descriptor are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
 
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
-            LOGGER.debug("No extensions in the SP SSO descriptor are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
+            LOGGER.trace("No extensions in the SP SSO descriptor are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
 
         spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
             final UIInfo uiInfo = (UIInfo) obj;
-            LOGGER.debug("Found MDUI info for [{}]", entityId);
+            LOGGER.trace("Found MDUI info for [{}]", entityId);
             mdui.setUIInfo(uiInfo);
         });
         return mdui;

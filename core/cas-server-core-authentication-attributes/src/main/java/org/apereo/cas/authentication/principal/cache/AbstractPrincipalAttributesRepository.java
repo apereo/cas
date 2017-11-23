@@ -158,7 +158,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
                 .stream()
                 .collect(Collectors.toMap(Map.Entry::getKey,
                     entry -> entry.getValue().size() == 1
-                                ? entry.getValue().get(0) : entry.getValue(),
+                            ? entry.getValue().get(0) : entry.getValue(),
                     (e, f) -> f == null ? e : f));
     }
 
@@ -294,13 +294,18 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     }
 
     private IPersonAttributeDao getAttributeRepository() {
-        if (this.attributeRepository == null) {
-            final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
-            if (context != null) {
-                return context.getBean("attributeRepository", IPersonAttributeDao.class);
+        try {
+            if (this.attributeRepository == null) {
+                final ApplicationContext context = ApplicationContextProvider.getApplicationContext();
+                if (context != null) {
+                    return context.getBean("attributeRepository", IPersonAttributeDao.class);
+                }
+                LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
             }
-            LOGGER.warn("No application context could be retrieved, so no attribute repository instance can be determined.");
+        } catch (final Exception e) {
+            LOGGER.warn(e.getMessage(), e);
         }
+        
         return this.attributeRepository;
     }
 

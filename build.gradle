@@ -8,7 +8,9 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
-    enableJRebelAgent = Boolean.getBoolean("enableJRebelAgent")
+    continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
+    
+    publishingRelease = publishReleases && rootProject.sonatypeUsername != null && rootProject.sonatypePassword != null
     /*
     Open the Git repository in the current directory.
     Get commit id of HEAD.
@@ -20,21 +22,12 @@ ext {
 }
 
 def isArtifactSigningRequired = {
-    if (publishReleases && sonatypeUsername != null && sonatypePassword != null) {
-        return true
-    }
-    return false
+    return (publishReleases && sonatypeUsername != null && sonatypePassword != null)
 }
 
 apply from: rootProject.file("gradle/overrides.gradle")
 apply from: rootProject.file("gradle/dependencies.gradle")
-apply plugin: "com.gradle.build-scan"
-
-buildScan {
-    licenseAgreementUrl = "https://gradle.com/terms-of-service"
-    licenseAgree = "yes"
-    licenseAgree = "yes"
-}
+apply plugin: "com.github.kt3k.coveralls"
 
 buildscript {
     repositories {
@@ -43,21 +36,17 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
-        maven { url "https://repo.spring.io/milestone" }
-        maven { url "https://repo.spring.io/snapshot" }
     }
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:7.9.5"
+        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.1"
         classpath "org.standardout:gradle-versioneye-plugin:1.5.0"
         classpath "io.spring.gradle:propdeps-plugin:0.0.9.RELEASE"
-        classpath "com.gradle:build-scan-plugin:1.0"
         classpath "org.ajoberstar:grgit:1.7.2"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
-        classpath "org.zeroturnaround:gradle-jrebel-plugin:1.1.5"
+        classpath "org.kt3k.gradle.plugin:coveralls-gradle-plugin:2.8.1"
     }
 }
 
@@ -67,16 +56,19 @@ allprojects {
     apply plugin: "maven"
     apply plugin: "signing"
     apply plugin: "org.standardout.versioneye"
-    apply plugin: "nebula.lint"
+    apply plugin: "jacoco"
 
+    if (!rootProject.publishSnapshots) {
+        apply plugin: "nebula.lint"
+        gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
+    }
+    
     if (project.name == "cas-server-support-bom") {
         logger.info "Skipping pom generation for [$project.name], letting it create <dependency-management> entries on its own."
     } else {
         apply from: rootProject.file("gradle/maven.gradle")
     }
-
-    gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
-
+    
     signing {
         required = isArtifactSigningRequired
         sign configurations.archives
@@ -93,32 +85,33 @@ allprojects {
         }
     }
 
-    signArchives.enabled = rootProject.publishReleases || rootProject.publishSnapshots
+    signArchives.enabled = (rootProject.publishingRelease) || rootProject.publishSnapshots
 
     /*
         Do NOT publish test dependencies into the final POM.
     */
     conf2ScopeMappings.mappings.remove(configurations.findByName("testCompileOnly"))
     conf2ScopeMappings.mappings.remove(configurations.findByName("testRuntimeOnly"))
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
 }
 
 subprojects {
     task allDependenciesInsight(type: DependencyInsightReportTask,
-                                description: "Produce insight information for all dependencies") {
+            description: "Produce insight information for all dependencies") {
         doLast {}
     }
     task allDependencies(type: DependencyReportTask,
-                         description: "Display a graph of all project dependencies") {
+            description: "Display a graph of all project dependencies") {
         doLast {}
     }
-    if (Boolean.getBoolean("enableKotlin")) {
-        apply plugin: "kotlin"
-    }
     apply plugin: "java-library"
-    apply plugin: "rebel"
     apply plugin: "checkstyle"
     apply plugin: "findbugs"
-    apply plugin: "project-report"
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
     apply plugin: "propdeps-idea"
@@ -127,12 +120,19 @@ subprojects {
     apply from: rootProject.file("gradle/tasks.gradle")
 
     ext.libraries = rootProject.ext.libraries
-    
+
     repositories {
         mavenLocal()
+        mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        
+        if (rootProject.publishSnapshots) {
+            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+        }
+        
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
+        maven { url "https://dl.bintray.com/uniconiam/maven" }
+        maven { url "https://jitpack.io" }
         jcenter()
     }
 
@@ -140,8 +140,6 @@ subprojects {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()
         scanForTestClasses = false
-        maxParallelForks = 10
-
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
         exclude "**/*Abstract*.*"
@@ -177,7 +175,7 @@ subprojects {
                 }
             }
         }
-        
+
         exclude(group: "ch.qos.logback", module: "logback-core")
         exclude(group: "ch.qos.logback", module: "logback-classic")
         exclude(group: "cglib", module: "cglib")
@@ -187,10 +185,12 @@ subprojects {
     artifacts {
         tests testJar
 
-        archives sourcesJar
-        archives javadocJar
-        archives resourcesJar
-        archives testJar
+        if (!rootProject.publishSnapshots) {
+            archives sourcesJar
+            archives javadocJar
+            archives resourcesJar
+            archives testJar
+        }
     }
 
     sourceSets {
@@ -291,7 +291,6 @@ subprojects {
 
         provided libraries.javax
 
-
         if (!Boolean.getBoolean("skipFindbugs")) {
             findbugs libraries.findbugs
             findbugs configurations.findbugsPlugins.dependencies
@@ -301,20 +300,13 @@ subprojects {
 
         testImplementation libraries.tests
     }
-    
-    if (rootProject.enableJRebelAgent) {
-        generateRebel.enabled = true
-        jar.dependsOn(generateRebel)
-    } else {
-        generateRebel.enabled = false 
-    }
 }
 
 task wrapper(type: Wrapper, description: "Gradle wrapper") {
     gradleVersion = project.gradleVersion
 }
 
-task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory") {
+task javadoc(type: Javadoc, description: "Aggregate all Javadocs into a single directory", overwrite: true) {
     source subprojects.collect { project -> project.sourceSets.main.allJava }
     destinationDir = new File(buildDir, "javadoc")
     classpath = files(subprojects.collect { project -> project.sourceSets.main.compileClasspath })
@@ -334,10 +326,52 @@ task gradleHome(description: "Display GRADLE_HOME environment variable") {
     doFirst {
         println "\nexport GRADLE_HOME=" + gradle.gradleHomeDir
     }
-
 }
 
 artifacts {
     archives aggregateJavadocsIntoJar
     archives rootSourcesJar
+}
+
+task jacocoAggregateReport(type: JacocoReport, description: "Aggregate all test reports into a single directory") {
+    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
+    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
+    classDirectories = files(files(subprojects.sourceSets.main.output).collect {
+        fileTree(dir: it,
+                include: '**/*.class',
+                exclude: [
+                        '**/**Configuration.class',
+                        '**/**Configuration$**',
+                        '**/**Application.class',
+                        '**/**Application$**',
+                        '**/**WebflowConfigurer.class',
+                        '**/**WebflowConfigurer$**',
+                        '**/**Exception.class',
+                        '**/**Exception$**',
+                        '**/**Properties.class',
+                        '**/**Properties$**'
+                ])
+    })
+
+    executionData = files(subprojects.jacocoTestReport.executionData)
+    reports {
+        html.enabled = true
+        xml.enabled = true
+    }
+    doFirst {
+        executionData = files(executionData.findAll {
+            it.exists()
+        })
+    }
+}
+
+coveralls {
+    jacocoReportPath = "${buildDir}/reports/jacoco/jacocoAggregateReport/jacocoAggregateReport.xml"
+    sourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs).files.absolutePath
+}
+
+tasks.coveralls {
+    group = "Coverage reports"
+    description = "Uploads the aggregated coverage report to Coveralls"
+    dependsOn jacocoAggregateReport
 }

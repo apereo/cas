@@ -4,10 +4,10 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.token.authentication.TokenAuthenticationHandler;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +50,7 @@ public class TokenAuthenticationConfiguration {
     public AuthenticationHandler tokenAuthenticationHandler() {
         final TokenAuthenticationProperties token = casProperties.getAuthn().getToken();
         return new TokenAuthenticationHandler(token.getName(), servicesManager, tokenPrincipalFactory(),
-                Beans.newPrincipalNameTransformer(token.getPrincipalTransformation()));
+                PrincipalNameTransformerUtils.newPrincipalNameTransformer(token.getPrincipalTransformation()));
     }
 
     @ConditionalOnMissingBean(name = "tokenAuthenticationEventExecutionPlanConfigurer")

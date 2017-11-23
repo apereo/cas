@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.util;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 
@@ -18,6 +19,7 @@ public class EncryptionRandomizedCryptoProperties implements Serializable {
      * must be randomly-generated string whose length
      * is defined by the encryption key size setting.
      */
+    @RequiredProperty
     private String key = StringUtils.EMPTY;
     /**
      * Encryption key size.

@@ -42,7 +42,7 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<CasEvent> events) {
 
-        final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocation();
+        final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
         if (loc.isValid()) {
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);
             final long count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();

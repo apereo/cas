@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 
@@ -18,7 +19,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
-public class MockServiceTicket implements ServiceTicket {
+public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;
 
@@ -79,7 +80,7 @@ public class MockServiceTicket implements ServiceTicket {
 
     @Override
     public boolean isExpired() {
-        return false;
+        return this.expiration.isExpired(this);
     }
 
     @Override
@@ -93,8 +94,27 @@ public class MockServiceTicket implements ServiceTicket {
     }
 
     @Override
+    public Authentication getAuthentication() {
+        return this.parent.getAuthentication();
+    }
+
+    @Override
+    public void update() {
+    }
+
+    @Override
     public int getCountOfUses() {
         return 0;
+    }
+
+    @Override
+    public ZonedDateTime getLastTimeUsed() {
+        return ZonedDateTime.now();
+    }
+
+    @Override
+    public ZonedDateTime getPreviousTimeUsed() {
+        return ZonedDateTime.now();
     }
 
 

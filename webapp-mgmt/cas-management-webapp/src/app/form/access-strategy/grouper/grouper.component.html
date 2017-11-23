@@ -1,0 +1,14 @@
+<div>
+  <mat-form-field class="textInput">
+    <mat-select required
+             i18n-placeholder="services.form.label.sas.grouper.groupfield"
+             [placeholder]="messages.services_form_label_sas_grouper_groupfield"
+             [(ngModel)]="accessStrategy.groupField">
+      <mat-option *ngFor="let opt of data.formData.grouperFields" [value]="opt">{{ opt }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.label.sas.grouper.groupfield"
+           [matTooltip]="messages.services_form_label_sas_grouper_groupfield">help
+  </mat-icon>
+</div>

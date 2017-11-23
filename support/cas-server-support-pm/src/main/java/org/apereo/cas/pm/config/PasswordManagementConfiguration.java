@@ -23,7 +23,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
-import java.io.Serializable;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -47,7 +46,7 @@ public class PasswordManagementConfiguration {
     @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
     @RefreshScope
     @Bean
-    public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
+    public CipherExecutor passwordManagementCipherExecutor() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {
@@ -83,7 +82,7 @@ public class PasswordManagementConfiguration {
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
                     + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
         } else {
-            LOGGER.info("Password management is disabled. To enable the password management functionality, "
+            LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                     + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),

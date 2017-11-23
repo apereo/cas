@@ -1,0 +1,12 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.evalOrder"
+           [placeholder]="messages.services_form_label_evalOrder"
+           [(ngModel)]="data.service.evaluationOrder">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.evalOrder"
+           [matTooltip]="messages.services_form_tooltip_evalOrder">help
+  </mat-icon>
+</div>

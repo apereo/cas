@@ -14,7 +14,7 @@ public class AbstractCacheMonitorTests {
     private static final String MONITOR_NAME = "monitor";
 
     @Test
-    public void verifyObserveOk() throws Exception {
+    public void verifyObserveOk() {
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor(MONITOR_NAME) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
@@ -25,7 +25,7 @@ public class AbstractCacheMonitorTests {
     }
 
     @Test
-    public void verifyObserveWarn() throws Exception {
+    public void verifyObserveWarn() {
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor(MONITOR_NAME) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
@@ -36,7 +36,7 @@ public class AbstractCacheMonitorTests {
     }
 
     @Test
-    public void verifyObserveError() throws Exception {
+    public void verifyObserveError() {
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor(MONITOR_NAME) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
@@ -48,7 +48,7 @@ public class AbstractCacheMonitorTests {
 
 
     @Test
-    public void verifyObserveError2() throws Exception {
+    public void verifyObserveError2() {
         // When cache has exceeded both thresholds, should report ERROR status
         final AbstractCacheMonitor monitor = new AbstractCacheMonitor(MONITOR_NAME) {
             @Override

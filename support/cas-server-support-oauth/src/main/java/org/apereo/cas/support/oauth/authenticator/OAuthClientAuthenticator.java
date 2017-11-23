@@ -9,6 +9,8 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Authenticator for client credentials authentication.
@@ -17,7 +19,8 @@ import org.pac4j.core.exception.CredentialsException;
  * @since 5.0.0
  */
 public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
-
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthClientAuthenticator.class);
+    
     private final OAuth20Validator validator;
 
     private final ServicesManager servicesManager;
@@ -30,6 +33,9 @@ public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordC
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context)
             throws CredentialsException {
+
+        LOGGER.debug("Authenticating credential [{}]", credentials);
+        
         final String id = credentials.getUsername();
         final String secret = credentials.getPassword();
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, id);
@@ -45,5 +51,6 @@ public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordC
         final OAuthClientProfile profile = new OAuthClientProfile();
         profile.setId(id);
         credentials.setUserProfile(profile);
+        LOGGER.debug("Authenticated user profile [{}]", profile);
     }
 }

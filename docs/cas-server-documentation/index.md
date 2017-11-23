@@ -5,7 +5,7 @@ title: CAS - Home
 
 # CAS Enterprise Single Sign-On
 
-* Spring Webflow/Spring Boot [Java server component](planning/Architecture.html).
+* [Spring Webflow](installation/Webflow-Customization.html)/Spring Boot [Java server component](planning/Architecture.html).
 * [Pluggable authentication support](Configuring-Authentication-Components.html) ([LDAP](installation/LDAP-Authentication.html), 
 [Database](installation/Database-Authentication.html), [X.509](installation/X509-Authentication.html), [SPNEGO](installation/SPNEGO-Authentication.html), 
 [JAAS](installation/JAAS-Authentication.html), [JWT](installation/JWT-Authentication.html), 
@@ -55,3 +55,16 @@ The following demos are provided by the Apereo CAS project:
 | [CAS Configuration Server](installation/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver)
 
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
+
+## Powered By
+
+CAS development is powered by the following tools, projects and services.
+
+<table width="100%" style="overflow:hidden">
+  <tr>
+    <td><a href="https://travis-ci.org"><img src="https://travis-ci.com/images/logos/TravisCI-Full-Color.png" width="180" height="55"></a></td>
+    <td><a href="https://www.jetbrains.com/idea/"><img src="https://user-images.githubusercontent.com/1205228/31548576-1ac3d688-b038-11e7-9565-ffd89501872e.png" width="180" height="70"></a></td>
+    <td><a href="https://www.eclipse.org"><img width="180" height="50" src="https://user-images.githubusercontent.com/1205228/32225495-ac7b1e94-be5a-11e7-8f83-5c7399398fb8.png"></a></td>
+    <td><a href="http://projects.spring.io/spring-boot/"><img width="180" height="50" src="https://user-images.githubusercontent.com/1205228/32322526-0b58ac44-bfda-11e7-822e-ad763eb80faf.png"></a></td>
+  </tr>
+</table>

@@ -15,14 +15,13 @@ import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilte
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
+import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.hjson.JsonValue;
-import org.hjson.Stringify;
 import org.pac4j.core.context.HttpConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -48,9 +46,11 @@ import java.util.Map;
 public class OAuth20UserProfileControllerController extends BaseOAuth20Controller {
     private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileControllerController.class);
 
-    private static final String ID = "id";
-    private static final String ATTRIBUTES = "attributes";
-
+    /**
+     * View renderer for the final profile.
+     */
+    protected final OAuth20UserProfileViewRenderer userProfileViewRenderer;
+            
     public OAuth20UserProfileControllerController(final ServicesManager servicesManager,
                                                   final TicketRegistry ticketRegistry,
                                                   final OAuth20Validator validator,
@@ -59,9 +59,11 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
                                                   final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
                                                   final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
                                                   final CasConfigurationProperties casProperties,
-                                                  final CookieRetrievingCookieGenerator cookieGenerator) {
+                                                  final CookieRetrievingCookieGenerator cookieGenerator,
+                                                  final OAuth20UserProfileViewRenderer userProfileViewRenderer) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
+        this.userProfileViewRenderer = userProfileViewRenderer;
     }
 
     /**
@@ -99,8 +101,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
         finalizeProfileResponse(accessTokenTicket, map);
 
-        final String value = OAuth20Utils.jsonify(map);
-        LOGGER.debug("Final user profile is [{}]", JsonValue.readHjson(value).toString(Stringify.FORMATTED));
+        final String value = this.userProfileViewRenderer.render(map, accessTokenTicket);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }
 
@@ -134,8 +135,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         String accessToken = request.getParameter(OAuth20Constants.ACCESS_TOKEN);
         if (StringUtils.isBlank(accessToken)) {
             final String authHeader = request.getHeader(HttpConstants.AUTHORIZATION_HEADER);
-            if (StringUtils.isNotBlank(authHeader)
-                    && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
+            if (StringUtils.isNotBlank(authHeader) && authHeader.toLowerCase().startsWith(OAuth20Constants.BEARER_TOKEN.toLowerCase() + ' ')) {
                 accessToken = authHeader.substring(OAuth20Constants.BEARER_TOKEN.length() + 1);
             }
         }
@@ -148,14 +148,13 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      *
      * @param accessToken the access token
      * @return the linked multi value map
-     * @throws IOException the io exception
      */
-    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) throws IOException {
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) {
         final Principal principal = accessToken.getAuthentication().getPrincipal();
         LOGGER.debug("Preparing user profile response based on CAS principal [{}]", principal);
         final Map<String, Object> map = new HashMap<>();
-        map.put(ID, principal.getId());
-        map.put(ATTRIBUTES, principal.getAttributes());
+        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
+        map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, principal.getAttributes());
         return map;
     }
 

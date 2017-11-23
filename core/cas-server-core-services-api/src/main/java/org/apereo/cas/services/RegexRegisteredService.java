@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
 
@@ -24,11 +25,14 @@ public class RegexRegisteredService extends AbstractRegisteredService {
 
     private transient Pattern servicePattern;
 
+    /**
+     * {@inheritDoc}
+     * Resets the pattern because we just changed the id.
+     * @param id the new service id
+     */
     @Override
     public void setServiceId(final String id) {
         this.serviceId = id;
-
-        // reset the servicePattern because we just changed the serviceId
         this.servicePattern = null;
     }
     
@@ -48,5 +52,11 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     @Override
     protected AbstractRegisteredService newInstance() {
         return new RegexRegisteredService();
+    }
+
+    @JsonIgnore
+    @Override
+    public String getFriendlyName() {
+        return "CAS Client";
     }
 }

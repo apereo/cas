@@ -14,10 +14,15 @@ import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasRestAuthenticationConfiguration;
+import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -54,13 +59,18 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasRestAuthenticationConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, 
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
         CasCoreServicesConfiguration.class,
         RefreshAutoConfiguration.class,
         CasPersonDirectoryConfiguration.class,
@@ -83,7 +93,7 @@ public class RestAuthenticationHandlerTests {
     private ResponseActions server;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build()
                 .expect(manyTimes(), requestTo("http://localhost:8081/authn"))
                 .andExpect(method(HttpMethod.POST));

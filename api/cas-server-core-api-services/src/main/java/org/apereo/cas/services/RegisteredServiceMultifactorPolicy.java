@@ -14,7 +14,6 @@ import java.util.Set;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public interface RegisteredServiceMultifactorPolicy extends Serializable {
-
     /**
      * The enum Failure modes.
      */

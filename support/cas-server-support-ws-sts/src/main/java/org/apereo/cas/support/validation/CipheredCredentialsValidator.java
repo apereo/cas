@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CipheredCredentialsValidator implements Validator {
     private static final Logger LOGGER = LoggerFactory.getLogger(CipheredCredentialsValidator.class);
+    
     private final CipherExecutor cipherExecutor;
 
     public CipheredCredentialsValidator(final CipherExecutor cipherExecutor) {

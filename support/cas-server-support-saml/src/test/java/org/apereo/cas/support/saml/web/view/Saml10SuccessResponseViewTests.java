@@ -7,21 +7,23 @@ import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
-import org.apereo.cas.services.DomainServicesManager;
+import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.validation.ImmutableAssertion;
+import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 
@@ -34,6 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link Saml10SuccessResponseView} class.
@@ -41,7 +44,6 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @author Marvin S. Addison
  * @since 3.1
- *
  */
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
@@ -51,19 +53,19 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
     private Saml10SuccessResponseView response;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         final List<RegisteredService> list = new ArrayList<>();
         list.add(RegisteredServiceTestUtils.getRegisteredService("https://.+"));
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(list);
 
-        final ServicesManager mgmr = new DomainServicesManager(dao);
+        final ServicesManager mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         mgmr.load();
-        
+
         this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, NoOpCipherExecutor.getInstance()),
                 mgmr, "attribute", new Saml10ObjectBuilder(configBean),
-                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(),
-                1000, 30, "testIssuer", "whatever");         
+                new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(), 1000, 30,
+                "testIssuer", "whatever", new DefaultAuthenticationAttributeReleasePolicy());
     }
 
     @Test
@@ -83,9 +85,8 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", "value");
 
         final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
-        final Assertion assertion = new ImmutableAssertion(
-                primary, Collections.singletonList(primary),
-                CoreAuthenticationTestUtils.getService(), true);
+        final Assertion assertion = new DefaultAssertionBuilder(primary).with(Collections.singletonList(primary)).with(
+                CoreAuthenticationTestUtils.getService()).with(true).build();
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -121,10 +122,12 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         authAttributes.put("testSamlAttribute", "value");
 
         final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authAttributes);
+        final Assertion assertion = new DefaultAssertionBuilder(primary)
+                .with(Collections.singletonList(primary))
+                .with(CoreAuthenticationTestUtils.getService())
+                .with(true)
+                .build();
 
-        final Assertion assertion = new ImmutableAssertion(
-                primary, Collections.singletonList(primary),
-                CoreAuthenticationTestUtils.getService(), true);
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();
@@ -152,9 +155,11 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
         final Authentication primary = CoreAuthenticationTestUtils.getAuthentication(principal, authnAttributes);
 
-        final Assertion assertion = new ImmutableAssertion(
-                primary, Collections.singletonList(primary),
-                CoreAuthenticationTestUtils.getService(), true);
+        final Assertion assertion = new DefaultAssertionBuilder(primary)
+                .with(Collections.singletonList(primary))
+                .with(CoreAuthenticationTestUtils.getService())
+                .with(true)
+                .build();
         model.put("assertion", assertion);
 
         final MockHttpServletResponse servletResponse = new MockHttpServletResponse();

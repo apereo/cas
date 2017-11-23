@@ -33,24 +33,23 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createSurrogateListViewState(flow);
             createSurrogateSelectionActionState(flow);
             createTransitionToInjectSurrogateIntoFlow(flow);
             createSurrogateAuthorizationActionState(flow);
-
         }
     }
 
     private void createSurrogateAuthorizationActionState(final Flow flow) {
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));
     }
 
     private void createTransitionToInjectSurrogateIntoFlow(final Flow flow) {
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         createTransitionForState(actionState, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW, true);
     }
 

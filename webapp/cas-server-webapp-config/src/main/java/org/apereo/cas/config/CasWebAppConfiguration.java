@@ -64,25 +64,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         };
         return bean;
     }
-
-    @Bean
-    public Map serviceThemeResolverSupportedBrowsers() {
-        final Map<String, String> map = new HashMap<>();
-        map.put(".*iPhone.*", "iphone");
-        map.put(".*Android.*", "android");
-        map.put(".*Safari.*Pre.*", "safari");
-        map.put(".*iPhone.*", "iphone");
-        map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
-        return map;
-    }
+    
 
     @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
             protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response)
-                    throws Exception {
+                                                         final HttpServletResponse response) {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login"
                         + (queryString != null ? '?' + queryString : StringUtils.EMPTY);

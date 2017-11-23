@@ -12,9 +12,21 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  */
 public class DefaultTicketDefinitionProperties implements TicketDefinitionProperties {
 
+    /**
+     * Whether ticket operations require cascading down in the storage.
+     */
     private boolean cascadeTicket;
+    /**
+     * Storage/cache name that holds this ticket.
+     */
     private String cacheName;
+    /**
+     * Timeout for this ticket.
+     */
     private long cacheTimeout;
+    /**
+     * Password for this ticket storage, if any.
+     */
     private String storagePassword;
 
     @Override

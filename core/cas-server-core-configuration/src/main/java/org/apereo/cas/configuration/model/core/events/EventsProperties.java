@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.events;
 
+import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -11,7 +13,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
+@RequiresModule(name = "cas-server-core-events", automated = true)
 public class EventsProperties implements Serializable {
 
     private static final long serialVersionUID = 1734523424737956370L;
@@ -33,18 +35,29 @@ public class EventsProperties implements Serializable {
      * Track authentication events inside a database.
      */
     private Jpa jpa = new Jpa();
-
+    /**
+     * Track authentication events inside an influxdb database.
+     */
+    private InfluxDb influxDb = new InfluxDb();
     /**
      * Track authentication events inside a mongodb instance.
      */
-    private Mongodb mongodb = new Mongodb();
+    private MongoDb mongo = new MongoDb();
 
-    public Mongodb getMongodb() {
-        return mongodb;
+    public InfluxDb getInfluxDb() {
+        return influxDb;
     }
 
-    public void setMongodb(final Mongodb mongodb) {
-        this.mongodb = mongodb;
+    public void setInfluxDb(final InfluxDb influxDb) {
+        this.influxDb = influxDb;
+    }
+
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongodb) {
+        this.mongo = mongodb;
     }
 
     public boolean isTrackGeolocation() {
@@ -71,15 +84,26 @@ public class EventsProperties implements Serializable {
         this.jpa = jpa;
     }
 
+    @RequiresModule(name = "cas-server-support-events-jpa")
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = 7647381223153797806L;
     }
 
-    public static class Mongodb extends AbstractMongoClientProperties {
+    @RequiresModule(name = "cas-server-support-events-mongo")
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -1918436901491275547L;
 
-        public Mongodb() {
+        public MongoDb() {
             setCollection("MongoDbCasEventRepository");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-events-influxdb")
+    public static class InfluxDb extends InfluxDbProperties {
+        private static final long serialVersionUID = -3918436901491275547L;
+
+        public InfluxDb() {
+            setDatabase("CasInfluxDbEvents");
         }
     }
 }

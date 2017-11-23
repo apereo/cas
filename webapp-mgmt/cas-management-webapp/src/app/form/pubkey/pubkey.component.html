@@ -1,0 +1,29 @@
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput [required]="data.service.usernameAttributeProvider.encryptUserName ||
+                               data.service.attributeReleasePolicy.authorizedToReleaseCredentialPassword ||
+                               data.service.attributeReleasePolicy.authorizedToReleaseProxyGrantingTicket"
+           i18n-placeholder="services.form.label.pubKey.location"
+           [placeholder]="messages.services_form_label_pubKey_location"
+           [(ngModel)]="data.service.publicKey.location">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.pubKey.location"
+           [matTooltip]="messages.services_form_tooltip_pubKey_location">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.pubKey.algorithm"
+                [placeholder]="messages.services_form_label_pubKey_algorithm"
+                [(ngModel)]="data.service.publicKey.algorithm">
+      <mat-option value="RSA">RSA</mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.pubKey.algorithm"
+           [matTooltip]="messages.services_form_tooltip_pubKey_algorithm">help
+  </mat-icon>
+</div>

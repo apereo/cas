@@ -15,7 +15,7 @@ import java.util.concurrent.TimeoutException;
 public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatus> {
 
     /** Maximum amount of time in ms to wait while validating pool resources. */
-    private final int maxWait;
+    private final long maxWait;
 
     /** Executor that performs pool resource validation. */
     private final ExecutorService executor;
@@ -29,7 +29,7 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
      * If the pool defines a maximum time to wait for a resource, this property
      * should be set less than that value.
      */
-    public AbstractPoolMonitor(final String name, final ExecutorService executorService, final int maxWait) {
+    public AbstractPoolMonitor(final String name, final ExecutorService executorService, final long maxWait) {
         super(name);
         this.executor = executorService;
         this.maxWait = maxWait;
@@ -70,14 +70,18 @@ public abstract class AbstractPoolMonitor extends AbstractNamedMonitor<PoolStatu
      *
      * @return Number of idle pool resources.
      */
-    protected abstract int getIdleCount();
+    protected int getIdleCount() {
+        return PoolStatus.UNKNOWN_COUNT;
+    }
 
     /**
      * Gets the number of pool resources active at present.
      *
      * @return Number of active pool resources.
      */
-    protected abstract int getActiveCount();
+    protected int getActiveCount() {
+        return PoolStatus.UNKNOWN_COUNT;
+    }
 
     private static class Validator implements Callable<StatusCode> {
         private final AbstractPoolMonitor monitor;

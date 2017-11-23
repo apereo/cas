@@ -47,8 +47,6 @@ See [this guide](../installation/Configuring-Multifactor-Authentication-Triggers
 
 The CAS server is able to recognize the `entityId` parameter and display SAML MDUI on the login page,
 that is provided by the metadata associated with the relying party.
-This means that CAS will also need to know
-about metadata sources that the identity provider uses.
 
 ### Configuration
 
@@ -62,8 +60,26 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
+### Relying Party Metadata
+
+You may allow CAS to recognize SAML MDUI directly from metadata documents that are fed to CAS via settings. If the metadata for the relying party matches the requested `entityId` and contains MDUI elements, those will be passed onto the login page for decorations. If MDUI is not available in the metadata, the relevant elements from the matching service in the service registry will be used all the same.
+
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-metadata-ui).
 
-A sample screenshot of the above configuration in action:
+### Service Registry Metadata
 
-![capture](https://cloud.githubusercontent.com/assets/1205228/8120071/095c7628-1050-11e5-810e-7bce128391df.PNG)
+You may also register the relying party in the CAS service registry as a regular service application and simply specify a number of MDUI-like elements in the body of the registration record. An example follows:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "relying-party-entity-id",
+  "name" : "Test",
+  "id" : 100,
+  "description" : "This is the test application.",
+  "evaluationOrder" : 10000,
+  "logo": "images/logo.png",
+  "informationUrl": "https://test.example.org/info",
+  "privacyUrl": "https://test.example.org/privacy"
+}
+```

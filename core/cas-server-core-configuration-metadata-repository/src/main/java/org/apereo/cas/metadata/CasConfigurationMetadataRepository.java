@@ -1,8 +1,11 @@
 package org.apereo.cas.metadata;
 
+import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepositoryJsonBuilder;
 import org.springframework.core.io.Resource;
@@ -20,7 +23,7 @@ import java.util.Arrays;
  */
 public class CasConfigurationMetadataRepository {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationMetadataRepository.class);
-    
+
     private final ConfigurationMetadataRepository configMetadataRepo;
 
     public CasConfigurationMetadataRepository() {
@@ -51,5 +54,28 @@ public class CasConfigurationMetadataRepository {
 
     public ConfigurationMetadataRepository getRepository() {
         return configMetadataRepo;
+    }
+
+    /**
+     * Gets property group id.
+     *
+     * @param prop the prop
+     * @return the property group id
+     */
+    public static String getPropertyGroupId(final ConfigurationMetadataProperty prop) {
+        if (isCasProperty(prop)) {
+            return StringUtils.substringBeforeLast(prop.getName(), ".");
+        }
+        return StringUtils.substringBeforeLast(prop.getId(), ".");
+    }
+
+    /**
+     * Is cas property ?.
+     *
+     * @param prop the prop
+     * @return the boolean
+     */
+    public static boolean isCasProperty(final ConfigurationMetadataProperty prop) {
+        return prop.getName().startsWith(CasConfigurationProperties.PREFIX.concat("."));
     }
 }

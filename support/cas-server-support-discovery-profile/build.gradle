@@ -1,0 +1,38 @@
+description = "Apereo CAS Discovery Support"
+
+repositories {
+    maven { url "https://jitpack.io" }
+    jcenter()
+}
+dependencies {
+
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-authentication-attributes")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":support:cas-server-support-person-directory")
+    implementation project(":core:cas-server-core-authentication-mfa")
+
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":support:cas-server-support-oauth-services")
+    implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":support:cas-server-support-oidc-services")
+    implementation project(":support:cas-server-support-oidc-core")
+    implementation project(":support:cas-server-support-ws-idp-api")
+
+    implementation project(":support:cas-server-support-authy-core")
+    implementation project(":support:cas-server-support-azure-core")
+    implementation project(":support:cas-server-support-u2f-core")
+    implementation project(":support:cas-server-support-swivel-core")
+    implementation project(":support:cas-server-support-gauth-core-mfa")
+    implementation project(":support:cas-server-support-duo-core-mfa")
+    implementation project(":support:cas-server-support-yubikey-core-mfa")
+    implementation project(":support:cas-server-support-radius-core-mfa")
+    
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-web")
+    
+    testImplementation project(":core:cas-server-core-services")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+}

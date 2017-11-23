@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.Event;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
 /**
@@ -36,7 +37,15 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
     String getId();
 
     /**
+     * Gets the friendly-name for this provider.
+     *
+     * @return the name
+     */
+    String getFriendlyName();
+
+    /**
      * Does provider match/support this identifier?
+     * The identifier passed may be formed as a regular expression.
      *
      * @param identifier the identifier
      * @return the boolean
@@ -49,12 +58,14 @@ public interface MultifactorAuthenticationProvider extends Serializable, Ordered
      * This allows each mfa provider to design bypass rules based on traits
      * of the service or authentication, or both.
      *
-     * @param e                 the event
+     * @param event             the event
      * @param authentication    the authentication
      * @param registeredService the registered service
+     * @param request           the request
      * @return true if supported
      */
-    boolean supports(Event e, Authentication authentication, RegisteredService registeredService);
-
+    boolean supports(Event event, Authentication authentication,
+                     RegisteredService registeredService,
+                     HttpServletRequest request);
 
 }

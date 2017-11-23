@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-core-web", automated = true)
 public class HttpWebRequestProperties implements Serializable {
 
     private static final long serialVersionUID = -5175966163542099866L;
@@ -262,6 +265,14 @@ public class HttpWebRequestProperties implements Serializable {
          */
         private boolean xss = true;
 
+        /**
+         * Helps you reduce XSS risks on modern browsers by declaring what dynamic
+         * resources are allowed to load via a HTTP Header.
+         * Header value is made up of one or more directives.
+         * Multiple directives are separated with a semicolon.
+         */
+        private String contentSecurityPolicy;
+
         public boolean isCache() {
             return cache;
         }
@@ -300,6 +311,14 @@ public class HttpWebRequestProperties implements Serializable {
 
         public void setXss(final boolean xss) {
             this.xss = xss;
+        }
+
+        public String getContentSecurityPolicy() {
+            return contentSecurityPolicy;
+        }
+
+        public void setContentSecurityPolicy(final String contentSecurityPolicy) {
+            this.contentSecurityPolicy = contentSecurityPolicy;
         }
     }
 

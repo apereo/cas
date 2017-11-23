@@ -1,0 +1,64 @@
+<div>
+  <mat-checkbox [(ngModel)]="service.signAssertions">
+    <ng-container i18n="services.form.label.saml.signassertions">
+      {{ messages.services_form_label_saml_signassertions }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.signassertions"
+              [matTooltip]="messages.services_form_tooltip_saml_signassertions">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.signResponses">
+    <ng-container i18n="services.form.label.saml.signresponses">
+      {{ messages.services_form_label_saml_signresponses }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.signresponses"
+              [matTooltip]="messages.services_form_tooltip_saml_signresponses">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div style="padding-bottom: 10px;">
+  <mat-checkbox [(ngModel)]="service.encryptAssertions">
+    <ng-container i18n="services.form.label.saml.encryptassertions">
+      {{ messages.services_form_label_saml_encryptassertions }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.encrpytassertions"
+              [matTooltip]="messages.services_form_tooltip_saml_encryptassertions">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.saml.signingCredentialType"
+                [placeholder]="messages.services_form_label_saml_signingCredentialType"
+                [(ngModel)]="service.signingCredentialType">
+      <mat-option *ngFor="let opt of data.formData.samlCredentialTypes" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.signingCredentialType"
+            [matTooltip]="messages.services_form_tooltip_saml_signingCredentialType">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.authenticationcontextclass"
+           [placeholder]=" messages.services_form_label_saml_authenticationcontextclass"
+           [(ngModel)]="service.requiredAuthenticationContextClass">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.authenticationcontextclass"
+            [matTooltip]="messages.services_form_tooltip_saml_authenticationcontextclass">help
+  </mat-icon>
+</div>

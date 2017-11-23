@@ -1,20 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Principal;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
@@ -40,8 +34,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
 
         @Override
-        public void checkValidity() throws CertificateExpiredException,
-                CertificateNotYetValidException {
+        public void checkValidity() throws CertificateExpiredException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
@@ -49,7 +42,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public void checkValidity(final Date arg0)
-                throws CertificateExpiredException, CertificateNotYetValidException {
+                throws CertificateExpiredException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
@@ -166,16 +159,12 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
         }
 
         @Override
-        public void verify(final PublicKey arg0, final String arg1)
-                throws CertificateException, NoSuchAlgorithmException,
-                InvalidKeyException, NoSuchProviderException, SignatureException {
+        public void verify(final PublicKey arg0, final String arg1) {
             // nothing to do right now
         }
 
         @Override
-        public void verify(final PublicKey arg0) throws CertificateException,
-                NoSuchAlgorithmException, InvalidKeyException,
-                NoSuchProviderException, SignatureException {
+        public void verify(final PublicKey arg0) {
             // nothing to do right now
         }
     }

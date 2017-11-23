@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.Map;
 
 /**
@@ -47,10 +47,10 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         final UsernamePasswordCredential upc = (UsernamePasswordCredential) c;
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(upc.getUsername()));
-        headers.put("password", Arrays.asList(bean.getPassword()));
-        headers.put("oldPassword", Arrays.asList(upc.getPassword()));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(upc.getUsername()));
+        headers.put("password", CollectionUtils.wrap(bean.getPassword()));
+        headers.put("oldPassword", CollectionUtils.wrap(upc.getPassword()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrlChange(), HttpMethod.POST, entity, Boolean.class);
@@ -68,8 +68,8 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         }
 
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(username));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(username));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<String> result = restTemplate.exchange(rest.getEndpointUrlEmail(), HttpMethod.GET, entity, String.class);
 
@@ -86,8 +86,8 @@ public class RestPasswordManagementService extends BasePasswordManagementService
             return null;
         }
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(username));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(username));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<Map> result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
                 HttpMethod.GET, entity, Map.class);

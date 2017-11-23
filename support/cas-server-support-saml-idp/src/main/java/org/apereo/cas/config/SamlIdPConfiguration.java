@@ -40,6 +40,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
+import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.opensaml.saml.saml2.core.AuthnStatement;
@@ -84,6 +85,10 @@ public class SamlIdPConfiguration {
     @Qualifier("defaultSamlRegisteredServiceCachingMetadataResolver")
     private SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver;
 
+    @Autowired
+    @Qualifier("casSamlIdPMetadataResolver")
+    private MetadataResolver casSamlIdPMetadataResolver;
+    
     @Autowired
     @Qualifier("shibbolethCompatiblePersistentIdGenerator")
     private PersistentIdGenerator shibbolethCompatiblePersistentIdGenerator;
@@ -141,18 +146,16 @@ public class SamlIdPConfiguration {
 
     @ConditionalOnMissingBean(name = "samlArtifactTicketExpirationPolicy")
     @Bean
-    @RefreshScope
     public ExpirationPolicy samlArtifactTicketExpirationPolicy() {
         return new SamlArtifactTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
 
-    @Bean
+    @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
         try {
             final CasSamlArtifactMap map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
                     ticketGrantingTicketCookieGenerator);
-            map.initialize();
             map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
             return map;
         } catch (final Exception e) {
@@ -288,7 +291,8 @@ public class SamlIdPConfiguration {
                 algs.getOverrideSignatureReferenceDigestMethods(),
                 algs.getOverrideSignatureAlgorithms(),
                 algs.getOverrideBlackListedSignatureSigningAlgorithms(),
-                algs.getOverrideWhiteListedSignatureSigningAlgorithms());
+                algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
+                casSamlIdPMetadataResolver);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")
@@ -328,10 +332,7 @@ public class SamlIdPConfiguration {
 
     @ConditionalOnMissingBean(name = "samlAttributeQueryTicketExpirationPolicy")
     @Bean
-    @RefreshScope
     public ExpirationPolicy samlAttributeQueryTicketExpirationPolicy() {
         return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
-    
-    
 }

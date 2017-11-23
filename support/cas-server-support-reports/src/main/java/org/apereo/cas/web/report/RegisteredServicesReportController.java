@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
@@ -45,11 +46,10 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the web async task
-     * @throws Exception the exception
      */
     @GetMapping
     @ResponseBody
-    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
                 .stream()

@@ -1,7 +1,8 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.mock.MockService;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -36,7 +37,7 @@ public class SessionMonitorTests {
     }
 
     @Test
-    public void verifyObserveOk() throws Exception {
+    public void verifyObserveOk() {
         addTicketsToRegistry(this.defaultRegistry, 5, 10);
         final SessionMonitor monitor = new SessionMonitor(defaultRegistry, -1, -1);
         final SessionStatus status = monitor.observe();
@@ -46,7 +47,7 @@ public class SessionMonitorTests {
     }
 
     @Test
-    public void verifyObserveWarnSessionsExceeded() throws Exception {
+    public void verifyObserveWarnSessionsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 10, 1);
         final SessionMonitor monitor = new SessionMonitor(defaultRegistry, 0, 5);
         final SessionStatus status = monitor.observe();
@@ -55,7 +56,7 @@ public class SessionMonitorTests {
     }
 
     @Test
-    public void verifyObserveWarnServiceTicketsExceeded() throws Exception {
+    public void verifyObserveWarnServiceTicketsExceeded() {
         addTicketsToRegistry(this.defaultRegistry, 1, 10);
         final SessionMonitor monitor = new SessionMonitor(defaultRegistry, 5, 0);
         final SessionStatus status = monitor.observe();
@@ -71,8 +72,9 @@ public class SessionMonitorTests {
         });
 
         if (ticket[0] != null) {
+            final Service testService = RegisteredServiceTestUtils.getService("junit");
             IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
-                                    new MockService("junit"), TEST_EXP_POLICY, false, true)));
+                                    testService, TEST_EXP_POLICY, false, true)));
         }
     }
 }

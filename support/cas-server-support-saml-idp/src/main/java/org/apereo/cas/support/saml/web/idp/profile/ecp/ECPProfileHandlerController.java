@@ -24,7 +24,7 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.jasig.cas.client.validation.Assertion;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
@@ -96,13 +96,12 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      *
      * @param response the response
      * @param request  the request
-     * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO,
             consumes = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE},
             produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
     public void handleEcpRequest(final HttpServletResponse response,
-                                 final HttpServletRequest request) throws Exception {
+                                 final HttpServletRequest request) {
         final MessageContext soapContext = decodeSoapRequest(request);
         final Credential credential = extractBasicAuthenticationCredential(request, response);
 
@@ -205,7 +204,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                                             final HttpServletResponse response) {
         try {
             final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {
                 LOGGER.debug("Received basic authentication ECP request from credentials [{}]", credentials);

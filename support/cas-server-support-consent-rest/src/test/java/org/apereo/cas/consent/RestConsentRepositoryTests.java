@@ -38,7 +38,7 @@ public class RestConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentDecisionIsNotFound() throws Exception {
+    public void verifyConsentDecisionIsNotFound() {
         server.expect(manyTimes(), requestTo("/consent"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
@@ -54,7 +54,7 @@ public class RestConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final ConsentDecisionBuilder builder = new ConsentDecisionBuilder(NoOpCipherExecutor.getInstance());
+        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(NoOpCipherExecutor.getInstance());
         final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
         final Service svc = RegisteredServiceTestUtils.getService();
         final ConsentDecision decision = builder.build(svc,
@@ -69,6 +69,18 @@ public class RestConsentRepositoryTests {
         final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(d);
         assertEquals(d.getPrincipal(), "casuser");
+        server.verify();
+    }
+    
+    @Test
+    public void verifyConsentDecisionIsDeleted() {
+        server.expect(manyTimes(), requestTo("/consent/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess());
+        
+        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final boolean b = repo.deleteConsentDecision(1, "CasUser");
+        assertTrue(b);
         server.verify();
     }
 }

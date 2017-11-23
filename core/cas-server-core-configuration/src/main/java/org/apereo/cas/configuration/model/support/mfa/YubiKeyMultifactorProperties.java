@@ -2,7 +2,9 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
 import java.util.ArrayList;
@@ -15,15 +17,24 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
+@RequiresModule(name = "cas-server-support-yubikey")
+public class YubiKeyMultifactorProperties extends BaseMultifactorProviderProperties {
+    /**
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-yubikey";
+
     private static final long serialVersionUID = 9138057706201201089L;
+    
     /**
      * Yubikey client id.
      */
+    @RequiredProperty
     private Integer clientId;
     /**
      *  Yubikey secret key.
      */
+    @RequiredProperty
     private String secretKey = StringUtils.EMPTY;
 
     /**
@@ -54,10 +65,10 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Keep device registration records inside a MongoDb resource.
      */
-    private Mongodb mongodb = new Mongodb();
+    private MongoDb mongo = new MongoDb();
 
     public YubiKeyMultifactorProperties() {
-        setId("mfa-yubikey");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public boolean isTrustedDeviceEnabled() {
@@ -116,22 +127,22 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProvider {
         this.jpa = jpa;
     }
 
-    public Mongodb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final Mongodb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongodb) {
+        this.mongo = mongodb;
     }
 
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -4420099402220880361L;
     }
 
-    public static class Mongodb extends AbstractMongoClientProperties {
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = 6876845341227039713L;
 
-        public Mongodb() {
+        public MongoDb() {
             setCollection("MongoDbYubiKeyRepository");
         }
     }

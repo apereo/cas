@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -21,21 +22,25 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
     /**
      * Credentials access key.
      */
+    @RequiredProperty
     private String credentialAccessKey;
 
     /**
      * Credentials secret key.
      */
+    @RequiredProperty
     private String credentialSecretKey;
 
     /**
      * Dynamo DB endpoint.
      */
+    @RequiredProperty
     private String endpoint;
 
     /**
      * EC2 region.
      */
+    @RequiredProperty
     private String region;
 
     /**

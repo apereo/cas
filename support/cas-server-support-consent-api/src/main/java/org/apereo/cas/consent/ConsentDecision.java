@@ -9,9 +9,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConsentDecision}.
@@ -35,7 +36,7 @@ public class ConsentDecision {
     private String service;
 
     @Column(nullable = false)
-    private LocalDateTime date = LocalDateTime.now();
+    private LocalDateTime createdDate = LocalDateTime.now();
 
     @Column(nullable = false)
     private ConsentOptions options = ConsentOptions.ATTRIBUTE_NAME;
@@ -44,27 +45,25 @@ public class ConsentDecision {
     private Long reminder = 14L;
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
-    private TimeUnit reminderTimeUnit = TimeUnit.DAYS;
+    private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
-    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
-    private String attributeNames;
-
-    @Column(length = 4096, updatable = true, insertable = true, nullable = false)
-    private String attributeValues;
-
-    public LocalDateTime getDate() {
-        return date;
+    @Lob
+    @Column(name = "attributes", length = Integer.MAX_VALUE)
+    private String attributes;
+    
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public void setDate(final LocalDateTime date) {
-        this.date = date;
+    public void setCreatedDate(final LocalDateTime date) {
+        this.createdDate = date;
     }
 
-    public TimeUnit getReminderTimeUnit() {
+    public ChronoUnit getReminderTimeUnit() {
         return reminderTimeUnit;
     }
 
-    public void setReminderTimeUnit(final TimeUnit reminderTimeUnit) {
+    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
         this.reminderTimeUnit = reminderTimeUnit;
     }
 
@@ -92,22 +91,6 @@ public class ConsentDecision {
         this.service = service;
     }
 
-    public String getAttributeNames() {
-        return attributeNames;
-    }
-
-    public void setAttributeNames(final String attributeNames) {
-        this.attributeNames = attributeNames;
-    }
-
-    public String getAttributeValues() {
-        return attributeValues;
-    }
-
-    public void setAttributeValues(final String attributeValues) {
-        this.attributeValues = attributeValues;
-    }
-
     public ConsentOptions getOptions() {
         return options;
     }
@@ -124,13 +107,20 @@ public class ConsentDecision {
         return reminder;
     }
 
-    
+    public String getAttributes() {
+        return attributes;
+    }
+
+    public void setAttributes(final String attributes) {
+        this.attributes = attributes;
+    }
+
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
                 .append("principal", principal)
                 .append("service", service)
-                .append("date", date)
+                .append("date", createdDate)
                 .append("options", options)
                 .append("reminder", reminder)
                 .append("reminderTimeUnit", reminderTimeUnit)

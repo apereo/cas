@@ -1,0 +1,22 @@
+description = "Apereo CAS Event InfluxDb Repository"
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-services")
+    api project(":api:cas-server-core-api-validation")
+    api project(":api:cas-server-core-api-events")
+    
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-events")
+
+    implementation project(":support:cas-server-support-influxdb-core")
+    
+    implementation libraries.caffein
+    implementation libraries.influxdb
+    implementation libraries.okhttp
+
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
+}
+
+

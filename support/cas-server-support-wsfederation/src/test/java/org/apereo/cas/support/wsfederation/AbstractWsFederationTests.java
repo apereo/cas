@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -56,7 +57,8 @@ import javax.annotation.PostConstruct;
                 AbstractWsFederationTests.CasTestConfiguration.class,
                 WsFederationAuthenticationConfiguration.class,
                 WsFedAuthenticationEventExecutionPlanConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
@@ -73,7 +75,8 @@ import javax.annotation.PostConstruct;
                 RefreshAutoConfiguration.class,
                 AopAutoConfiguration.class,
                 CasCookieConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
                 CasCoreLogoutConfiguration.class,

@@ -72,8 +72,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureRewriteValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final Resource res = casProperties.getServer().getRewriteValveConfigLocation();
+        final Resource res = casProperties.getServer().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
+            LOGGER.debug("Configuring rewrite valve at [{}]", res);
+            
             final RewriteValve valve = new RewriteValve() {
                 @Override
                 protected synchronized void startInternal() throws LifecycleException {
@@ -129,7 +131,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 LOGGER.warn("No explicit port configuration is provided to CAS. Scanning for available ports...");
                 port = SocketUtils.findAvailableTcpPort();
             }
-            LOGGER.info("Activated embedded tomcat container HTTP port to [{}]", port);
+            LOGGER.info("Activated embedded tomcat container HTTP port on [{}]", port);
             connector.setPort(port);
 
             LOGGER.debug("Configuring embedded tomcat container for HTTP2 protocol support");

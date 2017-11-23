@@ -27,7 +27,7 @@ public class DefaultDelegatingAuditTrailManager implements DelegatingAuditTrailM
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDelegatingAuditTrailManager.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
-    private static final long MAX_CACHE_SIZE = 1000;
+    private static final long MAX_CACHE_SIZE = 1_000_000;
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;

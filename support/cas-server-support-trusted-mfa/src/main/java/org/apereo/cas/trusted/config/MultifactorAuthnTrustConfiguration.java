@@ -33,8 +33,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
 
-import java.io.Serializable;
-
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
@@ -49,7 +47,7 @@ public class MultifactorAuthnTrustConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
-    private static final long MAX_CACHE_SIZE = 1000;
+    private static final long MAX_CACHE_SIZE = 1_000_000;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -85,6 +83,7 @@ public class MultifactorAuthnTrustConfiguration {
                     return null;
                 });
 
+        storage.asMap();
         final BaseMultifactorAuthenticationTrustStorage m;
         if (trusted.getJson().getLocation() != null) {
             LOGGER.debug("Storing trusted device records inside the JSON resource [{}]", trusted.getJson().getLocation());
@@ -105,7 +104,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Bean
     @RefreshScope
-    public CipherExecutor<Serializable, String> mfaTrustCipherExecutor() {
+    public CipherExecutor mfaTrustCipherExecutor() {
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(

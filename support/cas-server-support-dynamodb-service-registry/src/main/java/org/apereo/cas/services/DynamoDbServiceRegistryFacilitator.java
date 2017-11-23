@@ -20,7 +20,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
@@ -45,7 +45,7 @@ public class DynamoDbServiceRegistryFacilitator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbServiceRegistryFacilitator.class);
     private static final String TABLE_NAME = "DynamoDbCasServices";
 
-    private final StringSerializer<RegisteredService> jsonSerializer = new RegisteredServiceJsonSerializer();
+    private final StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
 
     private enum ColumnNames {
         ID("id"),
@@ -194,7 +194,7 @@ public class DynamoDbServiceRegistryFacilitator {
     public void createServicesTable(final boolean deleteTables) {
         try {
             final CreateTableRequest request = new CreateTableRequest()
-                    .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.S))
+                    .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.N))
                     .withKeySchema(new KeySchemaElement(ColumnNames.ID.getName(), KeyType.HASH))
                     .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
                             dynamoDbProperties.getWriteCapacity()))

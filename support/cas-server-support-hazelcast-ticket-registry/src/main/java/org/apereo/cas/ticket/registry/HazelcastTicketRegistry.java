@@ -11,7 +11,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.concurrent.TimeUnit;
@@ -85,8 +84,15 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
         if (StringUtils.isNotBlank(encTicketId)) {
             final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
             if (metadata != null) {
-                final Ticket ticket = getTicketMapInstanceByMetadata(metadata).get(encTicketId);
-                return decodeTicket(ticket);
+                final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
+                final Ticket ticket = map.get(encTicketId);
+                final Ticket result = decodeTicket(ticket);
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
+                    map.remove(encTicketId);
+                    return null;
+                }
+                return result;
             }
             LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
         }
@@ -138,7 +144,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         shutdown();
     }
 

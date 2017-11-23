@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -50,19 +51,20 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
 @EnableScheduling
+@DirtiesContext
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
-
+    
     @BeforeClass
     public static void bootstrap() throws Exception {
-        initDirectoryServer();
+        initDirectoryServer(1390);
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.dao.load().forEach(service -> this.dao.delete(service));
     }
 
@@ -157,7 +159,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void verifyDeletingSingleService() throws Exception {
+    public void verifyDeletingSingleService() {
         final RegisteredService rs = getRegexRegisteredService();
         final RegisteredService rs2 = getRegexRegisteredService();
         this.dao.save(rs2);
@@ -172,7 +174,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     }
 
     @Test
-    public void verifyDeletingServices() throws Exception {
+    public void verifyDeletingServices() {
         this.dao.save(getRegexRegisteredService());
         this.dao.save(getRegexRegisteredService());
         final List<RegisteredService> services = this.dao.load();

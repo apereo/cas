@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.audit;
 
-import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 
 import java.io.Serializable;
@@ -64,7 +63,12 @@ public class AuditProperties implements Serializable {
     /**
      * Family of sub-properties pertaining to Jdbc-based audit destinations.
      */
-    private Jdbc jdbc = new Jdbc();
+    private AuditJdbcProperties jdbc = new AuditJdbcProperties();
+
+    /**
+     * Family of sub-properties pertaining to MongoDb-based audit destinations.
+     */
+    private AuditMongoDbProperties mongo = new AuditMongoDbProperties();
 
     /**
      * The audit format to use in the logs.
@@ -78,11 +82,19 @@ public class AuditProperties implements Serializable {
      */
     private boolean ignoreAuditFailures;
 
-    public Jdbc getJdbc() {
+    public AuditMongoDbProperties getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final AuditMongoDbProperties mongo) {
+        this.mongo = mongo;
+    }
+
+    public AuditJdbcProperties getJdbc() {
         return jdbc;
     }
 
-    public void setJdbc(final Jdbc jdbc) {
+    public void setJdbc(final AuditJdbcProperties jdbc) {
         this.jdbc = jdbc;
     }
 
@@ -150,49 +162,4 @@ public class AuditProperties implements Serializable {
         this.useServerHostAddress = useServerHostAddress;
     }
 
-    public static class Jdbc extends AbstractJpaProperties {
-        private static final long serialVersionUID = 4227475246873515918L;
-
-        /**
-         * Indicates how long audit records should be kept in the database.
-         * This is used by the clean-up criteria to clean up after stale audit records.
-         */
-        private int maxAgeDays = 180;
-
-        /**
-         * Defines the isolation level for transactions.
-         * @see org.springframework.transaction.TransactionDefinition
-         */
-        private String isolationLevelName = "ISOLATION_READ_COMMITTED";
-
-        /**
-         * Defines the propagation behavior for transactions.
-         * @see org.springframework.transaction.TransactionDefinition
-         */
-        private String propagationBehaviorName = "PROPAGATION_REQUIRED";
-
-        public int getMaxAgeDays() {
-            return maxAgeDays;
-        }
-
-        public void setMaxAgeDays(final int maxAgeDays) {
-            this.maxAgeDays = maxAgeDays;
-        }
-
-        public String getPropagationBehaviorName() {
-            return propagationBehaviorName;
-        }
-
-        public void setPropagationBehaviorName(final String propagationBehaviorName) {
-            this.propagationBehaviorName = propagationBehaviorName;
-        }
-
-        public String getIsolationLevelName() {
-            return isolationLevelName;
-        }
-
-        public void setIsolationLevelName(final String isolationLevelName) {
-            this.isolationLevelName = isolationLevelName;
-        }
-    }
 }

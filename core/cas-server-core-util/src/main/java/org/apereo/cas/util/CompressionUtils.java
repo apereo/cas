@@ -152,7 +152,7 @@ public final class CompressionUtils {
         try {
             final ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
             final GZIPOutputStream zos = new GZIPOutputStream(rstBao);
-            zos.write(srcTxt.getBytes());
+            zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
             IOUtils.closeQuietly(zos);
             final byte[] bytes = rstBao.toByteArray();
             final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,15 +36,16 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
                                  final ServicesManager servicesManager,
                                  final String authenticationContextAttribute,
                                  final boolean releaseProtocolAttributes,
+                                 final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                createDelegatedView(), releaseProtocolAttributes, serviceSelectionStrategy);
+                createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy,
+                serviceSelectionStrategy);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
         final MappingJackson2JsonView view = new MappingJackson2JsonView();
         view.setPrettyPrint(true);
-        view.setDisableCaching(true);
         view.getObjectMapper().setSerializationInclusion(JsonInclude.Include.NON_NULL).findAndRegisterModules();
         return view;
     }
@@ -55,7 +57,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                            final HttpServletResponse response) throws Exception {
+                                            final HttpServletResponse response) {
         final CasServiceResponse casResponse = new CasServiceResponse();
         try {
             super.prepareMergedOutputModel(model, request, response);
@@ -74,7 +76,6 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
             casModel.put("serviceResponse", casResponse);
             model.clear();
             model.putAll(casModel);
-            setView(createDelegatedView());
         }
     }
 

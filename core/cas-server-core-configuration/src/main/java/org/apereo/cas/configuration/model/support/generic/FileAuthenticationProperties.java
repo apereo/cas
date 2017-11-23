@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.generic;
 
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
 
@@ -13,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-
+@RequiresModule(name = "cas-server-support-generic")
 public class FileAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 4031366217090049241L;
@@ -32,6 +33,9 @@ public class FileAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
 
+    /**
+     * Principal transformation settings for this authentication.
+     */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 

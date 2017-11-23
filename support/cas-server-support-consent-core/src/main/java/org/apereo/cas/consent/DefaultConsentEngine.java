@@ -4,7 +4,6 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,7 +11,6 @@ import org.slf4j.LoggerFactory;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultConsentEngine}.
@@ -33,20 +31,12 @@ public class DefaultConsentEngine implements ConsentEngine {
         this.consentDecisionBuilder = consentDecisionBuilder;
     }
 
-    @Override
-    public Map<String, Object> getConsentableAttributes(final Authentication authentication,
-                                                        final Service service,
-                                                        final RegisteredService registeredService) {
-        LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
-        return registeredService.getAttributeReleasePolicy()
-                .getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
-    }
 
     @Override
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,
                                                                final RegisteredService registeredService,
                                                                final Authentication authentication) {
-        final Map<String, Object> attributes = getConsentableAttributes(authentication, service, registeredService);
+        final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
 
         if (attributes == null || attributes.isEmpty()) {
             LOGGER.debug("Consent is conditionally ignored for service [{}] given no consentable attributes are found", registeredService.getName());
@@ -57,7 +47,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         final ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return Pair.of(true, decision);
+            return Pair.of(true, null);
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
@@ -68,8 +58,8 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-        final ChronoUnit unit = DateTimeUtils.toChronoUnit(decision.getReminderTimeUnit());
-        final LocalDateTime dt = decision.getDate().plus(decision.getReminder(), unit);
+        final ChronoUnit unit = decision.getReminderTimeUnit();
+        final LocalDateTime dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
         final LocalDateTime now = LocalDateTime.now();
 
         LOGGER.debug("Reminder threshold date/time is calculated as [{}]", dt);
@@ -90,9 +80,9 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final RegisteredService registeredService,
                                                 final Authentication authentication,
                                                 final long reminder,
-                                                final TimeUnit reminderTimeUnit,
+                                                final ChronoUnit reminderTimeUnit,
                                                 final ConsentOptions options) {
-        final Map<String, Object> attributes = getConsentableAttributes(authentication, service, registeredService);
+        final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         final String principalId = authentication.getPrincipal().getId();
 
         ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
@@ -116,5 +106,20 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                final RegisteredService registeredService,
                                                final Authentication authentication) {
         return consentRepository.findConsentDecision(service, registeredService, authentication);
+    }
+
+    @Override
+    public Map<String, Object> resolveConsentableAttributesFrom(final ConsentDecision decision) {
+        LOGGER.debug("Retrieving consentable attributes from existing decision made by [{}] for [{}]",
+                decision.getPrincipal(), decision.getService());
+        return this.consentDecisionBuilder.getConsentableAttributesFrom(decision);
+    }
+
+    @Override
+    public Map<String, Object> resolveConsentableAttributesFrom(final Authentication authentication,
+                                                                final Service service,
+                                                                final RegisteredService registeredService) {
+        LOGGER.debug("Retrieving consentable attributes for [{}]", registeredService);
+        return registeredService.getAttributeReleasePolicy().getConsentableAttributes(authentication.getPrincipal(), service, registeredService);
     }
 }

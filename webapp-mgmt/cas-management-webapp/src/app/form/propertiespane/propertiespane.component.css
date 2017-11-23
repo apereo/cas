@@ -1,0 +1,15 @@
+.nameWidth {
+  flex: 0 0 240px;
+}
+
+.valueWidth {
+  flex: 0 0 240px;
+}
+
+.actionWidth {
+  flex: 0 0 40px;
+}
+
+/deep/.mat-autocomplete-panel {
+  min-width: 300px !important;
+}

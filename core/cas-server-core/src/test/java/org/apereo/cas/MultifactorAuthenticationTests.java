@@ -20,6 +20,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -65,7 +66,8 @@ import static org.junit.Assert.*;
                 CasMultifactorTestAuthenticationEventExecutionPlanConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
@@ -106,7 +108,7 @@ public class MultifactorAuthenticationTests {
     private CentralAuthenticationService cas;
 
     @Test
-    public void verifyAllowsAccessToNormalSecurityServiceWithPassword() throws Exception {
+    public void verifyAllowsAccessToNormalSecurityServiceWithPassword() {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, newUserPassCredentials(ALICE, ALICE));
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -115,7 +117,7 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test
-    public void verifyAllowsAccessToNormalSecurityServiceWithOTP() throws Exception {
+    public void verifyAllowsAccessToNormalSecurityServiceWithOTP() {
         final AuthenticationResult ctx = processAuthenticationAttempt(NORMAL_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
@@ -124,32 +126,26 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test
-    public void verifyDeniesAccessToHighSecurityServiceWithPassword() throws Exception {
+    public void verifyDeniesAccessToHighSecurityServiceWithPassword() {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE));
-
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-
         cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
     }
 
     @Test
-    public void verifyDeniesAccessToHighSecurityServiceWithOTP() throws Exception {
+    public void verifyDeniesAccessToHighSecurityServiceWithOTP() {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE, new OneTimePasswordCredential(ALICE, PASSWORD_31415));
-
         final TicketGrantingTicket tgt = cas.createTicketGrantingTicket(ctx);
         assertNotNull(tgt);
-
         this.thrown.expect(UnsatisfiedAuthenticationPolicyException.class);
-
         final ServiceTicket st = cas.grantServiceTicket(tgt.getId(), HIGH_SERVICE, ctx);
         assertNotNull(st);
     }
 
     @Test
-    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() throws Exception {
+    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTP() {
         final AuthenticationResult ctx = processAuthenticationAttempt(HIGH_SERVICE,
                 newUserPassCredentials(ALICE, ALICE),
                 new OneTimePasswordCredential(ALICE, PASSWORD_31415));
@@ -161,7 +157,7 @@ public class MultifactorAuthenticationTests {
     }
 
     @Test
-    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() throws Exception {
+    public void verifyAllowsAccessToHighSecurityServiceWithPasswordAndOTPViaRenew() {
         // Note the original credential used to start SSO session does not satisfy security policy
         final AuthenticationResult ctx2 = processAuthenticationAttempt(HIGH_SERVICE, newUserPassCredentials(ALICE, ALICE),
                 new OneTimePasswordCredential(ALICE, PASSWORD_31415));

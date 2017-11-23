@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -63,7 +64,8 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationMetadataConfiguration.class,
         CasCoreAuthenticationSupportConfiguration.class,
         CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, 
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreServicesConfiguration.class,

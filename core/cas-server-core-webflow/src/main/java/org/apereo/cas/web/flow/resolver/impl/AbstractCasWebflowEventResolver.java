@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.MessageDescriptor;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -197,11 +198,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param authenticationResultBuilder the authentication result builder
      * @param service                     the service
      * @return the event
-     * @throws Exception the exception
      */
     protected Event grantTicketGrantingTicketToAuthenticationResult(final RequestContext context,
                                                                     final AuthenticationResultBuilder authenticationResultBuilder,
-                                                                    final Service service) throws Exception {
+                                                                    final Service service) {
 
         LOGGER.debug("Finalizing authentication transactions and issuing ticket-granting ticket");
         final AuthenticationResult authenticationResult =
@@ -309,7 +309,9 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                                 final MultifactorAuthenticationProvider provider) {
         final Map<String, Object> map = new HashMap<>();
         map.put(Principal.class.getName(), principal);
-        map.put(RegisteredService.class.getName(), service);
+        if (service != null) {
+            map.put(RegisteredService.class.getName(), service);
+        }
         map.put(MultifactorAuthenticationProvider.class.getName(), provider);
         return map;
     }
@@ -364,27 +366,39 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                 LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
                 if (predicate.test((String) attributeValue)) {
                     LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
-
-                    LOGGER.debug("Attempting to isAvailable multifactor authentication provider [{}] for [{}]",
-                            provider, service);
-
-                    if (provider.isAvailable(service)) {
-                        LOGGER.debug("Provider [{}] is successfully verified", provider);
-                        final String id = provider.getId();
-                        final Event event = validateEventIdForMatchingTransitionInContext(id, context,
-                                buildEventAttributeMap(principal, service, provider));
-                        return CollectionUtils.wrapSet(event);
-                    }
-                    LOGGER.debug("Provider [{}] could not be verified", provider);
-                } else {
-                    LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
+                    return evaluateEventForProviderInContext(principal, service, context, provider);
                 }
+                LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
             }
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
         LOGGER.debug("Attribute value [{}] is not a single-valued attribute", attributeValue);
         return null;
+    }
+
+    /**
+     * Verify provider for current context and validate event id.
+     *
+     * @param principal the principal
+     * @param service   the service
+     * @param context   the context
+     * @param provider  the provider
+     * @return the set
+     */
+    protected Set<Event> evaluateEventForProviderInContext(final Principal principal,
+                                                           final RegisteredService service,
+                                                           final RequestContext context,
+                                                           final MultifactorAuthenticationProvider provider) {
+        LOGGER.debug("Attempting check for availability of multifactor authentication provider [{}] for [{}]", provider, service);
+        if (provider != null && provider.isAvailable(service)) {
+            LOGGER.debug("Provider [{}] is successfully verified", provider);
+            final String id = provider.getId();
+            final Event event = validateEventIdForMatchingTransitionInContext(id, context, buildEventAttributeMap(principal, service, provider));
+            return CollectionUtils.wrapSet(event);
+        }
+        LOGGER.debug("Provider [{}] could not be verified", provider);
+        return new HashSet<>(0);
     }
 
     private Set<Event> resolveEventViaAttribute(final Principal principal,
@@ -465,6 +479,16 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                                                            final Collection<MultifactorAuthenticationProvider> providers,
                                                            final Predicate<String> predicate) {
 
+        if (attributeNames.isEmpty()) {
+            LOGGER.debug("No attribute names are provided to trigger a multifactor authentication provider via [{}]", getName());
+            return null; 
+        }
+        
+        if (providers == null || providers.isEmpty()) {
+            LOGGER.error("No multifactor authentication providers are available in the application context");
+            return null;
+        }
+        
         return resolveEventViaAttribute(principal, principal.getAttributes(), attributeNames, service, context, providers, predicate);
     }
 
@@ -493,9 +517,10 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the registered service multifactor authentication provider
      */
     protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
+        
         try {
             LOGGER.debug("Locating bean definition for [{}]", providerId);
-            return this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true).values().stream()
+            return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()
                     .filter(p -> p.matches(providerId))
                     .findFirst();
         } catch (final Exception e) {

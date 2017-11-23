@@ -1,0 +1,89 @@
+<mat-radio-group [(ngModel)]="type" (change)="changeType()">
+
+  <mat-radio-button [value]="TYPE.DEFAULT">
+    <ng-container i18n="services.form.label.uap.default">
+      {{ messages.services_form_label_uap_default }}
+    </ng-container>
+  </mat-radio-button>
+
+  <mat-radio-button [value]="TYPE.ANONYMOUS">
+    <ng-container i18n="services.form.label.uap.anon">
+      {{ messages.services_form_label_uap_anon }}
+    </ng-container>
+  </mat-radio-button>
+
+  <mat-radio-button [value]="TYPE.PRINCIPAL_ATTRIBUTE">
+    <ng-container i18n="services.form.label.uap.principleAtt">
+      {{ messages.services_form_label_uap_principleAtt }}
+    </ng-container>
+  </mat-radio-button>
+
+</mat-radio-group>
+
+<div *ngIf="type == TYPE.ANONYMOUS">
+  <mat-form-field class="textInput">
+    <input matInput required
+           i18n-placeholder="services.form.label.uap.saltSetting"
+           [placeholder]="messages.services_form_label_uap_saltSetting"
+           [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.salt">
+  </mat-form-field>
+  <mat-icon style="font-size: medium;"
+           i18n-myTooltip="services.form.tooltip.uap.saltSetting"
+           [matTooltip]="messages.services_form_tooltip_uap_saltSetting">help
+  </mat-icon>
+  <mat-form-field class="textInput">
+    <input matInput [matAutocomplete]="auto"
+           i18n-placeholder="services.form.label.uap.anonAttribute"
+           [placeholder]="messages.services_form_label_uap_anonAttribute"
+           [(ngModel)]="data.service.usernameAttributeProvider.persistentIdGenerator.attribute">
+  </mat-form-field>
+  <mat-icon style="font-size: medium;"
+           i18n-myTooltip="services.form.tooltip.uap.anonAttribute"
+           [matTooltip]="messages.services_form_tooltip_uap_anonAttribute">help
+  </mat-icon>
+</div>
+
+<div *ngIf="type == TYPE.PRINCIPAL_ATTRIBUTE">
+
+  <div>
+    <mat-form-field class="textInput">
+      <input matInput required [matAutocomplete]="auto"
+             i18n-placeholder="services.form.label.uap.usernameAttribute"
+             [placeholder]="messages.services_form_label_uap_usernameAttribute"
+             [(ngModel)]="data.service.usernameAttributeProvider.usernameAttribute">
+    </mat-form-field>
+    <mat-icon style="font-size: medium;"
+             i18n-matTooltip="services.form.tooltip.uap.usernameAttribute"
+             [matTooltip]="messages.services_form_tooltip_uap_usernameAttribute">help
+    </mat-icon>
+  </div>
+
+  <div>
+    <mat-checkbox [(ngModel)]="data.service.usernameAttributeProvider.encryptUserName">
+      <ng-container i18n>
+        Encrypt Username
+      </ng-container>
+    </mat-checkbox>
+    <mat-icon style="font-size: medium;"
+             i18n-matTooltip="encpytUsername"
+             matTooltip="If checked the username attribute will be encrypted using the defined public key for the service">help
+    </mat-icon>
+  </div>
+
+  <div>
+    <mat-form-field class="textInput">
+      <mat-select i18n-placeholder="services.form.label.uap.canonicalizationMode"
+                  [placeholder]="messages.services_form_label_uap_canonicalizationMode"
+                  [(ngModel)]="data.service.usernameAttributeProvider.canonicalizationMode">
+        <mat-option *ngFor="let opt of data.formData.canonicalizationModes" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+</div>
+
+<mat-autocomplete style="width:300px" #auto="matAutocomplete">
+  <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">{{ opt }}</mat-option>
+</mat-autocomplete>

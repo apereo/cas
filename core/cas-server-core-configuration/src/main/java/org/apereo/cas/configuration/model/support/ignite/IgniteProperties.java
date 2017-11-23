@@ -2,11 +2,13 @@ package org.apereo.cas.configuration.model.support.ignite;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.time.Duration;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -15,6 +17,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-ignite-ticket-registry")
 public class IgniteProperties implements Serializable {
 
     private static final long serialVersionUID = -5259465262649559156L;
@@ -40,7 +43,8 @@ public class IgniteProperties implements Serializable {
      * <li>Both port1 and port2 should be greater than 0.</li>
      * </ul>
      */
-    private List<String> igniteAddress = Arrays.asList("localhost:47500");
+    @RequiredProperty
+    private List<String> igniteAddress = CollectionUtils.wrap("localhost:47500");
 
     /**
      * Settings related to tickets cache.
@@ -110,6 +114,7 @@ public class IgniteProperties implements Serializable {
     /**
      * Sets local port to listen to.
      */
+    @RequiredProperty
     private int localPort = -1;
 
     /**
@@ -146,6 +151,10 @@ public class IgniteProperties implements Serializable {
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public IgniteProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public long getAckTimeout() {
         return Duration.parse(ackTimeout).toMillis();
     }

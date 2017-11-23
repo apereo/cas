@@ -43,7 +43,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createClientActionActionState(flow);
@@ -54,7 +54,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createSaml2ClientLogoutAction() {
         final Flow logoutFlow = getLogoutFlow();
-        final DecisionState state = (DecisionState) logoutFlow.getState(CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
+        final DecisionState state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
         state.getEntryActionList().add(saml2ClientLogoutAction);
     }
 
@@ -74,9 +74,9 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 DelegatedClientAuthenticationAction.VIEW_ID_STOP_WEBFLOW);
         state.getEntryActionList().add(new AbstractAction() {
             @Override
-            protected Event doExecute(final RequestContext requestContext) throws Exception {
-                final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-                final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+            protected Event doExecute(final RequestContext requestContext) {
+                final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,
                         response.getStatus());
                 mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));

@@ -1,0 +1,66 @@
+<div>
+  <mat-radio-group [(ngModel)]="type" (change)="changeType()">
+
+    <mat-radio-button [value]="TYPE.DEFAULT">
+      <ng-container i18n="services.form.label.attrRelease.principleAttRepo.default">
+        {{ messages.services_form_label_attrRelease_principleAttRepo_default }}
+      </ng-container>
+    </mat-radio-button>
+
+    <mat-radio-button [value]="TYPE.CACHING">
+      <ng-container i18n="services.form.label.attrRelease.principleAttRepo.cached">
+        {{ messages.services_form_label_attrRelease_principleAttRepo_cached }}
+      </ng-container>
+    </mat-radio-button>
+
+  </mat-radio-group>
+</div>
+
+<div *ngIf="type == TYPE.CACHING">
+  <div>
+    <mat-form-field class="textInput">
+      <mat-select required
+                  i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.timeUnit"
+                  [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_timeUnit"
+                  [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.timeUnit">
+        <mat-option *ngFor="let opt of formData.timeUnits" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.timeUnit"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_timeUnit">help
+    </mat-icon>
+  </div>
+
+  <div>
+    <mat-form-field class="textInput">
+      <input matInput
+             i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.expiration"
+             [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_expiration"
+             [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.expiration">
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.expiration"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_expiration">help
+    </mat-icon>
+  </div>
+
+  <div>
+    <mat-form-field class="textInput">
+      <mat-select required
+                  i18n-placeholder="services.form.label.attrRelease.principleAttRepo.cached.mergeStrategy"
+                  [placeholder]="messages.services_form_label_attrRelease_principleAttRepo_cached_mergeStrategy"
+                  [(ngModel)]="data.service.attributeReleasePolicy.principalAttributesRepository.mergingStrategy">
+        <mat-option *ngFor="let opt of formData.mergingStrategies" [value]="opt">
+          {{ opt }}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.attrRelease.principleAttRepo.cached.mergeStrategy"
+             [matTooltip]="messages.services_form_tooltip_attrRelease_principleAttRepo_cached_mergeStrategy">help
+    </mat-icon>
+  </div>
+</div>

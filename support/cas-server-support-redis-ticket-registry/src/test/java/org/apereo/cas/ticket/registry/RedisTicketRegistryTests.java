@@ -20,8 +20,8 @@ import redis.embedded.RedisServer;
 /**
  * Unit test for {@link RedisTicketRegistry}.
  *
- * @author Scott Battaglia
- * @since 3.0.0
+ * @author Misagh Moayyed
+ * @since 5.0.0
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {RedisTicketRegistryConfiguration.class,
@@ -42,10 +42,11 @@ public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
     }
 
+    
     @BeforeClass
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6379);
@@ -58,7 +59,7 @@ public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
     }
 }

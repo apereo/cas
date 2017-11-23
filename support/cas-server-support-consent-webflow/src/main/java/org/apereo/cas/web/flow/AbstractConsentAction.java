@@ -4,6 +4,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentOptions;
@@ -27,16 +28,24 @@ import java.util.Map;
 public abstract class AbstractConsentAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractConsentAction.class);
 
-    /** CAS Settings. */
+    /**
+     * CAS Settings.
+     */
     protected final CasConfigurationProperties casProperties;
 
-    /** The services manager. */
+    /**
+     * The services manager.
+     */
     protected final ServicesManager servicesManager;
 
-    /** Service selection strategies. */
+    /**
+     * Service selection strategies.
+     */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    /** The consent engine that handles calculations. */
+    /**
+     * The consent engine that handles calculations.
+     */
     protected final ConsentEngine consentEngine;
 
     public AbstractConsentAction(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
@@ -56,10 +65,8 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * @return the registered service for consent
      */
     protected RegisteredService getRegisteredServiceForConsent(final RequestContext requestContext, final Service service) {
-        RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
-        if (registeredService == null) {
-            registeredService = this.servicesManager.findServiceBy(service);
-        }
+        final Service serviceToUse = this.authenticationRequestServiceSelectionStrategies.resolveService(service);
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceToUse);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         return registeredService;
     }
@@ -70,19 +77,22 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * @param requestContext the request context
      */
     protected void prepareConsentForRequestContext(final RequestContext requestContext) {
+        final ConsentProperties consentProperties = casProperties.getConsent();
+        
         final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
         final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
-        final Map<String, Object> attributes = consentEngine.getConsentableAttributes(authentication, service, registeredService);
+        final Map<String, Object> attributes = consentEngine.resolveConsentableAttributesFrom(authentication, service, registeredService);
         requestContext.getFlowScope().put("attributes", attributes);
         requestContext.getFlowScope().put("principal", authentication.getPrincipal().getId());
+        requestContext.getFlashScope().put("service", service);
 
         final ConsentDecision decision = consentEngine.findConsentDecision(service, registeredService, authentication);
-        requestContext.getFlowScope().put("option", decision == null
-                ? ConsentOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
-        requestContext.getFlowScope().put("reminder", decision == null
-                ? casProperties.getConsent().getReminder() : decision.getReminder());
+        requestContext.getFlowScope().put("option", decision == null? ConsentOptions.ATTRIBUTE_NAME.getValue() : decision.getOptions().getValue());
+        
+        final long reminder = decision == null ? consentProperties.getReminder() : decision.getReminder();
+        requestContext.getFlowScope().put("reminder", Long.valueOf(reminder));
         requestContext.getFlowScope().put("reminderTimeUnit", decision == null
-                ? casProperties.getConsent().getReminderTimeUnit().name() : decision.getReminderTimeUnit().name());
+                ? consentProperties.getReminderTimeUnit().name() : decision.getReminderTimeUnit().name());
     }
 }

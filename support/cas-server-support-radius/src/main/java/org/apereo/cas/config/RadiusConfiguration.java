@@ -9,13 +9,14 @@ import org.apereo.cas.adaptors.radius.authentication.handler.support.RadiusAuthe
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,8 +100,8 @@ public class RadiusConfiguration {
         final RadiusAuthenticationHandler h = new RadiusAuthenticationHandler(radius.getName(), servicesManager, radiusPrincipalFactory(), radiusServers(),
                 radius.isFailoverOnException(), radius.isFailoverOnAuthenticationFailure());
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(radius.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(radius.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(radius.getPrincipalTransformation()));
 
         if (passwordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(passwordPolicyConfiguration);

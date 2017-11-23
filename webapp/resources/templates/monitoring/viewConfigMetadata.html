@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{monitoring/layout}">
+
+<head>
+    <title th:text="#{cas.configmetadata.pagetitle}"></title>
+    <link rel="stylesheet" th:href="@{#{webjars.jqueryui.themes.cupertino.jquery-ui.css}}"/>
+    <script type="text/javascript" th:inline="javascript">
+
+        /*<![CDATA[*/
+
+        var urls = {
+            search: /*[[@{/status/configmetadata/search?name={query}}]]*/
+        };
+
+        /*]]>*/
+    
+        function jqueryReady() {
+            head.load(
+                /*[[@{/js/viewConfigMetadata.js}]]*/
+            );
+        }
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <h1 th:text="#{cas.configmetadata.pagetitle}"></h1>
+    <p>
+    <p>CAS ships with meta-data files that provide details of all supported configuration properties and settings. You may query the metadata repository
+        here to search for specific CAS settings and properties.
+    <p/>
+
+    Property names can be specified in very relaxed terms.
+    For instance <code>cas.someProperty</code>, <code>cas.some-property</code>, <code>cas.some_property</code>
+    and <code>CAS_SOME_PROPERTY</code> are all valid names.
+    </p>
+    <div>
+        <br/>
+        <div class="ui search">
+            <div class="ui left icon input form-group">
+                <input id="searchField" class="prompt form-control input-lg" type="text" placeholder="Search CAS...">
+            </div>
+        </div>
+        <p/>
+    </div>
+
+    <div id="accordion">
+    </div>
+</div>
+</body>
+</html>

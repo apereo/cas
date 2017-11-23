@@ -2,6 +2,7 @@ description = "Apereo CAS Events Consumer JPA"
 dependencies {
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-jpa-util")
     
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")

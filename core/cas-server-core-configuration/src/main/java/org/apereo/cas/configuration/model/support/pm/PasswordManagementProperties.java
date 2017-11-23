@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -17,6 +18,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-pm-webflow")
 public class PasswordManagementProperties implements Serializable {
 
     private static final long serialVersionUID = -260644582798411176L;
@@ -24,6 +26,11 @@ public class PasswordManagementProperties implements Serializable {
      * Flag to indicate if password management facility is enabled.
      */
     private boolean enabled;
+
+    /**
+     * Flag to indicate whether successful password change should trigger login automatically.
+     */
+    private boolean autoLogin;
 
     /**
      * A String value representing password policy regex pattarn.
@@ -78,6 +85,14 @@ public class PasswordManagementProperties implements Serializable {
         this.enabled = enabled;
     }
 
+    public boolean isAutoLogin() {
+        return autoLogin;
+    }
+
+    public void setAutoLogin(final boolean autoLogin) {
+        this.autoLogin = autoLogin;
+    }
+
     public String getPolicyPattern() {
         return policyPattern;
     }
@@ -110,6 +125,7 @@ public class PasswordManagementProperties implements Serializable {
         this.ldap = ldap;
     }
 
+    @RequiresModule(name = "cas-server-support-pm-jdbc")
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 4746591112640513465L;
 
@@ -165,6 +181,7 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-pm-rest")
     public static class Rest implements Serializable {
         private static final long serialVersionUID = 5262948164099973872L;
         /**
@@ -205,6 +222,7 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-pm-ldap")
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -2610186056194686825L;
         /**
@@ -260,6 +278,7 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-pm-webflow")
     public static class Reset implements Serializable {
         private static final long serialVersionUID = 3453970349530670459L;
         /**
@@ -355,6 +374,7 @@ public class PasswordManagementProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-pm")
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 1129426669588789974L;
     }

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
@@ -76,12 +77,11 @@ public class WsFederationAction extends AbstractAction {
      *
      * @param context the context
      * @return the event
-     * @throws Exception all unhandled exceptions
      */
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final String wa = request.getParameter(WA);
             if (StringUtils.isNotBlank(wa) && wa.equalsIgnoreCase(WSIGNIN)) {
                 return handleWsFederationAuthenticationRequest(context);
@@ -120,7 +120,7 @@ public class WsFederationAction extends AbstractAction {
     }
 
     private Event routeToLoginRequest(final RequestContext context, final WsFederationConfiguration config) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
         final Service service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
@@ -143,7 +143,7 @@ public class WsFederationAction extends AbstractAction {
     }
 
     private Event handleWsFederationAuthenticationRequest(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         final String wResult = request.getParameter(WRESULT);
         LOGGER.debug("Parameter [{}] received: [{}]", WRESULT, wResult);
@@ -174,7 +174,7 @@ public class WsFederationAction extends AbstractAction {
 
     private Event buildCredentialsFromAssertion(final RequestContext context, final Pair<Assertion, WsFederationConfiguration> assertion) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final HttpSession session = request.getSession();
 
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
@@ -238,9 +238,9 @@ public class WsFederationAction extends AbstractAction {
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
-
-            if (registeredService.getProperties().containsKey("wsfed.relyingPartyIdentifier")) {
-                relyingPartyIdentifier = registeredService.getProperties().get("wsfed.relyingPartyIdentifier").getValue();
+            if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
+                relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties
+                        .WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
         LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);

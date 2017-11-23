@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.profile.ProfileManager;
@@ -45,7 +46,7 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         boolean terminateSession = true;
         if (logoutProperties.isConfirmLogout()) {
             terminateSession = isLogoutRequestConfirmed(requestContext);
@@ -65,8 +66,8 @@ public class TerminateSessionAction extends AbstractAction {
     public Event terminate(final RequestContext context) {
         // in login's webflow : we can get the value from context as it has already been stored
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
             String tgtId = WebUtils.getTicketGrantingTicketId(context);
             // for logout, we need to get the cookie's value
@@ -99,7 +100,7 @@ public class TerminateSessionAction extends AbstractAction {
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.debug("Destroying application session");
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
         final HttpSession session = request.getSession();
@@ -109,7 +110,7 @@ public class TerminateSessionAction extends AbstractAction {
     }
 
     private static boolean isLogoutRequestConfirmed(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
 }

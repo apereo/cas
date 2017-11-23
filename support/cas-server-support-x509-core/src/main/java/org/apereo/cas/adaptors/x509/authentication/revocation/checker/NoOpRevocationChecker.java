@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import java.security.GeneralSecurityException;
 import java.security.cert.X509Certificate;
 
 /**
@@ -16,11 +15,10 @@ public class NoOpRevocationChecker implements RevocationChecker {
      *
      * @param certificate Certificate to check.
      *
-     * @throws GeneralSecurityException Never thrown.
      *
      */
     @Override
-    public void check(final X509Certificate certificate) throws GeneralSecurityException {
+    public void check(final X509Certificate certificate) {
         // NO-OP
     }
 }

@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.ehcache;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -14,6 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
 public class EhcacheProperties implements Serializable {
     private static final long serialVersionUID = 7772510035918976450L;
 
@@ -81,6 +84,7 @@ public class EhcacheProperties implements Serializable {
      * Default is "ehcache.xml" in the root of the class path,
      * or if not found, "ehcache-failsafe.xml" in the EhCache jar (default EhCache initialization).
      */
+    @RequiredProperty
     private Resource configLocation = new ClassPathResource("ehcache-replicated.xml");
 
     /**
@@ -97,6 +101,7 @@ public class EhcacheProperties implements Serializable {
     /**
      * The name of the cache manager instance.
      */
+    @RequiredProperty
     private String cacheManagerName = "ticketRegistryCacheManager";
     /**
      * The interval in seconds between runs of the disk expiry thread.
@@ -144,13 +149,17 @@ public class EhcacheProperties implements Serializable {
      * </ul>
      */
     private String persistence = "NONE";
-
+    
     /**
      * Crypto settings for the registry.
      */
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
+    public EhcacheProperties() {
+        this.crypto.setEnabled(false);
+    }
+    
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }

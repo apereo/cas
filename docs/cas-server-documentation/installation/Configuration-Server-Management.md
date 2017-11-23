@@ -21,7 +21,8 @@ The CAS server web application responds to the following strategies that dictate
 This is the default configuration mode which indicates that CAS does **NOT** require connections to an external configuration server
 and will run in an embedded *standalone mode*. When this option is turned on, CAS by default will attempt to locate settings and properties
 inside a given directory indicated under the setting name `cas.standalone.config` and otherwise falls back to using `/etc/cas/config` as the configuration directory.
-You may instruct CAS to use this setting via the methods [outlined here](Configuration-Management.html#overview).
+You may instruct CAS to use this setting via the methods [outlined here](Configuration-Management.html#overview). There also exists a `cas.standalone.config.file` which can 
+be used to directly feed a collection of properties to CAS in form of a file or classpath resource. 
 
 Similar to the Spring Cloud external configuration server, the contents of this directory include `(cas|application).(yml|properties)`
 files that can be used to control CAS behavior. Also note that this configuration directory can be monitored by CAS to auto-pick up changes
@@ -56,7 +57,7 @@ web application server, it matters not where settings come from and it has no kn
 talks to the configuration server to locate settings and move on.
 
 <div class="alert alert-info"><strong>Configuration Security</strong><p>This is a very good strategy to ensure configuration settings
-are not scatted around various deployment environments leading to a more secure deployment. The configuration server need not be
+are not scattered around various deployment environments leading to a more secure deployment. The configuration server need not be
 exposed to the outside world, and it can safely and secure be hidden behind firewalls, etc allowing access to only authorized clients
 such as the CAS server web application.</p></div>
 
@@ -86,7 +87,7 @@ may load CAS settings and properties via the following order and mechanics:
 The configuration and behavior of the configuration server is also controlled by its own
 `src/main/resources/bootstrap.properties` file. By default, it runs under port `8888` at `/casconfigserver` inside
 an embedded Apache Tomcat server whose endpoints are protected with basic authentication
-where the default credentials are `casuser` and `Mellon`. Furthermore, by default it runs
+where the default credentials are `casuser` and `Mellon` defined in `src/main/resources/application.properties`. Furthermore, by default it runs
 under a `native` profile described below.
 
 The following endpoints are secured and exposed by the configuration server:
@@ -96,7 +97,7 @@ The following endpoints are secured and exposed by the configuration server:
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
 | `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/env`                            | Accepts a `GET` and describes all configuration sources of the configurtion server.
+| `/env`                            | Accepts a `GET` and describes all configuration sources of the configuration server.
 | `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 | `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
@@ -258,9 +259,7 @@ Support is provided via the following dependency in the WAR overlay:
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#zookeeper).
 
-
 You will need to map CAS settings to ZooKeeper's nodes that contain values. The parent node for all settings should match the configuration root value provided to CAS. Under the root, you could have folders such as `cas`, `cas,dev`, `cas,local`, etc where `dev` and `local` are Spring profiles.
-
 
 To create nodes and values in Apache ZooKeeper, try the following commands
 as a sample:
@@ -326,6 +325,10 @@ Support is provided via the following dependency in the WAR overlay:
 
 By default, settings are expected to be found under a `CAS_SETTINGS_TABLE` that contains the fields: `id`, `name` and `value`.
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#jdbc).
+
+#### CAS Server Cloud Configuration
+
+The cloud configuration modules provided above on this page by the CAS project directky may also be used verbaitm inside a CAS server overlay. Remember that the primary objective for these modules is to simply retrieve settings and properties from a source. While they are mostly and primarily useful when activated inside the Spring Cloud Configuration server and can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to simply fetch settings from a source while running in standalone mode. In such scenarios, all sources of configuration regardless of format or syntax will work alongside each other to retrieve settings and you can certainly mix and match as you see fit.
 
 #### Composite Sources
 

@@ -14,7 +14,7 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.concurrent.TimeUnit;
+import java.time.temporal.ChronoUnit;
 
 /**
  * This is {@link ConfirmConsentAction}.
@@ -32,8 +32,8 @@ public class ConfirmConsentAction extends AbstractConsentAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+    protected Event doExecute(final RequestContext requestContext) {
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(WebUtils.getService(requestContext));
         final RegisteredService registeredService = getRegisteredServiceForConsent(requestContext, service);
         final Authentication authentication = WebUtils.getAuthentication(requestContext);
@@ -42,7 +42,7 @@ public class ConfirmConsentAction extends AbstractConsentAction {
 
         final long reminder = Long.parseLong(request.getParameter("reminder"));
         final String reminderTimeUnit = request.getParameter("reminderTimeUnit");
-        final TimeUnit unit = TimeUnit.valueOf(reminderTimeUnit.toUpperCase());
+        final ChronoUnit unit = ChronoUnit.valueOf(reminderTimeUnit.toUpperCase());
 
         consentEngine.storeConsentDecision(service, registeredService, authentication, reminder, unit, option);
         return new EventFactorySupport().success(this);

@@ -24,4 +24,13 @@ public interface LogoutHandler extends Ordered {
      * @param ticketGrantingTicket the ticket granting ticket
      */
     void handle(TicketGrantingTicket ticketGrantingTicket);
+
+    /**
+     * Gets name.
+     *
+     * @return the name
+     */
+    default String getName() {
+        return this.getClass().getSimpleName();
+    }
 }

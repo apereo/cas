@@ -1,0 +1,28 @@
+<div>
+  <h3 matDialogTitle>
+    <ng-container i18n="managemnet.services.table.modal.delete.header">
+      {{messages.management_services_table_modal_delete_header}}
+    </ng-container>
+  </h3>
+</div>
+<mat-dialog-content>
+  <ng-container i18n="management.services.table.modal.delete.msgPt1">
+    {{messages.management_services_table_modal_delete_msgPt1}}
+  </ng-container> {{ data != null ? data.name : '' }}.<br/>
+  <ng-container i18n="management.services.table.modal.delete.msgPt2">
+          {{messages.management_services_table_modal_delete_msgPt2}}
+  </ng-container>
+</mat-dialog-content>
+<mat-dialog-actions style="float:right;">
+  <div>
+    <button mat-button matDialogClose>
+      <mat-icon>cancel</mat-icon>
+      <ng-container i18n>Cancel</ng-container>
+    </button>
+    <button mat-button matDialogClose="true">
+      <mat-icon>delete</mat-icon>
+      <ng-container i18n>Delete</ng-container>
+    </button>
+  </div>
+</mat-dialog-actions>
+

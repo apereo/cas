@@ -1,0 +1,58 @@
+.serviceName {
+  display:inline-block;
+  position:relative;
+}
+
+.middle {
+  bottom:5px;
+}
+
+.first {
+
+}
+
+.last {
+
+}
+
+.MODIFY {
+  color: blue;
+  font-style: italic;
+}
+
+.ADD {
+  color:green;
+  font-style: italic;
+}
+
+.DELETE {
+  color:red;
+  font-style: italic;
+}
+
+.descriptionWidth {
+  flex: 1 1 auto;
+  color: inherit;
+}
+
+.serviceIdWidth {
+  flex: 0 0 240px;
+  color: inherit;
+}
+
+.nameWidth {
+  flex: 0 0 240px;
+  color:inherit !important;
+}
+
+.nameWidth a {
+  color:inherit;
+}
+
+.actionWidth {
+  flex: 0 0 50px;
+}
+
+.statusWidth {
+  flex: 0 0 50px;
+}

@@ -15,7 +15,7 @@ public class DatabaseProperties implements Serializable {
     /**
      * Whether SQL queries should be displayed in the console/logs.
      */
-    private boolean showSql = true;
+    private boolean showSql;
 
     /**
      * Whether to generate DDL after the EntityManagerFactory has been initialized creating/updating all relevant tables.

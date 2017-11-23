@@ -13,7 +13,7 @@ bootRun {
 }
 
 war {
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
 }
 
 springBoot  {
@@ -22,12 +22,14 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 }
 
 dependencies {
     providedRuntime libraries.springboottomcat
-    runtimeOnly libraries.springsecuritywebconfig
+    runtimeOnly libraries.springsecurity
+    runtimeOnly libraries.springsecurityweb
+    runtimeOnly libraries.springsecurityconfig
     implementation libraries.springcloudconfigserver
     implementation project(":core:cas-server-core-util")
 }

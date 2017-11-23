@@ -17,6 +17,7 @@ import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.context.ApplicationContext;
+import org.springframework.webflow.action.SetAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.EndState;
@@ -45,6 +46,8 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      *
      * @param flowBuilderServices    the flow builder services
      * @param flowDefinitionRegistry the flow definition registry
+     * @param applicationContext     the application context
+     * @param casProperties          the cas properties
      */
     public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                     final FlowDefinitionRegistry flowDefinitionRegistry,
@@ -54,16 +57,53 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
+            createInitialFlowActions(flow);
             createDefaultGlobalExceptionHandlers(flow);
             createDefaultEndStates(flow);
             createDefaultDecisionStates(flow);
             createDefaultActionStates(flow);
+            createDefaultViewStates(flow);
             createRememberMeAuthnWebflowConfig(flow);
         }
+    }
+
+    /**
+     * Create initial flow actions.
+     *
+     * @param flow the flow
+     */
+    protected void createInitialFlowActions(final Flow flow) {
+        flow.getStartActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_INIT_FLOW_SETUP));
+    }
+
+    /**
+     * Create default view states.
+     *
+     * @param flow the flow
+     */
+    protected void createDefaultViewStates(final Flow flow) {
+        createAuthenticationWarningMessagesView(flow);
+    }
+
+    /**
+     * Create authentication warning messages view.
+     *
+     * @param flow the flow
+     */
+    protected void createAuthenticationWarningMessagesView(final Flow flow) {
+        final ViewState state = createViewState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS, "casLoginMessageView");
+
+        final SetAction setAction = new SetAction(createExpression("requestScope.messages"), createExpression("messageContext.allMessages"));
+        state.getEntryActionList().add(setAction);
+        createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_PROCEED, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
+
+        final ActionState proceedAction = createActionState(flow, CasWebflowConstants.STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW);
+        proceedAction.getActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET));
+        createStateDefaultTransition(proceedAction, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
     }
 
     /**
@@ -74,7 +114,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createRememberMeAuthnWebflowConfig(final Flow flow) {
         if (casProperties.getTicket().getTgt().getRememberMe().isEnabled()) {
             createFlowVariable(flow, CasWebflowConstants.VAR_ID_CREDENTIAL, RememberMeUsernamePasswordCredential.class);
-            final ViewState state = (ViewState) flow.getState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            final ViewState state = getState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             final BinderConfiguration cfg = getViewStateBinderConfiguration(state);
             cfg.addBinding(new BinderConfiguration.Binding("rememberMe", null, false));
         } else {
@@ -88,12 +128,19 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createDefaultActionStates(final Flow flow) {
+        createSendTicketGrantingTicketAction(flow);
         createGenerateServiceTicketAction(flow);
         createTerminateSessionAction(flow);
         createGatewayServicesMgmtAction(flow);
         createServiceAuthorizationCheckAction(flow);
         createRedirectToServiceActionState(flow);
         createHandleAuthenticationFailureAction(flow);
+    }
+
+    private void createSendTicketGrantingTicketAction(final Flow flow) {
+        final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET));
+        createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
     }
 
     /**
@@ -104,7 +151,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createGenerateServiceTicketAction(final Flow flow) {
         final ActionState handler = createActionState(flow,
                 CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
-                createEvaluateAction("generateServiceTicketAction"));
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET));
         createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_REDIRECT);
         createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN);
         createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
@@ -118,9 +165,8 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createHandleAuthenticationFailureAction(final Flow flow) {
-        final ActionState handler = createActionState(flow,
-                CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
-                createEvaluateAction("authenticationExceptionHandler"));
+        final ActionState handler = createActionState(flow, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER));
         createTransitionForState(handler, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
         createTransitionForState(handler, AccountPasswordMustChangeException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
@@ -133,6 +179,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
         createTransitionForState(handler, PrincipalException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         createTransitionForState(handler, UnsatisfiedAuthenticationPolicyException.class.getSimpleName(), CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
         createTransitionForState(handler, UnauthorizedAuthenticationException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
+        createTransitionForState(handler, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
         createStateDefaultTransition(handler, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
 
     }
@@ -143,9 +190,8 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param flow the flow
      */
     protected void createRedirectToServiceActionState(final Flow flow) {
-        final ActionState redirectToView = createActionState(flow,
-                CasWebflowConstants.STATE_ID_REDIRECT,
-                createEvaluateAction("redirectToServiceAction"));
+        final ActionState redirectToView = createActionState(flow, CasWebflowConstants.STATE_ID_REDIRECT,
+                createEvaluateAction(CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE));
         createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(), CasWebflowConstants.STATE_ID_POST_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(), CasWebflowConstants.STATE_ID_HEADER_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(), CasWebflowConstants.STATE_ID_REDIR_VIEW);
@@ -170,8 +216,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
     protected void createGatewayServicesMgmtAction(final Flow flow) {
         final ActionState gatewayServicesManagementCheck = createActionState(flow,
                 CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK, createEvaluateAction("gatewayServicesManagementCheck"));
-        createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS,
-                CasWebflowConstants.STATE_ID_REDIRECT);
+        createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS, CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
     /**
@@ -181,7 +226,7 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      */
     protected void createTerminateSessionAction(final Flow flow) {
         final ActionState terminateSession = createActionState(flow,
-                CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction("terminateSessionAction"));
+                CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
     }
 

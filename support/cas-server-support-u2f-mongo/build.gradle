@@ -1,0 +1,17 @@
+description = "Apereo CAS U2F FIDO MongoDb Support"
+dependencies {
+    implementation libraries.yubicoapi
+    implementation libraries.u2flibserver
+    implementation libraries.caffein
+    implementation libraries.mongo
+    
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":support:cas-server-support-u2f")
+    implementation project(":support:cas-server-support-u2f-core")
+    implementation project(":support:cas-server-support-mongo-core")
+
+    testImplementation project(path: ":support:cas-server-support-u2f", configuration: "tests")
+}

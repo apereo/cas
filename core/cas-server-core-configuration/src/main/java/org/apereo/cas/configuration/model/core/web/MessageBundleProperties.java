@@ -1,7 +1,11 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.util.CollectionUtils;
+
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
  * Configuration properties class for message.bundle.
@@ -9,7 +13,7 @@ import java.nio.charset.StandardCharsets;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
+@RequiresModule(name = "cas-server-core-web", automated = true)
 public class MessageBundleProperties implements Serializable {
 
     private static final long serialVersionUID = 3769733438559663237L;
@@ -36,15 +40,15 @@ public class MessageBundleProperties implements Serializable {
     /**
      * A list of strings representing base names for this message bundle.
      */
-    private String[] baseNames = new String[] {"classpath:custom_messages", "classpath:messages"};
+    private List<String> baseNames = CollectionUtils.wrapList("classpath:custom_messages", "classpath:messages");
 
     /**
      * A list of strings representing common names for this message bundle.
-     *
+     * <p>
      * Entries in last common names override first values (as opposed to baseNames used in message bundles).
      */
-    private String[] commonNames = new String[] {"classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties"};
-    
+    private List<String> commonNames = CollectionUtils.wrapList("classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties");
+
     public String getEncoding() {
         return encoding;
     }
@@ -77,19 +81,19 @@ public class MessageBundleProperties implements Serializable {
         this.useCodeMessage = useCodeMessage;
     }
 
-    public String[] getBaseNames() {
+    public List<String> getBaseNames() {
         return baseNames;
     }
 
-    public void setBaseNames(final String[] baseNames) {
+    public void setBaseNames(final List<String> baseNames) {
         this.baseNames = baseNames;
     }
 
-    public String[] getCommonNames() {
+    public List<String> getCommonNames() {
         return commonNames;
     }
 
-    public void setCommonNames(final String[] commonNames) {
+    public void setCommonNames(final List<String> commonNames) {
         this.commonNames = commonNames;
     }
 }

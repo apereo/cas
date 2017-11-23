@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * @since 5.2.0
  */
 public class CasCommandLineParser {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCommandLineParser.class);
     private static final int WIDTH = 120;
 
@@ -31,7 +31,6 @@ public class CasCommandLineParser {
 
     public CasCommandLineParser() {
         options = new Options();
-        options.addOption(CommandLineOptions.OPTION_GROUP);
         options.addOption(CommandLineOptions.OPTION_PROPERTY);
         options.addOption(CommandLineOptions.OPTION_HELP);
         options.addOption(CommandLineOptions.OPTION_SUMMARY);
@@ -39,7 +38,9 @@ public class CasCommandLineParser {
         options.addOption(CommandLineOptions.OPTION_SKIP_BANNER);
         options.addOption(CommandLineOptions.OPTION_SHELL);
         options.addOption(CommandLineOptions.OPTION_GENERATE_KEY);
-        
+        options.addOption(CommandLineOptions.OPTION_GENERATE_JWT);
+        options.addOption(CommandLineOptions.OPTION_SUBJECT);
+
         parser = new DefaultParser();
     }
 
@@ -77,10 +78,10 @@ public class CasCommandLineParser {
                         + "2) Generating signing/encryption keys for relevant CAS configuration.\n"
                         + "3) Validating JSON/YAML service definitions for fun and profit.\n"
                         + "4) Retrieving list of available settings for a given module/group.\n"
-                        + "4) etc.\n",
+                        + "5) etc.\n",
                 true);
     }
-    
+
     /**
      * Gets property.
      *
@@ -92,6 +93,16 @@ public class CasCommandLineParser {
     }
 
     /**
+     * Gets subject.
+     *
+     * @param line the line
+     * @return the subject
+     */
+    public String getSubject(final CommandLine line) {
+        return getOptionValue(line, CommandLineOptions.OPTION_SUBJECT, null);
+    }
+
+    /**
      * Gets property.
      *
      * @param line the line
@@ -99,16 +110,6 @@ public class CasCommandLineParser {
      */
     public String getPropertyValue(final CommandLine line) {
         return getOptionValue(line, CommandLineOptions.OPTION_PROPERTY, StringUtils.EMPTY);
-    }
-    
-    /**
-     * Get group or module.
-     *
-     * @param line the line
-     * @return the string
-     */
-    public Pattern getGroup(final CommandLine line) {
-        return RegexUtils.createPattern(getOptionValue(line, CommandLineOptions.OPTION_GROUP, ".+"));
     }
 
     /**
@@ -132,6 +133,17 @@ public class CasCommandLineParser {
     }
 
     /**
+     * Is jwt gen.
+     *
+     * @param line the line
+     * @return the boolean
+     */
+    public boolean isGeneratingJwt(final CommandLine line) {
+        return hasOption(line, CommandLineOptions.OPTION_GENERATE_JWT);
+    }
+
+
+    /**
      * Is summary boolean.
      *
      * @param line the line
@@ -140,7 +152,7 @@ public class CasCommandLineParser {
     public boolean isSummary(final CommandLine line) {
         return hasOption(line, CommandLineOptions.OPTION_SUMMARY);
     }
-    
+
     /**
      * Is strict match boolean.
      *
@@ -193,7 +205,7 @@ public class CasCommandLineParser {
      * @return the option value
      */
     public boolean getOptionValue(final CommandLine line, final Option opt, final boolean defaultValue) {
-        return line.hasOption(opt.getOpt()) ? Boolean.valueOf(line.getOptionValue(opt.getOpt())) : defaultValue;
+        return line.hasOption(opt.getOpt()) ? Boolean.parseBoolean(line.getOptionValue(opt.getOpt())) : defaultValue;
     }
 
     /**

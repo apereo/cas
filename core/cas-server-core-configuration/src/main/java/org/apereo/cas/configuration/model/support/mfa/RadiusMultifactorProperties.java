@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 /**
@@ -10,10 +11,17 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class RadiusMultifactorProperties extends BaseMultifactorProvider {
-    private static final long serialVersionUID = 7021301814775348087L;
+@RequiresModule(name = "cas-server-support-radius-mfa")
+public class RadiusMultifactorProperties extends BaseMultifactorProviderProperties {
     /**
-     * In the event that radius authentication fails due to a catastraphic event,
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-radius";
+
+    private static final long serialVersionUID = 7021301814775348087L;
+    
+    /**
+     * In the event that radius authentication fails due to a catastrophic event,
      * fail over to the next server in the list.
      */
     private boolean failoverOnException;
@@ -41,7 +49,7 @@ public class RadiusMultifactorProperties extends BaseMultifactorProvider {
     private boolean trustedDeviceEnabled;
 
     public RadiusMultifactorProperties() {
-        setId("mfa-radius");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public boolean isTrustedDeviceEnabled() {

@@ -4,13 +4,18 @@ description = "Apereo CAS Microsoft Azure MFA Support"
  * PhoneFactor SDK is NOT available in a maven-based repository.
  */
 dependencies {
+    api project(":api:cas-server-core-api-webflow")
+    
     implementation libraries.zxingbarcode
     
     implementation files("./lib/PhoneFactorSDK-2.21.jar")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-web")
+    implementation project(":support:cas-server-support-azure-core")
     implementation project(":support:cas-server-support-otp-mfa")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

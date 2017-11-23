@@ -18,6 +18,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Enumeration;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.
@@ -40,10 +41,9 @@ public class ThreadContextMDCServletFilter implements Filter {
      * Does nothing.
      *
      * @param filterConfig filter initial configuration. Ignored.
-     * @throws ServletException never thrown in this case.
      */
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
     }
 
     @Override
@@ -76,9 +76,12 @@ public class ThreadContextMDCServletFilter implements Filter {
                 final String[] values = params.get(k);
                 addContextAttribute(k, Arrays.toString(values));
             });
-
-            Collections.list(request.getAttributeNames())
-                    .forEach(a -> addContextAttribute(a, request.getAttribute(a)));
+            
+            Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
+            final Enumeration<String> requestHeaderNames = request.getHeaderNames();
+            if (requestHeaderNames != null) {
+                Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
+            }
 
             final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {

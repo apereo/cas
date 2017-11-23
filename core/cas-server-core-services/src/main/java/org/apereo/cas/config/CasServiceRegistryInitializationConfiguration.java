@@ -8,14 +8,16 @@ import org.apereo.cas.services.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,9 +44,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired
-    private ApplicationContext applicationContext;
-
+    @RefreshScope
     @Autowired
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("servicesManager") final ServicesManager servicesManager,
@@ -62,6 +62,7 @@ public class CasServiceRegistryInitializationConfiguration {
         return initializer;
     }
 
+    @RefreshScope
     @Bean
     public ServiceRegistryDao embeddedJsonServiceRegistry() {
         try {
@@ -83,7 +84,10 @@ public class CasServiceRegistryInitializationConfiguration {
      */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
         EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
-            super(location, new RegisteredServiceJsonSerializer(), false, publisher);
+            super(location, CollectionUtils.wrapList(
+                    new CasAddonsRegisteredServicesJsonSerializer(),
+                    new DefaultRegisteredServiceJsonSerializer()),
+                    false, publisher);
         }
 
         @Override

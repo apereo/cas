@@ -1,7 +1,8 @@
 package org.apereo.cas.configuration.model.support.x509;
 
-import org.apereo.cas.configuration.model.core.authentication.PersonDirPrincipalResolverProperties;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -15,9 +16,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-x509-webflow")
 public class X509Properties implements Serializable {
-
-    private static final String DENY = "DENY";
+    
     private static final long serialVersionUID = -9032744084671270366L;
 
     /**
@@ -43,7 +44,11 @@ public class X509Properties implements Serializable {
         /**
          * Create principal by subject alternative name.
          */
-        SUBJECT_ALT_NAME
+        SUBJECT_ALT_NAME,
+        /**
+         * Create principal by common name and EDIPI.
+         */
+        CN_EDIPI,
     }
 
     /**
@@ -165,7 +170,7 @@ public class X509Properties implements Serializable {
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
-    private String crlResourceUnavailablePolicy = DENY;
+    private String crlResourceUnavailablePolicy = "DENY";
     /**
      * If the CRL resource has expired, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code RESOURCE}.
@@ -177,7 +182,7 @@ public class X509Properties implements Serializable {
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
-    private String crlResourceExpiredPolicy = DENY;
+    private String crlResourceExpiredPolicy = "DENY";
     /**
      * If the CRL is unavailable, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code CRL}.
@@ -189,7 +194,7 @@ public class X509Properties implements Serializable {
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
-    private String crlUnavailablePolicy = DENY;
+    private String crlUnavailablePolicy = "DENY";
     /**
      * If the CRL has expired, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code CRL}.
@@ -201,7 +206,7 @@ public class X509Properties implements Serializable {
      * data is permitted up to a threshold period of time but not afterward.</li>
      * </ul>
      */
-    private String crlExpiredPolicy = DENY;
+    private String crlExpiredPolicy = "DENY";
 
     /**
      * Radix used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
@@ -216,7 +221,7 @@ public class X509Properties implements Serializable {
      * Principal resolution properties.
      */
     @NestedConfigurationProperty
-    private PersonDirPrincipalResolverProperties principal = new PersonDirPrincipalResolverProperties();
+    private PersonDirectoryPrincipalResolverProperties principal = new PersonDirectoryPrincipalResolverProperties();
 
     /**
      * LDAP settings when fetching CRLs from LDAP.
@@ -326,11 +331,11 @@ public class X509Properties implements Serializable {
         this.crlFetcher = crlFetcher;
     }
 
-    public PersonDirPrincipalResolverProperties getPrincipal() {
+    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
         return principal;
     }
 
-    public void setPrincipal(final PersonDirPrincipalResolverProperties principal) {
+    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
         this.principal = principal;
     }
 

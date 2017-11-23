@@ -19,7 +19,6 @@ import java.util.stream.Collectors;
 /**
  * This is {@link DefaultRegisteredServiceAccessStrategy}
  * that allows the following rules:
- * <p>
  * <ul>
  * <li>A service may be disallowed to use CAS for authentication</li>
  * <li>A service may be disallowed to take part in CAS single sign-on such that
@@ -279,9 +278,14 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             LOGGER.trace("Service is not enabled in service registry.");
             return false;
         }
-
-
+        
         return true;
+    }
+
+    @JsonIgnore
+    @Override
+    public void setServiceAccessAllowed(final boolean value) {
+        this.enabled = value;
     }
 
     @Override

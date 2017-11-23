@@ -53,7 +53,7 @@ Typical questions in this category that are best answered elsewhere are:
 
 There may be cases where you learn that a fix is available for the defect or behavior relevant for your CAS deployments and you may be advised to upgrade to the current available `SNAPSHOT` release. Depending on your [choice of installation](Maven-Overlay-Installation.html), you will need to find the setting in your deployment configuration and build scripts that describes your *current* CAS version and bump that to the next `SNAPSHOT`. The build scripts should also have additional instructions on how to obtain and build `SNAPSHOT` releases in README files and such. 
 
-To find out what `SNAPSHOT` version applies to your deployment, you can either look at the release schedule or the appropriate branch of the CAS codebase. For instance, if you have deployed CAS `2.0.4` and the release schedule shows the next release is targetted for a `2.0.5`, then the available `SNAPSHOT` release would be `2.0.5-SNAPSHOT`. You can also take a look at the milestone setting assigned to the issue/pull request and determine the `SNAPSHOT` release. `SNAPSHOT` releases are always postfixed with `-SNAPSHOT`. If the assigned milestone to an issue is for instance `1.2.5-RC1`, then the `SNAPSHOT` release would be `1.2.5-RC1-SNAPSHOT`. 
+To find out what `SNAPSHOT` version applies to your deployment, you can either look at the release schedule or the appropriate branch of the CAS codebase. For instance, if you have deployed CAS `2.0.4` and the release schedule shows the next release is targeted for a `2.0.5`, then the available `SNAPSHOT` release would be `2.0.5-SNAPSHOT`. You can also take a look at the milestone setting assigned to the issue/pull request and determine the `SNAPSHOT` release. `SNAPSHOT` releases are always postfixed with `-SNAPSHOT`. If the assigned milestone to an issue is for instance `1.2.5-RC1`, then the `SNAPSHOT` release would be `1.2.5-RC1-SNAPSHOT`. 
 
 ## Configuring SSL Behind Load Balancer/Proxy
 
@@ -75,7 +75,7 @@ issues and such. Examine your CAS logs and you will find the cause.
 If your client application is not receiving attributes, you will need to make sure:
 
 1. The client is using a version of [CAS protocol](../protocol/CAS-Protocol.html) that is able to release attributes.
-2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation.
+2. The client, predicated on #1, is hitting the appropriate endpoint for service ticket validation (i.e. `/p3/serviceValidate`).
 3. The CAS server itself is [resolving and retrieving attributes](../integration/Attribute-Resolution.html) correctly.
 4. The CAS server is authorized to [release attributes](../integration/Attribute-Release.html) to that particular client application inside its service registry.
 

@@ -2,6 +2,7 @@ description = "Apereo CAS Couchbase Ticket Registry"
 dependencies {
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-couchbase-core")
     
     testImplementation project(":core:cas-server-core-tickets")

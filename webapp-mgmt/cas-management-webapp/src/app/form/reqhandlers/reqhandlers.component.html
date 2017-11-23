@@ -1,0 +1,13 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.requiredHandlers"
+           [placeholder]="messages.services_form_label_requiredHandlers"
+           [ngModel]="data.service.requiredHandlers"
+           (ngModelChange)="data.service.requiredHandlers = $event.split(',')">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.requiredHandlers"
+           [matTooltip]="messages.services_form_tooltip_requiredHandlers">help
+  </mat-icon>
+</div>

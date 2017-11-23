@@ -9,23 +9,29 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 /**
  * Parent controller for all views.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 public abstract class AbstractManagementController {
-    /** Ajax request header name to examine for exceptions. */
+    /**
+     * Ajax request header name to examine for exceptions.
+     */
     private static final String AJAX_REQUEST_HEADER_NAME = "x-requested-with";
 
-    /** Ajax request header value to examine for exceptions. */
+    /**
+     * Ajax request header value to examine for exceptions.
+     */
     private static final String AJAX_REQUEST_HEADER_VALUE = "XMLHttpRequest";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractManagementController.class);
-    
-    /** Instance of ServicesManager. */
+
+    /**
+     * Instance of ServicesManager.
+     */
     protected final ServicesManager servicesManager;
 
     /**
@@ -40,15 +46,13 @@ public abstract class AbstractManagementController {
     /**
      * Resolve exception.
      *
-     * @param request the request
+     * @param request  the request
      * @param response the response
-     * @param ex the exception
+     * @param ex       the exception
      * @return the model and view
-     * @throws IOException the iO exception
      */
     @ExceptionHandler
-    public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response,
-                                         final Exception ex) throws IOException {
+    public ModelAndView resolveException(final HttpServletRequest request, final HttpServletResponse response, final Exception ex) {
         LOGGER.error(ex.getMessage(), ex);
         final String contentType = request.getHeader(AJAX_REQUEST_HEADER_NAME);
         if (contentType != null && contentType.equals(AJAX_REQUEST_HEADER_VALUE)) {

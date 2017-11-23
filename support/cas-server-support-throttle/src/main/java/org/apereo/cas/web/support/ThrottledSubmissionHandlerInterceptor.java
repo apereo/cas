@@ -12,7 +12,6 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@FunctionalInterface
 public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInterceptor {
 
     /**
@@ -48,13 +47,6 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     void decrement();
 
     @Override
-    default void afterConcurrentHandlingStarted(final HttpServletRequest request,
-                                                final HttpServletResponse response,
-                                                final Object handler) throws Exception {
-        
-    }
-
-    @Override
     default boolean preHandle(final HttpServletRequest request,
                               final HttpServletResponse response,
                               final Object handler) throws Exception {
@@ -65,15 +57,18 @@ public interface ThrottledSubmissionHandlerInterceptor extends AsyncHandlerInter
     default void postHandle(final HttpServletRequest request,
                             final HttpServletResponse response,
                             final Object handler,
-                            final ModelAndView modelAndView) throws Exception {
-
+                            final ModelAndView modelAndView) {
     }
 
     @Override
-    default void afterCompletion(final HttpServletRequest request,
-                                 final HttpServletResponse response,
-                                 final Object handler,
-                                 final Exception ex) throws Exception {
+    default void afterConcurrentHandlingStarted(final HttpServletRequest httpServletRequest,
+                                                final HttpServletResponse httpServletResponse, final Object o) throws Exception {
+    }
 
+    @Override
+    default void afterCompletion(final HttpServletRequest httpServletRequest,
+                                 final HttpServletResponse httpServletResponse,
+                                 final Object o,
+                                 final Exception e) throws Exception {
     }
 }

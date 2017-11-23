@@ -17,12 +17,15 @@ import java.time.ZonedDateTime;
 @Entity(name = "COM_AUDIT_TRAIL")
 public class AuditTrailEntity {
 
-    /** Audit table name. */
+    /**
+     * Audit table name.
+     */
     public static final String AUDIT_TRAIL_TABLE_NAME = "COM_AUDIT_TRAIL";
-    
+
+    @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private long id = -1;
 
     @Column(name = "AUD_USER")
     private String user;
@@ -41,15 +44,19 @@ public class AuditTrailEntity {
 
     @Column(name = "APPLIC_CD")
     private String applicationCode;
-    
+
     @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP")
     private ZonedDateTime date;
 
-    public Long getId() {
+    public AuditTrailEntity() {
+        this.id = System.currentTimeMillis();
+    }
+
+    public long getId() {
         return this.id;
     }
 
-    public void setId(final Long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 

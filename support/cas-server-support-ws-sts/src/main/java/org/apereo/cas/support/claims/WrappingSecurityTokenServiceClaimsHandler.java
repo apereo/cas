@@ -6,13 +6,13 @@ import org.apache.cxf.sts.claims.ClaimsParameters;
 import org.apache.cxf.sts.claims.ProcessedClaim;
 import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -72,7 +72,7 @@ public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler,
 
     @Override
     public List<String> getSupportedRealms() {
-        return Arrays.asList(this.realm);
+        return CollectionUtils.wrap(this.realm);
     }
 
     @Override

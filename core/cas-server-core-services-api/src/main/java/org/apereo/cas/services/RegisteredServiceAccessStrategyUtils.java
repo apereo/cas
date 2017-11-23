@@ -12,6 +12,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -70,29 +71,68 @@ public final class RegisteredServiceAccessStrategyUtils {
     }
 
     /**
-     * Ensure service access is allowed.
+     * Ensure principal access is allowed for service.
+     *
+     * @param service           the service
+     * @param registeredService the registered service
+     * @param principalId       the principal id
+     * @param attributes        the attributes
+     */
+    public static void ensurePrincipalAccessIsAllowedForService(final Service service,
+                                                                final RegisteredService registeredService,
+                                                                final String principalId,
+                                                                final Map<String, Object> attributes) {
+        ensureServiceAccessIsAllowed(service, registeredService);
+        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principalId, attributes)) {
+            LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principalId);
+            final Map<String, Class<? extends Throwable>> handlerErrors = new HashMap<>();
+            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(), UnauthorizedServiceForPrincipalException.class);
+            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
+        }
+    }
+
+    /** 
+     * Ensure principal access is allowed for service.
      *
      * @param service           the service
      * @param registeredService the registered service
      * @param authentication    the authentication
+     */
+    public static void ensurePrincipalAccessIsAllowedForService(final Service service,
+                                                                final RegisteredService registeredService,
+                                                                final Authentication authentication) {
+        ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication, true);
+    }
+
+    /**
+     * Ensure service access is allowed.
+     *
+     * @param service                                      the service
+     * @param registeredService                            the registered service
+     * @param authentication                               the authentication
+     * @param retrievePrincipalAttributesFromReleasePolicy retrieve attributes from release policy or simply rely on the principal attributes
+     *                                                     already collected. Setting this value to false bears the assumption that the policy
+     *                                                     has run already.
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
     public static void ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                 final RegisteredService registeredService,
-                                                                final Authentication authentication)
+                                                                final Authentication authentication,
+                                                                final boolean retrievePrincipalAttributesFromReleasePolicy)
             throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
+        
         final Principal principal = authentication.getPrincipal();
-        final Map<String, Object> principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
-        if (!registeredService.getAccessStrategy().doPrincipalAttributesAllowServiceAccess(principal.getId(), principalAttrs)) {
-            LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principal);
-
-            final Map<String, Class<? extends Throwable>> handlerErrors = new HashMap<>();
-            handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-                    UnauthorizedServiceForPrincipalException.class);
-            throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
+        final Map<String, Object> principalAttrs;
+        if (retrievePrincipalAttributesFromReleasePolicy && registeredService != null && registeredService.getAttributeReleasePolicy() != null) {
+            principalAttrs = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
+        } else {
+            principalAttrs = authentication.getPrincipal().getAttributes();
         }
+        final Map<String, Object> attributes = new LinkedHashMap<>(principalAttrs);
+        attributes.putAll(authentication.getAttributes());
+        ensurePrincipalAccessIsAllowedForService(service, registeredService, principal.getId(), attributes);
     }
 
     /**

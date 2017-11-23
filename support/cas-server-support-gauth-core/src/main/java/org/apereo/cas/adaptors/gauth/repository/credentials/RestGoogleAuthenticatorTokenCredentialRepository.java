@@ -5,6 +5,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
@@ -15,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -41,14 +41,14 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     }
 
     @Override
-    public String getSecret(final String username) {
+    public OneTimeTokenAccount get(final String username) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(username));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(username));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
-        final ResponseEntity<String> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, String.class);
+        final ResponseEntity<OneTimeTokenAccount> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             return result.getBody();
         }
@@ -59,10 +59,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
-        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        headers.put("username", Arrays.asList(userName));
-        headers.put("validationCode", Arrays.asList(String.valueOf(validationCode)));
-        headers.put("secretKey", Arrays.asList(secretKey));
+        headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+        headers.put("username", CollectionUtils.wrap(userName));
+        headers.put("validationCode", CollectionUtils.wrap(String.valueOf(validationCode)));
+        headers.put("secretKey", CollectionUtils.wrap(secretKey));
         headers.put("scratchCodes", scratchCodes.stream().map(String::valueOf).collect(Collectors.toList()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);

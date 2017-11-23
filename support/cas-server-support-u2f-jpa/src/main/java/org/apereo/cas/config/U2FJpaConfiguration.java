@@ -10,6 +10,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,6 +26,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * This is {@link U2FJpaConfiguration}.
@@ -52,8 +54,8 @@ public class U2FJpaConfiguration {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());
     }
 
-    public String[] jpaU2fPackagesToScan() {
-        return new String[]{U2FDeviceRegistration.class.getPackage().getName()};
+    public List<String> jpaU2fPackagesToScan() {
+        return CollectionUtils.wrapList(U2FDeviceRegistration.class.getPackage().getName());
     }
 
     @Lazy

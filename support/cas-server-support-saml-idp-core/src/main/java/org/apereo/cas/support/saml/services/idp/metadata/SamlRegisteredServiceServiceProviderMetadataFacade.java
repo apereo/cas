@@ -2,15 +2,14 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.opensaml.core.criterion.EntityIdCriterion;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
-import org.opensaml.saml.criterion.BindingCriterion;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
@@ -56,7 +55,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         this.entityDescriptor = entityDescriptor;
         this.metadataResolver = metadataResolver;
     }
-    
+
     /**
      * Adapt saml metadata and parse. Acts as a facade.
      *
@@ -89,34 +88,47 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
                                                                                     final SamlRegisteredService registeredService,
                                                                                     final String entityID,
                                                                                     final CriteriaSet criterions) {
-        LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]",
-                registeredService.getName(), entityID);
+        LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
         try {
-            criterions.add(new BindingCriterion(CollectionUtils.wrap(SAMLConstants.SAML2_POST_BINDING_URI)));
-            criterions.add(new EntityIdCriterion(entityID));
-
-            LOGGER.info("Locating metadata for entityID [{}] with binding [{}] by attempting to run through the metadata chain...",
-                    entityID, SAMLConstants.SAML2_POST_BINDING_URI);
+            criterions.add(new EntityIdCriterion(entityID), true);
+            LOGGER.info("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
             final MetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
-            LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}] and binding [{}]",
-                    registeredService.getServiceId(), entityID, SAMLConstants.SAML2_POST_BINDING_URI);
+            LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
+                    registeredService.getServiceId(), entityID);
 
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
-                LOGGER.debug("Cannot find entity [{}] in metadata provider.", entityID);
+                LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
                 return Optional.empty();
             }
             LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
-            final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
-            if (ssoDescriptor != null) {
-                LOGGER.debug("Located SPSSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID, ssoDescriptor.getValidUntil());
-                return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver));
+
+            if (entityDescriptor.getValidUntil() != null && entityDescriptor.getValidUntil().isBeforeNow()) {
+                LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+                return Optional.empty();
             }
-            LOGGER.warn("Could not locate SPSSODescriptor in the metadata for [{}]", entityID);
-            return Optional.empty();
+
+            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
+    }
+
+    private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
+                                                                                                                final MetadataResolver chainingMetadataResolver,
+                                                                                                                final EntityDescriptor entityDescriptor) {
+        final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
+        if (ssoDescriptor != null) {
+            LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
+                    ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
+            if (ssoDescriptor.getValidUntil() != null && ssoDescriptor.getValidUntil().isBeforeNow()) {
+                LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
+                return Optional.empty();
+            }
+            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver));
+        }
+        LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
+        return Optional.empty();
     }
 
     public SPSSODescriptor getSsoDescriptor() {
@@ -212,7 +224,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
     public SingleLogoutService getSingleLogoutService() {
         return getSingleLogoutServices().get(0);
     }
-    
+
     /**
      * Gets assertion consumer service.
      *

@@ -1,0 +1,12 @@
+
+description = "Apereo CAS AUP Webflow Support"
+dependencies {
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-web")
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-authentication")
+    implementation project(":support:cas-server-support-actions")
+    implementation project(":support:cas-server-support-aup-core")
+    implementation project(":core:cas-server-core-configuration")
+}

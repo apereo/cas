@@ -1,0 +1,36 @@
+<div class="panel panel-default" *ngIf="!isEmpty(formData.availableAttributes)">
+  <mat-table [dataSource]="dataSource">
+
+    <ng-container cdkColumnDef="source">
+      <mat-header-cell *cdkHeaderCellDef>
+        <ng-container i18n="services.form.label.attrRelease.policies.sourceAttribute">
+          {{ messages.services_form_label_attrRelease_policies_sourceAttribute }}
+        </ng-container>
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let row"> {{ row.key }}</mat-cell>
+    </ng-container>
+
+    <ng-container cdkColumnDef="mapped">
+      <mat-header-cell *cdkHeaderCellDef>
+        <ng-container i18n="services.form.label.attrRelease.policies.wsFedClaim">
+          {{ messages.services_form_label_attrRelease_policies_wsFedClaim }}
+        </ng-container>
+        <mat-icon style="font-size: medium;"
+                 i18n-matTooltip="services.form.tooltip.attrRelease.policies.returnWsMapped"
+                 [matTooltip]="messages.services_form_tooltip_attrRelease_policies_returnWsMapped">help
+        </mat-icon>
+      </mat-header-cell>
+      <mat-cell *cdkCellDef="let row">
+        <mat-form-field>
+          <mat-select [(ngModel)]="data.service.attributeReleasePolicy.allowedAttributes[row.key]">
+            <mat-option *ngFor="let item of data.formData.wsFederationClaims" [value]="item">{{ item }}</mat-option>
+          </mat-select>
+        </mat-form-field>
+      </mat-cell>
+    </ng-container>
+
+    <mat-header-row *cdkHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *cdkRowDef="let row; columns: displayedColumns;"></mat-row>
+
+  </mat-table>
+</div>

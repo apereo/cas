@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.grouper.GrouperFacade;
@@ -26,7 +27,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -72,14 +73,14 @@ public class GrouperMultifactorAuthenticationPolicyEventResolver extends BaseMul
         }
 
         final Principal principal = authentication.getPrincipal();
-        final List<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal.getId());
+        final Collection<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal.getId());
         if (results.isEmpty()) {
             LOGGER.debug("No groups could be found for [{}] to resolve events for MFA", principal);
             return null;
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();

@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -14,17 +16,26 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class GAuthMultifactorProperties extends BaseMultifactorProvider {
+@RequiresModule(name = "cas-server-support-gauth")
+public class GAuthMultifactorProperties extends BaseMultifactorProviderProperties {
+    /**
+     * Provider id by default.
+     */
+    public static final String DEFAULT_IDENTIFIER = "mfa-gauth";
+
     private static final long serialVersionUID = -7401748853833491119L;
+    
     /**
      * Issuer used in the barcode when dealing with device registration events.
      * Used in the registration URL to identify CAS.
      */
+    @RequiredProperty
     private String issuer = "CASIssuer";
     /**
      * Label used in the barcode when dealing with device registration events.
      * Used in the registration URL to identify CAS.
      */
+    @RequiredProperty
     private String label = "CASLabel";
     /**
      * Length of the generated code.
@@ -44,7 +55,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
     /**
      * Store google authenticator devices inside a MongoDb instance.
      */
-    private MongoDb mongodb = new MongoDb();
+    private MongoDb mongo = new MongoDb();
     /**
      * Store google authenticator devices inside a jdbc instance.
      */
@@ -65,7 +76,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT1M", "PT1M");
 
     public GAuthMultifactorProperties() {
-        setId("mfa-gauth");
+        setId(DEFAULT_IDENTIFIER);
     }
 
     public Rest getRest() {
@@ -92,12 +103,12 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         this.json = json;
     }
 
-    public MongoDb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final MongoDb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongodb) {
+        this.mongo = mongodb;
     }
 
     public Jpa getJpa() {
@@ -168,7 +179,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProvider {
         }
     }
 
-    public static class MongoDb extends AbstractMongoClientProperties {
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = -200556119517414696L;
         /**
          * Collection name where tokens are kept to prevent replay attacks.

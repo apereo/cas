@@ -1,0 +1,214 @@
+<mat-card class="tabCard">
+  <mat-card-title>
+    <h5>OIDC Client Options</h5>
+  </mat-card-title>
+  <div class="cardContent">
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required
+               i18n-placeholder="services.form.label.oidcClientId"
+               [placeholder]="messages.services_form_label_oidcClientId"
+               [(ngModel)]="service.clientId">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.oidcClientId"
+                [matTooltip]="messages.services_form_tooltip_oidcClientId">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required [type]="showOAuthSecret ? 'text' : 'password'"
+               i18n-placeholder="services.form.label.oidcClientSecret"
+               [placeholder]="messages.services_form_label_oidcClientSecret"
+               [(ngModel)]="service.clientSecret">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.oidcClientSecret"
+                [matTooltip]="messages.services_form_tooltip_oidcClientSecret">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="showOAuthSecret">
+        <ng-container i18n="services.form.label.oidcShowSecret">
+          {{ messages.services_form_label_oidcShowSecret }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcShowSecret"
+                  [matTooltip]="messages.services_form_tooltip_oidcShowSecret">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="service.bypassApprovalPrompt">
+        <ng-container i18n="services.form.label.oidcBypass">
+          {{ messages.services_form_label_oidcBypass }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcBypass"
+                  [matTooltip]="messages.services_form_tooltip_oidcBypass">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="service.generateRefreshToken">
+        <ng-container i18n="services.form.label.oidcRefreshToken">
+          {{ messages.services_form_label_oidcRefreshToken }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcRefreshToken"
+                  [matTooltip]="messages.services_form_tooltip_oidcRefreshToken">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div style="padding-bottom:10px;">
+      <mat-checkbox  [(ngModel)]="service.jsonFormat">
+        <ng-container i18n="services.form.label.oidcJsonFormat">
+          {{ messages.services_form_label_oidcJsonFormat }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                  i18n-matTooltip="services.form.tooltip.oidcJsonFormat"
+                  [matTooltip]="messages.services_form_tooltip_oidcJsonFormat">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required
+               i18n-placeholder="services.form.label.oidc.jwks"
+               [placeholder]="messages.services_form_label_oidc_jwks"
+               [(ngModel)]="service.jwks">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.jwks"
+               [matTooltip]="messages.services_form_tooltip_oidc_jwks">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput" *ngIf="service.scopes.indexOf('user_defined') > -1">
+        <input matInput
+               i18n-placeholder="services.form.label.oidc.user.defined.scopes"
+               [placeholder]="messages.services_form_label_oidc_user_defined_scopes"
+               [(ngModel)]="service.scopes_userdefined"/>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.user.defined.scopes"
+               [matTooltip]="messages.services_form_tooltip_oidc_user_defined_scopes">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="service.signIdToken">
+        <ng-container i18n="services.form.label.oidc.signToken">
+          {{ messages.services_form_label_oidc_signToken }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.oidc.signToken"
+                 [matTooltip]="messages.services_form_tooltip_oidc_signToken">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-checkbox [(ngModel)]="service.implicit">
+        <ng-container i18n="services.form.label.oidc.implicit">
+          {{ messages.services_form_label_oidc_implicit }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.oidc.implicit"
+                 [matTooltip]="messages.services_form_tooltip_oidc_implicit">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div style="padding-bottom: 10px;">
+      <mat-checkbox [(ngModel)]="service.encryptIdToken">
+        <ng-container i18n="services.form.label.oidc.encrypt">
+          {{ messages.services_form_label_oidc_encrypt }}
+        </ng-container>
+        <mat-icon style="font-size: medium"
+                 i18n-matTooltip="services.form.tooltip.oidc.encrypt"
+                 [matTooltip]="messages.services_form_tooltip_oidc_encrypt">help
+        </mat-icon>
+      </mat-checkbox>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required [matAutocomplete]="encryptAlgAuto"
+               i18n-placeholder="services.form.label.oidc.encryptAlg"
+               [placeholder]="messages.services_form_label_oidc_encryptAlg"
+               [(ngModel)]="service.idTokenEncryptionAlg">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.encryptAlg"
+               [matTooltip]="messages.services_form_tooltip_oidc_encryptAlg">help
+      </mat-icon>
+      <mat-autocomplete #encryptAlgAuto="matAutocomplete">
+        <mat-option *ngFor="let opt of data.formData.oidcEncryptAlgOptions" [value]="opt">{{ opt }}</mat-option>
+      </mat-autocomplete>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required [matAutocomplete]="encodingAlgAuto"
+               i18n-placeholder="ervices.form.label.oidc.encryptEnc"
+               [placeholder]="messages.services_form_label_oidc_encryptEnc"
+               [(ngModel)]="service.idTokenEncryptionEncoding">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.encryptEnc"
+               [matTooltip]="messages.services_form_tooltip_oidc_encryptEnc">help
+      </mat-icon>
+      <mat-autocomplete #encodingAlgAuto="matAutocomplete">
+        <mat-option *ngFor="let opt of data.formData.oidcEncodingAlgOptions" [value]="opt">{{ opt }}</mat-option>
+      </mat-autocomplete>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <mat-select i18n-placeholder="services.form.label.oidc.subject.type"
+                    [placeholder]="messages.services_form_label_oidc_subject_type"
+                    [(ngModel)]="service.subjectType">
+          <mat-option *ngFor="let opt of data.formData.oidcSubjectTypes" [value]="opt">{{ opt }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.subject.type"
+               [matTooltip]="messages.services_form_tooltip_oidc_subject_type">help
+      </mat-icon>
+    </div>
+
+    <div *ngIf="service.subjectType === 'PAIRWISE'">
+      <mat-form-field class="textInput">
+        <input matInput
+               i18n-placeholder="services.form.label.oidc.sector.identifier.uri"
+               [placeholder]="messages.services_form_label_oidc_sector_identifier_uri"
+               [(ngModel)]="service.sectorIdentifierUri"/>
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.sector.identifier.uri"
+               [matTooltip]="messages.services_form_tooltip_oidc_sector_identifier_uri">help
+      </mat-icon>
+    </div>
+
+    <div *ngIf="service.dynamicallyRegistered">
+      <mat-form-field class="textInput">
+        <input matInput
+               i18n-placeholder="services.form.label.oidc.dynamicDate"
+               [placeholder]="messages.services_form_label_oidc_dynamicDate"
+               [(ngModel)]="service.dynamicRegistrationDateTime">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.oidc.dynamicDate"
+               [matTooltip]="messages.services_form_tooltip_oidc_dynamicDate">help
+      </mat-icon>
+    </div>
+  </div>
+</mat-card>

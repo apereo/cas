@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
@@ -53,7 +54,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
@@ -81,7 +82,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException();

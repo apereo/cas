@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * This is {@link MergeAttributesSearchEntryHandlersProperties}.
@@ -17,7 +18,7 @@ public class MergeAttributesSearchEntryHandlersProperties implements Serializabl
     /**
      * The Attribute names.
      */
-    private String[] attributeNames;
+    private List<String> attributeNames;
 
     public String getMergeAttributeName() {
         return mergeAttributeName;
@@ -27,11 +28,11 @@ public class MergeAttributesSearchEntryHandlersProperties implements Serializabl
         this.mergeAttributeName = mergeAttributeName;
     }
 
-    public String[] getAttributeNames() {
+    public List<String> getAttributeNames() {
         return attributeNames;
     }
 
-    public void setAttributeNames(final String[] attributeNames) {
+    public void setAttributeNames(final List<String> attributeNames) {
         this.attributeNames = attributeNames;
     }
 }

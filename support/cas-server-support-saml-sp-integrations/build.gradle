@@ -1,10 +1,14 @@
 description = "Apereo CAS SAML SP Integrations"
 dependencies {
     implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":support:cas-server-support-saml-idp")
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-saml-idp-core")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    
     implementation libraries.casclient
     implementation libraries.shibidp
 

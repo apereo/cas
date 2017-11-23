@@ -8,6 +8,7 @@ import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,7 +16,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -32,23 +33,24 @@ import java.util.List;
  * @since 4.2.0
  */
 public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
+    
+    /**
+     * The utils document.
+     */
+    public static final String UTIL_DOCUMENT = "utils";
+
     /**
      * All services view.
      */
     public static final View ALL_SERVICES_VIEW = DefaultView.create(
             "all_services",
             "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
-
+    
     /**
      * All views.
      */
-    public static final List<View> ALL_VIEWS = Arrays.asList(new View[]{ALL_SERVICES_VIEW});
-
-    /**
-     * The utils document.
-     */
-    public static final String UTIL_DOCUMENT = "utils";
-
+    public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_SERVICES_VIEW);
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
     
     private final CouchbaseClientFactory couchbase;

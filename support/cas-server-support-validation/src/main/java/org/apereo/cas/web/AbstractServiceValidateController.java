@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -246,6 +247,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         try {
+            prepareForTicketValidation(request, service, serviceTicketId);
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
@@ -254,9 +256,19 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE_PROXY, new Object[]{service.getId()}, request, service);
-        } catch (final UnauthorizedServiceException e) {
+        } catch (final UnauthorizedServiceException | PrincipalException e) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_UNAUTHORIZED_SERVICE, null, request, service);
         }
+    }
+
+    /**
+     * Prepare for ticket validation.
+     *
+     * @param request         the request
+     * @param service         the service
+     * @param serviceTicketId the service ticket id
+     */
+    protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
     }
 
     /**
