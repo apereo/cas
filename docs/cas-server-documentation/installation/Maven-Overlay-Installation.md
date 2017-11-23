@@ -61,7 +61,7 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 
 | Project                                                               | Build Directory                               | Source Directory
 |-----------------------------------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
+| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `target/cas.war!WEB-INF/classes/`     | `src/main/resources`
 | [CAS Gradle WAR Overlay](https://github.com/apereo/cas-gradle-overlay-template) | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
 To construct the overlay project, you need to copy directories and files *that you need to customize* in the build directory over to the source directory.
