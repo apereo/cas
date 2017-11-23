@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 /**
- * This is {@link AllTestsSuite}.
+ * This is {@link AllTrustedTestsSuite}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -20,5 +20,5 @@ import org.junit.runners.Suite;
         PrincipalBearingCredentialsToPrincipalResolverTests.class,
         PrincipalFromRequestRemoteUserNonInteractiveCredentialsActionTests.class,
         PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests.class})
-public class AllTestsSuite {
+public class AllTrustedTestsSuite {
 }
