@@ -46,6 +46,8 @@ distributed cache to broadcast service definition files across the cluster and a
 each node as needed. As service definitions are loaded by CAS, events are broadcasted to all 
 CAS nodes in the cluster to pick up the changes and keep definitions in sync. 
 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This feature is experimental.</p></div>
+
 Support is enabled by including the following dependency in the overlay:
 
 ```xml
