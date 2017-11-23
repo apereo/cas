@@ -63,7 +63,8 @@ import javax.annotation.PostConstruct;
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreTicketIdGeneratorsConfiguration.class,
         CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -85,7 +86,6 @@ import javax.annotation.PostConstruct;
         CasPersonDirectoryTestConfiguration.class,
         CasCoreWebflowConfiguration.class,
         CasCoreValidationConfiguration.class})
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
 @DirtiesContext
