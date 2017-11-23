@@ -162,6 +162,7 @@ public class CasSupportActionsConfiguration {
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
                 servicesManager,
+                authenticationRequestServiceSelectionStrategies,
                 ticketGrantingTicketCookieGenerator,
                 warnCookieGenerator, casProperties);
     }
@@ -185,7 +186,11 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "generateServiceTicketAction")
     public Action generateServiceTicketAction() {
-        return new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService, ticketRegistrySupport, servicesManager);
+        return new GenerateServiceTicketAction(authenticationSystemSupport,
+                centralAuthenticationService,
+                ticketRegistrySupport,
+                servicesManager,
+                authenticationRequestServiceSelectionStrategies);
     }
 
     @Bean
