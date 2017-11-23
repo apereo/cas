@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
@@ -35,6 +36,7 @@ import org.springframework.webflow.execution.RequestContext;
 public class GenerateServiceTicketAction extends AbstractAction {
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateServiceTicketAction.class);
     private final CentralAuthenticationService centralAuthenticationService;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final TicketRegistrySupport ticketRegistrySupport;
     private final ServicesManager servicesManager;
@@ -42,11 +44,13 @@ public class GenerateServiceTicketAction extends AbstractAction {
     public GenerateServiceTicketAction(final AuthenticationSystemSupport authenticationSystemSupport,
                                        final CentralAuthenticationService authenticationService,
                                        final TicketRegistrySupport ticketRegistrySupport,
-                                       final ServicesManager servicesManager) {
+                                       final ServicesManager servicesManager,
+                                       final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = authenticationService;
         this.ticketRegistrySupport = ticketRegistrySupport;
         this.servicesManager = servicesManager;
+        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
     }
 
     /**
@@ -75,7 +79,8 @@ public class GenerateServiceTicketAction extends AbstractAction {
                         + ticketGrantingTicket), ticketGrantingTicket);
             }
 
-            final RegisteredService registeredService = servicesManager.findServiceBy(service);
+            final Service selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
+            final RegisteredService registeredService = servicesManager.findServiceBy(selectedService);
             LOGGER.debug("Registered service asking for service ticket is [{}]", registeredService);
             WebUtils.putRegisteredService(context, registeredService);
             WebUtils.putService(context, service);
