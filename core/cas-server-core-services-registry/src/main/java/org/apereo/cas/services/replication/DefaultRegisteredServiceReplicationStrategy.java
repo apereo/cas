@@ -3,7 +3,6 @@ package org.apereo.cas.services.replication;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
-import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;

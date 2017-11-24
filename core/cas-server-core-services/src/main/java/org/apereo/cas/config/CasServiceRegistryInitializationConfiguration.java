@@ -4,10 +4,10 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
-import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -86,7 +86,7 @@ public class CasServiceRegistryInitializationConfiguration {
      */
     public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
         EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
-            super(location, getRegisteredServiceSerializers(), false, publisher, null);
+            super(location, getRegisteredServiceSerializers(), publisher);
         }
 
         private static List getRegisteredServiceSerializers() {

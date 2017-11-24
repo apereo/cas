@@ -1,6 +1,7 @@
 package org.apereo.cas.services.resource;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -12,9 +13,6 @@ import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
-import org.apereo.cas.support.events.service.CasRegisteredServicePreSaveEvent;
-import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.util.ResourceUtils;
@@ -84,8 +82,13 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private Pattern serviceFileNamePattern;
 
-    private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy
-        = new NoOpRegisteredServiceReplicationStrategy();
+    private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
+
+    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
+                                                   final Collection<StringSerializer<RegisteredService>> serializers,
+                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
+        this(configDirectory, serializers, false, eventPublisher, new NoOpRegisteredServiceReplicationStrategy());
+    }
 
     /**
      * Instantiates a new service registry dao.
@@ -150,29 +153,30 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
                                     final boolean enableWatcher,
                                     final ApplicationEventPublisher eventPublisher,
                                     final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+        
         setEventPublisher(eventPublisher);
-
-        this.registeredServiceReplicationStrategy = registeredServiceReplicationStrategy;
+        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
+            new NoOpRegisteredServiceReplicationStrategy());
+        this.registeredServiceSerializers = serializers;
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
 
         this.serviceRegistryDirectory = configDirectory;
         Assert.isTrue(this.serviceRegistryDirectory.toFile().exists(), this.serviceRegistryDirectory + " does not exist");
         Assert.isTrue(this.serviceRegistryDirectory.toFile().isDirectory(), this.serviceRegistryDirectory + " is not a directory");
-        this.registeredServiceSerializers = serializers;
-
+        
         if (enableWatcher) {
-            enableServicesDirectoryPathWatcher(configDirectory);
+            enableServicesDirectoryPathWatcher();
         }
     }
 
-    private void enableServicesDirectoryPathWatcher(final Path configDirectory) {
-        LOGGER.info("Setting up a watch for service registry directory at [{}]", configDirectory);
+    private void enableServicesDirectoryPathWatcher() {
+        LOGGER.info("Watching service registry directory at [{}]", this.serviceRegistryDirectory);
 
         final Consumer<File> onCreate = new CreateResourceBasedRegisteredServiceWatcher(this);
         final Consumer<File> onDelete = new DeleteResourceBasedRegisteredServiceWatcher(this);
         final Consumer<File> onModify = new ModifyResourceBasedRegisteredServiceWatcher(this);
-        
-        this.serviceRegistryConfigWatcher = new PathWatcherService(serviceRegistryDirectory, onCreate, onModify, onDelete);
+
+        this.serviceRegistryConfigWatcher = new PathWatcherService(this.serviceRegistryDirectory, onCreate, onModify, onDelete);
         this.serviceRegistryConfigWatcher.start(getClass().getSimpleName());
         LOGGER.debug("Started service registry watcher thread");
     }
@@ -232,6 +236,11 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         }
     }
 
+    /**
+     * Remove registered service.
+     *
+     * @param service the service
+     */
     protected void removeRegisteredService(final RegisteredService service) {
         this.serviceMap.remove(service.getId());
     }

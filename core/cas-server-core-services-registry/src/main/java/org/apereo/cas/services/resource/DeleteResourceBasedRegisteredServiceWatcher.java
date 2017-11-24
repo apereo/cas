@@ -1,7 +1,6 @@
 package org.apereo.cas.services.resource;
 
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ResourceBasedServiceRegistryDao;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicePreDeleteEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;

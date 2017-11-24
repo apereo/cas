@@ -1,11 +1,11 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
+import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
@@ -38,17 +38,14 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
      */
     protected HttpClient httpClient;
     private final transient Object lock = new Object();
-    private final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers;
-    private final SamlIdPProperties samlIdPProperties;
+    private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
 
     public SamlRegisteredServiceMetadataResolverCacheLoader(final OpenSamlConfigBean configBean,
                                                             final HttpClient httpClient,
-                                                            final SamlIdPProperties samlIdPProperties,
-                                                            final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers) {
+                                                            final SamlRegisteredServiceMetadataResolutionPlan availableResolvers) {
         this.configBean = configBean;
         this.httpClient = httpClient;
-        this.samlIdPProperties = samlIdPProperties;
-        this.availableResolvers = availableResolvers;
+        this.metadataResolutionPlan = availableResolvers;
     }
 
     @Override
@@ -57,7 +54,8 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
             final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
             final List<MetadataResolver> metadataResolvers = new ArrayList<>();
             
-            this.availableResolvers.stream()
+            final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+            availableResolvers.stream()
                     .filter(r -> r.supports(service))
                     .map(r -> r.resolve(service))
                     .forEach(metadataResolvers::addAll);
