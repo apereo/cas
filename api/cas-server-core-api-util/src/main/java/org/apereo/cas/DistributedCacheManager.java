@@ -60,11 +60,21 @@ public interface DistributedCacheManager<K extends Serializable, V extends Distr
     }
 
     /**
+     * update key/item from the cache and overwrite.
+     *
+     * @param key the key
+     * @param item the item
+     */
+    default void update(final K key, final V item) {
+    }
+
+    /**
      * Remove key/item from the cache.
      *
      * @param key the key
+     * @param item the item
      */
-    default void remove(final K key) {
+    default void remove(final K key, final V item) {
     }
 
     /**

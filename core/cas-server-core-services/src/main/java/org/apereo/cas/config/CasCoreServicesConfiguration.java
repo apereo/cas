@@ -14,13 +14,13 @@ import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationP
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
-import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.slf4j.Logger;
@@ -119,11 +119,11 @@ public class CasCoreServicesConfiguration {
         return new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
     }
 
-    @ConditionalOnMissingBean(name = "registeredServiceDistributedCacheManager")
+    @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")
     @Bean
     @RefreshScope
-    public DistributedCacheManager registeredServiceDistributedCacheManager() {
-        return new NoOpDistributedCacheManager();
+    public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
+        return new NoOpRegisteredServiceReplicationStrategy();
     }
     
     @ConditionalOnMissingBean(name = "serviceRegistryDao")

@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -28,7 +29,7 @@ public class OidcRegisteredServiceTests {
 
     public OidcRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
-                mock(ApplicationEventPublisher.class), new NoOpDistributedCacheManager());
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
     }
 
     @BeforeClass
