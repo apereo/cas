@@ -11,25 +11,25 @@ import org.springframework.test.context.junit4.SpringRunner;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link CasConfigurationJasyptDecryptorTests}.
+ * This is {@link CasConfigurationJasyptCipherExecutorTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-public class CasConfigurationJasyptDecryptorTests {
+public class CasConfigurationJasyptCipherExecutorTests {
     @Autowired
     private Environment environment;
 
     static {
-        System.setProperty(CasConfigurationJasyptDecryptor.JasyptEncryptionParameters.PASSWORD.getName(), "P@$$w0rd");
+        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getName(), "P@$$w0rd");
     }
 
-    private CasConfigurationJasyptDecryptor jasypt;
+    private CasConfigurationJasyptCipherExecutor jasypt;
 
     @Before
     public void setup() {
-        this.jasypt = new CasConfigurationJasyptDecryptor(this.environment);
+        this.jasypt = new CasConfigurationJasyptCipherExecutor(this.environment);
     }
 
     @Test
@@ -52,7 +52,7 @@ public class CasConfigurationJasyptDecryptorTests {
 
     @Test
     public void verifyDecryptionEncryptionPairFails() {
-        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptDecryptor.ENCRYPTED_VALUE_PREFIX + "keyValue");
+        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue");
         final Pair<String, Object> result = jasypt.decryptPair(pair);
         assertNull(result);
     }
@@ -60,7 +60,7 @@ public class CasConfigurationJasyptDecryptorTests {
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         final String value = jasypt.encryptValue("Testing");
-        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptDecryptor.ENCRYPTED_VALUE_PREFIX + value);
+        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + value);
         final Pair<String, Object> result = jasypt.decryptPair(pair);
         assertNotNull(result);
         assertEquals(result.getKey(), pair.getKey());
