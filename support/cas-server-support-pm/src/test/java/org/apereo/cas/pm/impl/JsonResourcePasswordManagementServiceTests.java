@@ -67,7 +67,7 @@ public class JsonResourcePasswordManagementServiceTests {
     private PasswordManagementService passwordChangeService;
 
     @Autowired
-    @Qualifier("passwordChangeService")
+    @Qualifier("passwordValidationService")
     private PasswordValidationService passwordValidationService;
 
     @Test
