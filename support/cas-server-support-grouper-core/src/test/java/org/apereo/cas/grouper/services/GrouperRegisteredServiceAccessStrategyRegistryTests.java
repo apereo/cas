@@ -3,8 +3,8 @@ package org.apereo.cas.grouper.services;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistryDao;
-import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -35,18 +35,17 @@ public class GrouperRegisteredServiceAccessStrategyRegistryTests {
 
     @Test
     public void checkAccessStrategyJson() throws Exception {
-
         final Map<String, Set<String>> attributes = new HashMap<>();
         final Set<String> v1 = new HashSet<>();
         v1.add("admin");
         attributes.put("memberOf", v1);
 
-        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService("test");
+        final AbstractRegisteredService service = RegisteredServiceTestUtils.getRegisteredService("testing");
         final GrouperRegisteredServiceAccessStrategy grouper = new GrouperRegisteredServiceAccessStrategy();
         grouper.setRequiredAttributes(attributes);
         service.setAccessStrategy(grouper);
         final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, 
-                mock(ApplicationEventPublisher.class), new NoOpDistributedCacheManager());
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
     }
