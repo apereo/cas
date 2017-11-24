@@ -8,6 +8,7 @@ import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
+import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;
@@ -52,7 +53,8 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Bean
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
-        return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager());
+        final StreamingServiceRegistryProperties stream = casProperties.getServiceRegistry().getStream();
+        return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager(), stream);
     }
     
     @Bean
@@ -64,7 +66,7 @@ public class CasServicesStreamingHazelcastConfiguration {
     @Bean
     public HazelcastInstance casRegisteredServiceHazelcastInstance() {
         final String name = CasRegisteredServiceHazelcastStreamPublisher.class.getSimpleName();
-        LOGGER.debug("Creating hazelcast instance [{}] to publish service definitions", name);
+        LOGGER.debug("Creating Hazelcast instance [{}] to publish service definitions", name);
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
         final StreamServicesHazelcastProperties stream = casProperties.getServiceRegistry().getStream().getHazelcast();
         final BaseHazelcastProperties hz = stream.getConfig();

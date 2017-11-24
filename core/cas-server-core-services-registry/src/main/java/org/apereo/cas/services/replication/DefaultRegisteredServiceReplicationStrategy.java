@@ -2,6 +2,7 @@ package org.apereo.cas.services.replication;
 
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
+import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.services.NoOpDistributedCacheManager;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
@@ -26,13 +27,13 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceReplicationStrategy.class);
 
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
+    private final StreamingServiceRegistryProperties properties;
 
-    public DefaultRegisteredServiceReplicationStrategy() {
-        this(new NoOpDistributedCacheManager());
-    }
-
-    public DefaultRegisteredServiceReplicationStrategy(final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager) {
+    public DefaultRegisteredServiceReplicationStrategy(
+        final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager,
+        final StreamingServiceRegistryProperties properties) {
         this.distributedCacheManager = distributedCacheManager;
+        this.properties = properties;
     }
 
     /**
@@ -77,9 +78,12 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             }
 
             if (service == null) {
+
                 LOGGER.debug("Service is in not found in the local service registry for this CAS node. CAS will use the cache entry [{}] instead "
                     + "and will update the service registry of this CAS node with the cache entry for future look-ups", item.getValue());
-                serviceRegistryDao.save(item.getValue());
+                if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
+                    serviceRegistryDao.save(item.getValue());
+                }
                 return item.getValue();
             }
             LOGGER.debug("Service definition cache entry [{}] carries the timestamp [{}]", item.getValue(), item.getTimestamp());
@@ -89,7 +93,11 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
             }
             LOGGER.debug("Service definition found in the cache [{}] is more recent than its counterpart on this CAS node. CAS will "
                 + "use the cache entry and update the service registry of this CAS node with the cache entry for future look-ups", item.getValue());
-            serviceRegistryDao.save(item.getValue());
+
+            if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
+                serviceRegistryDao.save(item.getValue());
+            }
+            
             return item.getValue();
         }
         LOGGER.debug("Requested service definition is not found in the replication cache");
@@ -152,7 +160,9 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     private void updateServiceRegistryWithRegisteredService(final List<RegisteredService> services, final RegisteredService cachedService,
                                                             final ServiceRegistryDao serviceRegistryDao) {
-        serviceRegistryDao.save(cachedService);
+        if (properties.getReplicationMode() == StreamingServiceRegistryProperties.ReplicationModes.ACTIVE_ACTIVE) {
+            serviceRegistryDao.save(cachedService);
+        }
         services.add(cachedService);
     }
 

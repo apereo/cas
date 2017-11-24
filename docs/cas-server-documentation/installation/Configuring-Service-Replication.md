@@ -46,8 +46,6 @@ distributed cache to broadcast service definition files across the cluster and a
 each node as needed. As service definitions are loaded by CAS, events are broadcasted to all 
 CAS nodes in the cluster to pick up the changes and keep definitions in sync. 
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>This feature is experimental.</p></div>
-
 Support is enabled by including the following dependency in the overlay:
 
 ```xml
@@ -60,3 +58,11 @@ Support is enabled by including the following dependency in the overlay:
 
 To see the relevant list of CAS properties, 
 please [review this guide](Configuration-Properties.html#service-registry-replication-hazelcast).
+
+## Replication Modes
+
+When CAS is configured to replicate service definitions in an active-active mode, you will need to make sure the service registry scheduler is carefully tuned in order to avoid surprises and overwrites. Likewise, the same sort of check needs to be done and verified for ad-hoc dynamic changes to the CAS service registry directory, if CAS is set to monitor for changes. Delays in replication and schedule may force one node to overwrite changes to the other. 
+
+For instance, consider the following scenario: there are two nodes in a CAS cluster where CAS1 is set to monitor changes from `/etc/cas/services` on node N1 and CAS2 is monitoring `/etc/cas/services` directory on node N2. Both N1 and N2 on startup attempt to bootstrap each other's copies of service definitions to make sure all is synchronized correctly. 
+
+Now let's consider that a file is `/etc/cas/services/App-100.json` is deleted from N2. In the time that it takes from N2 to broadcast the change to N1, it is likely that service registry scheduler for N2 also wakes up and attempts to restore the state of the world by synchronizing its copies of its service definition files from the distributed cache, which means that N2 will grab a copy of the deleted service from N1 and will restore the deleted file back. This situation typically manifests itself when the service registry scheduler is set to very aggressive timeouts and can mostly be avoided by relaxing the reload operation to run on a long scheduler such as every 2 hours. Alternatively, you may decide to simply run an active-passive setup to only have one master node produce and broadcast changes and other slave/passive nodes simply and only consume changes when needed.

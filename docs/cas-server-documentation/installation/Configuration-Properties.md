@@ -4711,9 +4711,16 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 Control how CAS services definition files should be replicated across a CAS cluster.
 To learn more about this topic, [please review this guide](Configuring-Service-Replication.html)
 
+Replication modes may be configured per the following options:
+
+| Type                    | Description
+|-------------------------|--------------------------------------------------------------
+| `ACTIVE_ACTIVE`       | All CAS nodes sync copies of definitions and keep them locally.
+| `ACTIVE_PASSIVE`    | Default. One master node keeps definitions and streams changes to other passive nodes.
 
 ```properties
 # cas.serviceRegistry.stream.enabled=true
+# cas.serviceRegistry.stream.replicationMode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
 ```
 
 ## Service Registry Replication Hazelcast
