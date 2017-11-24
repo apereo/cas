@@ -28,16 +28,22 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
     }
     @Override
     protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event) {
-        final long time = new Date().getTime();
-        LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, this.distributedCacheManager.getName(), time);
-        this.distributedCacheManager.remove(service);
+        final DistributedCacheObject<RegisteredService> item = getCacheObject(service, event);
+        LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, this.distributedCacheManager.getName(), item.getTimestamp());
+        this.distributedCacheManager.update(service, item);
     }
 
     @Override
     protected void handleCasRegisteredServiceUpdateEvents(final RegisteredService service, final ApplicationEvent event) {
+        final DistributedCacheObject<RegisteredService> item = getCacheObject(service, event);
+        LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, this.distributedCacheManager.getName(), item.getTimestamp());
+        this.distributedCacheManager.set(service, item);
+    }
+
+    private DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service, final ApplicationEvent event) {
         final long time = new Date().getTime();
         final DistributedCacheObject<RegisteredService> item = new DistributedCacheObject<>(time, service);
-        LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, this.distributedCacheManager.getName(), time);
-        this.distributedCacheManager.set(service, item);
+        item.getProperties().put("event", event);
+        return item;
     }
 }

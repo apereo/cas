@@ -2,6 +2,8 @@ package org.apereo.cas.services;
 
 
 import org.apereo.cas.DistributedCacheManager;
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -40,9 +42,10 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      */
     public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, 
                                   final ApplicationEventPublisher eventPublisher,
-                                  final DistributedCacheManager distributedCacheManager) {
+                                  final DistributedCacheManager distributedCacheManager,
+                                  final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
         super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), 
-                enableWatcher, eventPublisher, distributedCacheManager);
+                enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     /**
@@ -58,12 +61,12 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
     public JsonServiceRegistryDao(final Resource configDirectory,
                                   final boolean enableWatcher,
                                   final ApplicationEventPublisher eventPublisher,
-                                  final DistributedCacheManager distributedCacheManager) throws Exception {
+                                  final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
         super(configDirectory,
                 CollectionUtils.wrapList(
                         new CasAddonsRegisteredServicesJsonSerializer(),
                         new DefaultRegisteredServiceJsonSerializer()),
-                enableWatcher, eventPublisher, distributedCacheManager);
+                enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     @Override

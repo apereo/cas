@@ -17,16 +17,13 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 public class RegisteredServiceHazelcastDistributedCacheManager extends
-        BaseDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
+    BaseDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceHazelcastDistributedCacheManager.class);
 
     private final HazelcastInstance instance;
-    private final ServicesManager servicesManager;
     private final IMap<String, DistributedCacheObject<RegisteredService>> mapInstance;
 
-    public RegisteredServiceHazelcastDistributedCacheManager(final HazelcastInstance instance,
-                                                             final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
+    public RegisteredServiceHazelcastDistributedCacheManager(final HazelcastInstance instance) {
         this.instance = instance;
 
         final String mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
@@ -66,14 +63,19 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
     }
 
     @Override
-    public void remove(final RegisteredService service) {
-        final String key = buildKey(service);
-        this.mapInstance.remove(key);
+    public void remove(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
+        this.mapInstance.remove(service);
+    }
+
+    @Override
+    public void update(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
+        remove(service, item);
+        set(service, item);
     }
 
     @Override
     public Collection<DistributedCacheObject<RegisteredService>> findAll(
-            final Predicate<DistributedCacheObject<RegisteredService>> filter) {
+        final Predicate<DistributedCacheObject<RegisteredService>> filter) {
         return getAll().stream().filter(filter).collect(Collectors.toList());
     }
 

@@ -4,23 +4,23 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;
-import org.apereo.cas.DistributedCacheManager;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
+import org.apereo.cas.services.replication.DefaultRegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -40,19 +40,19 @@ public class CasServicesStreamingHazelcastConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
+    
     @Autowired
     @Qualifier("casRegisteredServiceStreamPublisherIdentifier")
     private StringBean casRegisteredServiceStreamPublisherIdentifier;
 
     @Bean
-    @RefreshScope
     public DistributedCacheManager registeredServiceDistributedCacheManager() {
-        return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance(), servicesManager);
+        return new RegisteredServiceHazelcastDistributedCacheManager(casRegisteredServiceHazelcastInstance());
+    }
+
+    @Bean
+    public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
+        return new DefaultRegisteredServiceReplicationStrategy(registeredServiceDistributedCacheManager());
     }
     
     @Bean

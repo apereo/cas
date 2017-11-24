@@ -18,18 +18,14 @@ public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
     
     @Autowired
     private transient ApplicationEventPublisher eventPublisher;
-
-    @Override
-    public RegisteredService findServiceByExactServiceId(final String id) {
-        return load().stream().filter(r -> r.getServiceId().equals(id)).findFirst().orElse(null);
-    }
+    
 
     /**
      * Publish event.
      *
      * @param event the event
      */
-    protected void publishEvent(final ApplicationEvent event) {
+    public void publishEvent(final ApplicationEvent event) {
         if (this.eventPublisher != null) {
             LOGGER.debug("Publishing event [{}]", event);
             this.eventPublisher.publishEvent(event);

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.junit.Before;
 import org.junit.Test;
@@ -25,7 +26,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
         try {
             this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
                     mock(ApplicationEventPublisher.class),
-                    new NoOpDistributedCacheManager());
+                    new NoOpRegisteredServiceReplicationStrategy());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
