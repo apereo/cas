@@ -5,7 +5,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.configuration.support.CasConfigurationJasyptDecryptor;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +53,7 @@ import java.util.stream.Collectors;
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
 
-    private CasConfigurationJasyptDecryptor configurationJasyptDecryptor;
+    private CasConfigurationJasyptCipherExecutor configurationJasyptDecryptor;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -84,7 +84,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        this.configurationJasyptDecryptor = new CasConfigurationJasyptDecryptor(environment);
+        this.configurationJasyptDecryptor = new CasConfigurationJasyptCipherExecutor(environment);
 
         final Properties props = new Properties();
         loadEmbeddedYamlOverriddenProperties(props, environment);

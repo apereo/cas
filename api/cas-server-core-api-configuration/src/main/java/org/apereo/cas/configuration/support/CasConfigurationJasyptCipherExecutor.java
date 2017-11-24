@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.support;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.CipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.slf4j.Logger;
@@ -14,19 +15,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link CasConfigurationJasyptDecryptor}.
+ * This is {@link CasConfigurationJasyptCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public class CasConfigurationJasyptDecryptor {
+public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
     public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationJasyptDecryptor.class);
-    
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationJasyptCipherExecutor.class);
+
     /**
      * The Jasypt encryption parameters.
      */
@@ -49,57 +50,133 @@ public class CasConfigurationJasyptDecryptor {
          */
         PASSWORD("cas.standalone.config.security.psw", null);
 
+        /**
+         * The Name.
+         */
         private final String name;
+        /**
+         * The Default value.
+         */
         private final String defaultValue;
 
+        /**
+         * Instantiates a new Jasypt encryption parameters.
+         *
+         * @param name         the name
+         * @param defaultValue the default value
+         */
         JasyptEncryptionParameters(final String name, final String defaultValue) {
             this.name = name;
             this.defaultValue = defaultValue;
         }
 
+        /**
+         * Gets name.
+         *
+         * @return the name
+         */
         public String getName() {
             return name;
         }
 
+        /**
+         * Gets default value.
+         *
+         * @return the default value
+         */
         public String getDefaultValue() {
             return defaultValue;
         }
     }
 
+    /**
+     * The Jasypt instance.
+     */
     private final StandardPBEStringEncryptor jasyptInstance;
 
-    public CasConfigurationJasyptDecryptor(final Environment environment) {
+    /**
+     * Instantiates a new Cas configuration jasypt cipher executor.
+     *
+     * @param environment the environment
+     */
+    public CasConfigurationJasyptCipherExecutor(final Environment environment) {
+        Security.addProvider(new BouncyCastleProvider());
         this.jasyptInstance = new StandardPBEStringEncryptor();
 
         final String alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
-        if (StringUtils.isNotBlank(alg)) {
-            LOGGER.debug("Configured jasyptInstance algorithm [{}]", alg);
-            jasyptInstance.setAlgorithm(alg);
-        }
+        setAlgorithm(alg);
 
         final String psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
-        if (StringUtils.isNotBlank(psw)) {
-            LOGGER.debug("Configured jasyptInstance password");
-            jasyptInstance.setPassword(psw);
-        }
+        setPassword(psw);
 
         final String pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
-        if (StringUtils.isNotBlank(pName)) {
-            LOGGER.debug("Configured jasyptInstance provider");
-            if (StringUtils.equals(pName, BouncyCastleProvider.PROVIDER_NAME)) {
-                Security.addProvider(new BouncyCastleProvider());
-            }
-            this.jasyptInstance.setProviderName(pName);
-        }
+        setProviderName(pName);
+        
         final String iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
+        setKeyObtentionIterations(iter);
+    }
+
+    /**
+     * Sets algorithm.
+     *
+     * @param alg the alg
+     */
+    public void setAlgorithm(final String alg) {
+        if (StringUtils.isNotBlank(alg)) {
+            LOGGER.debug("Configured Jasypt algorithm [{}]", alg);
+            jasyptInstance.setAlgorithm(alg);
+        }
+    }
+
+    /**
+     * Sets password.
+     *
+     * @param psw the psw
+     */
+    public void setPassword(final String psw) {
+        if (StringUtils.isNotBlank(psw)) {
+            LOGGER.debug("Configured Jasypt password");
+            jasyptInstance.setPassword(psw);
+        }
+    }
+
+    /**
+     * Sets key obtention iterations.
+     *
+     * @param iter the iter
+     */
+    public void setKeyObtentionIterations(final String iter) {
         if (StringUtils.isNotBlank(iter) && NumberUtils.isCreatable(iter)) {
-            LOGGER.debug("Configured jasyptInstance iterations");
+            LOGGER.debug("Configured Jasypt iterations");
             jasyptInstance.setKeyObtentionIterations(Integer.parseInt(iter));
         }
     }
 
-    private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
-        return environment.getProperty(param.getName(), param.getDefaultValue());
+    /**
+     * Sets provider name.
+     *
+     * @param pName the p name
+     */
+    public void setProviderName(final String pName) {
+        if (StringUtils.isNotBlank(pName)) {
+            LOGGER.debug("Configured Jasypt provider");
+            this.jasyptInstance.setProviderName(pName);
+        }
+    }
+
+    @Override
+    public String encode(final String value) {
+        return encryptValue(value);
+    }
+
+    @Override
+    public String decode(final String value) {
+        return decryptValue(value);
+    }
+
+    @Override
+    public String getName() {
+        return "CAS Configuration Jasypt Encryption";
     }
 
     /**
@@ -169,6 +246,9 @@ public class CasConfigurationJasyptDecryptor {
         return null;
     }
 
+    /**
+     * Initialize jasypt instance if necessary.
+     */
     private void initializeJasyptInstanceIfNecessary() {
         if (!this.jasyptInstance.isInitialized()) {
             LOGGER.debug("Initializing Jasypt...");
@@ -203,5 +283,16 @@ public class CasConfigurationJasyptDecryptor {
      */
     private static String getStringPropertyValue(final Object propertyValue) {
         return propertyValue instanceof String ? propertyValue.toString() : null;
+    }
+
+    /**
+     * Gets jasypt param from env.
+     *
+     * @param environment the environment
+     * @param param       the param
+     * @return the jasypt param from env
+     */
+    private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
+        return environment.getProperty(param.getName(), param.getDefaultValue());
     }
 }

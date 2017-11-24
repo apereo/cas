@@ -13,6 +13,7 @@ dependencies {
      */
     compile project(":api:cas-server-core-api-services")
     compile project(":core:cas-server-core-configuration")
+    compile project(":core:cas-server-core-configuration-api")
     compile project(":core:cas-server-core-util")
     compile project(":core:cas-server-core-services-api")
     compile project(":support:cas-server-support-oauth-services")
