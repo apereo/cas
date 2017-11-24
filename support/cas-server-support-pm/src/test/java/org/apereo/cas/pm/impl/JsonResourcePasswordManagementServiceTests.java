@@ -104,7 +104,7 @@ public class JsonResourcePasswordManagementServiceTests {
         final PasswordChangeBean bean = new PasswordChangeBean();
         bean.setConfirmedPassword("newPassword");
         bean.setPassword("newPassword");
-        boolean isValid = passwordValidationService.isValid(c, bean);
+        final boolean isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
     }
 }
