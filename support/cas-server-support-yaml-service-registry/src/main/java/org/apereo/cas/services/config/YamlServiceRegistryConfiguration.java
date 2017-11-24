@@ -2,9 +2,9 @@ package org.apereo.cas.services.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.YamlServiceRegistryDao;
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,8 +33,8 @@ public class YamlServiceRegistryConfiguration {
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
-    @Qualifier("registeredServiceDistributedCacheManager")
-    private DistributedCacheManager registeredServiceDistributedCacheManager;
+    @Qualifier("registeredServiceReplicationStrategy")
+    private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
     
     @Bean
     @RefreshScope
@@ -42,7 +42,7 @@ public class YamlServiceRegistryConfiguration {
         try {
             final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
             return new YamlServiceRegistryDao(registry.getYaml().getLocation(), 
-                    registry.isWatcherEnabled(), eventPublisher, registeredServiceDistributedCacheManager);
+                    registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

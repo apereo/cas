@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import static org.mockito.Mockito.*;
 
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.junit.Before;
 import org.springframework.context.ApplicationEventPublisher;
 
@@ -17,7 +18,7 @@ public class YamlServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
     public void setup() {
         try {
             this.dao = new YamlServiceRegistryDao(RESOURCE, false, 
-                    mock(ApplicationEventPublisher.class), new NoOpDistributedCacheManager());
+                    mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
         }
