@@ -102,8 +102,8 @@ public class JsonResourcePasswordManagementServiceTests {
     public void verifyPasswordValidationService() {
         final UsernamePasswordCredential c = new UsernamePasswordCredential("casuser", "password");
         final PasswordChangeBean bean = new PasswordChangeBean();
-        bean.setConfirmedPassword("newPassword");
-        bean.setPassword("newPassword");
+        bean.setConfirmedPassword("Test@1234");
+        bean.setPassword("Test@1234");
         final boolean isValid = passwordValidationService.isValid(c, bean);
         assertTrue(isValid);
     }
