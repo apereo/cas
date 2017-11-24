@@ -18,7 +18,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
     private static final long serialVersionUID = -1583614089051161614L;
-
+    
     /**
      * Default port.
      */
@@ -31,7 +31,7 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
      * adjusted if the latency between the CAS nodes in the cluster is too large. Having too
      * short a value will cause the record to expire before it reaches other members of the cluster.
      */
-    private String duration = "PT2M";
+    private String duration = "PT1M";
 
     /**
      * Configuration of the hazelcast instance to queue and stream items.
@@ -48,6 +48,7 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
     
     public StreamServicesHazelcastProperties() {
         config.getCluster().setPort(PORT);
+        config.getCluster().setInstanceName("localhost-services-replication");
     }
 
     public BaseHazelcastProperties getConfig() {

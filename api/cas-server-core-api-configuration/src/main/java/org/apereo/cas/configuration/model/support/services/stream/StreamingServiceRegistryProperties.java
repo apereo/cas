@@ -17,6 +17,32 @@ public class StreamingServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = 4957127900906059461L;
 
+    public enum ReplicationModes {
+        /**
+         * In this replication mode, all CAS nodes will try to sync copies
+         * of service definition files individually on each node.
+         */
+        ACTIVE_ACTIVE,
+        /**
+         * In this replication mode, one CAS service is designated to be the master
+         * that contains all service definition files locally, and will stream changes
+         * to other CAS passive nodes. Passive CAS nodes only access the replication
+         * cache to retrieve services, and will not individually keep copies of the
+         * service definition files on disk.
+         */
+        ACTIVE_PASSIVE
+    }
+
+    /**
+     * Indicates the replication mode. Accepted values are:
+     *
+     * <ul>
+     *     <li>{@code ACTIVE_ACTIVE}: All CAS nodes sync copies of definitions and keep them locally.</li>
+     *     <li>{@code ACTIVE_PASSIVE}: One master node keeps definitions and streams changes to other passive nodes</li>
+     * </ul>
+     */
+    private ReplicationModes replicationMode = ReplicationModes.ACTIVE_PASSIVE;
+    
     /**
      * Whether service registry events should be streamed and published
      * across a CAS cluster. One typical workflow is to enable the
@@ -47,5 +73,13 @@ public class StreamingServiceRegistryProperties implements Serializable {
 
     public void setEnabled(final boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public ReplicationModes getReplicationMode() {
+        return replicationMode;
+    }
+
+    public void setReplicationMode(final ReplicationModes replicationMode) {
+        this.replicationMode = replicationMode;
     }
 }
