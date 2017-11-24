@@ -41,7 +41,9 @@ public interface CipherExecutor<I, O> {
      *
      * @return true/false
      */
-    boolean isEnabled();
+    default boolean isEnabled() {
+        return true;
+    }
 
     /**
      * The (component) name of this cipher.
