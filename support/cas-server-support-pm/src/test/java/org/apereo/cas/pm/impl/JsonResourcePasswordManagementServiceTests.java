@@ -19,6 +19,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,7 +52,7 @@ import static org.junit.Assert.*;
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
+        CasCoreAuthenticationConfiguration.class,
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
@@ -64,6 +65,10 @@ public class JsonResourcePasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
     private PasswordManagementService passwordChangeService;
+
+    @Autowired
+    @Qualifier("passwordChangeService")
+    private PasswordValidationService passwordValidationService;
 
     @Test
     public void verifyUserEmailCanBeFound() {
@@ -91,5 +96,15 @@ public class JsonResourcePasswordManagementServiceTests {
         bean.setPassword("newPassword");
         final boolean res = passwordChangeService.change(c, bean);
         assertTrue(res);
+    }
+
+    @Test
+    public void verifyPasswordValidationService() {
+        final UsernamePasswordCredential c = new UsernamePasswordCredential("casuser", "password");
+        final PasswordChangeBean bean = new PasswordChangeBean();
+        bean.setConfirmedPassword("newPassword");
+        bean.setPassword("newPassword");
+        boolean isValid = passwordValidationService.isValid(c, bean);
+        assertTrue(isValid);
     }
 }
