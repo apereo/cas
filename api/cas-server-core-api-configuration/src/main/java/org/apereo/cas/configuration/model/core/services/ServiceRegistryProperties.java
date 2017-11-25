@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegist
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.serviceregistry.JpaServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
-import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
@@ -89,7 +89,7 @@ public class ServiceRegistryProperties implements Serializable {
      * Properties pertaining to mongo db service registry.
      */
     @NestedConfigurationProperty
-    private MongoServiceRegistryProperties mongo = new MongoServiceRegistryProperties();
+    private MongoDbServiceRegistryProperties mongo = new MongoDbServiceRegistryProperties();
 
     /**
      * Properties pertaining to couchbase service registry.
@@ -198,11 +198,11 @@ public class ServiceRegistryProperties implements Serializable {
         this.ldap = ldap;
     }
 
-    public MongoServiceRegistryProperties getMongo() {
+    public MongoDbServiceRegistryProperties getMongo() {
         return mongo;
     }
 
-    public void setMongo(final MongoServiceRegistryProperties mongo) {
+    public void setMongo(final MongoDbServiceRegistryProperties mongo) {
         this.mongo = mongo;
     }
 

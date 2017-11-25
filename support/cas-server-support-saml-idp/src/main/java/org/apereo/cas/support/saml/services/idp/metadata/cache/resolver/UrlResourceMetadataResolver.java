@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -28,7 +29,7 @@ import java.util.UUID;
  * @since 5.2.0
  */
 public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlResourceMetadataResolver.class);
 
     private final HttpClient httpClient;
     
@@ -65,7 +66,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
 
     private File getMetadataBackupFile(final AbstractResource metadataResource,
                                        final RegisteredService service) throws IOException {
-        final SamlIdPProperties.Metadata md = samlIdPProperties.getMetadata();
+        final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
         final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         LOGGER.debug("Metadata backup directory is at [{}]", backupDirectory.getCanonicalPath());
         
