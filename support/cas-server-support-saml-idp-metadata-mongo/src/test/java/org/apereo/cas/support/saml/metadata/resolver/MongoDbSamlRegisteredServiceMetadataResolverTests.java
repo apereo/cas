@@ -29,8 +29,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.MongoDbSamlMetadataProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
@@ -39,7 +37,6 @@ import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,7 +53,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 
 import static org.junit.Assert.*;
-import static org.mockito.Mockito.*;
 /**
  * This is {@link MongoDbSamlRegisteredServiceMetadataResolverTests}.
  *
