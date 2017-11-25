@@ -26,7 +26,7 @@ public class InMemoryResourceMetadataResolver extends ResourceBackedMetadataReso
     @Override
     protected byte[] fetchMetadata() throws ResolverException {
         try {
-                return inputstreamToByteArray(metadataResource.getInputStream());
+            return inputstreamToByteArray(metadataResource.getInputStream());
         } catch (final IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new ResolverException(e.getMessage(), e);
