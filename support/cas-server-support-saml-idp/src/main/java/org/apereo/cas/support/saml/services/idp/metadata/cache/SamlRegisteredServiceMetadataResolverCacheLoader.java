@@ -9,8 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServ
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.ChainingMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -26,7 +24,6 @@ import java.util.List;
  * @since 5.0.0
  */
 public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, MetadataResolver> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceMetadataResolverCacheLoader.class);
 
     /**
      * The Config bean.

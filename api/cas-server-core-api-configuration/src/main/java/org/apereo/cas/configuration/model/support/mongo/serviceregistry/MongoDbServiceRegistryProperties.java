@@ -10,10 +10,10 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-mongo-service-registry")
-public class MongoServiceRegistryProperties extends SingleCollectionMongoDbProperties {
+public class MongoDbServiceRegistryProperties extends SingleCollectionMongoDbProperties {
     private static final long serialVersionUID = -227092724742371662L;
     
-    public MongoServiceRegistryProperties() {
+    public MongoDbServiceRegistryProperties() {
         setCollection("cas-service-registry");
     }
 }

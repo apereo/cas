@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -55,7 +56,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      */
     protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
                                                final SamlRegisteredService service) throws Exception {
-        final SamlIdPProperties.Metadata md = samlIdPProperties.getMetadata();
+        final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(md.isFailFast());
         metadataProvider.setRequireValidMetadata(md.isRequireValidMetadata());

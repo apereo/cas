@@ -27,7 +27,7 @@ import java.util.Collection;
  * @since 5.2.0
  */
 public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileSystemResourceMetadataResolver.class);
 
     public FileSystemResourceMetadataResolver(final SamlIdPProperties samlIdPProperties, 
                                               final OpenSamlConfigBean configBean) {

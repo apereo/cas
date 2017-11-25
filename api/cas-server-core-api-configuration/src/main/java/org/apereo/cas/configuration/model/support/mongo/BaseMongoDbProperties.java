@@ -18,7 +18,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
     /**
      * core connection-related settings.
      */
-    private MongoConnections conns = new MongoConnections();
+    private MongoDbConnections conns = new MongoDbConnections();
 
     /**
      * The connection uri to the mongodb instance.
@@ -173,11 +173,11 @@ public abstract class BaseMongoDbProperties implements Serializable {
         this.socketKeepAlive = socketKeepAlive;
     }
 
-    public MongoConnections getConns() {
+    public MongoDbConnections getConns() {
         return conns;
     }
 
-    public void setConns(final MongoConnections conns) {
+    public void setConns(final MongoDbConnections conns) {
         this.conns = conns;
     }
     
@@ -213,7 +213,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
         this.sslEnabled = sslEnabled;
     }
 
-    public static class MongoConnections implements Serializable {
+    public static class MongoDbConnections implements Serializable {
 
         private static final long serialVersionUID = -2398415870062168474L;
         /**
