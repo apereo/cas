@@ -221,7 +221,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
-                + "Tickets that are issued during runtime will be LOST upon container restarts. This MAY impact SSO functionality.");
+                + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
         final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 

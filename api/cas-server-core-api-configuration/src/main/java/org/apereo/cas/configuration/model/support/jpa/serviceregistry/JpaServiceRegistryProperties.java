@@ -4,7 +4,7 @@ import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
- * Configuration properties class for svcreg.database.
+ * Configuration properties class for JPA service registry.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

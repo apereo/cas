@@ -131,7 +131,7 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts. "
+                + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
                 + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
 
         final List<RegisteredService> services = new ArrayList<>();
