@@ -1,17 +1,17 @@
-package org.apereo.cas.support.saml.metadata.resolver;
+package org.apereo.cas.support.saml.services.idp.metadata;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 /**
- * This is {@link MongoDbMetadata}.
+ * This is {@link SamlMetadataDocument}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Document
-public class MongoDbMetadata {
+public class SamlMetadataDocument {
     @Id
     private String id;
 
