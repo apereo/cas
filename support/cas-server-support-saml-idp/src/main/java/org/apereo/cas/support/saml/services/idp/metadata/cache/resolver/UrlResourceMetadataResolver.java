@@ -56,7 +56,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
                     this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
                     canonicalPath);
-            buildSingleMetadataResolver(metadataProvider, service);
+            configureAndInitializeSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

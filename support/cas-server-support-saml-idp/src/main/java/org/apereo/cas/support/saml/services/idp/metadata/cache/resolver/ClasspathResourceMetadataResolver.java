@@ -42,7 +42,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
 
             final Element metadataRoot = document.getDocumentElement();
             final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
-            buildSingleMetadataResolver(metadataProvider, service);
+            configureAndInitializeSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

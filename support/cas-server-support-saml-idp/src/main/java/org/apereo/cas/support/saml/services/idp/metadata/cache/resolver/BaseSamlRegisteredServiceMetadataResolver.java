@@ -1,11 +1,15 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import net.shibboleth.ext.spring.resource.ResourceHelper;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
+import org.apereo.cas.support.saml.InMemoryResourceMetadataResolver;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.util.RegexUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
@@ -18,8 +22,12 @@ import org.opensaml.saml.saml2.metadata.IDPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
 
 import javax.xml.namespace.QName;
+import java.io.InputStream;
+import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -48,14 +56,37 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
     }
 
     /**
+     * Build metadata resolver from document.
+     *
+     * @param service          the service
+     * @param metadataDocument the metadata document
+     * @return the metadata resolver
+     */
+    protected AbstractMetadataResolver buildMetadataResolverFrom(final SamlRegisteredService service,
+                                                                 final SamlMetadataDocument metadataDocument) {
+        try {
+            final StringReader reader = new StringReader(metadataDocument.getValue());
+            final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
+            final String desc = StringUtils.defaultString(service.getDescription(), service.getName());
+            final InputStreamResource metadataResource = new InputStreamResource(is, desc);
+            final AbstractMetadataResolver metadataResolver = new InMemoryResourceMetadataResolver(ResourceHelper.of(metadataResource));
+            configureAndInitializeSingleMetadataResolver(metadataResolver, service);
+            return metadataResolver;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+    
+    /**
      * Build single metadata resolver metadata resolver.
      *
      * @param metadataProvider the metadata provider
      * @param service          the service
      * @throws Exception the exception
      */
-    protected void buildSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
-                                               final SamlRegisteredService service) throws Exception {
+    protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
+                                                                final SamlRegisteredService service) throws Exception {
         final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(md.isFailFast());

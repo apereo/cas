@@ -152,6 +152,13 @@ layout: null
 
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
+        *   [Cloudwatch](/$version/installation/Logging-Cloudwatch.html)
+        *   [Loggly](/$version/installation/Logging-Loggly.html)
+        *   [Logstash](/$version/installation/Logging-Logstash.html)
+        *   [MDC](/$version/installation/Logging-MDC.html)
+        *   [Papertrail](/$version/installation/Logging-Papertrail.html)
+        *   [Sentry](/$version/installation/Logging-Sentry.html)
+        *   [SysLog](/$version/installation/Logging-SysLog.html)
     *   [Audits](/$version/installation/Audits.html)
     
 * [Monitoring & Statistics](#monitoroverview)
@@ -159,7 +166,6 @@ layout: null
     *   [Administration Server](/$version/installation/Configuring-Monitoring-Administration.html)
     *   [Metrics](/$version/installation/Configuring-Metrics.html)
     *   [Monitors](/$version/installation/Configuring-Monitoring.html)
-    *   [Sentry](/$version/integration/Sentry-Integration.html)
         
 * [User Interface](#user_interface)
     *   [Overview](/$version/installation/User-Interface-Customization.html)
