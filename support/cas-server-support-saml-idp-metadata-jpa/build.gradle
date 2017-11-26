@@ -20,9 +20,14 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")
+    testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-tickets")
     testImplementation project(":core:cas-server-core-web")
     testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core")
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-logout")
     testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }
