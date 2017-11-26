@@ -57,13 +57,25 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
 
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
+        final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
+        update(account);
+    }
+
+    @Override
+    public OneTimeTokenAccount create(final String username) {
+        final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
+        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+    }
+
+    @Override
+    public void update(final OneTimeTokenAccount account) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
-        headers.put("username", CollectionUtils.wrap(userName));
-        headers.put("validationCode", CollectionUtils.wrap(String.valueOf(validationCode)));
-        headers.put("secretKey", CollectionUtils.wrap(secretKey));
-        headers.put("scratchCodes", scratchCodes.stream().map(String::valueOf).collect(Collectors.toList()));
+        headers.put("username", CollectionUtils.wrap(account.getUsername()));
+        headers.put("validationCode", CollectionUtils.wrap(String.valueOf(account.getValidationCode())));
+        headers.put("secretKey", CollectionUtils.wrap(account.getSecretKey()));
+        headers.put("scratchCodes", account.getScratchCodes().stream().map(String::valueOf).collect(Collectors.toList()));
 
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Boolean.class);
@@ -71,11 +83,5 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
             LOGGER.debug("Posted google authenticator account successfully");
         }
         LOGGER.warn("Failed to save google authenticator account successfully");
-    }
-
-    @Override
-    public OneTimeTokenAccount create(final String username) {
-        final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
-        return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
     }
 }

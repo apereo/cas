@@ -136,7 +136,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ## Routing Logs to Sentry
 
-Log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
+Log data can be automatically routed to and integrated with [Sentry](../Logging-Sentry.html) to track and monitor CAS events and errors.
 
 ## Routing Logs to Papertrail
 

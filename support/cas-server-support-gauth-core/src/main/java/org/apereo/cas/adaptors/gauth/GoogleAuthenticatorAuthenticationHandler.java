@@ -83,6 +83,12 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid), null);
         }
+
+        if (acct.getScratchCodes().contains(otp)) {
+            LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
+            acct.getScratchCodes().remove(otp);
+            this.credentialRepository.save();
+        }
         throw new FailedLoginException("Failed to authenticate code " + otp);
     }
 

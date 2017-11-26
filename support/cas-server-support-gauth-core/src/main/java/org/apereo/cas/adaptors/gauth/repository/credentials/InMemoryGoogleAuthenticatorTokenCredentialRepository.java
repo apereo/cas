@@ -21,7 +21,6 @@ public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseIn
      * @param googleAuthenticator the google authenticator
      */
     public InMemoryGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
-
         this.googleAuthenticator = googleAuthenticator;
     }
 

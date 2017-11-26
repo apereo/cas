@@ -75,7 +75,7 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
             }
         });
         try {
-            buildSingleMetadataResolver(resolver, service);
+            configureAndInitializeSingleMetadataResolver(resolver, service);
             return CollectionUtils.wrap(resolver);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

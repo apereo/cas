@@ -58,12 +58,17 @@ public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOne
     @Override
     public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
         final GoogleAuthenticatorAccount account = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
-        this.mongoTemplate.save(account, this.collectionName);
+        update(account);
     }
 
     @Override
     public OneTimeTokenAccount create(final String username) {
         final GoogleAuthenticatorKey key = this.googleAuthenticator.createCredentials();
         return new GoogleAuthenticatorAccount(username, key.getKey(), key.getVerificationCode(), key.getScratchCodes());
+    }
+
+    @Override
+    public void update(final OneTimeTokenAccount account) {
+        this.mongoTemplate.save(account, this.collectionName);
     }
 }

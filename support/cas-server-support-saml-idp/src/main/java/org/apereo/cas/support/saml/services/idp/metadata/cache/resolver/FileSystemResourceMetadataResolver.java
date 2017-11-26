@@ -48,7 +48,7 @@ public class FileSystemResourceMetadataResolver extends BaseSamlRegisteredServic
             } else {
                 metadataResolver = new ResourceBackedMetadataResolver(ResourceHelper.of(metadataResource));
             }
-            buildSingleMetadataResolver(metadataResolver, service);
+            configureAndInitializeSingleMetadataResolver(metadataResolver, service);
             return CollectionUtils.wrap(metadataResolver);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
