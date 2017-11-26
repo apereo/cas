@@ -46,7 +46,8 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.PredicatedPrincipalAttributeMul
 import org.apereo.cas.web.flow.resolver.impl.mfa.PrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RegisteredServiceMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.mfa.RequestParameterMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestHeaderMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestParameterMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RestEndpointMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.adaptive.AdaptiveMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.adaptive.TimedMultifactorAuthenticationPolicyEventResolver;
@@ -196,6 +197,7 @@ public class CasCoreWebflowConfiguration {
         r.addDelegate(timedAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(globalAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(requestParameterAuthenticationPolicyWebflowEventResolver());
+        r.addDelegate(requestHeaderAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(restEndpointAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(groovyScriptAuthenticationPolicyWebflowEventResolver());
         r.addDelegate(registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver());
@@ -266,6 +268,16 @@ public class CasCoreWebflowConfiguration {
                 authenticationRequestServiceSelectionStrategies, selector, casProperties);
     }
 
+    @ConditionalOnMissingBean(name = "requestHeaderAuthenticationPolicyWebflowEventResolver")
+    @Bean
+    @RefreshScope
+    public CasWebflowEventResolver requestHeaderAuthenticationPolicyWebflowEventResolver() {
+        return new RequestHeaderMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
+            centralAuthenticationService, servicesManager,
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies, selector, casProperties);
+    }
+    
     @ConditionalOnMissingBean(name = "registeredServicePrincipalAttributeAuthenticationPolicyWebflowEventResolver")
     @Bean
     @RefreshScope
