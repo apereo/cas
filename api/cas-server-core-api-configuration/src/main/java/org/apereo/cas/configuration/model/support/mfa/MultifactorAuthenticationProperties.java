@@ -33,6 +33,12 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private String globalFailureMode = "CLOSED";
     /**
      * MFA can be triggered for a specific authentication request,
+     * provided the  request  contains a session/request attribute that indicates the required MFA authentication flow.
+     * The attribute name is configurable, but its value must match the authentication provider id of an available MFA provider.
+     */
+    private String sessionAttribute = "authn_method";
+    /**
+     * MFA can be triggered for a specific authentication request,
      * provided the initial request to the CAS /login endpoint contains a request header that indicates the required MFA authentication flow.
      * The header name is configurable, but its value must match the authentication provider id of an available MFA provider.
      */
@@ -184,6 +190,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SwivelMultifactorProperties swivel = new SwivelMultifactorProperties();
+
+    public String getSessionAttribute() {
+        return sessionAttribute;
+    }
+
+    public void setSessionAttribute(final String sessionAttribute) {
+        this.sessionAttribute = sessionAttribute;
+    }
 
     public Resource getGlobalPrincipalAttributePredicate() {
         return globalPrincipalAttributePredicate;
