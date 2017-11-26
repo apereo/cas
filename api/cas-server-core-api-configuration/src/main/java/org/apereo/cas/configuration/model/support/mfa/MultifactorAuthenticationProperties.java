@@ -33,11 +33,16 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private String globalFailureMode = "CLOSED";
     /**
      * MFA can be triggered for a specific authentication request,
+     * provided the initial request to the CAS /login endpoint contains a request header that indicates the required MFA authentication flow.
+     * The header name is configurable, but its value must match the authentication provider id of an available MFA provider.
+     */
+    private String requestHeader = "authn_method";
+    /**
+     * MFA can be triggered for a specific authentication request,
      * provided the initial request to the CAS /login endpoint contains a parameter that indicates the required MFA authentication flow.
      * The parameter name is configurable, but its value must match the authentication provider id of an available MFA provider.
      */
     private String requestParameter = "authn_method";
-
     /**
      * MFA can be triggered based on the results of a remote REST endpoint of your design.
      * If the endpoint is configured, CAS shall issue a POST, providing the principal and the service url.
@@ -250,6 +255,14 @@ public class MultifactorAuthenticationProperties implements Serializable {
 
     public void setRestEndpoint(final String restEndpoint) {
         this.restEndpoint = restEndpoint;
+    }
+
+    public String getRequestHeader() {
+        return requestHeader;
+    }
+
+    public void setRequestHeader(final String requestHeader) {
+        this.requestHeader = requestHeader;
     }
 
     public String getRequestParameter() {

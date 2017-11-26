@@ -437,11 +437,11 @@ from a Metadata query server, the metadata location must be configured to point 
 
 Metadata documents may also be stored in and fetched from a MongoDb instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined collection that is taught to CAS via settings.  The outline of the document is as follows:
 
-| Field             | Description
-|-----------------------|---------------------------------------------------
-| `id`             | The identifier of the record.
+| Field                     | Description
+|--------------|---------------------------------------------------
+| `id`                          | The identifier of the record.
 | `name`             | Indexed field which describes and names the metadata briefly.
-| `value`             | The XML document representing the metadata for the service provider.
+| `value`              | The XML document representing the metadata for the service provider.
 
 Support is enabled by including the following module in the overlay:
 
@@ -463,6 +463,39 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
   "id" : 10000003,
   "description" : "A MongoDb-based metadata resolver",
   "metadataLocation" : "mongodb://"
+}
+```
+
+#### JPA
+
+Metadata documents may also be stored in and fetched from a relational database instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
+
+| Field                     | Description
+|--------------|---------------------------------------------------
+| `id`                          | The identifier of the record.
+| `name`             | Indexed field which describes and names the metadata briefly.
+| `value`              | The XML document representing the metadata for the service provider.
+
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-saml-idp-metadata-jpa</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from database  instances:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "description" : "A relational-db-based metadata resolver",
+  "metadataLocation" : "jdbc://"
 }
 ```
 
