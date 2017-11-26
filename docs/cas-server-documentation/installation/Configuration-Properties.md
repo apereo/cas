@@ -2667,6 +2667,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # Activate MFA based on an optional request parameter
 # cas.authn.mfa.requestParameter=authn_method
 
+# Activate MFA based on an optional request header
+# cas.authn.mfa.requestHeader=authn_method
+
 # Describe the global failure mode in case provider cannot be reached
 # cas.authn.mfa.globalFailureMode=CLOSED
 
@@ -5973,5 +5976,3 @@ The following LDAP types are supported:
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
 ```
-
-
