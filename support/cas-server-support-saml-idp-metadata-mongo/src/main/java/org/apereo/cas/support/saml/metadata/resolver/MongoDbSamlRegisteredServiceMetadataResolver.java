@@ -53,10 +53,15 @@ public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegist
     public boolean supports(final SamlRegisteredService service) {
         try {
             final String metadataLocation = service.getMetadataLocation();
-            return metadataLocation.trim().startsWith("mongodb://");
+            return metadataLocation.trim().startsWith("jdbc://");
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
         return false;
+    }
+
+    @Override
+    public void saveOrUpdate(final SamlMetadataDocument document) {
+        this.mongoTemplate.save(document, this.collectionName);
     }
 }

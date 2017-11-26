@@ -52,6 +52,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private MongoDbSamlMetadataProperties mongo = new MongoDbSamlMetadataProperties();
 
     /**
+     * Properties pertaining to jpa metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private JpaSamlMetadataProperties jpa = new JpaSamlMetadataProperties();
+    
+    /**
      * Algorithm name to use when generating private key.
      */
     private String privateKeyAlgName = "RSA";
@@ -191,5 +197,13 @@ public class SamlIdPMetadataProperties implements Serializable {
 
     public void setMongo(final MongoDbSamlMetadataProperties mongo) {
         this.mongo = mongo;
+    }
+
+    public JpaSamlMetadataProperties getJpa() {
+        return jpa;
+    }
+
+    public void setJpa(final JpaSamlMetadataProperties jpa) {
+        this.jpa = jpa;
     }
 }
