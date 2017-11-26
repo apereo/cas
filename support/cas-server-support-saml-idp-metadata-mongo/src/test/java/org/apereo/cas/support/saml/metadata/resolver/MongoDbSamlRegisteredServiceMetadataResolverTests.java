@@ -30,6 +30,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.MongoDbSamlMetadataProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -113,7 +114,7 @@ public class MongoDbSamlRegisteredServiceMetadataResolverTests {
     public void setup() throws Exception {
         final MongoDbSamlMetadataProperties mongo = casProperties.getAuthn().getSamlIdp().getMetadata().getMongo();
         final ClassPathResource res = new ClassPathResource("sp-metadata.xml");
-        final MongoDbMetadata md = new MongoDbMetadata();
+        final SamlMetadataDocument md = new SamlMetadataDocument();
         md.setName("SP");
         md.setValue(IOUtils.toString(res.getInputStream(), StandardCharsets.UTF_8));
         mongoDbSamlMetadataResolverTemplate.save(md, mongo.getCollection());
