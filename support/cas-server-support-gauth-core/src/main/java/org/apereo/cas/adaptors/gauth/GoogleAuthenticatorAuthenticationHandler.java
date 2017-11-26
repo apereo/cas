@@ -78,17 +78,20 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
             throw new AccountExpiredException(uid + " cannot reuse OTP " + otp + " as it may be expired/invalid");
         }
 
-        final boolean isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
+        boolean isCodeValid = this.googleAuthenticatorInstance.authorize(acct.getSecretKey(), otp);
+
+        if (!isCodeValid && acct.getScratchCodes().contains(otp)) {
+            LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
+            acct.getScratchCodes().removeIf(token -> token == otp);
+            this.credentialRepository.update(acct);
+            isCodeValid = true;
+        }
+
         if (isCodeValid) {
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
             return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid), null);
         }
-
-        if (acct.getScratchCodes().contains(otp)) {
-            LOGGER.warn("Using scratch code [{}] to authenticate user [{}]. Scratch code will be removed", otp, uid);
-            acct.getScratchCodes().remove(otp);
-            this.credentialRepository.save();
-        }
+        
         throw new FailedLoginException("Failed to authenticate code " + otp);
     }
 
