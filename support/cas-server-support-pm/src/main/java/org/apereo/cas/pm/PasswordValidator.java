@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.binding.validation.ValidationContext;
+import org.springframework.util.StringUtils;
 
 /**
  * This is {@link PasswordValidator}.
@@ -25,6 +26,13 @@ public class PasswordValidator {
      */
     public void validateCasMustChangePassView(final PasswordChangeBean bean, final ValidationContext context) {
         final MessageContext messages = context.getMessageContext();
+
+        if (!StringUtils.hasText(bean.getPassword())) {
+            messages.addMessage(new MessageBuilder().error().source("pm.passwordFailedCriteria").
+                    defaultText("Password policy rejected empty password.").build());
+            return;
+        }
+        
         if (!bean.getPassword().equals(bean.getConfirmedPassword())) {
             messages.addMessage(new MessageBuilder().error().source("pm.passwordsMustMatch").
                     defaultText("Provided passwords do not match.").build());
