@@ -13,6 +13,11 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-captcha")
 public class GoogleRecaptchaProperties implements Serializable {
     private static final long serialVersionUID = -8955074129123813915L;
+
+    /**
+     * Whether google reCAPTCHA should be enabled.
+     */
+    private boolean enabled = true;
     /**
      * The google reCAPTCHA site key.
      */
@@ -48,5 +53,13 @@ public class GoogleRecaptchaProperties implements Serializable {
 
     public void setSiteKey(final String siteKey) {
         this.siteKey = siteKey;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
     }
 }
