@@ -25,6 +25,7 @@ signing.keyId=7A24P9QB
 signing.password=P@$$w0rd
 signing.secretKeyRingFile=/Users/example/.gnupg/secring.gpg
 org.gradle.daemon=false
+org.gradle.parallel=false
 ```
 
 - Checkout the CAS project: `git clone git@github.com:apereo/cas.git cas-server`
