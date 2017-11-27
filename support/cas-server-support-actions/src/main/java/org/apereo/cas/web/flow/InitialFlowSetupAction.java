@@ -102,7 +102,6 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
-        WebUtils.putRecaptchaSiteKeyIntoFlowScope(context, casProperties.getGoogleRecaptcha().getSiteKey());
         WebUtils.putStaticAuthenticationIntoFlowScope(context,
                 StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
                         || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
