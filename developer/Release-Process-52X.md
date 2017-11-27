@@ -44,7 +44,7 @@ skip this step and move on to next section to build and release.</p></div>
 #### Travis CI
 
 - Change `.travis.yml` to *only* build the newly-created release branch.
-- Change `travis/deploy-to-sonatype.sh` to point to the newly-created release branch.
+- Change `travis/script.sh` to point to the newly-created release branch.
 - Change `travis/push-javadoc-to-gh-pages.sh` to point to the newly-created release branch.
  
 Do not forget to commit all changes and push changes upstream, creatng a new remote branch to track the release.
