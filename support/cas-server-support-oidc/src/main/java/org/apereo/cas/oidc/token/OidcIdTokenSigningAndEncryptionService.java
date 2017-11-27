@@ -13,7 +13,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link OidcIdTokenSigningAndEncryptionService}.
@@ -115,9 +114,7 @@ public class OidcIdTokenSigningAndEncryptionService {
 
         jws.setKey(jsonWebKey.getPrivateKey());
         jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-        if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
-            jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
-        } else {
+        if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
             jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
         }
         LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());

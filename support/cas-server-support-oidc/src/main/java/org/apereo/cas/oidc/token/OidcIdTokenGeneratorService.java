@@ -170,7 +170,7 @@ public class OidcIdTokenGeneratorService {
         LOGGER.debug("Digesting access token hash via algorithm [{}]", hashAlg);
         final byte[] digested = DigestUtils.rawDigest(hashAlg, tokenBytes);
         final byte[] hashBytesLeftHalf = Arrays.copyOf(digested, digested.length / 2);
-        return EncodingUtils.encodeBase64(hashBytesLeftHalf);
+        return EncodingUtils.encodeUrlSafeBase64(hashBytesLeftHalf);
     }
 }
 
