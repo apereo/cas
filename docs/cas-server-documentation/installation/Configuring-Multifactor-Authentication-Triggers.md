@@ -282,6 +282,8 @@ An example request that triggers an authentication flow based on a request param
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ```
 
+The same strategy also applied to triggers that are based on request/session attributes, which tend to get used for internal communications between APIs and CAS components specially when designing addons and extensions.
+
 ## Principal Attribute Per Application
 
 As a hybrid option, MFA can be triggered for a specific application registered inside the CAS service registry, provided

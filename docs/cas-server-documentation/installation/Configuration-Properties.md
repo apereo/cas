@@ -2670,6 +2670,9 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # Activate MFA based on an optional request header
 # cas.authn.mfa.requestHeader=authn_method
 
+# Activate MFA based on an optional request/session attribute
+# cas.authn.mfa.sessionAttribute=authn_method
+
 # Describe the global failure mode in case provider cannot be reached
 # cas.authn.mfa.globalFailureMode=CLOSED
 
@@ -5280,13 +5283,14 @@ Attribute configuration and customizations that are processed and accepted by th
 # cas.authn.attributeRepository.stub.attributes.eppn=eppn
 ```
 
-
 Use LDAP to enforce access into the management web application either by group or attribute.
+
 ## Google reCAPTCHA Integration
 
 Display Google's reCAPTCHA widget on the CAS login page.
 
 ```properties
+# cas.googleRecaptcha.enabled=true
 # cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
 # cas.googleRecaptcha.siteKey=
 # cas.googleRecaptcha.secret=
