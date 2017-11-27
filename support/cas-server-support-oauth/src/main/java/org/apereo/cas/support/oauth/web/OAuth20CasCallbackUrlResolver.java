@@ -34,7 +34,7 @@ public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     @Override
     public String compute(final String url, final WebContext context) {
         if (url.startsWith(callbackUrl)) {
-            final URIBuilder builder = new URIBuilder(url);
+            final URIBuilder builder = new URIBuilder(url, true);
 
             Optional<URIBuilder.BasicNameValuePair> parameter = getQueryParameter(context, OAuth20Constants.CLIENT_ID);
             parameter.ifPresent(basicNameValuePair -> builder.addParameter(basicNameValuePair.getName(), basicNameValuePair.getValue()));

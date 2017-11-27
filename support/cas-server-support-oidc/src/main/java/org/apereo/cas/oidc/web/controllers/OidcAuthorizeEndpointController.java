@@ -26,6 +26,7 @@ import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -75,6 +76,12 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
         }
 
         return super.handleRequest(request, response);
+    }
+
+    @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    @Override
+    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handleRequest(request, response);
     }
 
     @Override
