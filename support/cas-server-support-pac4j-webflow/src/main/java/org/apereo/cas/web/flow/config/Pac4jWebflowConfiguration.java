@@ -4,6 +4,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
 import org.apereo.cas.web.flow.Pac4jWebflowConfigurer;
+import org.apereo.cas.web.flow.TerminateSessionAction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,6 +46,18 @@ public class Pac4jWebflowConfiguration {
     private Action saml2ClientLogoutAction;
 
     @Autowired
+    @Qualifier("pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction")
+    private Action ignoreServiceRedirectForSamlSloAction;
+
+    @Autowired
+    @Qualifier("terminateSessionAction")
+    private TerminateSessionAction terminateSessionAction;
+
+    @Autowired
+    @Qualifier("pac4jLimitedTerminateSessionAction")
+    private Action limitedTerminateSessionAction;
+
+    @Autowired
     @Qualifier("logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
     
@@ -53,7 +66,8 @@ public class Pac4jWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer pac4jWebflowConfigurer() {
         final CasWebflowConfigurer w = new Pac4jWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
+                logoutFlowDefinitionRegistry, saml2ClientLogoutAction, ignoreServiceRedirectForSamlSloAction, terminateSessionAction,
+                limitedTerminateSessionAction, applicationContext, casProperties);
         w.initialize();
         return w;
     }

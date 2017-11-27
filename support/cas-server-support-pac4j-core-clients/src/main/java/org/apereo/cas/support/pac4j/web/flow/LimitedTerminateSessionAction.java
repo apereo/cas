@@ -9,33 +9,42 @@ import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.execution.FlowExecutionListenerAdapter;
-import org.springframework.webflow.execution.FlowSession;
+import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Throwables;
 
 
 /**
- * A Spring Flow execution listener that invalidates user session after the flow terminates.
+ * A Spring Flow action that invalidates user session.
+ * 
+ * Intended to be used at the end of the flow, in the "on-end" section.
  * 
  * Sometimes we need the session until the very last moment of the flow (e.g. during logout, we need the session to render the SAML SLO
  * request), that's why we invalidate it after the flow terminates.
+ * 
+ * It contains a subset of code from the original {@code TerminateSessionAction} that is not executed on deferred session termination.
+ * So these two actions are complementary:
+ * <ul>
+ * <li>Either only {@code TerminateSessionAction} is used,</li>
+ * <li>or both are used, {@code TerminateSessionAction} does everything except actual HTTP session termination and PAC4J logout, which is
+ * done in {@code LimitedTerminateSessionAction}.</li>
+ * </ul>
  * 
  * @author jkacer
  * 
  * @since 5.2.0
  */
-public class TerminateSessionFlowExecutionListener extends FlowExecutionListenerAdapter {
+public class LimitedTerminateSessionAction extends AbstractAction {
 
-    private final Logger logger = LoggerFactory.getLogger(TerminateSessionFlowExecutionListener.class);
+    private final Logger logger2 = LoggerFactory.getLogger(LimitedTerminateSessionAction.class);
 
 
     @Override
-    public void sessionEnded(final RequestContext context, final FlowSession session, final String outcome, final AttributeMap<?> output) {
-        super.sessionEnded(context, session, outcome, output);
+    protected Event doExecute(final RequestContext context) {
         terminate(context);
+        return null;
     }
 
 
@@ -50,7 +59,7 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             destroyApplicationSession(request, response);
-            logger.debug("Terminated the application session successfully.");
+            logger2.debug("Terminated the application session successfully.");
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -66,7 +75,7 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
      *            The HTTP response.
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        logger.debug("Destroying application session");
+        logger2.debug("Destroying application session");
         final ProfileManager<?> manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 
@@ -75,5 +84,6 @@ public class TerminateSessionFlowExecutionListener extends FlowExecutionListener
             session.invalidate();
         }
     }
+
 
 }

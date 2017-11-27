@@ -14,12 +14,18 @@ import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.authentication.ClientAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandler;
+import org.apereo.cas.support.pac4j.web.flow.IgnoreServiceRedirectUrlForSamlAction;
 import org.apereo.cas.support.pac4j.web.flow.SAML2ClientLogoutAction;
+import org.apereo.cas.support.pac4j.web.flow.SingleLogoutPreparationAction;
+import org.apereo.cas.support.pac4j.web.flow.LimitedTerminateSessionAction;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.profile.service.ProfileService;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -80,6 +86,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
+
 
     private void configureGithubClient(final Collection<BaseClient> properties) {
         final Pac4jProperties.Github github = casProperties.getAuthn().getPac4j().getGithub();
@@ -417,30 +424,55 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         return new ClientAuthenticationMetaDataPopulator();
     }
 
+    @ConditionalOnMissingBean(name = "pac4jSingleLogoutPreparationAction")
+    @Bean
+    @Autowired
+    public Action pac4jSingleLogoutPreparationAction(
+            @Qualifier("ticketGrantingTicketCookieGenerator") final CookieRetrievingCookieGenerator tgtCookieGenerator,
+            @Qualifier("pac4jProfileService") final ProfileService<CommonProfile> pac4jProfileService) {
+        return new SingleLogoutPreparationAction(tgtCookieGenerator, pac4jProfileService);
+    }
+
+    @ConditionalOnMissingBean(name = "pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction")
+    @Bean
+    @Autowired
+    public Action pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction(@Qualifier("builtClients") final Clients clients) {
+        return new IgnoreServiceRedirectUrlForSamlAction(clients);
+    }
+
+    @ConditionalOnMissingBean(name = "pac4jLimitedTerminateSessionAction")
+    @Bean
+    public Action pac4jLimitedTerminateSessionAction() {
+        return new LimitedTerminateSessionAction();
+    }
+
     @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
     @Bean
-    public Action saml2ClientLogoutAction() {
-        return new SAML2ClientLogoutAction(builtClients());
+    @Autowired
+    public Action saml2ClientLogoutAction(@Qualifier("builtClients") final Clients clients) {
+        return new SAML2ClientLogoutAction(clients);
     }
 
     @RefreshScope
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
-    public AuthenticationHandler clientAuthenticationHandler() {
+    @Autowired
+    public AuthenticationHandler clientAuthenticationHandler(@Qualifier("builtClients") final Clients clients) {
         final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
-                clientPrincipalFactory(), builtClients());
+                clientPrincipalFactory(), clients);
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }
 
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
-    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
+    @Autowired
+    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer(@Qualifier("builtClients") final Clients clients) {
         return plan -> {
-            if (!builtClients().findAllClients().isEmpty()) {
+            if (!clients.findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");
-                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
+                plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(clients), personDirectoryPrincipalResolver);
                 plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());
             }
         };

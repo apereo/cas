@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.apereo.cas.support.pac4j.web.flow.IgnoreServiceRedirectUrlForSamlActionTests;
 import org.apereo.cas.support.pac4j.web.flow.SingleLogoutPreparationActionTests;
-import org.apereo.cas.support.pac4j.web.flow.TerminateSessionFlowExecutionListenerTests;
+import org.apereo.cas.support.pac4j.web.flow.LimitedTerminateSessionActionTests;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -21,7 +21,7 @@ import org.apereo.cas.support.pac4j.web.flow.TerminateSessionFlowExecutionListen
     DelegatedClientAuthenticationActionTests.class,
     IgnoreServiceRedirectUrlForSamlActionTests.class,
     SingleLogoutPreparationActionTests.class,
-    TerminateSessionFlowExecutionListenerTests.class
+    LimitedTerminateSessionActionTests.class
 })
 public class AllTestsSuite {
 }

@@ -32,6 +32,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class SingleLogoutPreparationAction extends AbstractAction {
 
+    public static final String WEBFLOW_ACTION_STATE_ID = "prepareForSingleLogout";
+    public static final String WEBFLOW_ACTION_EVAL_EXPRESSION = "pac4jSingleLogoutPreparationAction";
+    
     private final Logger logger2 = LoggerFactory.getLogger(SingleLogoutPreparationAction.class);
 
     private final ProfileService<? extends CommonProfile> profileService;

@@ -12,26 +12,22 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
-import org.springframework.webflow.core.collection.AttributeMap;
-import org.springframework.webflow.core.collection.LocalAttributeMap;
-import org.springframework.webflow.execution.FlowSession;
-import org.springframework.webflow.test.MockFlowSession;
 import org.springframework.webflow.test.MockRequestContext;
 
 /**
- * Unit test of {@link TerminateSessionFlowExecutionListener}.
+ * Unit test of {@link LimitedTerminateSessionAction}.
  * 
  * @author jkacer
  * 
  * @since 5.2.0
  */
-public class TerminateSessionFlowExecutionListenerTests {
+public class LimitedTerminateSessionActionTests {
 
-    private TerminateSessionFlowExecutionListener listenerUnderTest;
+    private LimitedTerminateSessionAction actionUnderTest;
 
 
     @Test
-    public void httpSessionMustBeInvalidatedOnFlowSessionEnd() {
+    public void httpSessionMustBeInvalidatedAfterExecution() {
         // Prepare the input
         final MockHttpServletRequest nativeRequest = new MockHttpServletRequest();
         final MockHttpServletResponse nativeResponse = new MockHttpServletResponse();
@@ -42,12 +38,8 @@ public class TerminateSessionFlowExecutionListenerTests {
         final MockRequestContext rc = new MockRequestContext();
         rc.setExternalContext(externalContext);
 
-        final FlowSession flowSession = new MockFlowSession();
-        final String outcome = "EndStateId";
-        final AttributeMap<?> flowOutput = new LocalAttributeMap<>();
-
         // Run the tested listener
-        listenerUnderTest.sessionEnded(rc, flowSession, outcome, flowOutput);
+        actionUnderTest.doExecute(rc);
 
         // Check the session state
         assertTrue("The HTTP session should have been invalidated in the Terminate Session Listener.", session.isInvalid());
@@ -61,8 +53,8 @@ public class TerminateSessionFlowExecutionListenerTests {
 
 
     @Before
-    public void setUpTestedListener() {
-        listenerUnderTest = new TerminateSessionFlowExecutionListener();
+    public void setUpTestedAction() {
+        actionUnderTest = new LimitedTerminateSessionAction();
     }
 
 }

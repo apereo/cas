@@ -75,7 +75,7 @@ public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
 
         if (shouldServiceRedirectBeIgnored(client, context)) {
             requestContext.getFlowScope().remove(FLOW_ATTR_LOGOUT_REDIR_URL);
-            logger2.debug("The Logout Redirection URL has been removed from the web low scope in order to allow for SAML2 SLO.");
+            logger2.debug("The Logout Redirection URL has been removed from the web flow scope in order to allow for SAML2 SLO.");
         }
 
         return null;
