@@ -1,6 +1,6 @@
 #!/bin/bash
 
-branchName="master"
+branchName="5.2.x"
 gradle="sudo ./gradlew"
 gradleUpload="uploadArchives"
 gradleUploadOptions="-x javadoc --parallel -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
