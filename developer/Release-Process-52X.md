@@ -103,10 +103,8 @@ and if the release process here had you create a new branch.
 
 - [CAS Webapp Maven Overlay](https://github.com/apereo/cas-overlay-template)
 - [CAS Webapp Gradle Overlay](https://github.com/apereo/cas-gradle-overlay-template)
-- [CAS Configuration Server Overlay](https://github.com/apereo/cas-configserver-overlay)
-- [CAS Services Management WebApp Overlay](https://github.com/apereo/cas-services-management-overlay)
-- [CAS Discovery Server Overlay](https://github.com/apereo/cas-discoveryserver-overlay)
-- [CAS Spring Boot Admin Server Overlay](https://github.com/apereo/cas-bootadmin-overlay)
+- [CAS Management WebApp Overlay](https://github.com/apereo/cas-management-overlay)
+- [CAS Management Gradle Overlay](https://github.com/apereo/cas-management-gradle-overlay)
 
 ## Update Documentation
 
