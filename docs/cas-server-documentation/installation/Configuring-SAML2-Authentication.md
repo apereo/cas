@@ -102,7 +102,7 @@ Here is a generated metadata file as an example:
 
 ### Server Configuration
 
-<div class="alert alert-info"><strong>Server Configuration</strong><p>If you have deployed CAS in an external application server/servlet container (i.e. Apache Tomcat) you will need to make sure that the server is adjusted to handle large-enough <code>HttpHeaderSize</code> and <code>HttpPostSize</code> values (i.e. 2097152). The embedded container that ships with CAS handles this automatically.</p></div>
+If you have deployed CAS in an external application server/servlet container (i.e. Apache Tomcat) you will need to make sure that the server is adjusted to handle large-enough `HttpHeaderSize` and `HttpPostSize` values (i.e. `2097152`). The embedded container that ships with CAS handles this automatically.
 
 ### Mapping Endpoints
 
@@ -512,7 +512,7 @@ A metadata location for a SAML service definition may  point to an external Groo
   "name" : "SAMLService",
   "id" : 10000003,
   "description" : "A Groovy-based metadata resolver",
-  "metadataLocation" : "file:/etc/cas/config/groovy-metadata.xml"
+  "metadataLocation" : "file:/etc/cas/config/groovy-metadata.groovy"
 }
 ```
 
