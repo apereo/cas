@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 
-import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
@@ -36,16 +35,16 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * Sets the path to the directory where JSON service registry entries are
      * stored. Uses the {@link DefaultRegisteredServiceJsonSerializer} by default.
      *
-     * @param configDirectory the config directory where service registry files can be found.
-     * @param enableWatcher   the enable watcher
-     * @param eventPublisher  the event publisher
+     * @param configDirectory                      the config directory where service registry files can be found.
+     * @param enableWatcher                        the enable watcher
+     * @param eventPublisher                       the event publisher
+     * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, 
+    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher,
                                   final ApplicationEventPublisher eventPublisher,
-                                  final DistributedCacheManager distributedCacheManager,
                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
-        super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), 
-                enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+        super(configDirectory, new DefaultRegisteredServiceJsonSerializer(),
+            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     /**
@@ -53,9 +52,10 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * Sets the path to the directory where JSON service registry entries are
      * stored. Uses the {@link DefaultRegisteredServiceJsonSerializer} by default.
      *
-     * @param configDirectory the config directory where service registry files can be found.
-     * @param enableWatcher   the enable watcher
-     * @param eventPublisher  the event publisher
+     * @param configDirectory                      the config directory where service registry files can be found.
+     * @param enableWatcher                        the enable watcher
+     * @param eventPublisher                       the event publisher
+     * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @throws Exception the IO exception
      */
     public JsonServiceRegistryDao(final Resource configDirectory,
@@ -63,10 +63,10 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
                                   final ApplicationEventPublisher eventPublisher,
                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
         super(configDirectory,
-                CollectionUtils.wrapList(
-                        new CasAddonsRegisteredServicesJsonSerializer(),
-                        new DefaultRegisteredServiceJsonSerializer()),
-                enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+            CollectionUtils.wrapList(
+                new CasAddonsRegisteredServicesJsonSerializer(),
+                new DefaultRegisteredServiceJsonSerializer()),
+            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     @Override
