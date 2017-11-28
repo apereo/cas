@@ -1842,4 +1842,8 @@ to Faraz Khan at ASU for catching the typo.
 
 April, 2013: v3.0 - CAS 3.0 protocol, Apereo copyright, Apache License 2.0
 
-November, 2017: v3.0.1 - Fixed ServiceValidate XSD schema
+January, 2014: v3.0.1 - Attribute occurance
+
+September, 2015: v3.0.2 - Format parameter
+
+November, 2017: v3.0.3 - Fixed ServiceValidate XSD schema
