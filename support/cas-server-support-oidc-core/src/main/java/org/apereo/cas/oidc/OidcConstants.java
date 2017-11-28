@@ -90,7 +90,7 @@ public interface OidcConstants {
         }
 
         public String getFriendlyName() {
-            return WordUtils.capitalize("offline_access".replace('_', ' '));
+            return WordUtils.capitalize(this.scope.replace('_', ' '));
         }
     }
 
