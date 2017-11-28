@@ -72,7 +72,7 @@ public class SingleLogoutPreparationActionTests {
         profile.setId("Profile-1");
 
         final ProfileService<CommonProfile> profileServiceMock = mock(ProfileService.class);
-        when(profileServiceMock.findById(TGT_ID)).thenReturn(profile);
+        when(profileServiceMock.findByLinkedId(TGT_ID)).thenReturn(profile);
 
         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
         when(ticketGrantingTicketCookieGeneratorMock.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn(TGT_ID);

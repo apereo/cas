@@ -62,8 +62,8 @@ public class SingleLogoutPreparationAction extends AbstractAction {
             tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
 
-        // Retrieve the user profile previously stored to the long-term storage in PAC4J ClientAction.
-        final CommonProfile profile = (tgtId == null) ? null : profileService.findById(tgtId);
+        // Retrieve the user profile previously stored to the long-term storage in PAC4J DelegatedClientAuthenticationAction.
+        final CommonProfile profile = (tgtId == null) ? null : profileService.findByLinkedId(tgtId);
 
         // And save the profile into the PAC4J Profile Manager for this request + session.
         if (profile != null) {
@@ -71,6 +71,7 @@ public class SingleLogoutPreparationAction extends AbstractAction {
             final WebContext webContext = new J2EContext(request, response);
             final ProfileManager pm = Pac4jUtils.getPac4jProfileManager(webContext);
             pm.save(true, profile, false);
+            profileService.removeById(profile.getId());
             logger2.debug("User profile restored from a long-term storage and saved in PAC4J Profile Manager.");
         } else {
             logger2.debug("No user profile restored from a long-term storage. SAML Single Logout may not work properly."

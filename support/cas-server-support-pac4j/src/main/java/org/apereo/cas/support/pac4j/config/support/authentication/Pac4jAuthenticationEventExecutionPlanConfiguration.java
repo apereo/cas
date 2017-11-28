@@ -76,6 +76,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jAuthenticationEventExecutionPlanConfiguration.class);
 
+    private static final String Q_BUILT_CLIENTS = "builtClients";
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -433,10 +435,11 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         return new SingleLogoutPreparationAction(tgtCookieGenerator, pac4jProfileService);
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction")
     @Bean
     @Autowired
-    public Action pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction(@Qualifier("builtClients") final Clients clients) {
+    public Action pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction(@Qualifier(Q_BUILT_CLIENTS) final Clients clients) {
         return new IgnoreServiceRedirectUrlForSamlAction(clients);
     }
 
@@ -446,10 +449,11 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         return new LimitedTerminateSessionAction();
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
     @Bean
     @Autowired
-    public Action saml2ClientLogoutAction(@Qualifier("builtClients") final Clients clients) {
+    public Action saml2ClientLogoutAction(@Qualifier(Q_BUILT_CLIENTS) final Clients clients) {
         return new SAML2ClientLogoutAction(clients);
     }
 
@@ -457,7 +461,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "clientAuthenticationHandler")
     @Autowired
-    public AuthenticationHandler clientAuthenticationHandler(@Qualifier("builtClients") final Clients clients) {
+    public AuthenticationHandler clientAuthenticationHandler(@Qualifier(Q_BUILT_CLIENTS) final Clients clients) {
         final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
                 clientPrincipalFactory(), clients);
@@ -465,10 +469,12 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         return h;
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
     @Autowired
-    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer(@Qualifier("builtClients") final Clients clients) {
+    public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer(
+            @Qualifier(Q_BUILT_CLIENTS) final Clients clients) {
         return plan -> {
             if (!clients.findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");

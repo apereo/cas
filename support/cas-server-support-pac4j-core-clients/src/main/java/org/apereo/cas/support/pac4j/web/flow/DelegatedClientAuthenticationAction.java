@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
 
                 // Prepare for future Single Logout - save the profile
-                prepareForFutureSingleLogout(client, credentials, webContext);
+                prepareForFutureSingleLogout(client, credentials, webContext, tgt.getId());
 
                 return success();
             }
@@ -320,19 +320,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      *            Credentials from the user.
      * @param webContext
      *            PAC4J web context.
+     * @param tgtId
+     *            TGT ID, will be used as the Linked ID for later retrieval.
      * 
      * @throws Exception
      *             If anything fails.
      */
     private void prepareForFutureSingleLogout(final BaseClient<Credentials, ? extends UserProfile> client, final Credentials credentials,
-            final WebContext webContext) throws HttpAction {
+            final WebContext webContext, final String tgtId) throws HttpAction {
         if (profileService != null) {
             final CommonProfile profile = client.getUserProfile(credentials, webContext);
-            /* Unclear point here. What should the password be? Can it be the TGT ID? See SingleLogoutPreparationAction:57; we use
-             * the TGT ID to read he profile from the service there.
-             */
-            final String password = "TODO";
-            profileService.create(profile, password);
+            profile.setLinkedId(tgtId);
+            profileService.create(profile, null); // Do not use any password
         }
     }
 
