@@ -10,7 +10,7 @@ This page documents the steps that a release engineer should take for cutting a 
 ## Account Setup
 
 - You will need to sign up for a [Sonatype account](http://central.sonatype.org/pages/ossrh-guide.html) and must ask 
-to be authorized to publish releases to the `org.apereo` package. Once you have, you may be asked to have one of the
+to be authorized to publish releases to the `org.apereo` package by cresting a JIRA. Once you have, you may be asked to have one of the
 current project members *vouch* for you. 
 - You will need to [generate your own PGP signatures](http://blog.sonatype.com/2010/01/how-to-generate-pgp-signatures-with-maven/) to sign the release artifacts prior to uploading them to a central repository.
 
