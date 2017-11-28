@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -9,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.io.UrlResource;
@@ -18,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
@@ -210,6 +213,19 @@ public final class ResourceUtils {
         }
     }
 
+    /**
+     * Build input stream resource from string value.
+     *
+     * @param value       the value
+     * @param description the description
+     * @return the input stream resource
+     */
+    public static InputStreamResource buildInputStreamResourceFrom(final String value, final String description) {
+        final StringReader reader = new StringReader(value);
+        final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
+        return new InputStreamResource(is, description);
+    }
+    
     /**
      * Is the resource a file?
      *

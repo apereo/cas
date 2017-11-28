@@ -442,6 +442,7 @@ Metadata documents may also be stored in and fetched from a MongoDb instance.  T
 | `id`                          | The identifier of the record.
 | `name`             | Indexed field which describes and names the metadata briefly.
 | `value`              | The XML document representing the metadata for the service provider.
+| `signature`              | The contents of the signing key to validate metadata, if any.
 
 Support is enabled by including the following module in the overlay:
 
@@ -475,6 +476,7 @@ Metadata documents may also be stored in and fetched from a relational database 
 | `id`                          | The identifier of the record.
 | `name`             | Indexed field which describes and names the metadata briefly.
 | `value`              | The XML document representing the metadata for the service provider.
+| `signature`              | The contents of the signing key to validate metadata, if any.
 
 Support is enabled by including the following module in the overlay:
 
