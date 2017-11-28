@@ -512,7 +512,7 @@ A metadata location for a SAML service definition may  point to an external Groo
   "name" : "SAMLService",
   "id" : 10000003,
   "description" : "A Groovy-based metadata resolver",
-  "metadataLocation" : "file:/etc/cas/config/groovy-metadata.xml"
+  "metadataLocation" : "file:/etc/cas/config/groovy-metadata.groovy"
 }
 ```
 
