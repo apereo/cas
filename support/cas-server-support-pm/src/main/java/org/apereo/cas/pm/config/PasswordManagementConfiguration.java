@@ -21,7 +21,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-
+import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
 
 /**
@@ -62,7 +62,12 @@ public class PasswordManagementConfiguration {
     @RefreshScope
     @Bean
     public PasswordValidationService passwordValidationService() {
-        return (c, bean) -> true;
+        final String policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
+        return (credential, bean) -> {
+            return StringUtils.hasText(bean.getPassword())
+                && bean.getPassword().equals(bean.getConfirmedPassword())
+                && bean.getPassword().matches(policyPattern);
+        };
     }
     
     @ConditionalOnMissingBean(name = "passwordChangeService")
