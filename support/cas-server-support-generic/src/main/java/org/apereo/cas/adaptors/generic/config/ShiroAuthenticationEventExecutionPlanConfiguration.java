@@ -4,12 +4,13 @@ import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,11 +65,11 @@ public class ShiroAuthenticationEventExecutionPlanConfiguration {
                 shiro.getRequiredRoles(), shiro.getRequiredPermissions());
 
         h.loadShiroConfiguration(shiro.getLocation());
-        h.setPasswordEncoder(Beans.newPasswordEncoder(shiro.getPasswordEncoder()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(shiro.getPasswordEncoder()));
         if (shiroPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
         return h;
     }
 

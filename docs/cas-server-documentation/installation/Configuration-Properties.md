@@ -10,7 +10,7 @@ line switches](Configuration-Management.html#overview). This section provides a 
 references to the underlying modules that consume them.
 
 <div class="alert alert-info"><strong>Be Selective</strong><p>
-This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need.</p></div>
+This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
 
 Note that property names can be specified
 in very relaxed terms. For instance `cas.someProperty`, `cas.some-property`, `cas.some_property`
@@ -82,7 +82,7 @@ The above configuration also applies to online git-based repositories such as Gi
 
 ### Vault
 
-Load settings from [HasiCorp's Vault](Configuration-Properties-Security.html).
+Load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
@@ -224,8 +224,7 @@ server.contextPath=/cas
 # By default and if you remove this setting, CAS runs on port 8080
 server.port=8443
 
-# To disable SSL configuration, comment out the following settings
-# Or set to blank values.
+# To disable SSL configuration, comment out the following settings or set to blank values.
 server.ssl.keyStore=file:/etc/cas/thekeystore
 server.ssl.keyStorePassword=changeit
 server.ssl.keyPassword=changeit
@@ -246,7 +245,9 @@ server.useForwardHeaders=true
 server.connectionTimeout=20000
 ```
 
-### Embedded Tomcat Container
+### Embedded Apache Tomcat Container
+
+The following settings affect the runtime behavior of the embedded Apache Tomcat container.
 
 ```properties
 # server.tomcat.basedir=build/tomcat
@@ -348,7 +349,7 @@ backend cas-pool
 
 #### Extended Access Log Valve
 
-Enable the [extended access log](https://tomcat.apache.org/tomcat-8.0-doc/api/org/apache/catalina/valves/ExtendedAccessLogValve.html)
+Enable the [extended access log](http://tomcat.apache.org/tomcat-8.0-doc/config/valve.html#Extended_Access_Log_Valve)
 for the embedded Tomcat container.
 
 ```properties
@@ -357,6 +358,14 @@ for the embedded Tomcat container.
 # cas.server.extAccessLog.suffix=.log
 # cas.server.extAccessLog.prefix=localhost_access_extended
 # cas.server.extAccessLog.directory=
+```
+
+#### Rewrite Valve Valve
+
+Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
+
+```properties
+# cas.server.rewriteValve.location=classpath://container/tomcat/rewrite.config
 ```
 
 ## CAS Server
@@ -469,6 +478,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.monitor.endpoints.dashboard.enabled=false
 # cas.monitor.endpoints.dashboard.sensitive=true
 
+# cas.monitor.endpoints.discovery.enabled=false
+# cas.monitor.endpoints.discovery.sensitive=true
+
 # cas.monitor.endpoints.auditEvents.enabled=false
 # cas.monitor.endpoints.auditEvents.sensitive=true
 
@@ -510,6 +522,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 # cas.monitor.endpoints.registeredServicesReport.enabled=false
 # cas.monitor.endpoints.registeredServicesReport.sensitive=true
+
+# cas.monitor.endpoints.configurationMetadata.enabled=false
+# cas.monitor.endpoints.configurationMetadata.sensitive=true
 ```
 
 ### Securing Endpoints With Spring Security
@@ -518,24 +533,28 @@ Monitoring endpoints may also be secured by Spring Security. You can define the 
 
 ```properties
 # security.ignored[0]=/**
-security.filterOrder=0
-security.requireSsl=true
-security.sessions=if_required
-security.user.name=<predefined-userid>
-security.user.password=<predefined-password>
-security.user.role=ACTUATOR
+# security.filterOrder=0
+# security.requireSsl=true
+# security.sessions=if_required
+# security.user.name=<predefined-userid>
+# security.user.password=<predefined-password>
+# security.user.role=ACTUATOR
 ```
 
 #### Basic Authentication
 
+Enable basic authentication for Spring Security to secure endpoints.
+
 ```properties
-security.basic.authorizeMode=none|role|authenticated
-security.basic.enabled=true
-security.basic.path=/cas/status/**
-security.basic.realm=CAS
+# security.basic.authorizeMode=none|role|authenticated
+# security.basic.enabled=true
+# security.basic.path=/cas/status/**
+# security.basic.realm=CAS
 ```
 
 #### JAAS Authentication
+
+Enable JAAS authentication for Spring Security to secure endpoints.
 
 ```properties
 # cas.adminPagesSecurity.jaas.loginConfig=file:/path/to/config
@@ -544,6 +563,8 @@ security.basic.realm=CAS
 ```
 
 #### JDBC Authentication
+
+Enable JDBC authentication for Spring Security to secure endpoints.
 
 ```properties
 # cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
@@ -570,6 +591,8 @@ security.basic.realm=CAS
 ```
 
 #### LDAP Authentication
+
+Enable LDAP authentication for Spring Security to secure endpoints.
 
 ```properties
 # cas.adminPagesSecurity.ldap.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
@@ -839,7 +862,6 @@ def Map<String, List<Object>> run(final Object... args) {
     logger.debug("[{}]: The received uid is [{}]", this.class.simpleName, uid)
     return[username:[uid], likes:["cheese", "food"], id:[1234,2,3,4,5], another:"attribute"]
 }
-
 ```
 
 ### JSON
@@ -894,7 +916,7 @@ to be a JSON map as such:
 
 ### Ruby/Python/Javascript/Groovy
 
-Similiar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
+Similar to the Groovy option but more versatile, this option takes advantage of Java's native scripting API to invoke Groovy, Python or Javascript scripting engines to compile a pre-defined script o resolve attributes. The following settings are relevant:
 
 ```properties
 # cas.authn.attributeRepository.script[0].location=file:/etc/cas/script.groovy
@@ -1037,10 +1059,17 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 
 ### Protocol Attributes
 
-Defines whether CAS should include and release protocol attributes defined in the specification in addition to the principal attribute.
+Defines whether CAS should include and release protocol attributes defined in the specification in addition to the
+principal attributes. By default all authentication attributes are released when protocol attributes are enabled for
+release. If you wish to restrict which authentication attributes get released, you can use the below settings to control authentication attributes more globally.
+
+Protocol/authentication attributes may also be released conditionally on a per-service basis. To learn more about this topic, [please review this guide](../integration/Attribute-Release.html).
 
 ```properties
 # cas.authn.releaseProtocolAttributes=true
+
+# cas.authn.authenticationAttributeRelease.onlyRelease=authenticationDate,isFromNewLogin
+# cas.authn.authenticationAttributeRelease.neverRelease=
 ```
 
 ## Principal Resolution
@@ -1084,9 +1113,22 @@ would only be acceptable in a multi-factor authentication situation.
 # cas.authn.policy.all.enabled=true
 ```
 
-### NotPrevented
+### Unique Principal
 
-Satisfied if an only if the authentication event is not blocked by a `PreventedException`.
+Satisfied if and only if the requesting principal has not already authenticated with CAS.
+Otherwise the authentication event is blocked, preventing multiple logins. 
+
+<div class="alert alert-warning"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
+as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established
+a authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
+
+```properties
+# cas.authn.policy.uniquePrincipal.enabled=true
+```
+
+### Not Prevented
+
+Satisfied if and only if the authentication event is not blocked by a `PreventedException`.
 
 ```properties
 # cas.authn.policy.notPrevented.enabled=true
@@ -1094,7 +1136,7 @@ Satisfied if an only if the authentication event is not blocked by a `PreventedE
 
 ### Required
 
-Satisfied if an only if a specified handler successfully authenticates its credential.
+Satisfied if and only if a specified handler successfully authenticates its credential.
 
 ```properties
 # cas.authn.policy.req.tryAll=false
@@ -1328,6 +1370,22 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 # cas.authn.surrogate.rest.basicAuthPassword=
 ```
 
+### Notifications
+
+```properties
+# cas.authn.surrogate.sms.from=
+# cas.authn.surrogate.sms.text=
+# cas.authn.surrogate.sms.attributeName=phone
+
+# cas.authn.surrogate.mail.from=
+# cas.authn.surrogate.mail.text=
+# cas.authn.surrogate.mail.subject=
+# cas.authn.surrogate.mail.cc=
+# cas.authn.surrogate.mail.bcc=
+# cas.authn.surrogate.mail.attributeName=mail
+
+```
+
 ## Risk-based Authentication
 
 Evaluate suspicious authentication requests and take action.
@@ -1365,6 +1423,9 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 ## Email Submissions
 
+To learn more about this topic, [please review this guide](SMS-Email-Configuration.html).
+
+
 ```properties
 # spring.mail.host=
 # spring.mail.port=
@@ -1379,7 +1440,7 @@ To learn more about this topic, [please review this guide](Configuring-RiskBased
 
 To learn more about this topic, [please review this guide](SMS-Messaging-Configuration.html).
 
-### Twillio
+### Twilio
 
 ```properties
 # cas.twilio.accountId=
@@ -1430,29 +1491,29 @@ Used to geo-profile authentication events.
 To learn more about this topic, [please review this guide](Cassandra-Authentication.html).
 
 ```properties
-cas.authn.cassandra.usernameAttribute=
-cas.authn.cassandra.passwordAttribute=
-cas.authn.cassandra.tableName=
-cas.authn.cassandra.username=
-cas.authn.cassandra.password=
+# cas.authn.cassandra.usernameAttribute=
+# cas.authn.cassandra.passwordAttribute=
+# cas.authn.cassandra.tableName=
+# cas.authn.cassandra.username=
+# cas.authn.cassandra.password=
 
-cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
-cas.authn.cassandra.keyspace=
-cas.authn.cassandra.contactPoints=localhost1,localhost2
-cas.authn.cassandra.localDc=
-cas.authn.cassandra.shuffleReplicas=true
-cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
-cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
-cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
-cas.authn.cassandra.maxConnections=10
-cas.authn.cassandra.coreConnections=1
-cas.authn.cassandra.maxRequestsPerConnection=1024
-cas.authn.cassandra.connectTimeoutMillis=5000
+# cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
+# cas.authn.cassandra.keyspace=
+# cas.authn.cassandra.contactPoints=localhost1,localhost2
+# cas.authn.cassandra.localDc=
+# cas.authn.cassandra.shuffleReplicas=true
+# cas.authn.cassandra.retryPolicy=DEFAULT_RETRY_POLICY|DOWNGRADING_CONSISTENCY_RETRY_POLICY|FALLTHROUGH_RETRY_POLICY
+# cas.authn.cassandra.compression=LZ4|SNAPPY|NONE
+# cas.authn.cassandra.consistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# cas.authn.cassandra.serialConsistencyLevel=ANY|ONE|TWO|THREE|QUORUM|LOCAL_QUORUM|ALL|EACH_QUORUM|LOCAL_SERIAL|SERIAL|LOCAL_ONE
+# cas.authn.cassandra.maxConnections=10
+# cas.authn.cassandra.coreConnections=1
+# cas.authn.cassandra.maxRequestsPerConnection=1024
+# # cas.authn.cassandra.connectTimeoutMillis=5000
 cas.authn.cassandra.readTimeoutMillis=5000
-cas.authn.cassandra.port=9042
-cas.authn.cassandra.name=
-cas.authn.cassandra.order=
+# cas.authn.cassandra.port=9042
+# cas.authn.cassandra.name=
+# cas.authn.cassandra.order=
 ```
 
 ## Digest Authentication
@@ -1498,6 +1559,8 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.passwordEncoder.secret=
 # cas.authn.radius.passwordEncoder.strength=16
 
+# cas.authn.radius.principalTransformation.pattern=(.+)@example.org
+# cas.authn.radius.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.radius.principalTransformation.suffix=
 # cas.authn.radius.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.radius.principalTransformation.prefix=
@@ -1518,6 +1581,8 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.passwordEncoder.secret=
 # cas.authn.file.passwordEncoder.strength=16
 
+# cas.authn.file.principalTransformation.pattern=(.+)@example.org
+# cas.authn.file.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.file.principalTransformation.suffix=
 # cas.authn.file.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.file.principalTransformation.prefix=
@@ -1537,6 +1602,8 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 # cas.authn.reject.passwordEncoder.secret=
 # cas.authn.reject.passwordEncoder.strength=16
 
+# cas.authn.reject.principalTransformation.pattern=(.+)@example.org
+# cas.authn.reject.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.reject.principalTransformation.suffix=
 # cas.authn.reject.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.reject.principalTransformation.prefix=
@@ -1588,6 +1655,8 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
 # cas.authn.jdbc.query[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.query[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.query[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.query[0].principalTransformation.suffix=
 # cas.authn.jdbc.query[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.query[0].principalTransformation.prefix=
@@ -1631,6 +1700,8 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
 # cas.authn.jdbc.search[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.search[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.search[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.search[0].principalTransformation.suffix=
 # cas.authn.jdbc.search[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.search[0].principalTransformation.prefix=
@@ -1671,6 +1742,8 @@ Authenticates a user by attempting to create a database connection using the use
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
 # cas.authn.jdbc.bind[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.bind[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.bind[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.bind[0].principalTransformation.suffix=
 # cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.bind[0].principalTransformation.prefix=
@@ -1726,6 +1799,8 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
 # cas.authn.jdbc.encode[0].passwordEncoder.strength=16
 
+# cas.authn.jdbc.encode[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jdbc.encode[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jdbc.encode[0].principalTransformation.suffix=
 # cas.authn.jdbc.encode[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jdbc.encode[0].principalTransformation.prefix=
@@ -1743,6 +1818,8 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.collectionName=users
 # cas.authn.mongo.name=
 
+# cas.authn.mongo.principalTransformation.pattern=(.+)@example.org
+# cas.authn.mongo.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.mongo.principalTransformation.suffix=
 # cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.mongo.principalTransformation.prefix=
@@ -1784,7 +1861,7 @@ The following authentication types are supported:
 
 ### Connection Strategies
 
-If multiple URLs are provided as the ldapURL this describes how each URL will be processed.
+If multiple URLs are provided as the LDAP url, this describes how each URL will be processed.
 
 | Provider              | Description              
 |-----------------------|-----------------------------------------------------------------------------------------------
@@ -1824,12 +1901,13 @@ The following options can be used to passivate objects when they are checked bac
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No passivation takes place.
 | `CLOSE`                 | Passivates a connection by attempting to close it.
-| `BIND`                  | Passivates a connection by performing a bind operation on it.
+| `BIND`                  | The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.
 
 #### Why Passivators?
 
 You may receive unexpected LDAP failures, when CAS is configured to authenticate using `DIRECT` or `AUTHENTICATED` types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it's no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request.
 
+Furthermore if you are seeing errors in the logs that resemble a *<Operation exception encountered, reopening connection>* type of message, this usually is an indication that the connection pool's validation timeout established and created by CAS is greater than the timeout configured in the LDAP server, or more likely, in the load balancer in front of the LDAP servers. You can adjust the LDAP server session's timeout for connections, or you can teach CAS to use a validatity period that is equal or less than the LDAP server session's timeout.
 
 ```properties
 # cas.authn.ldap[0].type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
@@ -1865,12 +1943,16 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 #
 # cas.authn.ldap[0].principalAttributeList=sn,cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER
 
-
 # cas.authn.ldap[0].collectDnAttribute=false
+# cas.authn.ldap[0].principalDnAttributeName=principalLdapDn
 # cas.authn.ldap[0].allowMultiplePrincipalAttributeValues=true
 # cas.authn.ldap[0].allowMissingPrincipalAttributeValue=true
 # cas.authn.ldap[0].credentialCriteria=
+```
 
+### LDAP SSL
+
+```properties
 # cas.authn.ldap[0].saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
 # cas.authn.ldap[0].saslRealm=EXAMPLE.COM
 # cas.authn.ldap[0].saslAuthorizationId=
@@ -1882,7 +1964,11 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].keystore=
 # cas.authn.ldap[0].keystorePassword=
 # cas.authn.ldap[0].keystoreType=JKS|JCEKS|PKCS12
+```
 
+### LDAP Pooling
+
+```properties
 # cas.authn.ldap[0].poolPassivator=NONE|CLOSE|BIND
 # cas.authn.ldap[0].minPoolSize=3
 # cas.authn.ldap[0].maxPoolSize=10
@@ -1895,7 +1981,11 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].idleTime=5000
 # cas.authn.ldap[0].prunePeriod=5000
 # cas.authn.ldap[0].blockWaitTime=5000
+```
 
+### LDAP Search Entry Handlers
+
+```properties
 # cas.authn.ldap[0].providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
 # cas.authn.ldap[0].allowMultipleDns=false
 
@@ -1922,17 +2012,27 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 # cas.authn.ldap[0].name=
 # cas.authn.ldap[0].order=0
+```
 
+### LDAP Password Encoding & Principal Transformation
+
+```properties
 # cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.ldap[0].passwordEncoder.secret=
 # cas.authn.ldap[0].passwordEncoder.strength=16
 
+# cas.authn.ldap[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.ldap[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.ldap[0].principalTransformation.suffix=
 # cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.ldap[0].principalTransformation.prefix=
+```
 
+### LDAP Connection Validators
+
+```properties
 # cas.authn.ldap[0].validator.type=NONE|SEARCH|COMPARE
 # cas.authn.ldap[0].validator.baseDn=
 # cas.authn.ldap[0].validator.searchFilter=(objectClass=*)
@@ -1940,8 +2040,13 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 # cas.authn.ldap[0].validator.attributeName=objectClass
 # cas.authn.ldap[0].validator.attributeValues=top
 # cas.authn.ldap[0].validator.dn=
+```
 
+### LDAP Password Policy
+
+```properties
 # cas.authn.ldap[0].passwordPolicy.type=GENERIC|AD|FreeIPA|EDirectory
+
 # cas.authn.ldap[0].passwordPolicy.enabled=true
 # cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
 # cas.authn.ldap[0].passwordPolicy.loginFailures=5
@@ -1953,7 +2058,50 @@ You may receive unexpected LDAP failures, when CAS is configured to authenticate
 
 # An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
 # cas.authn.ldap[0].passwordPolicy.customPolicyClass=com.example.MyAuthenticationResponseHandler
+
+# cas.authn.ldap[0].passwordPolicy.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
+# cas.authn.ldap[0].passwordPolicy.groovy.location=file:/etc/cas/config/password-policy.groovy
 ```
+
+#### Password Policy Strategies
+
+Password policy strategy types are outlined below. The strategy evaluates the authentication response received from LDAP and is allowed to review it upfront in order to further examine whether account state, messages and warnings is eligible for further investigation.
+
+| Option        | Description
+|---------------|-----------------------------------------------------------------------------
+| `DEFAULT`     | Accepts the auhentication response as is, and processes account state, if any.
+| `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
+| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
+
+If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
+
+```groovy
+import java.util.*
+import org.ldaptive.auth.*
+import org.apereo.cas.*
+import org.apereo.cas.authentication.*
+import org.apereo.cas.authentication.support.*
+
+def List<MessageDescriptor> run(final Object... args) {
+    def response = args[0]
+    def configuration = args[1];
+    def logger = args[2]
+
+    logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
+
+    def accountStateHandler = configuration.getAccountStateHandler()
+    return accountStateHandler.handle(response, configuration)
+}
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------------------
+| `response`            | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse`
+| `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
 
 ## REST Authentication
 
@@ -2092,6 +2240,8 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].passwordEncoder.secret=
 # cas.authn.jaas[0].passwordEncoder.strength=16
 
+# cas.authn.jaas[0].principalTransformation.pattern=(.+)@example.org
+# cas.authn.jaas[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.jaas[0].principalTransformation.suffix=
 # cas.authn.jaas[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.jaas[0].principalTransformation.prefix=
@@ -2154,14 +2304,20 @@ To learn more about this topic, [please review this guide](JWT-Authentication.ht
 ```properties
 # cas.authn.token.name=
 
+# cas.authn.token.principalTransformation.pattern=(.+)@example.org
+# cas.authn.token.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.token.principalTransformation.suffix=
 # cas.authn.token.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.token.principalTransformation.prefix=
 ```
 
-### JWT Service Tickets
+### JWT Tickets
+
+Allow CAS tickets through various protocol channels to be created as JWTs. See [this guide](Configure-ServiceTicket-JWT.html) or [this guide](../protocol/REST-Protocol.html) for more info.
 
 ```properties
+# cas.authn.token.crypto.enabled=true
+# cas.authn.token.crypto.encryptionEnabled=true
 # cas.authn.token.crypto.signing.key=
 # cas.authn.token.crypto.signing.keySize=512
 # cas.authn.token.crypto.encryption.key=
@@ -2195,6 +2351,8 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 # cas.authn.couchbase.passwordEncoder.secret=
 # cas.authn.couchbase.passwordEncoder.strength=16
 
+# cas.authn.couchbase.principalTransformation.pattern=(.+)@example.org
+# cas.authn.couchbase.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.couchbase.principalTransformation.suffix=
 # cas.authn.couchbase.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.couchbase.principalTransformation.prefix=
@@ -2230,24 +2388,11 @@ To learn more about this topic, [please review this guide](AWS-CloudDirectory-Au
 # cas.authn.cloudDirectory.passwordEncoder.secret=
 # cas.authn.cloudDirectory.passwordEncoder.strength=16
 
+# cas.authn.cloudDirectory.principalTransformation.pattern=(.+)@example.org
+# cas.authn.cloudDirectory.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.cloudDirectory.principalTransformation.suffix=
 # cas.authn.cloudDirectory.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.cloudDirectory.principalTransformation.prefix=
-```
-
-## Stormpath Authentication
-
-To learn more about this topic, [please review this guide](Stormpath-Authentication.html).
-
-```properties
-# cas.authn.stormpath.apiKey=
-# cas.authn.stormpath.secretkey=
-# cas.authn.stormpath.applicationId=
-# cas.authn.stormpath.name=
-
-# cas.authn.stormpath.principalTransformation.suffix=
-# cas.authn.stormpath.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.stormpath.principalTransformation.prefix=
 ```
 
 ## Remote Address Authentication
@@ -2270,6 +2415,7 @@ prior to production rollouts.</p></div>
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
+# cas.authn.accept.credentialCriteria=
 
 # cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
 # cas.authn.accept.passwordEncoder.characterEncoding=
@@ -2277,6 +2423,8 @@ prior to production rollouts.</p></div>
 # cas.authn.accept.passwordEncoder.secret=
 # cas.authn.accept.passwordEncoder.strength=16
 
+# cas.authn.accept.principalTransformation.pattern=(.+)@example.org
+# cas.authn.accept.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.accept.principalTransformation.suffix=
 # cas.authn.accept.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.accept.principalTransformation.prefix=
@@ -2291,12 +2439,13 @@ To learn more about this topic, [please review this guide](X509-Authentication.h
 X.509 principal resolution can act on the following principal types:
 
 | Type                    | Description                            
-|-------------------------|----------------------------------------------------------------------------------------------------
+|-------------------------|----------------------------------------------------------------------
 | `SERIAL_NO`             | Resolve the principal by the serial number with a configurable <strong>radix</strong>, ranging from 2 to 36. If <code>radix</code> is <code>16</code>, then the serial number could be filled with leading zeros to even the number of digits.
 | `SERIAL_NO_DN`          | Resolve the principal by serial number and issuer dn.
 | `SUBJECT`               | Resolve the principal by extracting one or more attribute values from the certificate subject DN and combining them with intervening delimiters.
 | `SUBJECT_ALT_NAME`      | Resolve the principal by the subject alternative name extension.
 | `SUBJECT_DN`            | The default type; Resolve the principal by the certificate's subject dn.
+| `CN_EDIPI`              | Resolve the principal by the Electronic Data Interchange Personal Identifier (EDIPI) from the Common Name.
 
 ### CRL Fetching / Revocation
 
@@ -2428,6 +2577,8 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.passwordEncoder.secret=
 # cas.authn.shiro.passwordEncoder.strength=16
 
+# cas.authn.shiro.principalTransformation.pattern=(.+)@example.org
+# cas.authn.shiro.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
 # cas.authn.shiro.principalTransformation.suffix=
 # cas.authn.shiro.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
 # cas.authn.shiro.principalTransformation.prefix=
@@ -2442,6 +2593,8 @@ To learn more about this topic, [please review this guide](Trusted-Authenticatio
 # cas.authn.trusted.principalAttribute=
 # cas.authn.trusted.returnNull=false
 # cas.authn.trusted.name=
+
+# cas.authn.trusted.remotePrincipalHeader=
 ```
 
 ## WS-Fed Delegated Authentication
@@ -2479,7 +2632,6 @@ strategies when collecting principal attributes:
 # cas.authn.wsfed[0].encryptionCertificate=classpath:certificate.crt
 # cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
 ```
-
 
 ## Multifactor Authentication
 
@@ -2586,9 +2738,9 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.
 ### MongoDb Storage
 
 ```properties
-# cas.authn.mfa.trusted.mongodb.clientUri=
-# cas.authn.mfa.trusted.mongodb.dropCollection=false
-# cas.authn.mfa.trusted.mongodb.collection=MongoDbCasTrustedAuthnMfaRepository
+# cas.authn.mfa.trusted.mongo.clientUri=
+# cas.authn.mfa.trusted.mongo.dropCollection=false
+# cas.authn.mfa.trusted.mongo.collection=MongoDbCasTrustedAuthnMfaRepository
 ```
 
 ### REST Storage
@@ -2620,13 +2772,15 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.label=
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
-# cas.authn.mfa.gauth.trustedDeviceEnabled=true
+# cas.authn.mfa.gauth.trustedDeviceEnabled=false
 # cas.authn.mfa.gauth.name=
 
 # cas.authn.mfa.gauth.cleaner.enabled=true
 # cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
 # cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 
+
+# cas.authn.mfa.gauth.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.gauth.bypass.authenticationAttributeName=bypass|skip
@@ -2634,6 +2788,8 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.gauth.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.gauth.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.gauth.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.gauth.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 #### Google Authenticator JSON
@@ -2651,10 +2807,10 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 #### Google Authenticator MongoDb
 
 ```properties
-# cas.authn.mfa.gauth.mongodb.clientUri=
-# cas.authn.mfa.gauth.mongodb.dropCollection=false
-# cas.authn.mfa.gauth.mongodb.collection=MongoDbGoogleAuthenticatorRepository
-# cas.authn.mfa.gauth.mongodb.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
+# cas.authn.mfa.gauth.mongo.clientUri=
+# cas.authn.mfa.gauth.mongo.dropCollection=false
+# cas.authn.mfa.gauth.mongo.collection=MongoDbGoogleAuthenticatorRepository
+# cas.authn.mfa.gauth.mongo.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
 #### Google Authenticator JPA
@@ -2693,9 +2849,10 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.secretKey=
 # cas.authn.mfa.yubikey.rank=0
 # cas.authn.mfa.yubikey.apiUrls=
-# cas.authn.mfa.yubikey.trustedDeviceEnabled=true
+# cas.authn.mfa.yubikey.trustedDeviceEnabled=false
 # cas.authn.mfa.yubikey.name=
 
+# cas.authn.mfa.yubikey.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.yubikey.bypass.authenticationAttributeName=bypass|skip
@@ -2703,6 +2860,8 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.yubikey.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.yubikey.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.yubikey.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.yubikey.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 #### YubiKey JSON Device Store
@@ -2750,9 +2909,9 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 ### YubiKey MongoDb Device Store
 
 ```properties
-# cas.authn.mfa.yubikey.mongodb.clientUri=
-# cas.authn.mfa.yubikey.mongodb.dropCollection=false
-# cas.authn.mfa.yubikey.mongodb.collection=MongoDbYubiKeyRepository
+# cas.authn.mfa.yubikey.mongo.clientUri=
+# cas.authn.mfa.yubikey.mongo.dropCollection=false
+# cas.authn.mfa.yubikey.mongo.collection=MongoDbYubiKeyRepository
 ```
 
 ### Radius OTP
@@ -2763,7 +2922,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
 # cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
-# cas.authn.mfa.radius.trustedDeviceEnabled=true
+# cas.authn.mfa.radius.trustedDeviceEnabled=false
 # cas.authn.mfa.radius.name=
 
 # cas.authn.mfa.radius.client.socketTimeout=0
@@ -2782,6 +2941,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.server.nasIpAddress=
 # cas.authn.mfa.radius.server.nasIpv6Address=
 
+# cas.authn.mfa.radius.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.radius.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.radius.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.radius.bypass.authenticationAttributeName=bypass|skip
@@ -2789,6 +2949,8 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.radius.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.radius.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.radius.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.radius.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ### DuoSecurity
@@ -2801,10 +2963,12 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].duoApplicationKey=
 # cas.authn.mfa.duo[0].duoIntegrationKey=
 # cas.authn.mfa.duo[0].duoApiHost=
-# cas.authn.mfa.duo[0].trustedDeviceEnabled=true
+# cas.authn.mfa.duo[0].trustedDeviceEnabled=false
 # cas.authn.mfa.duo[0].id=mfa-duo
+# cas.authn.mfa.duo[0].registrationUrl=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
 
+# cas.authn.mfa.duo[0].bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.duo[0].bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.duo[0].bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.duo[0].bypass.authenticationAttributeName=bypass|skip
@@ -2812,6 +2976,8 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.duo[0].bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.duo[0].bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.duo[0].bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
@@ -2830,6 +2996,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.rank=0
 # cas.authn.mfa.u2f.name=
 
+# cas.authn.mfa.u2f.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.u2f.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.u2f.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.u2f.bypass.authenticationAttributeName=bypass|skip
@@ -2837,6 +3004,8 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.u2f.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.u2f.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
@@ -2856,6 +3025,28 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.cleaner.schedule.enabled=true
 # cas.authn.mfa.u2f.cleaner.schedule.startDelay=PT10S
 # cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
+```
+
+#### FIDO U2F MongoDb
+
+```properties
+# cas.authn.mfa.u2f.mongo.host=localhost
+# cas.authn.mfa.u2f.mongo.clientUri=localhost
+# cas.authn.mfa.u2f.mongo.idleTimeout=30000
+# cas.authn.mfa.u2f.mongo.port=27017
+# cas.authn.mfa.u2f.mongo.dropCollection=false
+# cas.authn.mfa.u2f.mongo.socketKeepAlive=false
+# cas.authn.mfa.u2f.mongo.password=
+# cas.authn.mfa.u2f.mongo.collection=cas-fido-repository
+# cas.authn.mfa.u2f.mongo.databaseName=cas-mongo-database
+# cas.authn.mfa.u2f.mongo.timeout=5000
+# cas.authn.mfa.u2f.mongo.userId=
+# cas.authn.mfa.u2f.mongo.writeConcern=NORMAL
+# cas.authn.mfa.u2f.mongo.authenticationDatabaseName=
+# cas.authn.mfa.u2f.mongo.replicaSet=
+# cas.authn.mfa.u2f.mongo.ssEnabled=false
+# cas.authn.mfa.u2f.mongo.conns.lifetime=60000
+# cas.authn.mfa.u2f.mongo.conns.perHost=10
 ```
 
 #### FIDO U2F JPA
@@ -2887,6 +3078,20 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.jpa.pool.maxWait=2000
 ```
 
+### FIDO U2F REST
+
+```properties
+# cas.authn.mfa.u2f.rest.url=https://somewhere.fido.org
+# cas.authn.mfa.u2f.rest.basicAuthUsername=
+# cas.authn.mfa.u2f.rest.basicAuthPassword=
+```
+
+### FIDO U2F Groovy
+
+```properties
+# cas.authn.mfa.u2f.groovy.location=file:/etc/cas/config/fido.groovy
+```
+
 ### Swivel Secure
 
 To learn more about this topic, [please review this guide](SwivelSecure-Authentication.html).
@@ -2899,6 +3104,7 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.rank=0
 # cas.authn.mfa.swivel.name=
 
+# cas.authn.mfa.swivel.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.swivel.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.swivel.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.swivel.bypass.authenticationAttributeName=bypass|skip
@@ -2906,6 +3112,8 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.swivel.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.swivel.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.swivel.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.swivel.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ### Microsoft Azure
@@ -2921,6 +3129,7 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.name=
 # cas.authn.mfa.azure.allowInternationalCalls=false
 
+# cas.authn.mfa.azure.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.azure.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.azure.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.azure.bypass.authenticationAttributeName=bypass|skip
@@ -2928,6 +3137,8 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.azure.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.azure.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.azure.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.azure.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ### Authy
@@ -2941,9 +3152,10 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.mailAttribute=mail
 # cas.authn.mfa.authy.countryCode=1
 # cas.authn.mfa.authy.forceVerification=true
-# cas.authn.mfa.authy.trustedDeviceEnabled=true
+# cas.authn.mfa.authy.trustedDeviceEnabled=false
 # cas.authn.mfa.authy.name=
 
+# cas.authn.mfa.authy.bypass.type=DEFAULT|GROOVY|REST
 # cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
 # cas.authn.mfa.authy.bypass.principalAttributeValue=true|enabled.+
 # cas.authn.mfa.authy.bypass.authenticationAttributeName=bypass|skip
@@ -2951,6 +3163,8 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.bypass.authenticationHandlerName=AcceptUsers.+
 # cas.authn.mfa.authy.bypass.authenticationMethodName=LdapAuthentication.+
 # cas.authn.mfa.authy.bypass.credentialClassType=UsernamePassword.+
+# cas.authn.mfa.authy.bypass.httpRequestRemoteAddress=127.+|example.*
+# cas.authn.mfa.authy.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 ## SAML Core
@@ -2965,7 +3179,6 @@ Control core SAML functionality within CAS.
 # cas.samlCore.issuer=localhost
 # cas.samlCore.securityManager=org.apache.xerces.util.SecurityManager
 ```
-
 
 ## SAML IdP
 
@@ -2985,7 +3198,6 @@ A given attribute that is to be encoded in the final SAML response may contain a
 | `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
 
 
-
 ```properties
 # cas.authn.samlIdp.entityId=https://cas.example.org/idp
 # cas.authn.samlIdp.scope=example.org
@@ -3001,12 +3213,15 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
 # cas.authn.samlIdp.metadata.supportedContentTypes=
 
+# cas.authn.samlIdp.attributeQueryProfileEnabled=true
+
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
 
 # cas.authn.samlIdp.response.defaultAuthenticationContextClass=
 # cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
+# cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
 # cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 
@@ -3025,6 +3240,30 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 Allow CAS to register and enable a number of built-in SAML service provider integrations.
 To learn more about this topic, [please review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+
+<div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time.</p></div>
+
+The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+
+Each SAML service provider supports the following settings:
+
+| Name                  |  Description
+|-----------------------|---------------------------------------------------------------------------
+| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
+| `name`                | The name of the service provider registered in the service registry.
+| `description`         | The description of the service provider registered in the service registry.
+| `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
+| `nameIdFormat`        | The name of the service provider registered in the service registry.
+| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
+| `signatureLocation`   | Signature location to verify metadata.
+| `entityIds`           | List of entity ids allowed for this service provider.
+| `signResponses`       | Indicate whether responses should be signed. Default is `true`.
+| `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
+
+
+The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>The adopter is encouraged to only keep and maintain properties needed for their particular deployment and remove all other optional settings for which there exist sane defaults.</p></div>
 
 ### Dropbox
 
@@ -3053,6 +3292,78 @@ To learn more about this topic, [please review this guide](../integration/Config
 # cas.samlSp.openAthens.name=openAthens
 # cas.samlSp.openAthens.description=openAthens Integration
 # cas.samlSp.openAthens.attributes=eduPersonPrincipalName,email
+```
+
+### Egnyte
+
+```properties
+# cas.samlSp.egnyte.metadata=/path/to/egnyte-metadata.xml
+# cas.samlSp.egnyte.name=Egnyte
+# cas.samlSp.egnyte.description=Egnyte Integration
+```
+
+### EverBridge
+
+```properties
+# cas.samlSp.everBridge.metadata=/path/to/everBridge-metadata.xml
+# cas.samlSp.everBridge.name=Everbridge
+# cas.samlSp.everBridge.description=EverBridge Integration
+```
+
+### Symplicity
+
+```properties
+# cas.samlSp.symplicity.metadata=/path/to/symplicity-metadata.xml
+# cas.samlSp.symplicity.name=Symplicity
+# cas.samlSp.symplicity.description=Symplicity Integration
+```
+
+### Yuja
+
+```properties
+# cas.samlSp.yuja.metadata=/path/to/yuja-metadata.xml
+# cas.samlSp.yuja.name=Yuja
+# cas.samlSp.yuja.description=Yuja Integration
+```
+
+### New Relic
+
+```properties
+# cas.samlSp.newRelic.metadata=/path/to/newRelic-metadata.xml
+# cas.samlSp.newRelic.name=NewRelic
+# cas.samlSp.newRelic.description=New Relic Integration
+```
+
+### Sunshine State Education and Research Computing Alliance
+
+```properties
+# cas.samlSp.sserca.metadata=/path/to/sserca-metadata.xml
+# cas.samlSp.sserca.name=SSERCA
+# cas.samlSp.sserca.description=SSERCA Integration
+```
+
+### CherWell
+
+```properties
+# cas.samlSp.cherWell.metadata=/path/to/cherwell-metadata.xml
+# cas.samlSp.cherWell.name=CherWell
+# cas.samlSp.cherWell.description=CherWell Integration
+```
+
+### FAMIS
+
+```properties
+# cas.samlSp.famis.metadata=/path/to/famis-metadata.xml
+# cas.samlSp.famis.name=Famis
+# cas.samlSp.famis.description=Famis Integration
+```
+
+### Bynder
+
+```properties
+# cas.samlSp.bynder.metadata=/path/to/bynder-metadata.xml
+# cas.samlSp.bynder.name=Bynder
+# cas.samlSp.bynder.description=Bynder Integration
 ```
 
 ### Web Advisor
@@ -3296,14 +3607,6 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
 
-## SQRL
-
-Allow CAS to authenticate accounts via SQRL. To learn more about this topic, [please review this guide](../protocol/SQRL-Protocol.html).
-
-```properties
-# cas.authn.sqrl.nutExpirationSeconds=200
-# cas.authn.sqrl.sfn=sqrl-example
-```
 
 ## OpenID Connect
 
@@ -3441,7 +3744,7 @@ Delegate authentication to an generic OAuth2 server.
 Delegate authentication to an external OpenID Connect server.
 
 ```properties
-# cas.authn.pac4j.oidc[0].type=GOOGLE|AZURE|GENERIC
+# cas.authn.pac4j.oidc[0].type=KEYCLOAK|GOOGLE|AZURE|GENERIC
 # cas.authn.pac4j.oidc[0].discoveryUri=
 # cas.authn.pac4j.oidc[0].maxClockSkew=
 # cas.authn.pac4j.oidc[0].scope=
@@ -3483,6 +3786,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # cas.authn.pac4j.saml[0].identityProviderMetadataPath=
 
 # (Optional) Friendly name for IdP, e.g. "This Organization" or "That Organization"
+# This name, with 'nonword' characters converted to '-' (e.g. This Org (New) become This-Org--New- ),
+# is added to the "class" attribute of the redirect link on the login page, to allow for
+# custom styling of individual IdPs (e.g. for an organization logo).
 # cas.authn.pac4j.saml[0].clientName=
 
 # Control aspects of the authentication request sent to IdP
@@ -3602,6 +3908,7 @@ To learn more about this topic, [please review this guide](WS-Federation-Protoco
 # Used to secure authentication requests between the IdP and STS
 # cas.authn.wsfedIdp.sts.crypto.encryption.key=
 # cas.authn.wsfedIdp.sts.crypto.signing.key=
+# cas.authn.wsfedIdp.sts.crypto.enabled=true
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
@@ -3626,6 +3933,9 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.accessToken.maxTimeToLiveInSeconds=28800
 
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
+
+# cas.authn.oauth.userProfileViewType=NESTED|FLAT
+# cas.authn.oauth.throttler=neverThrottle|authenticationThrottle
 ```
 
 ## Localization
@@ -3687,6 +3997,7 @@ To learn more about this topic, [please review this guide](Logout-Single-Signout
 # cas.logout.followServiceRedirects=false
 # cas.logout.redirectParameter=service
 # cas.logout.confirmLogout=false
+# cas.logout.removeDescendantTickets=false
 ```
 
 ## Single Logout
@@ -3749,6 +4060,30 @@ To learn more about this topic, [please review this guide](Audits.html).
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
 # cas.audit.useServerHostAddress=false
+```
+
+### MongoDb Audits
+
+Store audit logs inside a MongoDb database.
+
+```properties
+# cas.audit.mongo.host=localhost
+# cas.audit.mongo.clientUri=localhost
+# cas.audit.mongo.idleTimeout=30000
+# cas.audit.mongo.port=27017
+# cas.audit.mongo.dropCollection=false
+# cas.audit.mongo.socketKeepAlive=false
+# cas.audit.mongo.password=
+# cas.audit.mongo.collection=cas-audit-database
+# cas.audit.mongo.databaseName=cas-mongo-database
+# cas.audit.mongo.timeout=5000
+# cas.audit.mongo.userId=
+# cas.audit.mongo.writeConcern=NORMAL
+# cas.audit.mongo.authenticationDatabaseName=
+# cas.audit.mongo.replicaSet=
+# cas.audit.mongo.ssEnabled=false
+# cas.audit.mongo.conns.lifetime=60000
+# cas.audit.mongo.conns.perHost=10
 ```
 
 ### Database Audits
@@ -3824,6 +4159,56 @@ Decide how CAS should monitor the internal state of various cache storage servic
 ```properties
 # cas.monitor.warn.threshold=10
 # cas.monitor.warn.evictionThreshold=0
+```
+
+### Memcached Monitors
+
+Decide how CAS should monitor the internal state of a memcached connection pool.
+
+```properties
+# cas.monitor.memcached.servers=localhost:11211
+# cas.monitor.memcached.locatorType=ARRAY_MOD
+# cas.monitor.memcached.failureMode=Redistribute
+# cas.monitor.memcached.hashAlgorithm=FNV1_64_HASH
+# cas.monitor.memcached.shouldOptimize=false
+# cas.monitor.memcached.daemon=true
+# cas.monitor.memcached.maxReconnectDelay=-1
+# cas.monitor.memcached.useNagleAlgorithm=false
+# cas.monitor.memcached.shutdownTimeoutSeconds=-1
+# cas.monitor.memcached.opTimeout=-1
+# cas.monitor.memcached.timeoutExceptionThreshold=2
+# cas.monitor.memcached.maxTotal=20
+# cas.monitor.memcached.maxIdle=8
+# cas.monitor.memcached.minIdle=0
+
+# cas.monitor.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
+# cas.monitor.memcached.transcoderCompressionThreshold=16384
+# cas.monitor.memcached.kryoAutoReset=false
+# cas.monitor.memcached.kryoObjectsByReference=false
+# cas.monitor.memcached.kryoRegistrationRequired=false
+
+```
+
+### MongoDb Monitors
+
+Decide how CAS should monitor the internal state of a MongoDb instance.
+
+```properties
+# cas.monitor.mongo.host=localhost
+# cas.monitor.mongo.clientUri=localhost
+# cas.monitor.mongo.idleTimeout=30000
+# cas.monitor.mongo.port=27017
+# cas.monitor.mongo.socketKeepAlive=false
+# cas.monitor.mongo.password=
+# cas.monitor.mongo.databaseName=cas-mongo-database
+# cas.monitor.mongo.timeout=5000
+# cas.monitor.mongo.userId=
+# cas.monitor.mongo.writeConcern=NORMAL
+# cas.monitor.mongo.authenticationDatabaseName=
+# cas.monitor.mongo.replicaSet=
+# cas.monitor.mongo.ssEnabled=false
+# cas.monitor.mongo.conns.lifetime=60000
+# cas.monitor.mongo.conns.perHost=10
 ```
 
 ### Database Monitoring
@@ -3939,6 +4324,21 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 # cas.events.trackConfigurationModifications=true
 ```
 
+### InfluxDb Events
+
+Decide how CAS should store authentication events inside an InfluxDb instance.
+
+```properties
+# cas.events.influxDb.url=http://localhost:8086
+# cas.events.influxDb.username=root
+# cas.events.influxDb.password=root
+# cas.events.influxDb.retentionPolicy=autogen
+# cas.events.influxDb.dropDatabase=false
+# cas.events.influxDb.pointsToFlush=100
+# cas.events.influxDb.batchInterval=PT5S
+# cas.events.influxDb.consistencyLevel=ALL
+```
+
 ### Database Events
 
 Decide how CAS should store authentication events inside a database instance.
@@ -3975,9 +4375,9 @@ Decide how CAS should store authentication events inside a database instance.
 Decide how CAS should store authentication events inside a MongoDb instance.
 
 ```properties
-# cas.events.mongodb.clientUri=
-# cas.events.mongodb.dropCollection=false
-# cas.events.mongodb.collection=MongoDbCasEventRepository
+# cas.events.mongo.clientUri=
+# cas.events.mongo.dropCollection=false
+# cas.events.mongo.collection=MongoDbCasEventRepository
 ```
 
 ## Http Web Requests
@@ -3990,6 +4390,7 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.header.hsts=true
 # cas.httpWebRequest.header.xcontent=true
 # cas.httpWebRequest.header.cache=true
+# cas.httpWebRequest.header.contentSecurityPolicy=
 
 # cas.httpWebRequest.cors.enabled=false
 # cas.httpWebRequest.cors.allowCredentials=false
@@ -4040,14 +4441,35 @@ The default options are avaiable for hostname verification:
 | `NONE`                  | Ignore hostname verification.
 | `DEFAULT`               | Enforce hostname verification.
 
-
 ## Service Registry
+
+See [this guide](Service-Management.html) to learn more.
 
 ```properties
 # cas.serviceRegistry.watcherEnabled=true
+
 # cas.serviceRegistry.schedule.repeatInterval=120000
 # cas.serviceRegistry.schedule.startDelay=15000
+
+# Auto-initialize the registry from default JSON service definitions
 # cas.serviceRegistry.initFromJson=false
+
+# cas.serviceRegistry.managementType=DEFAULT|DOMAIN
+```
+
+### Service Registry Notifications
+
+```properties
+# cas.serviceRegistry.sms.from=
+# cas.serviceRegistry.sms.text=
+# cas.serviceRegistry.sms.attributeName=phone
+
+# cas.serviceRegistry.mail.from=
+# cas.serviceRegistry.mail.text=
+# cas.serviceRegistry.mail.subject=
+# cas.serviceRegistry.mail.cc=
+# cas.serviceRegistry.mail.bcc=
+# cas.serviceRegistry.mail.attributeName=mail
 ```
 
 ### JSON Service Registry
@@ -4071,6 +4493,49 @@ to locate YAML service definitions, decide how those resources should be found.
 ```
 
 To learn more about this topic, [please review this guide](YAML-Service-Management.html).
+
+### RESTful Service Registry
+
+To learn more about this topic, [please review this guide](REST-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.rest.url=classpath:/services
+# cas.serviceRegistry.rest.basicAuthUsername=
+# cas.serviceRegistry.rest.basicAuthPassword=
+```
+
+### Redis Service Registry
+
+To learn more about this topic, [please review this guide](Redis-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.redis.host=localhost
+# cas.serviceRegistry.redis.database=0
+# cas.serviceRegistry.redis.port=6380
+# cas.serviceRegistry.redis.password=
+# cas.serviceRegistry.redis.timeout=2000
+# cas.serviceRegistry.redis.useSsl=false
+# cas.serviceRegistry.redis.usePool=true
+
+# cas.serviceRegistry.redis.pool.max-active=20
+# cas.serviceRegistry.redis.pool.maxIdle=8
+# cas.serviceRegistry.redis.pool.minIdle=0
+# cas.serviceRegistry.redis.pool.maxActive=8
+# cas.serviceRegistry.redis.pool.maxWait=-1
+# cas.serviceRegistry.redis.pool.numTestsPerEvictionRun=0
+# cas.serviceRegistry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.serviceRegistry.redis.pool.lifo=true
+# cas.serviceRegistry.redis.pool.fairness=false
+
+# cas.serviceRegistry.redis.pool.testOnCreate=false
+# cas.serviceRegistry.redis.pool.testOnBorrow=false
+# cas.serviceRegistry.redis.pool.testOnReturn=false
+# cas.serviceRegistry.redis.pool.testWhileIdle=false
+
+# cas.serviceRegistry.redis.sentinel.master=mymaster
+# cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
+```
 
 ### DynamoDb Service Registry
 
@@ -4112,6 +4577,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Service-Mana
 # cas.serviceRegistry.dynamoDb.crypto.encryption.key=
 # cas.serviceRegistry.dynamoDb.crypto.encryption.keySize=16
 # cas.serviceRegistry.dynamoDb.crypto.alg=AES
+# cas.serviceRegistry.dynamoDb.crypto.enabled=false
 ```
 
 ### MongoDb Service Registry
@@ -4120,18 +4586,21 @@ Store CAS service definitions inside a MongoDb instance.
 To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
 
 ```properties
+# cas.serviceRegistry.mongo.host=localhost
+# cas.serviceRegistry.mongo.clientUri=localhost
 # cas.serviceRegistry.mongo.idleTimeout=30000
 # cas.serviceRegistry.mongo.port=27017
 # cas.serviceRegistry.mongo.dropCollection=false
 # cas.serviceRegistry.mongo.socketKeepAlive=false
 # cas.serviceRegistry.mongo.password=
-# cas.serviceRegistry.mongo.collectionName=cas-service-registry
+# cas.serviceRegistry.mongo.collection=cas-service-registry
 # cas.serviceRegistry.mongo.databaseName=cas-mongo-database
 # cas.serviceRegistry.mongo.timeout=5000
 # cas.serviceRegistry.mongo.userId=
 # cas.serviceRegistry.mongo.writeConcern=NORMAL
-# cas.serviceRegistry.mongo.host=localhost
-
+# cas.serviceRegistry.mongo.authenticationDatabaseName=
+# cas.serviceRegistry.mongo.replicaSet=
+# cas.serviceRegistry.mongo.ssEnabled=false
 # cas.serviceRegistry.mongo.conns.lifetime=60000
 # cas.serviceRegistry.mongo.conns.perHost=10
 ```
@@ -4223,7 +4692,7 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
-## Service Registey Replication Hazelcast
+## Service Registry Replication Hazelcast
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT30S
@@ -4308,6 +4777,7 @@ To learn more about this topic, [please review this guide](JPA-Ticket-Registry.h
 # cas.ticket.registry.jpa.crypto.encryption.key=
 # cas.ticket.registry.jpa.crypto.encryption.keySize=16
 # cas.ticket.registry.jpa.crypto.alg=AES
+# cas.ticket.registry.jpa.crypto.enabled=false
 ```
 
 ### Couchbase Ticket Registry
@@ -4326,6 +4796,7 @@ To learn more about this topic, [please review this guide](Couchbase-Ticket-Regi
 # cas.ticket.registry.couchbase.crypto.encryption.key=
 # cas.ticket.registry.couchbase.crypto.encryption.keySize=16
 # cas.ticket.registry.couchbase.crypto.alg=AES
+# cas.ticket.registry.couchbase.crypto.enabled=false
 ```
 
 ### Hazelcast Ticket Registry
@@ -4363,6 +4834,7 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 # cas.ticket.registry.hazelcast.crypto.encryption.key=
 # cas.ticket.registry.hazelcast.crypto.encryption.keySize=16
 # cas.ticket.registry.hazelcast.crypto.alg=AES
+# cas.ticket.registry.hazelcast.crypto.enabled=false
 ```
 
 ### Infinispan Ticket Registry
@@ -4378,6 +4850,7 @@ To learn more about this topic, [please review this guide](Infinispan-Ticket-Reg
 # cas.ticket.registry.infinispan.crypto.encryption.key=
 # cas.ticket.registry.infinispan.crypto.encryption.keySize=16
 # cas.ticket.registry.infinispan.crypto.alg=AES
+# cas.ticket.registry.infinispan.crypto.enabled=false
 ```
 
 ### InMemory Ticket Registry
@@ -4386,6 +4859,9 @@ This is typically the default ticket registry instance where tickets
 are kept inside the runtime environment memory.
 
 ```properties
+# Enable the backing map to be cacheable
+# cas.ticket.registry.inMemory.cache=true
+
 # cas.ticket.registry.inMemory.loadFactor=1
 # cas.ticket.registry.inMemory.concurrency=20
 # cas.ticket.registry.inMemory.initialCapacity=1000
@@ -4395,6 +4871,37 @@ are kept inside the runtime environment memory.
 # cas.ticket.registry.inMemory.crypto.encryption.key=
 # cas.ticket.registry.inMemory.crypto.encryption.keySize=16
 # cas.ticket.registry.inMemory.crypto.alg=AES
+# cas.ticket.registry.inMemory.crypto.enabled=false
+```
+
+### JMS Ticket Registry
+
+To learn more about this topic, [please review this guide](Messaging-JMS-Ticket-Registry.html).
+
+#### JMS Ticket Registry ActiveMQ
+
+```properties
+# spring.activemq.broker-url=tcp://192.168.1.210:9876
+# spring.activemq.user=admin
+# spring.activemq.password=secret
+# spring.activemq.pool.enabled=true
+# spring.activemq.pool.max-connections=50
+```
+
+#### JMS Ticket Registry Artemis
+
+```properties
+# spring.artemis.mode=native
+# spring.artemis.host=192.168.1.210
+# spring.artemis.port=9876
+# spring.artemis.user=admin
+# spring.artemis.password=secret
+```
+
+#### JMS Ticket Registry JNDI
+
+```properties
+# spring.jms.jndi-name=java:/MyConnectionFactory
 ```
 
 ### Ehcache Ticket Registry
@@ -4430,6 +4937,7 @@ To learn more about this topic, [please review this guide](Ehcache-Ticket-Regist
 # cas.ticket.registry.ehcache.crypto.encryption.key=
 # cas.ticket.registry.ehcache.crypto.encryption.keySize=16
 # cas.ticket.registry.ehcache.crypto.alg=AES
+# cas.ticket.registry.ehcache.crypto.enabled=false
 ```
 
 ### Ignite Ticket Registry
@@ -4466,6 +4974,7 @@ To learn more about this topic, [please review this guide](Ignite-Ticket-Registr
 # cas.ticket.registry.ignite.crypto.encryption.key=
 # cas.ticket.registry.ignite.crypto.encryption.keySize=16
 # cas.ticket.registry.ignite.crypto.alg=AES
+# cas.ticket.registry.ignite.crypto.enabled=false
 ```
 
 ### Memcached Ticket Registry
@@ -4477,12 +4986,29 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 # cas.ticket.registry.memcached.locatorType=ARRAY_MOD
 # cas.ticket.registry.memcached.failureMode=Redistribute
 # cas.ticket.registry.memcached.hashAlgorithm=FNV1_64_HASH
+# cas.ticket.registry.memcached.shouldOptimize=false
+# cas.ticket.registry.memcached.daemon=true
+# cas.ticket.registry.memcached.maxReconnectDelay=-1
+# cas.ticket.registry.memcached.useNagleAlgorithm=false
+# cas.ticket.registry.memcached.shutdownTimeoutSeconds=-1
+# cas.ticket.registry.memcached.opTimeout=-1
+# cas.ticket.registry.memcached.timeoutExceptionThreshold=2
+# cas.ticket.registry.memcached.maxTotal=20
+# cas.ticket.registry.memcached.maxIdle=8
+# cas.ticket.registry.memcached.minIdle=0
+
+# cas.ticket.registry.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
+# cas.ticket.registry.memcached.transcoderCompressionThreshold=16384
+# cas.ticket.registry.memcached.kryoAutoReset=false
+# cas.ticket.registry.memcached.kryoObjectsByReference=false
+# cas.ticket.registry.memcached.kryoRegistrationRequired=false
 
 # cas.ticket.registry.memcached.crypto.signing.key=
 # cas.ticket.registry.memcached.crypto.signing.keySize=512
 # cas.ticket.registry.memcached.crypto.encryption.key=
 # cas.ticket.registry.memcached.crypto.encryption.keySize=16
 # cas.ticket.registry.memcached.crypto.alg=AES
+# cas.ticket.registry.memcached.crypto.enabled=false
 ```
 
 ### DynamoDb Ticket Registry
@@ -4525,6 +5051,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.crypto.encryption.key=
 # cas.ticket.registry.dynamoDb.crypto.encryption.keySize=16
 # cas.ticket.registry.dynamoDb.crypto.alg=AES
+# cas.ticket.registry.dynamoDb.crypto.enabled=false
 ```
 
 ### MongoDb Ticket Registry
@@ -4542,6 +5069,10 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.userId=
 # cas.ticket.registry.mongo.writeConcern=NORMAL
 # cas.ticket.registry.mongo.host=localhost
+# cas.ticket.registry.mongo.clientUri=
+# cas.ticket.registry.mongo.authenticationDatabaseName=
+# cas.ticket.registry.mongo.replicaSet=
+# cas.ticket.registry.mongo.ssEnabled=false
 
 # cas.ticket.registry.mongo.conns.lifetime=60000
 # cas.ticket.registry.mongo.conns.perHost=10
@@ -4551,6 +5082,7 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 # cas.ticket.registry.mongo.crypto.encryption.key=
 # cas.ticket.registry.mongo.crypto.encryption.keySize=16
 # cas.ticket.registry.mongo.crypto.alg=AES
+# cas.ticket.registry.mongo.crypto.enabled=false
 ```
 
 ### Redis Ticket Registry
@@ -4558,42 +5090,41 @@ To learn more about this topic, [please review this guide](MongoDb-Ticket-Regist
 To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html).
 
 ```properties
-## Redis server host.
 # cas.ticket.registry.redis.host=localhost
-#
-## Database index used by the connection factory.
 # cas.ticket.registry.redis.database=0
-#
-## Redis server port.
 # cas.ticket.registry.redis.port=6379
-#
-## Login password of the redis server.
 # cas.ticket.registry.redis.password=
-#
-## Connection timeout in milliseconds
 # cas.ticket.registry.redis.timeout=
-#
-##
+# cas.ticket.registry.redis.useSsl=false
+# cas.ticket.registry.redis.usePool=true
+
 # cas.ticket.registry.redis.pool.max-active=20
-#
-## Max number of "idle" connections in the pool. Use a negative value to indicate an unlimited number of idle connections.
 # cas.ticket.registry.redis.pool.maxIdle=8
-#
-## Target for the minimum number of idle connections to maintain in the pool. This setting only has an effect if it is positive.
 # cas.ticket.registry.redis.pool.minIdle=0
-#
-## Max number of connections that can be allocated by the pool at a given time. Use a negative value for no limit.
 # cas.ticket.registry.redis.pool.maxActive=8
-#
-## Maximum amount of time (in milliseconds) a connection allocation should block
-#  before throwing an exception when the pool is exhausted. Use a negative value to block indefinitely.
 # cas.ticket.registry.redis.pool.maxWait=-1
+# cas.ticket.registry.redis.pool.numTestsPerEvictionRun=0
+# cas.ticket.registry.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.ticket.registry.redis.pool.minEvictableIdleTimeMillis=0
+# cas.ticket.registry.redis.pool.lifo=true
+# cas.ticket.registry.redis.pool.fairness=false
+
+# cas.ticket.registry.redis.pool.testOnCreate=false
+# cas.ticket.registry.redis.pool.testOnBorrow=false
+# cas.ticket.registry.redis.pool.testOnReturn=false
+# cas.ticket.registry.redis.pool.testWhileIdle=false
+
+# cas.ticket.registry.redis.sentinel.master=mymaster
+# cas.ticket.registry.redis.sentinel.node[0]=localhost:26379
+# cas.ticket.registry.redis.sentinel.node[1]=localhost:26380
+# cas.ticket.registry.redis.sentinel.node[2]=localhost:26381
 
 # cas.ticket.registry.redis.crypto.signing.key=
 # cas.ticket.registry.redis.crypto.signing.keySize=512
 # cas.ticket.registry.redis.crypto.encryption.key=
 # cas.ticket.registry.redis.crypto.encryption.keySize=16
 # cas.ticket.registry.redis.crypto.alg=AES
+# cas.ticket.registry.redis.crypto.enabled=false
 ```
 
 ## Protocol Ticket Security
@@ -4644,6 +5175,23 @@ applicable to STs.
 
 ## TGT Expiration Policy
 
+Ticket expiration policies are activated in the following conditions:
+
+- If the timeout values for the default policy are all set to zero or less, CAS shall ensure tickets are *never* considered expired.
+- Disabling a policy requires that all its timeout settings be set to a value equal or less than zero.
+- If not ticket expiration policy is determined, CAS shall ensure the ticket are *always* considered expired.
+
+<div class="alert alert-info"><strong>Keep What You Need!</strong><p>You are encouraged to only keep and maintain properties and settings needed for a particular policy. It is <strong>UNNECESSARY</strong> to grab a copy of all fields or keeping a copy as a reference while leaving them commented out. This strategy would ultimately lead to poor upgrades increasing chances of breaking changes and a messy deployment at that.</p></div>
+
+Ticket expiration policies are activated in the following order:
+
+1. Tickets are never expired, if and when settings for the default policy are configured accordingly.
+2. Timeout
+3. Default
+4. Throttled Timeout
+5. Hard Timeout
+6. Tickets always expire immediately.
+
 ### Default
 
 Provides a hard-time out as well as a sliding window.
@@ -4690,29 +5238,57 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 
 To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
 
+The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services or those that might define an external CAS server for authentication are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
+
 ```properties
+# server.port=8444
 # server.contextPath=/cas-management
 
 # cas.mgmt.adminRoles[0]=ROLE_ADMIN
 # cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
 
+# cas.mgmt.userPropertiesFile=classpath:/user-details.[json|yml]
 # cas.mgmt.userPropertiesFile=classpath:/user-details.properties
+
 # cas.mgmt.serverName=https://localhost:8443
 # cas.mgmt.defaultLocale=en
 
 # cas.mgmt.authzAttributes[0]=memberOf
 # cas.mgmt.authzAttributes[1]=groupMembership
+
+# Connect to a CAS server for authentication
+# cas.server.name=
+# cas.server.prefix=
+
+# Use regex for authorized IPs
+#cas.mgmt.authzIpRegex=
+```
+
+### Attributes
+
+Attribute configuration and customizations that are processed and accepted by the management web application are defined via the following settings:
+
+```properties
+# cas.authn.attributeRepository.stub.attributes.uid=uid
+# cas.authn.attributeRepository.stub.attributes.givenName=givenName
+# cas.authn.attributeRepository.stub.attributes.eppn=eppn
 ```
 
 ### LDAP Authorization
 
+Use LDAP to enforce access into the management web application either by group or attribute.
+
 ```properties
+# Enable authorization based on groups
 # cas.mgmt.ldap.ldapAuthz.groupAttribute=
 # cas.mgmt.ldap.ldapAuthz.groupPrefix=
 # cas.mgmt.ldap.ldapAuthz.groupFilter=
 # cas.mgmt.ldap.ldapAuthz.groupBaseDn=
+
+# Enable authorization based on attributes and roles
 # cas.mgmt.ldap.ldapAuthz.rolePrefix=ROLE_
 # cas.mgmt.ldap.ldapAuthz.roleAttribute=uugid
+
 # cas.mgmt.ldap.ldapAuthz.searchFilter=cn={user}
 # cas.mgmt.ldap.ldapAuthz.baseDn=
 
@@ -4769,42 +5345,82 @@ To learn more about this topic, [please review this guide](../integration/Config
 Control how Spring Webflow's conversational session state should be managed by CAS,
 and all other webflow related settings.
 
-To learn more about this topic, [please review this guide](Webflow-Customization.html) or [this guide](Webflow-Customization-Sessions.html).
+To learn more about this topic, [please review this guide](Webflow-Customization.html).
 
 ```properties
-# cas.webflow.autoconfigure=true
 # cas.webflow.alwaysPauseRedirect=false
 # cas.webflow.refresh=true
 # cas.webflow.redirectSameState=false
+```
 
+### Spring Webflow Auto Configuration
+
+Options that control how the Spring Webflow context is dynamically altered and configured by CAS. To learn more about this topic, [please review this guide](Webflow-Customization-Extensions.html).
+
+```properties
+# cas.webflow.autoconfigure=true
+```
+
+#### Spring Webflow Groovy Auto Configuration
+
+Control the Spring Webflow context via a custom Groovy script.
+
+```properties
+# cas.webflow.groovy.location=file:/etc/cas/config/custom-webflow.groovy
+```
+
+### Spring Webflow Session Management
+
+To learn more about this topic, [see this guide](Webflow-Customization-Sessions.html).
+
+```properties
 # cas.webflow.session.lockTimeout=30
 # cas.webflow.session.compress=false
 # cas.webflow.session.maxConversations=5
-# cas.webflow.session.storage=true
 
-# Manage session storage via Hazelcast
-# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+# Enable server-side session management
+# cas.webflow.session.storage=false
+```
 
-# Manage session storage via Mongo
-# spring.data.mongodb.host=mongo-srv
-# spring.data.mongodb.port=27018
-# spring.data.mongodb.database=prod
+#### Spring Webflow Client-Side Session
 
-# Manage session storage via Redis
-# spring.session.store-type=redis
-# spring.redis.host=localhost
-# spring.redis.password=secret
-# spring.redis.port=6379
+```properties
+# cas.webflow.crypto.enabled=true
 
 # cas.webflow.crypto.signing.key=
 # cas.webflow.crypto.signing.keySize=512
+
 # cas.webflow.crypto.encryption.keySize=16
 # cas.webflow.crypto.encryption.key=
+
 # cas.webflow.crypto.alg=AES
 ```
 
 The encryption key must be randomly-generated string whose length is defined by the encryption key size setting.
 The signing key [is a JWK](Configuration-Properties-Common.html#signing--encryption) whose length is defined by the signing key size setting.
+
+#### Spring Webflow Hazelcast Server-Side Session
+
+```properties
+# cas.webflow.session.hzLocation=classpath:/hazelcast.xml
+```
+
+#### Spring Webflow MongoDb Server-Side Session
+
+```properties
+# spring.data.mongodb.host=mongo-srv
+# spring.data.mongodb.port=27018
+# spring.data.mongodb.database=prod
+```
+
+#### Spring Webflow Redis Server-Side Session
+
+```properties
+# spring.session.store-type=redis
+# spring.redis.host=localhost
+# spring.redis.password=secret
+# spring.redis.port=6379
+```
 
 ### Authentication Exceptions
 
@@ -4846,9 +5462,72 @@ Interrupt the authentication flow to reach out to external services. To learn mo
 Decide how CAS should attempt to determine whether AUP is accepted.
 To learn more about this topic, [please review this guide](Webflow-Customization-AUP.html).
 
-
 ```properties
 # cas.acceptableUsagePolicy.aupAttributeName=aupAccepted
+```
+
+#### REST
+
+```properties
+# cas.acceptableUsagePolicy.rest.method=GET|POST
+# cas.acceptableUsagePolicy.rest.order=0
+# cas.acceptableUsagePolicy.rest.caseInsensitive=false
+# cas.acceptableUsagePolicy.rest.basicAuthUsername=uid
+# cas.acceptableUsagePolicy.rest.basicAuthPassword=password
+# cas.acceptableUsagePolicy.rest.url=https://rest.somewhere.org/attributes
+```
+
+#### JDBC
+
+If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance.
+
+```properties
+# cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
+
+# cas.acceptableUsagePolicy.jdbc.validationQuery=SELECT 1
+# cas.acceptableUsagePolicy.jdbc.maxWait=5000
+# cas.acceptableUsagePolicy.jdbc.healthQuery=
+# cas.acceptableUsagePolicy.jdbc.isolateInternalQueries=false
+# cas.acceptableUsagePolicy.jdbc.url=jpa:hsqldb:mem:cas-hsql-database
+# cas.acceptableUsagePolicy.jdbc.failFastTimeout=1
+# cas.acceptableUsagePolicy.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.acceptableUsagePolicy.jdbc.dialect=org.hibernate.dialect.HSQLDialect
+# cas.acceptableUsagePolicy.jdbc.leakThreshold=10
+# cas.acceptableUsagePolicy.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.acceptableUsagePolicy.jdbc.batchSize=1
+# cas.acceptableUsagePolicy.jdbc.user=sa
+# cas.acceptableUsagePolicy.jdbc.ddlAuto=create-drop
+# cas.acceptableUsagePolicy.jdbc.maxAgeDays=180
+# cas.acceptableUsagePolicy.jdbc.password=
+# cas.acceptableUsagePolicy.jdbc.autocommit=false
+# cas.acceptableUsagePolicy.jdbc.driverClass=org.hsqldb.jpaDriver
+# cas.acceptableUsagePolicy.jdbc.idleTimeout=5000
+# cas.acceptableUsagePolicy.jdbc.dataSourceName=
+# cas.acceptableUsagePolicy.jdbc.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.acceptableUsagePolicy.jdbc.properties.propertyName=propertyValue
+```
+
+#### MongoDb
+
+```properties
+# cas.acceptableUsagePolicy.mongo.host=localhost
+# cas.acceptableUsagePolicy.mongo.clientUri=localhost
+# cas.acceptableUsagePolicy.mongo.idleTimeout=30000
+# cas.acceptableUsagePolicy.mongo.port=27017
+# cas.acceptableUsagePolicy.mongo.dropCollection=false
+# cas.acceptableUsagePolicy.mongo.socketKeepAlive=false
+# cas.acceptableUsagePolicy.mongo.password=
+# cas.acceptableUsagePolicy.mongo.collection=cas-acceptableUsagePolicy-repository
+# cas.acceptableUsagePolicy.mongo.databaseName=cas-mongo-database
+# cas.acceptableUsagePolicy.mongo.timeout=5000
+# cas.acceptableUsagePolicy.mongo.userId=
+# cas.acceptableUsagePolicy.mongo.writeConcern=NORMAL
+# cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=
+# cas.acceptableUsagePolicy.mongo.replicaSet=
+# cas.acceptableUsagePolicy.mongo.ssEnabled=false
+# cas.acceptableUsagePolicy.mongo.conns.lifetime=60000
+# cas.acceptableUsagePolicy.mongo.conns.perHost=10
 ```
 
 #### LDAP
@@ -4891,7 +5570,6 @@ If AUP is controlled via LDAP, decide how choices should be remembered back insi
 # cas.acceptableUsagePolicy.ldap.validator.dn=
 ```
 
-
 ## REST API
 
 To learn more about this topic, [please review this guide](../protocol/REST-Protocol.html).
@@ -4899,16 +5577,100 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 ```properties
 # cas.rest.attributeName=
 # cas.rest.attributeValue=
-# cas.rest.throttler=neverThrottle
+# cas.rest.throttler=neverThrottle|authenticationThrottle
 ```
 
-## Metrics & Performance Stats
+## Metrics
 
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
 # cas.metrics.loggerName=perfStatsLogger
 # cas.metrics.refreshInterval=30
+```
+
+### Metrics Storage
+
+#### Redis
+
+```properties
+# cas.metrics.redis.key=
+# cas.metrics.redis.prefix=
+
+# cas.metrics.redis.host=localhost
+# cas.metrics.redis.database=0
+# cas.metrics.redis.port=6380
+# cas.metrics.redis.password=
+# cas.metrics.redis.timeout=2000
+# cas.metrics.redis.useSsl=false
+# cas.metrics.redis.usePool=true
+
+# cas.metrics.redis.pool.max-active=20
+# cas.metrics.redis.pool.maxIdle=8
+# cas.metrics.redis.pool.minIdle=0
+# cas.metrics.redis.pool.maxActive=8
+# cas.metrics.redis.pool.maxWait=-1
+# cas.metrics.redis.pool.numTestsPerEvictionRun=0
+# cas.metrics.redis.pool.softMinEvictableIdleTimeMillis=0
+# cas.metrics.redis.pool.minEvictableIdleTimeMillis=0
+# cas.metrics.redis.pool.lifo=true
+# cas.metrics.redis.pool.fairness=false
+
+# cas.metrics.redis.pool.testOnCreate=false
+# cas.metrics.redis.pool.testOnBorrow=false
+# cas.metrics.redis.pool.testOnReturn=false
+# cas.metrics.redis.pool.testWhileIdle=false
+```
+
+#### Statsd
+
+```properties
+# cas.metrics.statsd.host=
+# cas.metrics.statsd.port=8125
+# cas.metrics.statsd.prefix=cas
+```
+
+#### MongoDb
+
+```properties
+# cas.metrics.mongo.host=localhost
+# cas.metrics.mongo.clientUri=localhost
+# cas.metrics.mongo.idleTimeout=30000
+# cas.metrics.mongo.port=27017
+# cas.metrics.mongo.dropCollection=false
+# cas.metrics.mongo.socketKeepAlive=false
+# cas.metrics.mongo.password=
+# cas.metrics.mongo.collection=cas-metrics-repository
+# cas.metrics.mongo.databaseName=cas-mongo-database
+# cas.metrics.mongo.timeout=5000
+# cas.metrics.mongo.userId=
+# cas.metrics.mongo.writeConcern=NORMAL
+# cas.metrics.mongo.authenticationDatabaseName=
+# cas.metrics.mongo.replicaSet=
+# cas.metrics.mongo.ssEnabled=false
+# cas.metrics.mongo.conns.lifetime=60000
+# cas.metrics.mongo.conns.perHost=10
+```
+
+#### Open TSDB
+
+```properties
+# cas.metrics.openTsdb.connectTimeout=10000
+# cas.metrics.openTsdb.readTimeout=30000
+# cas.metrics.openTsdb.prefix=url
+```
+
+#### InfluxDb
+
+```properties
+# cas.metrics.influxDb.url=http://localhost:8086
+# cas.metrics.influxDb.username=root
+# cas.metrics.influxDb.password=root
+# cas.metrics.influxDb.retentionPolicy=autogen
+# cas.metrics.influxDb.dropDatabase=false
+# cas.metrics.influxDb.pointsToFlush=100
+# cas.metrics.influxDb.batchInterval=PT5S
+# cas.metrics.influxDb.consistencyLevel=ALL
 ```
 
 ## Groovy Shell
@@ -4951,14 +5713,14 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 To learn more about this topic, [please review this guide](Service-Discovery-Guide.html).
 
 ```properties
-eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
-eureka.client.enabled=true
-eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
-eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
-eureka.instance.homePageUrl=${cas.server.prefix}/
-eureka.client.healthcheck.enabled=true
+# eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
+# eureka.client.enabled=true
+# eureka.instance.statusPageUrl=${cas.server.prefix}/status/info
+# eureka.instance.healthCheckUrl=${cas.server.prefix}/status/health
+# eureka.instance.homePageUrl=${cas.server.prefix}/
+# eureka.client.healthcheck.enabled=true
 
-spring.cloud.config.discovery.enabled=false
+# spring.cloud.config.discovery.enabled=false
 ```
 
 ## Provisioning
@@ -4997,6 +5759,12 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.json.location=file:/etc/cas/config/consent.json
 ```
 
+### Groovy Attribute Consent
+
+```properties
+# cas.consent.groovy.location=file:/etc/cas/config/consent.groovy
+```
+
 ### JPA Attribute Consent
 
 ```properties
@@ -5022,6 +5790,80 @@ To learn more about this topic, [please review this guide](../integration/Attrib
 # cas.consent.jpa.dataSourceProxy=false
 # Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
 # cas.consent.jpa.properties.propertyName=propertyValue
+```
+
+### LDAP Attribute Consent
+
+```properties
+# cas.consent.ldap.consentAttributeName=casConsentDecision
+# cas.consent.ldap.userFilter=cn={user}
+# cas.consent.ldap.subtreeSearch=true
+
+# cas.consent.ldap.type=GENERIC|AD|FreeIPA|EDirectory
+# cas.consent.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+# cas.consent.ldap.connectionStrategy=
+# cas.consent.ldap.baseDn=dc=example,dc=org
+# cas.consent.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
+# cas.consent.ldap.bindCredential=Password
+# cas.consent.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+# cas.consent.ldap.connectTimeout=PT5S
+# cas.consent.ldap.trustCertificates=
+# cas.consent.ldap.keystore=
+# cas.consent.ldap.keystorePassword=
+# cas.consent.ldap.keystoreType=JKS|JCEKS|PKCS12
+# cas.consent.ldap.poolPassivator=NONE|CLOSE|BIND
+# cas.consent.ldap.minPoolSize=3
+# cas.consent.ldap.maxPoolSize=10
+# cas.consent.ldap.validateOnCheckout=true
+# cas.consent.ldap.validatePeriodically=true
+# cas.consent.ldap.validatePeriod=PT5M
+# cas.consent.ldap.validateTimeout=PT5S
+# cas.consent.ldap.failFast=true
+# cas.consent.ldap.idleTime=PT10M
+# cas.consent.ldap.prunePeriod=PT2H
+# cas.consent.ldap.blockWaitTime=PT3S
+# cas.consent.ldap.useSsl=true
+# cas.consent.ldap.useStartTls=false
+# cas.consent.ldap.responseTimeout=PT5S
+# cas.consent.ldap.allowMultipleDns=false
+# cas.consent.ldap.name=
+
+# cas.consent.ldap.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+# cas.consent.ldap.saslRealm=EXAMPLE.COM
+# cas.consent.ldap.saslAuthorizationId=
+# cas.consent.ldap.saslMutualAuth=
+# cas.consent.ldap.saslQualityOfProtection=
+# cas.consent.ldap.saslSecurityStrength=
+
+# cas.consent.ldap.validator.type=NONE|SEARCH|COMPARE
+# cas.consent.ldap.validator.baseDn=
+# cas.consent.ldap.validator.searchFilter=(objectClass=*)
+# cas.consent.ldap.validator.scope=OBJECT|ONELEVEL|SUBTREE
+# cas.consent.ldap.validator.attributeName=objectClass
+# cas.consent.ldap.validator.attributeValues=top
+# cas.consent.ldap.validator.dn=
+```
+
+### MongoDb Attribute Consent
+
+```properties
+# cas.consent.mongo.host=localhost
+# cas.consent.mongo.clientUri=localhost
+# cas.consent.mongo.idleTimeout=30000
+# cas.consent.mongo.port=27017
+# cas.consent.mongo.dropCollection=false
+# cas.consent.mongo.socketKeepAlive=false
+# cas.consent.mongo.password=
+# cas.consent.mongo.collection=cas-consent-repository
+# cas.consent.mongo.databaseName=cas-mongo-database
+# cas.consent.mongo.timeout=5000
+# cas.consent.mongo.userId=
+# cas.consent.mongo.writeConcern=NORMAL
+# cas.consent.mongo.authenticationDatabaseName=
+# cas.consent.mongo.replicaSet=
+# cas.consent.mongo.ssEnabled=false
+# cas.consent.mongo.conns.lifetime=60000
+# cas.consent.mongo.conns.perHost=10
 ```
 
 ### REST Attribute Consent
@@ -5056,9 +5898,13 @@ To learn more about this topic, [please review this guide](Password-Policy-Enfor
 # cas.authn.pm.reset.emailAttribute=mail
 # cas.authn.pm.reset.securityQuestionsEnabled=true
 
+# Automatically log in after successful password change
+# cas.authn.pm.autoLogin=false
+
 # Used to sign/encrypt the password-reset link
 # cas.authn.pm.reset.crypto.encryption.key=
 # cas.authn.pm.reset.crypto.signing.key=
+# cas.authn.pm.reset.crypto.enabled=true
 ```
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.

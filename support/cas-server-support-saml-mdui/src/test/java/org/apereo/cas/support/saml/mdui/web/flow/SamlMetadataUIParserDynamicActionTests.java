@@ -9,6 +9,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
@@ -26,6 +27,7 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIConfiguration;
+import org.apereo.cas.support.saml.mdui.config.SamlMetadataUIWebflowConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -67,10 +69,12 @@ import static org.junit.Assert.*;
         classes = {
                 SamlMetadataUIParserDynamicActionTests.CasTestConfiguration.class,
                 SamlMetadataUIConfiguration.class,
+                SamlMetadataUIWebflowConfiguration.class,
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CoreSamlConfiguration.class,
                 CasCoreWebConfiguration.class,

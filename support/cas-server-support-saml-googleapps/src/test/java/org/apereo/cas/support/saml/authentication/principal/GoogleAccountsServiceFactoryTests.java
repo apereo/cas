@@ -17,8 +17,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
-
 import static org.junit.Assert.*;
 
 /**
@@ -62,13 +60,14 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.PARAMETER_SAML_REQUEST, encodeMessage(samlRequest));
 
         final GoogleAccountsService service = (GoogleAccountsService) this.factory.createService(request);
-        service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal());
+        service.setPrincipal(CoreAuthenticationTestUtils.getPrincipal().getId());
         assertNotNull(service);
-        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET");
+        final Response response = googleAccountsServiceResponseBuilder.build(service, "SAMPLE_TICKET",
+                CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
     }
 
-    private static String encodeMessage(final String xmlString) throws IOException {
+    private static String encodeMessage(final String xmlString) {
         return CompressionUtils.deflate(xmlString);
     }
 }

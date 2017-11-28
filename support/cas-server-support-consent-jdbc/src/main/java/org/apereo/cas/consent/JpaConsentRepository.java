@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is {@link JpaConsentRepository}.
@@ -21,7 +23,7 @@ import javax.persistence.PersistenceContext;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerConsent")
 public class JpaConsentRepository implements ConsentRepository {
-    private static final long serialVersionUID = 6599908862493270206L;
+    private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
 
@@ -33,6 +35,33 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public String toString() {
         return getClass().getSimpleName();
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions(final String principal) {
+        try {
+            return this.entityManager.createQuery(
+                    SELECT_QUERY.concat("where r.principal = :principal"), ConsentDecision.class)
+                    .setParameter("principal", principal)
+                    .getResultList();
+        } catch (final NoResultException e) {
+            LOGGER.debug(e.getMessage());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return new ArrayList<>(0);
+    }
+
+    @Override
+    public Collection<ConsentDecision> findConsentDecisions() {
+        try {
+            return this.entityManager.createQuery(SELECT_QUERY, ConsentDecision.class).getResultList();
+        } catch (final NoResultException e) {
+            LOGGER.debug(e.getMessage());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());
+        }
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -61,6 +90,21 @@ public class JpaConsentRepository implements ConsentRepository {
             if (!isNew) {
                 this.entityManager.persist(mergedDecision);
             }
+            return true;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+    
+    @Override
+    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+        try {
+            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY
+                    .concat("where r.id = :id"), ConsentDecision.class)
+                    .setParameter("id", decisionId)
+                    .getSingleResult();
+            this.entityManager.remove(decision);
             return true;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

@@ -1,4 +1,5 @@
 /* global trackGeoLocation, jqueryReady */
+
 /* exported resourceLoadedSuccessfully */
 
 function requestGeoPosition() {
@@ -33,9 +34,33 @@ function showGeoPosition(position) {
         + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.timestamp);
 }
 
+
+function preserveAnchorTagOnForm() {
+    $('#fm1').submit(function () {
+        var location = self.document.location;
+        var hash = decodeURIComponent(location.hash);
+        
+        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
+            hash = '#' + hash;
+        }
+
+        var action = $('#fm1').attr('action');
+        if (action == undefined) {
+            action = location.href;
+        }
+        var qidx = location.href.indexOf('?');
+        if (qidx != -1) {
+            var queryParams = location.href.substring(qidx);
+            action += queryParams;
+        }
+        action += hash;
+        $('#fm1').attr('action', action);
+        
+    });
+}
+
 function areCookiesEnabled() {
     if ($.cookie == undefined) {
-        // console.log('JQuery Cookie library is not defined');
         return;
     }
 
@@ -43,7 +68,7 @@ function areCookiesEnabled() {
     var value = $.cookie('cookiesEnabled');
     $.removeCookie('cookiesEnabled');
     return value != undefined;
-    
+
 }
 
 function animateCasMessageBoxes() {
@@ -58,32 +83,36 @@ function animateCasMessageBoxes() {
 }
 
 function disableEmptyInputFormSubmission() {
+    var fields = $('#fm1 input[name="username"],[name="password"]');
 
-    $('#fm1 input[name="username"],[name="password"]').on('input', function (event) {
-        var enableSubmission = $('#fm1 input[name="username"]').val().trim() &&
-                               $('#fm1 input[name="password"]').val().trim();
+    if (fields.length == 2) {
+        fields.on('input', function (event) {
+            var enableSubmission = $('#fm1 input[name="username"]').val().trim() &&
+                $('#fm1 input[name="password"]').val().trim();
 
-        if (enableSubmission) {
-            $('#fm1 input[name=submit]').removeAttr('disabled');
-            event.stopPropagation();
-        } else {
-            $('#fm1 input[name=submit]').attr('disabled', 'true');
-        }
-    });
+            if (enableSubmission) {
+                $('#fm1 input[name=submit]').removeAttr('disabled');
+                event.stopPropagation();
+            } else {
+                $('#fm1 input[name=submit]').attr('disabled', 'true');
+            }
+        });
+    }
 
     /**
      * Handle auto-complete events to the extent possible.
      */
-    setTimeout(function(){
-        var uid = $('#username').val();
-        if (uid != null && uid != '') {
-            $('#username').change();
-            $('#username').focus();
-            $('#fm1 input[name=submit]').removeAttr('disabled');
-        }
+    if ($('#fm1 input[name="username"]').length > 0) {
+        setTimeout(function () {
+            var uid = $('#username').val();
+            if (uid != null && uid != '') {
+                $('#username').change();
+                $('#username').focus();
+                $('#fm1 input[name=submit]').removeAttr('disabled');
+            }
 
-    }, 100);
-
+        }, 100);
+    }
 }
 
 function resourceLoadedSuccessfully() {
@@ -106,6 +135,7 @@ function resourceLoadedSuccessfully() {
 
         animateCasMessageBoxes();
         disableEmptyInputFormSubmission();
+        preserveAnchorTagOnForm();
 
         $('#capslock-on').hide();
         $('#fm1 input[name="username"],[name="password"]').trigger('input');

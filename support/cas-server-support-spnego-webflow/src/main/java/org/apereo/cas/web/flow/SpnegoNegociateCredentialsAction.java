@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,11 +94,11 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext context) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
-        final HttpServletResponse response = WebUtils.getHttpServletResponse(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
         final String authorizationHeader = request.getHeader(SpnegoConstants.HEADER_AUTHORIZATION);
-        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
 
         LOGGER.debug("Authorization header [{}], User Agent header [{}]", authorizationHeader, userAgent);
         if (!StringUtils.hasText(userAgent) || this.supportedBrowser.isEmpty()) {

@@ -10,6 +10,7 @@ import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
@@ -32,6 +33,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.jpa.SharedEntityManagerCreator;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -72,6 +74,7 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class,
         CasCoreServicesConfiguration.class,
         CasCoreConfiguration.class,
+        CasCoreUtilConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -84,6 +87,7 @@ import static org.junit.Assert.*;
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@DirtiesContext
 public class JpaLockingStrategyTests {
     /**
      * Number of clients contending for lock in concurrent test.
@@ -118,14 +122,13 @@ public class JpaLockingStrategyTests {
     /**
      * Test basic acquire/release semantics.
      *
-     * @throws Exception On errors.
      */
     @Test
-    public void verifyAcquireAndRelease() throws Exception {
-        final String appId = "basic";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
+    public void verifyAcquireAndRelease() {
         try {
+            final String appId = "basic";
+            final String uniqueId = appId + "-1";
+            final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             lock.release();
@@ -135,24 +138,17 @@ public class JpaLockingStrategyTests {
             fail("testAcquireAndRelease failed");
         }
     }
-
-    /**
-     * Test lock expiration.
-     *
-     * @throws Exception On errors.
-     */
+    
     @Test
-    public void verifyLockExpiration() throws Exception {
-        final String appId = "expquick";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
+    public void verifyLockExpiration() {
         try {
+            final String appId = "expquick";
+            final String uniqueId = appId + "-1";
+            final LockingStrategy lock = newLockTxProxy(appId, uniqueId, "1");
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
-            assertFalse(lock.acquire());
-            Thread.sleep(1500);
+            lock.release();
             assertTrue(lock.acquire());
-            assertEquals(uniqueId, getOwner(appId));
             lock.release();
             assertNull(getOwner(appId));
         } catch (final Exception e) {
@@ -166,10 +162,10 @@ public class JpaLockingStrategyTests {
      */
     @Test
     public void verifyNonReentrantBehavior() {
-        final String appId = "reentrant";
-        final String uniqueId = appId + "-1";
-        final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
         try {
+            final String appId = "reentrant";
+            final String uniqueId = appId + "-1";
+            final LockingStrategy lock = newLockTxProxy(appId, uniqueId, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT);
             assertTrue(lock.acquire());
             assertEquals(uniqueId, getOwner(appId));
             assertFalse(lock.acquire());
@@ -185,7 +181,7 @@ public class JpaLockingStrategyTests {
      * Test concurrent acquire/release semantics.
      */
     @Test
-    public void verifyConcurrentAcquireAndRelease() throws Exception {
+    public void verifyConcurrentAcquireAndRelease() {
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
         try {
             testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
@@ -201,7 +197,7 @@ public class JpaLockingStrategyTests {
      * Test concurrent acquire/release semantics for existing lock.
      */
     @Test
-    public void verifyConcurrentAcquireAndReleaseOnExistingLock() throws Exception {
+    public void verifyConcurrentAcquireAndReleaseOnExistingLock() {
         final LockingStrategy[] locks = getConcurrentLocks("concurrent-exists");
         locks[0].acquire();
         locks[0].release();
@@ -286,7 +282,7 @@ public class JpaLockingStrategyTests {
         }
 
         @Override
-        public Object invoke(final Object proxy, final Method method, final Object[] args) throws Throwable {
+        public Object invoke(final Object proxy, final Method method, final Object[] args) {
             return new TransactionTemplate(txManager).execute(status -> {
                 try {
                     final Object result = method.invoke(jpaLock, args);
@@ -312,7 +308,7 @@ public class JpaLockingStrategyTests {
         }
 
         @Override
-        public Boolean call() throws Exception {
+        public Boolean call() {
             try {
                 return lock.acquire();
             } catch (final Exception e) {
@@ -332,7 +328,7 @@ public class JpaLockingStrategyTests {
         }
 
         @Override
-        public Boolean call() throws Exception {
+        public Boolean call() {
             try {
                 lock.release();
                 return true;

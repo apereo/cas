@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -21,12 +23,15 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String SPNEGO_NEGOTIATE = "negociateSpnego";
     private static final String EVALUATE_SPNEGO_CLIENT = "evaluateClientRequest";
 
-    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+    public SpengoWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
+                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                   final ApplicationContext applicationContext,
+                                   final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createStartSpnegoAction(flow);
@@ -40,7 +45,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void augmentWebflowToStartSpnego(final Flow flow) {
-        final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         createTransitionForState(state, CasWebflowConstants.TRANSITION_ID_SUCCESS, START_SPNEGO_AUTHENTICATE, true);
     }
 

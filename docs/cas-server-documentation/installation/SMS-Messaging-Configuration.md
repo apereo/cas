@@ -9,19 +9,19 @@ CAS presents the ability to notify users on select actions via SMS messaging. Ex
 or password reset links/tokens. SMS providers supported by CAS are listed below. Note that an active/professional subscription may be required for certain
 providers.
 
-## Twillio
+## Twilio
 
 To learn more, [visit this site](https://www.twilio.com/).
 
 ```xml
 <dependency>
     <groupId>org.apereo.cas</groupId>
-    <artifactId>cas-server-support-sms-twillio</artifactId>
+    <artifactId>cas-server-support-sms-twilio</artifactId>
     <version>${cas.version}</version>
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#twillio).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#twilio).
 
 ## TextMagic
 

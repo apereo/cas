@@ -22,9 +22,9 @@ var Gauge = function (wrapper, percent, options) {
         .range(['green', 'green', 'goldenrod', 'red']);
 
     var arc = d3.svg.arc()
-            .startAngle(0)
-            .innerRadius(width * 0.4)
-            .outerRadius(width * 0.5)
+        .startAngle(0)
+        .innerRadius(width * 0.4)
+        .outerRadius(width * 0.5)
         ;
 
     var svg = d3.select(wrapper).append('svg')

@@ -49,7 +49,7 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     }
 
     @Override
-    public boolean isSatisfiedBy(final Authentication authn) throws Exception {
+    public boolean isSatisfiedBy(final Authentication authn) {
         boolean credsOk = true;
         if (this.tryAll) {
             credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();

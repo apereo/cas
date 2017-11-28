@@ -4,11 +4,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.web.Log4jServletContextListener;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.ServletListenerRegistrationBean;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.SimpleUrlHandlerMapping;
@@ -46,8 +48,9 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         return bean;
     }
 
+    @ConditionalOnMissingBean(name = "localeResolver")
     @Bean
-    public CookieLocaleResolver localeResolver() {
+    public LocaleResolver localeResolver() {
         final CookieLocaleResolver bean = new CookieLocaleResolver() {
             @Override
             protected Locale determineDefaultLocale(final HttpServletRequest request) {
@@ -61,25 +64,14 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
         };
         return bean;
     }
-
-    @Bean
-    public Map serviceThemeResolverSupportedBrowsers() {
-        final Map<String, String> map = new HashMap<>();
-        map.put(".*iPhone.*", "iphone");
-        map.put(".*Android.*", "android");
-        map.put(".*Safari.*Pre.*", "safari");
-        map.put(".*iPhone.*", "iphone");
-        map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
-        return map;
-    }
+    
 
     @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
             @Override
             protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                         final HttpServletResponse response)
-                    throws Exception {
+                                                         final HttpServletResponse response) {
                 final String queryString = request.getQueryString();
                 final String url = request.getContextPath() + "/login"
                         + (queryString != null ? '?' + queryString : StringUtils.EMPTY);

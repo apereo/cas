@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
@@ -66,7 +67,7 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         LOGGER.debug("Attempting to globally activate [{}]", globalProviderId);
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", globalProviderId);
             throw new AuthenticationException();
@@ -76,10 +77,9 @@ public class GlobalMultifactorAuthenticationPolicyEventResolver extends BaseMult
         if (providerFound.isPresent()) {
             final MultifactorAuthenticationProvider provider = providerFound.get();
             if (provider.isAvailable(service)) {
-                LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]",
-                        provider, service.getName());
-                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context,
-                        buildEventAttributeMap(authentication.getPrincipal(), service, provider));
+                LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service);
+                final Map<String, Object> attributes = buildEventAttributeMap(authentication.getPrincipal(), service, provider);
+                final Event event = validateEventIdForMatchingTransitionInContext(provider.getId(), context, attributes);
                 return CollectionUtils.wrapSet(event);
             }
             LOGGER.warn("Located multifactor provider [{}], yet the provider cannot be reached or verified", provider);

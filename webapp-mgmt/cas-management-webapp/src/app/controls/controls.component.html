@@ -1,0 +1,17 @@
+<div>
+  <div style="display:inline;" *ngIf="showEdit">
+    <button mat-button (click)="save.emit();">
+      <mat-icon>save</mat-icon>
+        <ng-container i18n="services.form.button.save">
+            {{ messages.services_form_button_save }}
+        </ng-container>
+    </button>
+    <button mat-button (click)="goBack();">
+      <mat-icon>cancel</mat-icon>
+        <ng-container i18n="services.form.button.cancel">
+            {{ messages.services_form_button_cancel }}
+        </ng-container>
+    </button>
+  </div>
+</div>
+

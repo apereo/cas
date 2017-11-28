@@ -3,11 +3,21 @@ dependencies {
     implementation project(":support:cas-server-support-audit-jdbc")
     implementation project(":core:cas-server-core-audit")
     implementation project(":support:cas-server-support-throttle")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
+    
     testImplementation project(path: ":support:cas-server-support-throttle", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core")
     testImplementation project(path: ":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core-authentication-attributes")
+    testImplementation project(":core:cas-server-core-authentication")
 }

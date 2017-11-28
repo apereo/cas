@@ -23,7 +23,7 @@ public class OidcProfileScopeAttributeReleasePolicy extends BaseOidcScopeAttribu
             "locale", "updated_at").collect(Collectors.toList());
 
     public OidcProfileScopeAttributeReleasePolicy() {
-        super(OidcConstants.PROFILE);
+        super(OidcConstants.StandardScopes.PROFILE.getScope());
         setAllowedAttributes(allowedAttributes);
     }
 

@@ -9,7 +9,7 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBui
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
-import org.apereo.cas.ticket.SamlArtifactTicket;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.joda.time.DateTime;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.ArtifactResponse;

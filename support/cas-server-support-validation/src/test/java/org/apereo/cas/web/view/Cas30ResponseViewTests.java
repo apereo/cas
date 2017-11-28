@@ -4,11 +4,14 @@ import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
@@ -40,7 +43,6 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
-
 
 /**
  * Unit tests for {@link Cas30ResponseView}.
@@ -79,16 +81,16 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
                 getArgumentExtractor(),
                 new DefaultMultifactorTriggerSelectionStrategy("", ""),
                 new DefaultAuthenticationContextValidator("", "OPEN", "test"),
-                cas3ServiceJsonView, cas3SuccessView, 
+                cas3ServiceJsonView, cas3SuccessView,
                 cas3ServiceFailureView, "authenticationContext",
                 new LinkedHashSet<>()
         );
     }
-    
+
     private Map<?, ?> renderView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
         LOGGER.warn("Retrieved model and view [{}]", modelAndView.getModel());
-        
+
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
 
@@ -100,14 +102,15 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             }
 
             @Override
-            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+            public void render(final Map<String, ?> map, final HttpServletRequest request, final HttpServletResponse response) {
                 LOGGER.warn("Setting attribute [{}]", map.keySet());
                 map.forEach(request::setAttribute);
             }
         };
 
-        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager,
-                "attribute", viewDelegated, true);
+        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager, "attribute",
+                viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
+                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
         return (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);

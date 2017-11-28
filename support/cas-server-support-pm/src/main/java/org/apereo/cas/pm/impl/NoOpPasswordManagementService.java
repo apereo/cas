@@ -23,7 +23,7 @@ public class NoOpPasswordManagementService extends BasePasswordManagementService
     }
 
     @Override
-    public boolean change(final Credential c, final PasswordChangeBean bean) {
+    public boolean changeInternal(final Credential c, final PasswordChangeBean bean) {
         return false;
     }
 

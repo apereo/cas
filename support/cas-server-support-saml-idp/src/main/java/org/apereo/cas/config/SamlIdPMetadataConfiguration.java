@@ -27,6 +27,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.io.FileSystemResource;
 
 import java.util.Collection;
@@ -51,7 +53,9 @@ public class SamlIdPMetadataConfiguration {
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean openSamlConfigBean;
     
+    @Lazy
     @Bean
+    @DependsOn("shibbolethIdpMetadataAndCertificatesGenerationService")
     public MetadataResolver casSamlIdPMetadataResolver() {
         try {
             final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();

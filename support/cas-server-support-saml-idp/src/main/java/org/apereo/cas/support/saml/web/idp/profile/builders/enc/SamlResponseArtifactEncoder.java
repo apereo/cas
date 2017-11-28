@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.opensaml.messaging.context.MessageContext;

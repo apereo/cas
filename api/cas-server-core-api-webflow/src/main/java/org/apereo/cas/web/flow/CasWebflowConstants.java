@@ -21,6 +21,9 @@ public interface CasWebflowConstants {
     /** Cancel transition id. */
     String TRANSITION_ID_CANCEL = "cancel";
 
+    /** Enroll transition id. */
+    String TRANSITION_ID_ENROLL = "enroll";
+    
     /**
      * The state id 'success'.
      */
@@ -329,7 +332,72 @@ public interface CasWebflowConstants {
     String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
 
     /**
-     * State id 'initialFlowSetupAction'.
+     * Action id 'initialFlowSetupAction'.
      */
-    String STATE_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+
+    /**
+     * Action id 'generateServiceTicketAction'.
+     */
+    String ACTION_ID_GENERATE_SERVICE_TICKET = "generateServiceTicketAction";
+
+    /**
+     * Action id 'redirectToServiceAction'.
+     */
+    String ACTION_ID_REDIRECT_TO_SERVICE = "redirectToServiceAction";
+
+    /**
+     * Action id 'redirectToServiceAction'.
+     */
+    String ACTION_ID_TERMINATE_SESSION = "terminateSessionAction";
+
+    /**
+     * Action id 'authenticationExceptionHandler'.
+     */
+    String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
+    
+    /**
+     * Action id 'sendTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
+    
+    /**
+     * Transition id 'changePassword'.
+     */
+    String TRANSITION_ID_CHANGE_PASSWORD = "changePassword";
+
+    /**
+     * State id 'proceedFromAuthenticationWarningView'.
+     */
+    String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
+
+    /**
+     * Action to check if login should redirect to password reset subflow.
+     */
+    String CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
+
+    /**
+     * State for password reset subflow "pswdResetSubflow".
+     */
+    String STATE_ID_PASSWORD_RESET_SUBFLOW = "pswdResetSubflow";
+
+    /**
+     * Login flow state indicating the password reset subflow is complete "pswdResetComplete".
+     */
+    String STATE_ID_PASSWORD_RESET_FLOW_COMPLETE = "pswdResetComplete";
+
+    /**
+     * State to restart the login flow fresh "redirectToLogin".
+     */
+    String STATE_ID_REDIRECT_TO_LOGIN = "redirectToLogin";
+
+    /**
+     * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
+     */
+    String STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN = "postLoginPswdChangeCheck";
+
+    /**
+     * State id to check for do change password manual flag "checkDoChangePassword".
+     */
+    String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
 }

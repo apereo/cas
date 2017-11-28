@@ -19,7 +19,7 @@ Support is enabled by adding the following module into the overlay:
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#resource-based-jsonyaml-service-registry).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#yaml-service-registry).
 
 
 A sample YAML file follows:
@@ -56,7 +56,7 @@ The naming convention for new files is recommended to be the following:
 YAML fileName = serviceName + "-" + serviceNumericId + ".yml"
 ```
 
-Remember that because files are created based on the `serviceName`, you will need to make sure [characters considered invalid for file names](https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words) are not used as part of the name.
+Remember that because files are created based on the `serviceName`, you will need to make sure [characters considered invalid for file names](https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words) are not used as part of the name. Furthermore, note that CAS **MUST** be given full read/write permissions on directory which contains service definition files.
 
 <div class="alert alert-warning"><strong>Duplicate Services</strong><p>
 As you add more files to the directory, you need to be absolutely sure that no two service definitions

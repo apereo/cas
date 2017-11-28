@@ -1,0 +1,64 @@
+<mat-accordion #accordian style="width:600px;" multi="true">
+  <mat-expansion-panel *ngFor="let filter of filters();let last=last" style="width:630px;left:-35px;position:relative;"
+       [expanded]="last">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+          <button [matMenuTriggerFor]="panelMenu" mat-icon-button (click)="selectedFilter = filter;$event.stopPropagation()" style="width:auto;height:auto;line-height: 0px!important;">
+            <mat-icon style="font-size: medium;">menu</mat-icon></button>
+        <span *ngIf="isRegEx(filter)">Regex</span>
+        <span *ngIf="isMappedRegEx(filter)">Mapped</span>
+        <span *ngIf="isReverseMapped(filter)">Reverse Mapped</span>
+        <span *ngIf="isScripted(filter)">Scripted</span>
+      </mat-panel-title>
+      <mat-panel-description>
+        <span *ngIf="isRegEx(filter)">{{ filter.pattern }}</span>
+        <span *ngIf="isMappedRegEx(filter)">{{ getAttributes(filter) }} </span>
+        <span *ngIf="isReverseMapped(filter)">{{ getAttributes(filter) }}</span>
+        <span *ngIf="isScripted(filter)">{{ filter.script }}</span>
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+    <div *ngIf="isRegEx(filter)">
+      <mat-form-field class="textInput">
+        <input matInput
+               i18n-placeholder="services.form.label.attrRelease.attrFilter"
+               [placeholder]="messages.services_form_label_attrRelease_attrFilter"
+               [(ngModel)]="filter.pattern">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.attrRelease.attrFilter"
+               [matTooltip]="messages.services_form_tooltip_attrRelease_attrFilter">help
+      </mat-icon>
+    </div>
+    <div *ngIf="isMappedRegEx(filter) || isReverseMapped(filter)">
+      <app-mapped [filter]="filter"></app-mapped>
+    </div>
+    <div *ngIf="isScripted(filter)">
+      <mat-form-field class="textInput">
+        <input matInput
+               i18n-placeholder="services.form.label.attrRelease.attrFilter.scripted"
+               [placeholder]="messages.services_form_label_attrRelease_attrFilter_scripted"
+               [(ngModel)]="filter.script">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+                i18n-matTooltip="services.form.tooltip.attrRelease.attrFilter.scripted"
+                [matTooltip]="messages.services_form_tooltip_attrRelease_attrFilter_scripted">help
+      </mat-icon>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+<div style="height:25px;padding-top: 5px;">
+  <button mat-mini-fab [matMenuTriggerFor]="addMenu" style="float:right;">+</button>
+</div>
+
+<mat-menu #panelMenu>
+  <button mat-menu-item (click)="moveUp()">Move UP</button>
+  <button mat-menu-item (click)="moveDown()">Move Down</button>
+  <button mat-menu-item (click)="removeFilter()">Remove</button>
+</mat-menu>
+
+<mat-menu #addMenu>
+  <button mat-menu-item (click)="addRegEx()">Regex</button>
+  <button mat-menu-item (click)="addMappedRegex()">Mapped Regex</button>
+  <button mat-menu-item (click)="addReverseMapped()">Reverse Mapped Regex</button>
+  <button mat-menu-item (click)="addScript()">Script</button>
+</mat-menu>

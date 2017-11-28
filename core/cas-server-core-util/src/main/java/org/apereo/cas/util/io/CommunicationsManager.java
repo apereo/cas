@@ -62,6 +62,20 @@ public class CommunicationsManager {
     }
 
     /**
+     * Email boolean.
+     *
+     * @param text    the text
+     * @param from    the from
+     * @param subject the subject
+     * @param to      the to
+     * @return the boolean
+     */
+    public boolean email(final String text, final String from,
+                         final String subject, final String to) {
+        return email(text, from, subject, to, null, null);
+    }
+
+    /**
      * Email.
      *
      * @param text    the text
@@ -104,7 +118,7 @@ public class CommunicationsManager {
         }
         return false;
     }
-    
+
     /**
      * Sms.
      *
@@ -123,7 +137,7 @@ public class CommunicationsManager {
         }
         return false;
     }
-    
+
     /**
      * Sms.
      *

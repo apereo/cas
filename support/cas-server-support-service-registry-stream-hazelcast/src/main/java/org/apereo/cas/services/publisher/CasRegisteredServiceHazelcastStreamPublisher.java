@@ -2,6 +2,7 @@ package org.apereo.cas.services.publisher;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +21,7 @@ public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegiste
     private final String mapName;
 
     public CasRegisteredServiceHazelcastStreamPublisher(final HazelcastInstance instance,
-                                                        final PublisherIdentifier publisherId) {
+                                                        final StringBean publisherId) {
         super(publisherId);
         this.instance = instance;
         this.mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();

@@ -39,6 +39,11 @@ import java.util.function.Predicate;
 public interface CentralAuthenticationService {
 
     /**
+     * CAS namespace.
+     */
+    String NAMESPACE = CentralAuthenticationService.class.getPackage().getName();
+    
+    /**
      * Create a {@link TicketGrantingTicket} by authenticating credentials.
      * The details of the security policy around credential authentication and the definition
      * of authentication success are dependent on the implementation, but it SHOULD be safe to assume
@@ -88,7 +93,7 @@ public interface CentralAuthenticationService {
      *
      * @param <T>      the generic ticket type to return that extends {@link Ticket}
      * @param ticketId the ticket granting ticket id
-     * @param clazz    the ticket type that is reques to be found
+     * @param clazz    the ticket type that is requested to be found
      * @return the ticket object
      * @throws InvalidTicketException the invalid ticket exception
      * @since 4.1.0
@@ -114,7 +119,7 @@ public interface CentralAuthenticationService {
      * used to filter the collection of tickets received. Implementations
      * can use the predicate to request a collection of expired tickets,
      * or tickets whose id matches a certain pattern, etc. The resulting
-     * collection will include ticktes that have been evaluated by the predicate.
+     * collection will include tickets that have been evaluated by the predicate.
      *
      * @param predicate the predicate
      * @return the tickets

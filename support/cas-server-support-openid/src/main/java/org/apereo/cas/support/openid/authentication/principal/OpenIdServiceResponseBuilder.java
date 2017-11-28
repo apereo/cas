@@ -2,13 +2,14 @@ package org.apereo.cas.support.openid.authentication.principal;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.validation.Assertion;
-import org.apereo.cas.web.support.WebUtils;
 import org.openid4java.association.Association;
 import org.openid4java.message.AuthRequest;
 import org.openid4java.message.Message;
@@ -66,10 +67,10 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @return the generated authentication answer
      */
     @Override
-    public Response build(final WebApplicationService webApplicationService, final String ticketId) {
+    public Response build(final WebApplicationService webApplicationService, final String ticketId, final Authentication authentication) {
 
         final OpenIdService service = (OpenIdService) webApplicationService;
-        final ParameterList parameterList = new ParameterList(WebUtils.getHttpServletRequestFromRequestAttributes().getParameterMap());
+        final ParameterList parameterList = new ParameterList(HttpRequestUtils.getHttpServletRequestFromRequestAttributes().getParameterMap());
 
         final Map<String, String> parameters = new HashMap<>();
 

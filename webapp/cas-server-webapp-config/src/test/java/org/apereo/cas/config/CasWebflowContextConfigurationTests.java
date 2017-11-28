@@ -10,6 +10,7 @@ import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +65,7 @@ import static org.junit.Assert.*;
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasCoreWebflowConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
@@ -144,7 +145,7 @@ public class CasWebflowContextConfigurationTests {
             //CHECKSTYLE:OFF
             return new AbstractAction() {
                 @Override
-                protected Event doExecute(final RequestContext requestContext) throws Exception {
+                protected Event doExecute(final RequestContext requestContext) {
                     requestContext.getFlowScope().put("test0", Collections.singleton(TEST));
                     requestContext.getFlowScope().put("test1", Collections.singletonList(TEST));
                     requestContext.getFlowScope().put("test2", Collections.singletonMap(TEST, TEST));

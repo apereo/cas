@@ -2,6 +2,7 @@ package org.apereo.cas.pm;
 
 import org.apereo.cas.authentication.Credential;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -18,8 +19,11 @@ public interface PasswordManagementService {
      * @param c    the credentials
      * @param bean the bean
      * @return true /false
+     * @throws InvalidPasswordException if new password fails downstream validation
      */
-    boolean change(Credential c, PasswordChangeBean bean);
+    default boolean change(Credential c, PasswordChangeBean bean) throws InvalidPasswordException {
+        return false;
+    }
 
     /**
      * Find email associated with username.
@@ -27,7 +31,9 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    String findEmail(String username);
+    default String findEmail(String username) {
+        return null;
+    }
 
     /**
      * Create token string.
@@ -35,7 +41,9 @@ public interface PasswordManagementService {
      * @param username the username
      * @return the string
      */
-    String createToken(String username);
+    default String createToken(String username) {
+        return null;
+    }
 
     /**
      * Parse token string.
@@ -43,13 +51,36 @@ public interface PasswordManagementService {
      * @param token the token
      * @return the username
      */
-    String parseToken(String token);
+    default String parseToken(String token) {
+        return null;
+    }
 
     /**
      * Gets security questions.
      *
+     * The return object must have predictable iteration (use LinkedHashMap
+     * instead of HashMap, for example).
+     * 
      * @param username the username
      * @return the security questions
      */
-    Map<String, String> getSecurityQuestions(String username);
+    default Map<String, String> getSecurityQuestions(String username) {
+        return new LinkedHashMap<>(0);
+    }
+
+    /**
+     * Checks a security questions answer.
+     *
+     * @param username the username
+     * @param question the text of the question
+     * @param answer stored answer
+     * @param input user response to question
+     * @return whether the answer is correct
+     */
+    default boolean isValidSecurityQuestionAnswer(String username, String question, String answer, String input) {
+        if (answer != null) {
+            return answer.equals(input);
+        }
+        return false;
+    }
 }

@@ -25,6 +25,7 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -107,8 +108,12 @@ public class RadiusMultifactorConfiguration {
 
     @ConditionalOnMissingBean(name = "radiusMultifactorWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer radiusMultifactorWebflowConfigurer() {
-        return new RadiusMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, radiusFlowRegistry());
+        final CasWebflowConfigurer w = new RadiusMultifactorWebflowConfigurer(flowBuilderServices, 
+                loginFlowDefinitionRegistry, radiusFlowRegistry(), applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
     
     /**
@@ -121,10 +126,14 @@ public class RadiusMultifactorConfiguration {
 
         @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfiguration")
         @Bean
+        @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                    loginFlowDefinitionRegistry);
+            final CasWebflowConfigurer w = new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices, 
+                    loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                    loginFlowDefinitionRegistry, applicationContext, casProperties);
+            w.initialize();
+            return w;
         }
     }
 }

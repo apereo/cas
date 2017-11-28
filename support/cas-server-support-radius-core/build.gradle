@@ -7,5 +7,6 @@ repositories {
 
 dependencies {
     api libraries.jradius
+    implementation libraries.bouncycastle
     implementation project(":core:cas-server-core-util")
 }

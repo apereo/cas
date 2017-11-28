@@ -3,7 +3,10 @@ package org.apereo.cas.configuration.model.core.monitor;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -14,6 +17,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-core-monitor", automated = true)
 public class MonitorProperties implements Serializable {
 
     private static final long serialVersionUID = -7047060071480971606L;
@@ -56,7 +60,25 @@ public class MonitorProperties implements Serializable {
      * Options for monitoring LDAP resources.
      */
     private Ldap ldap = new Ldap();
-    
+
+    /**
+     * Options for monitoring Memcached resources.
+     */
+    private Memcached memcached = new Memcached();
+
+    /**
+     * Options for monitoring MongoDb resources.
+     */
+    private MongoDb mongo = new MongoDb();
+
+    public Memcached getMemcached() {
+        return memcached;
+    }
+
+    public void setMemcached(final Memcached memcached) {
+        this.memcached = memcached;
+    }
+
     public Endpoints getEndpoints() {
         return endpoints;
     }
@@ -113,8 +135,21 @@ public class MonitorProperties implements Serializable {
         this.ldap = ldap;
     }
 
+    public MongoDb getMongo() {
+        return mongo;
+    }
+
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
+    }
+
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class St implements Serializable {
         private static final long serialVersionUID = -8167395674267219982L;
+
+        /**
+         * Warning settings for this monitor.
+         */
         @NestedConfigurationProperty
         private Warn warn = new Warn(5000);
 
@@ -127,6 +162,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class Tgt implements Serializable {
 
         private static final long serialVersionUID = -2756454350350278724L;
@@ -145,6 +181,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class Warn implements Serializable {
 
         private static final long serialVersionUID = 2788617778375787703L;
@@ -184,6 +221,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-core-monitor", automated = true)
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = 4722929378440179113L;
 
@@ -216,6 +254,17 @@ public class MonitorProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-memcached-monitor")
+    public static class Memcached extends BaseMemcachedProperties {
+        private static final long serialVersionUID = -9139788158851782673L;
+    }
+
+    @RequiresModule(name = "cas-server-support-mongo-monitor")
+    public static class MongoDb extends BaseMongoDbProperties {
+        private static final long serialVersionUID = -1918436901491275547L;
+    }
+
+    @RequiresModule(name = "cas-server-support-jdbc-monitor")
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = -7139788158851782673L;
 
@@ -296,7 +345,7 @@ public class MonitorProperties implements Serializable {
         }
     }
 
-
+    @RequiresModule(name = "cas-server-support-reports", automated = true)
     public static class Endpoints extends BaseEndpoint {
 
         /**
@@ -350,6 +399,10 @@ public class MonitorProperties implements Serializable {
         private Statistics statistics = new Statistics();
 
         /**
+         * Discovery related settings.
+         */
+        private Discovery discovery = new Discovery();
+        /**
          * Trusted devices related settings.
          */
         private TrustedDevices trustedDevices = new TrustedDevices();
@@ -373,14 +426,34 @@ public class MonitorProperties implements Serializable {
          */
         private RegisteredServicesReport registeredServicesReport = new RegisteredServicesReport();
 
-
+        /**
+         * Configuration metadata, documentation and fields, etc.
+         */
+        private ConfigurationMetadata configurationMetadata = new ConfigurationMetadata();
+        
         public Endpoints() {
             setSensitive(Boolean.TRUE);
             setEnabled(Boolean.FALSE);
         }
 
+        public ConfigurationMetadata getConfigurationMetadata() {
+            return configurationMetadata;
+        }
+
+        public void setConfigurationMetadata(final ConfigurationMetadata configurationMetadata) {
+            this.configurationMetadata = configurationMetadata;
+        }
+
         public RegisteredServicesReport getRegisteredServicesReport() {
             return registeredServicesReport;
+        }
+
+        public Discovery getDiscovery() {
+            return discovery;
+        }
+
+        public void setDiscovery(final Discovery discovery) {
+            this.discovery = discovery;
         }
 
         public void setRegisteredServicesReport(final RegisteredServicesReport registeredServicesReport) {
@@ -499,49 +572,72 @@ public class MonitorProperties implements Serializable {
             this.trustedDevices = trustedDevices;
         }
 
+        @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class Dashboard extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class AuditEvents extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-support-reports", automated = true)
         public static class AuthenticationEvents extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-configuration", automated = true)
         public static class ConfigurationState extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-monitor", automated = true)
         public static class HealthCheck extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-logging", automated = true)
         public static class LoggingConfig extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-support-metrics", automated = true)
         public static class Metrics extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-support-person-directory", automated = true)
         public static class AttributeResolution extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class SingleSignOnReport extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class Statistics extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-support-mfa-trusted", automated = true)
         public static class TrustedDevices extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-web", automated = true)
         public static class Status extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-support-discovery", automated = true)
+        public static class Discovery extends BaseEndpoint {
+        }
+
+        @RequiresModule(name = "cas-server-core", automated = true)
         public static class SingleSignOnStatus extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-webflow", automated = true)
         public static class SpringWebflowReport extends BaseEndpoint {
         }
 
+        @RequiresModule(name = "cas-server-core-services", automated = true)
         public static class RegisteredServicesReport extends BaseEndpoint {
+        }
+
+        @RequiresModule(name = "cas-server-core-configuration", automated = true)
+        public static class ConfigurationMetadata extends BaseEndpoint {
         }
     }
 }

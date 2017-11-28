@@ -32,7 +32,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     @Override
-    protected Event doPreExecute(final RequestContext context) throws Exception {
+    protected Event doPreExecute(final RequestContext context) {
         final UsernamePasswordCredential up = WebUtils.getCredential(context, UsernamePasswordCredential.class);
         if (up instanceof SurrogateUsernamePasswordCredential) {
             return null;
@@ -44,7 +44,7 @@ public class SurrogateInitialAuthenticationAction extends InitialAuthenticationA
     }
 
     @Override
-    protected void doPostExecute(final RequestContext context) throws Exception {
+    protected void doPostExecute(final RequestContext context) {
         deconvertFromSurrogatePrincipal(context);
     }
 

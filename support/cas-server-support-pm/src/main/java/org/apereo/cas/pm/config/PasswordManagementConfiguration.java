@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
-import org.apereo.cas.pm.PasswordValidator;
+import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -21,9 +21,8 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
-
+import org.springframework.util.StringUtils;
 import javax.annotation.PostConstruct;
-import java.io.Serializable;
 
 /**
  * This is {@link PasswordManagementConfiguration}.
@@ -47,7 +46,7 @@ public class PasswordManagementConfiguration {
     @ConditionalOnMissingBean(name = "passwordManagementCipherExecutor")
     @RefreshScope
     @Bean
-    public CipherExecutor<Serializable, String> passwordManagementCipherExecutor() {
+    public CipherExecutor passwordManagementCipherExecutor() {
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
         final EncryptionJwtSigningJwtCryptographyProperties crypto = pm.getReset().getCrypto();
         if (pm.isEnabled() && crypto.isEnabled()) {
@@ -59,6 +58,18 @@ public class PasswordManagementConfiguration {
         return NoOpCipherExecutor.getInstance();
     }
 
+    @ConditionalOnMissingBean(name = "passwordValidationService")
+    @RefreshScope
+    @Bean
+    public PasswordValidationService passwordValidationService() {
+        final String policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
+        return (credential, bean) -> {
+            return StringUtils.hasText(bean.getPassword())
+                && bean.getPassword().equals(bean.getConfirmedPassword())
+                && bean.getPassword().matches(policyPattern);
+        };
+    }
+    
     @ConditionalOnMissingBean(name = "passwordChangeService")
     @RefreshScope
     @Bean
@@ -76,19 +87,12 @@ public class PasswordManagementConfiguration {
                     + "Password management functionality will have no effect and will be disabled until a storage service is configured. "
                     + "To explicitly disable the password management functionality, add 'cas.authn.pm.enabled=false' to the CAS configuration");
         } else {
-            LOGGER.info("Password management is disabled. To enable the password management functionality, "
+            LOGGER.debug("Password management is disabled. To enable the password management functionality, "
                     + "add 'cas.authn.pm.enabled=true' to the CAS configuration and then configure storage options for account updates");
         }
         return new NoOpPasswordManagementService(passwordManagementCipherExecutor(),
                 casProperties.getServer().getPrefix(),
                 casProperties.getAuthn().getPm());
-    }
-
-    @RefreshScope
-    @ConditionalOnMissingBean(name = "passwordValidator")
-    @Bean
-    public PasswordValidator passwordValidator() {
-        return new PasswordValidator();
     }
 
     @PostConstruct

@@ -1,13 +1,20 @@
 
 description = "Apereo CAS YubiKey Support"
 dependencies {
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-webflow")
+
+    implementation project(":support:cas-server-support-yubikey-core-mfa")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":api:cas-server-core-api")
-    implementation project(":api:cas-server-core-api-webflow")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
     implementation project(":support:cas-server-support-yubikey-core")
 
     implementation libraries.yubicoapi
+    testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

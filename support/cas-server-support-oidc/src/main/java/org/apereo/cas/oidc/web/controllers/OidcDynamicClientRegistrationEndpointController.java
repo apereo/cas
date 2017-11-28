@@ -33,7 +33,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -81,13 +80,12 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
      * @param request   the request
      * @param response  the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.REGISTRATION_URL,
             consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<OidcClientRegistrationResponse> handleRequestInternal(@RequestBody final String jsonInput,
                                                                                 final HttpServletRequest request,
-                                                                                final HttpServletResponse response) throws Exception {
+                                                                                final HttpServletResponse response) {
         try {
             final OidcClientRegistrationRequest registrationRequest = this.clientRegistrationRequestSerializer.from(jsonInput);
             LOGGER.debug("Received client registration request [{}]", registrationRequest);
@@ -95,8 +93,8 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
             if (registrationRequest.getScopes().isEmpty()) {
                 throw new Exception("Registration request does not contain any scope values");
             }
-            if (!registrationRequest.getScope().contains(OidcConstants.OPENID)) {
-                throw new Exception("Registration request scopes do not contain [{}]" + OidcConstants.OPENID);
+            if (!registrationRequest.getScope().contains(OidcConstants.StandardScopes.OPENID.getScope())) {
+                throw new Exception("Registration request scopes do not contain " + OidcConstants.StandardScopes.OPENID.getScope());
             }
 
             final OidcRegisteredService registeredService = new OidcRegisteredService();
@@ -163,7 +161,7 @@ public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20
         clientResponse.setSubjectType("public");
         clientResponse.setTokenEndpointAuthMethod(registrationRequest.getTokenEndpointAuthMethod());
         clientResponse.setClientName(registeredService.getName());
-        clientResponse.setGrantTypes(Arrays.asList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
+        clientResponse.setGrantTypes(CollectionUtils.wrapList(OAuth20GrantTypes.AUTHORIZATION_CODE.name().toLowerCase(),
                 OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase()));
         clientResponse.setRedirectUris(CollectionUtils.wrap(registeredService.getServiceId()));
         clientResponse.setResponseTypes(CollectionUtils.wrap(OAuth20ResponseTypes.CODE.name().toLowerCase()));

@@ -24,10 +24,10 @@ import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -61,7 +61,8 @@ public class ShibbolethAttributeResolverConfiguration {
             environment.getPropertySources().forEach(s -> {
                 if (s instanceof EnumerablePropertySource<?>) {
                     final EnumerablePropertySource<?> ps = (EnumerablePropertySource<?>) s;
-                    Arrays.asList(ps.getPropertyNames()).forEach(key -> result.put(key, ps.getProperty(key)));
+                    final List<String> names = CollectionUtils.wrapList(ps.getPropertyNames());
+                    names.forEach(key -> result.put(key, ps.getProperty(key)));
                 }
             });
             final Properties p = new Properties();

@@ -18,10 +18,10 @@ public class AbstractPoolMonitorTests {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     @Test
-    public void verifyObserveOK() throws Exception {
+    public void verifyObserveOK() {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 1000) {
             @Override
-            protected StatusCode checkPool() throws Exception {
+            protected StatusCode checkPool() {
                 return StatusCode.OK;
             }
 
@@ -42,7 +42,7 @@ public class AbstractPoolMonitorTests {
     }
 
     @Test
-    public void verifyObserveWarn() throws Exception {
+    public void verifyObserveWarn() {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 500) {
             @Override
             protected StatusCode checkPool() throws Exception {
@@ -67,10 +67,10 @@ public class AbstractPoolMonitorTests {
     }
 
     @Test
-    public void verifyObserveError() throws Exception {
+    public void verifyObserveError() {
         final AbstractPoolMonitor monitor = new AbstractPoolMonitor("monitor", executor, 500) {
             @Override
-            protected StatusCode checkPool() throws Exception {
+            protected StatusCode checkPool() {
                 throw new IllegalArgumentException("Pool check failed due to rogue penguins.");
             }
 

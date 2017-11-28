@@ -2,7 +2,6 @@ package org.apereo.cas.support.wsfederation.authentication.handler.support;
 
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -38,7 +37,7 @@ public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcess
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final WsFederationCredential wsFederationCredentials = (WsFederationCredential) credential;
         if (wsFederationCredentials != null) {
             final Map attributes = wsFederationCredentials.getAttributes();

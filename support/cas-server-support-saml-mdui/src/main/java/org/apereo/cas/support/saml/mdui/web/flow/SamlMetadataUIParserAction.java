@@ -58,13 +58,15 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     }
 
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         final String entityId = getEntityIdFromRequest(requestContext);
         if (StringUtils.isBlank(entityId)) {
             LOGGER.debug("No entity id found for parameter [{}]", this.entityIdParameterName);
             return success();
         }
 
+        LOGGER.debug("Located entity id [{}] from request", entityId);
+        
         if (!MetadataUIUtils.isMetadataFoundForEntityId(metadataAdapter, entityId)) {
             LOGGER.debug("Metadata is not found for entity [{}] and CAS service registry is consulted for the entity definition", entityId);
             final RegisteredService registeredService = getRegisteredServiceFromRequest(requestContext, entityId);
@@ -92,7 +94,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
     protected void loadSamlMetadataIntoRequestContext(final RequestContext requestContext, final String entityId, final RegisteredService registeredService) {
         LOGGER.debug("Locating SAML MDUI for entity [{}]", entityId);
         final SamlMetadataUIInfo mdui = MetadataUIUtils.locateMetadataUserInterfaceForEntityId(
-            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequest(requestContext));
+            this.metadataAdapter, entityId, registeredService, WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext));
         LOGGER.debug("Located SAML MDUI for entity [{}] as [{}]", entityId, mdui);
         WebUtils.putServiceUserInterfaceMetadata(requestContext, mdui);
     }
@@ -151,7 +153,7 @@ public class SamlMetadataUIParserAction extends AbstractAction {
      * @return the entity id from request
      */
     protected String getEntityIdFromRequest(final RequestContext requestContext) {
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         return request.getParameter(this.entityIdParameterName);
     }
 }

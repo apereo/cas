@@ -25,17 +25,17 @@ public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return new DefaultTicketRegistry();
     }
 
     @Test
     public void verifyOtherConstructor() {
-        assertNotNull(new DefaultTicketRegistry(10, 10F, 5, NoOpCipherExecutor.getInstance()));
+        assertNotNull(new DefaultTicketRegistry(10, 10, 5, NoOpCipherExecutor.getInstance()));
     }
 }

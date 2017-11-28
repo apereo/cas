@@ -7,6 +7,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
  * generic SAML2 support will come).
@@ -14,14 +18,20 @@ import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Entity
+@DiscriminatorValue("google")
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    private final String relayState;
+    @Column(length = 255, updatable = true, insertable = true)
+    private String relayState;
 
-    private final String requestId;
+    @Column(length = 255, updatable = true, insertable = true)
+    private String requestId;
 
+    private GoogleAccountsService() {}
+    
     /**
      * Instantiates a new google accounts service.
      *

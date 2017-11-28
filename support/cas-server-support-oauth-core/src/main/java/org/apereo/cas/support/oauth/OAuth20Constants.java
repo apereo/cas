@@ -56,6 +56,9 @@ public interface OAuth20Constants {
     String STATE = "state";
 
     /** The access token. */
+    String TOKEN = "token";    
+
+    /** The access token. */
     String ACCESS_TOKEN = "access_token";
 
     /** The refresh token. */

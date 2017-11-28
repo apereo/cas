@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -102,7 +101,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
 
         if (this.kerberosKdcSystemProperty != null) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -116,20 +115,20 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final String username = credential.getUsername();
         final String password = credential.getPassword();
 
+        Principal principal = null;
         final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
+            final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+            if (principals != null && !principals.isEmpty()) {
+                final java.security.Principal secPrincipal = principals.iterator().next();
+                principal = this.principalFactory.createPrincipal(secPrincipal.getName());
+            }
         } finally {
             lc.logout();
         }
 
-        Principal principal = null;
-        final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
-        if (principals != null && !principals.isEmpty()) {
-            final java.security.Principal secPrincipal = principals.iterator().next();
-            principal = this.principalFactory.createPrincipal(secPrincipal.getName());
-        }
         return createHandlerResult(credential, principal, null);
     }
 
@@ -209,7 +208,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         }
 
         @Override
-        public void handle(final Callback[] callbacks) throws UnsupportedCallbackException {
+        public void handle(final Callback[] callbacks) {
             Arrays.stream(callbacks).filter(callback -> {
                 if (callback.getClass().equals(NameCallback.class)) {
                     ((NameCallback) callback).setName(this.userName);

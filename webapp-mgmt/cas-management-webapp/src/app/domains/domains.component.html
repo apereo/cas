@@ -1,0 +1,64 @@
+<div style="display:flex;margin-bottom:10px;">
+  <div style="margin-left:25px;padding-top: 10px;">
+    <mat-icon style="padding-top: 3px;">build</mat-icon>
+    <h4 style="display: inline;position: relative;top: -5px;">
+      <ng-container i18n>
+        Domains
+      </ng-container>
+    </h4>
+  </div>
+  <div style="flex: 1 1 auto;text-align: center">
+  </div>
+  <div>
+    <app-controls></app-controls>
+  </div>
+
+</div>
+
+<div style="display: flex; flex-direction: column; margin-right:25px;margin-left:25px;">
+<mat-table #table [dataSource]="dataSource">
+
+  <ng-container matColumnDef="actions">
+    <mat-header-cell *matHeaderCellDef [ngClass]="'actionWidth'">
+      <ng-container i18n>
+        &nbsp;
+      </ng-container>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row" [ngClass]="'actionWidth'">
+      <button mat-icon-button [matMenuTriggerFor]="serviceMenu" (click)="selectedItem = row">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </mat-cell>
+  </ng-container>
+
+  <ng-container matColumnDef="name">
+    <mat-header-cell *matHeaderCellDef>
+      <mat-form-field floatPlaceholder="never" style="width:100%;min-width:250px;max-width:750px;">
+        <input matInput (keyup)="doFilter($event.target.value)" placeholder="Filter Domains" >
+      </mat-form-field>
+    </mat-header-cell>
+    <mat-cell *matCellDef="let row" [ngClass]="'nameWidth'">
+      <a (click)="view(row)">
+        {{ row }}
+      </a>
+    </mat-cell>
+  </ng-container>
+
+  <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+  <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+</mat-table>
+
+<mat-paginator #paginator
+              [pageSize]="10"
+              [pageSizeOptions]="[5, 10, 25, 100]">
+</mat-paginator>
+</div>
+
+<mat-menu #serviceMenu>
+  <button mat-menu-item (click)="view(selectedItem)">
+    <mat-icon>edit</mat-icon>
+    <ng-container i18n="management.services.table.button.edit">
+      {{ messages.management_services_table_button_edit }}
+    </ng-container>
+  </button>
+</mat-menu>

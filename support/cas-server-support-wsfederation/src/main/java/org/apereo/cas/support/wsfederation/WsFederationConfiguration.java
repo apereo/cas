@@ -1,19 +1,20 @@
 package org.apereo.cas.support.wsfederation;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.io.FileWatcherService;
+import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
-import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,8 +85,18 @@ public class WsFederationConfiguration implements Serializable {
         this.name = name;
     }
 
-    @PostConstruct
-    private void initCertificates() {
+    public void initialize() {
+        this.signingCertificateResources
+                .stream()
+                .forEach(Unchecked.consumer(r -> {
+                    try {
+                        final FileWatcherService watcher = new FileWatcherService(r.getFile(),
+                            file -> createSigningWallet(this.signingCertificateResources));
+                        watcher.start(getClass().getSimpleName());
+                    } catch (final Exception e) {
+                        LOGGER.trace(e.getMessage(), e);
+                    }
+                }));
         createSigningWallet(this.signingCertificateResources);
     }
 
@@ -188,7 +199,7 @@ public class WsFederationConfiguration implements Serializable {
      * @param signingCertificateResources a list of certificate files to read in.
      */
     public void setSigningCertificateResources(final Resource... signingCertificateResources) {
-        this.signingCertificateResources = Arrays.asList(signingCertificateResources);
+        this.signingCertificateResources = CollectionUtils.wrapList(signingCertificateResources);
         createSigningWallet(this.signingCertificateResources);
     }
 

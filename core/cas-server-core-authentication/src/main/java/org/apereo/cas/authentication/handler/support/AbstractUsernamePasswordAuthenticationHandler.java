@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
@@ -17,7 +18,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.function.Predicate;
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the
@@ -29,16 +29,15 @@ import java.util.function.Predicate;
  */
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUsernamePasswordAuthenticationHandler.class);
-    
+
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
     private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
 
-    private Predicate<Credential> credentialSelectionPredicate = credential -> true;
-
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
-    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                         final PrincipalFactory principalFactory,
                                                          final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
@@ -71,7 +70,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
         userPass.setUsername(transformedUsername);
         userPass.setPassword(transformedPsw);
-        
+
         LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
         return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
@@ -88,7 +87,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword) 
+    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword)
             throws GeneralSecurityException, PreventedException;
 
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
@@ -97,10 +96,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
-        this.credentialSelectionPredicate = credentialSelectionPredicate;
     }
 
     public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
@@ -113,13 +108,20 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     @Override
     public boolean supports(final Credential credential) {
-        if (credential instanceof UsernamePasswordCredential) {
-            if (this.credentialSelectionPredicate != null) {
-                return this.credentialSelectionPredicate.test(credential);
-            }
+        if (!UsernamePasswordCredential.class.isInstance(credential)) {
+            LOGGER.debug("Credential is not one of username/password and is not accepted by handler [{}]", getName());
+            return false;
+        }
+        if (this.credentialSelectionPredicate == null) {
+            LOGGER.debug("No credential selection criteria is defined for handler [{}]. Credential is accepted for further processing", getName());
             return true;
         }
-        return false;
+
+        LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
+        final boolean result = this.credentialSelectionPredicate.test(credential);
+        LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]",
+                credential, getName(), BooleanUtils.toStringTrueFalse(result));
+        return result;
     }
 
     /**

@@ -1,18 +1,19 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.model.support.cassandra.ticketregistry.CassandraTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
+import org.apereo.cas.configuration.model.support.jms.JmsTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.mongo.ticketregistry.MongoTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -23,10 +24,17 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-core-tickets", automated = true)
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
 
+    /**
+     * JMS registry settings.
+     */
+    @NestedConfigurationProperty
+    private JmsTicketRegistryProperties jms = new JmsTicketRegistryProperties();
+    
     /**
      * DynamoDb registry settings.
      */
@@ -86,9 +94,6 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RedisTicketRegistryProperties redis = new RedisTicketRegistryProperties();
-
-    @NestedConfigurationProperty
-    private CassandraTicketRegistryProperties cassandra = new CassandraTicketRegistryProperties();
 
     /**
      * Settings relevant for the default in-memory ticket registry.
@@ -192,22 +197,31 @@ public class TicketRegistryProperties implements Serializable {
     public DynamoDbTicketRegistryProperties getDynamoDb() {
         return dynamoDb;
     }
-
+                                        
     public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
         this.dynamoDb = dynamoDb;
     }
 
-    public CassandraTicketRegistryProperties getCassandra() {
-        return cassandra;
+    public JmsTicketRegistryProperties getJms() {
+        return jms;
     }
 
-    public void setCassandra(final CassandraTicketRegistryProperties cassandra) {
-        this.cassandra = cassandra;
+    public void setJms(final JmsTicketRegistryProperties jms) {
+        this.jms = jms;
     }
 
+    @RequiresModule(name = "cas-server-core-tickets", automated = true)
     public static class InMemory implements Serializable {
 
         private static final long serialVersionUID = -2600525447128979994L;
+
+        /**
+         * Allow the ticket registry to cache ticket items for period of time
+         * and auto-evict and clean up, removing the need to running a ticket
+         * registry cleaner in the background.
+         */
+        private boolean cache;
+        
         /**
          * The initial capacity of the underlying memory store.
          * The implementation performs internal sizing to accommodate this many elements.
@@ -266,6 +280,14 @@ public class TicketRegistryProperties implements Serializable {
 
         public void setConcurrency(final int concurrency) {
             this.concurrency = concurrency;
+        }
+
+        public boolean isCache() {
+            return cache;
+        }
+
+        public void setCache(final boolean cache) {
+            this.cache = cache;
         }
     }
 }

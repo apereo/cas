@@ -9,9 +9,11 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
@@ -69,7 +71,8 @@ import static org.hamcrest.Matchers.startsWith;
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasCoreLogoutConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, 
+                CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
@@ -77,6 +80,7 @@ import static org.hamcrest.Matchers.startsWith;
                 CasCoreAuthenticationHandlersConfiguration.class,
                 CasCoreHttpConfiguration.class,
                 CasPersonDirectoryConfiguration.class,
+                CasCoreUtilConfiguration.class,
                 CasCookieConfiguration.class,
                 RefreshAutoConfiguration.class,
                 CasCoreServicesConfiguration.class})

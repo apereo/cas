@@ -19,7 +19,7 @@ public class OidcAddressScopeAttributeReleasePolicy extends BaseOidcScopeAttribu
     private List<String> allowedAttributes = Stream.of("address").collect(Collectors.toList());
 
     public OidcAddressScopeAttributeReleasePolicy() {
-        super(OidcConstants.ADDRESS);
+        super(OidcConstants.StandardScopes.ADDRESS.getScope());
         setAllowedAttributes(allowedAttributes);
     }
 

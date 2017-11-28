@@ -26,6 +26,7 @@ import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -68,13 +69,19 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
     @Override
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         final Collection<String> scopes = OAuth20Utils.getRequestedScopes(request);
-        if (scopes.isEmpty() || !scopes.contains(OidcConstants.OPENID)) {
+        if (scopes.isEmpty() || !scopes.contains(OidcConstants.StandardScopes.OPENID.getScope())) {
             LOGGER.warn("Provided scopes [{}] are undefined by OpenID Connect, which requires that scope [{}] MUST be specified, "
                             + "or the behavior is unspecified. CAS MAY allow this request to be processed for now.",
-                    scopes, OidcConstants.OPENID);
+                    scopes, OidcConstants.StandardScopes.OPENID.getScope());
         }
 
         return super.handleRequest(request, response);
+    }
+
+    @PostMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
+    @Override
+    public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        return handleRequest(request, response);
     }
 
     @Override

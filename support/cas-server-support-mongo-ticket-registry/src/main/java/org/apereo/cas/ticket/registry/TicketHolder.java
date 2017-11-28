@@ -37,7 +37,7 @@ public class TicketHolder implements Serializable {
         this.json = json;
         this.ticketId = ticketId;
         this.type = type;
-        this.expireAt = expireAt;
+        this.expireAt = new Date(expireAt.getTime());
     }
 
     public String getJson() {

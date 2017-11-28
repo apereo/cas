@@ -3,10 +3,10 @@ package org.apereo.cas.adaptors.rest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.services.ServicesManager;
@@ -40,7 +40,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+            throws GeneralSecurityException {
 
         try {
             final UsernamePasswordCredential creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
@@ -51,9 +51,8 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                return createHandlerResult(c,
-                        this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes()),
-                        new ArrayList<>());
+                final Principal principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
+                return createHandlerResult(c, principal, new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {

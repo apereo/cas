@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.mfa;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.mongo.AbstractMongoClientProperties;
+import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -16,6 +17,7 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiresModule(name = "cas-server-support-trusted-mfa")
 public class TrustedDevicesMultifactorProperties implements Serializable {
     private static final long serialVersionUID = 1505013239016790473L;
     /**
@@ -62,8 +64,11 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Store devices records inside MongoDb.
      */
-    private MongoDb mongodb = new MongoDb();
+    private MongoDb mongo = new MongoDb();
 
+    /**
+     * Crypto settings that sign/encrypt the device records.
+     */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
     
@@ -91,12 +96,12 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         this.rest = rest;
     }
 
-    public MongoDb getMongodb() {
-        return mongodb;
+    public MongoDb getMongo() {
+        return mongo;
     }
 
-    public void setMongodb(final MongoDb mongodb) {
-        this.mongodb = mongodb;
+    public void setMongo(final MongoDb mongo) {
+        this.mongo = mongo;
     }
 
     public Jpa getJpa() {
@@ -167,7 +172,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
         private static final long serialVersionUID = -8329950619696176349L;
     }
 
-    public static class MongoDb extends AbstractMongoClientProperties {
+    public static class MongoDb extends SingleCollectionMongoDbProperties {
         private static final long serialVersionUID = 4940497540189318943L;
 
         public MongoDb() {

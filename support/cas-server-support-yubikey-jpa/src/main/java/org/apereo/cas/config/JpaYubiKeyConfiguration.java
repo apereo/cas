@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
+import java.util.List;
 
 /**
  * This is {@link JpaYubiKeyConfiguration}.
@@ -52,8 +54,8 @@ public class JpaYubiKeyConfiguration {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());
     }
 
-    public String[] jpaYubiKeyPackagesToScan() {
-        return new String[]{YubiKeyAccount.class.getPackage().getName()};
+    public List<String> jpaYubiKeyPackagesToScan() {
+        return CollectionUtils.wrapList(YubiKeyAccount.class.getPackage().getName());
     }
 
     @Autowired

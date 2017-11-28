@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
@@ -21,13 +23,15 @@ public class U2FMultifactorWebflowConfigurer extends AbstractCasMultifactorWebfl
 
     public U2FMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                            final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                           final FlowDefinitionRegistry flowDefinitionRegistry) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                           final FlowDefinitionRegistry flowDefinitionRegistry,
+                                           final ApplicationContext applicationContext,
+                                           final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.u2fFlowRegistry = flowDefinitionRegistry;
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_U2F_EVENT_ID, this.u2fFlowRegistry);
     }
 }

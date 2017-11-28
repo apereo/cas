@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
 import org.apereo.cas.services.MongoServiceRegistryDaoCloudTests;
-import org.apereo.cas.services.MongoServiceRegistryDaoTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,6 +12,6 @@ import org.junit.runners.Suite;
  * @since 5.0.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({MongoServiceRegistryDaoCloudTests.class, MongoServiceRegistryDaoTests.class})
+@Suite.SuiteClasses(MongoServiceRegistryDaoCloudTests.class)
 public class AllTestsSuite {
 }

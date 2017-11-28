@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link ConsentEngine}.
@@ -32,7 +32,7 @@ public interface ConsentEngine extends Serializable {
                                  RegisteredService registeredService,
                                  Authentication authentication,
                                  long reminder,
-                                 TimeUnit reminderTimeUnit,
+                                 ChronoUnit reminderTimeUnit,
                                  ConsentOptions options);
 
     /**
@@ -55,9 +55,18 @@ public interface ConsentEngine extends Serializable {
      * @param registeredService the registered service
      * @return the consentable attributes
      */
-    Map<String, Object> getConsentableAttributes(Authentication authentication,
-                                                 Service service,
-                                                 RegisteredService registeredService);
+    Map<String, Object> resolveConsentableAttributesFrom(Authentication authentication,
+                                                         Service service,
+                                                         RegisteredService registeredService);
+
+    /**
+     * Gets consentable attributes from an existing consent decision.
+     * Typically decisions are signed and encoded, so this op will need to ensure
+     * the correct attribute names and values in the existing decision record are produced.
+     * @param decision the decision
+     * @return the consentable attributes
+     */
+    Map<String, Object> resolveConsentableAttributesFrom(ConsentDecision decision);
 
     /**
      * Is consent required?

@@ -1,0 +1,118 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput required
+           i18n-placeholder="services.form.label.saml.metadata.location"
+           [placeholder]="messages.services_form_label_saml_metadata_location"
+           [(ngModel)]="service.metadataLocation">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.metadata.location"
+            [matTooltip]="messages.services_form_tooltip_saml_metadata_location">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.metadata.maximumvalidity"
+           [placeholder]="messages.services_form_label_saml_metadata_maximumvalidity"
+           [(ngModel)]="service.metadataMaxValidity">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.metadata.maximumvalidity"
+            [matTooltip]="messages.services_form_tooltip_saml_metadata_maximumvalidity">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.metadata.signaturepublickeylocation"
+           [placeholder]="messages.services_form_label_saml_metadata_signaturepublickeylocation"
+           [(ngModel)]="service.metadataSignatureLocation">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.metadata.signaturepublickeylocation"
+            [matTooltip]="messages.services_form_tooltip_saml_metadata_signaturepublickeylocation">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           placeholder="Metadata Expiration Duration"
+           [(ngModel)]="service.metadataExpirationDuration">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            matTooltip="If defined, will expire metadata in the cache after the indicated duration which will force CAS to retrieve and resolve the metadata again.">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.saml.metadata.pattern"
+           [placeholder]="messages.services_form_label_saml_metadata_pattern"
+           [(ngModel)]="service.metadataCriteriaPattern">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.metadata.pattern"
+            [matTooltip]="messages.services_form_tooltip_saml_metadata_pattern">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.saml.metadata.dir"
+                [placeholder]="messages.services_form_label_saml_metadata_dir"
+                [(ngModel)]="service.metadataCriteriaDirection">
+      <mat-option *ngFor="let opt of data.formData.samlDirections" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.metadata.dir"
+            [matTooltip]="messages.services_form_tooltip_saml_metadata_dir">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.saml.metadata.role"
+                [placeholder]="messages.services_form_label_saml_metadata_role"
+                [(ngModel)]="service.metadataCriteriaRoles">
+      <mat-option *ngFor="let opt of data.formData.samlRoles" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+            i18n-matTooltip="services.form.tooltip.saml.metadata.role"
+            [matTooltip]="messages.services_form_tooltip_saml_metadata_role">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.metadataCriteriaRemoveEmptyEntitiesDescriptors">
+    <ng-container i18n="services.form.saml.removeEmptyEntities">
+      {{ messages.services_form_label_saml_removeEmptyEntities }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.removeEmptyEntitities"
+              [matTooltip]="messages.services_form_tooltip_saml_removeEmptyEntities">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div style="padding-bottom: 10px;">
+  <mat-checkbox [(ngModel)]="service.metadataCriteriaRemoveRolelessEntityDescriptors">
+    <ng-container i18n="services.form.label.saml.removeRoleless">
+      {{ messages.services_form_label_saml_removeRoleless }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+              i18n-matTooltip="services.form.tooltip.saml.removeRoleless"
+              [matTooltip]="messages.services_form_tooltip_saml_removeRoleless">help
+    </mat-icon>
+  </mat-checkbox>
+</div>

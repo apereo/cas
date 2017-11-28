@@ -26,9 +26,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieUtils;
-import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
@@ -58,7 +58,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     /**
      * The code factory instance.
      */
-    protected OAuthCodeFactory oAuthCodeFactory;
+    protected final OAuthCodeFactory oAuthCodeFactory;
 
     /**
      * The Consent approval view resolver.
@@ -114,8 +114,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     @GetMapping(path = OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.AUTHORIZE_URL)
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final J2EContext context = WebUtils.getPac4jJ2EContext(request, response);
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
@@ -176,12 +176,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @param context           the context
      * @param clientId          the client id
      * @return the model and view
-     * @throws Exception the exception
      */
     protected ModelAndView redirectToCallbackRedirectUrl(final ProfileManager manager,
                                                          final OAuthRegisteredService registeredService,
                                                          final J2EContext context,
-                                                         final String clientId) throws Exception {
+                                                         final String clientId) {
         final Optional<UserProfile> profile = manager.get(true);
         if (profile == null || !profile.isPresent()) {
             LOGGER.error("Unexpected null profile from profile manager. Request is not fully authenticated.");
@@ -193,7 +192,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
-
+        
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
@@ -234,9 +233,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final String grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
                 OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
+        final Set<String> scopes = OAuth20Utils.parseRequestScopes(context);
         final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
-                registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType));
-
+                registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
+        
         return builder.build(context, clientId, holder);
     }
 
@@ -251,7 +251,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                 .stream()
                 .filter(b -> b.supports(context))
                 .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Could not validate the request given it's unsupported"));
+                .orElse(null);
+        if (validator == null) {
+            LOGGER.warn("Ignoring malformed request [{}] no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
+            return false;
+        }
         return validator.validate(context);
     }
 }

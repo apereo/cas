@@ -1,0 +1,25 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.informationUrl"
+           [placeholder]="messages.services_form_label_informationUrl"
+           [(ngModel)]="data.service.informationUrl">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.informationUrl"
+           [matTooltip]="messages.services_form_tooltip_informationUrl">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.privacyUrl"
+           [placeholder]="messages.services_form_label_privacyUrl"
+           [(ngModel)]="data.service.privacyUrl">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.privacyUrl"
+           [matTooltip]="messages.services_form_tooltip_privacyUrl">help
+  </mat-icon>
+</div>

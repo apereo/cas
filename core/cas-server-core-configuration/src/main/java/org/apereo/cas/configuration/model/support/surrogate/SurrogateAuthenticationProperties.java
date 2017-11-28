@@ -1,9 +1,14 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
+import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.sms.SmsProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -15,6 +20,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@RequiresModule(name = "cas-server-support-surrogate-webflow")
 public class SurrogateAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2088813217398883623L;
     /**
@@ -48,6 +54,34 @@ public class SurrogateAuthenticationProperties implements Serializable {
      */
     private Tgt tgt = new Tgt();
 
+    /**
+     * Email settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private EmailProperties mail = new EmailProperties();
+
+    /**
+     * SMS settings for notifications.
+     */
+    @NestedConfigurationProperty
+    private SmsProperties sms = new SmsProperties();
+
+    public EmailProperties getMail() {
+        return mail;
+    }
+
+    public void setMail(final EmailProperties mail) {
+        this.mail = mail;
+    }
+
+    public SmsProperties getSms() {
+        return sms;
+    }
+
+    public void setSms(final SmsProperties sms) {
+        this.sms = sms;
+    }
+    
     public Rest getRest() {
         return rest;
     }
@@ -104,6 +138,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         this.separator = separator;
     }
 
+    @RequiresModule(name = "cas-server-support-surrogate-webflow")
     public static class Simple implements Serializable {
         private static final long serialVersionUID = 16938920863432222L;
         /**
@@ -123,24 +158,29 @@ public class SurrogateAuthenticationProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-surrogate-webflow")
     public static class Json extends SpringResourceProperties {
         private static final long serialVersionUID = 3599367681439517829L;
     }
 
+    @RequiresModule(name = "cas-server-support-surrogate-authentication-rest")
     public static class Rest extends RestEndpointProperties {
         private static final long serialVersionUID = 8152273816132989085L;
     }
-    
+
+    @RequiresModule(name = "cas-server-support-surrogate-authentication-ldap")
     public static class Ldap extends AbstractLdapProperties {
         private static final long serialVersionUID = -3848837302921751926L;
         /**
          * LDAP base DN used to locate the surrogate/admin accounts.
          */
+        @RequiredProperty
         private String baseDn;
         /**
          * Search filter used to locate the admin user in the LDAP tree
          * and determine accounts qualified for impersonation.
          */
+        @RequiredProperty
         private String searchFilter;
         /**
          * LDAP search filter used to locate the surrogate account.
@@ -150,6 +190,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
          *  Attribute that must be found on the LDAP entry linked to the admin user
          *  that tags the account as authorized for impersonation.
          */
+        @RequiredProperty
         private String memberAttributeName;
         /**
          * A pattern that is matched against the attribute value of the admin user,
@@ -200,6 +241,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
         }
     }
 
+    @RequiresModule(name = "cas-server-support-surrogate-authentication")
     public static class Tgt implements Serializable {
         private static final long serialVersionUID = 2077366413438267330L;
 
@@ -216,7 +258,8 @@ public class SurrogateAuthenticationProperties implements Serializable {
             this.timeToKillInSeconds = timeToKillInSeconds;
         }
     }
-    
+
+    @RequiresModule(name = "cas-server-support-surrogate-authentication-jdbc")
     public static class Jdbc extends AbstractJpaProperties {
         private static final long serialVersionUID = 8970195444880123796L;
 
@@ -224,10 +267,12 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * Surrogate query to use to determine whether an admin user can impersonate another user.
          * The query must return an integer count of greater than zero.
          */
+        @RequiredProperty
         private String surrogateSearchQuery = "SELECT COUNT(*) FROM surrogate WHERE username=?";
         /**
          * SQL query to use in order to retrieve the list of qualified accounts for impersonation for a given admin user.
          */
+        @RequiredProperty
         private String surrogateAccountQuery = "SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?";
 
         public String getSurrogateSearchQuery() {

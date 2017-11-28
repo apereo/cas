@@ -1,14 +1,14 @@
 <div class="box" id="login">
     <div class="login-header">
         <h2 th:text="#{cas.login.pagetitle}"></h2>
-        <span th:replace="fragments/sqrl" />
-        <span class="fa-stack fa-2x hidden-xs" th:unless="${sqrlEnabled}">
+        
+        <span class="fa-stack fa-2x hidden-xs">
           <i class="fa fa-circle fa-stack-2x"></i>
           <i class="fa fa-lock fa-stack-1x fa-inverse"></i>
         </span>
     </div>
 
-    <form method="post" id="fm1" th:object="${credential}">
+    <form method="post" id="fm1" th:object="${credential}" action="login">
 
         <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
             <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
@@ -61,6 +61,14 @@
                 </span>
             </div>
         </section>
+
+        <section class="row check">
+            <p th:if="${passwordManagementEnabled}">
+                <input type="checkbox" name="doChangePassword" id="doChangePassword" value="true" th:checked="${param.doChangePassword != null}" tabindex="4"/>
+                <label for="doChangePassword" th:text="#{screen.button.changePassword}"/>
+            </p>
+        </section>
+
         <section class="row check">
             <p th:if="${rememberMeAuthenticationEnabled}">
                 <input type="checkbox" name="rememberMe" id="rememberMe" value="true" tabindex="5"/>

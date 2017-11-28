@@ -1,0 +1,81 @@
+<mat-card class="tabCard">
+  <mat-card-title>
+    <h5>OAuth Client Options</h5>
+  </mat-card-title>
+  <div class="cardContent">
+<div>
+  <mat-form-field class="textInput">
+    <input matInput required
+           i18n-placeholder="services.form.label.oauthClientId"
+           [placeholder]="messages.services_form_label_oauthClientId"
+           [(ngModel)]="service.clientId">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.oauthClientId"
+           [matTooltip]="messages.services_form_tooltip_oauthClientId">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput required [type]="showOAuthSecret ? 'text' : 'password'"
+           i18n-placeholder="services.form.label.oauthClientSecret"
+           [placeholder]="messages.services_form_label_oauthClientSecret"
+           [(ngModel)]="service.clientSecret">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.oauthClientSecret"
+           [matTooltip]="messages.services_form_tooltip_oauthClientSecret">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="showOAuthSecret">
+    <ng-container i18n="services.form.label.oauthShowSecret">
+      {{ messages.services_form_label_oauthShowSecret }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.oauthShowSecret"
+             [matTooltip]="messages.services_form_tooltip_oauthShowSecret">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.bypassApprovalPrompt">
+    <ng-container i18n="services.form.label.oauthBypass">
+      {{ messages.services_form_label_oauthBypass }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.oauthBypass"
+             [matTooltip]="messages.services_form_tooltip_oauthBypass">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="service.generateRefreshToken">
+    <ng-container i18n="services.form.label.oauthRefreshToken">
+      {{ messages.services_form_label_oauthRefreshToken }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.oauthRefreshToken"
+             [matTooltip]="messages.services_form_tooltip_oauthRefreshToken">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+
+<div>
+  <mat-checkbox  [(ngModel)]="service.jsonFormat">
+    <ng-container i18n="services.form.label.oauthJsonFormat">
+      {{ messages.services_form_label_oauthJsonFormat }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.oauthJsonFormat"
+             [matTooltip]="messages.services_form_tooltip_oauthJsonFormat">help
+    </mat-icon>
+  </mat-checkbox>
+</div>
+  </div>
+</mat-card>
+

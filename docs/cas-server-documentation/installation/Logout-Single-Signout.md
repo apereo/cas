@@ -24,7 +24,6 @@ user experience by creating symmetry between login and logout.
 <div class="alert alert-info"><strong>SSO Sessions</strong><p>It is possible to review the current collection of active SSO sessions,
 and determine if CAS itself maintains an active SSO session via the <a href="Monitoring-Statistics.html">CAS administration panels.</a></p></div>
 
-
 ## CAS Logout
 
 Per the [CAS Protocol](../protocol/CAS-Protocol.html), the `/logout` endpoint is responsible for destroying the current SSO session.
@@ -58,18 +57,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 CAS sends an HTTP POST message directly to the service. This is the traditional way of performing notification to the service.
 
-### Front Channel
-
-CAS issues asynchronous AJAX `POST` logout requests via `JSONP` to authenticated services.
-The expected behaviour of the CAS client is to invalidate the application web session.
-
-## SLO Requests
-
-The way the notification is done (_back_ or _front_ channel) is configured at a service level
-through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is
-delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
-
-A sample SLO message:
+A sample back channel SLO message:
 
 ```xml
 <samlp:LogoutRequest
@@ -83,6 +71,25 @@ A sample SLO message:
 </samlp:LogoutRequest>
 ```
 
+### Front Channel
+
+CAS issues asynchronous AJAX `GET` logout requests via `JSONP` to authenticated services.
+The expected behaviour of the CAS client is to invalidate the application web session. 
+
+<div class="alert alert-warning"><strong>Usage Warning</strong><p>Front channel logout may not be available for all CAS clients. Ensure your CAS client does support this behavior before trying it out.</p></div>
+
+A sample front channel SLO request submitted by CAS resembles the following format:
+
+```
+curl 'https://service.url?callback=jQuery112409319555380089843_1509437967792&logoutRequest=[BASE64 encoded request]&_=1509437967793'
+```
+
+## SLO Requests
+
+The way the notification is done (_back_ or _front_ channel) is configured at a service level
+through the `logoutType` property. This value is set to `LogoutType.BACK_CHANNEL` by default. The message is
+delivered or the redirection is sent to the URL presented in the _service_ parameter of the original CAS protocol ticket request.
+
 The session identifier is the CAS service ticket ID that was provided to the service when it originally authenticated
 to CAS. The session identifier is used to correlate a CAS session with an application session; for example, the SLO
 session identifier maps to a servlet session that can subsequently be destroyed to terminate the application session.
@@ -90,6 +97,10 @@ session identifier maps to a servlet session that can subsequently be destroyed 
 ### Turning Off Single Logout
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#single-logout).
+
+### Redirecting Logout to Service
+
+Logout requests may be optionally routed to an external URL bypassing the CAS logout screen. In order to to do you will need to specify the target destination typically in form of a `service` parameter to the CAS logout endpoint per the [CAS protocol specification](../protocol/CAS-Protocol-Specification.html).
 
 ### Single Logout Per Service
 

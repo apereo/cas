@@ -66,7 +66,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
 
     @Override
     public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                 final Object o, final ModelAndView modelAndView) throws Exception {
+                                 final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return;
         }

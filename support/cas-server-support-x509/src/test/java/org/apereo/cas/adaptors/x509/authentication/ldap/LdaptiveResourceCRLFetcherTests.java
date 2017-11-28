@@ -7,7 +7,8 @@ import org.apereo.cas.adaptors.x509.authentication.handler.support.AbstractX509L
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistributionPointRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -15,9 +16,14 @@ import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
+import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
+import org.apereo.cas.util.SchedulingUtils;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,10 +31,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import javax.annotation.PostConstruct;
 import java.security.cert.X509Certificate;
 
 
@@ -48,18 +57,34 @@ import java.security.cert.X509Certificate;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreTicketsConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreAuthenticationConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})
+@EnableScheduling
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
     
     @Autowired
     @Qualifier("crlFetcher")
     private CRLFetcher fetcher;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
+    @PostConstruct
+    public void init() {
+        SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
+    }
+    
     @BeforeClass
-    public static void bootstrap() throws Exception {
+    public static void bootstrapTests() throws Exception {
+        initDirectoryServer();
         AbstractX509LdapTests.bootstrap();
     }
 
@@ -91,5 +116,4 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
             checker.check(cert);
         }
     }
-
 }

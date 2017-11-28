@@ -1,0 +1,19 @@
+description = "Apereo CAS Internet2 Grouper Integration"
+dependencies {
+    api project(":api:cas-server-core-api-authentication")
+    api project(":api:cas-server-core-api-webflow")
+    
+    implementation libraries.grouper
+    implementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
+    
+    compileOnly project(":core:cas-server-core-webflow")
+    
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-services")
+    implementation project(":core:cas-server-core-services-registry")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(path: ":support:cas-server-support-json-service-registry")
+}

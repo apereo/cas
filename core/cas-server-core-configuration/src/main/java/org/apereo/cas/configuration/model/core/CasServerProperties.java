@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -15,50 +17,47 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-core", automated = true)
 public class CasServerProperties implements Serializable {
 
     private static final long serialVersionUID = 7876382696803430817L;
-    /**
-     * Location of a rewrite valve specifically by Apache Tomcat
-     * to activate URL rewriting.
-     */
-    private Resource rewriteValveConfigLocation = new ClassPathResource("container/tomcat/rewrite.config");
 
     /**
      * Full name of the CAS server. This is public-facing address
      * of the CAS deployment and not the individual node address,
      * in the event that CAS is clustered.
      */
+    @RequiredProperty
     private String name = "https://cas.example.org:8443";
 
     /**
      * A concatenation of the server name plus the CAS context path.
      * Deployments at root likely need to blank out this value.
      */
+    @RequiredProperty
     private String prefix = name.concat("/cas");
-
     /**
      * Embedded container AJP settings.
      */
     private Ajp ajp = new Ajp();
-
     /**
      * Embedded container HTTP port settings as an additional option.
      */
     private Http http = new Http();
-
     /**
      * Http proxy configuration properties.
      * In the event that you decide to run CAS without any SSL configuration in the embedded Tomcat container and on a non-secure
      * port yet wish to customize the connector configuration that is linked to the running port (i.e. 8080), this setting may apply.
      */
     private HttpProxy httpProxy = new HttpProxy();
-
     /**
      * Embedded container's SSL valve setting.
      */
     private SslValve sslValve = new SslValve();
-
+    /**
+     * Embedded container's rewrite valve setting.
+     */
+    private RewriteValve rewriteValve = new RewriteValve();
     /**
      * Configuration properties for access logging beyond defaults.
      */
@@ -70,14 +69,6 @@ public class CasServerProperties implements Serializable {
 
     public void setHttpProxy(final HttpProxy httpProxy) {
         this.httpProxy = httpProxy;
-    }
-
-    public Resource getRewriteValveConfigLocation() {
-        return rewriteValveConfigLocation;
-    }
-
-    public void setRewriteValveConfigLocation(final Resource rewriteValveConfigLocation) {
-        this.rewriteValveConfigLocation = rewriteValveConfigLocation;
     }
 
     public ExtendedAccessLog getExtAccessLog() {
@@ -134,6 +125,14 @@ public class CasServerProperties implements Serializable {
 
     public String getLogoutUrl() {
         return getPrefix().concat(CasProtocolConstants.ENDPOINT_LOGOUT);
+    }
+
+    public RewriteValve getRewriteValve() {
+        return rewriteValve;
+    }
+
+    public void setRewriteValve(final RewriteValve rewriteValve) {
+        this.rewriteValve = rewriteValve;
     }
 
     public static class Ajp implements Serializable {
@@ -549,6 +548,23 @@ public class CasServerProperties implements Serializable {
 
         public void setPort(final int port) {
             this.port = port;
+        }
+    }
+
+    public static class RewriteValve implements Serializable {
+        private static final long serialVersionUID = 9030094143985594411L;
+        /**
+         * Location of a rewrite valve specifically by Apache Tomcat
+         * to activate URL rewriting.
+         */
+        private Resource location = new ClassPathResource("container/tomcat/rewrite.config");
+
+        public Resource getLocation() {
+            return location;
+        }
+
+        public void setLocation(final Resource location) {
+            this.location = location;
         }
     }
 

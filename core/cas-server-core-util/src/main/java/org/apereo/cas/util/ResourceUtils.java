@@ -24,7 +24,7 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.*;
 
 /**
  * Utility class to assist with resource operations.
@@ -50,13 +50,16 @@ public final class ResourceUtils {
      * @throws IOException the exception
      */
     public static AbstractResource getRawResourceFrom(final String location) throws IOException {
+        if (StringUtils.isBlank(location)) {
+            throw new IllegalArgumentException("Provided location does not exist and is empty");
+        }
         final AbstractResource res;
         if (location.toLowerCase().startsWith(HTTP_URL_PREFIX)) {
             res = new UrlResource(location);
         } else if (location.toLowerCase().startsWith(CLASSPATH_URL_PREFIX)) {
             res = new ClassPathResource(location.substring(CLASSPATH_URL_PREFIX.length()));
         } else {
-            res = new FileSystemResource(StringUtils.remove(location, "file:"));
+            res = new FileSystemResource(StringUtils.remove(location, FILE_URL_PREFIX));
         }
         return res;
     }
@@ -99,6 +102,20 @@ public final class ResourceUtils {
         return false;
     }
 
+    /**
+     * Does resource exist?
+     *
+     * @param location the resource
+     * @return the boolean
+     */
+    public static boolean doesResourceExist(final String location) {
+        try {
+            return getResourceFrom(location) != null;
+        } catch (final Exception e) {
+            LOGGER.trace(e.getMessage(), e);
+        }
+        return false;
+    }
 
     /**
      * Gets resource from a String location.
@@ -191,5 +208,15 @@ public final class ResourceUtils {
         } catch (final IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+    }
+
+    /**
+     * Is the resource a file?
+     *
+     * @param resource the resource
+     * @return the boolean
+     */
+    public static boolean isFile(final String resource) {
+        return StringUtils.isNotBlank(resource) && resource.startsWith(FILE_URL_PREFIX);
     }
 }

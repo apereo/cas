@@ -1,0 +1,33 @@
+<mat-card class="tabCard">
+  <mat-card-title>
+    <h5>WS Federation Options</h5>
+  </mat-card-title>
+  <div class="cardContent">
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput
+               i18n-placeholder="services.form.label.wsfed.realm"
+               [placeholder]="messages.services_form_label_wsfed_realm"
+               [(ngModel)]="service.realm">
+      </mat-form-field>
+      <mat-icon style="font-size: medium;"
+               i18n-matTooltip="services.form.tooltip.wsfed.realm"
+               [matTooltip]="messages.services_form_tooltip_wsfed_realm">help
+      </mat-icon>
+    </div>
+
+    <div>
+      <mat-form-field class="textInput">
+        <input matInput required
+               i18n-placeholder="services.form.label.wsfed.appliesTo"
+               [placeholder]="messages.services_form_label_wsfed_appliesTo"
+               [(ngModel)]="service.appliesTo">
+      </mat-form-field>
+      <mat-icon style="font-size: medium"
+               i18n-matTooltip="services.form.tooltip.wsfed.appliesTo"
+               [matTooltip]="messages.services_form_tooltip_wsfed_appliesTo">help
+      </mat-icon>
+    </div>
+  </div>
+</mat-card>
+

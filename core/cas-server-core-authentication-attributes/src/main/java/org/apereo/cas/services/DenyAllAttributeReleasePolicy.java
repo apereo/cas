@@ -22,6 +22,9 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     public DenyAllAttributeReleasePolicy() {
         setExcludeDefaultAttributes(true);
         setPrincipalIdAttribute(null);
+        setAuthorizedToReleaseAuthenticationAttributes(false);
+        setAuthorizedToReleaseCredentialPassword(false);
+        setAuthorizedToReleaseProxyGrantingTicket(false);
     }
 
     @Override
@@ -42,11 +45,29 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
+    public boolean isAuthorizedToReleaseCredentialPassword() {
+        LOGGER.debug("CAS will not authorize the release of credential password, given the service is denied access to all attributes.");
+        return false;
+    }
+
+    @Override
+    public boolean isAuthorizedToReleaseProxyGrantingTicket() {
+        LOGGER.debug("CAS will not authorize the release of proxy-granting tickets, given the service is denied access to all attributes.");
+        return false;
+    }
+
+    @Override
+    public boolean isAuthorizedToReleaseAuthenticationAttributes() {
+        LOGGER.debug("CAS will not authorize the release of authentication attributes, given the service is denied access to all attributes.");
+        return false;
+    }
+
+    @Override
     protected Map<String, Object> returnFinalAttributesCollection(final Map<String, Object> attributesToRelease,
                                                                   final RegisteredService service) {
         LOGGER.info("CAS will not authorize anything for release, given the service is denied access to all attributes. "
                 + "If there are any default attributes set to be released to all services, "
                 + "those are also skipped for [{}]", service);
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 }

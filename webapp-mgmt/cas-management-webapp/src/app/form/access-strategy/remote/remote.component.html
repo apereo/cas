@@ -1,0 +1,28 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.sas.remoteUrl"
+           [placeholder]="messages.services_form_label_sas_remoteUrl"
+           [(ngModel)]="accessStrategy.endpointUrl">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.sas.remoteUrl"
+           [matTooltip]="messages.services_form_tooltip_sas_remoteUrl">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput [matAutocomplete]="auto"
+           i18n-placeholder="services.form.label.sas.authorizedCodes"
+           [placeholder]="messages.services_form_label_sas_authorizedCodes"
+           [(ngModel)]="accessStrategy.acceptableResponseCodes">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.sas.authorizedCodes"
+           [matTooltip]="messages.services_form_label_sas_authorizedCodes">help
+  </mat-icon>
+  <mat-autocomplete #auto="matAutocomplete">
+    <mat-option *ngFor="let code of data.formData.remoteCodes" [value]="code">{{ code }}</mat-option>
+  </mat-autocomplete>
+</div>

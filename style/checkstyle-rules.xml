@@ -26,8 +26,14 @@
             <property name="allowMissingParamTags" value="true"/>
         </module>
         <module name="JavadocVariable">
+            <property name="id" value="javadocForAllProtectedAndPublicFields"/>
             <property name="severity" value="error"/>
             <property name="scope" value="protected"/>
+            <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
+        </module>
+        <module name="JavadocVariable">
+            <property name="id" value="javadocForPropertyFields"/>
+            <property name="severity" value="error"/>
             <property name="ignoreNamePattern" value="log|logger|LOG|LOGGER"/>
         </module>
         <module name="JavadocStyle">
@@ -110,7 +116,9 @@
             <property name="validateComments" value="true"/>
             <property name="severity" value="error"/>
         </module>
-        <module name="AbbreviationAsWordInName"/>
+        <module name="AbbreviationAsWordInName">
+            <property name="allowedAbbreviationLength" value="5" />
+        </module>
         <module name="TypeName">
             <property name="severity" value="error"/>
         </module>
@@ -172,7 +180,7 @@
         </module>
         <module name="MethodLength"/>
         <module name="ParameterNumber">
-            <property name="max" value="10"/>
+            <property name="max" value="15"/>
             <property name="severity" value="error"/>
             <property name="tokens" value="METHOD_DEF"/>
         </module>
@@ -346,6 +354,15 @@
         </module>
 
         <!-- Custom checks based on regular expressions -->
+        <module name="RegexpSinglelineJava">
+            <property name="id" value="secureRandom"/>
+            <metadata name="net.sf.eclipsecs.core.comment" value="Do not create a standalone instance of SecureRandom"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="new SecureRandom\(.*\)"/>
+            <property name="message" 
+                      value="Do not create a standalone instance of SecureRandom. Use RandomUtils instead."/>
+        </module>
+        
         <module name="RegexpSinglelineJava">
             <property name="id" value="collectionsEmpty"/>
             <metadata name="net.sf.eclipsecs.core.comment" value="Avoid using an empty immutable collection"/>

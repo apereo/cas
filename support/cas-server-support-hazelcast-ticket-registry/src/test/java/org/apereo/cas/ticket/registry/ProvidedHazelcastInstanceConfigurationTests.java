@@ -13,6 +13,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
@@ -55,7 +56,7 @@ import static org.junit.Assert.*;
         CasCoreUtilConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class,
         CasCoreAuthenticationPolicyConfiguration.class,
         CasCoreAuthenticationMetadataConfiguration.class,
@@ -81,7 +82,7 @@ public class ProvidedHazelcastInstanceConfigurationTests {
     private HazelcastInstance hzInstance;
 
     @Test
-    public void hazelcastInstanceIsCreatedNormally() throws Exception {
+    public void hazelcastInstanceIsCreatedNormally() {
         assertNotNull(this.hzInstance);
         final Config config = this.hzInstance.getConfig();
         assertTrue(config.getNetworkConfig().getJoin().getMulticastConfig().isEnabled());

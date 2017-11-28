@@ -23,9 +23,11 @@ The execution order of multifactor authentication triggers is outlined below:
 11. Grouper
 12. Other
 
-Each trigger should properly try to ignore the authentication request, if applicable confguration is not found for its activation and execution. Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests (such as those presented by SAML2 or OpenID Connect) into multifactor authentication flows.
+Each trigger should properly try to ignore the authentication request, if applicable configuration is not found for its activation and execution. Also note that various CAS modules present and inject their own *internal triggers* into the CAS application runtime in order to translate protocol-specific authentication requests (such as those presented by SAML2 or OpenID Connect) into multifactor authentication flows.
 
 <div class="alert alert-info"><strong>Service Requirement</strong><p>Most multifactor authentication triggers require that the original authentication request submitted to CAS contain a <code>service</code> parameter. Failure to do so will simply result in an initial successful authentication attempt where subsequent requests that carry the relevant parameter will elevate the authentication context and trigger multifactor later. If you need to test a particular trigger, remember to provide the <code>service</code> parameter appropriately to see the trigger in action.</p></div>
+
+The trigger machinery in general should be completely oblivious to multifactor authentication; all it cares about is finding the next event in the chain in a very generic way. This means that it is technically possible to combine multiple triggers each of which may produce a different event in the authentication flow. In the event, having selected a final candidate event, the appropriate component and module that is able to support and respond to the produced event will take over and route the authentication flow appropriately.
 
 ## Global
 
@@ -61,13 +63,13 @@ to know what provider to next activate.
 - Trigger MFA based on a principal attribute(s) whose value(s) **EXACTLY** matches an MFA provider.
 This option is more relevant if you have more than one provider configured or if you have the flexibility of assigning provider ids to attributes as values.
 
-Needless to say, the attributes need to have been resolved for the principal prior to this step.
+Needless to say, the attributes need to have been resolved for the principal prior to this step. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Global Principal Attribute Predicate
 
 This is a more generic variant of the above trigger. It may be useful in cases where there is more than one provider configured and available in the application runtime and you need to design a strategy to dynamically decide on the provider that should be activated for the request.
 
-The decision is handed off to a `Predicate` implementation that define in a Groovy script whose location is taught to CAS.
+The decision is handed off to a `Predicate` implementation defined in a Groovy script whose location is taught to CAS. The responsibility of the `test` function in the script is to determine eligibility of the provider to be triggered. If the predicate determines multiple providers as eligible by returning `true` more than one, the first provider in the sorted result set ranked by the provider's order will be chosen to respond.
 
 The Groovy script predicate may be designed as such:
 
@@ -93,6 +95,57 @@ class PredicateExample implements Predicate<MultifactorAuthenticationProvider> {
     @Override
     boolean test(final MultifactorAuthenticationProvider p) {
         ...
+    }
+}
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|------------------------------------------------------------------------------------
+| `service`             | The object representing the corresponding service definition in the registry.
+| `principal`           | The object representing the authenticated principal.
+| `providers`           | Collection of `MultifactorAuthenticationProvider`s from which a selection shall be made.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
+
+As an example, the following predicate example will begin to test each multifactor authentication provider and if the given provider is `mfa-duo` it will accept it as a valid trigger so long as the provider can be reached.
+
+```groovy
+import org.apereo.cas.authentication.*
+import java.util.function.*
+import org.apereo.cas.services.*
+
+class PredicateExample implements Predicate<MultifactorAuthenticationProvider> {
+
+    def service
+    def principal
+    def providers
+    def logger
+
+    public PredicateExample(service, principal, providers, logger) {
+        this.service = service
+        this.principal = principal
+        this.providers = providers
+        this.logger = logger
+    }
+
+    @Override
+    boolean test(final MultifactorAuthenticationProvider p) {
+        logger.info("Testing provider {}", p.getId())
+        if (p.matches("mfa-duo")) {
+           logger.info("Provider {} is available. Checking eligibility...", p.getId())
+           if (p.isAvailable(this.service)) {
+               logger.info("Provider {} matched. Good to go!", p.getId())
+               return true;
+           }
+           logger.info("Skipping provider {}. Match failed.", p.getId())
+           return false; 
+        }
+        logger.info("Provider {} cannot be reached", p.getId())
+        return false
     }
 }
 ```
@@ -169,6 +222,41 @@ class SampleGroovyEventResolver {
         ...
 
         return "mfa-duo"
+    }
+}
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `service`             | The object representing the incoming service provided in the request, if any.
+| `registeredService`   | The object representing the corresponding service definition in the registry.
+| `authentication`      | The object representing the established authentication event, containing the principal.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+As an example, the following script triggers multifactor authentication via Duo Security, if the requesting application is `https://www.example.com` and the authenticated principal contains a `mail` attribute whose values contain `email@example.org`.
+
+```groovy
+import java.util.*
+
+class MyExampleScript {
+    def String run(final Object... args) {
+        def service = args[0]
+        def registeredService = args[1]
+        def authentication = args[2]
+        def logger = args[3]
+
+        if (service.id == "https://www.example.com") {
+            logger.info("Evaluating principal attributes [{}]", authentication.principal.attributes)
+
+            def mail = authentication.principal.attributes['mail']
+            if (mail.contains("email@example.org")) {
+                logger.info("Found mail attribute with value [{}]", mail)
+                return "mfa-duo"
+            }
+        }
+        return null
     }
 }
 ```

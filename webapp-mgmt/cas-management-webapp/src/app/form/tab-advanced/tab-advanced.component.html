@@ -1,0 +1,22 @@
+<div>
+  <form #advancedForm="ngForm">
+    <mat-card class="tabCard">
+      <mat-card-title>
+        <h5>Advanced</h5>
+      </mat-card-title>
+      <div class="cardContent">
+        <app-evalorder></app-evalorder>
+        <app-reqhandlers></app-reqhandlers>
+      </div>
+    </mat-card>
+    <mat-card class="tabCard">
+      <mat-card-title>
+          <h5>Public Key Options</h5>
+      </mat-card-title>
+      <div class="cardContent">
+        <app-pubkey></app-pubkey>
+      </div>
+    </mat-card>
+    <button type="submit" style="display:none;" #submit></button>
+  </form>
+</div>

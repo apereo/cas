@@ -1,0 +1,19 @@
+description = "Apereo CAS Twilio SMS Support"
+dependencies {
+
+    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-authentication")
+    
+    implementation libraries.twilio
+    
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-monitor")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(":support:cas-server-support-cookie")
+}

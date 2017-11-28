@@ -92,7 +92,9 @@ public class CasCoreConfiguration {
             final PrincipalFactory principalFactory,
             @Qualifier("protocolTicketCipherExecutor")
             final CipherExecutor cipherExecutor) {
-        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, servicesManager, logoutManager,
-                selectionStrategies, authenticationPolicyFactory(), principalFactory, cipherExecutor);
+        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, 
+                servicesManager, logoutManager,
+                selectionStrategies, authenticationPolicyFactory(), 
+                principalFactory, cipherExecutor);
     }
 }

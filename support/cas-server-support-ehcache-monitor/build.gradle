@@ -1,7 +1,13 @@
-
 description = "Apereo CAS Ehcache Integration Monitor"
 dependencies {
-	implementation project(":support:cas-server-support-ehcache-ticket-registry")
-	implementation project(":core:cas-server-core-monitor")
-	implementation libraries.ehcache
+    implementation project(":support:cas-server-support-ehcache-ticket-registry")
+    implementation project(":core:cas-server-core-monitor")
+    implementation project(":core:cas-server-core-configuration")
+    implementation libraries.ehcache
+
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-tickets", configuration: "tests")
 }

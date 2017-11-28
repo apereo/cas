@@ -31,7 +31,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
     public JavaType handleUnknownTypeId(final DeserializationContext ctxt,
                                         final JavaType baseType,
                                         final String subTypeId, final TypeIdResolver idResolver,
-                                        final String failureMsg) throws IOException {
+                                        final String failureMsg) {
 
         try {
             if (subTypeId.contains("org.jasig.")) {
@@ -52,8 +52,7 @@ class JasigRegisteredServiceDeserializationProblemHandler extends Deserializatio
     @Override
     public boolean handleUnknownProperty(final DeserializationContext ctxt, final JsonParser p,
                                          final JsonDeserializer<?> deserializer,
-                                         final Object beanOrClass,
-                                         final String propertyName) throws IOException {
+                                         final Object beanOrClass, final String propertyName) throws IOException {
         boolean handled = false;
         if (beanOrClass instanceof CachingPrincipalAttributesRepository) {
             final CachingPrincipalAttributesRepository repo = CachingPrincipalAttributesRepository.class.cast(beanOrClass);

@@ -2,8 +2,13 @@
     <h3 th:text="#{cas.login.resources.header}">:</h3>
     <ul class="list-group">
         <li class="list-group-item">
-            <a href="status/dashboard" th:inline="text">
+            <a th:href="@{/status/dashboard}" th:inline="text">
                 <i class="fa fa-cogs"></i> [[#{cas.login.resources.dashboard}]]
+            </a>
+        </li>
+        <li class="list-group-item" th:if="${attributeConsentEnabled}">
+            <a th:href="@{/consentReview}" th:inline="text">
+                <i class="fa fa-cogs"></i> [[#{screen.consent.title}]]
             </a>
         </li>
         <li class="list-group-item">

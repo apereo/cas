@@ -5,16 +5,15 @@ title: CAS - Multifactor Authentication
 
 # Multifactor Authentication (MFA)
 
-CAS provides a framework for multifactor authentication (MFA). The design philosophy for MFA support follows from
-the observation that institutional security policies with respect to MFA vary dramatically. We provide first class
-API support for authenticating multiple credentials and a policy framework around authentication. The components
-could be extended in a straightforward fashion to provide higher-level behaviors such as Webflow logic to assist,
-for example, a credential upgrade scenario where a SSO session is started by a weaker credential but a particular
-service demands re-authentication with a stronger credential.
+CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should be the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a susccessful multifactor authentication event.
 
-The authentication subsystem in CAS natively supports handling multiple credentials. While the default login form
-and Webflow tier are designed for the simple case of accepting a single credential, all core API components that
-interface with the authentication subsystem accept one or more credentials to authenticate.
+At a minimum, you need answer the following questions:
+
+- Which provider(s) are we using for multifactor authentication?
+- How and for whom are we triggering multifactor authentication?
+
+<div class="alert alert-info"><strong>Remember</strong><p>CAS itself is not a multifactor authentication provider. It simply lends itself to support services and products in the wild that already do so. If you do not have a provider selected, your best choices might be to perhaps experiment with the likes of Google Authenticator, or simply design your own.</p></div>
+
 
 ## Supported Providers
 
@@ -41,53 +40,7 @@ To learn more, [please see this guide](Configuring-Multifactor-Authentication-Tr
 
 ## Bypass Rules
 
-Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider
-is chosen to honor the authentication request, bypass rules are then consulted to calculate
-whether the provider should ignore the request and skip MFA conditionally.
-
-Bypass rules allow for the following options for each provider:
-
-- Skip multifactor authentication based on designated **principal** attribute **names**.
-- ...[and optionally] Skip multifactor authentication based on designated **principal** attribute **values**.
-- Skip multifactor authentication based on designated **authentication** attribute **names**.
-- ...[and optionally] Skip multifactor authentication based on designated **authentication** attribute **values**.
-- Skip multifactor authentication depending on method/form of primary authentication execution.
-
-A few simple examples follow:
-
-- Trigger MFA except when the principal carries an `affiliation` attribute whose value is either `alum` or `member`.
-- Trigger MFA except when the principal carries a `superAdmin` attribute.
-- Trigger MFA except if the method of primary authentication is SPNEGO.
-- Trigger MFA except if credentials used for primary authentication are of type `org.example.MyCredential`.
-
-Note that in addition to the above options, some multifactor authentication providers
-may also skip and bypass the authentication request in the event that the authenticated principal does not quite "qualify"
-for multifactor authentication. See the documentation for each specific provider to learn more.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
-
-Note that ticket validation requests shall successfully go through if multifactor authentication is
-bypassed for the given provider. In such cases, no authentication context is passed back to the application and
-additional attributes are supplanted to let the application know multifactor authentication is bypassed for the provider.
-
-### Applications
-
-MFA Bypass rules can be overridden per application via the CAS service registry. This is useful when
-MFA may be turned on globally for all applications and services, yet a few selectively need to be excluded. Services
-whose access should bypass MFA may be defined as such in the CAS service registry:
-
-```json
-{
-  "@class" : "org.apereo.cas.services.RegexRegisteredService",
-  "serviceId" : "^(https|imaps)://.*",
-  "id" : 100,
-  "multifactorPolicy" : {
-    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy",
-    "multifactorAuthenticationProviders" : [ "java.util.LinkedHashSet", [ "mfa-duo" ] ],
-    "bypassEnabled" : "true"
-  }
-}
-```
+Each multifactor provider is equipped with options to allow for MFA bypass. To learn more, [please see this guide](Configuring-Multifactor-Authentication-Bypass.html).
 
 ## Failure Modes
 
@@ -142,6 +95,16 @@ class SampleGroovyProviderSelection {
 }
 ```
 
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-------------------------------------------------------------------------------------------------------------------
+| `service`             | The object representing the incoming service provided in the request, if any.
+| `principal`           | The object representing the authenticated principal along with its attributes.
+| `providersCollection` | The object representing the collection of candidate multifactor providers qualified for the transaction.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Ranking Providers
@@ -168,6 +131,10 @@ and override others with a lower value.
 CAS is able to natively provide trusted device/browser features as part of any multifactor authentication flow. While certain providers tend to support this feature as well, this behavior is now put into CAS directly providing you with exact control over how devices/browsers are checked, how is that decision remembered for subsequent requests and how you might allow delegated management of those trusted decisions both for admins and end-users.
 
 [See this guide for more info](Multifactor-TrustedDevice-Authentication.html).
+
+## 2FA vs. MFA
+
+Multifactor authentication in CAS mostly presents itself in form of two-factor authentication when deployed. The framework however is designed in such a way to allow additional chaining of other providers into an existing authentication experience. If you have a need to string along multiple factors together one after another, it is likely that you may need to adjust and extend the existing authentication workflows to deliver the use case.
 
 ## Settings
 

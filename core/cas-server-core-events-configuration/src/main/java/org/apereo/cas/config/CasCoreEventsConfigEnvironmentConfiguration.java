@@ -26,7 +26,6 @@ public class CasCoreEventsConfigEnvironmentConfiguration {
 
     @ConditionalOnMissingBean(name = "casConfigurationEventListener")
     @Bean
-    @Autowired
     public CasConfigurationEventListener casConfigurationEventListener() {
         return new CasConfigurationEventListener(manager);
     }

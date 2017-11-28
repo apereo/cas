@@ -2,7 +2,7 @@ package org.apereo.cas.web.support;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
@@ -28,7 +28,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
     /**
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
-    private CipherExecutor<Serializable, String> cipherExecutor = NoOpCipherExecutor.getInstance();
+    private final CipherExecutor<Serializable, Serializable> cipherExecutor;
 
     /**
      * Instantiates a new Cas cookie value manager.
@@ -46,7 +46,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
                 .append(COOKIE_FIELD_SEPARATOR)
                 .append(clientInfo.getClientIpAddress());
 
-        final String userAgent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String userAgent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         if (StringUtils.isBlank(userAgent)) {
             throw new IllegalStateException("Request does not specify a user-agent");
         }
@@ -54,12 +54,12 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
 
         final String res = builder.toString();
         LOGGER.debug("Encoding cookie value [{}]", res);
-        return this.cipherExecutor.encode(res);
+        return this.cipherExecutor.encode(res).toString();
     }
 
     @Override
     public String obtainCookieValue(final Cookie cookie, final HttpServletRequest request) {
-        final String cookieValue = this.cipherExecutor.decode(cookie.getValue());
+        final String cookieValue = this.cipherExecutor.decode(cookie.getValue()).toString();
         LOGGER.debug("Decoded cookie value is [{}]", cookieValue);
         if (StringUtils.isBlank(cookieValue)) {
             LOGGER.debug("Retrieved decoded cookie value is blank. Failed to decode cookie [{}]", cookie.getName());
@@ -84,7 +84,7 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
                     + remoteAddr + " does not match " + clientInfo.getClientIpAddress());
         }
 
-        final String agent = WebUtils.getHttpServletRequestUserAgent(request);
+        final String agent = HttpRequestUtils.getHttpServletRequestUserAgent(request);
         if (!userAgent.equals(agent)) {
             throw new IllegalStateException("Invalid cookie. Required user-agent " + userAgent + " does not match " + agent);
         }

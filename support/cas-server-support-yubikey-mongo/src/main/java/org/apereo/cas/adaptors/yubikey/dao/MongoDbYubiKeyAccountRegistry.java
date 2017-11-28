@@ -9,7 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link MongoDbYubiKeyAccountRegistry}.
@@ -19,28 +18,16 @@ import org.springframework.util.Assert;
  */
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbYubiKeyAccountRegistry.class);
+    
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
     public MongoDbYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator,
-                                         final MongoOperations mongoTemplate, final String collectionName,
-                                         final boolean dropCollection) {
+                                         final MongoOperations mongoTemplate, final String collectionName) {
         super(accountValidator);
 
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-
-        Assert.notNull(this.mongoTemplate);
-
-        if (dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", this.collectionName);
-            this.mongoTemplate.dropCollection(this.collectionName);
-        }
-
-        if (!this.mongoTemplate.collectionExists(this.collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", this.collectionName);
-            this.mongoTemplate.createCollection(this.collectionName);
-        }
     }
 
     @Override

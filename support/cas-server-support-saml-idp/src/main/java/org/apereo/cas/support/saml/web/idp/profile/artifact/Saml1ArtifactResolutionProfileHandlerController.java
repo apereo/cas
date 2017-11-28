@@ -17,8 +17,8 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
-import org.apereo.cas.ticket.SamlArtifactTicket;
-import org.apereo.cas.ticket.SamlArtifactTicketFactory;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
+import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -73,11 +73,10 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
      *
      * @param response the response
      * @param request  the request
-     * @throws Exception the exception
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML1_SOAP_ARTIFACT_RESOLUTION)
     protected void handlePostRequest(final HttpServletResponse response,
-                                     final HttpServletRequest request) throws Exception {
+                                     final HttpServletRequest request) {
         final MessageContext ctx = decodeSoapRequest(request);
         final ArtifactResolve artifactMsg = (ArtifactResolve) ctx.getMessage();
         try {

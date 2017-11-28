@@ -15,13 +15,13 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="info" additivity="false">
+        <Logger name="org.apereo" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.opensaml" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="PROTOCOL_MESSAGE" level="info" additivity="false">
+        <Logger name="PROTOCOL_MESSAGE" level="warn" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.apache.xml.security" level="off" />

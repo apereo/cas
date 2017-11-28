@@ -2,15 +2,14 @@ package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -38,16 +37,17 @@ public final class CollectionUtils {
      */
     @SuppressWarnings("unchecked")
     public static Set<Object> toCollection(final Object obj) {
-        final Set<Object> c = new HashSet<>();
+        final Set<Object> c = new LinkedHashSet<>();
         if (obj == null) {
             LOGGER.debug("Converting null obj to empty collection");
         } else if (obj instanceof Collection) {
             c.addAll((Collection<Object>) obj);
             LOGGER.trace("Converting multi-valued attribute [{}]", obj);
         } else if (obj instanceof Map) {
-            throw new UnsupportedOperationException(Map.class.getCanonicalName() + " is not supported");
+            final Set<Map.Entry> set = ((Map) obj).entrySet();
+            c.addAll(set.stream().map(e -> Pair.of(e.getKey(), e.getValue())).collect(Collectors.toSet()));
         } else if (obj.getClass().isArray()) {
-            Collections.addAll(c, obj);
+            c.addAll(Arrays.stream((Object[]) obj).collect(Collectors.toSet()));
             LOGGER.trace("Converting array attribute [{}]", obj);
         } else {
             c.add(obj);
@@ -71,7 +71,7 @@ public final class CollectionUtils {
             inner.forEach((k, v) -> map.put(k, wrap(v)));
             return map;
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**
@@ -86,7 +86,7 @@ public final class CollectionUtils {
         if (source != null && !source.isEmpty()) {
             return new HashMap<>(source);
         }
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 
     /**
@@ -100,7 +100,7 @@ public final class CollectionUtils {
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
         final Map map = new HashMap<>();
-        if (StringUtils.isNotBlank(key)) {
+        if (StringUtils.isNotBlank(key) && value != null) {
             map.put(key, value);
         }
         return map;
@@ -200,7 +200,7 @@ public final class CollectionUtils {
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param source Nullable list to wrap.
+     * @param source list to wrap.
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
@@ -211,6 +211,9 @@ public final class CollectionUtils {
                 while (it.hasNext()) {
                     list.add((T) it.next());
                 }
+            } else if (source.getClass().isArray()) {
+                final List elements = Arrays.stream((Object[]) source).collect(Collectors.toList());
+                list.addAll(elements);
             } else {
                 list.add(source);
             }
@@ -272,9 +275,29 @@ public final class CollectionUtils {
      */
     public static <T> Set<T> wrapSet(final T... source) {
         final Set<T> list = new LinkedHashSet<>();
-        if (source != null) {
-            list.addAll(Arrays.stream(source).collect(Collectors.toSet()));
-        }
+        addToCollection(list, source);
         return list;
+    }
+
+    /**
+     * Wrap set set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> List<T> wrapList(final T... source) {
+        final List<T> list = new ArrayList<>();
+        addToCollection(list, source);
+        return list;
+    }
+
+    private static <T> void addToCollection(final Collection<T> list, final T[] source) {
+        if (source != null) {
+            Arrays.stream(source).forEach(s -> {
+                final Collection col = toCollection(s);
+                list.addAll(col);
+            });
+        }
     }
 }

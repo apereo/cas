@@ -4,6 +4,7 @@ title: CAS - OAuth Protocol
 ---
 
 # OAuth Protocol
+
 You can configure the CAS server with:
 
 * [OAuth client support](../integration/Delegate-Authentication.html), which means authentication can be delegated 

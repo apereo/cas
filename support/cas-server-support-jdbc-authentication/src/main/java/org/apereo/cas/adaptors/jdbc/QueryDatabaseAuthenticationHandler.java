@@ -44,7 +44,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldDisabled;
     private final Map<String, Collection<String>> principalAttributeMap;
 
-    public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+    public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
@@ -91,19 +91,17 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
             this.principalAttributeMap.forEach((key, attributeNames) -> {
                 final Object attribute = dbFields.get(key);
+  
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", key);
-
-                    if (attribute != null) {
-                        LOGGER.debug("Found attribute [{}] from the query results", key);
-                        attributeNames.forEach(s -> {
-                            LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
-                            attributes.put(s, CollectionUtils.wrap(attribute.toString()));
-                        });
-                    } else {
-                        LOGGER.warn("Requested attribute [{}] could not be found in the query results", key);
-                    }
+                    attributeNames.forEach(s -> {
+                        LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
+                        attributes.put(s, CollectionUtils.wrap(attribute.toString()));
+                    });
+                } else {
+                    LOGGER.warn("Requested attribute [{}] could not be found in the query results", key);
                 }
+
             });
 
         } catch (final IncorrectResultSizeDataAccessException e) {

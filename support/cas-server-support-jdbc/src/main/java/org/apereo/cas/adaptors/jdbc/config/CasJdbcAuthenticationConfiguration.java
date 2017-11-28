@@ -8,9 +8,12 @@ import org.apereo.cas.adaptors.jdbc.QueryDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.SearchModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.BindJdbcAuthenticationProperties;
@@ -18,7 +21,6 @@ import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationPropert
 import org.apereo.cas.configuration.model.support.jdbc.QueryEncodeJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.QueryJdbcAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.jdbc.SearchJdbcAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -90,17 +92,17 @@ public class CasJdbcAuthenticationConfiguration {
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
         final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (bindSearchPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(bindSearchPasswordPolicyConfiguration);
         }
 
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
+            h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(b.getCredentialCriteria()));
         }
 
         LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
@@ -113,17 +115,17 @@ public class CasJdbcAuthenticationConfiguration {
                 b.getSaltFieldName(), b.getExpiredFieldName(), b.getDisabledFieldName(), b.getNumberOfIterationsFieldName(), b.getNumberOfIterations(),
                 b.getStaticSalt());
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (queryAndEncodePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryAndEncodePasswordPolicyConfiguration);
         }
 
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
+            h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(b.getCredentialCriteria()));
         }
 
         LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
@@ -131,7 +133,7 @@ public class CasJdbcAuthenticationConfiguration {
     }
 
     private AuthenticationHandler queryDatabaseAuthenticationHandler(final QueryJdbcAuthenticationProperties b) {
-        final Multimap<String, String> attributes = Beans.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
+        final Multimap<String, String> attributes = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(b.getPrincipalAttributeList());
         LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", attributes, b.getUrl());
 
         final QueryDatabaseAuthenticationHandler h = new QueryDatabaseAuthenticationHandler(b.getName(), servicesManager,
@@ -140,17 +142,17 @@ public class CasJdbcAuthenticationConfiguration {
                 b.getFieldExpired(), b.getFieldDisabled(),
                 CollectionUtils.wrap(attributes));
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (queryPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(queryPasswordPolicyConfiguration);
         }
 
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
+            h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(b.getCredentialCriteria()));
         }
 
         LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());
@@ -161,16 +163,16 @@ public class CasJdbcAuthenticationConfiguration {
         final SearchModeSearchDatabaseAuthenticationHandler h = new SearchModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
                 jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b.getFieldUser(), b.getFieldPassword(), b.getTableUsers());
 
-        h.setPasswordEncoder(Beans.newPasswordEncoder(b.getPasswordEncoder()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
-        h.setPrincipalNameTransformer(Beans.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
         if (searchModePasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(searchModePasswordPolicyConfiguration);
         }
 
         if (StringUtils.isNotBlank(b.getCredentialCriteria())) {
-            h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(b.getCredentialCriteria()));
+            h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(b.getCredentialCriteria()));
         }
 
         LOGGER.debug("Created authentication handler [{}] to handle database url at [{}]", h.getName(), b.getUrl());

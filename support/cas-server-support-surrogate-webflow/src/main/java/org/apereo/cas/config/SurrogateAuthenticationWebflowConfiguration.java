@@ -15,8 +15,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
@@ -65,11 +67,18 @@ public class SurrogateAuthenticationWebflowConfiguration {
     @Autowired
     @Qualifier("handledAuthenticationExceptions")
     private Set<Class<? extends Exception>> handledAuthenticationExceptions;
-            
+
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @ConditionalOnMissingBean(name = "surrogateWebflowConfigurer")
     @Bean
+    @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer surrogateWebflowConfigurer() {
-        return new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, selectSurrogateAction());
+        final CasWebflowConfigurer w = new SurrogateWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, selectSurrogateAction(),
+                applicationContext, casProperties);
+        w.initialize();
+        return w;
     }
 
     @ConditionalOnMissingBean(name = "selectSurrogateAction")

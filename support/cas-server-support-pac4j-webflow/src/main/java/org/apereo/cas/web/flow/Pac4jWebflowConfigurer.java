@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -33,14 +35,15 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
     public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
                                   final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                   final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-                                  final Action saml2ClientLogoutAction) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                  final Action saml2ClientLogoutAction, final ApplicationContext applicationContext,
+                                  final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         this.saml2ClientLogoutAction = saml2ClientLogoutAction;
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createClientActionActionState(flow);
@@ -51,7 +54,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private void createSaml2ClientLogoutAction() {
         final Flow logoutFlow = getLogoutFlow();
-        final DecisionState state = (DecisionState) logoutFlow.getState(CasWebflowConstants.STATE_ID_FINISH_LOGOUT);
+        final DecisionState state = getState(logoutFlow, CasWebflowConstants.STATE_ID_FINISH_LOGOUT, DecisionState.class);
         state.getEntryActionList().add(saml2ClientLogoutAction);
     }
 
@@ -71,9 +74,9 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
                 DelegatedClientAuthenticationAction.VIEW_ID_STOP_WEBFLOW);
         state.getEntryActionList().add(new AbstractAction() {
             @Override
-            protected Event doExecute(final RequestContext requestContext) throws Exception {
-                final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-                final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+            protected Event doExecute(final RequestContext requestContext) {
+                final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+                final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
                 final Optional<ModelAndView> mv = DelegatedClientAuthenticationAction.hasDelegationRequestFailed(request,
                         response.getStatus());
                 mv.ifPresent(modelAndView -> modelAndView.getModel().forEach((k, v) -> requestContext.getFlowScope().put(k, v)));

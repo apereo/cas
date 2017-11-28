@@ -1,14 +1,18 @@
 description = "Apereo CAS Server OpenID Connect Support"
 dependencies {
+    api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-ticket")
+    api project(":api:cas-server-core-api-protocol")
+    
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-util")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-services-api")
-    implementation project(":api:cas-server-core-api")
-    implementation project(":api:cas-server-core-api-webflow")
-    implementation project(":api:cas-server-core-api-ticket")
-    implementation project(":api:cas-server-core-api-protocol")
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration")
     implementation project(":support:cas-server-support-oauth-webflow")
     implementation project(":support:cas-server-support-oidc-core")
     implementation project(":support:cas-server-support-oauth-core")
@@ -19,8 +23,22 @@ dependencies {
     
     implementation libraries.jose4j
     implementation libraries.caffein
+    
     compileOnly project(":support:cas-server-support-cookie")
     compileOnly project(":core:cas-server-core-webflow")
-    testImplementation project(":core:cas-server-core-util")
     
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-services-authentication")
+    testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":support:cas-server-support-themes")
+    testImplementation project(":support:cas-server-support-cookie")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-services")
 }

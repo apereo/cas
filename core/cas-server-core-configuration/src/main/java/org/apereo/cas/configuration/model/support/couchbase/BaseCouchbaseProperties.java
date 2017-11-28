@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.couchbase;
 
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
 
@@ -20,6 +21,7 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     /**
      * Nodeset name.
      */
+    @RequiredProperty
     private String nodeSet = "localhost:8091";
 
     /**
@@ -30,11 +32,13 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     /**
      * Password.
      */
+    @RequiredProperty
     private String password;
 
     /**
      * Bucket name.
      */
+    @RequiredProperty
     private String bucket = "default";
 
     public boolean isQueryEnabled() {

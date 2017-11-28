@@ -1,15 +1,21 @@
 package org.apereo.cas.ticket.registry;
 
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.mock.MockServiceTicket;
+import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Assume;
 import org.junit.Before;
@@ -23,6 +29,7 @@ import org.springframework.test.util.AopTestUtils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -34,6 +41,10 @@ public abstract class AbstractTicketRegistryTests {
 
     @ClassRule
     public static final SpringClassRule SPRING_CLASS_RULE = new SpringClassRule();
+
+    private static final String TGT_ID = "TGT";
+    private static final String ST_1_ID = "ST1";
+    private static final String PGT_1_ID = "PGT-1";
 
     private static final int TICKETS_IN_REGISTRY = 10;
     private static final String EXCEPTION_CAUGHT_NONE_EXPECTED = "Exception caught.  None expected.";
@@ -57,17 +68,15 @@ public abstract class AbstractTicketRegistryTests {
             setUpEncryption();
         }
     }
-
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
-            final DefaultTicketCipherExecutor cipher = new DefaultTicketCipherExecutor(
-                    null, null, "AES", 
-                    512, 16, "test");
+            final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(
+                    new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
             registry.setCipherExecutor(cipher);
         } else {
-            registry.setCipherExecutor((CipherExecutor) NoOpCipherExecutor.getInstance());
+            registry.setCipherExecutor(NoOpCipherExecutor.getInstance());
         }
     }
 
@@ -76,9 +85,8 @@ public abstract class AbstractTicketRegistryTests {
      * return the TicketRegistry they wish to test.
      *
      * @return the TicketRegistry we wish to test
-     * @throws Exception the exception
      */
-    public abstract TicketRegistry getNewTicketRegistry() throws Exception;
+    public abstract TicketRegistry getNewTicketRegistry();
 
     /**
      * Determine whether the tested registry is able to iterate its tickets.
@@ -326,4 +334,79 @@ public abstract class AbstractTicketRegistryTests {
         }
     }
 
+    @Test
+    public void verifyWriteGetDelete() {
+        final Ticket ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
+        ticketRegistry.addTicket(ticket);
+        final Ticket ticketFromRegistry = ticketRegistry.getTicket(TicketGrantingTicket.PREFIX);
+        assertNotNull(ticketFromRegistry);
+        assertEquals(TicketGrantingTicket.PREFIX, ticketFromRegistry.getId());
+        ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX);
+        assertNull(ticketRegistry.getTicket(TicketGrantingTicket.PREFIX));
+    }
+
+    @Test
+    public void verifyExpiration() {
+        final String id = "ST-1234567890ABCDEFGHIJKL-exp1";
+        final MockServiceTicket ticket = new MockServiceTicket(id, RegisteredServiceTestUtils.getService(), new MockTicketGrantingTicket("test"));
+        ticket.setExpiration(new AlwaysExpiresExpirationPolicy());
+        ticketRegistry.addTicket(ticket);
+        assertNull(ticketRegistry.getTicket(id, ServiceTicket.class));
+    }
+
+    @Test
+    public void verifyDeleteTicketWithPGT() {
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
+
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+
+        final ServiceTicket st1 = tgt.grantServiceTicket(ST_1_ID, service, new NeverExpiresExpirationPolicy(), false, true);
+        this.ticketRegistry.addTicket(st1);
+        this.ticketRegistry.updateTicket(tgt);
+
+        assertNotNull(this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class));
+        assertNotNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));
+
+        final ProxyGrantingTicket pgt = st1.grantProxyGrantingTicket(PGT_1_ID, a, new NeverExpiresExpirationPolicy());
+        this.ticketRegistry.addTicket(pgt);
+        this.ticketRegistry.updateTicket(tgt);
+        this.ticketRegistry.updateTicket(st1);
+        assertEquals(pgt.getGrantingTicket(), tgt);
+        assertNotNull(this.ticketRegistry.getTicket(PGT_1_ID, ProxyGrantingTicket.class));
+        assertEquals(a, pgt.getAuthentication());
+        assertNotNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));
+
+        assertTrue(this.ticketRegistry.deleteTicket(tgt.getId()) > 0);
+
+        assertNull(this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class));
+        assertNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));
+        assertNull(this.ticketRegistry.getTicket(PGT_1_ID, ProxyGrantingTicket.class));
+    }
+
+    @Test
+    public void verifyDeleteTicketsWithMultiplePGTs() {
+        final Authentication a = CoreAuthenticationTestUtils.getAuthentication();
+        this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TGT_ID, a, new NeverExpiresExpirationPolicy()));
+        final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TGT_ID, TicketGrantingTicket.class);
+
+        final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
+        IntStream.range(1, 5).forEach(i -> {
+            final ServiceTicket st = tgt.grantServiceTicket(ST_1_ID + "-" + i, service,
+                    new NeverExpiresExpirationPolicy(), false, true);
+            this.ticketRegistry.addTicket(st);
+            this.ticketRegistry.updateTicket(tgt);
+
+            final ProxyGrantingTicket pgt = st.grantProxyGrantingTicket(PGT_1_ID + "-" + i, a, new NeverExpiresExpirationPolicy());
+            this.ticketRegistry.addTicket(pgt);
+            this.ticketRegistry.updateTicket(tgt);
+            this.ticketRegistry.updateTicket(st);
+        });
+
+        final int c = this.ticketRegistry.deleteTicket(TGT_ID);
+        assertEquals(c, 6);
+    }
 }

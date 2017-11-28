@@ -4,6 +4,7 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -34,36 +35,26 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
-    private final boolean dropCollection;
     private final TicketCatalog ticketCatalog;
     private final MongoOperations mongoTemplate;
+    private final boolean dropCollection;
 
-    public MongoDbTicketRegistry(final TicketCatalog ticketCatalog, final MongoOperations mongoTemplate) {
-        this(ticketCatalog, false, mongoTemplate);
-    }
-
-    public MongoDbTicketRegistry(final TicketCatalog ticketCatalog, final boolean dropCollection,
-                                 final MongoOperations mongoTemplate) {
+    public MongoDbTicketRegistry(final TicketCatalog ticketCatalog,
+                                 final MongoOperations mongoTemplate,
+                                 final boolean dropCollection) {
         this.ticketCatalog = ticketCatalog;
-        this.dropCollection = dropCollection;
         this.mongoTemplate = mongoTemplate;
+        this.dropCollection = dropCollection;
 
         createTicketCollections();
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
 
-    private DBCollection createTicketCollection(final TicketDefinition ticket) {
+    private DBCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
         final String collectionName = ticket.getProperties().getStorageName();
         LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
-        if (this.dropCollection) {
-            LOGGER.debug("Dropping database collection: [{}]", collectionName);
-            this.mongoTemplate.dropCollection(collectionName);
-        }
+        factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
 
-        if (!this.mongoTemplate.collectionExists(collectionName)) {
-            LOGGER.debug("Creating database collection: [{}]", collectionName);
-            this.mongoTemplate.createCollection(collectionName);
-        }
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
         final DBCollection collection = mongoTemplate.getCollection(collectionName);
         collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1),
@@ -73,8 +64,9 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
     private void createTicketCollections() {
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         definitions.forEach(t -> {
-            final DBCollection c = createTicketCollection(t);
+            final DBCollection c = createTicketCollection(t, factory);
             LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getFullName());
         });
     }
@@ -97,7 +89,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             }
             final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(holder.getTicketId()));
             final Update update = Update.update(TicketHolder.FIELD_NAME_JSON, holder.getJson());
-            this.mongoTemplate.updateFirst(query, update, collectionName);
+            this.mongoTemplate.upsert(query, update, collectionName);
             LOGGER.debug("Updated ticket [{}]", ticket);
         } catch (final Exception e) {
             LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
@@ -147,8 +139,15 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(encTicketId));
             final TicketHolder d = this.mongoTemplate.findOne(query, TicketHolder.class, collectionName);
             if (d != null) {
-                final Ticket result = deserializeTicketFromMongoDocument(d);
-                return decodeTicket(result);
+                final Ticket decoded = deserializeTicketFromMongoDocument(d);
+                final Ticket result = decodeTicket(decoded);
+
+                if (result != null && result.isExpired()) {
+                    LOGGER.debug("Ticket [{}] has expired and is now removed from the collection", result.getId());
+                    deleteSingleTicket(encTicketId);
+                    return null;
+                }
+                return result;
             }
         } catch (final Exception e) {
             LOGGER.error("Failed fetching [{}]: [{}]", ticketId, e);
@@ -197,7 +196,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     }
 
     /**
-     * Calculate the time at which the ticket is eligible for automatic deletion by MongoDb.
+     * Calculate the time at which the ticket is eligible for automated deletion by MongoDb.
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {

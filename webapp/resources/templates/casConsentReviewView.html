@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <title th:text="#{screen.consent.review.header}"></title>
+
+    <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
+    <script th:src="@{#{webjars.datatables.datatables.bootstrapmin.js}}"></script>
+    <script type="text/javascript" th:inline="javascript">
+        var urls = {
+            delete: /*[[@{/consentReview/deleteConsentDecision}]]*/,
+            getConsentDecisions: /*[[@{/consentReview/getConsentDecisions}]]*/
+        };
+        var strings = {
+            error: /*[[#{screen.consent.review.error}]]*/,
+            success: /*[[#{screen.consent.review.success}]]*/,
+            confirm: /*[[#{screen.consent.review.confirm}]]*/,
+            yes: /*[[#{screen.consent.review.yes}]]*/,
+            no: /*[[#{screen.consent.review.no}]]*/,
+            data: {
+                search: /*[[#{screen.consent.review.data.search}]]*/,
+                zeroRecords: /*[[#{screen.consent.review.data.zerorecords}]]*/,
+                info: /*[[#{screen.consent.review.data.info}]]*/,
+                infoFiltered: /*[[#{screen.consent.review.data.infofiltered}]]*/,
+                infoEmpty: /*[[#{screen.consent.review.data.infoempty}]]*/
+            }
+        };
+
+        function jqueryReady() {
+            head.load(
+                /*[[@{/js/consentReview.js}]]*/
+            );
+        };
+    </script>
+</head>
+
+<body id="cas">
+<div layout:fragment="content">
+    <link rel="stylesheet" th:href="@{/css/consentReview.css}"/>
+
+    <div id="content">
+
+        <div class=" panel panel-default consentOverview">
+            <div class="panel-heading">
+                <h4 th:utext="#{screen.consent.review.header}"/>
+            </div>
+            <div class="panel-body">
+                <div id="loadingMessage">
+                    <h3 th:text="#{screen.consent.review.loading}"/>
+                </div>
+
+                <div id="no-consent-decisions">
+                    <p th:text="#{screen.consent.review.noconsentdecisions}"/>
+                </div>
+
+                <div id="consent-decisons">
+                    <div id="alertWrapper"></div>
+                    <table id="consentDecisions" class="display table table-striped table-hover">
+                        <thead>
+                        <th th:text="#{screen.consent.review.date}"/>
+                        <th th:texT="#{screen.consent.review.service}"/>
+                        </thead>
+                        <tbody>
+                        <tr class="info hidden">
+                            <td class="info" colspan="3">
+                                <div>
+                                    <table class="table table-bordered row-detail">
+                                        <tbody>
+                                        <tr>
+                                            <td class="field-label active consent-created-date-label col-3" th:utext="#{screen.consent.review.createddate}"/>
+                                            <td class="created-date"></td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field-label active consent-reminder-label col-3" th:utext="#{screen.consent.review.reminder}"></td>
+                                            <td class="consent-reminder">
+                                                <span class="seconds" th:utext="#{screen.consent.options.timeunit.seconds}"/>
+                                                <span class="minutes" th:utext="#{screen.consent.options.timeunit.minutes}"/>
+                                                <span class="hours" th:utext="#{screen.consent.options.timeunit.hours}"/>
+                                                <span class="days" th:utext="#{screen.consent.options.timeunit.days}"/>
+                                                <span class="weeks" th:utext="#{screen.consent.options.timeunit.weeks}"/>
+                                                <span class="months" th:utext="#{screen.consent.options.timeunit.months}"/>
+                                                <span class="years" th:utext="#{screen.consent.options.timeunit.years}"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field-label active consent-option-label col-3" th:utext="#{screen.consent.review.option}"/>
+                                            <td class="consent-options">
+                                                                <span class="attribute-name label label-default"
+                                                                      th:utext="#{screen.consent.options.attributename}"
+                                                                      th:title="#{screen.consent.review.options.desc.attributename}" data-toggle="tooltip"
+                                                                      data-placement="bottom"/>
+                                                <span class="attribute-value label label-default" th:utext="#{screen.consent.options.attributevalue}"
+                                                      th:title="#{screen.consent.review.options.desc.attributevalue}" data-toggle="tooltip"
+                                                      data-placement="bottom"/>
+                                                <span class="always label label-default" th:utext="#{screen.consent.options.always}"
+                                                      th:title="#{screen.consent.review.options.desc.always}" data-toggle="tooltip" data-placement="bottom"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td class="field-label active consent-attributes-label col-3" th:utext="#{screen.consent.review.attributes}"/>
+                                            <td>
+                                                <table class="table table-striped table-bordered consent-attributes">
+                                                    <thead>
+                                                    <tr>
+                                                        <th th:text="#{screen.consent.attributes.attribute}"/>
+                                                        <th th:text="#{screen.consent.attributes.values}"/>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                    <button type="button" class="btn btn-danger" th:utext="#{screen.consent.review.delete}"/>
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <button type="button" name="logout" id="logout" class="btn btn-primary" th:utext="#{screen.welcome.button.logout}"/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.Beans;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import javax.persistence.LockModeType;
@@ -13,6 +14,7 @@ import javax.persistence.LockModeType;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-jpa-ticket-registry")
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**
@@ -42,6 +44,7 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
+        this.crypto.setEnabled(false);
     }
 
     public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {

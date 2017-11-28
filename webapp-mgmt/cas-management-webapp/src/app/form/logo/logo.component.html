@@ -1,0 +1,12 @@
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.logoUrl"
+           [placeholder]="messages.services_form_label_logoUrl"
+           [(ngModel)]="data.service.logo">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.logoUrl"
+          [matTooltip]="messages.services_form_tooltip_logoUrl">help
+  </mat-icon>
+</div>

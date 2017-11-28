@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.ldap;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@RequiresModule(name = "cas-server-support-ldap")
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     private static final long serialVersionUID = -5357843463521189892L;
@@ -30,7 +32,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
 
     /**
-     * Password encoder settings for REST authentication.
+     * Password encoder settings for LDAP authentication.
      */
     @NestedConfigurationProperty
     private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
@@ -52,11 +54,17 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
     private String principalAttributeId;
 
     /**
+     * Name of attribute to be used for principal's DN.
+     */
+    private String principalDnAttributeName = "principalLdapDn";
+
+    /**
      * List of attributes to retrieve from LDAP.
      * Attributes can be virtually remapped to multiple names.
      * Example {@code cn:commonName,givenName,eduPersonTargettedId:SOME_IDENTIFIER}
      */
     private List principalAttributeList = new ArrayList();
+
     /**
      * Sets a flag that determines whether multiple values are allowed for the {@link #principalAttributeId}.
      * This flag only has an effect if {@link #principalAttributeId} is configured. If multiple values are detected
@@ -65,6 +73,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      *
      */
     private boolean allowMultiplePrincipalAttributeValues;
+
     /**
      * List of additional attributes to retrieve, if any.
      */
@@ -75,7 +84,7 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * if a specific/configured principal id attribute is not found.
      */
     private boolean allowMissingPrincipalAttributeValue = true;
-    
+
     /**
      * When entry DN should be called as an attribute and stored into the principal.
      */
@@ -132,6 +141,14 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
 
     public void setPrincipalAttributeId(final String principalAttributeId) {
         this.principalAttributeId = principalAttributeId;
+    }
+
+    public String getPrincipalDnAttributeName() {
+        return principalDnAttributeName;
+    }
+
+    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
+        this.principalDnAttributeName = principalDnAttributeName;
     }
 
     public List getPrincipalAttributeList() {

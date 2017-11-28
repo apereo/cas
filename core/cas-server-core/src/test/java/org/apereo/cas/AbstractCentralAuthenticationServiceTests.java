@@ -12,6 +12,7 @@ import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfig
 import org.apereo.cas.config.CasCoreAuthenticationSupportConfiguration;
 import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
+import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
@@ -21,7 +22,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasTestAuthenticationEventExecutionPlanConfiguration;
+import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
@@ -42,6 +43,7 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -55,13 +57,13 @@ import javax.annotation.PostConstruct;
 @SpringBootTest(
         classes = {
                 AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-                CasTestAuthenticationEventExecutionPlanConfiguration.class,
+                CasAuthenticationEventExecutionPlanTestConfiguration.class,
                 CasCoreServicesConfiguration.class,
                 CasWebApplicationServiceFactoryConfiguration.class,
                 CasDefaultServiceTicketIdGeneratorsConfiguration.class,
                 CasCoreTicketIdGeneratorsConfiguration.class,
                 CasCoreUtilConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
                 CasCoreAuthenticationPolicyConfiguration.class,
                 CasCoreAuthenticationMetadataConfiguration.class,
@@ -77,7 +79,7 @@ import javax.annotation.PostConstruct;
                 CasCoreWebConfiguration.class,
                 CasCoreLogoutConfiguration.class,
                 RefreshAutoConfiguration.class,
-                CasCoreAuthenticationConfiguration.class,
+                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
                 AopAutoConfiguration.class,
                 CasPersonDirectoryTestConfiguration.class,
                 CasCoreWebflowConfiguration.class,
@@ -85,6 +87,7 @@ import javax.annotation.PostConstruct;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
+@DirtiesContext
 @TestPropertySource(locations = {"classpath:/core.properties"})
 public abstract class AbstractCentralAuthenticationServiceTests {
 

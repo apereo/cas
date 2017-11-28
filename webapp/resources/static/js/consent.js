@@ -1,3 +1,5 @@
+var strings = strings;
+
 /* global data */
 $(document).ready(function(){
     resolveAttributes();
@@ -5,13 +7,13 @@ $(document).ready(function(){
 });
 
 function optionSelected() {
-    var v = $('input[name=option]:checked', '#fm1').val()
+    var v = $('input[name=option]:checked', '#fm1').val();
     if (v == 0) {
-        $("#reminderPanel").hide();
-        $("#reminderTab").hide();
+        $('#reminderPanel').hide();
+        $('#reminderTab').hide();
     } else {
-        $("#reminderPanel").show();
-        $("#reminderTab").show();
+        $('#reminderPanel').show();
+        $('#reminderTab').show();
     }
 }
 
@@ -24,7 +26,10 @@ function resolveAttributes() {
     else {
         table = $('#attributesTable').DataTable( {
             paging : false,
-            searching : false
+            searching : false,
+            language: {
+                info: strings.info
+            }
         } );
     }
 

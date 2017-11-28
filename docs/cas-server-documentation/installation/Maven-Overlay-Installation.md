@@ -11,6 +11,10 @@ customizations such as component configuration and UI design.
 The output of a WAR overlay build is a `cas.war` file that can be deployed to a servlet container like
 [Apache Tomcat](Configuring-Servlet-Container.html).
 
+## Requirements
+
+[See this guide](../planning/Installation-Requirements.html) to learn more.
+
 ## What is a WAR Overlay?
 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
@@ -57,10 +61,10 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 
 | Project                                                               | Build Directory                               | Source Directory
 |-----------------------------------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
+| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `target/cas.war!WEB-INF/classes/`     | `src/main/resources`
 | [CAS Gradle WAR Overlay](https://github.com/apereo/cas-gradle-overlay-template) | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
-To construct the overlay project, you neeed to copy directories and files *that you need to customize* in the build directory over to the source directory.
+To construct the overlay project, you need to copy directories and files *that you need to customize* in the build directory over to the source directory.
 
 The Gradle overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
@@ -82,62 +86,6 @@ See [this guide](Docker-Installation.html) for more info.
 ## Servlet Container
 
 CAS can be deployed to a number of servlet containers. See [this guide](Configuring-Servlet-Container.html) for more info.
-
-## Spring Configuration
-
-CAS server depends heavily on the Spring framework. Two modes of configuration are available. Note that both modes
-can be used at the same time.
-
-### XML
-
-There is a `src/main/resources/deployerConfigContext.xml` which CAS adopters may include in the overlay for environment-specific CAS settings.
-Note that in most cases, modifying this file should be unnecessary.
-
-### Groovy
-
-The CAS application context is able to load a `src/main/resources/deployerConfigContext.groovy`.
-For advanced use cases, CAS beans can be dynamically defined via the [Groovy programming language](http://www.groovy-lang.org/).
-
-
-```groovy
-beans {
-    xmlns([context:'http://www.springframework.org/schema/context'])
-    xmlns([lang:'http://www.springframework.org/schema/lang'])
-    xmlns([util:'http://www.springframework.org/schema/util'])
-
-    exampleBean(org.apereo.cas.example.ExampleBean) {
-        beanProperty = propertyValue
-    }
-}
-```
-
-Additionally, dynamic reloadable Groovy beans can be defined in the `src/main/resources/deployerConfigContext.xml`. These definitions
-are directly read from a `.groovy` script which is monitored for changes and reloaded automatically.
-Here is a dynamic `messenger` bean defined whose definition is read from a `Messenger.groovy` file,
-and is monitored for changes every 5 seconds.
-
-```xml
-<lang:groovy id="messenger"
-    refresh-check-delay="5000"
-    script-source="classpath:Messenger.groovy">
-    <lang:property name="message" value="Hello, CAS!" />
-</lang:groovy>
-```
-
-The contents of the `Messenger.groovy` must resolve to a valid Java/Groovy class:
-
-```groovy
-class ExampleMessenger implements Messenger {
-    String message = "Welcome"
-
-    String getMessage() {
-        this.message
-    }
-    void setMessage(String message) {
-        this.message = message
-    }
-}
-```
 
 ## Custom and Third-Party Source
 
@@ -251,4 +199,4 @@ by using a `scope=import` dependency:
 To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management)
 and configure the Gradle build accordingly.
 
-*(1) [WAR Overlays](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)*
+<sub>(1) [WAR Overlays](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)</sub>

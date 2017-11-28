@@ -1,0 +1,64 @@
+<div style="display:flex;margin-bottom:10px;">
+  <div style="margin-left:25px;padding-top: 10px;">
+    <mat-icon style="padding-top: 3px;">search</mat-icon>
+    <h4 style="display: inline;position: relative;top: -5px;">
+      <ng-container i18n>
+        Search Results
+      </ng-container>
+    </h4>
+  </div>
+  <div style="flex: 1 1 auto"></div>
+  <div>
+    <app-controls></app-controls>
+  </div>
+</div>
+
+<div style="display: flex; flex-direction: column; margin-right:25px;margin-left:25px;">
+  <mat-table #table [dataSource]="dataSource">
+
+    <ng-container matColumnDef="name">
+      <mat-header-cell *matHeaderCellDef>
+        <ng-container i18n>
+          Name
+        </ng-container>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        <a (click)="serviceEdit(row.assignedId)">
+          {{ row.name }}
+        </a>
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="serviceId">
+      <mat-header-cell *matHeaderCellDef>
+        <ng-container i18n>
+          Service Url
+        </ng-container>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.serviceId }}
+      </mat-cell>
+    </ng-container>
+
+    <ng-container matColumnDef="description">
+      <mat-header-cell *matHeaderCellDef>
+        <ng-container i18n>
+          Description
+        </ng-container>
+      </mat-header-cell>
+      <mat-cell *matCellDef="let row">
+        {{ row.description }}
+      </mat-cell>
+    </ng-container>
+
+
+    <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+    <mat-row *matRowDef="let row; columns: displayedColumns;"></mat-row>
+  </mat-table>
+
+  <mat-paginator #paginator
+                [pageSize]="10"
+                [pageSizeOptions]="[5, 10, 25, 100]">
+  </mat-paginator>
+</div>
+

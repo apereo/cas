@@ -1,6 +1,8 @@
 package org.apereo.cas.web.flow;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -24,30 +26,30 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public SurrogateWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                       final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                      final Action selectSurrogateAction) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                      final Action selectSurrogateAction, final ApplicationContext applicationContext,
+                                      final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.selectSurrogateAction = selectSurrogateAction;
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             createSurrogateListViewState(flow);
             createSurrogateSelectionActionState(flow);
             createTransitionToInjectSurrogateIntoFlow(flow);
             createSurrogateAuthorizationActionState(flow);
-
         }
     }
 
     private void createSurrogateAuthorizationActionState(final Flow flow) {
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));
     }
-    
+
     private void createTransitionToInjectSurrogateIntoFlow(final Flow flow) {
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         createTransitionForState(actionState, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW, true);
     }
 

@@ -5,6 +5,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
@@ -73,8 +74,8 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
             return null;
         }
         
-        final Map<String, MultifactorAuthenticationProvider> providerMap = 
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -95,9 +96,9 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
         final String clientIp = clientInfo.getClientIpAddress();
         LOGGER.debug("Located client IP address as [{}]", clientIp);
 
-        final String agent = WebUtils.getHttpServletRequestUserAgent();
+        final String agent = WebUtils.getHttpServletRequestUserAgentFromRequestContext();
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Set<Map.Entry<String, String>> entries = multifactorMap.entrySet();
         for (final Map.Entry entry : entries) {
             final String mfaMethod = entry.getKey().toString();
@@ -124,7 +125,7 @@ public class AdaptiveMultifactorAuthenticationPolicyEventResolver extends BaseMu
 
     private boolean checkRequestGeoLocation(final String clientIp, final String mfaMethod, final String pattern) {
         if (this.geoLocationService != null) {
-            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocation();
+            final GeoLocationRequest location = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
             final GeoLocationResponse loc = this.geoLocationService.locate(clientIp, location);
             if (loc != null) {
                 final String address = loc.build();

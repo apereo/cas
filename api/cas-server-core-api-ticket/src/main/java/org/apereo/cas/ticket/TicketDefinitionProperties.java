@@ -57,6 +57,19 @@ public interface TicketDefinitionProperties {
     long getStorageTimeout();
 
     /**
+     * Sets store password if any.
+     *
+     * @param psw the password for the storage.
+     */
+    void setStoragePassword(String psw);
+
+    /**
+     * Describes the credential required to access the storage, if any.
+     * @return the psw
+     */
+    String getStoragePassword();
+
+    /**
      * Sets cache timeout.
      *
      * @param timeout the cache timeout

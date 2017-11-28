@@ -15,9 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * @author Scott Battaglia
@@ -45,8 +48,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     }
 
     /**
-     *
-     *
      * @return specified ticket from the registry
      * @throws IllegalArgumentException if class is null.
      * @throws ClassCastException       if class does not match requested ticket
@@ -109,17 +110,17 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
 
         if (ticket instanceof TicketGrantingTicket) {
-            if (ticket instanceof ProxyGrantingTicket) {
-                LOGGER.debug("Removing proxy-granting ticket [{}]", ticketId);
-            }
-
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
             count.addAndGet(deleteChildren(tgt));
 
-            final Collection<ProxyGrantingTicket> proxyGrantingTickets = tgt.getProxyGrantingTickets();
-            proxyGrantingTickets.stream().map(Ticket::getId).forEach(t -> count.addAndGet(this.deleteTicket(t)));
+            if (ticket instanceof ProxyGrantingTicket) {
+                deleteProxyGrantingTicketFromParent((ProxyGrantingTicket) ticket);
+            } else {
+                deleteLinkedProxyGrantingTickets(count, tgt);
+            }
         }
+
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
 
         if (deleteSingleTicket(ticketId)) {
@@ -129,6 +130,42 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         return count.intValue();
     }
 
+    /**
+     * Delete tickets.
+     *
+     * @param tickets the tickets
+     * @return the total number of deleted tickets
+     */
+    protected int deleteTickets(final Set<String> tickets) {
+        return deleteTickets(tickets.stream());
+    }
+
+    /**
+     * Delete tickets.
+     *
+     * @param tickets the tickets
+     * @return the total number of deleted tickets
+     */
+    protected int deleteTickets(final Stream<String> tickets) {
+        return tickets.mapToInt(this::deleteTicket).sum();
+    }
+    
+    private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
+        final Set<String> pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
+        final boolean hasPgts = !pgts.isEmpty();
+        count.getAndAdd(deleteTickets(pgts));
+        if (hasPgts) {
+            LOGGER.debug("Removing proxy-granting tickets from parent ticket-granting ticket");
+            tgt.getProxyGrantingTickets().clear();
+            updateTicket(tgt);
+        }
+    }
+
+    private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
+        final ProxyGrantingTicket thePgt = ticket;
+        thePgt.getGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
+        updateTicket(thePgt.getGrantingTicket());
+    }
 
     /**
      * Delete TGT's service tickets.
@@ -136,7 +173,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticket the ticket
      * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted
      */
-    public int deleteChildren(final TicketGrantingTicket ticket) {
+
+    protected int deleteChildren(final TicketGrantingTicket ticket) {
         final AtomicInteger count = new AtomicInteger(0);
 
         // delete service tickets
@@ -163,7 +201,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     public abstract boolean deleteSingleTicket(String ticketId);
 
-    public void setCipherExecutor(final CipherExecutor<byte[], byte[]> cipherExecutor) {
+    public void setCipherExecutor(final CipherExecutor cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 
@@ -233,7 +271,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                         result.getClass().getSimpleName());
                 return result;
             }
-            
+
             LOGGER.debug("Attempting to decode [{}]", result);
             final EncodedTicket encodedTicket = (EncodedTicket) result;
 

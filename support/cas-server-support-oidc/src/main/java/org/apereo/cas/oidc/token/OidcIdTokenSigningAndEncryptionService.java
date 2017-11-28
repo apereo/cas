@@ -9,12 +9,10 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.jose4j.lang.JoseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
-import java.util.UUID;
 
 /**
  * This is {@link OidcIdTokenSigningAndEncryptionService}.
@@ -44,9 +42,8 @@ public class OidcIdTokenSigningAndEncryptionService {
      * @param svc    the service
      * @param claims the claims
      * @return the string
-     * @throws JoseException the jose exception
      */
-    public String encode(final OidcRegisteredService svc, final JwtClaims claims) throws JoseException {
+    public String encode(final OidcRegisteredService svc, final JwtClaims claims) {
         try {
             LOGGER.debug("Attempting to produce id token generated for service [{}]", svc);
             final JsonWebSignature jws = new JsonWebSignature();
@@ -117,9 +114,7 @@ public class OidcIdTokenSigningAndEncryptionService {
 
         jws.setKey(jsonWebKey.getPrivateKey());
         jws.setAlgorithmConstraints(AlgorithmConstraints.DISALLOW_NONE);
-        if (StringUtils.isBlank(jsonWebKey.getKeyId())) {
-            jws.setKeyIdHeaderValue(UUID.randomUUID().toString());
-        } else {
+        if (StringUtils.isNotBlank(jsonWebKey.getKeyId())) {
             jws.setKeyIdHeaderValue(jsonWebKey.getKeyId());
         }
         LOGGER.debug("Signing id token with key id header value [{}]", jws.getKeyIdHeaderValue());

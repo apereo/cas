@@ -1,22 +1,28 @@
 package org.apereo.cas.services.web.config;
 
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.ChainingThemeResolver;
-import org.apereo.cas.services.web.RegisteredServiceThemeBasedViewResolver;
 import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.ServiceThemeResolver;
+import org.apereo.cas.services.web.ThemeBasedViewResolver;
+import org.apereo.cas.services.web.ThemeViewResolver;
+import org.apereo.cas.services.web.ThemeViewResolverFactory;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafAutoConfiguration;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.theme.CookieThemeResolver;
@@ -29,6 +35,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -40,7 +47,15 @@ import java.util.Set;
  */
 @Configuration("casThemesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Import(ThymeleafAutoConfiguration.class)
 public class CasThemesConfiguration {
+
+    @Autowired
+    private ResourceLoader resourceLoader;
+    
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -53,30 +68,32 @@ public class CasThemesConfiguration {
     private ThymeleafProperties thymeleafProperties;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     @Qualifier("thymeleafViewResolver")
     private ThymeleafViewResolver thymeleafViewResolver;
 
-    @Autowired
-    @Qualifier("argumentExtractor")
-    private ArgumentExtractor argumentExtractors;
-
-    @Autowired
-    @Qualifier("serviceThemeResolverSupportedBrowsers")
-    private Map serviceThemeResolverSupportedBrowsers;
-
     @Bean
     public ViewResolver registeredServiceViewResolver() {
-        final String defaultThemeName = casProperties.getTheme().getDefaultThemeName();
-        
-        final RegisteredServiceThemeBasedViewResolver r = new RegisteredServiceThemeBasedViewResolver(servicesManager, argumentExtractors,
-                thymeleafProperties.getPrefix(), thymeleafProperties.getSuffix());
-        
-        r.setDefaultThemeName(defaultThemeName);
+        final ThemeBasedViewResolver resolver = new ThemeBasedViewResolver(themeResolver(), themeViewResolverFactory());
+        resolver.setOrder(thymeleafViewResolver.getOrder() - 1);
+        return resolver;
+    }
+
+    @ConditionalOnMissingBean(name = "themeViewResolverFactory")
+    @Bean
+    public ThemeViewResolverFactory themeViewResolverFactory() {
+        final ThemeViewResolver.Factory factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties);
+        factory.setApplicationContext(applicationContext);
+        return factory;
+    }
+
+    protected ThymeleafViewResolver nonCachingThymeleafViewResolver() {
+        // clone existing ThymeleafViewResolver
+        final ThymeleafViewResolver r = new ThymeleafViewResolver();
+
         r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
-        r.setCache(this.thymeleafProperties.isCache());
-        if (!r.isCache()) {
-            r.setCacheLimit(0);
-        }
         r.setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
         r.setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
         r.setContentType(this.thymeleafViewResolver.getContentType());
@@ -107,8 +124,23 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
-        
+
+        // disable the cache
+        r.setCache(false);
+
+        // return this ViewResolver
         return r;
+    }
+
+    @Bean
+    public Map serviceThemeResolverSupportedBrowsers() {
+        final Map<String, String> map = new HashMap<>();
+        map.put(".*iPhone.*", "iphone");
+        map.put(".*Android.*", "android");
+        map.put(".*Safari.*Pre.*", "safari");
+        map.put(".*iPhone.*", "iphone");
+        map.put(".*Nokia.*AppleWebKit.*", "nokiawebkit");
+        return map;
     }
 
     @ConditionalOnMissingBean(name = "themeResolver")
@@ -131,12 +163,14 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookiePath(tgc.getPath());
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
-        final ServiceThemeResolver serviceThemeResolver = new ServiceThemeResolver(servicesManager, serviceThemeResolverSupportedBrowsers);
+        final ServiceThemeResolver serviceThemeResolver = new ServiceThemeResolver(servicesManager,
+                serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
+                this.resourceLoader);
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
-        
+
         final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
         header.setDefaultThemeName(defaultThemeName);
-        
+
         final ChainingThemeResolver chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)
                 .addResolver(sessionThemeResolver)
@@ -146,5 +180,4 @@ public class CasThemesConfiguration {
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
-
 }

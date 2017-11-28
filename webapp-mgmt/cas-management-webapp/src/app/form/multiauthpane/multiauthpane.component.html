@@ -1,0 +1,73 @@
+<div>
+  <mat-form-field class="textInput">
+    <mat-select multiple
+           i18n-placeholder="services.form.label.multiauth.providers"
+           [placeholder]="messages.services_form_label_multiauth_providers"
+           [(ngModel)]="data.service.multifactorPolicy.multifactorAuthenticationProviders">
+      <mat-option *ngFor="let opt of formData.mfaProviders" [value]="opt.value">
+        {{ opt.display }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.multiauth_providers"
+           [matTooltip]="messages.services_form_tooltip_multiauth_providers">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <mat-select i18n-placeholder="services.form.label.multiauth.failuremode"
+                [placeholder]="messages.services_form_label_multiauth_failuremode"
+                [(ngModel)]="data.service.multifactorPolicy.failureMode">
+      <mat-option *ngFor="let opt of formData.mfaFailureModes" [value]="opt">
+        {{ opt }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.multiauth.failuremode"
+           [matTooltip]="messages.services_form_tooltip_multiauth_failuremode">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput [matAutocomplete]="auto"
+           i18n-placeholder="services.form.label.multiauth.principalattribute.nametrigger"
+           [placeholder]="messages.services_form_label_multiauth_principalattribute_nametrigger"
+           [(ngModel)]="data.service.multifactorPolicy.principalAttributeNameTrigger">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-matTooltip="services.form.tooltip.multiauth.principalattribute.nametrigger"
+           [matTooltip]="messages.services_form_tooltip_multiauth_principalattribute_nametrigger">help
+  </mat-icon>
+  <mat-autocomplete style="width:300px" #auto="matAutocomplete">
+    <mat-option *ngFor="let opt of formData.availableAttributes" [value]="opt">{{ opt }}</mat-option>
+  </mat-autocomplete>
+</div>
+
+<div>
+  <mat-form-field class="textInput">
+    <input matInput
+           i18n-placeholder="services.form.label.multiauth.principalattribute.valuetomatch"
+           [placeholder]="messages.services_form_label_multiauth_principalattribute_valuetomatch"
+           [(ngModel)]="data.service.multifactorPolicy.principalAttributeValueToMatch">
+  </mat-form-field>
+  <mat-icon style="font-size: medium"
+           i18n-myTooltip="services.form.tooltip.multiauth.principalattribute.valuetomatch"
+           [matTooltip]="messages.services_form_tooltip_multiauth_principalattribute_valuetomatch">help
+  </mat-icon>
+</div>
+
+<div>
+  <mat-checkbox [(ngModel)]="data.service.multifactorPolicy.bypassEnabled">
+    <ng-container i18n="services.form.label.multiauth.bypassenabled">
+      {{ messages.services_form_label_multiauth_bypassenabled }}
+    </ng-container>
+    <mat-icon style="font-size: medium"
+             i18n-matTooltip="services.form.tooltip.multiauth.bypassenabled"
+             [matTooltip]="messages.services_form_tooltip_multiauth_bypassenabled">help
+    </mat-icon>
+  </mat-checkbox>
+</div>

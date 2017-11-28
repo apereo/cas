@@ -4,7 +4,6 @@ import com.authy.api.Token;
 import com.authy.api.User;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -23,11 +22,11 @@ import java.util.Map;
  * Authy authentication handler for CAS.
  *
  * @author Misagh Moayyed
- * @since 5.0
+ * @since 5.0.0
  */
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private Boolean forceVerification = Boolean.FALSE;
+    private final boolean forceVerification;
     private final AuthyClientInstance instance;
 
     public AuthyAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -38,7 +37,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final AuthyTokenCredential tokenCredential = (AuthyTokenCredential) credential;
         final RequestContext context = RequestContextHolder.getRequestContext();
         final Principal principal = WebUtils.getAuthentication(context).getPrincipal();
@@ -49,7 +48,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
         }
 
         final Map<String, String> options = new HashMap<>(1);
-        options.put("force", this.forceVerification.toString());
+        options.put("force", Boolean.toString(this.forceVerification));
 
         final Token verification = this.instance.getAuthyTokens().verify(user.getId(), tokenCredential.getToken(), options);
 

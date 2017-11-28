@@ -5,11 +5,11 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
@@ -108,7 +108,7 @@ public class SpnegoConfiguration {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
                 spnegoProperties.getPrincipal().isReturnNull(),
-                Beans.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
+                PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
                 spnegoProperties.getPrincipal().getPrincipalAttribute());
     }
 

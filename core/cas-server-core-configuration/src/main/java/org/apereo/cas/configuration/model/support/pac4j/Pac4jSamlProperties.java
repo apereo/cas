@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@RequiresModule(name = "cas-server-support-pac4j-webflow")
 public class Pac4jSamlProperties implements Serializable {
     private static final long serialVersionUID = -862819796533384951L;
 
@@ -16,22 +20,26 @@ public class Pac4jSamlProperties implements Serializable {
      * when creating authentication requests.
      */
     private String destinationBinding = "urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Redirect";
-    
+
     /**
      * The password to use when generating the SP/CAS keystore.
      */
+    @RequiredProperty
     private String keystorePassword;
     /**
      * The password to use when generating the private key for the SP/CAS keystore.
      */
+    @RequiredProperty
     private String privateKeyPassword;
     /**
      * Location of the keystore to use and generate the SP/CAS keystore.
      */
+    @RequiredProperty
     private String keystorePath;
     /**
      * The metadata location of the identity provider that is to handle authentications.
      */
+    @RequiredProperty
     private String identityProviderMetadataPath;
     /**
      * Once you have an authenticated session on the identity provider, usually it won't prompt you again to enter your
@@ -44,14 +52,19 @@ public class Pac4jSamlProperties implements Serializable {
     /**
      * The entity id of the SP/CAS that is used in the SP metadata generation process.
      */
+    @RequiredProperty
     private String serviceProviderEntityId;
     /**
      * Location of the SP metadata to use and generate.
      */
+    @RequiredProperty
     private String serviceProviderMetadataPath;
 
     /**
      * Name of the SAML client mostly for UI purposes and uniqueness.
+     * This name, with 'nonword' characters converted to '-' (e.g. "This Org (New)" becomes "This-Org--New-")
+     * is added to the "class" atribute of the redirect link on the login page, to allow for
+     * custom styling of individual IdPs (e.g. for an organization logo).
      */
     private String clientName;
 

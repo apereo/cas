@@ -1,0 +1,57 @@
+.header {
+  display: flex;
+  height:50px;
+  background-color: #153e50;
+  color: #ffffff;
+  border: none;
+  border-radius: 0;
+  margin-bottom: 0;
+  border-bottom: 1px solid #6ec066;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
+  top:0px;
+}
+
+.brand > img {
+  height: 25px;
+  vertical-align: middle;
+  margin-left:10px;
+  margin-right:10px;
+  border: 0;
+}
+
+.brand > h4 {
+  display: inline-block;
+  margin-top: 16px;
+  font-weight: normal;
+  color:#ffffff;
+}
+
+.searchbox {
+  flex: 1 1 auto;
+  text-align: center;
+  padding-top:11px;
+}
+
+.search {
+  max-width:400px;
+  min-width:100px;
+  width:100%;
+  height:30px;
+  color:#000000;
+  border:0;
+  opacity: .85;
+  text-indent: 5px;
+}
+
+.links {
+  padding-right:10px;
+  padding-top: 3px;
+  color:#ffffff;
+}
+
+.links > a {
+  padding-right:10px;
+  color: #ffffff;
+}

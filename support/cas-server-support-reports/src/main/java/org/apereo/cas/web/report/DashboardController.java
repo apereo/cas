@@ -3,6 +3,7 @@ package org.apereo.cas.web.report;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,10 +93,9 @@ public class DashboardController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = getEndpointsModelMap();
@@ -148,26 +148,20 @@ public class DashboardController extends BaseCasMvcEndpoint {
                 && isEndpointCapable(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties));
         model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository")
                 && isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties));
-        model.put("singleSignOnReportEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties));
-        model.put("statisticsEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties));
-        model.put("singleSignOnStatusEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnStatus(), casProperties));
-        model.put("springWebflowEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties));
-        model.put("auditLogEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuditEvents(), casProperties));
-        model.put("configurationStateEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties));
-        model.put("healthcheckEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getHealthCheck(), casProperties));
-        model.put("metricsEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getMetrics(), casProperties));
-        model.put("servicesEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
-        model.put("attributeResolutionEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
+        model.put("singleSignOnReportEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties));
+        model.put("statisticsEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties));
+        model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnStatus(), casProperties));
+        model.put("springWebflowEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties));
+        model.put("auditLogEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuditEvents(), casProperties));
+        model.put("configurationStateEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties));
+        model.put("healthcheckEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getHealthCheck(), casProperties));
+        model.put("metricsEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getMetrics(), casProperties));
+        model.put("servicesEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
+        model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar")
+                && isEndpointCapable(casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties));
+        model.put("attributeResolutionEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
+        model.put("configurationMetadataEndpointEnabled",
+                isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties));
 
         final boolean endpointAvailable = model.entrySet().stream()
                 .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));

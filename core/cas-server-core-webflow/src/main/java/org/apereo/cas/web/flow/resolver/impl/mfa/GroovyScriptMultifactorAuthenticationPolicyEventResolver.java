@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -38,7 +39,7 @@ import java.util.Set;
  * @since 5.1.0
  */
 public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GlobalMultifactorAuthenticationPolicyEventResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptMultifactorAuthenticationPolicyEventResolver.class);
 
     private final Resource groovyScript;
 
@@ -62,10 +63,16 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
         final RegisteredService registeredService = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        if (groovyScript == null || !ResourceUtils.doesResourceExist(groovyScript)) {
-            LOGGER.debug("No groovy script is found or configured for multifactor authentication");
+        if (groovyScript == null) {
+            LOGGER.debug("No groovy script is configured for multifactor authentication");
             return null;
         }
+
+        if (!ResourceUtils.doesResourceExist(groovyScript)) {
+            LOGGER.warn("No groovy script is found at [{}] for multifactor authentication", groovyScript);
+            return null;
+        }
+        
         if (authentication == null) {
             LOGGER.debug("No authentication is available to determine event for principal");
             return null;
@@ -76,7 +83,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             throw new AuthenticationException();
@@ -85,6 +92,7 @@ public class GroovyScriptMultifactorAuthenticationPolicyEventResolver extends Ba
         try {
             final Object[] args = {service, registeredService, authentication, LOGGER};
             final String provider = ScriptingUtils.executeGroovyScript(groovyScript, args, String.class);
+            LOGGER.debug("Groovy script run for [{}] returned the provider id [{}]", service, provider);
             if (StringUtils.isBlank(provider)) {
                 return null;
             }

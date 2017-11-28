@@ -34,6 +34,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.net.URI;
+import java.time.Instant;
 import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -190,7 +191,7 @@ public abstract class BaseWSFederationRequestController {
 
             final URI url = builder.build();
 
-            LOGGER.debug("Built service callback url [{}]", url);
+            LOGGER.trace("Built service callback url [{}]", url);
             return org.jasig.cas.client.util.CommonUtils.constructServiceUrl(request, response,
                     url.toString(), casProperties.getServer().getName(),
                     CasProtocolConstants.PARAMETER_SERVICE,
@@ -257,10 +258,10 @@ public abstract class BaseWSFederationRequestController {
 
         final long ttlMs = ttl * 60L * 1000L;
         if (ttlMs > 0) {
-            final Date createdDate = idpToken.getCreated();
+            final Instant createdDate = idpToken.getCreated();
             if (createdDate != null) {
                 final Date expiryDate = new Date();
-                expiryDate.setTime(createdDate.getTime() + ttlMs);
+                expiryDate.setTime(createdDate.toEpochMilli() + ttlMs);
                 if (expiryDate.before(new Date())) {
                     return true;
                 }

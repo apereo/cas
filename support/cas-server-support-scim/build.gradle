@@ -2,8 +2,10 @@ description = "Apereo CAS SCIM 2 Provisioning Support"
 
 dependencies {
     implementation libraries.unboundidscim
+    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-webflow")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-authentication")
     implementation project(":core:cas-server-core-configuration")

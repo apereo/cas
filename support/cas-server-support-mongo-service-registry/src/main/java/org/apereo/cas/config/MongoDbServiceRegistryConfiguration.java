@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
-import org.apereo.cas.mongo.MongoDbObjectFactory;
+import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.MongoServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,16 +28,19 @@ public class MongoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
-        final MongoDbObjectFactory factory = new MongoDbObjectFactory();
-        return factory.buildMongoTemplate(casProperties.getServiceRegistry().getMongo());
+        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
+
+        final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
+        factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
+        return mongoTemplate;
     }
     
     @Bean
-    public ServiceRegistryDao serviceRegistryDao() throws Exception {
+    public ServiceRegistryDao serviceRegistryDao() {
         final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistryDao(
                 mongoDbServiceRegistryTemplate(),
-                mongo.getCollectionName(),
-                mongo.isDropCollection());
+                mongo.getCollection());
     }
 }

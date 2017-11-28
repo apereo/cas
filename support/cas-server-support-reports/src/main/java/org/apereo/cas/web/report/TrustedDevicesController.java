@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorP
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
+import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,11 +44,10 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         return new ModelAndView("monitoring/viewTrustedDevices");
@@ -59,12 +59,11 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the records
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getRecords")
     @ResponseBody
     public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
-                                                                final HttpServletResponse response) throws Exception {
+                                                                final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
@@ -81,12 +80,11 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the integer
-     * @throws Exception the exception
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
     public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request,
-                                final HttpServletResponse response) throws Exception {
+                                final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         this.mfaTrustEngine.expire(key);

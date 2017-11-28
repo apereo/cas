@@ -34,11 +34,11 @@ public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         final String uid = WebUtils.getAuthentication(requestContext).getPrincipal().getId();
 
-        final String secretKey = repository.getSecret(uid);
-        if (StringUtils.isBlank(secretKey)) {
+        final OneTimeTokenAccount acct = repository.get(uid);
+        if (acct == null || StringUtils.isBlank(acct.getSecretKey())) {
             final OneTimeTokenAccount keyAccount = this.repository.create(uid);
             final String keyUri = "otpauth://totp/" + this.label + ':' + uid + "?secret=" + keyAccount.getSecretKey() + "&issuer=" + this.issuer;
             requestContext.getFlowScope().put("key", keyAccount);

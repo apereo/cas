@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import org.apereo.cas.adaptors.x509.util.CertUtils;
+import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
 import org.apereo.cas.authentication.AbstractCredential;

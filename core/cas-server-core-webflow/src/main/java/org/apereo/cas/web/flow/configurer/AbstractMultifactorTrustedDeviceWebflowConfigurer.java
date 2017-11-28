@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.configurer;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.Flow;
@@ -33,12 +35,13 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorTrustedDeviceWebflowConfigurer.class);
 
-    private boolean enableDeviceRegistration = true;
+    private final boolean enableDeviceRegistration;
 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                                             final boolean enableDeviceRegistration) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry);
+                                                             final boolean enableDeviceRegistration, final ApplicationContext applicationContext,
+                                                             final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 
@@ -57,7 +60,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         final Flow flow = (Flow) flowDefinitionRegistry.getFlowDefinition(flowId);
 
         // Set the verify action
-        final ActionState state = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
+        final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);
         final Transition transition = (Transition) state.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         final String targetStateId = transition.getTargetStateId();
         transition.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.STATE_ID_VERIFY_TRUSTED_DEVICE));
@@ -77,7 +80,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
                 isDeviceRegistrationRequired(),
                 CasWebflowConstants.VIEW_ID_REGISTER_DEVICE, CasWebflowConstants.STATE_ID_REAL_SUBMIT);
 
-        final ActionState submit = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        final ActionState submit = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         final Transition success = (Transition) submit.getTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS);
         if (enableDeviceRegistration) {
             success.setTargetStateResolver(new DefaultTargetStateResolver(CasWebflowConstants.VIEW_ID_REGISTER_DEVICE));
@@ -109,9 +112,11 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
         }
 
         final String msg = "CAS application context cannot find bean [%s]. "
-                + "This typically indicates that configuration is attempting to activate trusted-device functionality for "
+                + "This typically indicates that configuration is attempting to activate trusted-devices functionality for "
                 + "multifactor authentication, yet the configuration modules that auto-configure the webflow are absent "
-                + "from the CAS application runtime.";
+                + "from the CAS application runtime. If you have no need for trusted-devices functionality and wish to let the "
+                + "multifactor authentication provider (and not CAS) remember and record trusted devices for you, you need to "
+                + "turn this behavior off.";
 
         if (!applicationContext.containsBean(MFA_SET_TRUST_ACTION_BEAN_ID)) {
             throw new IllegalArgumentException(String.format(msg, MFA_SET_TRUST_ACTION_BEAN_ID));
@@ -121,11 +126,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
             throw new IllegalArgumentException(String.format(msg, MFA_VERIFY_TRUST_ACTION_BEAN_ID));
         }
     }
-
-    public boolean isEnableDeviceRegistration() {
-        return enableDeviceRegistration;
-    }
-
+    
     private static String isDeviceRegistrationRequired() {
         return "flashScope.".concat(MFA_TRUSTED_AUTHN_SCOPE_ATTR).concat("== null");
     }
