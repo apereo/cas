@@ -52,41 +52,9 @@ CREATE TABLE IF NOT EXISTS cas.ticket_cleaner_lastrun (
 );
 ```
 
-- Binary serialized ticket:
-```cql
-CREATE KEYSPACE cas WITH replication = {'class': 'NetworkTopologyStrategy', 'replication_factor': '3'}  AND durable_writes = true;
-
-CREATE TABLE IF NOT EXISTS cas.ticketgrantingticket (
-    id text PRIMARY KEY,
-    ticket blob,
-    ticket_granting_ticket_id text,
-    expiration_bucket bigint
-) WITH default_time_to_live = 5184000;
-
-CREATE MATERIALIZED VIEW IF NOT EXISTS cas.ticket_cleaner AS
-SELECT expiration_bucket, ticket, id FROM ticketgrantingticket
-WHERE id IS NOT NULL AND expiration_bucket IS NOT NULL AND ticket IS NOT NULL
-PRIMARY KEY (expiration_bucket, id);
-
-CREATE TABLE IF NOT EXISTS cas.serviceticket (
-    id text PRIMARY KEY,
-    ticket blob
-) WITH default_time_to_live = 60;
-
-CREATE TABLE IF NOT EXISTS cas.ticket_cleaner_lastrun (
-    id text PRIMARY KEY,
-    last_run bigint
-);
-```
-
 ### Object Serialization
-Our Cassandra ticket registry implementation can store tickets as String or bytes of data, so CAS tickets must be serialized to a byte array prior to storage. 
-CAS ships with two custom serialization components `JacksonBinarySerializer` and `JacksonJsonSerializer`. By default `JacksonJsonSerializer` is used, but you 
-can use the other passing it to `CassandraTicketRegistry`.
-Considerations to choose a serializer:
-- this two implementations could have different performance
-- objects serialized using `JacksonJsonSerializer` could be read as they are stored as a JSON string in Cassandra 
-- objects serialized using `JacksonBinarySerializer` could not be read as they are stored as a BLOB object in Cassandra 
+Our Cassandra ticket registry implementation stores tickets as String, so CAS tickets must be serialized to a byte array prior to storage. 
+CAS ships with a custom serialization component, `JacksonJsonSerializer`. 
 
 
 ### Multi datacenter replication

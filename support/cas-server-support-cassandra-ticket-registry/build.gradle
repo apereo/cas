@@ -14,6 +14,7 @@ test.finalizedBy stopCassandra
 
 dependencies {
     compile project(":core:cas-server-core-tickets")
+    compile project(":support:cas-server-support-cassandra-core")
 
     compile libraries.cassandra
     compile libraries.jackson

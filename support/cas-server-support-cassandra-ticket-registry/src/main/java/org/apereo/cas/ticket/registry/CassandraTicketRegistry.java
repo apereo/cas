@@ -1,13 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
-import com.datastax.driver.core.Cluster;
 import com.datastax.driver.core.ConsistencyLevel;
 import com.datastax.driver.core.PreparedStatement;
-import com.datastax.driver.core.ProtocolVersion;
 import com.datastax.driver.core.ResultSet;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
-import org.apereo.cas.TicketSerializer;
+import org.apereo.cas.serializer.TicketSerializer;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -30,7 +28,7 @@ import java.util.stream.StreamSupport;
  *
  * @since 5.2.0
  */
-public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
+public class CassandraTicketRegistry extends AbstractTicketRegistry {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CassandraTicketRegistry.class);
     private static final String LAST_RUN_TABLE = "ticket_cleaner_lastrun";
@@ -42,8 +40,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     private static final int TICKETS_IN_TESTS = 10;
 
     private final TicketCatalog ticketCatalog;
-    private final TicketSerializer<T> serializer;
-    private final Class<T> typeToWriteToCassandra;
+    private final TicketSerializer<String> serializer;
 
     private final PreparedStatement insertTgtStmt;
     private final PreparedStatement updateTgtStmt;
@@ -65,39 +62,30 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     private final String tgtTable;
     private final String stTable;
 
-    public CassandraTicketRegistry(final TicketCatalog ticketCatalog, final String contactPoints, final String username, final String password,
-                                   final String keyspace, final TicketSerializer<T> serializer, final Class<T> typeToWriteToCassandra) {
+    public CassandraTicketRegistry(final Session session, final TicketCatalog ticketCatalog,
+                                   final TicketSerializer<String> serializer) {
         this.ticketCatalog = ticketCatalog;
         this.serializer = serializer;
-        this.typeToWriteToCassandra = typeToWriteToCassandra;
-        final Cluster cluster = Cluster.builder().addContactPoints(contactPoints.split(",")).withCredentials(username, password)
-                .withProtocolVersion(ProtocolVersion.V3).build();
 
-        this.session = cluster.connect(keyspace);
+        this.session = session;
 
         tgtTable = ticketCatalog.find("TGT").getProperties().getStorageName();
         stTable = ticketCatalog.find("ST").getProperties().getStorageName();
-        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ?, expiration_bucket = ? where id = ? ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectTgtStmt = session.prepare("select ticket from " + tgtTable + " where id = ?");
+        this.insertTgtStmt = session.prepare("insert into " + tgtTable + " (id, ticket, ticket_granting_ticket_id, expiration_bucket) values (?, ?, ?, ?) ");
+        this.deleteTgtStmt = session.prepare("delete from " + tgtTable + " where id = ?");
+        this.updateTgtStmt = session.prepare("update " + tgtTable + " set ticket = ?, expiration_bucket = ? where id = ? ");
 
         this.selectStStmt = session.prepare("select ticket from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
         this.insertStStmt = session.prepare("insert into " + stTable + " (id, ticket) values (?, ?) ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
         this.deleteStStmt = session.prepare("delete from " + stTable + " where id = ?").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
         this.updateStStmt = session.prepare("update " + stTable + " set ticket = ? where id = ? ").setConsistencyLevel(ConsistencyLevel.LOCAL_ONE);
 
-        this.selectExStmt = session.prepare("select ticket, id from " + EXPIRY_TABLE + " where expiration_bucket = ? ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.selectDateExStmt = session.prepare("select expiration_bucket from " + EXPIRY_TABLE)
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectExStmt = session.prepare("select ticket, id from " + EXPIRY_TABLE + " where expiration_bucket = ? ");
+        this.selectDateExStmt = session.prepare("select expiration_bucket from " + EXPIRY_TABLE);
 
-        this.selectLrStmt = session.prepare("select last_run from " + LAST_RUN_TABLE + " where id = 'LASTRUN' ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
-        this.updateLrStmt = session.prepare("update " + LAST_RUN_TABLE + " set last_run = ? where id = 'LASTRUN' ")
-                .setConsistencyLevel(ConsistencyLevel.LOCAL_QUORUM);
+        this.selectLrStmt = session.prepare("select last_run from " + LAST_RUN_TABLE + " where id = 'LASTRUN' ");
+        this.updateLrStmt = session.prepare("update " + LAST_RUN_TABLE + " set last_run = ? where id = 'LASTRUN' ");
 
         final long lastRun = getLastRunTimestamp();
         final long currentTime = currentTimeBucket();
@@ -163,7 +151,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
             LOGGER.info("ticket {} not found", ticketId);
             return null;
         }
-        return serializer.deserialize(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra), ticketDefinition.getImplementationClass());
+        return serializer.deserialize(row.getString(FIRST_COLUMN_INDEX), ticketDefinition.getImplementationClass());
     }
 
     private PreparedStatement getTicketQueryForStorageName(final TicketDefinition ticketDefinition) {
@@ -212,7 +200,7 @@ public class CassandraTicketRegistry<T> extends AbstractTicketRegistry {
     private Stream<Ticket> getExpiredTGTsIn(final long lastRunBucket) {
         final ResultSet resultSet = session.execute(this.selectExStmt.bind(lastRunBucket));
         return StreamSupport.stream(resultSet.spliterator(), false)
-                .map(row -> serializer.deserialize(row.get(FIRST_COLUMN_INDEX, typeToWriteToCassandra),
+                .map(row -> serializer.deserialize(row.getString(FIRST_COLUMN_INDEX),
                         ticketCatalog.find(row.getString(1)).getImplementationClass()))
                 .filter(ticket -> Objects.nonNull(ticket) && ticket.isExpired());
     }
