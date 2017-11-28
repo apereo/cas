@@ -36,6 +36,10 @@ public class SamlMetadataDocument {
     @Column(name = "value", length = Integer.MAX_VALUE)
     private String value;
 
+    @Lob
+    @Column(name = "signature", length = Integer.MAX_VALUE)
+    private String signature;
+
     public SamlMetadataDocument() {
         setId(System.currentTimeMillis());
     }
@@ -62,5 +66,13 @@ public class SamlMetadataDocument {
 
     public void setValue(final String value) {
         this.value = value;
+    }
+
+    public String getSignature() {
+        return signature;
+    }
+
+    public void setSignature(final String signature) {
+        this.signature = signature;
     }
 }
