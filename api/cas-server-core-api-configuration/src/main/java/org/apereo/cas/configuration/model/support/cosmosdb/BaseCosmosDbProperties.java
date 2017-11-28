@@ -42,7 +42,6 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * bounded staleness, session, and consistent prefix consistency levels. Collectively these
      * five consistency levels enable you to make well-reasoned trade-offs between consistency, availability, and latency.
      * Accepted values are:
-     * <p>
      * <ul>
      * <li>{@code Strong}: Linearizability</li>
      * <li>{@code Session}: Consistent Prefix. Monotonic reads, monotonic writes, read-your-writes, write-follows-reads</li>
