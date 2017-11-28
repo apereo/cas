@@ -34,7 +34,7 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * @author jkacer
  * 
- * @since 5.2.0
+ * @since 5.3.0
  */
 public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
 

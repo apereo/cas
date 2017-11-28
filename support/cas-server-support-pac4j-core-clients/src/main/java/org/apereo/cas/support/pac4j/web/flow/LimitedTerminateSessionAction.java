@@ -34,7 +34,7 @@ import com.google.common.base.Throwables;
  * 
  * @author jkacer
  * 
- * @since 5.2.0
+ * @since 5.3.0
  */
 public class LimitedTerminateSessionAction extends AbstractAction {
 

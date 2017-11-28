@@ -122,10 +122,10 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ActionState actionStateForPrepareSingleLogout = createActionState(logoutFlow,
                SingleLogoutPreparationAction.WEBFLOW_ACTION_STATE_ID,
                createEvaluateAction(SingleLogoutPreparationAction.WEBFLOW_ACTION_EVAL_EXPRESSION)); 
-       actionStateForPrepareSingleLogout.getTransitionSet().add(transitionToInitiallyStartState);
+        actionStateForPrepareSingleLogout.getTransitionSet().add(transitionToInitiallyStartState);
 
-       // Set a new start state
-       setStartState(logoutFlow, actionStateForPrepareSingleLogout);
+        // Set a new start state
+        setStartState(logoutFlow, actionStateForPrepareSingleLogout);
     }
 
 

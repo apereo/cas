@@ -19,7 +19,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * 
  * @author jkacer
  * 
- * @since 5.2.0
+ * @since 5.3.0
  */
 public class LimitedTerminateSessionActionTests {
 

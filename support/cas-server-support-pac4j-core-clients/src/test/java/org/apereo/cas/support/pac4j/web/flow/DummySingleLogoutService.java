@@ -24,7 +24,7 @@ import net.shibboleth.utilities.java.support.collection.LockableClassToInstanceM
  * 
  * @author jkacer
  * 
- * @since 5.2.0
+ * @since 5.3.0
  */
 public class DummySingleLogoutService implements SingleLogoutService {
 
