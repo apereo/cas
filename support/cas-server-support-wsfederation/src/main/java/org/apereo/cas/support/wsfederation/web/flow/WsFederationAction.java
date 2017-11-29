@@ -33,6 +33,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
@@ -46,11 +47,12 @@ public class WsFederationAction extends AbstractAction {
     private static final String LOCALE = "locale";
     private static final String METHOD = "method";
     private static final String PROVIDERURL = "WsFederationIdentityProviderUrl";
-    private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=";
+    private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";
     private static final String THEME = "theme";
     private static final String WA = "wa";
     private static final String WRESULT = "wresult";
     private static final String WSIGNIN = "wsignin1.0";
+    private static final String WCTX = "wctx";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationAction.class);
 
@@ -123,15 +125,16 @@ public class WsFederationAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
+        final UUID requestUUID = UUID.randomUUID();
         final Service service = (Service) context.getFlowScope().get(CasProtocolConstants.PARAMETER_SERVICE);
         if (service != null) {
-            session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
+            session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE + "-" + requestUUID.toString(), service);
         }
         saveRequestParameter(request, session, THEME);
         saveRequestParameter(request, session, LOCALE);
         saveRequestParameter(request, session, METHOD);
 
-        final String url = getAuthorizationUrl(config) + getRelyingPartyIdentifier(service, context, config);
+        final String url = String.format(getAuthorizationUrl(config), getRelyingPartyIdentifier(service, context, config), requestUUID.toString());
         LOGGER.info("Preparing to redirect to the IdP [{}]", url);
         context.getFlowScope().put(PROVIDERURL, url);
         LOGGER.debug("Returning error event");
@@ -176,8 +179,16 @@ public class WsFederationAction extends AbstractAction {
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final HttpSession session = request.getSession();
+            
+            final String wCtx = request.getParameter(WCTX);
+			LOGGER.debug("Parameter [{}] received: [{}]", WCTX, wCtx);
+			
+			if (StringUtils.isBlank(wCtx)) {
+				LOGGER.error("No [{}] parameter is found", WCTX);
+				return error();
+			}
 
-            final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+            final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE + "-" + wCtx);
             LOGGER.debug("Creating credential based on the provided assertion");
             final WsFederationCredential credential = this.wsFederationHelper.createCredentialFromToken(assertion.getKey());
 
