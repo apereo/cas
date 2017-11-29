@@ -79,6 +79,24 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     }
 
     @Test
+    public void checkSaveMethodWithDelegatedAuthnPolicy() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("checkSaveMethodWithDelegatedAuthnPolicy");
+        r.setServiceId(SERVICE_ID);
+        r.setDescription(DESCRIPTION);
+
+        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList("one", "two")));
+        r.setAccessStrategy(strategy);
+        final RegisteredService r2 = this.dao.save(r);
+        final RegisteredService r3 = this.dao.findServiceById(r2.getId());
+        assertEquals(r, r2);
+        assertEquals(r2, r3);
+    }
+
+    
+    @Test
     public void execSaveWithAuthnMethodPolicy() {
         final RegexRegisteredService r = new RegexRegisteredService();
         r.setName("execSaveWithAuthnMethodPolicy");

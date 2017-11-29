@@ -5,6 +5,7 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.joda.time.DateTimeUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -81,7 +82,10 @@ public class JpaServiceRegistryDaoImplTests {
         r.setTheme("theme");
         r.setDescription("description");
         r.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-
+        final DefaultRegisteredServiceAccessStrategy strategy = new DefaultRegisteredServiceAccessStrategy();
+        strategy.setDelegatedAuthenticationPolicy(
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList("one", "two")));
+        r.setAccessStrategy(strategy);
         final RegisteredService r2 = this.serviceRegistryDao.save(r);
         final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -47,7 +48,7 @@ import java.util.Set;
 @Entity
 @Inheritance
 @DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING,
-        columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
+    columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 public abstract class AbstractRegisteredService implements RegisteredService {
@@ -194,36 +195,16 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     @PostLoad
     public void postLoad() {
-        if (this.proxyPolicy == null) {
-            this.proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
-        }
-        if (this.usernameAttributeProvider == null) {
-            this.usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
-        }
-        if (this.logoutType == null) {
-            this.logoutType = LogoutType.BACK_CHANNEL;
-        }
-        if (this.requiredHandlers == null) {
-            this.requiredHandlers = new HashSet<>();
-        }
-        if (this.accessStrategy == null) {
-            this.accessStrategy = new DefaultRegisteredServiceAccessStrategy();
-        }
-        if (this.multifactorPolicy == null) {
-            this.multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
-        }
-        if (this.properties == null) {
-            this.properties = new LinkedHashMap<>();
-        }
-        if (this.attributeReleasePolicy == null) {
-            this.attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
-        }
-        if (this.contacts == null) {
-            this.contacts = new ArrayList<>();
-        }
-        if (this.expirationPolicy == null) {
-            this.expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
-        }
+        this.proxyPolicy = ObjectUtils.defaultIfNull(this.proxyPolicy, new RefuseRegisteredServiceProxyPolicy());
+        this.usernameAttributeProvider = ObjectUtils.defaultIfNull(this.usernameAttributeProvider, new DefaultRegisteredServiceUsernameProvider());
+        this.logoutType = ObjectUtils.defaultIfNull(this.logoutType, LogoutType.BACK_CHANNEL);
+        this.requiredHandlers = ObjectUtils.defaultIfNull(this.requiredHandlers, new HashSet<>());
+        this.accessStrategy = ObjectUtils.defaultIfNull(this.accessStrategy, new DefaultRegisteredServiceAccessStrategy());
+        this.multifactorPolicy = ObjectUtils.defaultIfNull(this.multifactorPolicy, new DefaultRegisteredServiceMultifactorPolicy());
+        this.properties = ObjectUtils.defaultIfNull(this.properties, new LinkedHashMap());
+        this.attributeReleasePolicy = ObjectUtils.defaultIfNull(this.attributeReleasePolicy, new ReturnAllowedAttributeReleasePolicy());
+        this.contacts = ObjectUtils.defaultIfNull(this.contacts, new ArrayList());
+        this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
     }
 
     @Override
@@ -244,55 +225,55 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
-                .append(this.proxyPolicy, that.proxyPolicy)
-                .append(this.evaluationOrder, that.evaluationOrder)
-                .append(this.description, that.description)
-                .append(this.name, that.name)
-                .append(this.serviceId, that.serviceId)
-                .append(this.theme, that.theme)
-                .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
-                .append(this.logoutType, that.logoutType)
-                .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
-                .append(this.accessStrategy, that.accessStrategy)
-                .append(this.logo, that.logo)
-                .append(this.publicKey, that.publicKey)
-                .append(this.logoutUrl, that.logoutUrl)
-                .append(this.requiredHandlers, that.requiredHandlers)
-                .append(this.proxyPolicy, that.proxyPolicy)
-                .append(this.properties, that.properties)
-                .append(this.multifactorPolicy, that.multifactorPolicy)
-                .append(this.informationUrl, that.informationUrl)
-                .append(this.privacyUrl, that.privacyUrl)
-                .append(this.contacts, that.contacts)
-                .append(this.expirationPolicy, that.expirationPolicy)
-                .isEquals();
+            .append(this.proxyPolicy, that.proxyPolicy)
+            .append(this.evaluationOrder, that.evaluationOrder)
+            .append(this.description, that.description)
+            .append(this.name, that.name)
+            .append(this.serviceId, that.serviceId)
+            .append(this.theme, that.theme)
+            .append(this.usernameAttributeProvider, that.usernameAttributeProvider)
+            .append(this.logoutType, that.logoutType)
+            .append(this.attributeReleasePolicy, that.attributeReleasePolicy)
+            .append(this.accessStrategy, that.accessStrategy)
+            .append(this.logo, that.logo)
+            .append(this.publicKey, that.publicKey)
+            .append(this.logoutUrl, that.logoutUrl)
+            .append(this.requiredHandlers, that.requiredHandlers)
+            .append(this.proxyPolicy, that.proxyPolicy)
+            .append(this.properties, that.properties)
+            .append(this.multifactorPolicy, that.multifactorPolicy)
+            .append(this.informationUrl, that.informationUrl)
+            .append(this.privacyUrl, that.privacyUrl)
+            .append(this.contacts, that.contacts)
+            .append(this.expirationPolicy, that.expirationPolicy)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(7, 31)
-                .append(this.description)
-                .append(this.serviceId)
-                .append(this.name)
-                .append(this.theme)
-                .append(this.evaluationOrder)
-                .append(this.usernameAttributeProvider)
-                .append(this.accessStrategy)
-                .append(this.logoutType)
-                .append(this.attributeReleasePolicy)
-                .append(this.accessStrategy)
-                .append(this.logo)
-                .append(this.publicKey)
-                .append(this.logoutUrl)
-                .append(this.requiredHandlers)
-                .append(this.proxyPolicy)
-                .append(this.properties)
-                .append(this.multifactorPolicy)
-                .append(this.informationUrl)
-                .append(this.privacyUrl)
-                .append(this.contacts)
-                .append(this.expirationPolicy)
-                .toHashCode();
+            .append(this.description)
+            .append(this.serviceId)
+            .append(this.name)
+            .append(this.theme)
+            .append(this.evaluationOrder)
+            .append(this.usernameAttributeProvider)
+            .append(this.accessStrategy)
+            .append(this.logoutType)
+            .append(this.attributeReleasePolicy)
+            .append(this.accessStrategy)
+            .append(this.logo)
+            .append(this.publicKey)
+            .append(this.logoutUrl)
+            .append(this.requiredHandlers)
+            .append(this.proxyPolicy)
+            .append(this.properties)
+            .append(this.multifactorPolicy)
+            .append(this.informationUrl)
+            .append(this.privacyUrl)
+            .append(this.contacts)
+            .append(this.expirationPolicy)
+            .toHashCode();
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
@@ -423,12 +404,12 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     public int compareTo(final RegisteredService other) {
         return new CompareToBuilder()
-                .append(getEvaluationOrder(), other.getEvaluationOrder())
-                .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-                        StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
-                .append(getServiceId(), other.getServiceId())
-                .append(getId(), other.getId())
-                .toComparison();
+            .append(getEvaluationOrder(), other.getEvaluationOrder())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
+                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(getServiceId(), other.getServiceId())
+            .append(getId(), other.getId())
+            .toComparison();
     }
 
     @Override

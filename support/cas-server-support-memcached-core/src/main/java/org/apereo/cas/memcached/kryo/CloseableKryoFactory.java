@@ -32,6 +32,7 @@ import org.apereo.cas.memcached.kryo.serial.URLSerializer;
 import org.apereo.cas.memcached.kryo.serial.ZonedDateTimeSerializer;
 import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceContact;
+import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceExpirationPolicy;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.GroovyScriptAttributeReleasePolicy;
@@ -211,6 +212,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(RegisteredService.LogoutType.class);
         kryo.register(RegisteredServicePublicKeyImpl.class);
         kryo.register(DefaultRegisteredServiceContact.class);
+        kryo.register(DefaultRegisteredServiceDelegatedAuthenticationPolicy.class);
         kryo.register(DefaultRegisteredServiceExpirationPolicy.class);
         kryo.register(RegisteredServiceRegexAttributeFilter.class);
         kryo.register(PrincipalAttributeRegisteredServiceUsernameProvider.class);
