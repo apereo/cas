@@ -75,6 +75,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * @param authentication       the authentication.
      * @param expirationPolicy     the expiration policy.
      * @param ticketGrantingTicket the ticket granting ticket
+     * @param scopes               the scopes
      * @throws IllegalArgumentException if the service or authentication are null.
      */
     public OAuthCodeImpl(final String id, final Service service, final Authentication authentication,
