@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.RegexUtils;
 
@@ -46,7 +47,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         if (this.servicePattern == null) {
             this.servicePattern = RegexUtils.createPattern(this.serviceId);
         }
-        return this.servicePattern.matcher(serviceId).matches();
+        return StringUtils.isBlank(serviceId) ? false : this.servicePattern.matcher(serviceId).matches();
     }
 
     @Override
