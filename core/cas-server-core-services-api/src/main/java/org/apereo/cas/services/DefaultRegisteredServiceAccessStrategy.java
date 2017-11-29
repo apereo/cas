@@ -32,14 +32,15 @@ import java.util.stream.Collectors;
  * @since 4.1
  */
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
-    
     private static final long serialVersionUID = 1245279151345635245L;
+
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceAccessStrategy.class);
 
     /**
      * The sorting/execution order of this strategy.
      */
     private int order;
+
     /**
      * Is the service allowed at all?
      */
@@ -54,6 +55,11 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * The Unauthorized redirect url.
      */
     private URI unauthorizedRedirectUrl;
+
+    /**
+     * The delegated authn policy.
+     */
+    private RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy;
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
@@ -260,6 +266,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return this.rejectedAttributes;
     }
 
+    @Override
+    @JsonIgnore
+    public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
+        return delegatedAuthenticationPolicy;
+    }
+
+    public void setDelegatedAuthenticationPolicy(final RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy) {
+        this.delegatedAuthenticationPolicy = delegatedAuthenticationPolicy;
+    }
+
     @JsonIgnore
     @Override
     public boolean isServiceAccessAllowedForSso() {
@@ -278,7 +294,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             LOGGER.trace("Service is not enabled in service registry.");
             return false;
         }
-        
+
         return true;
     }
 
@@ -309,8 +325,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
         }
-
-
+        
         return true;
     }
 
@@ -322,7 +337,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @return the boolean
      */
     protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
-                                                             final Map<String, Set<String>> requiredAttributes) {
+                                                               final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
         if (requiredAttributes.isEmpty()) {
             return true;
@@ -360,8 +375,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         if (principalAttributes.size() < this.rejectedAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
-                            + "which means the principal is not carrying enough data to grant authorization",
-                    principalAttributes);
+                    + "which means the principal is not carrying enough data to grant authorization",
+                principalAttributes);
             return false;
         }
 
@@ -385,8 +400,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
 
         if (principalAttributes.size() < requiredAttributes.size()) {
             LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
-                            + "which indicates the principal is not carrying enough data to grant authorization",
-                    principalAttributes);
+                    + "which indicates the principal is not carrying enough data to grant authorization",
+                principalAttributes);
             return false;
         }
         return true;
@@ -406,40 +421,43 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
         final DefaultRegisteredServiceAccessStrategy rhs = (DefaultRegisteredServiceAccessStrategy) obj;
         return new EqualsBuilder()
-                .append(this.enabled, rhs.enabled)
-                .append(this.ssoEnabled, rhs.ssoEnabled)
-                .append(this.requireAllAttributes, rhs.requireAllAttributes)
-                .append(this.requiredAttributes, rhs.requiredAttributes)
-                .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
-                .append(this.caseInsensitive, rhs.caseInsensitive)
-                .append(this.rejectedAttributes, rhs.rejectedAttributes)
-                .isEquals();
+            .append(this.enabled, rhs.enabled)
+            .append(this.ssoEnabled, rhs.ssoEnabled)
+            .append(this.requireAllAttributes, rhs.requireAllAttributes)
+            .append(this.requiredAttributes, rhs.requiredAttributes)
+            .append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
+            .append(this.caseInsensitive, rhs.caseInsensitive)
+            .append(this.rejectedAttributes, rhs.rejectedAttributes)
+            .append(this.delegatedAuthenticationPolicy, rhs.delegatedAuthenticationPolicy)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(this.enabled)
-                .append(this.ssoEnabled)
-                .append(this.requireAllAttributes)
-                .append(this.requiredAttributes)
-                .append(this.unauthorizedRedirectUrl)
-                .append(this.caseInsensitive)
-                .append(this.rejectedAttributes)
-                .toHashCode();
+            .append(this.enabled)
+            .append(this.ssoEnabled)
+            .append(this.requireAllAttributes)
+            .append(this.requiredAttributes)
+            .append(this.unauthorizedRedirectUrl)
+            .append(this.caseInsensitive)
+            .append(this.rejectedAttributes)
+            .append(this.delegatedAuthenticationPolicy)
+            .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("enabled", this.enabled)
-                .append("ssoEnabled", this.ssoEnabled)
-                .append("requireAllAttributes", this.requireAllAttributes)
-                .append("requiredAttributes", this.requiredAttributes)
-                .append("unauthorizedRedirectUrl", this.unauthorizedRedirectUrl)
-                .append("caseInsensitive", this.caseInsensitive)
-                .append("rejectedAttributes", this.rejectedAttributes)
-                .toString();
+            .append("enabled", this.enabled)
+            .append("ssoEnabled", this.ssoEnabled)
+            .append("requireAllAttributes", this.requireAllAttributes)
+            .append("requiredAttributes", this.requiredAttributes)
+            .append("unauthorizedRedirectUrl", this.unauthorizedRedirectUrl)
+            .append("caseInsensitive", this.caseInsensitive)
+            .append("rejectedAttributes", this.rejectedAttributes)
+            .append("delegatedAuthenticationPolicy", this.delegatedAuthenticationPolicy)
+            .toString();
     }
 
     /**
@@ -451,8 +469,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      */
     private boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
         final Set<String> difference = attributes.keySet().stream()
-                .filter(a -> principalAttributes.keySet().contains(a))
-                .collect(Collectors.toSet());
+            .filter(a -> principalAttributes.keySet().contains(a))
+            .collect(Collectors.toSet());
 
         if (this.requireAllAttributes && difference.size() < attributes.size()) {
             return false;
