@@ -181,12 +181,12 @@ public class WsFederationAction extends AbstractAction {
             final HttpSession session = request.getSession();
             
             final String wCtx = request.getParameter(WCTX);
-			LOGGER.debug("Parameter [{}] received: [{}]", WCTX, wCtx);
-			
-			if (StringUtils.isBlank(wCtx)) {
-				LOGGER.error("No [{}] parameter is found", WCTX);
-				return error();
-			}
+            LOGGER.debug("Parameter [{}] received: [{}]", WCTX, wCtx);
+            
+            if (StringUtils.isBlank(wCtx)) {
+                LOGGER.error("No [{}] parameter is found", WCTX);
+                return error();
+            }
 
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE + "-" + wCtx);
             LOGGER.debug("Creating credential based on the provided assertion");
