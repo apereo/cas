@@ -50,12 +50,11 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
 
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final OAuthRegisteredService registeredService = getOAuthRegisteredServiceBy(request);
         if (registeredService == null) {
             throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
-        LOGGER.debug("Located registered service [{}]", registeredService);
 
         final OAuthToken token = getOAuthTokenFromRequest(request);
         if (token == null) {
@@ -63,10 +62,20 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         }
         final Service service = this.webApplicationServiceServiceFactory.createService(redirectUri);
         scopes.addAll(token.getScopes());
-        
+
         return new AccessTokenRequestDataHolder(service, token.getAuthentication(), token,
             registeredService, getGrantType(),
             isAllowedToGenerateRefreshToken(), scopes);
+    }
+
+    /**
+     * Gets registered service identifier from request.
+     *
+     * @param request the request
+     * @return the registered service identifier from request
+     */
+    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
+        return request.getParameter(OAuth20Constants.REDIRECT_URI);
     }
 
     /**
@@ -125,5 +134,20 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     @Override
     public OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
+    /**
+     * Gets oauth registered service from the request.
+     * Implementation attempts to locate the redirect uri from request and
+     * check with service registry to find a matching oauth service.
+     *
+     * @param request the request
+     * @return the registered service
+     */
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
+        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        LOGGER.debug("Located registered service [{}]", registeredService);
+        return registeredService;
     }
 }
