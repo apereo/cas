@@ -42,7 +42,6 @@ import org.apereo.cas.configuration.model.support.sms.TwilioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
-import org.apereo.cas.configuration.model.webapp.mgmt.ManagementWebappProperties;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -310,12 +309,6 @@ public class CasConfigurationProperties implements Serializable {
     private LocaleProperties locale = new LocaleProperties();
 
     /**
-     * CAS Management Webapp functionality.
-     */
-    @NestedConfigurationProperty
-    private ManagementWebappProperties mgmt = new ManagementWebappProperties();
-
-    /**
      * Spring Webflow functionality.
      */
     @NestedConfigurationProperty
@@ -575,14 +568,6 @@ public class CasConfigurationProperties implements Serializable {
 
     public void setLocale(final LocaleProperties locale) {
         this.locale = locale;
-    }
-
-    public ManagementWebappProperties getMgmt() {
-        return mgmt;
-    }
-
-    public void setMgmt(final ManagementWebappProperties mgmt) {
-        this.mgmt = mgmt;
     }
 
     public WebflowProperties getWebflow() {
