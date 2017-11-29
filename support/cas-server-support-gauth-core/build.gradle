@@ -4,13 +4,18 @@ dependencies {
     api libraries.zxingbarcode
     api project(":api:cas-server-core-api-webflow")
     
-    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-gauth-core-mfa")
+
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(":core:cas-server-core-util")
+    
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

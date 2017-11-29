@@ -1,4 +1,4 @@
-description = "Apereo CAS central configuration module providing type-safe configuration domain model to the rest of CAS server"
+description = "Apereo CAS central configuration module"
 
 dependencies {
     implementation libraries.springsecurity
@@ -7,28 +7,9 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.bouncycastle
     
-    optional libraries.springbootconfigmetadata
-
+    api project(":api:cas-server-core-api-configuration")
+    api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
-    compileOnly project(":core:cas-server-core-util")
-    testImplementation project(":core:cas-server-core-util")
-}
-
-task generateConfigurationMetadata(type: JavaExec) {
-    doFirst {
-        println "\nRunning CAS Spring configuration metadata processor in addition to the native " +
-                "Spring Boot metadata processor, to create configuration " +
-                "metadata for nested and indexed properties. The process starts with the build directory " +
-                "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
-    }
-    main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-    classpath = sourceSets.main.runtimeClasspath
-    args buildDir, projectDir.canonicalPath
-}
-
-compileJava.dependsOn(processResources)
-
-if (!Boolean.getBoolean("skipNestedConfigMetadataGen")) {
-    jar.dependsOn(generateConfigurationMetadata)
+    implementation project(":core:cas-server-core-configuration-api")
 }

@@ -1,12 +1,7 @@
 description = "Apereo CAS RADIUS Support"
 
-repositories {
-    maven { url "https://jitpack.io" }
-    jcenter()
-}
-
 dependencies {
     api libraries.jradius
     implementation libraries.bouncycastle
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
 }

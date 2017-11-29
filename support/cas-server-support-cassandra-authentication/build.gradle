@@ -1,12 +1,16 @@
 description = "Apereo CAS Apache Cassandra Authentication Support"
 dependencies {
-    implementation project(":core:cas-server-core-authentication")
     api project(":api:cas-server-core-api")
-    implementation project(":core:cas-server-core-configuration")
+
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-cassandra-core")
+
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    
     implementation libraries.cassandra
     
 }

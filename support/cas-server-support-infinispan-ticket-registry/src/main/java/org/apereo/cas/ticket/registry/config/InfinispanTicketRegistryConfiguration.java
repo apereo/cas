@@ -3,10 +3,10 @@ package org.apereo.cas.ticket.registry.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.infinispan.InfinispanProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.InfinispanTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.infinispan.Cache;
 import org.infinispan.manager.DefaultCacheManager;
 import org.infinispan.manager.EmbeddedCacheManager;
@@ -33,7 +33,7 @@ public class InfinispanTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry() {
         final InfinispanProperties span = casProperties.getTicket().getRegistry().getInfinispan();
         final InfinispanTicketRegistry r = new InfinispanTicketRegistry(getCache(span));
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(span.getCrypto(), "infinispan"));
+        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(span.getCrypto(), "infinispan"));
         return r;
     }
 

@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
@@ -439,7 +440,13 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     public void verifyDestroyRemoteRegistry() throws AbstractTicketException, AuthenticationException {
         final MockOnlyOneTicketRegistry registry = new MockOnlyOneTicketRegistry();
         final TicketGrantingTicketImpl tgt = new TicketGrantingTicketImpl("TGT-1", mock(Authentication.class), mock(ExpirationPolicy.class));
-        final MockExpireUpdateTicketLogoutManager logoutManager = new MockExpireUpdateTicketLogoutManager(registry);
+        final LogoutManager logoutManager = mock(LogoutManager.class);
+        when(logoutManager.performLogout(any(TicketGrantingTicket.class)))
+            .thenAnswer(invocation -> {
+                tgt.markTicketExpired();
+                registry.updateTicket(tgt);
+                return null;
+            });
         registry.addTicket(tgt);
         final DefaultCentralAuthenticationService cas = new DefaultCentralAuthenticationService(registry, null, null, logoutManager, null, null, null, null);
         cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));

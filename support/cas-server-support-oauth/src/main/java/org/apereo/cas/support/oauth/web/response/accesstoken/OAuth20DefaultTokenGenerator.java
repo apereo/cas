@@ -52,14 +52,15 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     public Pair<AccessToken, RefreshToken> generate(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating refresh token for [{}]", holder.getService());
         final Authentication authn = DefaultAuthenticationBuilder
-                .newInstance(holder.getAuthentication())
-                .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
-                .build();
+            .newInstance(holder.getAuthentication())
+            .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
+            .build();
 
+        LOGGER.debug("Creating access token for [{}]", holder);
         final AccessToken accessToken = this.accessTokenFactory.create(holder.getService(),
-                authn, holder.getTicketGrantingTicket(), holder.getScopes());
+            authn, holder.getTicketGrantingTicket(), holder.getScopes());
 
-        LOGGER.debug("Creating access token [{}]", accessToken);
+        LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, holder.getTicketGrantingTicket());
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
@@ -105,7 +106,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     private RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         final RefreshToken refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
-                responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
+            responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket(), responseHolder.getScopes());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         return refreshToken;

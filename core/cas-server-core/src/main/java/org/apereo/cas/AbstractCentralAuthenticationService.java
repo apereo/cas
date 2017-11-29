@@ -46,7 +46,6 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 public abstract class AbstractCentralAuthenticationService implements CentralAuthenticationService, Serializable, ApplicationEventPublisherAware {
-
     private static final long serialVersionUID = -7572316677901391166L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCentralAuthenticationService.class);
@@ -66,7 +65,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Implementation of Service Manager.
      */
     protected final ServicesManager servicesManager;
-
+                                    
     /**
      * The logout manager.
      **/

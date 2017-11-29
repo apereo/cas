@@ -36,10 +36,18 @@ if (!rootProject.publishingRelease) {
     processResources.dependsOn npmLint
 }
 
-processResources.dependsOn compileSass
+if (!Boolean.getBoolean("skipSass")) {
+    processResources.dependsOn compileSass
+} else {
+    println("Skipping Sass compilation...")
+}
 
-clean.delete << new File(project(":webapp").projectDir, "node_modules")
-clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js' , include: '*-bundle.js')
+if (!Boolean.getBoolean("skipNodeModulesCleanUp")) {
+    clean.delete << new File(project(":webapp").projectDir, "node_modules")
+    clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js', include: '*-bundle.js')
+} else {
+    println("Skipping node_modules cleanup...")
+}
 
 sourceSets {
     main {
@@ -53,12 +61,13 @@ javadoc {
     enabled false
 }
 
-[distZip, distTar].each { task -> configurations.archives.artifacts.removeAll
-        { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
+[distZip, distTar].each { task ->
+    configurations.archives.artifacts.removeAll
+            { it.class.simpleName == "ArchivePublishArtifact" && it.archiveTask == task }
     task.enabled = false
 }
 
-springBoot  {
+springBoot {
     mainClass = MAIN_CLASS
 }
 
@@ -72,7 +81,7 @@ bootRun {
     if (Os.isFamily(Os.FAMILY_WINDOWS)) {
         dependsOn pathingJar
         doFirst {
-          classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
+            classpath = files("$buildDir/classes/main", "$buildDir/resources/main", pathingJar.archivePath)
         }
     }
 
@@ -83,7 +92,7 @@ bootRun {
     if (rootProject.enableRemoteDebugging) {
         list.add("-Xrunjdwp:transport=dt_socket,address=5000,server=y,suspend=n")
     }
-    
+
     jvmArgs = list
 }
 
@@ -114,6 +123,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-cookie")
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-events-configuration")
     implementation project(":core:cas-server-core-configuration")
@@ -124,11 +134,11 @@ dependencies {
     implementation project(":support:cas-server-support-configuration")
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-actions")
-    implementation project(":support:cas-server-support-cookie")
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
+
     
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")

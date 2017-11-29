@@ -9,6 +9,7 @@ import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.BeforeClass;
@@ -51,7 +52,8 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, 
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
     }
@@ -67,7 +69,8 @@ public class SamlRegisteredServiceTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, 
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
     }
