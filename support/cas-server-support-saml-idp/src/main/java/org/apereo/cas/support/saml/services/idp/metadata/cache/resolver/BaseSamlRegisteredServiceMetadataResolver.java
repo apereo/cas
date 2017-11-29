@@ -93,7 +93,8 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * @throws Exception the exception
      */
     protected void configureAndInitializeSingleMetadataResolver(final AbstractMetadataResolver metadataProvider,
-                                                                final SamlRegisteredService service, final List<MetadataFilter> metadataFilterList) throws Exception {
+                                                                final SamlRegisteredService service,
+                                                                final List<MetadataFilter> metadataFilterList) throws Exception {
         final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
         metadataProvider.setParserPool(this.configBean.getParserPool());
         metadataProvider.setFailFastInitialization(md.isFailFast());

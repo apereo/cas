@@ -9,6 +9,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import java.util.Collection;
+
 /**
  * Default OAuth refresh token factory.
  *
@@ -37,9 +39,11 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
     }
 
     @Override
-    public RefreshToken create(final Service service, final Authentication authentication, final TicketGrantingTicket ticketGrantingTicket) {
+    public RefreshToken create(final Service service, final Authentication authentication,
+                               final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         final String codeId = this.refreshTokenIdGenerator.getNewTicketId(RefreshToken.PREFIX);
-        final RefreshToken rt = new RefreshTokenImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket);
+        final RefreshToken rt = new RefreshTokenImpl(codeId, service, authentication,
+            this.expirationPolicy, ticketGrantingTicket, scopes);
 
         if (ticketGrantingTicket != null) {
             ticketGrantingTicket.getDescendantTickets().add(rt.getId());
