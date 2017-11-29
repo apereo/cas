@@ -18,7 +18,7 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
     private static final long serialVersionUID = 5519257723778012771L;
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal principal,
+    public Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> resolvedAttributes,
                                                         final RegisteredService service) {
         return resolvedAttributes;

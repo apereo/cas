@@ -208,7 +208,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private boolean verifyAccessForGrantClientCredentials(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
         final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                 && this.validator.checkServiceValid(registeredService);
     }
@@ -216,7 +216,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private boolean verifyAccessForGrantPassword(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
         final String clientId = request.getParameter(OAuth20Constants.CLIENT_ID);
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
                 && this.validator.checkServiceValid(registeredService);
@@ -248,7 +248,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     private boolean verifyAccessForGrantAuthorizationCode(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
         final String clientId = uProfile.getId();
         final String redirectUri = request.getParameter(OAuth20Constants.REDIRECT_URI);
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
 

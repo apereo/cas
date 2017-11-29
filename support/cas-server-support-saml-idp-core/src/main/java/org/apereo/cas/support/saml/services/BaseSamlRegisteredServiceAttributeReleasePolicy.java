@@ -33,7 +33,7 @@ public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends Re
     private static final Logger LOGGER = LoggerFactory.getLogger(BaseSamlRegisteredServiceAttributeReleasePolicy.class);
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal principal,
+    public Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> attributes, final RegisteredService service) {
         if (service instanceof SamlRegisteredService) {
             final SamlRegisteredService saml = (SamlRegisteredService) service;

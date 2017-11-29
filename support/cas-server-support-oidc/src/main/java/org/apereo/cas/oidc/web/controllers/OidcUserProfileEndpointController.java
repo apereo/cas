@@ -10,12 +10,13 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
-import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileControllerController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.pac4j.core.context.J2EContext;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,23 +27,23 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link OidcProfileEndpointController}.
+ * This is {@link OidcUserProfileEndpointController}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class OidcProfileEndpointController extends OAuth20UserProfileControllerController {
+public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpointController {
 
-    public OidcProfileEndpointController(final ServicesManager servicesManager,
-                                         final TicketRegistry ticketRegistry,
-                                         final OAuth20Validator validator,
-                                         final AccessTokenFactory accessTokenFactory,
-                                         final PrincipalFactory principalFactory,
-                                         final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                         final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                         final CasConfigurationProperties casProperties,
-                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                         final OAuth20UserProfileViewRenderer userProfileViewRenderer) {
+    public OidcUserProfileEndpointController(final ServicesManager servicesManager,
+                                             final TicketRegistry ticketRegistry,
+                                             final OAuth20Validator validator,
+                                             final AccessTokenFactory accessTokenFactory,
+                                             final PrincipalFactory principalFactory,
+                                             final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                             final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
+                                             final CasConfigurationProperties casProperties,
+                                             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                             final OAuth20UserProfileViewRenderer userProfileViewRenderer) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
                 principalFactory, webApplicationServiceServiceFactory,
                 scopeToAttributesFilter, casProperties,
@@ -56,8 +57,9 @@ public class OidcProfileEndpointController extends OAuth20UserProfileControllerC
     }
 
     @Override
-    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) {
-        final Principal principal = accessToken.getAuthentication().getPrincipal();
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken,
+                                                          final J2EContext context) {
+        final Principal principal = getAccessTokenAuthenticationPrincipal(accessToken, context);
         final Map<String, Object> map = new HashMap<>(principal.getAttributes());
         if (!map.containsKey(OidcConstants.CLAIM_SUB)) {
             map.put(OidcConstants.CLAIM_SUB, principal.getId());

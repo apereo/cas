@@ -95,8 +95,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
                                               final Set<OAuth20RequestValidator> oauthRequestValidators) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
-                ticketGrantingTicketCookieGenerator);
+            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
+            ticketGrantingTicketCookieGenerator);
         this.oAuthCodeFactory = oAuthCodeFactory;
         this.consentApprovalViewResolver = consentApprovalViewResolver;
         this.authenticationBuilder = authenticationBuilder;
@@ -119,7 +119,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         if (!verifyAuthorizeRequest(context) || !isRequestAuthenticated(manager, context)) {
             LOGGER.error("Authorize request verification failed. Either the authorization request is missing required parameters, "
-                    + "or the request is not authenticated and contains no authenticated profile/principal.");
+                + "or the request is not authenticated and contains no authenticated profile/principal.");
             return OAuth20Utils.produceUnauthorizedErrorView();
         }
 
@@ -152,7 +152,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
     public ModelAndView handleRequestPost(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         return handleRequest(request, response);
     }
-    
+
     /**
      * Gets registered service by client id.
      *
@@ -160,7 +160,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      * @return the registered service by client id
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
     }
 
     private static boolean isRequestAuthenticated(final ProfileManager manager, final J2EContext context) {
@@ -192,7 +192,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
 
         final Authentication authentication = this.authenticationBuilder.build(profile.get(), registeredService, context, service);
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
-        
+
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
         } catch (final UnauthorizedServiceException | PrincipalException e) {
@@ -223,20 +223,22 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                                 final String clientId, final Service service,
                                                 final Authentication authentication) {
         final OAuth20AuthorizationResponseBuilder builder = this.oauthAuthorizationResponseBuilders
-                .stream()
-                .filter(b -> b.supports(context))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
+            .stream()
+            .filter(b -> b.supports(context))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Could not build the callback url. Response type likely not supported"));
 
         final TicketGrantingTicket ticketGrantingTicket = CookieUtils.getTicketGrantingTicketFromRequest(
-                ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
+            ticketGrantingTicketCookieGenerator, this.ticketRegistry, context.getRequest());
 
         final String grantType = StringUtils.defaultIfEmpty(context.getRequestParameter(OAuth20Constants.GRANT_TYPE),
-                OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
+            OAuth20GrantTypes.AUTHORIZATION_CODE.getType()).toUpperCase();
         final Set<String> scopes = OAuth20Utils.parseRequestScopes(context);
         final AccessTokenRequestDataHolder holder = new AccessTokenRequestDataHolder(service, authentication,
-                registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
-        
+            registeredService, ticketGrantingTicket, OAuth20GrantTypes.valueOf(grantType), scopes);
+
+        LOGGER.debug("Building authorization response for grant type [{}] with scopes [{}] for client id [{}]",
+            grantType, scopes, clientId);
         return builder.build(context, clientId, holder);
     }
 
@@ -248,10 +250,10 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     private boolean verifyAuthorizeRequest(final J2EContext context) {
         final OAuth20RequestValidator validator = this.oauthRequestValidators
-                .stream()
-                .filter(b -> b.supports(context))
-                .findFirst()
-                .orElse(null);
+            .stream()
+            .filter(b -> b.supports(context))
+            .findFirst()
+            .orElse(null);
         if (validator == null) {
             LOGGER.warn("Ignoring malformed request [{}] no OAuth20 validator could declare support for its syntax", context.getFullRequestURL());
             return false;

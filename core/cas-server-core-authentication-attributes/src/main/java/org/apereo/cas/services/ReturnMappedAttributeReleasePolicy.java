@@ -69,7 +69,7 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal principal,
+    public Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> attrs,
                                                         final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);

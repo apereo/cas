@@ -21,8 +21,10 @@ import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.HttpConstants;
+import org.pac4j.core.context.J2EContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -43,24 +45,24 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public class OAuth20UserProfileControllerController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileControllerController.class);
+public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileEndpointController.class);
 
     /**
      * View renderer for the final profile.
      */
     protected final OAuth20UserProfileViewRenderer userProfileViewRenderer;
             
-    public OAuth20UserProfileControllerController(final ServicesManager servicesManager,
-                                                  final TicketRegistry ticketRegistry,
-                                                  final OAuth20Validator validator,
-                                                  final AccessTokenFactory accessTokenFactory,
-                                                  final PrincipalFactory principalFactory,
-                                                  final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                                  final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                                  final CasConfigurationProperties casProperties,
-                                                  final CookieRetrievingCookieGenerator cookieGenerator,
-                                                  final OAuth20UserProfileViewRenderer userProfileViewRenderer) {
+    public OAuth20UserProfileEndpointController(final ServicesManager servicesManager,
+                                                final TicketRegistry ticketRegistry,
+                                                final OAuth20Validator validator,
+                                                final AccessTokenFactory accessTokenFactory,
+                                                final PrincipalFactory principalFactory,
+                                                final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
+                                                final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
+                                                final CasConfigurationProperties casProperties,
+                                                final CookieRetrievingCookieGenerator cookieGenerator,
+                                                final OAuth20UserProfileViewRenderer userProfileViewRenderer) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.userProfileViewRenderer = userProfileViewRenderer;
@@ -78,6 +80,8 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
     public ResponseEntity<String> handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
+        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+            
         final String accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
             LOGGER.error("Missing [{}]", OAuth20Constants.ACCESS_TOKEN);
@@ -98,7 +102,7 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
         }
         updateAccessTokenUsage(accessTokenTicket);
 
-        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket);
+        final Map<String, Object> map = writeOutProfileResponse(accessTokenTicket, context);
         finalizeProfileResponse(accessTokenTicket, map);
 
         final String value = this.userProfileViewRenderer.render(map, accessTokenTicket);
@@ -147,15 +151,35 @@ public class OAuth20UserProfileControllerController extends BaseOAuth20Controlle
      * Write out profile response.
      *
      * @param accessToken the access token
+     * @param context     the context
      * @return the linked multi value map
      */
-    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken) {
-        final Principal principal = accessToken.getAuthentication().getPrincipal();
-        LOGGER.debug("Preparing user profile response based on CAS principal [{}]", principal);
+    protected Map<String, Object> writeOutProfileResponse(final AccessToken accessToken, final J2EContext context) {
+        final Principal principal = getAccessTokenAuthenticationPrincipal(accessToken, context);
         final Map<String, Object> map = new HashMap<>();
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, principal.getAttributes());
         return map;
+    }
+
+    /**
+     * Gets access token authentication principal.
+     *
+     * @param accessToken the access token
+     * @param context     the context
+     * @return the access token authentication principal
+     */
+    protected Principal getAccessTokenAuthenticationPrincipal(final AccessToken accessToken, final J2EContext context) {
+        final Service service = accessToken.getService();
+        final RegisteredService registeredService = servicesManager.findServiceBy(service);
+
+        final Principal currentPrincipal = accessToken.getAuthentication().getPrincipal();
+        LOGGER.debug("Preparing user profile response based on CAS principal [{}]", currentPrincipal);
+
+        final Principal principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal,
+            registeredService, context, accessToken);
+        LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
+        return principal;
     }
 
     /**

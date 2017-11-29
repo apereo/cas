@@ -53,7 +53,7 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal principal,
+    public Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> attrs, final RegisteredService service) {
         return authorizeReleaseOfAllowedAttributes(attrs);
     }

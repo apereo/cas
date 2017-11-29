@@ -54,7 +54,7 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
         LOGGER.debug("Locating OAuth registered service by client id [{}]", clientId);
 
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         LOGGER.debug("Located OAuth registered service [{}]", registeredService);
 
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);

@@ -40,7 +40,8 @@ public class AccessTokenRequestDataHolder {
                 grantType, isAllowedToGenerateRefreshToken, scopes);
     }
 
-    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+    public AccessTokenRequestDataHolder(final Service service,
+                                        final Authentication authentication,
                                         final OAuthToken token,
                                         final OAuthRegisteredService registeredService,
                                         final OAuth20GrantTypes grantType,

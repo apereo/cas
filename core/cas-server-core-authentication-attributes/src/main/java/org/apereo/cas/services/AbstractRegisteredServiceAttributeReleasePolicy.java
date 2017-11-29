@@ -272,7 +272,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @param service    the service
      * @return the attributes allowed for release
      */
-    protected abstract Map<String, Object> getAttributesInternal(Principal principal,
+    public abstract Map<String, Object> getAttributesInternal(Principal principal,
                                                                  Map<String, Object> attributes,
                                                                  RegisteredService service);
 

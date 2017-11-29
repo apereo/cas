@@ -36,9 +36,9 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     }
 
     @Override
-    public View build(final J2EContext context, final String clientId,
-                      final AccessTokenRequestDataHolder holder) {
-        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(), holder.getTicketGrantingTicket());
+    public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(),
+            holder.getTicketGrantingTicket(), holder.getScopes());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
@@ -47,7 +47,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
         final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
-        
+
         String callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
         if (StringUtils.isNotBlank(state)) {

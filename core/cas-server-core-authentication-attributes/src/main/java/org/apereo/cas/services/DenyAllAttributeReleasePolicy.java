@@ -28,7 +28,7 @@ public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttr
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         LOGGER.debug("Ignoring all attributes given the service is designed to never receive any.");
         return new HashMap<>(0);

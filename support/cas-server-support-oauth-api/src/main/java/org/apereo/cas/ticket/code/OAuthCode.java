@@ -12,7 +12,7 @@ import org.apereo.cas.ticket.OAuthToken;
 public interface OAuthCode extends OAuthToken {
 
     /**
-     *  The prefix for OAuth codes.
+     * The prefix for OAuth codes.
      */
     String PREFIX = "OC";
 }
