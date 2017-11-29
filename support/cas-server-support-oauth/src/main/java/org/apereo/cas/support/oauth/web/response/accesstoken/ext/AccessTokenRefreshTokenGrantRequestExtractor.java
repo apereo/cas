@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -23,8 +25,9 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
 
     public AccessTokenRefreshTokenGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
                                                         final CentralAuthenticationService centralAuthenticationService,
-                                                        final OAuthProperties oAuthProperties) {
-        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties);
+                                                        final OAuthProperties oAuthProperties,
+                                                        final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties, webApplicationServiceServiceFactory);
     }
 
     @Override

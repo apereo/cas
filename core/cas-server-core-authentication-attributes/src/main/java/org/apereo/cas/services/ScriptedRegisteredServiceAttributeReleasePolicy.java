@@ -40,7 +40,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     }
 
     @Override
-    protected Map<String, Object> getAttributesInternal(final Principal principal,
+    public Map<String, Object> getAttributesInternal(final Principal principal,
                                                         final Map<String, Object> attributes,
                                                         final RegisteredService service) {
         try {
