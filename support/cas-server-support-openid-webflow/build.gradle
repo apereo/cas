@@ -2,7 +2,8 @@
 description = "Apereo CAS OpenID Webflow Support"
 dependencies {
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-configuration-api")
     api project(":api:cas-server-core-api-webflow")
     implementation project(":support:cas-server-support-openid")
 }

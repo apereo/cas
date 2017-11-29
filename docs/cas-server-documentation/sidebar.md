@@ -145,12 +145,20 @@ layout: null
         *   [JPA](/$version/installation/JPA-Service-Management.html)
         *   [Redis](/$version/installation/Redis-Service-Management.html)
         *   [DynamoDb](/$version/installation/DynamoDb-Service-Management.html)
+        *   [CosmosDb](/$version/installation/CosmosDb-Service-Management.html)
         *   [Couchbase](/$version/installation/Couchbase-Service-Management.html)
         *   [REST](/$version/installation/REST-Service-Management.html)
         *   [Custom](/$version/installation/Custom-Service-Management.html)
 
 * [Logs & Audits](#logs_audits)
     *   [Logging](/$version/installation/Logging.html)
+        *   [Cloudwatch](/$version/installation/Logging-Cloudwatch.html)
+        *   [Loggly](/$version/installation/Logging-Loggly.html)
+        *   [Logstash](/$version/installation/Logging-Logstash.html)
+        *   [MDC](/$version/installation/Logging-MDC.html)
+        *   [Papertrail](/$version/installation/Logging-Papertrail.html)
+        *   [Sentry](/$version/installation/Logging-Sentry.html)
+        *   [SysLog](/$version/installation/Logging-SysLog.html)
     *   [Audits](/$version/installation/Audits.html)
     
 * [Monitoring & Statistics](#monitoroverview)
@@ -158,7 +166,6 @@ layout: null
     *   [Administration Server](/$version/installation/Configuring-Monitoring-Administration.html)
     *   [Metrics](/$version/installation/Configuring-Metrics.html)
     *   [Monitors](/$version/installation/Configuring-Monitoring.html)
-    *   [Sentry](/$version/integration/Sentry-Integration.html)
         
 * [User Interface](#user_interface)
     *   [Overview](/$version/installation/User-Interface-Customization.html)
@@ -202,7 +209,6 @@ layout: null
     *   [Google Analytics](/$version/integration/Configuring-Google-Analytics.html)
     *   [SCIM Provisioning](/$version/integration/SCIM-Integration.html)
     *   [CAS Clients](/$version/integration/CAS-Clients.html)
-    *   [Groovy Shell](/$version/installation/Configuring-Groovy-Console.html)
     *   [Swagger API](/$version/integration/Swagger-Integration.html)
     *   [Shibboleth Identity Provider](/$version/integration/Shibboleth.html)
 

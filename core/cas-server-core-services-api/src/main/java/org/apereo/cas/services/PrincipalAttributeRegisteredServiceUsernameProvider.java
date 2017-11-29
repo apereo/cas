@@ -120,6 +120,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         final PrincipalAttributeRegisteredServiceUsernameProvider rhs =
                 (PrincipalAttributeRegisteredServiceUsernameProvider) obj;
         return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
                 .append(this.usernameAttribute, rhs.usernameAttribute)
                 .isEquals();
     }

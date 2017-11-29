@@ -2,12 +2,17 @@
 description = "Apereo CAS Services REST Implementation"
 dependencies {
     api project(":api:cas-server-core-api")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-rest")
     implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-authentication-api")
+
     api project(":api:cas-server-core-api-authentication")
+
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

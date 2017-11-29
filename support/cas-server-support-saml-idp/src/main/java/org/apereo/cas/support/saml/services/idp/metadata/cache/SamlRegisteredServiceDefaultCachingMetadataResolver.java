@@ -19,13 +19,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
     private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceDefaultCachingMetadataResolver.class);
     private static final int MAX_CACHE_SIZE = 10_000;
 
-    private final long metadataCacheExpirationMinutes;
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;
     private final LoadingCache<SamlRegisteredService, MetadataResolver> cache;
 
     public SamlRegisteredServiceDefaultCachingMetadataResolver(final long metadataCacheExpirationMinutes,
                                                                final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
-        this.metadataCacheExpirationMinutes = metadataCacheExpirationMinutes;
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
                 .maximumSize(MAX_CACHE_SIZE)

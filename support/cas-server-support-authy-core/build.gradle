@@ -3,6 +3,6 @@ dependencies {
     api project(":api:cas-server-core-api")
     
     implementation libraries.authyjava
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-mfa")
 }

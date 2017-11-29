@@ -25,7 +25,7 @@ import java.util.Collection;
  * @since 5.2.0
  */
 public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolver.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ClasspathResourceMetadataResolver.class);
 
     public ClasspathResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                              final OpenSamlConfigBean configBean) {
@@ -42,7 +42,7 @@ public class ClasspathResourceMetadataResolver extends BaseSamlRegisteredService
 
             final Element metadataRoot = document.getDocumentElement();
             final DOMMetadataResolver metadataProvider = new DOMMetadataResolver(metadataRoot);
-            buildSingleMetadataResolver(metadataProvider, service);
+            configureAndInitializeSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

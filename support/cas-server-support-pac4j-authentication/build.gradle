@@ -1,8 +1,8 @@
 description = "Apereo CAS Authentication handler wrapping pac4j"
 dependencies {
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-pac4j-core")
     implementation libraries.pac4j
 }

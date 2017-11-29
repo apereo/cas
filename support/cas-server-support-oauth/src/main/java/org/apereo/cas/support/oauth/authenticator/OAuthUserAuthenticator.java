@@ -50,7 +50,7 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
 
             final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
             final Service service = this.webApplicationServiceFactory.createService(clientId);
-            final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+            final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             final AuthenticationResult authenticationResult = this.authenticationSystemSupport

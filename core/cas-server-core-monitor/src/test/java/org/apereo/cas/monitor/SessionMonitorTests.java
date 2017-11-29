@@ -1,8 +1,9 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -13,6 +14,7 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.stream.IntStream;
 
@@ -72,9 +74,15 @@ public class SessionMonitorTests {
         });
 
         if (ticket[0] != null) {
-            final Service testService = RegisteredServiceTestUtils.getService("junit");
+            final Service testService = getService("junit");
             IntStream.range(0, stCount).forEach(i -> registry.addTicket(ticket[0].grantServiceTicket(GENERATOR.getNewTicketId("ST"),
                                     testService, TEST_EXP_POLICY, false, true)));
         }
+    }
+
+    public static AbstractWebApplicationService getService(final String name) {
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        request.addParameter("service", name);
+        return (AbstractWebApplicationService) new WebApplicationServiceFactory().createService(request);
     }
 }

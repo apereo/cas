@@ -38,7 +38,7 @@ public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordC
         
         final String id = credentials.getUsername();
         final String secret = credentials.getPassword();
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, id);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, id);
 
         if (!this.validator.checkServiceValid(registeredService)) {
             throw new CredentialsException("Service invalid for client identifier: " + id);

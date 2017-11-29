@@ -209,6 +209,8 @@ public class SamlObjectSignatureValidator {
                 foundValidCredential = true;
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
+            } finally {
+                handler.destroy();
             }
         }
 

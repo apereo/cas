@@ -9,12 +9,13 @@ dependencies {
     implementation libraries.zxingbarcode
     
     implementation files("./lib/PhoneFactorSDK-2.21.jar")
-    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-authentication-mfa")
-    implementation project(":core:cas-server-core-web")
+    implementation project(":core:cas-server-core-web-api")
     implementation project(":support:cas-server-support-azure-core")
     implementation project(":support:cas-server-support-otp-mfa")
     compileOnly project(":support:cas-server-support-trusted-mfa")

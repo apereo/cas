@@ -5,7 +5,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.mock.MockServiceTicket;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -16,6 +15,7 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Assume;
 import org.junit.Before;
@@ -72,7 +72,7 @@ public abstract class AbstractTicketRegistryTests {
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
-            final CipherExecutor cipher = Beans.newTicketRegistryCipherExecutor(
+            final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
                     new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
             registry.setCipherExecutor(cipher);
         } else {

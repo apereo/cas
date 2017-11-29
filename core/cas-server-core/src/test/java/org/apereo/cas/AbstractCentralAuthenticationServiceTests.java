@@ -3,6 +3,7 @@ package org.apereo.cas;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
+import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -22,9 +23,7 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
-import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -44,7 +43,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -55,36 +53,37 @@ import javax.annotation.PostConstruct;
  * @since 3.0.0
  */
 @SpringBootTest(
-        classes = {
-                AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-                CasAuthenticationEventExecutionPlanTestConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreConfiguration.class,
-                CasRegisteredServicesTestConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCookieConfiguration.class,
-                CasCoreWebConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
-                AopAutoConfiguration.class,
-                CasPersonDirectoryTestConfiguration.class,
-                CasCoreWebflowConfiguration.class,
-                CasCoreValidationConfiguration.class})
-@ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+    classes = {
+        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
+        CasAuthenticationEventExecutionPlanTestConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCookieConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        AopAutoConfiguration.class,
+        CasPersonDirectoryTestConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreValidationConfiguration.class})
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
 @DirtiesContext

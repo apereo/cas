@@ -77,7 +77,7 @@ public class OAuth20PasswordGrantTypeRequestValidator implements OAuth20RequestV
      * @return the registered service by client id
      */
     protected OAuthRegisteredService getRegisteredServiceByClientId(final String clientId) {
-        return OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
+        return OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
     }
 
     @Override

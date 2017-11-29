@@ -9,6 +9,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 
+import java.util.Collection;
+
 /**
  * Default OAuth code factory.
  *
@@ -37,11 +39,13 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     }
 
     @Override
-    public OAuthCode create(final Service service, final Authentication authentication, final TicketGrantingTicket ticketGrantingTicket) {
+    public OAuthCode create(final Service service, final Authentication authentication,
+                            final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         final String codeId = this.oAuthCodeIdGenerator.getNewTicketId(OAuthCode.PREFIX);
-        return new OAuthCodeImpl(codeId, service, authentication, this.expirationPolicy, ticketGrantingTicket);
+        return new OAuthCodeImpl(codeId, service, authentication,
+            this.expirationPolicy, ticketGrantingTicket, scopes);
     }
-    
+
     @Override
     public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
         return (T) this;
