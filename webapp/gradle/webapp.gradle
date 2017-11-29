@@ -123,6 +123,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-validation")
     implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-cookie")
     implementation project(":core:cas-server-core-events")
     implementation project(":core:cas-server-core-events-configuration")
     implementation project(":core:cas-server-core-configuration")
@@ -133,12 +134,12 @@ dependencies {
     implementation project(":support:cas-server-support-configuration")
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-actions")
-    implementation project(":core:cas-server-core-cookie")
     implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
 
+    
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 
