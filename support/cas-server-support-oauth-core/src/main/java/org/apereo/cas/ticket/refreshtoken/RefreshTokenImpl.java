@@ -2,9 +2,9 @@ package org.apereo.cas.ticket.refreshtoken;
 
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
-import org.apereo.cas.ticket.ExpirationPolicy;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -37,6 +37,7 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
      * @param authentication       the authentication.
      * @param expirationPolicy     the expiration policy.
      * @param ticketGrantingTicket the ticket granting ticket
+     * @param scopes               the scopes
      * @throws IllegalArgumentException if the service or authentication are null.
      */
     public RefreshTokenImpl(final String id, final Service service, final Authentication authentication,
