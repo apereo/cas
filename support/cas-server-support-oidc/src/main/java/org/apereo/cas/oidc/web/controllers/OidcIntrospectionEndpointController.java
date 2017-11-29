@@ -100,7 +100,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
 
-            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, credentials.getUsername());
+            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
             if (validateIntrospectionRequest(service, credentials, request)) {
                 final String accessToken = StringUtils.defaultIfBlank(request.getParameter(OAuth20Constants.ACCESS_TOKEN),
                         request.getParameter(OAuth20Constants.TOKEN));

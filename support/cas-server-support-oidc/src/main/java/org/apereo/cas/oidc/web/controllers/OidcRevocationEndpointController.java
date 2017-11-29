@@ -70,7 +70,7 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");
             }
 
-            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, credentials.getUsername());
+            final OAuthRegisteredService service = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, credentials.getUsername());
             if (this.validator.checkServiceValid(service)
                     && this.validator.checkParameterExist(request, OAuth20Constants.ACCESS_TOKEN)
                     && this.validator.checkClientSecret(service, credentials.getPassword())) {
