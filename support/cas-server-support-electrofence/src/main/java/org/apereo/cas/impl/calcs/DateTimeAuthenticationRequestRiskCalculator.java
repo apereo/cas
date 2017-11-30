@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;
+import java.time.ZoneOffset;
 import java.util.Collection;
 
 /**
@@ -20,7 +21,7 @@ import java.util.Collection;
  */
 public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DateTimeAuthenticationRequestRiskCalculator.class);
-    
+
     private final int windowInHours;
 
     public DateTimeAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository, final int windowInHours) {
@@ -31,17 +32,20 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<CasEvent> events) {
-        final ZonedDateTime timestamp = ZonedDateTime.now();
+        final ZonedDateTime timestamp = ZonedDateTime.now(ZoneOffset.UTC);
         LOGGER.debug("Filtering authentication events for timestamp [{}]", timestamp);
+        long count = 0;
 
-        final long count = events.stream().filter(e -> {
-            final int hour = timestamp.getHour();
-            return e.getCreationTime().getHour() == hour
-                    || e.getCreationTime().plusHours(windowInHours).getHour() == hour
-                    || e.getCreationTime().minusHours(windowInHours).getHour() == hour;
-        }).count();
-        
-        LOGGER.debug("Total authentication events found for [{}]: [{}]", timestamp, count);
+        if (timestamp.getHour() <= timestamp.plusHours(windowInHours).getHour()
+                && timestamp.getHour() >= timestamp.minusHours(windowInHours).getHour()){
+            count = events.stream().filter(e->e.getCreationTime().getHour() <= timestamp.plusHours(windowInHours).getHour()
+                && e.getCreationTime().getHour() >= timestamp.minusHours(windowInHours).getHour()).count();
+        } else {
+            count = events.stream().filter(e -> e.getCreationTime().getHour() <= timestamp.plusHours(windowInHours).getHour()
+                || e.getCreationTime().getHour() >= timestamp.minusHours(windowInHours).getHour()).count();
+        }
+
+        LOGGER.debug("Total authentication events found for [{}] in a [{}]h window: [{}]", timestamp, windowInHours, count);
         if (count == events.size()) {
             LOGGER.debug("Principal [{}] has always authenticated from [{}]", authentication.getPrincipal(), timestamp);
             return LOWEST_RISK_SCORE;
