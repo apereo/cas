@@ -125,8 +125,16 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
         generator.setHostName(getIdPHostName());
-        generator.setCertificateFile(idp.getMetadata().getEncryptionCertFile().getFile());
-        generator.setPrivateKeyFile(idp.getMetadata().getEncryptionKeyFile().getFile());
+        final File encCert = idp.getMetadata().getEncryptionCertFile().getFile();
+        if (encCert.exists()) {
+            FileUtils.forceDelete(encCert);
+        }
+        generator.setCertificateFile(encCert);
+        final File encKey = idp.getMetadata().getEncryptionKeyFile().getFile();
+        if (encKey.exists()) {
+            FileUtils.forceDelete(encKey);
+        }
+        generator.setPrivateKeyFile(encKey);
         generator.setURISubjectAltNames(CollectionUtils.wrap(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
@@ -140,8 +148,17 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
         generator.setHostName(getIdPHostName());
-        generator.setCertificateFile(idp.getMetadata().getSigningCertFile().getFile());
-        generator.setPrivateKeyFile(idp.getMetadata().getSigningKeyFile().getFile());
+        final File signingCert = idp.getMetadata().getSigningCertFile().getFile();
+        if (signingCert.exists()) {
+            FileUtils.forceDelete(signingCert);
+        }
+        
+        generator.setCertificateFile(signingCert);
+        final File signingKey = idp.getMetadata().getSigningKeyFile().getFile();
+        if (signingKey.exists()) {
+            FileUtils.forceDelete(signingKey);
+        }
+        generator.setPrivateKeyFile(signingKey);
         generator.setURISubjectAltNames(CollectionUtils.wrap(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
