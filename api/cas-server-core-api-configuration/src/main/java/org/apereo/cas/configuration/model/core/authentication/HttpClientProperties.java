@@ -46,6 +46,17 @@ public class HttpClientProperties implements Serializable {
      * For example http(s)://localhost/logout
      */    
     private boolean allowLocalLogoutUrls;
+
+    /**
+     * If specified the regular expression will be used to validate the url's authority.
+     */
+    private String authorityValidationRegEx;
+    
+    /**
+     * Whether the regular expression specified with {@code authorityValidationRegEx} should be handled as case-sensitive
+     * ({@true}) or case-insensitive ({@false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
+     */
+    private boolean authorityValidationRegExCaseSensitiv = true;
     
     public String getHostNameVerifier() {
         return hostNameVerifier;
@@ -90,9 +101,25 @@ public class HttpClientProperties implements Serializable {
     public boolean isAllowLocalLogoutUrls() {
         return this.allowLocalLogoutUrls;
     }
-    
+
     public void setAllowLocalLogoutUrls(final boolean allowLocalLogoutUrls) {
         this.allowLocalLogoutUrls = allowLocalLogoutUrls;
+    }
+
+    public String getAuthorityValidationRegEx() {
+        return this.authorityValidationRegEx;
+    }
+
+    public void setAuthorityValidationRegEx(final String authorityValidationRegEx) {
+        this.authorityValidationRegEx = authorityValidationRegEx;
+    }
+
+    public boolean isAuthorityValidationRegExCaseSensitiv() {
+        return this.authorityValidationRegExCaseSensitiv;
+    }
+
+    public void setAuthorityValidationRegExCaseSensitiv(final boolean authorityValidationRegExCaseSensitiv) {
+        this.authorityValidationRegExCaseSensitiv = authorityValidationRegExCaseSensitiv;
     }
 
     public static class Truststore implements Serializable {

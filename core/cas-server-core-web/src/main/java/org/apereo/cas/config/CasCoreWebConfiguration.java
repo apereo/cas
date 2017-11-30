@@ -98,7 +98,9 @@ public class CasCoreWebConfiguration {
     @Bean
     public FactoryBean<UrlValidator> urlValidator() {
         final boolean allowLocalLogoutUrls = this.casProperties.getHttpClient().isAllowLocalLogoutUrls();
-        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls);
+        final String authorityValidationRegEx = this.casProperties.getHttpClient().getAuthorityValidationRegEx();
+        final boolean authorityValidationRegExCaseSensitiv = this.casProperties.getHttpClient().isAuthorityValidationRegExCaseSensitiv();
+        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitiv);
     }
 
     @ConditionalOnMissingBean(name = "authenticationAttributeReleasePolicy")
