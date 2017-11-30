@@ -22,6 +22,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.DefaultConnectionStrategy;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.DerefAliases;
 import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -635,6 +636,10 @@ public final class LdapUtils {
         resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getUserFilter());
 
+        if (StringUtils.isNotBlank(l.getDerefAliases())) {
+            resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+        }
+        
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
@@ -951,6 +956,9 @@ public final class LdapUtils {
         entryResolver.setUserFilter(l.getUserFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+        if (StringUtils.isNotBlank(l.getDerefAliases())) {
+            entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+        }
 
         final List<SearchEntryHandler> handlers = new ArrayList<>();
         l.getSearchEntryHandlers().forEach(h -> {
