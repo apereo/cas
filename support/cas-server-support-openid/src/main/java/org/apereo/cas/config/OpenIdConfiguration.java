@@ -21,7 +21,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -42,7 +42,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * This is {@link OpenIdConfiguration}.
@@ -121,7 +120,7 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
-    private Set<ValidationAuthorizer> validationAuthorizers;
+    private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
     
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
@@ -172,7 +171,8 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor")
+                                                                       final ArgumentExtractor argumentExtractor) {
         final OpenIdValidateController c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
                 authenticationSystemSupport, servicesManager,
                 centralAuthenticationService, proxy20Handler,

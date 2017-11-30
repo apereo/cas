@@ -32,8 +32,9 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
@@ -46,6 +47,7 @@ import org.springframework.web.servlet.View;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.net.URL;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -70,7 +72,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
 
-    private final Set<ValidationAuthorizer> validationAuthorizers;
+    private final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -118,11 +120,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                              final View successView,
                                              final View failureView,
                                              final String authnContextAttribute,
-                                             final Set<ValidationAuthorizer> validationAuthorizers) {
+                                             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         this(CollectionUtils.wrapSet(validationSpecification), authenticationSystemSupport, servicesManager,
-                centralAuthenticationService, proxyHandler, argumentExtractor,
-                multifactorTriggerSelectionStrategy, authenticationContextValidator,
-                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+            centralAuthenticationService, proxyHandler, argumentExtractor,
+            multifactorTriggerSelectionStrategy, authenticationContextValidator,
+            jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
     }
 
     public AbstractServiceValidateController(final Set<CasProtocolValidationSpecification> validationSpecifications,
@@ -137,7 +139,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
                                              final View successView,
                                              final View failureView,
                                              final String authnContextAttribute,
-                                             final Set<ValidationAuthorizer> validationAuthorizers) {
+                                             final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         this.validationSpecifications = validationSpecifications;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.servicesManager = servicesManager;
@@ -192,10 +194,10 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
         // Resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers =
-                this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
+            this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         final Authentication authentication = assertion.getPrimaryAuthentication();
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request,
-                service, authentication.getPrincipal());
+            service, authentication.getPrincipal());
 
         // No MFA auth context found
         if (!requestedContext.isPresent()) {
@@ -225,13 +227,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the ticket granting ticket
      */
     private TicketGrantingTicket handleProxyGrantingTicketDelivery(final String serviceTicketId, final Credential credential)
-            throws AuthenticationException, AbstractTicketException {
+        throws AuthenticationException, AbstractTicketException {
         final ServiceTicket serviceTicket = this.centralAuthenticationService.getTicket(serviceTicketId, ServiceTicket.class);
         final AuthenticationResult authenticationResult =
-                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
+            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceTicket.getService(), credential);
         final TicketGrantingTicket proxyGrantingTicketId = this.centralAuthenticationService.createProxyGrantingTicket(serviceTicketId, authenticationResult);
         LOGGER.debug("Generated proxy-granting ticket [{}] off of service ticket [{}] and credential [{}]",
-                proxyGrantingTicketId.getId(), serviceTicketId, credential);
+            proxyGrantingTicketId.getId(), serviceTicketId, credential);
 
         return proxyGrantingTicketId;
     }
@@ -301,7 +303,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         if (!validateAssertion(request, serviceTicketId, assertion, service)) {
             return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_TICKET, new Object[]{serviceTicketId}, request, service);
         }
-        
+
         final Pair<Boolean, Optional<MultifactorAuthenticationProvider>> ctxResult = validateAuthenticationContext(assertion, request);
         if (!ctxResult.getKey()) {
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
@@ -315,7 +317,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             }
         } else {
             LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials",
-                    this.proxyHandler.getClass().getSimpleName());
+                this.proxyHandler.getClass().getSimpleName());
         }
 
         onSuccessfulValidation(serviceTicketId, assertion);
@@ -336,7 +338,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param service         the service
      * @return true /false
      */
-    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, 
+    private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId,
                                       final Assertion assertion, final Service service) {
         for (final CasProtocolValidationSpecification s : this.validationSpecifications) {
             s.reset();
@@ -351,7 +353,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
 
         enforceTicketValidationAuthorizationFor(request, service, assertion);
-        
+
         return true;
     }
 
@@ -454,7 +456,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     protected void enforceTicketValidationAuthorizationFor(final HttpServletRequest request,
                                                            final Service service,
                                                            final Assertion assertion) {
-        for (final ValidationAuthorizer a : this.validationAuthorizers) {
+        final Collection<ServiceTicketValidationAuthorizer> authorizers = this.validationAuthorizers.getAuthorizers();
+        for (final ServiceTicketValidationAuthorizer a : authorizers) {
             try {
                 a.authorize(request, service, assertion);
             } catch (final Exception e) {
@@ -496,7 +499,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         if (!registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             final String msg = String.format("ServiceManagement: Unauthorized Service Access. "
-                    + "Service [%s] is not enabled in service registry.", service.getId());
+                + "Service [%s] is not enabled in service registry.", service.getId());
 
             LOGGER.warn(msg);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);

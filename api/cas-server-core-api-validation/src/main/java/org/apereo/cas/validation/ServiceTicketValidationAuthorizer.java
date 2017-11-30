@@ -5,13 +5,13 @@ import org.apereo.cas.authentication.principal.Service;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * This is {@link ValidationAuthorizer}.
+ * This is {@link ServiceTicketValidationAuthorizer}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @FunctionalInterface
-public interface ValidationAuthorizer {
+public interface ServiceTicketValidationAuthorizer {
 
     /**
      * Is authorized?

@@ -15,6 +15,7 @@ import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeRelease
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
+import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
@@ -39,7 +40,6 @@ import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.security.PrivateKey;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -83,7 +83,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
                 new DefaultAuthenticationContextValidator("", "OPEN", "test"),
                 cas3ServiceJsonView, cas3SuccessView,
                 cas3ServiceFailureView, "authenticationContext",
-                new LinkedHashSet<>()
+                new DefaultServiceTicketValidationAuthorizersExecutionPlan()
         );
     }
 

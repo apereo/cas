@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,7 +19,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * @author Misagh Moayyed
@@ -38,7 +37,8 @@ public class ServiceValidateController extends AbstractServiceValidateController
                                      final AuthenticationContextValidator authenticationContextValidator,
                                      final View jsonView,
                                      final View successView, final View failureView,
-                                     final String authnContextAttribute, final Set<ValidationAuthorizer> validationAuthorizers) {
+                                     final String authnContextAttribute,
+                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         super(validationSpecification, authenticationSystemSupport, servicesManager,
                 centralAuthenticationService, proxyHandler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,

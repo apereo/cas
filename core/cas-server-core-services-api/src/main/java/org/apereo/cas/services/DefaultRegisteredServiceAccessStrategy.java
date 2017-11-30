@@ -267,7 +267,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     @Override
-    @JsonIgnore
     public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         return delegatedAuthenticationPolicy;
     }

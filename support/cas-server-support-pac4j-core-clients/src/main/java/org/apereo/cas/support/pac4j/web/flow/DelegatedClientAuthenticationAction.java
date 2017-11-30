@@ -56,7 +56,7 @@ import java.util.regex.Pattern;
  * @since 3.5.0
  */
 public class DelegatedClientAuthenticationAction extends AbstractAction {
-    
+
     /**
      * Stop the webflow for pac4j and route to view.
      */
@@ -113,10 +113,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
-        // web context
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
-        // get client
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
 
@@ -133,7 +131,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             LOGGER.debug("Retrieve service: [{}]", service);
             if (service != null) {
                 request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-
                 if (!isDelegatedClientAuthorizedForService(client, service)) {
                     LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -193,10 +190,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
 
-        // web context
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
-        // save parameters in web session
         final Service service = WebUtils.getService(context);
         LOGGER.debug("Save service: [{}]", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
@@ -231,7 +226,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
-            LOGGER.warn("No clients could be determined based on the provided configuration");
+            LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
+                + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers for this request.");
         }
     }
 
@@ -328,7 +324,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                     LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, client);
                     return true;
                 }
-                LOGGER.warn("Delegated authentication policy for [{}] refuses access to client [{}]", registeredService, client);
+                LOGGER.warn("Delegated authentication policy for [{}] refuses access to client [{}]", registeredService.getServiceId(), client);
                 return false;
             }
         }

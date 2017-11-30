@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
 
@@ -84,7 +85,7 @@ public class ClientCredential implements Credential, Serializable {
 
     @Override
     public String toString() {
-        return new ToStringBuilder(this)
+        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("id", getId())
                 .toString();
     }
