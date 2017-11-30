@@ -15,6 +15,11 @@ import java.io.Serializable;
  */
 public class ClientCredential implements Credential, Serializable {
 
+    /***
+     * The name of the client used to perform the authentication.
+     */
+    public static final String AUTHENTICATION_ATTRIBUTE_CLIENT_NAME = "clientName";
+
     /**
      * The serialVersionUID.
      */

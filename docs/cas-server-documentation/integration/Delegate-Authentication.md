@@ -95,6 +95,28 @@ On CAS server side, to push attributes to the CAS client, it should be configure
 }
 ```
 
+## Access Strategy
+
+Service definitions may be conditionally authorized to use an external identity provider by defining their own access strategy and policy:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 100,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy",
+    "delegatedAuthenticationPolicy" : {
+      "@class" : "org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy",
+      "allowedProviders" : [ "java.util.ArrayList", [ "Facebook", "Twitter" ] ]
+    }
+  }
+}
+```
+
+The list of allowed providers should contain the exteral identity provider names (i.e. client names).
+
 ## Troubleshooting
 
 To enable additional logging, configure the log4j configuration file to add the following

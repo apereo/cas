@@ -16,15 +16,12 @@ import org.apereo.cas.authentication.principal.ClientCredential;
  */
 public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
-    /***
-     * The name of the client used to perform the authentication.
-     */
-    public static final String CLIENT_NAME = "clientName";
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         final ClientCredential clientCredential = (ClientCredential) transaction.getCredential();
-        builder.addAttribute(CLIENT_NAME, clientCredential.getCredentials().getClientName());
+        builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME,
+            clientCredential.getCredentials().getClientName());
     }
 
     @Override
@@ -36,7 +33,7 @@ public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMet
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
+            .appendSuper(super.toString())
+            .toString();
     }
 }
