@@ -10,6 +10,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-authentication")
 
     testImplementation project(":core:cas-server-core-validation")
+    testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-authentication")
