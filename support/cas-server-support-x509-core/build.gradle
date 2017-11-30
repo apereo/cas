@@ -5,7 +5,9 @@ dependencies {
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-ldap-core")
+    
     implementation libraries.bouncycastle
     implementation libraries.ehcache
     
@@ -14,6 +16,12 @@ dependencies {
     testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-webflow")
+    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-authentication")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-monitor")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
