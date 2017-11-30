@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
@@ -43,7 +44,7 @@ import static org.mockito.Mockito.*;
  * @since 3.5.2
  */
 public class DelegatedClientAuthenticationActionTests {
-    
+
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";
 
     private static final String MY_KEY = "my_key";
@@ -83,8 +84,9 @@ public class DelegatedClientAuthenticationActionTests {
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
-                null, mock(CentralAuthenticationService.class),
-                ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME, false, null);
+            null, mock(CentralAuthenticationService.class),
+            ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
+            false, mock(ServicesManager.class), null);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -92,9 +94,9 @@ public class DelegatedClientAuthenticationActionTests {
         assertEquals(MY_LOCALE, mockSession.getAttribute(LocaleChangeInterceptor.DEFAULT_PARAM_NAME));
         assertEquals(MY_METHOD, mockSession.getAttribute(CasProtocolConstants.PARAMETER_METHOD));
         final MutableAttributeMap flowScope = mockRequestContext.getFlowScope();
-        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls = 
-                (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>) 
-                        flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
+        final Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration> urls =
+            (Set<DelegatedClientAuthenticationAction.ProviderLoginPageConfiguration>)
+                flowScope.get(DelegatedClientAuthenticationAction.PAC4J_URLS);
 
         assertFalse(urls.isEmpty());
         assertSame(2, urls.size());
@@ -143,7 +145,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(support.getAuthenticationTransactionManager()).thenReturn(transManager);
 
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-                "theme", "locale", false, null);
+            "theme", "locale", false, mock(ServicesManager.class), null);
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

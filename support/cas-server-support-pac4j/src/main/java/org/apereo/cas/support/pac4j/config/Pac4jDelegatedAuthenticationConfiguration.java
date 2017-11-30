@@ -5,6 +5,7 @@ import java.util.function.Function;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.CommonProfile;
@@ -31,8 +32,12 @@ import org.springframework.webflow.execution.Action;
 public class Pac4jDelegatedAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
@@ -40,19 +45,20 @@ public class Pac4jDelegatedAuthenticationConfiguration {
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-    
+
     @Autowired
     @RefreshScope
     @Bean
     @Lazy
     public Action clientAction(@Qualifier("builtClients") final Clients builtClients) {
-        return new DelegatedClientAuthenticationAction(builtClients, 
-                authenticationSystemSupport, 
-                centralAuthenticationService, 
-                casProperties.getTheme().getParamName(), 
-                casProperties.getLocale().getParamName(), 
-                casProperties.getAuthn().getPac4j().isAutoRedirect(),
-                pac4jProfileService());
+        return new DelegatedClientAuthenticationAction(builtClients,
+            authenticationSystemSupport,
+            centralAuthenticationService,
+            casProperties.getTheme().getParamName(),
+            casProperties.getLocale().getParamName(),
+            casProperties.getAuthn().getPac4j().isAutoRedirect(),
+            servicesManager,
+            pac4jProfileService());
     }
 
 

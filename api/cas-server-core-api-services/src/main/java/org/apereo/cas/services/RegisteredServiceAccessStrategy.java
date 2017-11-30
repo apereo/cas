@@ -89,4 +89,12 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      */
     default void setServiceAccessAllowed(final boolean enabled) {
     }
+
+    /**
+     * Return the delegated authentication policy for this service.
+     * @return authn policy
+     */
+    default RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
+        return null;
+    }
 }
