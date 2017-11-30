@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.web.support.DefaultAuthenticationAttributeReleasePolicy;
+import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
@@ -22,7 +23,6 @@ import org.springframework.web.servlet.support.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.LinkedHashSet;
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -59,7 +59,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
                 new DefaultAuthenticationContextValidator("", "OPEN", "test"),
                 cas3ServiceJsonView, cas2SuccessView, 
                 cas2ServiceFailureView, "authenticationContext",
-                new LinkedHashSet<>()
+                new DefaultServiceTicketValidationAuthorizersExecutionPlan()
         );
     }
 
