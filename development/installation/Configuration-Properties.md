@@ -3189,7 +3189,18 @@ Control core SAML functionality within CAS.
 ## SAML IdP
 
 Allow CAS to become a SAML2 identity provider.
+
 To learn more about this topic, [please review this guide](Configuring-SAML2-Authentication.html).
+
+```properties
+# cas.authn.samlIdp.entityId=https://cas.example.org/idp
+# cas.authn.samlIdp.scope=example.org
+
+# cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
+# cas.authn.samlIdp.authenticationContextClassMappings[1]=https://refeds.org/profile/mfa->mfa-gauth
+
+# cas.authn.samlIdp.attributeQueryProfileEnabled=true
+```
 
 ### Attributes Name Formats
 
@@ -3203,34 +3214,83 @@ A given attribute that is to be encoded in the final SAML response may contain a
 | `unspecified`        | Map the attribute to `urn:oasis:names:tc:SAML:2.0:attrname-format:basic`.
 | `urn:my:own:format`  | Map the attribute to `urn:my:own:format`.
 
+### SAML Metadata
 
 ```properties
-# cas.authn.samlIdp.entityId=https://cas.example.org/idp
-# cas.authn.samlIdp.scope=example.org
-# cas.authn.samlIdp.authenticationContextClassMappings[0]=urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo
+# cas.authn.samlIdp.metadata.location=file:/etc/cas/saml
 
 # cas.authn.samlIdp.metadata.cacheExpirationMinutes=30
 # cas.authn.samlIdp.metadata.failFast=true
-# cas.authn.samlIdp.metadata.location=file:/etc/cas/saml
 # cas.authn.samlIdp.metadata.privateKeyAlgName=RSA
 # cas.authn.samlIdp.metadata.requireValidMetadata=true
 
 # cas.authn.samlIdp.metadata.basicAuthnUsername=
 # cas.authn.samlIdp.metadata.basicAuthnPassword=
 # cas.authn.samlIdp.metadata.supportedContentTypes=
+```
 
-# cas.authn.samlIdp.attributeQueryProfileEnabled=true
+#### SAML Metadata JPA
 
+```properties
+# cas.authn.samlIdp.metadata.jpa.healthQuery=
+# cas.authn.samlIdp.metadata.jpa.isolateInternalQueries=false
+# cas.authn.samlIdp.metadata.jpa.url=jdbc:hsqldb:mem:cas-hsql-database
+# cas.authn.samlIdp.metadata.jpa.failFastTimeout=1
+# cas.authn.samlIdp.metadata.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.HSQLDialect
+# cas.authn.samlIdp.metadata.jpa.leakThreshold=10
+# cas.authn.samlIdp.metadata.jpa.propagationBehaviorName=PROPAGATION_REQUIRED
+# cas.authn.samlIdp.metadata.jpa.batchSize=1
+# cas.authn.samlIdp.metadata.jpa.user=sa
+# cas.authn.samlIdp.metadata.jpa.ddlAuto=create-drop
+# cas.authn.samlIdp.metadata.jpa.maxAgeDays=180
+# cas.authn.samlIdp.metadata.jpa.password=
+# cas.authn.samlIdp.metadata.jpa.autocommit=false
+# cas.authn.samlIdp.metadata.jpa.driverClass=org.hsqldb.jdbcDriver
+# cas.authn.samlIdp.metadata.jpa.idleTimeout=5000
+# cas.authn.samlIdp.metadata.jpa.dataSourceName=
+# cas.authn.samlIdp.metadata.jpa.dataSourceProxy=false
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# cas.authn.samlIdp.metadata.jpa.properties.propertyName=propertyValue
+
+# cas.authn.samlIdp.metadata.jpa.pool.suspension=false
+# cas.authn.samlIdp.metadata.jpa.pool.minSize=6
+# cas.authn.samlIdp.metadata.jpa.pool.maxSize=18
+# cas.authn.samlIdp.metadata.jpa.pool.maxWait=2000
+```
+
+#### SAML Metadata MongoDb
+
+```properties
+# cas.authn.samlIdp.metadata.mongo.host=localhost
+# cas.authn.samlIdp.metadata.mongo.clientUri=localhost
+# cas.authn.samlIdp.metadata.mongo.idleTimeout=30000
+# cas.authn.samlIdp.metadata.mongo.port=27017
+# cas.authn.samlIdp.metadata.mongo.dropCollection=false
+# cas.authn.samlIdp.metadata.mongo.socketKeepAlive=false
+# cas.authn.samlIdp.metadata.mongo.password=
+# cas.authn.samlIdp.metadata.mongo.collection=cas-audit-database
+# cas.authn.samlIdp.metadata.mongo.databaseName=cas-saml-metadata
+# cas.authn.samlIdp.metadata.mongo.timeout=5000
+# cas.authn.samlIdp.metadata.mongo.userId=
+# cas.authn.samlIdp.metadata.mongo.writeConcern=NORMAL
+# cas.authn.samlIdp.metadata.mongo.authenticationDatabaseName=
+# cas.authn.samlIdp.metadata.mongo.replicaSet=
+# cas.authn.samlIdp.metadata.mongo.ssEnabled=false
+# cas.authn.samlIdp.metadata.mongo.conns.lifetime=60000
+# cas.authn.samlIdp.metadata.mongo.conns.perHost=10
+```
+
+### SAML Logout
+
+```properties
 # cas.authn.samlIdp.logout.forceSignedLogoutRequests=true
 # cas.authn.samlIdp.logout.singleLogoutCallbacksDisabled=false
+```
 
-# cas.authn.samlIdp.response.defaultAuthenticationContextClass=
-# cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
-# cas.authn.samlIdp.response.signError=false
-# cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
-# cas.authn.samlIdp.response.useAttributeFriendlyName=true
-# cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
+### SAML Algorithms & Security
 
+```properties
 # cas.authn.samlIdp.algs.overrideSignatureCanonicalizationAlgorithm=
 # cas.authn.samlIdp.algs.overrideDataEncryptionAlgorithms=
 # cas.authn.samlIdp.algs.overrideKeyEncryptionAlgorithms=
@@ -3240,6 +3300,17 @@ A given attribute that is to be encoded in the final SAML response may contain a
 # cas.authn.samlIdp.algs.overrideSignatureAlgorithms=
 # cas.authn.samlIdp.algs.overrideBlackListedSignatureSigningAlgorithms=
 # cas.authn.samlIdp.algs.overrideWhiteListedSignatureSigningAlgorithms=
+```
+
+### SAML Response
+
+```properties
+# cas.authn.samlIdp.response.defaultAuthenticationContextClass=
+# cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
+# cas.authn.samlIdp.response.signError=false
+# cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
+# cas.authn.samlIdp.response.useAttributeFriendlyName=true
+# cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
 
 ## SAML SPs
@@ -3612,7 +3683,6 @@ The signature location MUST BE the public key used to sign the metadata.
 # cas.samlSp.inCommon.signatureLocation=/etc/cas/saml/inc-md-public-key.pem
 # cas.samlSp.inCommon.entityIds[0]=sampleSPEntityId
 ```
-
 
 ## OpenID Connect
 
