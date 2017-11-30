@@ -338,3 +338,20 @@ are likely the only safe options for production use.
 
 For more information on configuration of transaction levels and propagation behaviors,
 please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
+
+## Multifactor Authentication Bypass
+
+The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
+
+```properties
+# ${configurationKeyForProvider}.bypass.type=DEFAULT|GROOVY|REST
+# ${configurationKeyForProvider}.bypass.principalAttributeName=bypass|skip
+# ${configurationKeyForProvider}.bypass.principalAttributeValue=true|enabled.+
+# ${configurationKeyForProvider}.bypass.authenticationAttributeName=bypass|skip
+# ${configurationKeyForProvider}.bypass.authenticationAttributeValue=allowed.+|enabled.+
+# ${configurationKeyForProvider}.bypass.authenticationHandlerName=AcceptUsers.+
+# ${configurationKeyForProvider}.bypass.authenticationMethodName=LdapAuthentication.+
+# ${configurationKeyForProvider}.bypass.credentialClassType=UsernamePassword.+
+# ${configurationKeyForProvider}.bypass.httpRequestRemoteAddress=127.+|example.*
+# ${configurationKeyForProvider}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+```

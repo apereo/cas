@@ -81,10 +81,12 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * Whether subtree searching is allowed.
      */
     private boolean subtreeSearch = true;
+    
     /**
      * Base DN to use.
      */
     private String baseDn;
+
     /**
      * User filter to use for searching.
      * Syntax is {@code cn={user}} or {@code cn={0}}.
@@ -92,6 +94,18 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
     @RequiredProperty
     private String userFilter;
 
+    /**
+     * Define how aliases are de-referenced.
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code NEVER}</li>
+     *     <li>{@code SEARCHING}: dereference when searching the entries beneath the starting point but not when searching for the starting entry.</li>
+     *     <li>{@code FINDING}: dereference when searching for the starting entry but not when searching the entries beneath the starting point.</li>
+     *     <li>{@code ALWAYS}: dereference when searching for the starting entry and when searching the entries beneath the starting point.</li>
+     * </ul>
+     */
+    private String derefAliases;
+    
     /**
      * Search entry to define on the authenticator.
      */
@@ -160,5 +174,12 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
     public void setPrincipalAttributePassword(final String principalAttributePassword) {
         this.principalAttributePassword = principalAttributePassword;
     }
-    
+
+    public String getDerefAliases() {
+        return derefAliases;
+    }
+
+    public void setDerefAliases(final String derefAliases) {
+        this.derefAliases = derefAliases;
+    }
 }
