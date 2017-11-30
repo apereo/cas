@@ -1,5 +1,7 @@
 package org.apereo.cas;
 
+import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
+
 /**
  * Responsible to define operation that deal with encryption, signing
  * and verification of a value.
@@ -10,6 +12,12 @@ package org.apereo.cas;
  * @since 4.1
  */
 public interface CipherExecutor<I, O> {
+    
+    /**
+     * Default content encryption algorithm.
+     */
+    String DEFAULT_CONTENT_ENCRYPTION_ALGORITHM =
+            ContentEncryptionAlgorithmIdentifiers.AES_128_CBC_HMAC_SHA_256;
     
     /**
      * Encrypt the value. Implementations may
@@ -33,7 +41,9 @@ public interface CipherExecutor<I, O> {
      *
      * @return true/false
      */
-    boolean isEnabled();
+    default boolean isEnabled() {
+        return true;
+    }
 
     /**
      * The (component) name of this cipher.

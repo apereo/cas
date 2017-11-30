@@ -7,6 +7,7 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -31,7 +32,8 @@ public class OAuthRegisteredServiceTests {
     private final ServiceRegistryDao dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
     }
 
     @BeforeClass

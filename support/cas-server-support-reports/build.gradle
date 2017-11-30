@@ -3,15 +3,16 @@ dependencies {
     api project(":api:cas-server-core-api")
     implementation libraries.metrics
 
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-monitor")
-    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-validation")
+    implementation project(":core:cas-server-core-validation-api")
     
     compileOnly project(":support:cas-server-support-trusted-mfa")
     compileOnly project(":core:cas-server-core-events")
     compileOnly project(":support:cas-server-support-discovery-profile")
 
-    provided project(":support:cas-server-support-cookie")
+    implementation project(":core:cas-server-core-cookie-api")
     provided project(":core:cas-server-core-audit")
 }

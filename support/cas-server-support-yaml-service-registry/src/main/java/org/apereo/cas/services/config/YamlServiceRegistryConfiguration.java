@@ -4,9 +4,11 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.YamlServiceRegistryDao;
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationEventPublisher;
@@ -30,12 +32,17 @@ public class YamlServiceRegistryConfiguration {
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
+    @Autowired
+    @Qualifier("registeredServiceReplicationStrategy")
+    private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
+    
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         try {
             final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-            return new YamlServiceRegistryDao(registry.getYaml().getLocation(), registry.isWatcherEnabled(), eventPublisher);
+            return new YamlServiceRegistryDao(registry.getYaml().getLocation(), 
+                    registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

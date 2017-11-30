@@ -4,6 +4,7 @@ import com.google.common.base.Function;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -44,7 +45,7 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
     public List<MetadataResolver> resolve(final SamlRegisteredService service) {
         LOGGER.info("Loading metadata dynamically for [{}]", service.getName());
 
-        final SamlIdPProperties.Metadata md = samlIdPProperties.getMetadata();
+        final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
                 new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
         resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(md.getCacheExpirationMinutes(), TimeUnit.MINUTES));
@@ -74,7 +75,7 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
             }
         });
         try {
-            buildSingleMetadataResolver(resolver, service);
+            configureAndInitializeSingleMetadataResolver(resolver, service);
             return CollectionUtils.wrap(resolver);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

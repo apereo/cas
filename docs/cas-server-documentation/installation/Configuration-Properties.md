@@ -2667,6 +2667,12 @@ To learn more about this topic, [please review this guide](Configuring-Multifact
 # Activate MFA based on an optional request parameter
 # cas.authn.mfa.requestParameter=authn_method
 
+# Activate MFA based on an optional request header
+# cas.authn.mfa.requestHeader=authn_method
+
+# Activate MFA based on an optional request/session attribute
+# cas.authn.mfa.sessionAttribute=authn_method
+
 # Describe the global failure mode in case provider cannot be reached
 # cas.authn.mfa.globalFailureMode=CLOSED
 
@@ -4537,6 +4543,20 @@ To learn more about this topic, [please review this guide](Redis-Service-Managem
 # cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
 ```
 
+### CosmosDb Service Registry
+
+To learn more about this topic, [please review this guide](CosmosDb-Service-Management.html).
+
+```properties
+# cas.serviceRegistry.cosmosDb.uri=
+# cas.serviceRegistry.cosmosDb.key=
+# cas.serviceRegistry.cosmosDb.database=
+# cas.serviceRegistry.cosmosDb.collection=
+# cas.serviceRegistry.cosmosDb.throughput=10000
+# cas.serviceRegistry.cosmosDb.dropCollection=true
+# cas.serviceRegistry.cosmosDb.consistencyLevel=Session
+```
+
 ### DynamoDb Service Registry
 
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
@@ -4692,7 +4712,27 @@ To learn more about this topic, [please review this guide](JPA-Service-Managemen
 # cas.serviceRegistry.jpa.pool.maxWait=2000
 ```
 
+## Service Registry Replication
+
+Control how CAS services definition files should be replicated across a CAS cluster.
+To learn more about this topic, [please review this guide](Configuring-Service-Replication.html)
+
+Replication modes may be configured per the following options:
+
+| Type                    | Description
+|-------------------------|--------------------------------------------------------------
+| `ACTIVE_ACTIVE`       | All CAS nodes sync copies of definitions and keep them locally.
+| `ACTIVE_PASSIVE`    | Default. One master node keeps definitions and streams changes to other passive nodes.
+
+```properties
+# cas.serviceRegistry.stream.enabled=true
+# cas.serviceRegistry.stream.replicationMode=ACTIVE_ACTIVE|ACTIVE_PASSIVE
+```
+
 ## Service Registry Replication Hazelcast
+
+Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
+To learn more about this topic, [please review this guide](Configuring-Service-Replication.html)
 
 ```properties
 # cas.serviceRegistry.stream.hazelcast.duration=PT30S
@@ -4806,7 +4846,6 @@ To learn more about this topic, [please review this guide](Hazelcast-Ticket-Regi
 
 ```properties
 # cas.ticket.registry.hazelcast.pageSize=500
-# cas.ticket.registry.hazelcast.configLocation=
 
 # cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
 # cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300
@@ -5234,36 +5273,6 @@ The hard timeout policy provides for finite ticket lifetime as measured from the
 # cas.ticket.tgt.hardTimeout.timeToKillInSeconds=28800
 ```
 
-## Management Webapp
-
-To learn more about this topic, [please review this guide](Installing-ServicesMgmt-Webapp.html).
-
-The configuration of the CAS management web application is handled inside a `management.properties|yml` file. Some of the settings, specially those that deal with service registry and loading services or those that might define an external CAS server for authentication are shared between this application and the core CAS web application. You have to note that the [persistence storage](Service-Management.html) for services **MUST** be the same as that of the CAS server. The same service registry component that is configured for the CAS server, including module and all settings that affect the behavior of services, needs to be configured in the same exact way for the management web application.
-
-```properties
-# server.port=8444
-# server.contextPath=/cas-management
-
-# cas.mgmt.adminRoles[0]=ROLE_ADMIN
-# cas.mgmt.adminRoles[1]=ROLE_SUPER_USER
-
-# cas.mgmt.userPropertiesFile=classpath:/user-details.[json|yml]
-# cas.mgmt.userPropertiesFile=classpath:/user-details.properties
-
-# cas.mgmt.serverName=https://localhost:8443
-# cas.mgmt.defaultLocale=en
-
-# cas.mgmt.authzAttributes[0]=memberOf
-# cas.mgmt.authzAttributes[1]=groupMembership
-
-# Connect to a CAS server for authentication
-# cas.server.name=
-# cas.server.prefix=
-
-# Use regex for authorized IPs
-#cas.mgmt.authzIpRegex=
-```
-
 ### Attributes
 
 Attribute configuration and customizations that are processed and accepted by the management web application are defined via the following settings:
@@ -5274,59 +5283,14 @@ Attribute configuration and customizations that are processed and accepted by th
 # cas.authn.attributeRepository.stub.attributes.eppn=eppn
 ```
 
-### LDAP Authorization
-
 Use LDAP to enforce access into the management web application either by group or attribute.
-
-```properties
-# Enable authorization based on groups
-# cas.mgmt.ldap.ldapAuthz.groupAttribute=
-# cas.mgmt.ldap.ldapAuthz.groupPrefix=
-# cas.mgmt.ldap.ldapAuthz.groupFilter=
-# cas.mgmt.ldap.ldapAuthz.groupBaseDn=
-
-# Enable authorization based on attributes and roles
-# cas.mgmt.ldap.ldapAuthz.rolePrefix=ROLE_
-# cas.mgmt.ldap.ldapAuthz.roleAttribute=uugid
-
-# cas.mgmt.ldap.ldapAuthz.searchFilter=cn={user}
-# cas.mgmt.ldap.ldapAuthz.baseDn=
-
-# cas.mgmt.ldap.allowMultipleResults=false
-# cas.mgmt.ldap.baseDn=dc=example,dc=org
-# cas.mgmt.ldap.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
-# cas.mgmt.ldap.connectionStrategy=
-# cas.mgmt.ldap.baseDn=dc=example,dc=org
-# cas.mgmt.ldap.userFilter=cn={user}
-# cas.mgmt.ldap.bindDn=cn=Directory Manager,dc=example,dc=org
-# cas.mgmt.ldap.bindCredential=Password
-# cas.mgmt.ldap.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
-# cas.mgmt.ldap.connectTimeout=5000
-# cas.mgmt.ldap.trustCertificates=
-# cas.mgmt.ldap.keystore=
-# cas.mgmt.ldap.keystorePassword=
-# cas.mgmt.ldap.keystoreType=JKS|JCEKS|PKCS12
-# cas.mgmt.ldap.poolPassivator=NONE|CLOSE|BIND
-# cas.mgmt.ldap.minPoolSize=3
-# cas.mgmt.ldap.maxPoolSize=10
-# cas.mgmt.ldap.validateOnCheckout=true
-# cas.mgmt.ldap.validatePeriodically=true
-# cas.mgmt.ldap.validatePeriod=600
-# cas.mgmt.ldap.validateTimeout=5000
-# cas.mgmt.ldap.failFast=true
-# cas.mgmt.ldap.idleTime=500
-# cas.mgmt.ldap.prunePeriod=600
-# cas.mgmt.ldap.blockWaitTime=5000
-# cas.mgmt.ldap.subtreeSearch=true
-# cas.mgmt.ldap.useSsl=true
-# cas.mgmt.ldap.useStartTls=false
-```
 
 ## Google reCAPTCHA Integration
 
 Display Google's reCAPTCHA widget on the CAS login page.
 
 ```properties
+# cas.googleRecaptcha.enabled=true
 # cas.googleRecaptcha.verifyUrl=https://www.google.com/recaptcha/api/siteverify
 # cas.googleRecaptcha.siteKey=
 # cas.googleRecaptcha.secret=
@@ -6016,5 +5980,3 @@ The following LDAP types are supported:
 # cas.authn.pm.rest.endpointUrlSecurityQuestions=
 # cas.authn.pm.rest.endpointUrlChange=
 ```
-
-

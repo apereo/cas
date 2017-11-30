@@ -1,9 +1,13 @@
 
 description = "Apereo CAS WS-Federation Webflow Support"
 dependencies {
-    implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-web")
     api project(":api:cas-server-core-api-webflow")
-    implementation project(":core:cas-server-core-configuration")
+    
+    implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":support:cas-server-support-wsfederation")
+
+    testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
 }

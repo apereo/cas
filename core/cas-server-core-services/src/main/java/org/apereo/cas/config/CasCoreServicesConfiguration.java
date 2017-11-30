@@ -19,6 +19,8 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.slf4j.Logger;
@@ -117,12 +119,19 @@ public class CasCoreServicesConfiguration {
         return new RegisteredServicesEventListener(servicesManager, casProperties, communicationsManager);
     }
 
+    @ConditionalOnMissingBean(name = "registeredServiceReplicationStrategy")
+    @Bean
+    @RefreshScope
+    public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
+        return new NoOpRegisteredServiceReplicationStrategy();
+    }
+    
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime WILL be LOST upon container restarts. "
+                + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
                 + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
 
         final List<RegisteredService> services = new ArrayList<>();

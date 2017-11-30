@@ -4,18 +4,23 @@ description = "Apereo CAS Swivel Support"
  * The Swivel client library is not available in a central repository.
  */
 dependencies {
-    implementation project(":core:cas-server-core-authentication")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-webflow")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-swivel-core")
     
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
 
     implementation files("./lib/pinsafe.client.jar")
+    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     compileOnly project(":support:cas-server-support-trusted-mfa")
 }

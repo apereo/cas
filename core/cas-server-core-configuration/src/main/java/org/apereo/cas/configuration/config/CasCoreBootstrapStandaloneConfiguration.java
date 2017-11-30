@@ -5,7 +5,7 @@ import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.configuration.support.CasConfigurationJasyptDecryptor;
+import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +18,8 @@ import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.Ordered;
+import org.springframework.core.PriorityOrdered;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
@@ -48,10 +50,10 @@ import java.util.stream.Collectors;
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casStandaloneBootstrapConfiguration")
-public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator {
+public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
     private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreBootstrapStandaloneConfiguration.class);
 
-    private CasConfigurationJasyptDecryptor configurationJasyptDecryptor;
+    private CasConfigurationJasyptCipherExecutor configurationJasyptDecryptor;
 
     @Autowired
     private ResourceLoader resourceLoader;
@@ -82,7 +84,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        this.configurationJasyptDecryptor = new CasConfigurationJasyptDecryptor(environment);
+        this.configurationJasyptDecryptor = new CasConfigurationJasyptCipherExecutor(environment);
 
         final Properties props = new Properties();
         loadEmbeddedYamlOverriddenProperties(props, environment);
@@ -110,7 +112,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     private void loadSettingsFromStandaloneConfigFile(final Properties props, final File configFile) {
         final Properties pp = new Properties();
-        
+
         try (FileReader r = new FileReader(configFile)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             pp.load(r);
@@ -191,5 +193,10 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
                 props.putAll(decryptProperties(pp));
             }
         }
+    }
+
+    @Override
+    public int getOrder() {
+        return Ordered.LOWEST_PRECEDENCE;
     }
 }

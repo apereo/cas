@@ -235,7 +235,8 @@ public abstract class AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
-        final OAuthCode code = oAuthCodeFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
+        final OAuthCode code = oAuthCodeFactory.create(service, authentication,
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(code);
         return code;
     }
@@ -244,7 +245,8 @@ public abstract class AbstractOAuth20Tests {
         final Authentication authentication = getAuthentication(principal);
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final Service service = factory.createService(registeredService.getServiceId());
-        final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication, new MockTicketGrantingTicket("casuser"));
+        final RefreshToken refreshToken = oAuthRefreshTokenFactory.create(service, authentication,
+            new MockTicketGrantingTicket("casuser"), new ArrayList<>());
         this.ticketRegistry.addTicket(refreshToken);
         return refreshToken;
     }

@@ -4,8 +4,9 @@ dependencies {
     implementation project(":support:cas-server-support-oauth-api")
     implementation libraries.pac4j
     testImplementation project(":core:cas-server-core-util")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-services-registry")
     testImplementation project(path: ":support:cas-server-support-json-service-registry")

@@ -1,6 +1,8 @@
 package org.apereo.cas.services;
 
 
+import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,15 +17,15 @@ import java.nio.file.Path;
  * the directory structure to find relevant YAML files. Files are expected to have the
  * {@value YamlServiceRegistryDao#FILE_EXTENSION} extension. An example of the YAML file is included here:
  * <pre>
---- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
-serviceId: "testId"
-name: "YAML"
-id: 1000
-description: "description"
-attributeReleasePolicy: !&lt;org.apereo.cas.services.ReturnAllAttributeReleasePolicy&gt;
-accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy&gt;
-  enabled: true
-  ssoEnabled: true
+ * --- !&lt;org.apereo.cas.services.RegexRegisteredService&gt;
+ * serviceId: "testId"
+ * name: "YAML"
+ * id: 1000
+ * description: "description"
+ * attributeReleasePolicy: !&lt;org.apereo.cas.services.ReturnAllAttributeReleasePolicy&gt;
+ * accessStrategy: !&lt;org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy&gt;
+ * enabled: true
+ * ssoEnabled: true
  * </pre>
  *
  * @author Dmitriy Kopylenko
@@ -42,12 +44,16 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * Sets the path to the directory where YAML service registry entries are
      * stored. Uses the {@link RegisteredServiceYamlSerializer} by default.
      *
-     * @param configDirectory the config directory where service registry files can be found.
-     * @param enableWatcher   the enable watcher
-     * @param eventPublisher  the event publisher
+     * @param configDirectory                      the config directory where service registry files can be found.
+     * @param enableWatcher                        the enable watcher
+     * @param eventPublisher                       the event publisher
+     * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher) {
-        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher);
+    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher,
+                                  final ApplicationEventPublisher eventPublisher,
+                                  final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+        super(configDirectory, new RegisteredServiceYamlSerializer(),
+            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     /**
@@ -55,15 +61,18 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * Sets the path to the directory where YAML service registry entries are
      * stored. Uses the {@link RegisteredServiceYamlSerializer} by default.
      *
-     * @param configDirectory the config directory where service registry files can be found.
-     * @param enableWatcher   the enable watcher
-     * @param eventPublisher  the event publisher
+     * @param configDirectory                      the config directory where service registry files can be found.
+     * @param enableWatcher                        the enable watcher
+     * @param eventPublisher                       the event publisher
+     * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @throws Exception the IO exception
      */
     public YamlServiceRegistryDao(final Resource configDirectory,
                                   final boolean enableWatcher,
-                                  final ApplicationEventPublisher eventPublisher) throws Exception {
-        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher, eventPublisher);
+                                  final ApplicationEventPublisher eventPublisher,
+                                  final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
+        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
+            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
 

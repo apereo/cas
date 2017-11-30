@@ -1,6 +1,6 @@
 description = "Apereo CAS Trusted MFA Browser/Device REST Support"
 dependencies {
     implementation project(":support:cas-server-support-trusted-mfa")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
 }

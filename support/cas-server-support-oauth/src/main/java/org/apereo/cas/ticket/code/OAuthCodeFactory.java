@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
+import java.util.Collection;
+
 /**
  * Factory to create OAuth codes.
  *
@@ -19,7 +21,9 @@ public interface OAuthCodeFactory extends TicketFactory {
      * @param service              the service
      * @param authentication       the authentication
      * @param ticketGrantingTicket the ticket granting ticket
+     * @param scopes               the scopes
      * @return the OAuth code
      */
-    OAuthCode create(Service service, Authentication authentication, TicketGrantingTicket ticketGrantingTicket);
+    OAuthCode create(Service service, Authentication authentication,
+                     TicketGrantingTicket ticketGrantingTicket, Collection<String> scopes);
 }

@@ -6,7 +6,6 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -14,6 +13,7 @@ import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +54,7 @@ public class HazelcastTicketRegistryConfiguration {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
                 ticketCatalog,
                 hz.getPageSize());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
+        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
     }
 

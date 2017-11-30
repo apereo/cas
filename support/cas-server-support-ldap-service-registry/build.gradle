@@ -2,16 +2,17 @@ description = "Apereo CAS LDAP Service Registry Support"
 dependencies {
     implementation project(":core:cas-server-core-services")
     implementation project(":support:cas-server-support-ldap-core")
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-services-registry")
     
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
-    testImplementation project(":core:cas-server-core-authentication")
+    testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":support:cas-server-support-oauth-core")
     testImplementation project(":support:cas-server-support-oauth-services")
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":support:cas-server-support-saml-idp-core")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-tickets")
-    testImplementation project(":core:cas-server-core-logout")
+    testImplementation project(":core:cas-server-core-logout-api")
 }

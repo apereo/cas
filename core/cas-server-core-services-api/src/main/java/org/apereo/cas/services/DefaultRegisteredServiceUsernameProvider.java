@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -37,11 +38,18 @@ public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServ
         if (obj == this) {
             return true;
         }
-        return obj.getClass() == getClass();
+        if (obj.getClass() != getClass()) {
+            return false;
+        }
+        return new EqualsBuilder()
+                .appendSuper(super.equals(obj))
+                .isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 113).toHashCode();
+        return new HashCodeBuilder()
+                .appendSuper(super.hashCode())
+                .toHashCode();
     }
 }

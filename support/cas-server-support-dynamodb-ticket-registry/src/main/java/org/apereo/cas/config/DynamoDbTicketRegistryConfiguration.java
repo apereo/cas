@@ -12,11 +12,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistry;
 import org.apereo.cas.ticket.registry.DynamoDbTicketRegistryFacilitator;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -44,7 +44,7 @@ public class DynamoDbTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final DynamoDbTicketRegistryProperties db = casProperties.getTicket().getRegistry().getDynamoDb();
         final EncryptionRandomizedSigningJwtCryptographyProperties crypto = db.getCrypto();
-        return new DynamoDbTicketRegistry(Beans.newTicketRegistryCipherExecutor(crypto, "dynamoDb"),
+        return new DynamoDbTicketRegistry(CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "dynamoDb"),
                 dynamoDbTicketRegistryFacilitator(ticketCatalog));
     }
 
