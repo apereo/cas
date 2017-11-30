@@ -609,6 +609,7 @@ Enable LDAP authentication for Spring Security to secure endpoints.
 # cas.adminPagesSecurity.ldap.bindCredential=Password
 
 # cas.adminPagesSecurity.ldap.enhanceWithEntryResolver=true
+# cas.adminPagesSecurity.ldap.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS
 # cas.adminPagesSecurity.ldap.dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.adminPagesSecurity.ldap.principalAttributePassword=password
 
@@ -1931,6 +1932,7 @@ Furthermore if you are seeing errors in the logs that resemble a *<Operation exc
 # cas.authn.ldap[0].bindCredential=Password
 
 # cas.authn.ldap[0].enhanceWithEntryResolver=true
+# cas.authn.ldap[0].derefAliases=NEVER|SEARCHING|FINDING|ALWAYS
 # cas.authn.ldap[0].dnFormat=uid=%s,ou=people,dc=example,dc=org
 # cas.authn.ldap[0].principalAttributeId=uid
 # cas.authn.ldap[0].principalAttributePassword=password
@@ -2784,19 +2786,9 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.cleaner.enabled=true
 # cas.authn.mfa.gauth.cleaner.schedule.startDelay=20000
 # cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
-
-
-# cas.authn.mfa.gauth.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.gauth.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.gauth.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.gauth.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.gauth.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.gauth.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.gauth.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.gauth.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.gauth.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.gauth.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.gauth`.
 
 #### Google Authenticator JSON
 
@@ -2857,18 +2849,9 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.apiUrls=
 # cas.authn.mfa.yubikey.trustedDeviceEnabled=false
 # cas.authn.mfa.yubikey.name=
-
-# cas.authn.mfa.yubikey.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.yubikey.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.yubikey.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.yubikey.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.yubikey.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.yubikey.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.yubikey.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.yubikey.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.yubikey.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.yubikey.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
 
 #### YubiKey JSON Device Store
 
@@ -2946,18 +2929,9 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.server.nasPort=-1
 # cas.authn.mfa.radius.server.nasIpAddress=
 # cas.authn.mfa.radius.server.nasIpv6Address=
-
-# cas.authn.mfa.radius.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.radius.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.radius.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.radius.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.radius.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.radius.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.radius.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.radius.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.radius.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.radius.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
 
 ### DuoSecurity
 
@@ -2973,17 +2947,6 @@ To learn more about this topic, [please review this guide](DuoSecurity-Authentic
 # cas.authn.mfa.duo[0].id=mfa-duo
 # cas.authn.mfa.duo[0].registrationUrl=https://registration.example.org/duo-enrollment
 # cas.authn.mfa.duo[0].name=
-
-# cas.authn.mfa.duo[0].bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.duo[0].bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.duo[0].bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.duo[0].bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.duo[0].bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.duo[0].bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.duo[0].bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.duo[0].bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.duo[0].bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.duo[0].bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
 
 The `duoApplicationKey` is a string, at least 40 characters long, that you generate and keep secret from Duo.
@@ -2994,6 +2957,8 @@ import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+
 ### FIDO U2F
 
 To learn more about this topic, [please review this guide](FIDO-U2F-Authentication.html).
@@ -3002,22 +2967,13 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.rank=0
 # cas.authn.mfa.u2f.name=
 
-# cas.authn.mfa.u2f.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.u2f.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.u2f.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.u2f.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.u2f.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.u2f.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.u2f.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.u2f.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.u2f.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.u2f.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
-
 # cas.authn.mfa.u2f.expireRegistrations=30
 # cas.authn.mfa.u2f.expireRegistrationsTimeUnit=SECONDS
 # cas.authn.mfa.u2f.expireDevices=30
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F JSON
 
@@ -3109,18 +3065,9 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.ignoreSslErrors=false
 # cas.authn.mfa.swivel.rank=0
 # cas.authn.mfa.swivel.name=
-
-# cas.authn.mfa.swivel.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.swivel.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.swivel.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.swivel.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.swivel.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.swivel.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.swivel.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.swivel.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.swivel.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.swivel.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
 
 ### Microsoft Azure
 
@@ -3134,18 +3081,9 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.rank=0
 # cas.authn.mfa.azure.name=
 # cas.authn.mfa.azure.allowInternationalCalls=false
-
-# cas.authn.mfa.azure.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.azure.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.azure.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.azure.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.azure.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.azure.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.azure.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.azure.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.azure.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.azure.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
 
 ### Authy
 
@@ -3160,18 +3098,9 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.forceVerification=true
 # cas.authn.mfa.authy.trustedDeviceEnabled=false
 # cas.authn.mfa.authy.name=
-
-# cas.authn.mfa.authy.bypass.type=DEFAULT|GROOVY|REST
-# cas.authn.mfa.authy.bypass.principalAttributeName=bypass|skip
-# cas.authn.mfa.authy.bypass.principalAttributeValue=true|enabled.+
-# cas.authn.mfa.authy.bypass.authenticationAttributeName=bypass|skip
-# cas.authn.mfa.authy.bypass.authenticationAttributeValue=allowed.+|enabled.+
-# cas.authn.mfa.authy.bypass.authenticationHandlerName=AcceptUsers.+
-# cas.authn.mfa.authy.bypass.authenticationMethodName=LdapAuthentication.+
-# cas.authn.mfa.authy.bypass.credentialClassType=UsernamePassword.+
-# cas.authn.mfa.authy.bypass.httpRequestRemoteAddress=127.+|example.*
-# cas.authn.mfa.authy.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
 ```
+
+Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
 
 ## SAML Core
 
