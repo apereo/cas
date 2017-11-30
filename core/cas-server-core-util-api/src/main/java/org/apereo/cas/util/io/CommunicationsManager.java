@@ -55,7 +55,7 @@ public class CommunicationsManager {
                          final String subject,
                          final String cc, final String bcc) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isMailSenderDefined()) {
-            final String to = CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
+            final String to = getFirstAttributeByName( principal, attribute );
             return email(text, from, subject, to, cc, bcc);
         }
         return false;
@@ -132,7 +132,7 @@ public class CommunicationsManager {
                        final String attribute,
                        final String text, final String from) {
         if (StringUtils.isNotBlank(attribute) && principal.getAttributes().containsKey(attribute) && isSmsSenderDefined()) {
-            final String to = CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
+            final String to = getFirstAttributeByName( principal, attribute );
             return sms(from, to, text);
         }
         return false;
@@ -153,4 +153,9 @@ public class CommunicationsManager {
         }
         return this.smsSender.send(from, to, text);
     }
+
+    private String getFirstAttributeByName( final Principal principal, final String attribute ) {
+        return CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
+    }
+
 }
