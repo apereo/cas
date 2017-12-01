@@ -643,7 +643,7 @@ public final class WebUtils {
      * @return the boolean
      */
     public static boolean isRememberMeAuthenticationEnabled(final RequestContext context) {
-        return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", false);
+        return context.getFlowScope().getBoolean("rememberMeAuthenticationEnabled", Boolean.FALSE);
     }
 
     /**
