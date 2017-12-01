@@ -22,9 +22,9 @@ Contributors:
 -   Robert Oschwald [CAS 3.0]
 -   Misagh Moayyed
 
-Version: 3.0.2
+Version: 3.0.3
 
-Release Date: 2015-01-13
+Release Date: 2017-12-01
 
 Copyright &copy; 2005, Yale University
 
@@ -1525,76 +1525,116 @@ to the CAS client.
 
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:cas="http://www.yale.edu/tp/cas" targetNamespace="http://www.yale.edu/tp/cas" elementFormDefault="qualified" attributeFormDefault="unqualified">
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+           xmlns:cas="http://www.yale.edu/tp/cas"
+           targetNamespace="http://www.yale.edu/tp/cas"
+           elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:documentation>
+      The following is the schema for the Central Authentication Service (CAS) version 3.0 protocol response.<br />
+      This covers the responses for the following endpoints: /serviceValidate, /proxyValidate, /p3/serviceValidate, /p3/proxyValidate, /proxy.<br />
+      This specification is subject to change.<br />
+
+      Schema version: 3.0.3<br />
+
+      History:<br />
+      3.0   initial version for CAS 3.0 protocol spec <br />
+      3.0.3 fixed attributes memberOf / xs:any clash, added documentation.<br />
+    </xs:documentation>
+  </xs:annotation>
+  <xs:element name="serviceResponse" type="cas:ServiceResponseType">
     <xs:annotation>
-        <xs:documentation>The following is the schema for the Central Authentication Service (CAS) version 3.0 protocol response. This covers the responses for the following servlets: /serviceValidate, /proxyValidate, /p3/serviceValidate, /p3/proxyValidate, /proxy This specification is subject to change.</xs:documentation>
+      <xs:documentation>The service Response.</xs:documentation>
     </xs:annotation>
-    <xs:element name="serviceResponse" type="cas:ServiceResponseType"></xs:element>
-    <xs:complexType name="ServiceResponseType">
-        <xs:choice>
-            <xs:element name="authenticationSuccess" type="cas:AuthenticationSuccessType"></xs:element>
-            <xs:element name="authenticationFailure" type="cas:AuthenticationFailureType"></xs:element>
-            <xs:element name="proxySuccess" type="cas:ProxySuccessType"></xs:element>
-            <xs:element name="proxyFailure" type="cas:ProxyFailureType"></xs:element>
-        </xs:choice>
-    </xs:complexType>
-    <xs:complexType name="AuthenticationSuccessType">
-        <xs:sequence>
-            <xs:element name="user" type="xs:string"></xs:element>
-            <xs:element name="attributes" type="cas:AttributesType" minOccurs="0"></xs:element>
-            <xs:element name="proxyGrantingTicket" type="xs:string" minOccurs="0"></xs:element>
-            <xs:element name="proxies" type="cas:ProxiesType" minOccurs="0"></xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="ProxiesType">
-        <xs:sequence>
-            <xs:element name="proxy" type="xs:string" maxOccurs="unbounded"></xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="AuthenticationFailureType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="code" type="xs:string" use="required"></xs:attribute>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="ProxySuccessType">
-        <xs:sequence>
-            <xs:element name="proxyTicket" type="xs:string"></xs:element>
-        </xs:sequence>
-    </xs:complexType>
-    <xs:complexType name="ProxyFailureType">
-        <xs:simpleContent>
-            <xs:extension base="xs:string">
-                <xs:attribute name="code" type="xs:string" use="required"></xs:attribute>
-            </xs:extension>
-        </xs:simpleContent>
-    </xs:complexType>
-    <xs:complexType name="AttributesType">
-        <xs:sequence>
-            <xs:element name="authenticationDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"></xs:element>
-            <xs:element name="longTermAuthenticationRequestTokenUsed" type="xs:boolean" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>true if a long-term (Remember-Me) token was used</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="isFromNewLogin" type="xs:boolean" minOccurs="1" maxOccurs="1">
-                <xs:annotation>
-                    <xs:documentation>true if this was from a new, interactive login. If login was from a non-interactive login (e.g. Remember-Me), this value is false or might be omitted.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:element name="memberOf" type="xs:string" minOccurs="0" maxOccurs="unbounded">
-                <xs:annotation>
-                    <xs:documentation>One or many elements describing the units the user is member in. E.g. LDAP format values.</xs:documentation>
-                </xs:annotation>
-            </xs:element>
-            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax">
-                <xs:annotation>
-                    <xs:documentation>Any user specific attribute elements.</xs:documentation>
-                </xs:annotation>
-            </xs:any>
-        </xs:sequence>
-    </xs:complexType>
+  </xs:element>
+  <xs:complexType name="ServiceResponseType">
+    <xs:choice>
+      <xs:element name="authenticationSuccess" type="cas:AuthenticationSuccessType"/>
+      <xs:element name="authenticationFailure" type="cas:AuthenticationFailureType"/>
+      <xs:element name="proxySuccess" type="cas:ProxySuccessType"/>
+      <xs:element name="proxyFailure" type="cas:ProxyFailureType"/>
+    </xs:choice>
+  </xs:complexType>
+  <xs:complexType name="AuthenticationSuccessType">
+    <xs:sequence>
+      <xs:element name="user" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The username which authenticated successfully.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="attributes" type="cas:AttributesType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional attributes.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="proxyGrantingTicket" type="xs:string" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional PGT.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="proxies" type="cas:ProxiesType" minOccurs="0">
+        <xs:annotation>
+          <xs:documentation>Optional type of proxies.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ProxiesType">
+    <xs:sequence>
+      <xs:element name="proxy" type="xs:string" maxOccurs="unbounded"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="AuthenticationFailureType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="code" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>The error code on authentication failure.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ProxySuccessType">
+    <xs:sequence>
+      <xs:element name="proxyTicket" type="xs:string">
+        <xs:annotation>
+          <xs:documentation>The PT.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="ProxyFailureType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="code" type="xs:string" use="required">
+          <xs:annotation>
+            <xs:documentation>The error code on proxy failure.</xs:documentation>
+          </xs:annotation>
+        </xs:attribute>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="AttributesType">
+    <xs:sequence>
+      <xs:element name="authenticationDate" type="xs:dateTime" minOccurs="1" maxOccurs="1"/>
+      <xs:element name="longTermAuthenticationRequestTokenUsed" type="xs:boolean" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>true if a long-term (Remember-Me) token was used</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:element name="isFromNewLogin" type="xs:boolean" minOccurs="1" maxOccurs="1">
+        <xs:annotation>
+          <xs:documentation>true if this was from a new, interactive login. If login was from a non-interactive login (e.g. Remember-Me), this value is false or might be omitted.</xs:documentation>
+        </xs:annotation>
+      </xs:element>
+      <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax">
+        <xs:annotation>
+          <xs:documentation>Any user specific attribute elements. May contain memberOf or any other elements.</xs:documentation>
+        </xs:annotation>
+      </xs:any>
+    </xs:sequence>
+  </xs:complexType>
 </xs:schema>
 ```
 
@@ -1795,9 +1835,15 @@ met:
 **Appendix F: Changes to this Document**
 ========================================
 
-May 4, 2005: v1.0 - initial release
+May 4, 2005: v1.0 - initial release for CAS 1.0 and CAS 2.0, Copyright © 2005, Yale University
 
 March 2, 2012: v1.0.1 - fixed "noscropt" typo. apetro per amazurek with credit
 to Faraz Khan at ASU for catching the typo.
 
-April, 2013: v2.0 - CAS 3.0 protocol, Apereo copyright, Apache License 2.0
+April, 2013: v3.0 - CAS 3.0 protocol, Apereo copyright, Apache License 2.0
+
+January, 2014: v3.0.1 - Attribute occurance
+
+September, 2015: v3.0.2 - Format parameter
+
+December, 2017: v3.0.3 - Fixed ServiceValidate XSD schema
