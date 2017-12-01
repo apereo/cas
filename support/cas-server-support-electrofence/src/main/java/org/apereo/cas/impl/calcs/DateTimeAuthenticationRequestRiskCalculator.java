@@ -38,13 +38,11 @@ public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticat
 
         if (timestamp.getHour() <= timestamp.plusHours(windowInHours).getHour()
                 && timestamp.getHour() >= timestamp.minusHours(windowInHours).getHour()){
-            count = events.stream().filter(
-                    e->e.getCreationTime().getHour() <= timestamp.plusHours(windowInHours).getHour()
-                    && e.getCreationTime().getHour() >= timestamp.minusHours(windowInHours).getHour()
-                                    ).count();
+            count = events.stream().filter(e->e.getCreationTime().getHour() <= timestamp.plusHours(windowInHours).getHour()
+                && e.getCreationTime().getHour() >= timestamp.minusHours(windowInHours).getHour()).count();
         } else {
             count = events.stream().filter(e -> e.getCreationTime().getHour() <= timestamp.plusHours(windowInHours).getHour()
-                    || e.getCreationTime().getHour() >= timestamp.minusHours(windowInHours).getHour()).count();
+                || e.getCreationTime().getHour() >= timestamp.minusHours(windowInHours).getHour()).count();
         }
 
         LOGGER.debug("Total authentication events found for [{}] in a [{}]h window: [{}]", timestamp, windowInHours, count);
