@@ -155,7 +155,8 @@ public class CommunicationsManager {
     }
 
     private String getFirstAttributeByName(final Principal principal, final String attribute) {
-        return CollectionUtils.toCollection(principal.getAttributes().get(attribute)).iterator().next().toString();
+        final Object value = principal.getAttributes().get(attribute);
+        return CollectionUtils.firstElement(value).toString();
     }
 
 }

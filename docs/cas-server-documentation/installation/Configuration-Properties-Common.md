@@ -177,6 +177,16 @@ def String run(final Object... args) {
 }
 ```
 
+The following options related to principal transformation support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.principalTransformation.pattern=(.+)@example.org
+# ${configurationKey}.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
+# ${configurationKey}.principalTransformation.suffix=
+# ${configurationKey}.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# ${configurationKey}.principalTransformation.prefix=
+```
+
 ## Hibernate & JDBC
 
 Control global properties that are relevant to Hibernate,
@@ -186,6 +196,45 @@ connections and queries.
 ```properties
 # cas.jdbc.showSql=true
 # cas.jdbc.genDdl=true
+```
+
+### Database Settings
+
+The following options related to JPA/JDBC support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.user=sa
+# ${configurationKey}.password=
+# ${configurationKey}.driverClass=org.hsqldb.jdbcDriver
+# ${configurationKey}.url=jdbc:hsqldb:mem:cas-hsql-database
+# ${configurationKey}.dialect=org.hibernate.dialect.HSQLDialect
+
+# ${configurationKey}.failFastTimeout=1
+# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED
+# ${configurationKey}.healthQuery=
+# ${configurationKey}.isolateInternalQueries=false
+# ${configurationKey}.leakThreshold=10
+# ${configurationKey}.propagationBehaviorName=PROPAGATION_REQUIRED
+# ${configurationKey}.batchSize=1
+# ${configurationKey}.defaultCatalog=
+# ${configurationKey}.defaultSchema=
+# ${configurationKey}.ddlAuto=create-drop
+# ${configurationKey}.maxAgeDays=180
+
+# ${configurationKey}.autocommit=false
+# ${configurationKey}.idleTimeout=5000
+
+# ${configurationKey}.dataSourceName=
+# ${configurationKey}.dataSourceProxy=false
+
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# ${configurationKey}.properties.propertyName=propertyValue
+
+# ${configurationKey}.pool.suspension=false
+# ${configurationKey}.pool.minSize=6
+# ${configurationKey}.pool.maxSize=18
+# ${configurationKey}.pool.maxWait=2000
+# ${configurationKey}.pool.timeoutMillis=1000
 ```
 
 ### Container-based JDBC Connections
