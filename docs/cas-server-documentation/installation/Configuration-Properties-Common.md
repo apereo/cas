@@ -333,6 +333,103 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 # cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
 ```
 
+## MongoDb Configuration
+
+The following options related to MongoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.mongo.host=localhost
+# ${configurationKey}.mongo.clientUri=localhost
+# ${configurationKey}.mongo.idleTimeout=30000
+# ${configurationKey}.mongo.port=27017
+# ${configurationKey}.mongo.dropCollection=false
+# ${configurationKey}.mongo.socketKeepAlive=false
+# ${configurationKey}.mongo.password=
+
+# Depending on the feature at hand, CAS may decide to dynamically create its own collections and ignore this setting.
+# ${configurationKey}.mongo.collection=cas-service-registry
+
+# ${configurationKey}.mongo.databaseName=cas-mongo-database
+# ${configurationKey}.mongo.timeout=5000
+# ${configurationKey}.mongo.userId=
+# ${configurationKey}.mongo.writeConcern=NORMAL
+# ${configurationKey}.mongo.authenticationDatabaseName=
+# ${configurationKey}.mongo.replicaSet=
+# ${configurationKey}.mongo.ssEnabled=false
+# ${configurationKey}.mongo.conns.lifetime=60000
+# ${configurationKey}.mongo.conns.perHost=10
+```
+
+## DynamoDb Configuration
+
+The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# ${configurationKey}.dynamoDb.credentialAccessKey=
+# ${configurationKey}.dynamoDb.credentialSecretKey=
+
+# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
+# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# ${configurationKey}.dynamoDb.regionOverride=
+# ${configurationKey}.dynamoDb.serviceNameIntern=
+
+# ${configurationKey}.dynamoDb.dropTablesOnStartup=false
+# ${configurationKey}.dynamoDb.timeOffset=0
+
+# ${configurationKey}.dynamoDb.readCapacity=10
+# ${configurationKey}.dynamoDb.writeCapacity=10
+# ${configurationKey}.dynamoDb.connectionTimeout=5000
+# ${configurationKey}.dynamoDb.requestTimeout=5000
+# ${configurationKey}.dynamoDb.socketTimeout=5000
+# ${configurationKey}.dynamoDb.useGzip=false
+# ${configurationKey}.dynamoDb.useReaper=false
+# ${configurationKey}.dynamoDb.useThrottleRetries=false
+# ${configurationKey}.dynamoDb.useTcpKeepAlive=false
+# ${configurationKey}.dynamoDb.protocol=HTTPS
+# ${configurationKey}.dynamoDb.clientExecutionTimeout=10000
+# ${configurationKey}.dynamoDb.cacheResponseMetadata=false
+# ${configurationKey}.dynamoDb.localAddress=
+# ${configurationKey}.dynamoDb.maxConnections=10
+```
+
+## Redis Configuration
+
+The following options related to Redis support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.redis.host=localhost
+# ${configurationKey}.redis.database=0
+# ${configurationKey}.redis.port=6380
+# ${configurationKey}.redis.password=
+# ${configurationKey}.redis.timeout=2000
+# ${configurationKey}.redis.useSsl=false
+# ${configurationKey}.redis.usePool=true
+
+# ${configurationKey}.redis.pool.max-active=20
+# ${configurationKey}.redis.pool.maxIdle=8
+# ${configurationKey}.redis.pool.minIdle=0
+# ${configurationKey}.redis.pool.maxActive=8
+# ${configurationKey}.redis.pool.maxWait=-1
+# ${configurationKey}.redis.pool.numTestsPerEvictionRun=0
+# ${configurationKey}.redis.pool.softMinEvictableIdleTimeMillis=0
+# ${configurationKey}.redis.pool.minEvictableIdleTimeMillis=0
+# ${configurationKey}.redis.pool.lifo=true
+# ${configurationKey}.redis.pool.fairness=false
+
+# ${configurationKey}.redis.pool.testOnCreate=false
+# ${configurationKey}.redis.pool.testOnBorrow=false
+# ${configurationKey}.redis.pool.testOnReturn=false
+# ${configurationKey}.redis.pool.testWhileIdle=false
+
+# ${configurationKey}.redis.sentinel.master=mymaster
+# ${configurationKey}.redis.sentinel.nodes[0]=localhost:26377
+# ${configurationKey}.redis.sentinel.nodes[1]=localhost:26378
+# ${configurationKey}.redis.sentinel.nodes[2]=localhost:26379
+```
 
 ## DDL Configuration
 
