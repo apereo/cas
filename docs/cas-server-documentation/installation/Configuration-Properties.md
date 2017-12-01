@@ -2735,18 +2735,13 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ### MongoDb Storage
 
-```properties
-# cas.authn.mfa.trusted.mongo.clientUri=
-# cas.authn.mfa.trusted.mongo.dropCollection=false
-# cas.authn.mfa.trusted.mongo.collection=MongoDbCasTrustedAuthnMfaRepository
-```
-
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`. 
+ 
 ### REST Storage
 
 ```properties
 # cas.authn.mfa.trusted.rest.endpoint=https://api.example.org/trustedBrowser
 ```
-
 
 ### Cleaner
 
@@ -2794,10 +2789,9 @@ Multifacor authentication bypass settings for this provider are available [here]
 
 #### Google Authenticator MongoDb
 
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.gauth`.  The following settings are additionally available for this feature:
+ 
 ```properties
-# cas.authn.mfa.gauth.mongo.clientUri=
-# cas.authn.mfa.gauth.mongo.dropCollection=false
-# cas.authn.mfa.gauth.mongo.collection=MongoDbGoogleAuthenticatorRepository
 # cas.authn.mfa.gauth.mongo.tokenCollection=MongoDbGoogleAuthenticatorTokenRepository
 ```
 
@@ -2887,12 +2881,8 @@ Multifacor authentication bypass settings for this provider are available [here]
 
 ### YubiKey MongoDb Device Store
 
-```properties
-# cas.authn.mfa.yubikey.mongo.clientUri=
-# cas.authn.mfa.yubikey.mongo.dropCollection=false
-# cas.authn.mfa.yubikey.mongo.collection=MongoDbYubiKeyRepository
-```
-
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.yubikey`.
+ 
 ### Radius OTP
 
 To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
@@ -2981,26 +2971,8 @@ Multifacor authentication bypass settings for this provider are available [here]
 
 #### FIDO U2F MongoDb
 
-```properties
-# cas.authn.mfa.u2f.mongo.host=localhost
-# cas.authn.mfa.u2f.mongo.clientUri=localhost
-# cas.authn.mfa.u2f.mongo.idleTimeout=30000
-# cas.authn.mfa.u2f.mongo.port=27017
-# cas.authn.mfa.u2f.mongo.dropCollection=false
-# cas.authn.mfa.u2f.mongo.socketKeepAlive=false
-# cas.authn.mfa.u2f.mongo.password=
-# cas.authn.mfa.u2f.mongo.collection=cas-fido-repository
-# cas.authn.mfa.u2f.mongo.databaseName=cas-mongo-database
-# cas.authn.mfa.u2f.mongo.timeout=5000
-# cas.authn.mfa.u2f.mongo.userId=
-# cas.authn.mfa.u2f.mongo.writeConcern=NORMAL
-# cas.authn.mfa.u2f.mongo.authenticationDatabaseName=
-# cas.authn.mfa.u2f.mongo.replicaSet=
-# cas.authn.mfa.u2f.mongo.ssEnabled=false
-# cas.authn.mfa.u2f.mongo.conns.lifetime=60000
-# cas.authn.mfa.u2f.mongo.conns.perHost=10
-```
-
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+ 
 #### FIDO U2F JPA
 
 ```properties
@@ -3180,26 +3152,8 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata MongoDb
 
-```properties
-# cas.authn.samlIdp.metadata.mongo.host=localhost
-# cas.authn.samlIdp.metadata.mongo.clientUri=localhost
-# cas.authn.samlIdp.metadata.mongo.idleTimeout=30000
-# cas.authn.samlIdp.metadata.mongo.port=27017
-# cas.authn.samlIdp.metadata.mongo.dropCollection=false
-# cas.authn.samlIdp.metadata.mongo.socketKeepAlive=false
-# cas.authn.samlIdp.metadata.mongo.password=
-# cas.authn.samlIdp.metadata.mongo.collection=cas-audit-database
-# cas.authn.samlIdp.metadata.mongo.databaseName=cas-saml-metadata
-# cas.authn.samlIdp.metadata.mongo.timeout=5000
-# cas.authn.samlIdp.metadata.mongo.userId=
-# cas.authn.samlIdp.metadata.mongo.writeConcern=NORMAL
-# cas.authn.samlIdp.metadata.mongo.authenticationDatabaseName=
-# cas.authn.samlIdp.metadata.mongo.replicaSet=
-# cas.authn.samlIdp.metadata.mongo.ssEnabled=false
-# cas.authn.samlIdp.metadata.mongo.conns.lifetime=60000
-# cas.authn.samlIdp.metadata.mongo.conns.perHost=10
-```
-
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
+ 
 ### SAML Logout
 
 ```properties
@@ -4047,26 +4001,8 @@ To learn more about this topic, [please review this guide](Audits.html).
 
 Store audit logs inside a MongoDb database.
 
-```properties
-# cas.audit.mongo.host=localhost
-# cas.audit.mongo.clientUri=localhost
-# cas.audit.mongo.idleTimeout=30000
-# cas.audit.mongo.port=27017
-# cas.audit.mongo.dropCollection=false
-# cas.audit.mongo.socketKeepAlive=false
-# cas.audit.mongo.password=
-# cas.audit.mongo.collection=cas-audit-database
-# cas.audit.mongo.databaseName=cas-mongo-database
-# cas.audit.mongo.timeout=5000
-# cas.audit.mongo.userId=
-# cas.audit.mongo.writeConcern=NORMAL
-# cas.audit.mongo.authenticationDatabaseName=
-# cas.audit.mongo.replicaSet=
-# cas.audit.mongo.ssEnabled=false
-# cas.audit.mongo.conns.lifetime=60000
-# cas.audit.mongo.conns.perHost=10
-```
-
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
+ 
 ### Database Audits
 
 Store audit logs inside a database.
@@ -4172,25 +4108,7 @@ Decide how CAS should monitor the internal state of a memcached connection pool.
 
 ### MongoDb Monitors
 
-Decide how CAS should monitor the internal state of a MongoDb instance.
-
-```properties
-# cas.monitor.mongo.host=localhost
-# cas.monitor.mongo.clientUri=localhost
-# cas.monitor.mongo.idleTimeout=30000
-# cas.monitor.mongo.port=27017
-# cas.monitor.mongo.socketKeepAlive=false
-# cas.monitor.mongo.password=
-# cas.monitor.mongo.databaseName=cas-mongo-database
-# cas.monitor.mongo.timeout=5000
-# cas.monitor.mongo.userId=
-# cas.monitor.mongo.writeConcern=NORMAL
-# cas.monitor.mongo.authenticationDatabaseName=
-# cas.monitor.mongo.replicaSet=
-# cas.monitor.mongo.ssEnabled=false
-# cas.monitor.mongo.conns.lifetime=60000
-# cas.monitor.mongo.conns.perHost=10
-```
+Decide how CAS should monitor the internal state of a MongoDb instance.  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.monitor`.
 
 ### Database Monitoring
 
@@ -4353,13 +4271,7 @@ Decide how CAS should store authentication events inside a database instance.
 
 ### MongoDb Events
 
-Decide how CAS should store authentication events inside a MongoDb instance.
-
-```properties
-# cas.events.mongo.clientUri=
-# cas.events.mongo.dropCollection=false
-# cas.events.mongo.collection=MongoDbCasEventRepository
-```
+Decide how CAS should store authentication events inside a MongoDb instance.  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
 
 ## Http Web Requests
 
@@ -4489,36 +4401,7 @@ To learn more about this topic, [please review this guide](REST-Service-Manageme
 
 ### Redis Service Registry
 
-To learn more about this topic, [please review this guide](Redis-Service-Management.html).
-
-```properties
-# cas.serviceRegistry.redis.host=localhost
-# cas.serviceRegistry.redis.database=0
-# cas.serviceRegistry.redis.port=6380
-# cas.serviceRegistry.redis.password=
-# cas.serviceRegistry.redis.timeout=2000
-# cas.serviceRegistry.redis.useSsl=false
-# cas.serviceRegistry.redis.usePool=true
-
-# cas.serviceRegistry.redis.pool.max-active=20
-# cas.serviceRegistry.redis.pool.maxIdle=8
-# cas.serviceRegistry.redis.pool.minIdle=0
-# cas.serviceRegistry.redis.pool.maxActive=8
-# cas.serviceRegistry.redis.pool.maxWait=-1
-# cas.serviceRegistry.redis.pool.numTestsPerEvictionRun=0
-# cas.serviceRegistry.redis.pool.softMinEvictableIdleTimeMillis=0
-# cas.serviceRegistry.redis.pool.minEvictableIdleTimeMillis=0
-# cas.serviceRegistry.redis.pool.lifo=true
-# cas.serviceRegistry.redis.pool.fairness=false
-
-# cas.serviceRegistry.redis.pool.testOnCreate=false
-# cas.serviceRegistry.redis.pool.testOnBorrow=false
-# cas.serviceRegistry.redis.pool.testOnReturn=false
-# cas.serviceRegistry.redis.pool.testWhileIdle=false
-
-# cas.serviceRegistry.redis.sentinel.master=mymaster
-# cas.serviceRegistry.redis.sentinel.nodes=localhost:26379,localhost:26380,localhost:26381
-```
+To learn more about this topic, [please review this guide](Redis-Service-Management.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### CosmosDb Service Registry
 
@@ -4536,65 +4419,13 @@ To learn more about this topic, [please review this guide](CosmosDb-Service-Mana
 
 ### DynamoDb Service Registry
 
-To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
-
-```properties
-# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# cas.serviceRegistry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
-
-# Alternatively, you may directly provide credentials to CAS
-# cas.serviceRegistry.dynamoDb.credentialAccessKey=
-# cas.serviceRegistry.dynamoDb.credentialSecretKey=
-
-# cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000
-# cas.serviceRegistry.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# cas.serviceRegistry.dynamoDb.regionOverride=
-# cas.serviceRegistry.dynamoDb.serviceNameIntern=
-
-# cas.serviceRegistry.dynamoDb.dropTablesOnStartup=false
-# cas.serviceRegistry.dynamoDb.timeOffset=0
-
-# cas.serviceRegistry.dynamoDb.readCapacity=10
-# cas.serviceRegistry.dynamoDb.writeCapacity=10
-# cas.serviceRegistry.dynamoDb.connectionTimeout=5000
-# cas.serviceRegistry.dynamoDb.requestTimeout=5000
-# cas.serviceRegistry.dynamoDb.socketTimeout=5000
-# cas.serviceRegistry.dynamoDb.useGzip=false
-# cas.serviceRegistry.dynamoDb.useReaper=false
-# cas.serviceRegistry.dynamoDb.useThrottleRetries=false
-# cas.serviceRegistry.dynamoDb.useTcpKeepAlive=false
-# cas.serviceRegistry.dynamoDb.protocol=HTTPS
-# cas.serviceRegistry.dynamoDb.clientExecutionTimeout=10000
-# cas.serviceRegistry.dynamoDb.cacheResponseMetadata=false
-# cas.serviceRegistry.dynamoDb.localAddress=
-# cas.serviceRegistry.dynamoDb.maxConnections=10
-```
+To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### MongoDb Service Registry
 
-Store CAS service definitions inside a MongoDb instance.
-To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
-
-```properties
-# cas.serviceRegistry.mongo.host=localhost
-# cas.serviceRegistry.mongo.clientUri=localhost
-# cas.serviceRegistry.mongo.idleTimeout=30000
-# cas.serviceRegistry.mongo.port=27017
-# cas.serviceRegistry.mongo.dropCollection=false
-# cas.serviceRegistry.mongo.socketKeepAlive=false
-# cas.serviceRegistry.mongo.password=
-# cas.serviceRegistry.mongo.collection=cas-service-registry
-# cas.serviceRegistry.mongo.databaseName=cas-mongo-database
-# cas.serviceRegistry.mongo.timeout=5000
-# cas.serviceRegistry.mongo.userId=
-# cas.serviceRegistry.mongo.writeConcern=NORMAL
-# cas.serviceRegistry.mongo.authenticationDatabaseName=
-# cas.serviceRegistry.mongo.replicaSet=
-# cas.serviceRegistry.mongo.ssEnabled=false
-# cas.serviceRegistry.mongo.conns.lifetime=60000
-# cas.serviceRegistry.mongo.conns.perHost=10
-```
-
+Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.serviceRegistry`.
+ 
 ### LDAP Service Registry
 
 Control how CAS services should be found inside an LDAP instance.
@@ -4983,104 +4814,15 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### DynamoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html).
-
-```properties
-# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
-# cas.ticket.registry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
-
-# Alternatively, you may directly provide credentials to CAS
-# cas.ticket.registry.dynamoDb.credentialAccessKey=
-# cas.ticket.registry.dynamoDb.credentialSecretKey=
-
-# cas.ticket.registry.dynamoDb.endpoint=http://localhost:8000
-# cas.ticket.registry.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
-# cas.ticket.registry.dynamoDb.regionOverride=
-# cas.ticket.registry.dynamoDb.serviceNameIntern=
-
-# cas.ticket.registry.dynamoDb.dropTablesOnStartup=false
-# cas.ticket.registry.dynamoDb.timeOffset=0
-
-# cas.ticket.registry.dynamoDb.readCapacity=10
-# cas.ticket.registry.dynamoDb.writeCapacity=10
-# cas.ticket.registry.dynamoDb.connectionTimeout=5000
-# cas.ticket.registry.dynamoDb.requestTimeout=5000
-# cas.ticket.registry.dynamoDb.socketTimeout=5000
-# cas.ticket.registry.dynamoDb.useGzip=false
-# cas.ticket.registry.dynamoDb.useReaper=false
-# cas.ticket.registry.dynamoDb.useThrottleRetries=false
-# cas.ticket.registry.dynamoDb.useTcpKeepAlive=false
-# cas.ticket.registry.dynamoDb.protocol=HTTPS
-# cas.ticket.registry.dynamoDb.clientExecutionTimeout=10000
-# cas.ticket.registry.dynamoDb.cacheResponseMetadata=false
-# cas.ticket.registry.dynamoDb.localAddress=
-# cas.ticket.registry.dynamoDb.maxConnections=10
-```
-
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
+To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.ticket.registry.dynamoDb`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ### MongoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html).
-
-```properties
-# cas.ticket.registry.mongo.idleTimeout=30000
-# cas.ticket.registry.mongo.port=27017
-# cas.ticket.registry.mongo.dropCollection=false
-# cas.ticket.registry.mongo.socketKeepAlive=false
-# cas.ticket.registry.mongo.password=
-# cas.ticket.registry.mongo.databaseName=cas-database
-# cas.ticket.registry.mongo.timeout=5000
-# cas.ticket.registry.mongo.userId=
-# cas.ticket.registry.mongo.writeConcern=NORMAL
-# cas.ticket.registry.mongo.host=localhost
-# cas.ticket.registry.mongo.clientUri=
-# cas.ticket.registry.mongo.authenticationDatabaseName=
-# cas.ticket.registry.mongo.replicaSet=
-# cas.ticket.registry.mongo.ssEnabled=false
-
-# cas.ticket.registry.mongo.conns.lifetime=60000
-# cas.ticket.registry.mongo.conns.perHost=10
-```
-
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.mongo`.
+To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html). Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.mongo`.  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`. 
 
 ### Redis Ticket Registry
 
-To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html).
-
-```properties
-# cas.ticket.registry.redis.host=localhost
-# cas.ticket.registry.redis.database=0
-# cas.ticket.registry.redis.port=6379
-# cas.ticket.registry.redis.password=
-# cas.ticket.registry.redis.timeout=
-# cas.ticket.registry.redis.useSsl=false
-# cas.ticket.registry.redis.usePool=true
-
-# cas.ticket.registry.redis.pool.max-active=20
-# cas.ticket.registry.redis.pool.maxIdle=8
-# cas.ticket.registry.redis.pool.minIdle=0
-# cas.ticket.registry.redis.pool.maxActive=8
-# cas.ticket.registry.redis.pool.maxWait=-1
-# cas.ticket.registry.redis.pool.numTestsPerEvictionRun=0
-# cas.ticket.registry.redis.pool.softMinEvictableIdleTimeMillis=0
-# cas.ticket.registry.redis.pool.minEvictableIdleTimeMillis=0
-# cas.ticket.registry.redis.pool.lifo=true
-# cas.ticket.registry.redis.pool.fairness=false
-
-# cas.ticket.registry.redis.pool.testOnCreate=false
-# cas.ticket.registry.redis.pool.testOnBorrow=false
-# cas.ticket.registry.redis.pool.testOnReturn=false
-# cas.ticket.registry.redis.pool.testWhileIdle=false
-
-# cas.ticket.registry.redis.sentinel.master=mymaster
-# cas.ticket.registry.redis.sentinel.node[0]=localhost:26379
-# cas.ticket.registry.redis.sentinel.node[1]=localhost:26380
-# cas.ticket.registry.redis.sentinel.node[2]=localhost:26381
-```
-
-Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
+To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
 
 ## Protocol Ticket Security
 
@@ -5373,25 +5115,7 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### MongoDb
 
-```properties
-# cas.acceptableUsagePolicy.mongo.host=localhost
-# cas.acceptableUsagePolicy.mongo.clientUri=localhost
-# cas.acceptableUsagePolicy.mongo.idleTimeout=30000
-# cas.acceptableUsagePolicy.mongo.port=27017
-# cas.acceptableUsagePolicy.mongo.dropCollection=false
-# cas.acceptableUsagePolicy.mongo.socketKeepAlive=false
-# cas.acceptableUsagePolicy.mongo.password=
-# cas.acceptableUsagePolicy.mongo.collection=cas-acceptableUsagePolicy-repository
-# cas.acceptableUsagePolicy.mongo.databaseName=cas-mongo-database
-# cas.acceptableUsagePolicy.mongo.timeout=5000
-# cas.acceptableUsagePolicy.mongo.userId=
-# cas.acceptableUsagePolicy.mongo.writeConcern=NORMAL
-# cas.acceptableUsagePolicy.mongo.authenticationDatabaseName=
-# cas.acceptableUsagePolicy.mongo.replicaSet=
-# cas.acceptableUsagePolicy.mongo.ssEnabled=false
-# cas.acceptableUsagePolicy.mongo.conns.lifetime=60000
-# cas.acceptableUsagePolicy.mongo.conns.perHost=10
-```
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptableUsagePolicy`. 
 
 #### LDAP
 
@@ -5459,31 +5183,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 ```properties
 # cas.metrics.redis.key=
 # cas.metrics.redis.prefix=
-
-# cas.metrics.redis.host=localhost
-# cas.metrics.redis.database=0
-# cas.metrics.redis.port=6380
-# cas.metrics.redis.password=
-# cas.metrics.redis.timeout=2000
-# cas.metrics.redis.useSsl=false
-# cas.metrics.redis.usePool=true
-
-# cas.metrics.redis.pool.max-active=20
-# cas.metrics.redis.pool.maxIdle=8
-# cas.metrics.redis.pool.minIdle=0
-# cas.metrics.redis.pool.maxActive=8
-# cas.metrics.redis.pool.maxWait=-1
-# cas.metrics.redis.pool.numTestsPerEvictionRun=0
-# cas.metrics.redis.pool.softMinEvictableIdleTimeMillis=0
-# cas.metrics.redis.pool.minEvictableIdleTimeMillis=0
-# cas.metrics.redis.pool.lifo=true
-# cas.metrics.redis.pool.fairness=false
-
-# cas.metrics.redis.pool.testOnCreate=false
-# cas.metrics.redis.pool.testOnBorrow=false
-# cas.metrics.redis.pool.testOnReturn=false
-# cas.metrics.redis.pool.testWhileIdle=false
 ```
+
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.metrics`.
 
 #### Statsd
 
@@ -5495,25 +5197,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 #### MongoDb
 
-```properties
-# cas.metrics.mongo.host=localhost
-# cas.metrics.mongo.clientUri=localhost
-# cas.metrics.mongo.idleTimeout=30000
-# cas.metrics.mongo.port=27017
-# cas.metrics.mongo.dropCollection=false
-# cas.metrics.mongo.socketKeepAlive=false
-# cas.metrics.mongo.password=
-# cas.metrics.mongo.collection=cas-metrics-repository
-# cas.metrics.mongo.databaseName=cas-mongo-database
-# cas.metrics.mongo.timeout=5000
-# cas.metrics.mongo.userId=
-# cas.metrics.mongo.writeConcern=NORMAL
-# cas.metrics.mongo.authenticationDatabaseName=
-# cas.metrics.mongo.replicaSet=
-# cas.metrics.mongo.ssEnabled=false
-# cas.metrics.mongo.conns.lifetime=60000
-# cas.metrics.mongo.conns.perHost=10
-```
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.metrics.mongo`. 
 
 #### Open TSDB
 
@@ -5707,25 +5391,7 @@ Signing & encryption settings for this feature are available [here](Configuratio
 
 ### MongoDb Attribute Consent
 
-```properties
-# cas.consent.mongo.host=localhost
-# cas.consent.mongo.clientUri=localhost
-# cas.consent.mongo.idleTimeout=30000
-# cas.consent.mongo.port=27017
-# cas.consent.mongo.dropCollection=false
-# cas.consent.mongo.socketKeepAlive=false
-# cas.consent.mongo.password=
-# cas.consent.mongo.collection=cas-consent-repository
-# cas.consent.mongo.databaseName=cas-mongo-database
-# cas.consent.mongo.timeout=5000
-# cas.consent.mongo.userId=
-# cas.consent.mongo.writeConcern=NORMAL
-# cas.consent.mongo.authenticationDatabaseName=
-# cas.consent.mongo.replicaSet=
-# cas.consent.mongo.ssEnabled=false
-# cas.consent.mongo.conns.lifetime=60000
-# cas.consent.mongo.conns.perHost=10
-```
+ Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`. 
 
 ### REST Attribute Consent
 
