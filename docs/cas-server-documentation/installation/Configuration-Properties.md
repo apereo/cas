@@ -468,63 +468,34 @@ To learn more about this topic, [please review this guide](Configuring-Monitorin
 
 ## CAS Endpoints
 
-These are the collection of endpoints that are specific to CAS.
-To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
+These are the collection of endpoints that are specific to CAS. To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
+
+The following configuration keys are available and mapped to CAS endpoints:
+
+- `cas.monitor.endpoints`
+- `cas.monitor.endpoints.dashboard`
+- `cas.monitor.endpoints.discovery`
+- `cas.monitor.endpoints.auditEvents`
+- `cas.monitor.endpoints.authenticationEvents`
+- `cas.monitor.endpoints.configurationState`
+- `cas.monitor.endpoints.healthCheck`
+- `cas.monitor.endpoints.loggingConfig`
+- `cas.monitor.endpoints.metrics`
+- `cas.monitor.endpoints.attributeResolution`
+- `cas.monitor.endpoints.singleSignOnReport`
+- `cas.monitor.endpoints.statistics`
+- `cas.monitor.endpoints.trustedDevices`
+- `cas.monitor.endpoints.status`
+- `cas.monitor.endpoints.singleSignOnStatus`
+- `cas.monitor.endpoints.springWebflowReport`
+- `cas.monitor.endpoints.registeredServicesReport`
+- `cas.monitor.endpoints.configurationMetadata`
+
+The following settings equally apply to all CAS endpoints:
 
 ```properties
-# cas.monitor.endpoints.enabled=false
-# cas.monitor.endpoints.sensitive=true
-
-# cas.monitor.endpoints.dashboard.enabled=false
-# cas.monitor.endpoints.dashboard.sensitive=true
-
-# cas.monitor.endpoints.discovery.enabled=false
-# cas.monitor.endpoints.discovery.sensitive=true
-
-# cas.monitor.endpoints.auditEvents.enabled=false
-# cas.monitor.endpoints.auditEvents.sensitive=true
-
-# cas.monitor.endpoints.authenticationEvents.enabled=false
-# cas.monitor.endpoints.authenticationEvents.sensitive=true
-
-# cas.monitor.endpoints.configurationState.enabled=false
-# cas.monitor.endpoints.configurationState.sensitive=true
-
-# cas.monitor.endpoints.healthCheck.enabled=false
-# cas.monitor.endpoints.healthCheck.sensitive=true
-
-# cas.monitor.endpoints.loggingConfig.enabled=false
-# cas.monitor.endpoints.loggingConfig.sensitive=true
-
-# cas.monitor.endpoints.metrics.enabled=false
-# cas.monitor.endpoints.metrics.sensitive=true
-
-# cas.monitor.endpoints.attributeResolution.enabled=false
-# cas.monitor.endpoints.attributeResolution.sensitive=true
-
-# cas.monitor.endpoints.singleSignOnReport.enabled=false
-# cas.monitor.endpoints.singleSignOnReport.sensitive=true
-
-# cas.monitor.endpoints.statistics.enabled=false
-# cas.monitor.endpoints.statistics.sensitive=true
-
-# cas.monitor.endpoints.trustedDevices.enabled=false
-# cas.monitor.endpoints.trustedDevices.sensitive=true
-
-# cas.monitor.endpoints.status.enabled=false
-# cas.monitor.endpoints.status.sensitive=true
-
-# cas.monitor.endpoints.singleSignOnStatus.enabled=false
-# cas.monitor.endpoints.singleSignOnStatus.sensitive=true
-
-# cas.monitor.endpoints.springWebflowReport.enabled=false
-# cas.monitor.endpoints.springWebflowReport.sensitive=true
-
-# cas.monitor.endpoints.registeredServicesReport.enabled=false
-# cas.monitor.endpoints.registeredServicesReport.sensitive=true
-
-# cas.monitor.endpoints.configurationMetadata.enabled=false
-# cas.monitor.endpoints.configurationMetadata.sensitive=true
+# ${configurationKey}.enabled=false
+# ${configurationKey}.sensitive=true
 ```
 
 ### Securing Endpoints With Spring Security
@@ -564,30 +535,10 @@ Enable JAAS authentication for Spring Security to secure endpoints.
 
 #### JDBC Authentication
 
-Enable JDBC authentication for Spring Security to secure endpoints.
+Enable JDBC authentication for Spring Security to secure endpoints. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.adminPagesSecurity.jdbc`.
 
 ```properties
 # cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
-# cas.adminPagesSecurity.jdbc.healthQuery=
-# cas.adminPagesSecurity.jdbc.isolateInternalQueries=false
-# cas.adminPagesSecurity.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.adminPagesSecurity.jdbc.failFastTimeout=1
-# cas.adminPagesSecurity.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.adminPagesSecurity.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.adminPagesSecurity.jdbc.leakThreshold=10
-# cas.adminPagesSecurity.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.adminPagesSecurity.jdbc.batchSize=1
-# cas.adminPagesSecurity.jdbc.user=sa
-# cas.adminPagesSecurity.jdbc.ddlAuto=create-drop
-# cas.adminPagesSecurity.jdbc.maxAgeDays=180
-# cas.adminPagesSecurity.jdbc.password=
-# cas.adminPagesSecurity.jdbc.autocommit=false
-# cas.adminPagesSecurity.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.adminPagesSecurity.jdbc.idleTimeout=5000
-# cas.adminPagesSecurity.jdbc.dataSourceName=
-# cas.adminPagesSecurity.jdbc.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.adminPagesSecurity.jdbc.properties.propertyName=propertyValue
 ```
 
 #### LDAP Authentication
@@ -1211,37 +1162,11 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 ### Database
 
 Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the
-same IP address.
+same IP address. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.throttle.jdbc`.
 
 ```properties
 # cas.authn.throttle.jdbc.auditQuery=SELECT AUD_DATE FROM COM_AUDIT_TRAIL WHERE AUD_CLIENT_IP = ? AND AUD_USER = ? \
 #                                    AND AUD_ACTION = ? AND APPLIC_CD = ? AND AUD_DATE >= ? ORDER BY AUD_DATE DESC
-# cas.authn.throttle.jdbc.healthQuery=
-# cas.authn.throttle.jdbc.isolateInternalQueries=false
-# cas.authn.throttle.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.throttle.jdbc.failFastTimeout=1
-# cas.authn.throttle.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.throttle.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.throttle.jdbc.leakThreshold=10
-# cas.authn.throttle.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.throttle.jdbc.batchSize=1
-# cas.authn.throttle.jdbc.user=sa
-# cas.authn.throttle.jdbc.ddlAuto=create-drop
-# cas.authn.throttle.jdbc.maxAgeDays=180
-# cas.authn.throttle.jdbc.password=
-# cas.authn.throttle.jdbc.autocommit=false
-# cas.authn.throttle.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.throttle.jdbc.idleTimeout=5000
-
-# cas.authn.throttle.jdbc.pool.suspension=false
-# cas.authn.throttle.jdbc.pool.minSize=6
-# cas.authn.throttle.jdbc.pool.maxSize=18
-# cas.authn.throttle.jdbc.pool.maxWait=2000
-# cas.authn.throttle.jdbc.dataSourceName=
-# cas.authn.throttle.jdbc.dataSourceProxy=false
-
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.throttle.jdbc.properties.propertyName=propertyValue
 ```
 
 ## Adaptive Authentication
@@ -1333,31 +1258,9 @@ To learn more about this topic, [please review this guide](Surrogate-Authenticat
 
 ### JDBC Surrogate Accounts
 
+ Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.surrogate.jdbc`.
+ 
 ```properties
-# cas.authn.surrogate.jdbc.validationQuery=SELECT 1
-# cas.authn.surrogate.jdbc.maxWait=5000
-# cas.authn.surrogate.jdbc.healthQuery=
-# cas.authn.surrogate.jdbc.isolateInternalQueries=false
-# cas.authn.surrogate.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.surrogate.jdbc.failFastTimeout=1
-# cas.authn.surrogate.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.surrogate.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.surrogate.jdbc.leakThreshold=10
-# cas.authn.surrogate.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.surrogate.jdbc.batchSize=1
-# cas.authn.surrogate.jdbc.user=sa
-# cas.authn.surrogate.jdbc.ddlAuto=create-drop
-# cas.authn.surrogate.jdbc.maxAgeDays=180
-# cas.authn.surrogate.jdbc.password=
-# cas.authn.surrogate.jdbc.autocommit=false
-# cas.authn.surrogate.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.surrogate.jdbc.idleTimeout=5000
-# cas.authn.surrogate.jdbc.dataSourceName=
-# cas.authn.surrogate.jdbc.dataSourceProxy=false
-
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.surrogate.jdbc.properties.propertyName=propertyValue
-
 # cas.authn.surrogate.jdbc.surrogateSearchQuery=SELECT COUNT(*) FROM surrogate WHERE username=?
 # cas.authn.surrogate.jdbc.surrogateAccountQuery=SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?
 ```
@@ -1531,7 +1434,7 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 
 ## Radius Authentication
 
-To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
+To learn more about this topic, [please review this guide](RADIUS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`.
 
 ```properties
 # cas.authn.radius.server.nasPortId=-1
@@ -1559,17 +1462,11 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.passwordEncoder.encodingAlgorithm=
 # cas.authn.radius.passwordEncoder.secret=
 # cas.authn.radius.passwordEncoder.strength=16
-
-# cas.authn.radius.principalTransformation.pattern=(.+)@example.org
-# cas.authn.radius.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.radius.principalTransformation.suffix=
-# cas.authn.radius.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.radius.principalTransformation.prefix=
 ```
 
 ## File (Whitelist) Authentication
 
-To learn more about this topic, [please review this guide](Whitelist-Authentication.html).
+To learn more about this topic, [please review this guide](Whitelist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`.
 
 ```properties
 # cas.authn.file.separator=::
@@ -1581,17 +1478,11 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 # cas.authn.file.passwordEncoder.encodingAlgorithm=
 # cas.authn.file.passwordEncoder.secret=
 # cas.authn.file.passwordEncoder.strength=16
-
-# cas.authn.file.principalTransformation.pattern=(.+)@example.org
-# cas.authn.file.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.file.principalTransformation.suffix=
-# cas.authn.file.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.file.principalTransformation.prefix=
 ```
 
 ## Reject Users (Blacklist) Authentication
 
-To learn more about this topic, [please review this guide](Blacklist-Authentication.html).
+To learn more about this topic, [please review this guide](Blacklist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`.
 
 ```properties
 # cas.authn.reject.users=user1,user2
@@ -1602,12 +1493,6 @@ To learn more about this topic, [please review this guide](Blacklist-Authenticat
 # cas.authn.reject.passwordEncoder.encodingAlgorithm=
 # cas.authn.reject.passwordEncoder.secret=
 # cas.authn.reject.passwordEncoder.strength=16
-
-# cas.authn.reject.principalTransformation.pattern=(.+)@example.org
-# cas.authn.reject.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.reject.principalTransformation.suffix=
-# cas.authn.reject.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.reject.principalTransformation.prefix=
 ```
 
 ## Database Authentication
@@ -1617,34 +1502,14 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 ### Query Database Authentication
 
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
-against the password on record determined by a configurable database query.
+against the password on record determined by a configurable database query.  Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.query[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`.
 
 ```properties
-# cas.authn.jdbc.query[0].sql=SELECT * FROM table WHERE name=?
-# cas.authn.jdbc.query[0].healthQuery=
-# cas.authn.jdbc.query[0].isolateInternalQueries=false
-# cas.authn.jdbc.query[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.query[0].failFastTimeout=1
-# cas.authn.jdbc.query[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.query[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.query[0].leakThreshold=10
-# cas.authn.jdbc.query[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.query[0].batchSize=1
-# cas.authn.jdbc.query[0].user=user
-# cas.authn.jdbc.query[0].ddlAuto=create-drop
-# cas.authn.jdbc.query[0].maxAgeDays=180
-# cas.authn.jdbc.query[0].password=secret
-# cas.authn.jdbc.query[0].autocommit=false
-# cas.authn.jdbc.query[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.query[0].idleTimeout=5000
 # cas.authn.jdbc.query[0].credentialCriteria=
 # cas.authn.jdbc.query[0].name=
 # cas.authn.jdbc.query[0].order=0
-# cas.authn.jdbc.query[0].dataSourceName=
-# cas.authn.jdbc.query[0].dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.jdbc.query[0].properties.propertyName=propertyValue
 
+# cas.authn.jdbc.query[0].sql=SELECT * FROM table WHERE name=?
 # cas.authn.jdbc.query[0].fieldPassword=password
 # cas.authn.jdbc.query[0].fieldExpired=
 # cas.authn.jdbc.query[0].fieldDisabled=
@@ -1655,99 +1520,41 @@ against the password on record determined by a configurable database query.
 # cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.query[0].passwordEncoder.secret=
 # cas.authn.jdbc.query[0].passwordEncoder.strength=16
-
-# cas.authn.jdbc.query[0].principalTransformation.pattern=(.+)@example.org
-# cas.authn.jdbc.query[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.jdbc.query[0].principalTransformation.suffix=
-# cas.authn.jdbc.query[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.query[0].principalTransformation.prefix=
 ```
 
 ### Search Database Authentication
 
-Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found.
+Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.search[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.search[0]`.
 
 ```properties
 # cas.authn.jdbc.search[0].fieldUser=
 # cas.authn.jdbc.search[0].tableUsers=
 # cas.authn.jdbc.search[0].fieldPassword=
-# cas.authn.jdbc.search[0].healthQuery=
-# cas.authn.jdbc.search[0].isolateInternalQueries=false
-# cas.authn.jdbc.search[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.search[0].failFastTimeout=1
-# cas.authn.jdbc.search[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.search[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.search[0].leakThreshold=10
-# cas.authn.jdbc.search[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.search[0].batchSize=1
-# cas.authn.jdbc.search[0].user=sa
-# cas.authn.jdbc.search[0].ddlAuto=create-drop
-# cas.authn.jdbc.search[0].maxAgeDays=180
-# cas.authn.jdbc.search[0].password=
-# cas.authn.jdbc.search[0].autocommit=false
-# cas.authn.jdbc.search[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.search[0].idleTimeout=5000
 # cas.authn.jdbc.search[0].credentialCriteria=
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
-# cas.authn.jdbc.search[0].dataSourceName=
-# cas.authn.jdbc.search[0].dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.jdbc.search[0].properties.propertyName=propertyValue
 
 # cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.search[0].passwordEncoder.secret=
 # cas.authn.jdbc.search[0].passwordEncoder.strength=16
-
-# cas.authn.jdbc.search[0].principalTransformation.pattern=(.+)@example.org
-# cas.authn.jdbc.search[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.jdbc.search[0].principalTransformation.suffix=
-# cas.authn.jdbc.search[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.search[0].principalTransformation.prefix=
 ```
 
 ### Bind Database Authentication
 
-Authenticates a user by attempting to create a database connection using the username and (hashed) password.
+Authenticates a user by attempting to create a database connection using the username and (hashed) password. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.bind[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.bind[0]`.
 
 ```properties
-# cas.authn.jdbc.bind[0].healthQuery=
-# cas.authn.jdbc.bind[0].isolateInternalQueries=false
-# cas.authn.jdbc.bind[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.bind[0].failFastTimeout=1
-# cas.authn.jdbc.bind[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.bind[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.bind[0].leakThreshold=10
-# cas.authn.jdbc.bind[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.bind[0].batchSize=1
-# cas.authn.jdbc.bind[0].user=sa
-# cas.authn.jdbc.bind[0].ddlAuto=create-drop
-# cas.authn.jdbc.bind[0].maxAgeDays=180
-# cas.authn.jdbc.bind[0].password=
-# cas.authn.jdbc.bind[0].autocommit=false
-# cas.authn.jdbc.bind[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.bind[0].idleTimeout=5000
 # cas.authn.jdbc.bind[0].credentialCriteria=
 # cas.authn.jdbc.bind[0].name=
 # cas.authn.jdbc.bind[0].order=0
-# cas.authn.jdbc.bind[0].dataSourceName=
-# cas.authn.jdbc.bind[0].dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.jdbc.bind[0].properties.propertyName=propertyValue
 
 # cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.bind[0].passwordEncoder.secret=
 # cas.authn.jdbc.bind[0].passwordEncoder.strength=16
-
-# cas.authn.jdbc.bind[0].principalTransformation.pattern=(.+)@example.org
-# cas.authn.jdbc.bind[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.jdbc.bind[0].principalTransformation.suffix=
-# cas.authn.jdbc.bind[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.bind[0].principalTransformation.prefix=
 ```
 
 ### Encode Database Authentication
@@ -1760,6 +1567,9 @@ This password encoding method combines the private Salt and the public salt whic
 If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
 is converted to hex before comparing it to the database value.
 
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.encode[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.encode[0]`.
+
+
 ```properties
 # cas.authn.jdbc.encode[0].numberOfIterations=0
 # cas.authn.jdbc.encode[0].numberOfIterationsFieldName=numIterations
@@ -1770,46 +1580,21 @@ is converted to hex before comparing it to the database value.
 # cas.authn.jdbc.encode[0].passwordFieldName=password
 # cas.authn.jdbc.encode[0].expiredFieldName=
 # cas.authn.jdbc.encode[0].disabledFieldName=
-# cas.authn.jdbc.encode[0].healthQuery=
-# cas.authn.jdbc.encode[0].isolateInternalQueries=false
-# cas.authn.jdbc.encode[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.jdbc.encode[0].failFastTimeout=1
-# cas.authn.jdbc.encode[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.jdbc.encode[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.jdbc.encode[0].leakThreshold=10
-# cas.authn.jdbc.encode[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.jdbc.encode[0].batchSize=1
-# cas.authn.jdbc.encode[0].user=sa
-# cas.authn.jdbc.encode[0].ddlAuto=create-drop
-# cas.authn.jdbc.encode[0].maxAgeDays=180
-# cas.authn.jdbc.encode[0].password=
-# cas.authn.jdbc.encode[0].autocommit=false
-# cas.authn.jdbc.encode[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.jdbc.encode[0].idleTimeout=5000
+
 # cas.authn.jdbc.encode[0].credentialCriteria=
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
-# cas.authn.jdbc.encode[0].dataSourceName=
-# cas.authn.jdbc.encode[0].dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.jdbc.encode[0].properties.propertyName=propertyValue
 
 # cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
 # cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jdbc.encode[0].passwordEncoder.secret=
 # cas.authn.jdbc.encode[0].passwordEncoder.strength=16
-
-# cas.authn.jdbc.encode[0].principalTransformation.pattern=(.+)@example.org
-# cas.authn.jdbc.encode[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.jdbc.encode[0].principalTransformation.suffix=
-# cas.authn.jdbc.encode[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jdbc.encode[0].principalTransformation.prefix=
 ```
 
 ## MongoDb Authentication
 
-To learn more about this topic, [please review this guide](MongoDb-Authentication.html).
+To learn more about this topic, [please review this guide](MongoDb-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`.
 
 ```properties
 # cas.authn.mongo.mongoHostUri=mongodb://uri
@@ -1818,12 +1603,6 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.passwordAttribute=password
 # cas.authn.mongo.collectionName=users
 # cas.authn.mongo.name=
-
-# cas.authn.mongo.principalTransformation.pattern=(.+)@example.org
-# cas.authn.mongo.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.mongo.principalTransformation.suffix=
-# cas.authn.mongo.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.mongo.principalTransformation.prefix=
 
 # cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.mongo.passwordEncoder.characterEncoding=
@@ -2018,18 +1797,14 @@ Furthermore if you are seeing errors in the logs that resemble a *<Operation exc
 
 ### LDAP Password Encoding & Principal Transformation
 
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.ldap[0]`.
+
 ```properties
 # cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.ldap[0].passwordEncoder.characterEncoding=
 # cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.ldap[0].passwordEncoder.secret=
 # cas.authn.ldap[0].passwordEncoder.strength=16
-
-# cas.authn.ldap[0].principalTransformation.pattern=(.+)@example.org
-# cas.authn.ldap[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.ldap[0].principalTransformation.suffix=
-# cas.authn.ldap[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.ldap[0].principalTransformation.prefix=
 ```
 
 ### LDAP Connection Validators
@@ -2227,7 +2002,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 
 ## JAAS Authentication
 
-To learn more about this topic, [please review this guide](JAAS-Authentication.html).
+To learn more about this topic, [please review this guide](JAAS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jaas[0]`.
 
 ```properties
 # cas.authn.jaas[0].realm=CAS
@@ -2241,12 +2016,6 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].passwordEncoder.encodingAlgorithm=
 # cas.authn.jaas[0].passwordEncoder.secret=
 # cas.authn.jaas[0].passwordEncoder.strength=16
-
-# cas.authn.jaas[0].principalTransformation.pattern=(.+)@example.org
-# cas.authn.jaas[0].principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.jaas[0].principalTransformation.suffix=
-# cas.authn.jaas[0].principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.jaas[0].principalTransformation.prefix=
 ```
 
 ## GUA Authentication
@@ -2301,16 +2070,10 @@ To learn more about this topic, [please review this guide](GUA-Authentication.ht
 
 ## JWT/Token Authentication
 
-To learn more about this topic, [please review this guide](JWT-Authentication.html).
+To learn more about this topic, [please review this guide](JWT-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.token`.
 
 ```properties
 # cas.authn.token.name=
-
-# cas.authn.token.principalTransformation.pattern=(.+)@example.org
-# cas.authn.token.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.token.principalTransformation.suffix=
-# cas.authn.token.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.token.principalTransformation.prefix=
 ```
 
 ### JWT Tickets
@@ -2326,7 +2089,7 @@ The signing key and the encryption key [are both JWKs](Configuration-Properties-
 
 ## Couchbase Authentication
 
-To learn more about this topic, [please review this guide](Couchbase-Authentication.html).
+To learn more about this topic, [please review this guide](Couchbase-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchbase`.
 
 ```properties
 
@@ -2346,17 +2109,11 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 # cas.authn.couchbase.passwordEncoder.encodingAlgorithm=
 # cas.authn.couchbase.passwordEncoder.secret=
 # cas.authn.couchbase.passwordEncoder.strength=16
-
-# cas.authn.couchbase.principalTransformation.pattern=(.+)@example.org
-# cas.authn.couchbase.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.couchbase.principalTransformation.suffix=
-# cas.authn.couchbase.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.couchbase.principalTransformation.prefix=
 ```
 
 ## Amazon Cloud Directory Authentication
 
-To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html).
+To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`.
 
 ```properties
 # cas.authn.cloudDirectory.credentialAccessKey=
@@ -2383,12 +2140,6 @@ To learn more about this topic, [please review this guide](AWS-CloudDirectory-Au
 # cas.authn.cloudDirectory.passwordEncoder.encodingAlgorithm=
 # cas.authn.cloudDirectory.passwordEncoder.secret=
 # cas.authn.cloudDirectory.passwordEncoder.strength=16
-
-# cas.authn.cloudDirectory.principalTransformation.pattern=(.+)@example.org
-# cas.authn.cloudDirectory.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.cloudDirectory.principalTransformation.suffix=
-# cas.authn.cloudDirectory.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.cloudDirectory.principalTransformation.prefix=
 ```
 
 ## Remote Address Authentication
@@ -2408,6 +2159,8 @@ use <strong>casuser</strong> and <strong>Mellon</strong> as the username and pas
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.accept`.
+
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
@@ -2418,12 +2171,6 @@ prior to production rollouts.</p></div>
 # cas.authn.accept.passwordEncoder.encodingAlgorithm=
 # cas.authn.accept.passwordEncoder.secret=
 # cas.authn.accept.passwordEncoder.strength=16
-
-# cas.authn.accept.principalTransformation.pattern=(.+)@example.org
-# cas.authn.accept.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.accept.principalTransformation.suffix=
-# cas.authn.accept.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.accept.principalTransformation.prefix=
 ```
 
 ## X509 Authentication
@@ -2559,7 +2306,7 @@ To fetch CRLs, the following options are available:
 
 ## Shiro Authentication
 
-To learn more about this topic, [please review this guide](Shiro-Authentication.html).
+To learn more about this topic, [please review this guide](Shiro-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.shiro`.
 
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
@@ -2572,12 +2319,6 @@ To learn more about this topic, [please review this guide](Shiro-Authentication.
 # cas.authn.shiro.passwordEncoder.encodingAlgorithm=
 # cas.authn.shiro.passwordEncoder.secret=
 # cas.authn.shiro.passwordEncoder.strength=16
-
-# cas.authn.shiro.principalTransformation.pattern=(.+)@example.org
-# cas.authn.shiro.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
-# cas.authn.shiro.principalTransformation.suffix=
-# cas.authn.shiro.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
-# cas.authn.shiro.principalTransformation.prefix=
 ```
 
 
@@ -4005,35 +3746,7 @@ Store audit logs inside a MongoDb database.
  
 ### Database Audits
 
-Store audit logs inside a database.
-
-```properties
-# cas.audit.jdbc.healthQuery=
-# cas.audit.jdbc.isolateInternalQueries=false
-# cas.audit.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.audit.jdbc.failFastTimeout=1
-# cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.audit.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.audit.jdbc.leakThreshold=10
-# cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.audit.jdbc.batchSize=1
-# cas.audit.jdbc.user=sa
-# cas.audit.jdbc.ddlAuto=create-drop
-# cas.audit.jdbc.maxAgeDays=180
-# cas.audit.jdbc.password=
-# cas.audit.jdbc.autocommit=false
-# cas.audit.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.audit.jdbc.idleTimeout=5000
-# cas.audit.jdbc.dataSourceName=
-# cas.audit.jdbc.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.audit.jdbc.properties.propertyName=propertyValue
-
-# cas.audit.jdbc.pool.suspension=false
-# cas.audit.jdbc.pool.minSize=6
-# cas.audit.jdbc.pool.maxSize=18
-# cas.audit.jdbc.pool.maxWait=2000
-```
+Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.audit.jdbc`.
 
 ## Sleuth Distributed Tracing
 
@@ -4113,31 +3826,11 @@ Decide how CAS should monitor the internal state of a MongoDb instance.  Configu
 ### Database Monitoring
 
 Decide how CAS should monitor the internal state of JDBC connections used
-for authentication or attribute retrieval.
+for authentication or attribute retrieval. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.monitor.jdbc`.
 
 ```properties
 # cas.monitor.jdbc.validationQuery=SELECT 1
 # cas.monitor.jdbc.maxWait=5000
-# cas.monitor.jdbc.healthQuery=
-# cas.monitor.jdbc.isolateInternalQueries=false
-# cas.monitor.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.monitor.jdbc.failFastTimeout=1
-# cas.monitor.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.monitor.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.monitor.jdbc.leakThreshold=10
-# cas.monitor.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.monitor.jdbc.batchSize=1
-# cas.monitor.jdbc.user=sa
-# cas.monitor.jdbc.ddlAuto=create-drop
-# cas.monitor.jdbc.maxAgeDays=180
-# cas.monitor.jdbc.password=
-# cas.monitor.jdbc.autocommit=false
-# cas.monitor.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.monitor.jdbc.idleTimeout=5000
-# cas.monitor.jdbc.dataSourceName=
-# cas.monitor.jdbc.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.monitor.jdbc.properties.propertyName=propertyValue
 ```
 
 ### LDAP Connection Pool
@@ -5084,33 +4777,10 @@ To learn more about this topic, [please review this guide](Webflow-Customization
 
 #### JDBC
 
-If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance.
+If AUP is controlled via JDBC, decide how choices should be remembered back inside the database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.acceptableUsagePolicy.jdbc`.
 
 ```properties
 # cas.acceptableUsagePolicy.jdbc.tableName=usage_policies_table
-
-# cas.acceptableUsagePolicy.jdbc.validationQuery=SELECT 1
-# cas.acceptableUsagePolicy.jdbc.maxWait=5000
-# cas.acceptableUsagePolicy.jdbc.healthQuery=
-# cas.acceptableUsagePolicy.jdbc.isolateInternalQueries=false
-# cas.acceptableUsagePolicy.jdbc.url=jpa:hsqldb:mem:cas-hsql-database
-# cas.acceptableUsagePolicy.jdbc.failFastTimeout=1
-# cas.acceptableUsagePolicy.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.acceptableUsagePolicy.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.acceptableUsagePolicy.jdbc.leakThreshold=10
-# cas.acceptableUsagePolicy.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.acceptableUsagePolicy.jdbc.batchSize=1
-# cas.acceptableUsagePolicy.jdbc.user=sa
-# cas.acceptableUsagePolicy.jdbc.ddlAuto=create-drop
-# cas.acceptableUsagePolicy.jdbc.maxAgeDays=180
-# cas.acceptableUsagePolicy.jdbc.password=
-# cas.acceptableUsagePolicy.jdbc.autocommit=false
-# cas.acceptableUsagePolicy.jdbc.driverClass=org.hsqldb.jpaDriver
-# cas.acceptableUsagePolicy.jdbc.idleTimeout=5000
-# cas.acceptableUsagePolicy.jdbc.dataSourceName=
-# cas.acceptableUsagePolicy.jdbc.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.acceptableUsagePolicy.jdbc.properties.propertyName=propertyValue
 ```
 
 #### MongoDb
@@ -5496,33 +5166,14 @@ The following LDAP types are supported:
 
 ### JDBC Password Management
 
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.pm.jdbc`.
+
 ```properties
 # The two fields indicated below are expected to be returned
 # cas.authn.pm.jdbc.sqlSecurityQuestions=SELECT question, answer FROM table WHERE user=?
 
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
-
-# cas.authn.pm.jdbc.healthQuery=
-# cas.authn.pm.jdbc.isolateInternalQueries=false
-# cas.authn.pm.jdbc.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.pm.jdbc.failFastTimeout=1
-# cas.authn.pm.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.pm.jdbc.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.pm.jdbc.leakThreshold=10
-# cas.authn.pm.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.pm.jdbc.batchSize=1
-# cas.authn.pm.jdbc.user=sa
-# cas.authn.pm.jdbc.ddlAuto=create-drop
-# cas.authn.pm.jdbc.maxAgeDays=180
-# cas.authn.pm.jdbc.password=
-# cas.authn.pm.jdbc.autocommit=false
-# cas.authn.pm.jdbc.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.pm.jdbc.idleTimeout=5000
-# cas.authn.pm.jdbc.dataSourceName=
-# cas.authn.pm.jdbc.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.pm.jdbc.properties.propertyName=propertyValue
 
 # cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
 # cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
