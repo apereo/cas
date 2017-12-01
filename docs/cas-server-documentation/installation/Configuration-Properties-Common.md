@@ -291,6 +291,21 @@ The outcome would be similar to:
 
 The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
 
+### Settings
+
+The following crypto options apply equally to relevant CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.crypto.signing.key=
+# ${configurationKey}.crypto.signing.keySize=
+
+# ${configurationKey}.crypto.encryption.key=
+# ${configurationKey}.crypto.encryption.keySize=
+
+# ${configurationKey}.crypto.alg=AES
+# ${configurationKey}.crypto.enabled=false
+```
+
 ### RSA Keys
 
 Certain features such as the ability to produce [JWTs as CAS tickets](Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
@@ -318,6 +333,7 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 # cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
 ```
 
+
 ## DDL Configuration
 
 Note that the default value for Hibernate's DDL setting is `create-drop` which may not be appropriate for use in production. Setting the value to
@@ -338,3 +354,25 @@ are likely the only safe options for production use.
 
 For more information on configuration of transaction levels and propagation behaviors,
 please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
+
+## Multifactor Authentication Bypass
+
+The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.bypass.type=DEFAULT|GROOVY|REST
+
+# ${configurationKey}.bypass.principalAttributeName=bypass|skip
+# ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
+
+# ${configurationKey}.bypass.authenticationAttributeName=bypass|skip
+# ${configurationKey}.bypass.authenticationAttributeValue=allowed.+|enabled.+
+
+# ${configurationKey}.bypass.authenticationHandlerName=AcceptUsers.+
+# ${configurationKey}.bypass.authenticationMethodName=LdapAuthentication.+
+
+# ${configurationKey}.bypass.credentialClassType=UsernamePassword.+
+
+# ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
+# ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+```
