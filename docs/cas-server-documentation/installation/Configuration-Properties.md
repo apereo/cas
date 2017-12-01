@@ -1434,7 +1434,7 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 
 ## Radius Authentication
 
-To learn more about this topic, [please review this guide](RADIUS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`.
+To learn more about this topic, [please review this guide](RADIUS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.radius`.
 
 ```properties
 # cas.authn.radius.server.nasPortId=-1
@@ -1456,43 +1456,25 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.radius.name=
 # cas.authn.radius.failoverOnException=false
 # cas.authn.radius.failoverOnAuthenticationFailure=false
-
-# cas.authn.radius.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.radius.passwordEncoder.characterEncoding=
-# cas.authn.radius.passwordEncoder.encodingAlgorithm=
-# cas.authn.radius.passwordEncoder.secret=
-# cas.authn.radius.passwordEncoder.strength=16
 ```
 
 ## File (Whitelist) Authentication
 
-To learn more about this topic, [please review this guide](Whitelist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`.
+To learn more about this topic, [please review this guide](Whitelist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.file`.
 
 ```properties
 # cas.authn.file.separator=::
 # cas.authn.file.filename=file:///path/to/users/file
 # cas.authn.file.name=
-
-# cas.authn.file.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.file.passwordEncoder.characterEncoding=
-# cas.authn.file.passwordEncoder.encodingAlgorithm=
-# cas.authn.file.passwordEncoder.secret=
-# cas.authn.file.passwordEncoder.strength=16
 ```
 
 ## Reject Users (Blacklist) Authentication
 
-To learn more about this topic, [please review this guide](Blacklist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`.
+To learn more about this topic, [please review this guide](Blacklist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.reject`.
 
 ```properties
 # cas.authn.reject.users=user1,user2
 # cas.authn.reject.name=
-
-# cas.authn.reject.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.reject.passwordEncoder.characterEncoding=
-# cas.authn.reject.passwordEncoder.encodingAlgorithm=
-# cas.authn.reject.passwordEncoder.secret=
-# cas.authn.reject.passwordEncoder.strength=16
 ```
 
 ## Database Authentication
@@ -1502,7 +1484,7 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 ### Query Database Authentication
 
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
-against the password on record determined by a configurable database query.  Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.query[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`.
+against the password on record determined by a configurable database query.  Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.query[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
 
 ```properties
 # cas.authn.jdbc.query[0].credentialCriteria=
@@ -1514,17 +1496,11 @@ against the password on record determined by a configurable database query.  Dat
 # cas.authn.jdbc.query[0].fieldExpired=
 # cas.authn.jdbc.query[0].fieldDisabled=
 # cas.authn.jdbc.query[0].principalAttributeList=sn,cn:commonName,givenName
-
-# cas.authn.jdbc.query[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.jdbc.query[0].passwordEncoder.characterEncoding=
-# cas.authn.jdbc.query[0].passwordEncoder.encodingAlgorithm=
-# cas.authn.jdbc.query[0].passwordEncoder.secret=
-# cas.authn.jdbc.query[0].passwordEncoder.strength=16
 ```
 
 ### Search Database Authentication
 
-Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.search[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.search[0]`.
+Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.search[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.search[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.search[0]`.
 
 ```properties
 # cas.authn.jdbc.search[0].fieldUser=
@@ -1533,28 +1509,16 @@ Searches for a user record by querying against a username and password; the user
 # cas.authn.jdbc.search[0].credentialCriteria=
 # cas.authn.jdbc.search[0].name=
 # cas.authn.jdbc.search[0].order=0
-
-# cas.authn.jdbc.search[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.jdbc.search[0].passwordEncoder.characterEncoding=
-# cas.authn.jdbc.search[0].passwordEncoder.encodingAlgorithm=
-# cas.authn.jdbc.search[0].passwordEncoder.secret=
-# cas.authn.jdbc.search[0].passwordEncoder.strength=16
 ```
 
 ### Bind Database Authentication
 
-Authenticates a user by attempting to create a database connection using the username and (hashed) password. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.bind[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.bind[0]`.
+Authenticates a user by attempting to create a database connection using the username and (hashed) password. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.bind[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.bind[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.bind[0]`.
 
 ```properties
 # cas.authn.jdbc.bind[0].credentialCriteria=
 # cas.authn.jdbc.bind[0].name=
 # cas.authn.jdbc.bind[0].order=0
-
-# cas.authn.jdbc.bind[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.jdbc.bind[0].passwordEncoder.characterEncoding=
-# cas.authn.jdbc.bind[0].passwordEncoder.encodingAlgorithm=
-# cas.authn.jdbc.bind[0].passwordEncoder.secret=
-# cas.authn.jdbc.bind[0].passwordEncoder.strength=16
 ```
 
 ### Encode Database Authentication
@@ -1567,7 +1531,7 @@ This password encoding method combines the private Salt and the public salt whic
 If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
 is converted to hex before comparing it to the database value.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.encode[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.encode[0]`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.encode[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.encode[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.encode[0]`.
 
 
 ```properties
@@ -1584,17 +1548,11 @@ Database settings for this feature are available [here](Configuration-Properties
 # cas.authn.jdbc.encode[0].credentialCriteria=
 # cas.authn.jdbc.encode[0].name=
 # cas.authn.jdbc.encode[0].order=0
-
-# cas.authn.jdbc.encode[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.jdbc.encode[0].passwordEncoder.characterEncoding=
-# cas.authn.jdbc.encode[0].passwordEncoder.encodingAlgorithm=
-# cas.authn.jdbc.encode[0].passwordEncoder.secret=
-# cas.authn.jdbc.encode[0].passwordEncoder.strength=16
 ```
 
 ## MongoDb Authentication
 
-To learn more about this topic, [please review this guide](MongoDb-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`.
+To learn more about this topic, [please review this guide](MongoDb-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.mongo`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.mongo`.
 
 ```properties
 # cas.authn.mongo.mongoHostUri=mongodb://uri
@@ -1603,12 +1561,6 @@ To learn more about this topic, [please review this guide](MongoDb-Authenticatio
 # cas.authn.mongo.passwordAttribute=password
 # cas.authn.mongo.collectionName=users
 # cas.authn.mongo.name=
-
-# cas.authn.mongo.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.mongo.passwordEncoder.characterEncoding=
-# cas.authn.mongo.passwordEncoder.encodingAlgorithm=
-# cas.authn.mongo.passwordEncoder.secret=
-# cas.authn.mongo.passwordEncoder.strength=16
 ```
 
 ## LDAP Authentication
@@ -1797,15 +1749,7 @@ Furthermore if you are seeing errors in the logs that resemble a *<Operation exc
 
 ### LDAP Password Encoding & Principal Transformation
 
-Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.ldap[0]`.
-
-```properties
-# cas.authn.ldap[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.ldap[0].passwordEncoder.characterEncoding=
-# cas.authn.ldap[0].passwordEncoder.encodingAlgorithm=
-# cas.authn.ldap[0].passwordEncoder.secret=
-# cas.authn.ldap[0].passwordEncoder.strength=16
-```
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.ldap[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.ldap[0]`.
 
 ### LDAP Connection Validators
 
@@ -1883,17 +1827,11 @@ The parameters passed are as follows:
 ## REST Authentication
 
 This allows the CAS server to reach to a remote REST endpoint via a `POST`.
-To learn more about this topic, [please review this guide](Rest-Authentication.html).
+To learn more about this topic, [please review this guide](Rest-Authentication.html). Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.rest`.
 
 ```properties
 # cas.authn.rest.uri=https://...
 # cas.authn.rest.name=
-
-# cas.authn.rest.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.rest.passwordEncoder.characterEncoding=
-# cas.authn.rest.passwordEncoder.encodingAlgorithm=
-# cas.authn.rest.passwordEncoder.secret=
-# cas.authn.rest.passwordEncoder.strength=16
 ```
 
 ## Google Apps Authentication
@@ -2002,7 +1940,7 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 
 ## JAAS Authentication
 
-To learn more about this topic, [please review this guide](JAAS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jaas[0]`.
+To learn more about this topic, [please review this guide](JAAS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jaas[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jaas[0]`.
 
 ```properties
 # cas.authn.jaas[0].realm=CAS
@@ -2010,12 +1948,6 @@ To learn more about this topic, [please review this guide](JAAS-Authentication.h
 # cas.authn.jaas[0].kerberosRealmSystemProperty=
 # cas.authn.jaas[0].name=
 # cas.authn.jaas[0].credentialCriteria=
-
-# cas.authn.jaas[0].passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.jaas[0].passwordEncoder.characterEncoding=
-# cas.authn.jaas[0].passwordEncoder.encodingAlgorithm=
-# cas.authn.jaas[0].passwordEncoder.secret=
-# cas.authn.jaas[0].passwordEncoder.strength=16
 ```
 
 ## GUA Authentication
@@ -2089,7 +2021,7 @@ The signing key and the encryption key [are both JWKs](Configuration-Properties-
 
 ## Couchbase Authentication
 
-To learn more about this topic, [please review this guide](Couchbase-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchbase`.
+To learn more about this topic, [please review this guide](Couchbase-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.couchbase`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.couchbase`.
 
 ```properties
 
@@ -2103,17 +2035,11 @@ To learn more about this topic, [please review this guide](Couchbase-Authenticat
 
 # cas.authn.couchbase.name=
 # cas.authn.couchbase.order=
-
-# cas.authn.couchbase.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.couchbase.passwordEncoder.characterEncoding=
-# cas.authn.couchbase.passwordEncoder.encodingAlgorithm=
-# cas.authn.couchbase.passwordEncoder.secret=
-# cas.authn.couchbase.passwordEncoder.strength=16
 ```
 
 ## Amazon Cloud Directory Authentication
 
-To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`.
+To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cloudDirectory`.
 
 ```properties
 # cas.authn.cloudDirectory.credentialAccessKey=
@@ -2134,12 +2060,6 @@ To learn more about this topic, [please review this guide](AWS-CloudDirectory-Au
 
 # cas.authn.cloudDirectory.name=
 # cas.authn.cloudDirectory.order=
-
-# cas.authn.cloudDirectory.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.cloudDirectory.passwordEncoder.characterEncoding=
-# cas.authn.cloudDirectory.passwordEncoder.encodingAlgorithm=
-# cas.authn.cloudDirectory.passwordEncoder.secret=
-# cas.authn.cloudDirectory.passwordEncoder.strength=16
 ```
 
 ## Remote Address Authentication
@@ -2159,18 +2079,12 @@ use <strong>casuser</strong> and <strong>Mellon</strong> as the username and pas
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
-Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.accept`.
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.accept`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.accept`.
 
 ```properties
 # cas.authn.accept.users=
 # cas.authn.accept.name=
 # cas.authn.accept.credentialCriteria=
-
-# cas.authn.accept.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
-# cas.authn.accept.passwordEncoder.characterEncoding=
-# cas.authn.accept.passwordEncoder.encodingAlgorithm=
-# cas.authn.accept.passwordEncoder.secret=
-# cas.authn.accept.passwordEncoder.strength=16
 ```
 
 ## X509 Authentication
@@ -2306,19 +2220,13 @@ To fetch CRLs, the following options are available:
 
 ## Shiro Authentication
 
-To learn more about this topic, [please review this guide](Shiro-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.shiro`.
+To learn more about this topic, [please review this guide](Shiro-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.shiro`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.shiro`.
 
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
 # cas.authn.shiro.requiredRoles=value1,value2,...
 # cas.authn.shiro.location=classpath:shiro.ini
 # cas.authn.shiro.name=
-
-# cas.authn.shiro.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.shiro.passwordEncoder.characterEncoding=
-# cas.authn.shiro.passwordEncoder.encodingAlgorithm=
-# cas.authn.shiro.passwordEncoder.secret=
-# cas.authn.shiro.passwordEncoder.strength=16
 ```
 
 
@@ -5166,7 +5074,7 @@ The following LDAP types are supported:
 
 ### JDBC Password Management
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.pm.jdbc`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.pm.jdbc`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.pm.jdbc`.
 
 ```properties
 # The two fields indicated below are expected to be returned
@@ -5174,12 +5082,6 @@ Database settings for this feature are available [here](Configuration-Properties
 
 # cas.authn.pm.jdbc.sqlFindEmail=SELECT email FROM table WHERE user=?
 # cas.authn.pm.jdbc.sqlChangePassword=UPDATE table SET password=? WHERE user=?
-
-# cas.authn.pm.jdbc.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2|com.example.CustomPasswordEncoder
-# cas.authn.pm.jdbc.passwordEncoder.characterEncoding=
-# cas.authn.pm.jdbc.passwordEncoder.encodingAlgorithm=
-# cas.authn.pm.jdbc.passwordEncoder.secret=
-# cas.authn.pm.jdbc.passwordEncoder.strength=16
 ```
 
 ### REST Password Management
