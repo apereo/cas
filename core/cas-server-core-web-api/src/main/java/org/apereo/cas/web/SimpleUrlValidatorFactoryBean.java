@@ -18,20 +18,22 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
 
     private static final UrlValidator URL_VALIDATOR_ALLOW_LOCAL_URLS = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);
 
-    private final boolean             allowLocalUrls;
-    private final UrlValidator        urlValidatorWithRegex;
+    private final boolean allowLocalUrls;
+    private final UrlValidator urlValidatorWithRegex;
 
     public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls) {
         this(allowLocalUrls, null, true);
     }
     
-    public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls, final String authorityValidationRegEx, final boolean authorityValidationRegExCaseSensitiv) {
+    public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls, final String authorityValidationRegEx, 
+        final boolean authorityValidationRegExCaseSensitiv) {
         this.allowLocalUrls = allowLocalUrls;
         this.urlValidatorWithRegex = createUrlValidatorWithRegex(allowLocalUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitiv);
     }
 
-    private UrlValidator createUrlValidatorWithRegex(final boolean allowLocalUrls, final String authorityValidationRegEx, final boolean authorityValidationRegExCaseSensitiv) {
-        if(StringUtils.isEmpty(authorityValidationRegEx)) {
+    private UrlValidator createUrlValidatorWithRegex(final boolean allowLocalUrls, final String authorityValidationRegEx, 
+        final boolean authorityValidationRegExCaseSensitiv) {
+        if (StringUtils.isEmpty(authorityValidationRegEx)) {
             return null;
         }
         
@@ -46,11 +48,11 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     }
 
     private UrlValidator getUrlValidator() {
-        if(this.urlValidatorWithRegex != null) {
+        if (this.urlValidatorWithRegex != null) {
             return urlValidatorWithRegex;
         }
         
-        if(this.allowLocalUrls) {
+        if (this.allowLocalUrls) {
             return URL_VALIDATOR_ALLOW_LOCAL_URLS;
         }
 
