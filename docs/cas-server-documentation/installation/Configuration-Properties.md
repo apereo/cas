@@ -2778,7 +2778,7 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.gauth`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.gauth`.
 
 #### Google Authenticator JSON
 
@@ -2841,7 +2841,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.name=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
 
 #### YubiKey JSON Device Store
 
@@ -2921,7 +2921,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 # cas.authn.mfa.radius.server.nasIpv6Address=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
 
 ### DuoSecurity
 
@@ -2947,7 +2947,7 @@ import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
 
 ### FIDO U2F
 
@@ -2963,7 +2963,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F JSON
 
@@ -3057,7 +3057,7 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.name=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
 
 ### Microsoft Azure
 
@@ -3073,7 +3073,7 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.allowInternationalCalls=false
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
 
 ### Authy
 
@@ -3090,7 +3090,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.name=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Common-Properties.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
 
 ## SAML Core
 
