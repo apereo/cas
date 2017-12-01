@@ -40,7 +40,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX
         assertTrue(this.resolver.supports(c));
     }
 
-    @Test
+    @Test                                                        
     public void verifySupportFalse() {
         assertFalse(this.resolver.supports(new UsernamePasswordCredential()));
     }
