@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
+import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.slf4j.Logger;
@@ -49,5 +50,18 @@ public class AccessTokenRefreshTokenGrantRequestExtractor extends AccessTokenAut
     @Override
     public OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.REFRESH_TOKEN;
+    }
+
+    @Override
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
+        final String clientId = getRegisteredServiceIdentifierFromRequest(request);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
+        LOGGER.debug("Located registered service [{}]", registeredService);
+        return registeredService;
+    }
+
+    @Override
+    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
+        return request.getParameter(OAuth20Constants.CLIENT_ID);
     }
 }

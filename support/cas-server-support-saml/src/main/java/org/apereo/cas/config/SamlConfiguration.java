@@ -18,7 +18,7 @@ import org.apereo.cas.support.saml.web.view.Saml10FailureResponseView;
 import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +31,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
 
 import java.nio.charset.StandardCharsets;
-import java.util.Set;
 
 /**
  * This is {@link SamlConfiguration} that creates the necessary OpenSAML context and beans.
@@ -92,7 +91,7 @@ public class SamlConfiguration {
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
-    private Set<ValidationAuthorizer> validationAuthorizers;
+    private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
             
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope

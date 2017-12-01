@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -16,7 +16,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Set;
 
 /**
  * @author Misagh Moayyed
@@ -35,7 +34,7 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
                                     final View jsonView,
                                     final View successView, final View failureView,
                                     final String authnContextAttribute, 
-                                     final Set<ValidationAuthorizer> validationAuthorizers) {
+                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         super(validationSpecification, authenticationSystemSupport, servicesManager,
                 centralAuthenticationService, proxyHandler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
