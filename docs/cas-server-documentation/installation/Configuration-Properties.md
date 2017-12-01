@@ -4320,6 +4320,8 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.httpClient.readTimeout=5000
 # cas.httpClient.hostnameVerifier=NONE|DEFAULT
 # cas.httpClient.allowLocalLogoutUrls=false
+# cas.httpClient.authorityValidationRegEx=
+# cas.httpClient.authorityValidationRegExCaseSensitiv=true
 
 # cas.httpClient.truststore.psw=changeit
 # cas.httpClient.truststore.file=classpath:/truststore.jks
