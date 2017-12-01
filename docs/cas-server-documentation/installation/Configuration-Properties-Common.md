@@ -99,6 +99,16 @@ class PredicateExample implements Predicate<Credential> {
 Certain aspects of CAS such as authentication handling support configuration of
 password encoding. Most options are based on Spring Security's [support for password encoding](http://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/password/PasswordEncoder.html).
 
+The following options related to password encoding support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
+# ${configurationKey}.passwordEncoder.characterEncoding=
+# ${configurationKey}.passwordEncoder.encodingAlgorithm=
+# ${configurationKey}.passwordEncoder.secret=
+# ${configurationKey}.passwordEncoder.strength=16
+```
+
 The following options are supported:
 
 | Type                    | Description
