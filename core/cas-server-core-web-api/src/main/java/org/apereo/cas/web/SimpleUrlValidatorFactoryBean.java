@@ -42,15 +42,15 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
 
     @Override
     public org.apereo.cas.web.UrlValidator getObject() {
-        return new SimpleUrlValidator( getUrlValidator(), getDomainValidator() );
+        return new SimpleUrlValidator(getUrlValidator(), getDomainValidator());
     }
 
     private UrlValidator getUrlValidator() {
-        if ( this.urlValidatorWithRegex != null ) {
+        if(this.urlValidatorWithRegex != null) {
             return urlValidatorWithRegex;
         }
         
-        if ( this.allowLocalUrls ) {
+        if(this.allowLocalUrls) {
             return URL_VALIDATOR_ALLOW_LOCAL_URLS;
         }
 
@@ -58,7 +58,7 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     }
 
     public DomainValidator getDomainValidator() {
-        return DomainValidator.getInstance( this.allowLocalUrls );
+        return DomainValidator.getInstance(this.allowLocalUrls);
     }
 
     @Override

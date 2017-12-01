@@ -75,7 +75,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     public void verifyLocalLogoutUrlWithValidRegExValidationAndLocalUrlNotAllowed() throws Exception {
         final AbstractRegisteredService svc = getRegisteredService(".+");
         svc.setLogoutUrl(null);
-        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true );
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true);
         final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
         assertEquals(url, new URL("https://localhost/logout?p=v"));
     }
@@ -99,7 +99,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
  
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) throws Exception {
-        return createDefaultSingleLogoutServiceLogoutUrlBuilder( allowLocalLogoutUrls, null, true );
+        return createDefaultSingleLogoutServiceLogoutUrlBuilder(allowLocalLogoutUrls, null, true);
     }
     
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls, 
