@@ -24,7 +24,7 @@ Contributors:
 
 Version: 3.0.3
 
-Release Date: 2017-11-23
+Release Date: 2017-12-01
 
 Copyright &copy; 2005, Yale University
 
@@ -1535,11 +1535,11 @@ to the CAS client.
       This covers the responses for the following endpoints: /serviceValidate, /proxyValidate, /p3/serviceValidate, /p3/proxyValidate, /proxy.<br />
       This specification is subject to change.<br />
 
-      Schema version: 3.0.1<br />
+      Schema version: 3.0.3<br />
 
       History:<br />
       3.0   initial version for CAS 3.0 protocol spec <br />
-      3.0.1 fixed attributes memberOf / xs:any clash, added documentation.<br />
+      3.0.3 fixed attributes memberOf / xs:any clash, added documentation.<br />
     </xs:documentation>
   </xs:annotation>
   <xs:element name="serviceResponse" type="cas:ServiceResponseType">
@@ -1846,4 +1846,4 @@ January, 2014: v3.0.1 - Attribute occurance
 
 September, 2015: v3.0.2 - Format parameter
 
-November, 2017: v3.0.3 - Fixed ServiceValidate XSD schema
+December, 2017: v3.0.3 - Fixed ServiceValidate XSD schema
