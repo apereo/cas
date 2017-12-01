@@ -26,5 +26,31 @@ public class SimpleUrlValidatorFactoryBeanTests {
         assertTrue(validator.isValid("http://www.demo.com/logout"));
         assertTrue(validator.isValid("http://localhost/logout"));
     }
+    
+    @Test
+    public void verifyValidationWithRegEx() throws Exception {
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
+        assertTrue(validator.isValid("http://my.test.authority/logout"));
+        assertFalse(validator.isValid("http://mY.tEST.aUTHORITY/logout"));
+        assertFalse(validator.isValid("http://other.test.authority/logout"));
+        assertFalse(validator.isValid("http://localhost/logout"));
+    }
+    
+    @Test
+    public void verifyValidationWithRegExCaseInsensitiv() throws Exception {
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", false).getObject();
+        assertTrue(validator.isValid("http://my.test.authority/logout"));
+        assertTrue(validator.isValid("http://mY.tEST.aUTHORITY/logout"));
+        assertFalse(validator.isValid("http://other.test.authority/logout"));
+        assertFalse(validator.isValid("http://localhost/logout"));
+    }
 
+    @Test
+    public void verifyValidationWithRegExAndLocalUrlAllowed() throws Exception {
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(true, "\\w{2}\\.\\w{4}\\.authority", true).getObject();
+        assertTrue(validator.isValid("http://my.test.authority/logout"));
+        assertFalse(validator.isValid("http://mY.tEST.aUTHORITY/logout"));
+        assertFalse(validator.isValid("http://other.test.authority/logout"));
+        assertTrue(validator.isValid("http://localhost/logout"));
+    }
 }

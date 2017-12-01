@@ -32,7 +32,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-    
+
     private Resource location;
     private String algorithm;
 
@@ -49,8 +49,8 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private PrivateKey readPemPrivateKey() {
         LOGGER.debug("Attempting to read as PEM [{}]", this.location);
         try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(in)) {
-            final PEMParser pp = new PEMParser(br);
+             BufferedReader br = new BufferedReader(in);
+             PEMParser pp = new PEMParser(br)) {
             final PEMKeyPair pemKeyPair = (PEMKeyPair) pp.readObject();
             final KeyPair kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
             return kp.getPrivate();
