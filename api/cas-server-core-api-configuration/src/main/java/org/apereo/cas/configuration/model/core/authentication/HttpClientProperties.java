@@ -54,7 +54,7 @@ public class HttpClientProperties implements Serializable {
     
     /**
      * Whether the regular expression specified with {@code authorityValidationRegEx} should be handled as case-sensitive
-     * ({@true}) or case-insensitive ({@false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
+     * ({@code true}) or case-insensitive ({@code false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
      */
     private boolean authorityValidationRegExCaseSensitiv = true;
     
