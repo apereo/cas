@@ -354,7 +354,7 @@ for the embedded Tomcat container.
 
 ```properties
 # cas.server.extAccessLog.enabled=false
-# cas.server.extAccessLog.pattern=c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)
+# cas.server.extAccessLog.pattern=c-ip s-ip cs-uri sc-status time x-threadname x-H(secure) x-H(remoteUser)
 # cas.server.extAccessLog.suffix=.log
 # cas.server.extAccessLog.prefix=localhost_access_extended
 # cas.server.extAccessLog.directory=
