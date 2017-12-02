@@ -215,7 +215,7 @@ JAASTest {
          */
         public LdapAuthorizationProperties getLdapAuthz() {
             ldapAuthz.setBaseDn(getBaseDn());
-            ldapAuthz.setSearchFilter(getUserFilter());
+            ldapAuthz.setSearchFilter(getSearchFilter());
             return ldapAuthz;
         }
 

@@ -182,6 +182,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
          */
         @RequiredProperty
         private String searchFilter;
+        
         /**
          * LDAP search filter used to locate the surrogate account.
          */
