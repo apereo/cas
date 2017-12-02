@@ -252,24 +252,11 @@ When you're done, create a remote debugger configuration in your IDE that connec
 
 ### Dependency Updates
 
-CAS integrates with [VersionEye](https://www.versioneye.com/user/projects/5677b4a5107997002d00131b) to 
-report back the version of dependencies used and those that may be outdated.
-
-In order to get a full report on dependencies, adjust the following:
-
-Specify the your VersionEye API key in the `~/.gradle/gradle.properties` file:
-
-```properties
-versioneye.api_key=1234567890abcdef
-```
-
-Then run the following command at the root:
+In order to get a full report on dependencies, run the following command at the root:
 
 ```bash
-./gradlew versionEyeUpdate
+./gradlew dependencyUpdates -Drevision=release
 ```
-
-Browse the report at the above link to see which dependencies might need attention. 
 
 ## Continuous Integration
 
