@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.aup;
 
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 
 import java.io.Serializable;
@@ -118,33 +118,8 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     }
 
     @RequiresModule(name = "cas-server-support-aup-ldap")
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = -7991011278378393382L;
-        /**
-         * Base DN to start the search for user accounts.
-         */
-        private String baseDn;
-        /**
-         * Search filter to use.
-         * Syntax is {@code cn={user}} or {@code cn={0}}
-         */
-        private String userFilter;
-
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getUserFilter() {
-            return userFilter;
-        }
-
-        public void setUserFilter(final String userFilter) {
-            this.userFilter = userFilter;
-        }
     }
 
 }

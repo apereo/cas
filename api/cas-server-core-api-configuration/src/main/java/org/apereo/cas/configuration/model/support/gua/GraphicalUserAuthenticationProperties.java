@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.support.gua;
 
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -43,41 +43,14 @@ public class GraphicalUserAuthenticationProperties implements Serializable {
         this.resource = resource;
     }
     
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = 4666838063728336692L;
-        /**
-         * Base DN to use for the user search.
-         */
-        @RequiredProperty
-        private String baseDn;
-        /**
-         * Search filter to locate the account in LDAP.
-         * Syntax is {@code cn={user}} or {@code cn={0}}
-         */
-        @RequiredProperty
-        private String userFilter;
         /**
          * Entry attribute that holds the user image.
          */
         @RequiredProperty
         private String imageAttribute;
 
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getUserFilter() {
-            return userFilter;
-        }
-
-        public void setUserFilter(final String userFilter) {
-            this.userFilter = userFilter;
-        }
-        
         public String getImageAttribute() {
             return imageAttribute;
         }

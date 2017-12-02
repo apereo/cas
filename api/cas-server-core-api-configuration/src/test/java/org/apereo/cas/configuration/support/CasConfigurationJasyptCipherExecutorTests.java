@@ -64,7 +64,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
         final Pair<String, Object> result = jasypt.decryptPair(pair);
         assertNotNull(result);
         assertEquals(result.getKey(), pair.getKey());
-        assertEquals(result.getValue(), "Testing");
+        assertEquals("Testing", result.getValue());
     }
 }
 

@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.util.HashMap;
@@ -13,24 +13,8 @@ import java.util.Map;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
-public class LdapPrincipalAttributesProperties extends AbstractLdapProperties {
+public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
     private static final long serialVersionUID = 5760065368731012063L;
-
-    /**
-     * Whether subtree searching should be perform recursively.
-     */
-    private boolean subtreeSearch = true;
-
-    /**
-     * Initial base DN to start the search.
-     */
-    private String baseDn;
-
-    /**
-     * Filter to query for user accounts.
-     * Format must match {@code attributeName={user}}.
-     */
-    private String userFilter;
 
     /**
      * The order of this attribute repository in the chain of repositories.
@@ -63,29 +47,5 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapProperties {
 
     public void setOrder(final int order) {
         this.order = order;
-    }
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
-    }
-
-    public String getUserFilter() {
-        return userFilter;
-    }
-
-    public void setUserFilter(final String userFilter) {
-        this.userFilter = userFilter;
-    }
-
-    public boolean isSubtreeSearch() {
-        return subtreeSearch;
-    }
-
-    public void setSubtreeSearch(final boolean subtreeSearch) {
-        this.subtreeSearch = subtreeSearch;
     }
 }
