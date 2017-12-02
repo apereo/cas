@@ -37,7 +37,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private boolean trackMostRecentSession = true;
 
-    public DefaultServiceTicketFactory(final ExpirationPolicy serviceTicketExpirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGeneratorMap,
+    public DefaultServiceTicketFactory(final ExpirationPolicy serviceTicketExpirationPolicy,
+                                       final Map<String, UniqueTicketIdGenerator> ticketIdGeneratorMap,
                                        final boolean onlyTrackMostRecentSession, final CipherExecutor cipherExecutor) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.uniqueTicketIdGeneratorsForService = ticketIdGeneratorMap;
@@ -46,7 +47,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     }
 
     @Override
-    public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service, final boolean credentialProvided) {
+    public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service,
+                                       final boolean credentialProvided, final Class<T> clazz) {
         String ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
