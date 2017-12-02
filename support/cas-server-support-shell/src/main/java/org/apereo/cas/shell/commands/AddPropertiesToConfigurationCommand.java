@@ -131,8 +131,8 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
             } else {
                 value = v.getDefaultValue().toString();
             }
-            LOGGER.info("Adding property [{}={}]", v.getName(), value);
-            p.put("# " + v.getName(), value);
+            LOGGER.info("Adding property [{}={}]", v.getId(), value);
+            p.put("# " + v.getId(), value);
         });
     }
 
