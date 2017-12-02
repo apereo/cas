@@ -138,7 +138,7 @@ public final class HttpUtils {
                                           final String basicAuthUsername,
                                           final String basicAuthPassword) {
         try {
-            return executeGet(url, basicAuthPassword, basicAuthUsername, new HashMap<>());
+            return executeGet(url, basicAuthUsername, basicAuthPassword, new HashMap<>());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
