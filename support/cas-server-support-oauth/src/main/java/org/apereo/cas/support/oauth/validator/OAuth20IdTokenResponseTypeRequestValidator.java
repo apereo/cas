@@ -20,6 +20,7 @@ public class OAuth20IdTokenResponseTypeRequestValidator extends OAuth20TokenResp
      *
      * @return the response type
      */
+    @Override
     public OAuth20ResponseTypes getResponseType() {
         return OAuth20ResponseTypes.IDTOKEN_TOKEN;
     }

@@ -664,8 +664,7 @@ By default, the execution order is the following but can be adjusted per source:
 5. [Internet2 Grouper](http://www.internet2.edu/products-services/trust-identity/grouper/)
 6. REST
 7. Script
-8. Shibboleth
-9. Stubbed/Static
+8. Stubbed/Static
 
 Note that if no *explicit* attribute mappings are defined, all permitted attributes on the record
 may be retrieved by CAS from the attribute repository source and made available to the principal. On the other hand,
@@ -865,14 +864,6 @@ with the following configured properties:
 grouperClient.webService.url = http://192.168.99.100:32768/grouper-ws/servicesRest
 grouperClient.webService.login = banderson
 grouperClient.webService.password = password
-```
-
-### Shibboleth Attribute Resolver
-
-To learn more about this topic, [please review this guide](../integration/Attribute-Resolution.html).
-
-```properties
-# cas.shibAttributeResolver.resources=classpath:/attribute-resolver.xml
 ```
 
 ### Shibboleth Integrations

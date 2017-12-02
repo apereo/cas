@@ -477,6 +477,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         return registeredServiceImpl;
     }
 
+    @Override
     protected void clearAllServices() {
         final Collection<RegisteredService> col = this.servicesManager.getAllServices();
         col.forEach(r -> this.servicesManager.delete(r.getId()));

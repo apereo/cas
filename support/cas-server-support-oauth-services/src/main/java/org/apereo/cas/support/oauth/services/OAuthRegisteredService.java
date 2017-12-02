@@ -182,6 +182,7 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     /**
      * Post load processing, once the service is located via JPA.
      */
+    @Override
     @PostLoad
     public void postLoad() {
         if (this.supportedGrantTypes == null) {

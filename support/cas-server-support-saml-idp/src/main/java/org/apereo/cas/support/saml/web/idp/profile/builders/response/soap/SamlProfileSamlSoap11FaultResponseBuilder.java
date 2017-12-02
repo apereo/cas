@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -19,7 +20,6 @@ import org.opensaml.soap.soap11.FaultActor;
 import org.opensaml.soap.soap11.FaultCode;
 import org.opensaml.soap.soap11.FaultString;
 import org.opensaml.soap.soap11.Header;
-import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +36,7 @@ public class SamlProfileSamlSoap11FaultResponseBuilder extends SamlProfileSamlSo
 
     public SamlProfileSamlSoap11FaultResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                                      final BaseSamlObjectSigner samlObjectSigner,
-                                                     final VelocityEngineFactory velocityEngineFactory,
+                                                     final VelocityEngine velocityEngineFactory,
                                                      final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                      final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
                                                      final SamlObjectEncrypter samlObjectEncrypter) {

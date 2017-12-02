@@ -614,13 +614,8 @@ ext.libraries = [
                     force = true
                 }
         ],
-        shibattributes          : [
-                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-impl:$idpVersion") {
-                    transitive = false
-                    force = true
-                },
-                dependencies.create("net.shibboleth.idp:idp-attribute-resolver-spring:$idpVersion") {
-                    transitive = false
+        apachevelocity     : [
+                dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityVersion") {
                     force = true
                 }
         ],
@@ -1081,6 +1076,13 @@ ext.libraries = [
                 },
                 dependencies.create("com.fasterxml.jackson.datatype:jackson-datatype-guava:$jacksonDatabindVersion") {
                     exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
+                    force = true
+                },
+                dependencies.create("com.fasterxml.jackson.module:jackson-module-kotlin:$jacksonDatabindVersion") {
+                    exclude(group: "com.google.guava", module: "guava")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "org.jetbrains.kotlin", module: "kotlin-reflect")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-annotations")
                     force = true
                 },

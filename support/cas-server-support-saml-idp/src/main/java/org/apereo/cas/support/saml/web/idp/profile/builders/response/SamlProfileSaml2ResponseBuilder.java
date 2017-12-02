@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -32,7 +33,6 @@ import org.opensaml.saml.saml2.core.Status;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -57,7 +57,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
 
     public SamlProfileSaml2ResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                            final BaseSamlObjectSigner samlObjectSigner,
-                                           final VelocityEngineFactory velocityEngineFactory,
+                                           final VelocityEngine velocityEngineFactory,
                                            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                            final SamlObjectEncrypter samlObjectEncrypter,
                                            final TicketRegistry ticketRegistry,

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -19,7 +20,6 @@ import org.opensaml.saml.saml2.core.RequestAbstractType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +44,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     /**
      * The Velocity engine factory.
      */
-    protected final VelocityEngineFactory velocityEngineFactory;
+    protected final VelocityEngine velocityEngineFactory;
 
     /**
      * CAS settings.
@@ -58,7 +58,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
                                               final BaseSamlObjectSigner samlObjectSigner,
-                                              final VelocityEngineFactory velocityEngineFactory,
+                                              final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                               final SamlObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean);

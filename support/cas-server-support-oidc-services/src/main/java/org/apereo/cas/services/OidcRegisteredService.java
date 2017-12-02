@@ -198,6 +198,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.
      */
+    @Override
     @PostLoad
     public void postLoad() {
         if (this.scopes == null) {

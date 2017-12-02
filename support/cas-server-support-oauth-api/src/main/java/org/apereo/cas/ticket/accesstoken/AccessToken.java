@@ -23,5 +23,6 @@ public interface AccessToken extends OAuthToken {
      *
      * @return the scopes
      */
+    @Override
     Collection<String> getScopes();
 }

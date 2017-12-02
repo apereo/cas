@@ -82,6 +82,7 @@ public class ProxyController extends AbstractDelegateController {
      * @return ModelAndView containing a view name of either
      * {@code casProxyFailureView} or {@code casProxySuccessView}
      */
+    @Override
     @GetMapping(path = "/proxy")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         final String proxyGrantingTicket = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET);
@@ -128,6 +129,7 @@ public class ProxyController extends AbstractDelegateController {
         return modelAndView;
     }
 
+    @Override
     public void setApplicationContext(final ApplicationContext context) {
         this.context = context;
     }

@@ -146,11 +146,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId) throws InvalidTicketException {
+    public Ticket getTicket(final String ticketId) throws InvalidTicketException {
         Assert.notNull(ticketId, "ticketId cannot be null");
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
-        return (T) ticket;
+        return ticket;
     }
 
     /**
