@@ -455,6 +455,19 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.maxConnections=10
 ```
 
+## RESTful Integrations
+
+The following options related to features in CAS that provide REST support to fetch and update data. These settings apply equally, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.method=GET|POST
+# ${configurationKey}.order=0
+# ${configurationKey}.caseInsensitive=false
+# ${configurationKey}.basicAuthUsername=uid
+# ${configurationKey}.basicAuthPassword=password
+# ${configurationKey}.url=https://rest.somewhere.org/attributes
+```
+
 ## Redis Configuration
 
 The following options related to Redis support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
@@ -511,6 +524,43 @@ are likely the only safe options for production use.
 For more information on configuration of transaction levels and propagation behaviors,
 please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
 
+## SAML2 Service Provider Integrations
+
+The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+
+Each SAML service provider supports the following settings:
+
+| Name                  |  Description
+|-----------------------|---------------------------------------------------------------------------
+| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
+| `name`                | The name of the service provider registered in the service registry.
+| `description`         | The description of the service provider registered in the service registry.
+| `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
+| `nameIdFormat`        | The name of the service provider registered in the service registry.
+| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
+| `signatureLocation`   | Signature location to verify metadata.
+| `entityIds`           | List of entity ids allowed for this service provider.
+| `signResponses`       | Indicate whether responses should be signed. Default is `true`.
+| `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
+
+
+The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
+
+The following  options apply equally to SAML2 service provider integrations, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.metadata=/etc/cas/saml/dropbox.xml
+# ${configurationKey}.name=Dropbox
+# ${configurationKey}.description=Dropbox Integration
+# ${configurationKey}.nameIdAttribute=mail
+# ${configurationKey}.nameIdFormat=
+# ${configurationKey}.signatureLocation=
+# ${configurationKey}.attributes=
+# ${configurationKey}.entityIds=
+# ${configurationKey}.signResponses=
+# ${configurationKey}.signAssertions=
+```
+
 ## Multifactor Authentication Bypass
 
 The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
@@ -531,4 +581,227 @@ The following bypass options apply equally to multifactor authentication provide
 
 # ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
 # ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+```
+
+In multifactor authentication bypass is determined via REST, RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
+
+## Couchbase Integration Settings
+
+The following  options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.nodeSet=localhost:8091
+# ${configurationKey}.password=
+# ${configurationKey}.queryEnabled=true
+# ${configurationKey}.bucket=default
+# ${configurationKey}.timeout=10
+```
+
+## Memcached Integration Settings
+
+The following  options are shared and apply when CAS is configured to integrate with memcached (i.e ticket registry, etc), given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.memcached.servers=localhost:11211
+# ${configurationKey}.memcached.locatorType=ARRAY_MOD
+# ${configurationKey}.memcached.failureMode=Redistribute
+# ${configurationKey}.memcached.hashAlgorithm=FNV1_64_HASH
+# ${configurationKey}.memcached.shouldOptimize=false
+# ${configurationKey}.memcached.daemon=true
+# ${configurationKey}.memcached.maxReconnectDelay=-1
+# ${configurationKey}.memcached.useNagleAlgorithm=false
+# ${configurationKey}.memcached.shutdownTimeoutSeconds=-1
+# ${configurationKey}.memcached.opTimeout=-1
+# ${configurationKey}.memcached.timeoutExceptionThreshold=2
+# ${configurationKey}.memcached.maxTotal=20
+# ${configurationKey}.memcached.maxIdle=8
+# ${configurationKey}.memcached.minIdle=0
+
+# ${configurationKey}.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
+# ${configurationKey}.memcached.transcoderCompressionThreshold=16384
+# ${configurationKey}.memcached.kryoAutoReset=false
+# ${configurationKey}.memcached.kryoObjectsByReference=false
+# ${configurationKey}.memcached.kryoRegistrationRequired=false
+```
+
+## Delegated Authentication Settings
+
+The following  options are shared and apply when CAS is configured to delegate authentication to an external provider such as Yahoo, given the provider's *configuration key*:
+
+```properties
+#${configurationKey}.id=
+#${configurationKey}.secret=
+# (Optional) Friendly name, e.g. "This Organization" or "That Organization"
+#${configurationKey}.clientName=My Provider
+```
+
+## LDAP Connection Settings
+
+The following  options apply  to features that integrate with an LDAP server (i.e. authentication, attribute resolution, etc) given the provider's *configuration key*:
+
+```properties
+#${configurationKey}.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+#${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
+#${configurationKey}.bindCredential=Password
+
+#${configurationKey}.poolPassivator=NONE|CLOSE|BIND
+#${configurationKey}.connectionStrategy=
+#${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+#${configurationKey}.connectTimeout=PT5S
+#${configurationKey}.trustCertificates=
+#${configurationKey}.keystore=
+#${configurationKey}.keystorePassword=
+#${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
+#${configurationKey}.minPoolSize=3
+#${configurationKey}.maxPoolSize=10
+#${configurationKey}.validateOnCheckout=true
+#${configurationKey}.validatePeriodically=true
+#${configurationKey}.validatePeriod=PT5M
+#${configurationKey}.validateTimeout=PT5S
+#${configurationKey}.failFast=true
+#${configurationKey}.idleTime=PT10M
+#${configurationKey}.prunePeriod=PT2H
+#${configurationKey}.blockWaitTime=PT3S
+#${configurationKey}.useSsl=true
+#${configurationKey}.useStartTls=false
+#${configurationKey}.responseTimeout=PT5S
+#${configurationKey}.allowMultipleDns=false
+#${configurationKey}.name=
+```
+
+### Connection Initialization
+
+LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
+
+| Behavior                               | Description              
+|----------------------------------------|-------------------------------------------------------------------
+| `bindDn`/`bindCredential` provided     | Use the provided credentials to bind when initializing connections.
+| `bindDn`/`bindCredential` set to `*`   | Use a fast-bind strategy to initialize the pool.   
+| `bindDn`/`bindCredential` set to blank | Skip connection initializing; perform operations anonymously.
+| SASL mechanism provided                | Use the given SASL mechanism to bind when initializing connections.
+
+### Passivators
+
+The following options can be used to passivate objects when they are checked back into the LDAP connection pool:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No passivation takes place.
+| `CLOSE`                 | Passivates a connection by attempting to close it.
+| `BIND`                  | The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.
+
+#### Why Passivators?
+
+You may receive unexpected LDAP failures, when CAS is configured to authenticate using `DIRECT` or `AUTHENTICATED` types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it's no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request.
+
+Furthermore if you are seeing errors in the logs that resemble a *<Operation exception encountered, reopening connection>* type of message, this usually is an indication that the connection pool's validation timeout established and created by CAS is greater than the timeout configured in the LDAP server, or more likely, in the load balancer in front of the LDAP servers. You can adjust the LDAP server session's timeout for connections, or you can teach CAS to use a validatity period that is equal or less than the LDAP server session's timeout.
+
+### Connection Strategies
+
+If multiple URLs are provided as the LDAP url, this describes how each URL will be processed.
+
+| Provider              | Description              
+|-----------------------|-----------------------------------------------------------------------------------------------
+| `DEFAULT`             | The default JNDI provider behavior will be used.    
+| `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
+| `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
+| `RANDOM`              | For each new connection a random LDAP url will be selected.
+| `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
+### LDAP SASL Mechanisms
+
+```properties
+#${configurationKey}.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+#${configurationKey}.saslRealm=EXAMPLE.COM
+#${configurationKey}.saslAuthorizationId=
+#${configurationKey}.saslMutualAuth=
+#${configurationKey}.saslQualityOfProtection=
+#${configurationKey}.saslSecurityStrength=
+```
+
+### LDAP Connection Validators
+
+The following LDAP validators can be used to test connection health status:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No validation takes place.
+| `SEARCH`                | Validates a connection is healthy by performing a search operation. Validation is considered successful if the search result size is greater than zero.
+| `COMPARE`               | Validates a connection is healthy by performing a compare operation.
+
+```properties
+#${configurationKey}.validator.type=NONE|SEARCH|COMPARE
+#${configurationKey}.validator.baseDn=
+#${configurationKey}.validator.searchFilter=(objectClass=*)
+#${configurationKey}.validator.scope=OBJECT|ONELEVEL|SUBTREE
+#${configurationKey}.validator.attributeName=objectClass
+#${configurationKey}.validator.attributeValues=top
+#${configurationKey}.validator.dn=
+```
+
+A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
+
+```properties
+#${configurationKey}.type=NONE|SEARCH|COMPARE
+```
+
+The following types are supported:
+
+| Type                    | Description
+|-------------------------|--------------------------------------------------
+| `AD`                                                     | Active Directory.
+| `FreeIPA`                                    | FreeIPA Directory Server.
+| `EDirectory`                         | NetIQ eDirectory.
+| `GENERIC`                              | All other directory servers (i.e OpenLDAP, etc).
+
+## LDAP Authentication/Search Settings
+
+In addition to common LDAP connection settings above, there are cases where CAS simply need to execute authenticate against an LDAP server to fetch an account or set of attributes or execute a search query in general. The following  options apply  given the provider's *configuration key*:
+
+**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, etc will simply deactivate LDAP  altogether silently.
+
+```properties
+# ${configurationKey}.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
+
+# ${configurationKey}.baseDn=dc=example,dc=org
+# ${configurationKey}.subtreeSearch=true
+
+# ${configurationKey}.enhanceWithEntryResolver=true
+# ${configurationKey}.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS
+# ${configurationKey}.dnFormat=uid=%s,ou=people,dc=example,dc=org
+# ${configurationKey}.principalAttributePassword=password
+```
+
+The following authentication types are supported:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
+| `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
+| `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+
+### LDAP Search Entry Handlers
+
+```properties
+# ${configurationKey}.searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE| \
+#                                               OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP| \
+#                                               RANGE_ENTRY|RECURSIVE_ENTRY
+
+# ${configurationKey}.searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
+# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
+# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeValueCaseChange=NONE|LOWER|UPPER
+# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNames=
+
+# ${configurationKey}.searchEntryHandlers[0].dnAttribute.dnAttributeName=entryDN
+# ${configurationKey}.searchEntryHandlers[0].dnAttribute.addIfExists=false
+
+# ${configurationKey}.searchEntryHandlers[0].primaryGroupId.groupFilter=(&(objectClass=group)(objectSid={0}))
+# ${configurationKey}.searchEntryHandlers[0].primaryGroupId.baseDn=
+
+# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.mergeAttributeName=
+# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.attribueNames=
+
+# ${configurationKey}.searchEntryHandlers[0].recursive.searchAttribute=
+# ${configurationKey}.searchEntryHandlers[0].recursive.mergeAttributes=
 ```
