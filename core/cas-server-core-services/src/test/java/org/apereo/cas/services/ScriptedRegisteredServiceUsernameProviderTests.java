@@ -18,6 +18,6 @@ public class ScriptedRegisteredServiceUsernameProviderTests {
         final String id =
                 p.resolveUsername(RegisteredServiceTestUtils.getPrincipal(), RegisteredServiceTestUtils.getService(),
                     RegisteredServiceTestUtils.getRegisteredService());
-        assertEquals(id, "test");
+        assertEquals("test", id);
     }
 }
