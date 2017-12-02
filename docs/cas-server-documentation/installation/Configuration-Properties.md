@@ -133,14 +133,10 @@ Load settings from a DynamoDb instance.
 
 ### JDBC
 
-Load settings from a RDBMS instance.
+Load settings from a RDBMS instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.spring.cloud.jdbc`.
 
 ```properties
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
-# cas.spring.cloud.jdbc.url=
-# cas.spring.cloud.jdbc.user=
-# cas.spring.cloud.jdbc.password=
-# cas.spring.cloud.jdbc.driverClass=
 ```
 
 ## Configuration Security
@@ -913,8 +909,7 @@ function run(args) {
 
 ### JDBC
 
-If you wish to directly and separately retrieve attributes from a JDBC source,
-the following settings are then relevant:
+Retrieve attributes from a JDBC source. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.attributeRepository.jdbc[0]`.
 
 ```properties
 
@@ -935,31 +930,6 @@ the following settings are then relevant:
 # cas.authn.attributeRepository.jdbc[0].columnMappings.columnAttrName3=columnAttrValue3
 
 # cas.authn.attributeRepository.jdbc[0].sql=SELECT * FROM table WHERE {0}
-# cas.authn.attributeRepository.jdbc[0].username=uid
-# cas.authn.attributeRepository.jdbc[0].healthQuery=
-# cas.authn.attributeRepository.jdbc[0].isolateInternalQueries=false
-# cas.authn.attributeRepository.jdbc[0].url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.attributeRepository.jdbc[0].failFastTimeout=1
-# cas.authn.attributeRepository.jdbc[0].isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.attributeRepository.jdbc[0].dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.attributeRepository.jdbc[0].leakThreshold=10
-# cas.authn.attributeRepository.jdbc[0].propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.attributeRepository.jdbc[0].batchSize=1
-# cas.authn.attributeRepository.jdbc[0].user=sa
-# cas.authn.attributeRepository.jdbc[0].ddlAuto=create-drop
-# cas.authn.attributeRepository.jdbc[0].password=
-# cas.authn.attributeRepository.jdbc[0].autocommit=false
-# cas.authn.attributeRepository.jdbc[0].driverClass=org.hsqldb.jdbcDriver
-# cas.authn.attributeRepository.jdbc[0].idleTimeout=5000
-# cas.authn.attributeRepository.jdbc[0].pool.suspension=false
-# cas.authn.attributeRepository.jdbc[0].pool.minSize=6
-# cas.authn.attributeRepository.jdbc[0].pool.maxSize=18
-# cas.authn.attributeRepository.jdbc[0].pool.maxWait=2000
-# cas.authn.attributeRepository.jdbc[0].dataSourceName=
-# cas.authn.attributeRepository.jdbc[0].dataSourceProxy=false
-
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.attributeRepository.jdbc[0].properties.propertyName=propertyValue
 ```
 
 ### Grouper
@@ -2355,32 +2325,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ### JDBC Storage
 
-```properties
-# cas.authn.mfa.trusted.jpa.healthQuery=
-# cas.authn.mfa.trusted.jpa.isolateInternalQueries=false
-# cas.authn.mfa.trusted.jpa.url=jdbc:hsqldb:mem:cas-jdbc-storage
-# cas.authn.mfa.trusted.jpa.failFastTimeout=1
-# cas.authn.mfa.trusted.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.trusted.jpa.leakThreshold=10
-# cas.authn.mfa.trusted.jpa.batchSize=1
-# cas.authn.mfa.trusted.jpa.defaultCatalog=
-# cas.authn.mfa.trusted.jpa.defaultSchema=
-# cas.authn.mfa.trusted.jpa.user=sa
-# cas.authn.mfa.trusted.jpa.ddlAuto=create-drop
-# cas.authn.mfa.trusted.jpa.password=
-# cas.authn.mfa.trusted.jpa.autocommit=false
-# cas.authn.mfa.trusted.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.trusted.jpa.idleTimeout=5000
-# cas.authn.mfa.trusted.jpa.dataSourceName=
-# cas.authn.mfa.trusted.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.mfa.trusted.jpa.properties.propertyName=propertyValue
-
-# cas.authn.mfa.trusted.jpa.pool.suspension=false
-# cas.authn.mfa.trusted.jpa.pool.minSize=6
-# cas.authn.mfa.trusted.jpa.pool.maxSize=18
-# cas.authn.mfa.trusted.jpa.pool.maxWait=2000
-```
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.trusted.jpa`.
 
 ### MongoDb Storage
 
@@ -2446,30 +2391,7 @@ Multifacor authentication bypass settings for this provider are available [here]
 
 #### Google Authenticator JPA
 
-```properties
-# cas.authn.mfa.gauth.jpa.database.healthQuery=
-# cas.authn.mfa.gauth.jpa.database.isolateInternalQueries=false
-# cas.authn.mfa.gauth.jpa.database.url=jdbc:hsqldb:mem:cas-gauth
-# cas.authn.mfa.gauth.jpa.database.failFastTimeout=1
-# cas.authn.mfa.gauth.jpa.database.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.gauth.jpa.database.leakThreshold=10
-# cas.authn.mfa.gauth.jpa.database.batchSize=1
-# cas.authn.mfa.gauth.jpa.database.user=sa
-# cas.authn.mfa.gauth.jpa.database.ddlAuto=create-drop
-# cas.authn.mfa.gauth.jpa.database.password=
-# cas.authn.mfa.gauth.jpa.database.autocommit=false
-# cas.authn.mfa.gauth.jpa.database.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.gauth.jpa.database.idleTimeout=5000
-# cas.authn.mfa.gauth.jpa.database.dataSourceName=
-# cas.authn.mfa.gauth.jpa.database.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.mfa.gauth.jpa.database.properties.propertyName=propertyValue
-
-# cas.authn.mfa.gauth.jpa.database.pool.suspension=false
-# cas.authn.mfa.gauth.jpa.database.pool.minSize=6
-# cas.authn.mfa.gauth.jpa.database.pool.maxSize=18
-# cas.authn.mfa.gauth.jpa.database.pool.maxWait=2000
-```
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.jpa`.
 
 ### YubiKey
 
@@ -2501,32 +2423,7 @@ Multifacor authentication bypass settings for this provider are available [here]
 
 ### YubiKey JPA Device Store
 
-```properties
-# cas.authn.mfa.yubikey.jpa.healthQuery=
-# cas.authn.mfa.yubikey.jpa.isolateInternalQueries=false
-# cas.authn.mfa.yubikey.jpa.url=jdbc:hsqldb:mem:cas-yubikeymfa
-# cas.authn.mfa.yubikey.jpa.failFastTimeout=1
-# cas.authn.mfa.yubikey.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.yubikey.jpa.leakThreshold=10
-# cas.authn.mfa.yubikey.jpa.batchSize=1
-# cas.authn.mfa.yubikey.jpa.defaultCatalog=
-# cas.authn.mfa.yubikey.jpa.defaultSchema=
-# cas.authn.mfa.yubikey.jpa.user=sa
-# cas.authn.mfa.yubikey.jpa.ddlAuto=create-drop
-# cas.authn.mfa.yubikey.jpa.password=
-# cas.authn.mfa.yubikey.jpa.autocommit=false
-# cas.authn.mfa.yubikey.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.yubikey.jpa.idleTimeout=5000
-# cas.authn.mfa.yubikey.jpa.dataSourceName=
-# cas.authn.mfa.yubikey.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.mfa.yubikey.jpa.properties.propertyName=propertyValue
-
-# cas.authn.mfa.yubikey.jpa.pool.suspension=false
-# cas.authn.mfa.yubikey.jpa.pool.minSize=6
-# cas.authn.mfa.yubikey.jpa.pool.maxSize=18
-# cas.authn.mfa.yubikey.jpa.pool.maxWait=2000
-```
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.yubikey`.
 
 ### YubiKey MongoDb Device Store
 
@@ -2624,32 +2521,7 @@ Multifacor authentication bypass settings for this provider are available [here]
  
 #### FIDO U2F JPA
 
-```properties
-# cas.authn.mfa.u2f.jpa.healthQuery=
-# cas.authn.mfa.u2f.jpa.isolateInternalQueries=false
-# cas.authn.mfa.u2f.jpa.url=jdbc:hsqldb:mem:cas-u2f
-# cas.authn.mfa.u2f.jpa.failFastTimeout=1
-# cas.authn.mfa.u2f.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.mfa.u2f.jpa.leakThreshold=10
-# cas.authn.mfa.u2f.jpa.batchSize=1
-# cas.authn.mfa.u2f.jpa.defaultCatalog=
-# cas.authn.mfa.u2f.jpa.defaultSchema=
-# cas.authn.mfa.u2f.jpa.user=sa
-# cas.authn.mfa.u2f.jpa.ddlAuto=create-drop
-# cas.authn.mfa.u2f.jpa.password=
-# cas.authn.mfa.u2f.jpa.autocommit=false
-# cas.authn.mfa.u2f.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.mfa.u2f.jpa.idleTimeout=5000
-# cas.authn.mfa.u2f.jpa.dataSourceName=
-# cas.authn.mfa.u2f.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.mfa.u2f.jpa.properties.propertyName=propertyValue
-
-# cas.authn.mfa.u2f.jpa.pool.suspension=false
-# cas.authn.mfa.u2f.jpa.pool.minSize=6
-# cas.authn.mfa.u2f.jpa.pool.maxSize=18
-# cas.authn.mfa.u2f.jpa.pool.maxWait=2000
-```
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.u2f.jpa`.
 
 ### FIDO U2F REST
 
@@ -2771,33 +2643,7 @@ A given attribute that is to be encoded in the final SAML response may contain a
 
 #### SAML Metadata JPA
 
-```properties
-# cas.authn.samlIdp.metadata.jpa.healthQuery=
-# cas.authn.samlIdp.metadata.jpa.isolateInternalQueries=false
-# cas.authn.samlIdp.metadata.jpa.url=jdbc:hsqldb:mem:cas-hsql-database
-# cas.authn.samlIdp.metadata.jpa.failFastTimeout=1
-# cas.authn.samlIdp.metadata.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.authn.samlIdp.metadata.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.authn.samlIdp.metadata.jpa.leakThreshold=10
-# cas.authn.samlIdp.metadata.jpa.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.authn.samlIdp.metadata.jpa.batchSize=1
-# cas.authn.samlIdp.metadata.jpa.user=sa
-# cas.authn.samlIdp.metadata.jpa.ddlAuto=create-drop
-# cas.authn.samlIdp.metadata.jpa.maxAgeDays=180
-# cas.authn.samlIdp.metadata.jpa.password=
-# cas.authn.samlIdp.metadata.jpa.autocommit=false
-# cas.authn.samlIdp.metadata.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.authn.samlIdp.metadata.jpa.idleTimeout=5000
-# cas.authn.samlIdp.metadata.jpa.dataSourceName=
-# cas.authn.samlIdp.metadata.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.authn.samlIdp.metadata.jpa.properties.propertyName=propertyValue
-
-# cas.authn.samlIdp.metadata.jpa.pool.suspension=false
-# cas.authn.samlIdp.metadata.jpa.pool.minSize=6
-# cas.authn.samlIdp.metadata.jpa.pool.maxSize=18
-# cas.authn.samlIdp.metadata.jpa.pool.maxWait=2000
-```
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.samlIdp.metadata.jpa`.
 
 #### SAML Metadata MongoDb
 
@@ -3841,34 +3687,7 @@ Decide how CAS should store authentication events inside an InfluxDb instance.
 
 ### Database Events
 
-Decide how CAS should store authentication events inside a database instance.
-
-```properties
-# cas.events.jpa.healthQuery=
-# cas.events.jpa.isolateInternalQueries=false
-# cas.events.jpa.url=jdbc:hsqldb:mem:cas-events
-# cas.events.jpa.failFastTimeout=1
-# cas.events.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.events.jpa.leakThreshold=10
-# cas.events.jpa.batchSize=1
-# cas.events.jpa.defaultCatalog=
-# cas.events.jpa.defaultSchema=
-# cas.events.jpa.user=sa
-# cas.events.jpa.ddlAuto=create-drop
-# cas.events.jpa.password=
-# cas.events.jpa.autocommit=false
-# cas.events.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.events.jpa.idleTimeout=5000
-# cas.events.jpa.dataSourceName=
-# cas.events.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.events.jpa.properties.propertyName=propertyValue
-
-# cas.events.jpa.pool.suspension=false
-# cas.events.jpa.pool.minSize=6
-# cas.events.jpa.pool.maxSize=18
-# cas.events.jpa.pool.maxWait=2000
-```
+Decide how CAS should store authentication events inside a database instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.events.jpa`.
 
 ### MongoDb Events
 
@@ -4087,32 +3906,7 @@ To learn more about this topic, [please review this guide](Couchbase-Service-Man
 ### Database Service Registry
 
 Control how CAS services should be found inside a database instance.
-To learn more about this topic, [please review this guide](JPA-Service-Management.html)
-
-```properties
-# cas.serviceRegistry.jpa.healthQuery=
-# cas.serviceRegistry.jpa.isolateInternalQueries=false
-# cas.serviceRegistry.jpa.url=jdbc:hsqldb:mem:cas-service-registry
-# cas.serviceRegistry.jpa.failFastTimeout=1
-# cas.serviceRegistry.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.serviceRegistry.jpa.leakThreshold=10
-# cas.serviceRegistry.jpa.batchSize=1
-# cas.serviceRegistry.jpa.user=sa
-# cas.serviceRegistry.jpa.ddlAuto=create-drop
-# cas.serviceRegistry.jpa.password=
-# cas.serviceRegistry.jpa.autocommit=false
-# cas.serviceRegistry.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.serviceRegistry.jpa.idleTimeout=5000
-# cas.serviceRegistry.jpa.dataSourceName=
-# cas.serviceRegistry.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.serviceRegistry.jpa.properties.propertyName=propertyValue
-
-# cas.serviceRegistry.jpa.pool.suspension=false
-# cas.serviceRegistry.jpa.pool.minSize=6
-# cas.serviceRegistry.jpa.pool.maxSize=18
-# cas.serviceRegistry.jpa.pool.maxWait=2000
-```
+To learn more about this topic, [please review this guide](JPA-Service-Management.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.serviceRegistry.jpa`.
 
 ## Service Registry Replication
 
@@ -4181,37 +3975,11 @@ This section controls how that process should behave.
 
 ### JPA Ticket Registry
 
-To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html).
+To learn more about this topic, [please review this guide](JPA-Ticket-Registry.html). Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.ticket.registry.jpa`.
 
 ```properties
 # cas.ticket.registry.jpa.ticketLockType=NONE
 # cas.ticket.registry.jpa.jpaLockingTimeout=3600
-
-# cas.ticket.registry.jpa.healthQuery=
-# cas.ticket.registry.jpa.isolateInternalQueries=false
-# cas.ticket.registry.jpa.url=jdbc:hsqldb:mem:cas-ticket-registry
-# cas.ticket.registry.jpa.failFastTimeout=1
-# cas.ticket.registry.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.ticket.registry.jpa.leakThreshold=10
-# cas.ticket.registry.jpa.jpaLockingTgtEnabled=true
-# cas.ticket.registry.jpa.batchSize=1
-# cas.ticket.registry.jpa.defaultCatalog=
-# cas.ticket.registry.jpa.defaultSchema=
-# cas.ticket.registry.jpa.user=sa
-# cas.ticket.registry.jpa.ddlAuto=create-drop
-# cas.ticket.registry.jpa.password=
-# cas.ticket.registry.jpa.autocommit=false
-# cas.ticket.registry.jpa.driverClass=org.hsqldb.jdbcDriver
-# cas.ticket.registry.jpa.idleTimeout=5000
-# cas.ticket.registry.jpa.dataSourceName=
-# cas.ticket.registry.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.ticket.registry.jpa.properties.propertyName=propertyValue
-
-# cas.ticket.registry.jpa.pool.suspension=false
-# cas.ticket.registry.jpa.pool.minSize=6
-# cas.ticket.registry.jpa.pool.maxSize=18
-# cas.ticket.registry.jpa.pool.maxWait=2000
 ```
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.jpa`.
@@ -4890,30 +4658,7 @@ Signing & encryption settings for this feature are available [here](Configuratio
 
 ### JPA Attribute Consent
 
-```properties
-# cas.consent.jpa.validationQuery=SELECT 1
-# cas.consent.jpa.maxWait=5000
-# cas.consent.jpa.healthQuery=
-# cas.consent.jpa.isolateInternalQueries=false
-# cas.consent.jpa.url=jpa:hsqldb:mem:cas-hsql-database
-# cas.consent.jpa.failFastTimeout=1
-# cas.consent.jpa.isolationLevelName=ISOLATION_READ_COMMITTED
-# cas.consent.jpa.dialect=org.hibernate.dialect.HSQLDialect
-# cas.consent.jpa.leakThreshold=10
-# cas.consent.jpa.propagationBehaviorName=PROPAGATION_REQUIRED
-# cas.consent.jpa.batchSize=1
-# cas.consent.jpa.user=sa
-# cas.consent.jpa.ddlAuto=create-drop
-# cas.consent.jpa.maxAgeDays=180
-# cas.consent.jpa.password=
-# cas.consent.jpa.autocommit=false
-# cas.consent.jpa.driverClass=org.hsqldb.jpaDriver
-# cas.consent.jpa.idleTimeout=5000
-# cas.consent.jpa.dataSourceName=
-# cas.consent.jpa.dataSourceProxy=false
-# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
-# cas.consent.jpa.properties.propertyName=propertyValue
-```
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.consent.jpa`.
 
 ### LDAP Attribute Consent
 
