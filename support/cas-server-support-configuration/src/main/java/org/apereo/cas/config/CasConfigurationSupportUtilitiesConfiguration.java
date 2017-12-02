@@ -69,9 +69,9 @@ public class CasConfigurationSupportUtilitiesConfiguration {
                 if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
                     LOGGER.debug("Starting to watch configuration directory [{}]", config);
                     final PathWatcherService watcher = new PathWatcherService(config.toPath(),
-                            createConfigurationCreatedEvent.andThen(publish),
-                            createConfigurationModifiedEvent.andThen(publish),
-                            createConfigurationDeletedEvent.andThen(publish));
+                            createConfigurationCreatedEvent.andNext(publish),
+                            createConfigurationModifiedEvent.andNext(publish),
+                            createConfigurationDeletedEvent.andNext(publish));
                     watcher.start(config.getName());
                 } else {
                     LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);

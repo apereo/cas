@@ -201,7 +201,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         final Principal principal = authentication.getPrincipal();
         final ProxyTicketFactory factory = this.ticketFactory.get(ProxyTicket.class);
-        final ProxyTicket proxyTicket = factory.create(proxyGrantingTicketObject, service);
+        final ProxyTicket proxyTicket = factory.create(proxyGrantingTicketObject, service, ProxyTicket.class);
 
         this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
         this.ticketRegistry.addTicket(proxyTicket);
@@ -244,7 +244,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         final Authentication authentication = authenticationResult.getAuthentication();
         final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
-        final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication);
+        final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
 
         LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
         this.ticketRegistry.addTicket(proxyGrantingTicket);
