@@ -3699,24 +3699,6 @@ Configuration settings for this feature are available [here](Configuration-Prope
 # cas.metrics.influxDb.consistencyLevel=ALL
 ```
 
-## Groovy Shell
-
-Control access and configuration of the embedded Groovy shell in CAS.
-To learn more about this topic, [please review this guide](Configuring-Groovy-Console.html).
-
-```properties
-# shell.commandRefreshInterval=15
-# shell.commandPathPatterns=classpath*:/commands/**
-# shell.auth.simple.user.name=
-# shell.auth.simple.user.password=
-# shell.ssh.enabled=true
-# shell.ssh.port=2000
-# shell.telnet.enabled=false
-# shell.telnet.port=5000
-# shell.ssh.authTimeout=3000
-# shell.ssh.idleTimeout=30000
-```
-
 ## SAML Metadata UI
 
 Control how SAML MDUI elements should be displayed on the main CAS login page
