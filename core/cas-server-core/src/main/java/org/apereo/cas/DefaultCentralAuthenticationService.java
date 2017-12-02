@@ -154,7 +154,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final Authentication latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
         AuthenticationCredentialsLocalBinder.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
-        final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
+        final ServiceTicketFactory factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service,
             authenticationResult != null && authenticationResult.isCredentialProvided(),
             ServiceTicket.class);
@@ -200,7 +200,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
 
         final Principal principal = authentication.getPrincipal();
-        final ProxyTicketFactory factory = this.ticketFactory.get(ProxyTicket.class);
+        final ProxyTicketFactory factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
         final ProxyTicket proxyTicket = factory.create(proxyGrantingTicketObject, service, ProxyTicket.class);
 
         this.ticketRegistry.updateTicket(proxyGrantingTicketObject);
@@ -243,7 +243,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         }
 
         final Authentication authentication = authenticationResult.getAuthentication();
-        final ProxyGrantingTicketFactory factory = this.ticketFactory.get(ProxyGrantingTicket.class);
+        final ProxyGrantingTicketFactory factory = (ProxyGrantingTicketFactory) this.ticketFactory.get(ProxyGrantingTicket.class);
         final ProxyGrantingTicket proxyGrantingTicket = factory.create(serviceTicket, authentication, ProxyGrantingTicket.class);
 
         LOGGER.debug("Generated proxy granting ticket [{}] based off of [{}]", proxyGrantingTicket, serviceTicketId);
@@ -369,7 +369,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, authentication);
         }
 
-        final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);
+        final TicketGrantingTicketFactory factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);
         final TicketGrantingTicket ticketGrantingTicket = factory.create(authentication);
 
         this.ticketRegistry.addTicket(ticketGrantingTicket);

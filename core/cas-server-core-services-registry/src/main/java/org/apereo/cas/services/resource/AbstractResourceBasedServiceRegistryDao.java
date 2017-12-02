@@ -255,7 +255,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
             .sorted()
             .collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
                 LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
-        final ArrayList<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
+        final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
         final List<RegisteredService> results =
             this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
