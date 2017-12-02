@@ -32,7 +32,7 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
         try {
             LOGGER.debug("Found groovy script to execute");
             final Object result = ScriptingUtils.executeGroovyScriptEngine(this.script,
-                    new Object[] {principal.getAttributes(), principal.getId(), LOGGER});
+                new Object[]{principal.getAttributes(), principal.getId(), LOGGER}, Object.class);
             if (result != null) {
                 LOGGER.debug("Found username [{}] from script [{}]", result, this.script);
                 return result.toString();
@@ -66,16 +66,16 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
         }
         final ScriptedRegisteredServiceUsernameProvider rhs = (ScriptedRegisteredServiceUsernameProvider) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.script, rhs.script)
-                .isEquals();
+            .appendSuper(super.equals(obj))
+            .append(this.script, rhs.script)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(script)
-                .toHashCode();
+            .appendSuper(super.hashCode())
+            .append(script)
+            .toHashCode();
     }
 }

@@ -508,6 +508,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.properties = (Map) properties;
     }
 
+    @Override
     public RegisteredServiceMultifactorPolicy getMultifactorPolicy() {
         return this.multifactorPolicy;
     }

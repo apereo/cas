@@ -28,6 +28,7 @@ public class Base64RandomStringGenerator extends AbstractRandomStringGenerator {
      * @param random raw bytes
      * @return a converted String
      */
+    @Override
     protected String convertBytesToString(final byte[] random) {
         return EncodingUtils.encodeUrlSafeBase64(random);
     }

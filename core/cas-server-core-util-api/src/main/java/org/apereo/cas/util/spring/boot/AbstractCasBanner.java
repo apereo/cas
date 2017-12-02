@@ -9,6 +9,7 @@ import org.apereo.cas.util.AsciiArtUtils;
 import org.apereo.cas.util.CasVersion;
 import org.springframework.boot.Banner;
 import org.springframework.boot.SpringBootVersion;
+import org.springframework.core.SpringVersion;
 import org.springframework.core.env.Environment;
 
 import javax.crypto.Cipher;
@@ -73,6 +74,7 @@ public abstract class AbstractCasBanner implements Banner {
             formatter.format("CAS Commit Id: %s%n", StringUtils.defaultString(CasVersion.getSpecificationVersion(), "Not Available"));
             formatter.format("CAS Build Date/Time: %s%n", CasVersion.getDateTime());
             formatter.format("Spring Boot Version: %s%n", SpringBootVersion.getVersion());
+            formatter.format("Spring Version: %s%n", SpringVersion.getVersion());
             formatter.format("%s%n", LINE_SEPARATOR);
             
             formatter.format("Java Home: %s%n", properties.get("java.home"));

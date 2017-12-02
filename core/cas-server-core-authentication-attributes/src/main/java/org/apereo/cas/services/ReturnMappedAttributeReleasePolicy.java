@@ -70,8 +70,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                        final Map<String, Object> attrs,
-                                                        final RegisteredService service) {
+                                                     final Map<String, Object> attrs,
+                                                     final RegisteredService service) {
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
 
@@ -83,18 +83,18 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
          * Then process the array to populate the map for allowed attributes
          */
         this.allowedAttributes.entrySet()
-                .stream()
-                .forEach(entry -> {
-                    final String attributeName = entry.getKey();
-                    final Collection mappedAttributes = CollectionUtils.wrap(entry.getValue());
-                    LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
-                    final Object attributeValue = resolvedAttributes.get(attributeName);
-                    mappedAttributes.forEach(mapped -> {
-                        final String mappedAttributeName = mapped.toString();
-                        LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
-                        mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
-                    });
+            .stream()
+            .forEach(entry -> {
+                final String attributeName = entry.getKey();
+                final Collection mappedAttributes = CollectionUtils.wrap(entry.getValue());
+                LOGGER.debug("Attempting to map allowed attribute name [{}]", attributeName);
+                final Object attributeValue = resolvedAttributes.get(attributeName);
+                mappedAttributes.forEach(mapped -> {
+                    final String mappedAttributeName = mapped.toString();
+                    LOGGER.debug("Mapping attribute [{}] to [{}] with value [{}]", attributeName, mappedAttributeName, attributeValue);
+                    mapSingleAttributeDefinition(attributeName, mappedAttributeName, attributeValue, resolvedAttributes, attributesToRelease);
                 });
+            });
         return attributesToRelease;
     }
 
@@ -118,9 +118,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 attributesToRelease.put(mappedAttributeName, attributeValue);
             } else {
                 LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
-                                + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
-                                + "will and can not be released without the presence of a value.",
-                        mappedAttributeName, attributeName, attributeName, mappedAttributeName);
+                        + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
+                        + "will and can not be released without the presence of a value.",
+                    mappedAttributeName, attributeName, attributeName, mappedAttributeName);
             }
         }
     }
@@ -159,8 +159,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
 
     private static Object getGroovyAttributeValue(final String groovyScript,
                                                   final Map<String, Object> resolvedAttributes) {
-        return ScriptingUtils.executeGroovyShellScript(groovyScript,
-                CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER));
+        final Map<String, Object> args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+        return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Object.class);
     }
 
 
@@ -177,24 +177,24 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         }
         final ReturnMappedAttributeReleasePolicy rhs = (ReturnMappedAttributeReleasePolicy) obj;
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.allowedAttributes, rhs.allowedAttributes)
-                .isEquals();
+            .appendSuper(super.equals(obj))
+            .append(this.allowedAttributes, rhs.allowedAttributes)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(this.allowedAttributes)
-                .toHashCode();
+            .appendSuper(super.hashCode())
+            .append(this.allowedAttributes)
+            .toHashCode();
     }
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("allowedAttributes", this.allowedAttributes)
-                .toString();
+            .appendSuper(super.toString())
+            .append("allowedAttributes", this.allowedAttributes)
+            .toString();
     }
 }

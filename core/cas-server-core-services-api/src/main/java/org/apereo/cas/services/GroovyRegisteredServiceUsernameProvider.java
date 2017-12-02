@@ -14,6 +14,7 @@ import org.springframework.core.io.AbstractResource;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
 import java.util.regex.Matcher;
 
 /**
@@ -94,10 +95,10 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     }
 
     private static Object getGroovyAttributeValue(final Principal principal, final String script) {
-        return ScriptingUtils.executeGroovyShellScript(script,
-                CollectionUtils.wrap("attributes", principal.getAttributes(),
-                        "id", principal.getId(),
-                        "logger", LOGGER));
+        final Map<String, Object> args = CollectionUtils.wrap("attributes", principal.getAttributes(),
+            "id", principal.getId(),
+            "logger", LOGGER);
+        return ScriptingUtils.executeGroovyShellScript(script, args, Object.class);
     }
 
     @Override
