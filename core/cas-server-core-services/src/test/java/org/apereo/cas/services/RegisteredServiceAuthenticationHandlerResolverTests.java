@@ -64,7 +64,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
                 RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
-        assertEquals(handlers.size(), 2);
+        assertEquals(2, handlers.size());
     }
 
     @Test

@@ -41,7 +41,7 @@ public class DefaultConsentDecisionBuilderTests {
     public void verifyNewConsentDecision() {
         final ConsentDecision consentDecision = getConsentDecision();
         assertNotNull(consentDecision);
-        assertEquals(consentDecision.getPrincipal(), "casuser");
+        assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());    
     }
 
