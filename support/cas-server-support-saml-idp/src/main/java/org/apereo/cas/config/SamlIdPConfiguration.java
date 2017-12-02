@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -56,7 +57,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import java.util.concurrent.TimeUnit;
 
@@ -103,7 +103,7 @@ public class SamlIdPConfiguration {
 
     @Autowired
     @Qualifier("shibboleth.VelocityEngine")
-    private VelocityEngineFactory velocityEngineFactory;
+    private VelocityEngine velocityEngineFactory;
 
     @Autowired
     @Qualifier("webApplicationServiceFactory")

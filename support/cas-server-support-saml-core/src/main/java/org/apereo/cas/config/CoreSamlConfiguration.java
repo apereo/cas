@@ -4,6 +4,7 @@ import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
+import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.apache.velocity.runtime.resource.loader.FileResourceLoader;
@@ -20,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.ui.velocity.VelocityEngineFactoryBean;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -44,13 +44,10 @@ public class CoreSamlConfiguration {
     
     @Lazy
     @Bean(name = "shibboleth.VelocityEngine")
-    public VelocityEngineFactoryBean velocityEngineFactoryBean() {
-        final VelocityEngineFactoryBean bean = new VelocityEngineFactoryBean();
-
+    public VelocityEngine velocityEngineFactoryBean() {
         final Properties properties = new Properties();
-        properties.put(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, SLF4JLogChute.class.getName());
+        properties.put(RuntimeConstants.RUNTIME_LOG_INSTANCE, SLF4JLogChute.class.getName());
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
-        properties.put(RuntimeConstants.OUTPUT_ENCODING, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.RESOURCE_LOADER, "file, classpath, string");
         properties.put(RuntimeConstants.FILE_RESOURCE_LOADER_PATH, FileUtils.getTempDirectory().getAbsolutePath());
@@ -58,9 +55,8 @@ public class CoreSamlConfiguration {
         properties.put("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
         properties.put("string.resource.loader.class", StringResourceLoader.class.getName());
         properties.put("file.resource.loader.class", FileResourceLoader.class.getName());
-        bean.setOverrideLogging(false);
-        bean.setVelocityProperties(properties);
-        return bean;
+
+        return new VelocityEngine(properties);
     }
     
     @Bean(name = "shibboleth.OpenSAMLConfig")
