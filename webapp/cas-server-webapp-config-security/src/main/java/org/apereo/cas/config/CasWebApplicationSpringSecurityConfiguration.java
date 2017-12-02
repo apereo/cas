@@ -49,7 +49,7 @@ public class CasWebApplicationSpringSecurityConfiguration extends GlobalAuthenti
         final AdminPagesSecurityProperties.Ldap ldap = casProperties.getAdminPagesSecurity().getLdap();
         final LdapAuthorizationProperties authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())
-                && StringUtils.isNotBlank(ldap.getUserFilter())
+                && StringUtils.isNotBlank(ldap.getSearchFilter())
                 && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
     }
 }
