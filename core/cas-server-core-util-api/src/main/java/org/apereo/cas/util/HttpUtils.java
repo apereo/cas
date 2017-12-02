@@ -102,7 +102,7 @@ public final class HttpUtils {
                                           final String basicAuthPassword,
                                           final Map<String, String> parameters) {
         try {
-            return execute(url, HttpMethod.GET.name(), basicAuthPassword, basicAuthUsername, parameters);
+            return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

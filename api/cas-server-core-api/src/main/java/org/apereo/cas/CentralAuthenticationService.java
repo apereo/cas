@@ -42,7 +42,7 @@ public interface CentralAuthenticationService {
      * CAS namespace.
      */
     String NAMESPACE = CentralAuthenticationService.class.getPackage().getName();
-    
+
     /**
      * Create a {@link TicketGrantingTicket} by authenticating credentials.
      * The details of the security policy around credential authentication and the definition
@@ -76,13 +76,12 @@ public interface CentralAuthenticationService {
      * it exists and has not expired yet, etc. This method is specifically
      * designed to remove the need to access the ticket registry.
      *
-     * @param <T>      the generic ticket type to return that extends {@link Ticket}
      * @param ticketId the ticket granting ticket id
      * @return the ticket object
      * @throws InvalidTicketException the invalid ticket exception
      * @since 5.0.0
      */
-    <T extends Ticket> T getTicket(String ticketId) throws InvalidTicketException;
+    Ticket getTicket(String ticketId) throws InvalidTicketException;
 
     /**
      * Obtains the given ticket by its id and type
@@ -99,7 +98,7 @@ public interface CentralAuthenticationService {
      * @since 4.1.0
      */
     <T extends Ticket> T getTicket(String ticketId, Class<T> clazz)
-            throws InvalidTicketException;
+        throws InvalidTicketException;
 
     /**
      * Attempts to delete a ticket from the underlying store
@@ -111,7 +110,8 @@ public interface CentralAuthenticationService {
      *
      * @param ticketId the ticket id
      */
-    default void deleteTicket(String ticketId) {}
+    default void deleteTicket(String ticketId) {
+    }
 
     /**
      * Retrieve a collection of tickets from the underlying ticket registry.
@@ -146,8 +146,8 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ServiceTicket grantServiceTicket(
-            String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult)
-            throws AuthenticationException, AbstractTicketException;
+        String ticketGrantingTicketId, Service service, AuthenticationResult authenticationResult)
+        throws AuthenticationException, AbstractTicketException;
 
     /**
      * Grant a {@link ProxyTicket} that may be used to access the given service
@@ -166,8 +166,8 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if the ticket could not be created.
      */
     ProxyTicket grantProxyTicket(
-             String proxyGrantingTicket, Service service)
-            throws AbstractTicketException;
+        String proxyGrantingTicket, Service service)
+        throws AbstractTicketException;
 
     /**
      * Validate a ServiceTicket for a particular Service.
@@ -200,5 +200,5 @@ public interface CentralAuthenticationService {
      * @throws AbstractTicketException if there was an error creating the ticket
      */
     ProxyGrantingTicket createProxyGrantingTicket(String serviceTicketId, AuthenticationResult authenticationResult)
-            throws AuthenticationException, AbstractTicketException;
+        throws AuthenticationException, AbstractTicketException;
 }

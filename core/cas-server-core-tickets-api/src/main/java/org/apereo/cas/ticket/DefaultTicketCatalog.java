@@ -50,7 +50,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
     public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
         final List list = ticketMetadataMap.values()
                 .stream()
-                .filter(t -> t.getImplementationClass().isInstance(ticketClass))
+                .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
                 .collect(Collectors.toList());
         OrderComparator.sort(list);
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);

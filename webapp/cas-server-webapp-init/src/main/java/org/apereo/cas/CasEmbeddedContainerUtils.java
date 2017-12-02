@@ -66,7 +66,7 @@ public final class CasEmbeddedContainerUtils {
         try {
             final Class<? extends AbstractCasBanner> clz = subTypes.iterator().next();
             LOGGER.debug("Created banner [{}]", clz);
-            return clz.newInstance();
+            return clz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

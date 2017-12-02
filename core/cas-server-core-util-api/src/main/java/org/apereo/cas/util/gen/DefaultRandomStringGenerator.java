@@ -29,6 +29,7 @@ public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator 
      * @param random the random
      * @return the string
      */
+    @Override
     protected String convertBytesToString(final byte[] random) {
         final char[] output = new char[random.length];
         IntStream.range(0, random.length).forEach(i -> {

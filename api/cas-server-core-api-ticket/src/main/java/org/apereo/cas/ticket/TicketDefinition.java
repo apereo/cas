@@ -41,6 +41,7 @@ public interface TicketDefinition extends Ordered {
      * Typically used in collection sorting and compare operations.
      * @return the order.
      */
+    @Override
     default int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
     }

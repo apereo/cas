@@ -64,8 +64,8 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     private static Map<String, Object> getGroovyAttributeValue(final String groovyScript,
                                                                final Map<String, Object> resolvedAttributes) {
-        return ScriptingUtils.executeGroovyShellScript(groovyScript,
-                CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER));
+        final Map<String, Object> args = CollectionUtils.wrap("attributes", resolvedAttributes, "logger", LOGGER);
+        return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Map.class);
     }
 
     private static Map<String, Object> filterInlinedGroovyAttributeValues(final Map<String, Object> resolvedAttributes,
@@ -96,9 +96,9 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("order", order)
-                .append("script", script)
-                .toString();
+            .append("order", order)
+            .append("script", script)
+            .toString();
     }
 
     @Override
@@ -114,16 +114,16 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
         }
         final RegisteredServiceScriptedAttributeFilter rhs = (RegisteredServiceScriptedAttributeFilter) obj;
         return new EqualsBuilder()
-                .append(this.order, rhs.order)
-                .append(this.script, rhs.script)
-                .isEquals();
+            .append(this.order, rhs.order)
+            .append(this.script, rhs.script)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(order)
-                .append(script)
-                .toHashCode();
+            .append(order)
+            .append(script)
+            .toHashCode();
     }
 }

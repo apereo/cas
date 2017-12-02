@@ -31,7 +31,9 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.StringUtils;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.Reader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -113,7 +115,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
     private void loadSettingsFromStandaloneConfigFile(final Properties props, final File configFile) {
         final Properties pp = new Properties();
 
-        try (FileReader r = new FileReader(configFile)) {
+        try (Reader r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             pp.load(r);
             LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), configFile);
@@ -141,7 +143,7 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
                 props.putAll(decryptProperties(pp));
             } else {
                 final Properties pp = new Properties();
-                pp.load(new FileReader(f));
+                pp.load(Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8));
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);
                 props.putAll(decryptProperties(pp));
             }

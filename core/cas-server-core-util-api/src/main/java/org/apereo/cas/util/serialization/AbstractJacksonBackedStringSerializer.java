@@ -20,9 +20,7 @@ import org.hjson.Stringify;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,14 +28,15 @@ import java.io.Reader;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.stream.Collectors;
 
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
  *
  * @author Misagh Moayyed
- * @param <T> the type parameter
- * @since 4.1
+ *  @param <T> the type parameter
+ *  @since 4.1
  */
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
@@ -94,8 +93,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public T from(final File json) {
         try {
             final String jsonString = isJsonFormat()
-                    ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
-                    : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
+                ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
+                : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
 
             return readObjectFromJson(jsonString);
         } catch (final Exception e) {
@@ -107,8 +106,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     public T from(final Reader json) {
         try {
             final String jsonString = isJsonFormat()
-                    ? JsonValue.readHjson(json).toString()
-                    : IOUtils.readLines(json).stream().collect(Collectors.joining());
+                ? JsonValue.readHjson(json).toString()
+                : IOUtils.readLines(json).stream().collect(Collectors.joining());
 
             return readObjectFromJson(jsonString);
         } catch (final Exception e) {
@@ -140,8 +139,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     protected String readJsonFrom(final InputStream json) throws IOException {
         return isJsonFormat()
-                ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
-                : IOUtils.readLines(json, StandardCharsets.UTF_8).stream().collect(Collectors.joining("\n"));
+            ? JsonValue.readHjson(IOUtils.toString(json, StandardCharsets.UTF_8)).toString()
+            : IOUtils.readLines(json, StandardCharsets.UTF_8).stream().collect(Collectors.joining("\n"));
     }
 
     @Override
@@ -149,8 +148,8 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
         try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
             final String hjsonString = isJsonFormat()
-                    ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
-                    : writer.toString();
+                ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
+                : writer.toString();
             IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);
@@ -172,19 +171,16 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     @Override
     public void to(final File out, final T object) {
         try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
 
             if (isJsonFormat()) {
-                try (FileWriter fileWriter = new FileWriter(out);
-                     BufferedWriter buffer = new BufferedWriter(fileWriter)) {
-
+                try (Writer fileWriter = Files.newBufferedWriter(out.toPath(), StandardCharsets.UTF_8)) {
                     final Stringify opt = this.prettyPrinter instanceof MinimalPrettyPrinter ? Stringify.PLAIN : Stringify.FORMATTED;
-                    JsonValue.readHjson(writer.toString()).writeTo(buffer, opt);
-                    buffer.flush();
+                    JsonValue.readHjson(writer.toString()).writeTo(fileWriter, opt);
                     fileWriter.flush();
                 }
             } else {
@@ -204,7 +200,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             throw new IllegalArgumentException(e);
         }
     }
-    
+
     /**
      * Initialize object mapper.
      *
@@ -223,7 +219,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     protected void configureObjectMapper(final ObjectMapper mapper) {
         mapper.configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)
-                .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+            .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         mapper.setSerializationInclusion(JsonInclude.Include.NON_EMPTY);
         mapper.setVisibility(PropertyAccessor.SETTER, JsonAutoDetect.Visibility.PROTECTED_AND_PUBLIC);
@@ -266,10 +262,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse JSON [{}] to deserialize into type [{}]. This may be caused "
-                            + "in the absence of a configuration/support module that knows how to interpret the JSON fragment, "
-                            + "specially if the fragment describes a CAS registered service definition. "
-                            + "Internal parsing error is [{}]",
-                    DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
+                    + "in the absence of a configuration/support module that knows how to interpret the JSON fragment, "
+                    + "specially if the fragment describes a CAS registered service definition. "
+                    + "Internal parsing error is [{}]",
+                DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
             LOGGER.trace(e.getMessage(), e);
         }
         return null;

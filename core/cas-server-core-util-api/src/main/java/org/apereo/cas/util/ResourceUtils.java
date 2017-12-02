@@ -17,12 +17,13 @@ import org.springframework.core.io.UrlResource;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
@@ -200,7 +201,7 @@ public final class ResourceUtils {
                                 copyDestination = new File(destination, entryFileName.getName());
                             }
 
-                            try (FileWriter writer = new FileWriter(copyDestination)) {
+                            try (Writer writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
                                 IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                             }
                         }

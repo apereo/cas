@@ -233,8 +233,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
         final Map<String, List<Object>> principalAttributes = convertPrincipalAttributesToPersonAttributes(p);
 
-        LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]",
-                this.mergingStrategy.getClass().getSimpleName());
+        LOGGER.debug("Merging current principal attributes with that of the repository via strategy [{}]", this.mergingStrategy);
 
         try {
             final Map<String, List<Object>> mergedAttributes =

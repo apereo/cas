@@ -37,7 +37,7 @@ public interface ServiceFactory<T extends Service> {
      * @param clazz the clazz
      * @return the t
      */
-    <T extends Service> T createService(String id, Class<? extends Service> clazz);
+    <T extends Service> T createService(String id, Class<T> clazz);
 
     /**
      * Create service based on the given parameters provided by the http request.
@@ -49,5 +49,5 @@ public interface ServiceFactory<T extends Service> {
      * @param clazz   the clazz
      * @return the t
      */
-    <T extends Service> T createService(HttpServletRequest request, Class<? extends Service> clazz);
+    <T extends Service> T createService(HttpServletRequest request, Class<T> clazz);
 }
