@@ -135,7 +135,7 @@ public final class DigestUtils {
     public static byte[] rawDigest(final String alg, final String salt, final String... data) {
         try {
             final MessageDigest digest = getMessageDigestInstance(alg);
-            Arrays.stream(data).forEach(d -> digest.update(d.getBytes()));
+            Arrays.stream(data).forEach(d -> digest.update(d.getBytes(StandardCharsets.UTF_8)));
             return digest.digest(salt.getBytes(StandardCharsets.UTF_8));
         } catch (final Exception cause) {
             throw new SecurityException(cause);

@@ -60,12 +60,13 @@ public final class SerializationUtils {
      *
      * @param <T>     the type parameter
      * @param inBytes The bytes to be deserialized
+     * @param clazz   the clazz
      * @return the object
      * @since 5.0.0
      */
-    public static <T> T deserialize(final byte[] inBytes) {
+    public static <T> T deserialize(final byte[] inBytes, final Class<T> clazz) {
         final ByteArrayInputStream inputStream = new ByteArrayInputStream(inBytes);
-        return deserialize(inputStream);
+        return deserialize(inputStream, clazz);
     }
 
     /**
@@ -73,15 +74,22 @@ public final class SerializationUtils {
      *
      * @param <T>         the type parameter
      * @param inputStream The stream to be deserialized
+     * @param clazz       the clazz
      * @return the object
      * @since 5.0.0
      */
-    public static <T> T deserialize(final InputStream inputStream) {
+    public static <T> T deserialize(final InputStream inputStream, final Class<T> clazz) {
         ObjectInputStream in = null;
         try {
             in = new ObjectInputStream(inputStream);
-            final T obj = (T) in.readObject();
-            return obj;
+            final Object obj = in.readObject();
+
+            if (!clazz.isAssignableFrom(obj.getClass())) {
+                throw new ClassCastException("Result [" + obj
+                    + " is of type " + obj.getClass()
+                    + " when we were expecting " + clazz);
+            }
+            return (T) obj;
         } catch (final ClassNotFoundException | IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         } finally {
@@ -119,9 +127,9 @@ public final class SerializationUtils {
      * @return the t
      * @since 4.2
      */
-    public static <T> T decodeAndDeserializeObject(final byte[] object,
-                                                   final CipherExecutor cipher,
-                                                   final Class<? extends Serializable> type) {
+    public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
+                                                                        final CipherExecutor cipher,
+                                                                        final Class<T> type) {
         try {
             final byte[] decoded = (byte[]) cipher.decode(object);
             return deserializeAndCheckObject(decoded, type);
@@ -140,10 +148,9 @@ public final class SerializationUtils {
      * @since 4.2
      */
     public static <T> T deserializeAndCheckObject(final byte[] object, final Class<? extends Serializable> type) {
-        final Object result = deserialize(object);
+        final Object result = deserialize(object, type);
         if (!type.isAssignableFrom(result.getClass())) {
-            throw new ClassCastException("Decoded object is of type " + result.getClass()
-                    + " when we were expecting " + type);
+            throw new ClassCastException("Decoded object is of type " + result.getClass() + " when we were expecting " + type);
         }
         return (T) result;
     }

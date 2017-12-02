@@ -96,12 +96,12 @@ public final class CoreAuthenticationUtils {
                     final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
                             new CompilerConfiguration(), true);
                     final Class<Predicate> clz = classLoader.parseClass(script);
-                    return clz.newInstance();
+                    return clz.getDeclaredConstructor().newInstance();
                 }
             }
 
             final Class predicateClazz = ClassUtils.getClass(selectionCriteria);
-            return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.newInstance();
+            return (Predicate<org.apereo.cas.authentication.Credential>) predicateClazz.getDeclaredConstructor().newInstance();
         } catch (final Exception e) {
             final Predicate<String> predicate = Pattern.compile(selectionCriteria).asPredicate();
             return credential -> predicate.test(credential.getId());

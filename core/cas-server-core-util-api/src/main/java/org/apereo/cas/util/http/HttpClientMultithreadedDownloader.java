@@ -71,6 +71,7 @@ public class HttpClientMultithreadedDownloader {
             this.info = info;
         }
 
+        @Override
         public void run() {
 
             switch (info.getState()) {

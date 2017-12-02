@@ -47,7 +47,7 @@ public final class PasswordEncoderUtils {
             try {
                 LOGGER.debug("Configuration indicates use of a custom password encoder [{}]", type);
                 final Class<PasswordEncoder> clazz = (Class<PasswordEncoder>) Class.forName(type);
-                return clazz.newInstance();
+                return clazz.getDeclaredConstructor().newInstance();
             } catch (final Exception e) {
                 LOGGER.error("Falling back to a no-op password encoder as CAS has failed to create "
                         + "an instance of the custom password encoder class " + type, e);
