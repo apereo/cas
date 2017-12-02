@@ -191,7 +191,7 @@ public class LdapAuthenticationConfiguration {
                         customPolicyClass);
                 final Class<AuthenticationResponseHandler> clazz = (Class<AuthenticationResponseHandler>)
                         Class.forName(customPolicyClass);
-                handlers.add(clazz.newInstance());
+                handlers.add(clazz.getDeclaredConstructor().newInstance());
             } catch (final Exception e) {
                 LOGGER.warn("Unable to construct an instance of the password policy handler", e);
             }

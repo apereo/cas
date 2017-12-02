@@ -38,7 +38,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
     @Test
     public void checkDefaultImpls() {
         final RegisteredServiceAccessStrategy authz = new DefaultRegisteredServiceAccessStrategy();
-        assertEquals(authz.getOrder(), 0);
+        assertEquals(0, authz.getOrder());
     }
 
     @Test
@@ -46,7 +46,7 @@ public class DefaultRegisteredServiceAccessStrategyTests {
         final RegisteredServiceAccessStrategy authz = new RegisteredServiceAccessStrategy() {
             private static final long serialVersionUID = -6993120869616143038L;
         };
-        assertEquals(authz.getOrder(), Integer.MAX_VALUE);
+        assertEquals(Integer.MAX_VALUE, authz.getOrder());
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess(null, null));

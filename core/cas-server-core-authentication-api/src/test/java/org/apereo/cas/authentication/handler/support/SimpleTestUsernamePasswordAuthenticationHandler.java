@@ -8,8 +8,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
@@ -40,8 +38,6 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
      */
     private static final Map<String, Exception> DEFAULT_USERNAME_ERROR_MAP = new HashMap<>();
-
-    protected PrincipalFactory principalFactory = new DefaultPrincipalFactory();
 
     /**
      * Map of special usernames to exceptions that are raised when a user with that name attempts authentication.

@@ -47,7 +47,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return this;
     }
 }

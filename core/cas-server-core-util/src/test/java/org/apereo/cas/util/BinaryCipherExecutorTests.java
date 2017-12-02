@@ -30,7 +30,7 @@ public class BinaryCipherExecutorTests {
                 16);
         final byte[] bytes = cc.encode(value.getBytes(StandardCharsets.UTF_8));
         final byte[] decoded = cc.decode(bytes);
-        assertEquals(value, new String(decoded));
+        assertEquals(value, new String(decoded, StandardCharsets.UTF_8));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class BinaryCipherExecutorTests {
             16);
         final byte[] bytes = cc.encode(value.getBytes(StandardCharsets.UTF_8));
         final byte[] decoded = cc.decode(bytes);
-        assertEquals(value, new String(decoded));
+        assertEquals(value, new String(decoded, StandardCharsets.UTF_8));
     }
     private static class TestBinaryCipherExecutor extends BaseBinaryCipherExecutor {
         TestBinaryCipherExecutor(final String encKey, final String signingKey, final int sKey, final int eKey) {

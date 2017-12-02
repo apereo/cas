@@ -42,7 +42,7 @@ public class DefaultTicketFactory implements TicketFactory {
     }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this.factoryMap.get(clazz.getCanonicalName());
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return (TicketFactory) this.factoryMap.get(clazz.getCanonicalName());
     }
 }

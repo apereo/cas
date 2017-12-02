@@ -7,14 +7,14 @@ package org.apereo.cas.ticket;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@FunctionalInterface
 public interface TicketFactory {
 
     /**
      * Get ticket factory.
      *
-     * @param <T>   the type parameter
      * @param clazz the clazz
      * @return ticket factory object
      */
-    <T extends TicketFactory> T get(Class<? extends Ticket> clazz);
+    TicketFactory get(Class<? extends Ticket> clazz);
 }

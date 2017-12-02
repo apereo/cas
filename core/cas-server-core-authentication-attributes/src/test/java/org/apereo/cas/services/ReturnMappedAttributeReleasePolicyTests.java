@@ -106,6 +106,6 @@ public class ReturnMappedAttributeReleasePolicyTests {
                 CoreAttributesTestUtils.getPrincipal(CoreAttributesTestUtils.CONST_USERNAME, principalAttributes),
                 CoreAttributesTestUtils.getService(), registeredService);
         assertTrue(result.containsKey(mappedAttribute));
-        assertEquals(result.get(mappedAttribute), "user@example.org");
+        assertEquals("user@example.org", result.get(mappedAttribute));
     }
 }

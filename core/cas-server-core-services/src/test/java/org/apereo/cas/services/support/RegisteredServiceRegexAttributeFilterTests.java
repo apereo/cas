@@ -77,7 +77,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
     public void verifyPatternFilter() {
 
         final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
-        assertEquals(attrs.size(), 7);
+        assertEquals(7, attrs.size());
 
         assertFalse(attrs.containsKey(PHONE));
         assertFalse(attrs.containsKey(GIVEN_NAME));
@@ -112,7 +112,7 @@ public class RegisteredServiceRegexAttributeFilterTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, RegisteredServiceTestUtils.getService(),
                 RegisteredServiceTestUtils.getRegisteredService("test"));
-        assertEquals(attr.size(), 1);
+        assertEquals(1, attr.size());
         assertTrue(attr.containsKey("attr3"));
 
         final byte[] data = SerializationUtils.serialize(policy);

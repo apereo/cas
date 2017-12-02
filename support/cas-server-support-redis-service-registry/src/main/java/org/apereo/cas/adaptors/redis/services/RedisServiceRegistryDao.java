@@ -6,7 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -72,7 +72,7 @@ public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new LinkedList<>();
+        return new ArrayList<>();
     }
 
     @Override
