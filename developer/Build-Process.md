@@ -130,6 +130,7 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 The following plugins may prove useful during development:
 
 - [Checkstyle](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
+- [FindBugs](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
 
 ### Eclipse
 
