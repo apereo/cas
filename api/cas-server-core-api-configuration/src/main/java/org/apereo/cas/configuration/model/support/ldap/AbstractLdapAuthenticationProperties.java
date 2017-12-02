@@ -1,6 +1,8 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -66,11 +68,13 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * </p>
      */
     private String principalAttributePassword;
+
     /**
      * Specify the dn format accepted by the AD authenticator, etc.
      * Example format might be {@code uid=%s,ou=people,dc=example,dc=org}.
      */
     private String dnFormat;
+
     /**
      * Whether specific search entry resolvers need to be set
      * on the authenticator, or the default should be used.
@@ -92,7 +96,7 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * Syntax is {@code cn={user}} or {@code cn={0}}.
      */
     @RequiredProperty
-    private String userFilter;
+    private String searchFilter;
 
     /**
      * Define how aliases are de-referenced.
@@ -143,12 +147,12 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
         this.baseDn = baseDn;
     }
 
-    public String getUserFilter() {
-        return userFilter;
+    public String getSearchFilter() {
+        return searchFilter;
     }
 
-    public void setUserFilter(final String userFilter) {
-        this.userFilter = userFilter;
+    public void setSearchFilter(final String userFilter) {
+        this.searchFilter = userFilter;
     }
 
     public String getDnFormat() {
@@ -181,5 +185,29 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
 
     public void setDerefAliases(final String derefAliases) {
         this.derefAliases = derefAliases;
+    }
+
+    /**
+     * @deprecated Since 5.2. Use {{@link #setSearchFilter(String)} instead}.
+     * Sets user filter.
+     *
+     * @param filter the filter
+     */
+    @Deprecated
+    @DeprecatedConfigurationProperty(reason = "userFilter is replaced with searchFilter instead.", replacement = "searchFilter")
+    public void setUserFilter(final String filter) {
+        throw new NotImplementedException("userFilter is no longer supported. Use searchFilter instead");
+    }
+
+    /**
+     * @deprecated Since 5.2. Use {{@link #getSearchFilter()} instead}.
+     * Gets user filter.
+     *
+     * @return the user filter
+     */
+    @Deprecated
+    @DeprecatedConfigurationProperty(reason = "userFilter is replaced with searchFilter instead.", replacement = "searchFilter")
+    public String getUserFilter() {
+        throw new NotImplementedException("userFilter is no longer supported. Use searchFilter instead");
     }
 }
