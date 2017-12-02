@@ -36,7 +36,7 @@ public class JRadiusServerImplTests {
         final JRadiusServerImpl server = new JRadiusServerImpl(RadiusProtocol.MSCHAPv2,
                 new RadiusClientFactory(ACCOUNTING_PORT, AUTHENTICATION_PORT, INET_ADDRESS, SECRET));
         final RadiusResponse response = server.authenticate("casuser", "Mellon");
-        assertEquals(response.getCode(), 2);
+        assertEquals(2, response.getCode());
         assertFalse(response.getAttributes().isEmpty());
         assertTrue(response.getAttributes().stream().anyMatch(a -> a.getAttributeName().equals(Attr_MSCHAP2Success.NAME)));
     }
