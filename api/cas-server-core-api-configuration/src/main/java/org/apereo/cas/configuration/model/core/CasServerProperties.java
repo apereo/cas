@@ -349,7 +349,7 @@ public class CasServerProperties implements Serializable {
         /**
          * String representing extended log pattern.
          */
-        private String pattern = "c-ip s-ip cs-uri sc-status time X-threadname x-H(secure) x-H(remoteUser)";
+        private String pattern = "c-ip s-ip cs-uri sc-status time x-threadname x-H(secure) x-H(remoteUser)";
 
         /**
          * File name suffix for extended log.
