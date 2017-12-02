@@ -132,7 +132,7 @@ public final class CollectionUtils {
      * @param value2 the value 2
      * @return the map
      */
-    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+    public static <K extends String, V extends Object> Map<K, V> wrap(final String key, final Object value,
                                         final String key2, final Object value2) {
         final Map m = wrap(key, value);
         m.put(key2, value2);

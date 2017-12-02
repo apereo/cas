@@ -41,8 +41,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                        final Map<String, Object> attributes,
-                                                        final RegisteredService service) {
+                                                     final Map<String, Object> attributes,
+                                                     final RegisteredService service) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>(0);
@@ -61,8 +61,8 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
     private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes,
                                                                            final Matcher matcherInline) {
         final String script = matcherInline.group(1).trim();
-        final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script,
-                CollectionUtils.wrap("attributes", attributes, "logger", LOGGER));
+        final Map<String, Object> args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
+        final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);
         return ObjectUtils.defaultIfNull(map, new HashMap<>());
     }
 

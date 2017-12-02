@@ -147,7 +147,7 @@ public final class SerializationUtils {
      * @return the t
      * @since 4.2
      */
-    public static <T> T deserializeAndCheckObject(final byte[] object, final Class<? extends Serializable> type) {
+    public static <T extends Serializable> T deserializeAndCheckObject(final byte[] object, final Class<T> type) {
         final Object result = deserialize(object, type);
         if (!type.isAssignableFrom(result.getClass())) {
             throw new ClassCastException("Decoded object is of type " + result.getClass() + " when we were expecting " + type);

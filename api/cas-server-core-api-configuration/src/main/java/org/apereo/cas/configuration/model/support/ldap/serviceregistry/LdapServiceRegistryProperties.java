@@ -1,8 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RequiredProperty;
 
 /**
  * This is {@link LdapServiceRegistryProperties}.
@@ -11,7 +10,7 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap-service-registry")
-public class LdapServiceRegistryProperties extends AbstractLdapProperties {
+public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 2372867394066286022L;
 
@@ -31,20 +30,6 @@ public class LdapServiceRegistryProperties extends AbstractLdapProperties {
      * to keep a representation of the service body.
      */
     private String serviceDefinitionAttribute = "description";
-
-    /**
-     * LDAP baseDn used for stored and retrieval of records from LDAP.
-     */
-    @RequiredProperty
-    private String baseDn;
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
-    }
 
     public String getObjectClass() {
         return objectClass;

@@ -3,7 +3,7 @@ package org.apereo.cas.configuration.model.support.pm;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -223,7 +223,7 @@ public class PasswordManagementProperties implements Serializable {
     }
 
     @RequiresModule(name = "cas-server-support-pm-ldap")
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = -2610186056194686825L;
         /**
          * Collection of attribute names that indicate security questions answers.
@@ -231,14 +231,7 @@ public class PasswordManagementProperties implements Serializable {
          * for the security question and the value is the attribute name for the answer linked to the question.
          */
         private Map<String, String> securityQuestionsAttributes = new LinkedHashMap<>();
-        /**
-         * Base DN to start the search and update operations.
-         */
-        private String baseDn;
-        /**
-         * User filter to start the search.
-         */
-        private String userFilter;
+
         /**
          * The specific variant of LDAP
          * based on which update operations will be constructed.
@@ -252,23 +245,7 @@ public class PasswordManagementProperties implements Serializable {
         public void setSecurityQuestionsAttributes(final Map<String, String> s) {
             this.securityQuestionsAttributes = s;
         }
-
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getUserFilter() {
-            return userFilter;
-        }
-
-        public void setUserFilter(final String userFilter) {
-            this.userFilter = userFilter;
-        }
-
+        
         public LdapType getType() {
             return type;
         }

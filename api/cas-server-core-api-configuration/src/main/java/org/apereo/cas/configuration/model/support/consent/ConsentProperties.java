@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.consent;
 
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -40,7 +40,7 @@ public class ConsentProperties implements Serializable {
      * Keep consent decisions stored via LDAP user records.
      */
     private Ldap ldap = new Ldap();
-    
+
     /**
      * Keep consent decisions stored via JDBC resources.
      */
@@ -60,13 +60,13 @@ public class ConsentProperties implements Serializable {
      * Keep consent decisions stored via a MongoDb database resource.
      */
     private MongoDb mongo = new MongoDb();
-    
+
     /**
      * Signing/encryption settings.
      */
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
-    
+
     public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
         return crypto;
     }
@@ -155,32 +155,19 @@ public class ConsentProperties implements Serializable {
     }
 
     @RequiresModule(name = "cas-server-consent-ldap")
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = 1L;
-        
+
         /**
          * Type of LDAP directory.
          */
         private LdapType type;
-        
+
         /**
          * Name of LDAP attribute that holds consent decisions as JSON.
          */
         private String consentAttributeName = "casConsentDecision";
-        /**
-         * Whether subtree searching is allowed.
-         */
-        private boolean subtreeSearch = true;
-        /**
-         * Base DN to use.
-         */
-        private String baseDn;
-        /**
-         * User filter to use for searching.
-         * Syntax is {@code cn={user}} or {@code cn={0}}.
-         */
-        private String userFilter;
-
+        
         public LdapType getType() {
             return type;
         }
@@ -188,37 +175,13 @@ public class ConsentProperties implements Serializable {
         public void setType(final LdapType type) {
             this.type = type;
         }
-        
+
         public String getConsentAttributeName() {
             return consentAttributeName;
         }
-        
+
         public void setConsentAttributeName(final String consentAttributeName) {
             this.consentAttributeName = consentAttributeName;
-        }
-
-        public boolean isSubtreeSearch() {
-            return subtreeSearch;
-        }
-
-        public void setSubtreeSearch(final boolean subtreeSearch) {
-            this.subtreeSearch = subtreeSearch;
-        }
-
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getUserFilter() {
-            return userFilter;
-        }
-
-        public void setUserFilter(final String userFilter) {
-            this.userFilter = userFilter;
         }
     }
 

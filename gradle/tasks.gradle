@@ -55,10 +55,6 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
     from javadoc.destinationDir
 }
 
-[javadocJar, resourcesJar, sourcesJar, testJar].each { task ->
-    task.enabled = rootProject.publishingRelease || rootProject.publishSnapshots
-}
-
 task cleanLogs(description: "Clean build log files") {
     delete fileTree(dir: project.projectDir, includes: ["**/*.log", "**/*.gz", "**/*.log.gz"])
 }
