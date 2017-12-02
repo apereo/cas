@@ -17,7 +17,7 @@ import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -101,7 +101,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
         try {
             LOGGER.debug("Loading services");
             final ViewResult allKeys = executeViewQueryForAllServices();
-            final List<RegisteredService> services = new LinkedList<>();
+            final List<RegisteredService> services = new ArrayList<>();
             for (final ViewRow row : allKeys) {
 
                 final RawJsonDocument document = row.document(RawJsonDocument.class);
@@ -118,7 +118,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
             return services;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new LinkedList<>();
+            return new ArrayList<>();
         }
     }
 

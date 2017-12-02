@@ -65,7 +65,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
         final String id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
             RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
-        assertEquals(id, "TheName");
+        assertEquals("TheName", id);
     }
 
     @Test
@@ -83,7 +83,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
         final String id = provider.resolveUsername(p, RegisteredServiceTestUtils.getService("usernameAttributeProviderService"),
             RegisteredServiceTestUtils.getRegisteredService("usernameAttributeProviderService"));
-        assertEquals(id, "TheName");
+        assertEquals("TheName", id);
     }
 
     @Test

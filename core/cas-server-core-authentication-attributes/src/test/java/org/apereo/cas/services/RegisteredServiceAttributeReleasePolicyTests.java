@@ -59,7 +59,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
         final Map<String, Object> attr = policy.getAttributes(p,
                 CoreAttributesTestUtils.getService(),
                 CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), 1);
+        assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
     }
 
@@ -81,7 +81,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
                 CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), 2);
+        assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_2));
     }
@@ -105,7 +105,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
                 CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), 1);
+        assertEquals(1, attr.size());
         assertTrue(attr.containsKey(NEW_ATTR_1_VALUE));
 
         final byte[] data = SerializationUtils.serialize(policy);
@@ -130,7 +130,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
                 CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), 2);
+        assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_3));
 
@@ -153,7 +153,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
 
         final Map<String, Object> attr = policy.getAttributes(p, CoreAttributesTestUtils.getService(),
                 CoreAttributesTestUtils.getRegisteredService());
-        assertEquals(attr.size(), 0);
+        assertTrue(attr.isEmpty());
     }
 
     @Test
