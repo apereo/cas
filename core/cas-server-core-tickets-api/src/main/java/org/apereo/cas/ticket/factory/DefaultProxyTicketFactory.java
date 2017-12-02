@@ -52,9 +52,10 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
     }
 
     @Override
-    public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service) {
+    public <T extends Ticket> T create(final ProxyGrantingTicket proxyGrantingTicket, final Service service,
+                                       final Class<T> clazz) {
         final String ticketId = produceTicketIdentifier(service);
-        return produceTicket(proxyGrantingTicket, service, ticketId);
+        return produceTicket(proxyGrantingTicket, service, ticketId, clazz);
     }
 
     /**
@@ -64,15 +65,23 @@ public class DefaultProxyTicketFactory implements ProxyTicketFactory {
      * @param proxyGrantingTicket the proxy granting ticket
      * @param service             the service
      * @param ticketId            the ticket id
+     * @param clazz               the clazz
      * @return the ticket
      */
-    protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket, final Service service, final String ticketId) {
-        final ProxyTicket serviceTicket = proxyGrantingTicket.grantProxyTicket(
+    protected <T extends Ticket> T produceTicket(final ProxyGrantingTicket proxyGrantingTicket,
+                                                 final Service service, final String ticketId, final Class<T> clazz) {
+        final ProxyTicket result = proxyGrantingTicket.grantProxyTicket(
                 ticketId,
                 service,
                 this.proxyTicketExpirationPolicy,
                 this.onlyTrackMostRecentSession);
-        return (T) serviceTicket;
+
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     /**
