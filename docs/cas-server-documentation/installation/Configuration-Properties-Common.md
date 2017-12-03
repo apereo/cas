@@ -392,6 +392,21 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 # cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
 ```
 
+## InfluxDb Configuration
+
+The following options related to InfluxDb support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.url=http://localhost:8086
+# ${configurationKey}.username=root
+# ${configurationKey}.password=root
+# ${configurationKey}.retentionPolicy=autogen
+# ${configurationKey}.dropDatabase=false
+# ${configurationKey}.pointsToFlush=100
+# ${configurationKey}.batchInterval=PT5S
+# ${configurationKey}.consistencyLevel=ALL
+```
+
 ## MongoDb Configuration
 
 The following options related to MongoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
