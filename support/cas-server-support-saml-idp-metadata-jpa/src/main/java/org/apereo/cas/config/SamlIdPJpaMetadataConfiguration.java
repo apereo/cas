@@ -64,8 +64,7 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
     public HibernateJpaVendorAdapter jpaSamlMetadataVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-    @RefreshScope
+    
     @Bean
     public DataSource dataSourceSamlMetadata() {
         final SamlIdPMetadataProperties idp = casProperties.getAuthn().getSamlIdp().getMetadata();

@@ -46,8 +46,7 @@ public class JdbcMultifactorAuthnTrustConfiguration {
     public HibernateJpaVendorAdapter jpaMfaTrustedAuthnVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-    @RefreshScope
+    
     @Bean
     public DataSource dataSourceMfaTrustedAuthn() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getTrusted().getJpa());

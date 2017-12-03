@@ -223,8 +223,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     @Test
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
         this.thrown.expect(InvalidTicketException.class);
-        this.thrown.expectMessage("bad-st");
-
         this.cas.createProxyGrantingTicket("bad-st", getAuthenticationContext());
     }
 

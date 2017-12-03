@@ -48,7 +48,6 @@ public class JpaYubiKeyConfiguration {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
 
-    @RefreshScope
     @Bean
     public DataSource dataSourceYubiKey() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getYubikey().getJpa());

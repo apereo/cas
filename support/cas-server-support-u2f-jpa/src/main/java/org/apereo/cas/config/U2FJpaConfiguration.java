@@ -47,8 +47,7 @@ public class U2FJpaConfiguration {
     public HibernateJpaVendorAdapter jpaU2fVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-    @RefreshScope
+    
     @Bean
     public DataSource dataSourceU2f() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getU2f().getJpa());

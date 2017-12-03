@@ -89,7 +89,7 @@ public final class JpaBeans {
             bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
             return bean;
         } catch (final Exception e) {
-            LOGGER.error("Error creating DataSource: [{}]", e.getMessage());
+            LOGGER.error("Error creating data source: [{}]", e.getMessage());
             throw new IllegalArgumentException(e);
         }
     }

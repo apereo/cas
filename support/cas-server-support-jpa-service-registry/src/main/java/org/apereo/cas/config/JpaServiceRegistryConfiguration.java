@@ -81,7 +81,6 @@ public class JpaServiceRegistryConfiguration {
         return mgmr;
     }
 
-    @RefreshScope
     @Bean
     public DataSource dataSourceService() {
         return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());

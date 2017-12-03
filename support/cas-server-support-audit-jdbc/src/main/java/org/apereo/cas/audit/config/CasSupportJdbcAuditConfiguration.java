@@ -88,7 +88,6 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public DataSource inspektrAuditTrailDataSource() {
         return JpaBeans.newDataSource(casProperties.getAudit().getJdbc());
     }
