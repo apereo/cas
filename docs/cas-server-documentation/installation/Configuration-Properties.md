@@ -903,14 +903,7 @@ Protocol/authentication attributes may also be released conditionally on a per-s
 
 ## Principal Resolution
 
-In the event that a separate resolver is put into place, control
-how the final principal should be constructed by default.
-
-```properties
-# cas.personDirectory.principalAttribute=
-# cas.personDirectory.returnNull=false
-# cas.personDirectory.principalResolutionFailureFatal=false
-```
+In the event that a separate resolver is put into place, control how the final principal should be constructed by default. Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.personDirectory`.
 
 ## Authentication Policy
 
@@ -1541,19 +1534,20 @@ To learn more about this topic, [please review this guide](../integration/Google
 
 ## OpenID Authentication
 
-Allow CAS to become an OpenID authentication provider.
-To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
+Allow CAS to become an OpenID authentication provider. To learn more about this topic, [please review this guide](../protocol/OpenID-Protocol.html).
+
+Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.openid.principal`.
 
 ```properties
 # cas.authn.openid.enforceRpId=false
-# cas.authn.openid.principal.principalAttribute=
-# cas.authn.openid.principal.returnNull=false
 # cas.authn.openid.name=
 ```
 
 ## SPNEGO Authentication
 
 To learn more about this topic, [please review this guide](SPNEGO-Authentication.html).
+
+Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.spnego.principal`.
 
 ```properties
 # cas.authn.spnego.kerberosConf=
@@ -1584,9 +1578,6 @@ To learn more about this topic, [please review this guide](SPNEGO-Authentication
 # cas.authn.spnego.jcifsPassword=
 # cas.authn.spnego.spnegoAttributeName=distinguishedName
 # cas.authn.spnego.name=
-
-# cas.authn.spnego.principal.principalAttribute=
-# cas.authn.spnego.principal.returnNull=false
 ```
 
 #### SPNEGO LDAP Integration
@@ -1813,10 +1804,10 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
 
-# cas.authn.x509.principal.principalAttribute=
-# cas.authn.x509.principal.returnNull=false
 # cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
+
+Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.x509.principal`.
 
 ### X509 LDAP Integration
 
@@ -1839,11 +1830,9 @@ Password encoding  settings for this feature are available [here](Configuration-
 
 ## Trusted Authentication
 
-To learn more about this topic, [please review this guide](Trusted-Authentication.html).
+To learn more about this topic, [please review this guide](Trusted-Authentication.html). Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.trusted`.
 
 ```properties
-# cas.authn.trusted.principalAttribute=
-# cas.authn.trusted.returnNull=false
 # cas.authn.trusted.name=
 
 # cas.authn.trusted.remotePrincipalHeader=

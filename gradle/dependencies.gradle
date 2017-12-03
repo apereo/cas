@@ -345,6 +345,9 @@ ext.libraries = [
                 dependencies.create("org.apache.commons:commons-lang3:$commonsLangVersion") {
                     force = true
                 },
+                dependencies.create("commons-lang:commons-lang:2.6") {
+                    force = true
+                },
                 dependencies.create("org.jooq:jool:$joolVersion") {
                     force = true
                 },
@@ -1980,6 +1983,10 @@ ext.libraries = [
         ],
         springintegration       : [
                 dependencies.create("org.springframework.integration:spring-integration-core:$springIntegrationVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.springframework.integration:spring-integration-jmx:$springIntegrationVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
