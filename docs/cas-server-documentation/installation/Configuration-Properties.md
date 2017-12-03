@@ -2915,18 +2915,7 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 ### InfluxDb Events
 
-Decide how CAS should store authentication events inside an InfluxDb instance.
-
-```properties
-# cas.events.influxDb.url=http://localhost:8086
-# cas.events.influxDb.username=root
-# cas.events.influxDb.password=root
-# cas.events.influxDb.retentionPolicy=autogen
-# cas.events.influxDb.dropDatabase=false
-# cas.events.influxDb.pointsToFlush=100
-# cas.events.influxDb.batchInterval=PT5S
-# cas.events.influxDb.consistencyLevel=ALL
-```
+Decide how CAS should store authentication events inside an InfluxDb instance. Configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
 
 ### Database Events
 
@@ -3679,16 +3668,7 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 #### InfluxDb
 
-```properties
-# cas.metrics.influxDb.url=http://localhost:8086
-# cas.metrics.influxDb.username=root
-# cas.metrics.influxDb.password=root
-# cas.metrics.influxDb.retentionPolicy=autogen
-# cas.metrics.influxDb.dropDatabase=false
-# cas.metrics.influxDb.pointsToFlush=100
-# cas.metrics.influxDb.batchInterval=PT5S
-# cas.metrics.influxDb.consistencyLevel=ALL
-```
+Configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.metrics.influxDb`.
 
 ## SAML Metadata UI
 
