@@ -27,6 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -67,25 +68,26 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        JpaLockingStrategyTests.JpaTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class})
+    JpaLockingStrategyTests.JpaTestConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
 public class JpaLockingStrategyTests {
@@ -121,7 +123,6 @@ public class JpaLockingStrategyTests {
 
     /**
      * Test basic acquire/release semantics.
-     *
      */
     @Test
     public void verifyAcquireAndRelease() {
@@ -138,7 +139,7 @@ public class JpaLockingStrategyTests {
             fail("testAcquireAndRelease failed");
         }
     }
-    
+
     @Test
     public void verifyLockExpiration() {
         try {
@@ -215,7 +216,7 @@ public class JpaLockingStrategyTests {
     private LockingStrategy[] getConcurrentLocks(final String appId) {
         final LockingStrategy[] locks = new LockingStrategy[CONCURRENT_SIZE];
         IntStream.rangeClosed(1, locks.length)
-                .forEach(i -> locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT));
+            .forEach(i -> locks[i - 1] = newLockTxProxy(appId, appId + '-' + i, JpaTicketRegistryProperties.DEFAULT_LOCK_TIMEOUT));
         return locks;
     }
 
@@ -223,15 +224,15 @@ public class JpaLockingStrategyTests {
         final JpaLockingStrategy lock = new JpaLockingStrategy(appId, uniqueId, Beans.newDuration(ttl).getSeconds());
         lock.entityManager = SharedEntityManagerCreator.createSharedEntityManager(factory);
         return (LockingStrategy) Proxy.newProxyInstance(
-                JpaLockingStrategy.class.getClassLoader(),
-                new Class[]{LockingStrategy.class},
-                new TransactionalLockInvocationHandler(lock, this.txManager));
+            JpaLockingStrategy.class.getClassLoader(),
+            new Class[]{LockingStrategy.class},
+            new TransactionalLockInvocationHandler(lock, this.txManager));
     }
 
     private String getOwner(final String appId) {
         final JdbcTemplate simpleJdbcTemplate = new JdbcTemplate(dataSource);
         final List<Map<String, Object>> results = simpleJdbcTemplate.queryForList(
-                "SELECT unique_id FROM locks WHERE application_id=?", appId);
+            "SELECT unique_id FROM locks WHERE application_id=?", appId);
         if (results.isEmpty()) {
             return null;
         }
