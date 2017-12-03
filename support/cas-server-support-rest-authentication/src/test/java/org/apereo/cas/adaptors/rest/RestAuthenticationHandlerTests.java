@@ -110,7 +110,7 @@ public class RestAuthenticationHandlerTests {
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
 
         final HandlerResult res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-        assertEquals(res.getPrincipal().getId(), "casuser");
+        assertEquals("casuser", res.getPrincipal().getId());
     }
 
     @Test

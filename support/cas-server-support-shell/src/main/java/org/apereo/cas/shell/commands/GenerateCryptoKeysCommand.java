@@ -58,7 +58,7 @@ public class GenerateCryptoKeysCommand implements CommandMarker {
                 .forEach(e -> {
                     final ConfigurationMetadataGroup grp = e.getValue();
                     grp.getSources().forEach(Unchecked.biConsumer((k, v) -> {
-                        final Object obj = ClassUtils.getClass(k, true).newInstance();
+                        final Object obj = ClassUtils.getClass(k, true).getDeclaredConstructor().newInstance();
                         if (obj instanceof EncryptionJwtSigningJwtCryptographyProperties) {
                             final EncryptionJwtSigningJwtCryptographyProperties crypto = (EncryptionJwtSigningJwtCryptographyProperties) obj;
                             LOGGER.info(cryptoGroup.concat(".encryption.key="+EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize())));

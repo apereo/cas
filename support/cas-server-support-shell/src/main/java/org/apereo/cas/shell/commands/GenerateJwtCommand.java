@@ -140,7 +140,7 @@ public class GenerateJwtCommand implements CommandMarker {
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
 
         final JWEAlgorithm algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
-        if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm.getName())) {
+        if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
             if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethod)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
                         encryptionMethod, encryptionAlgorithm, DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS);

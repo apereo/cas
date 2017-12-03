@@ -64,7 +64,8 @@ public class RegisteredServiceHazelcastDistributedCacheManager extends
 
     @Override
     public void remove(final RegisteredService service, final DistributedCacheObject<RegisteredService> item) {
-        this.mapInstance.remove(service);
+        final String key = buildKey(service);
+        this.mapInstance.remove(key);
     }
 
     @Override
