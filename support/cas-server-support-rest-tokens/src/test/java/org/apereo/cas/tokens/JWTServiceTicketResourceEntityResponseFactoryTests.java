@@ -112,7 +112,7 @@ public class JWTServiceTicketResourceEntityResponseFactoryTests {
         final Service service = RegisteredServiceTestUtils.getService("test");
         final ResponseEntity<String> response = serviceTicketResourceEntityResponseFactory.build(tgt.getId(), service, result);
         assertNotNull(response);
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
     @Test
@@ -123,7 +123,7 @@ public class JWTServiceTicketResourceEntityResponseFactoryTests {
         final Service service = RegisteredServiceTestUtils.getService("jwtservice");
         final ResponseEntity<String> response = serviceTicketResourceEntityResponseFactory.build(tgt.getId(), service, result);
         assertNotNull(response);
-        assertEquals(response.getStatusCode(), HttpStatus.OK);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
         assertFalse(response.getBody().startsWith(ServiceTicket.PREFIX));
         
         final Object jwt = this.tokenCipherExecutor.decode(response.getBody());

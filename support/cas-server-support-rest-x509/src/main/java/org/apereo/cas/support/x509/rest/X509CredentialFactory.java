@@ -13,6 +13,7 @@ import org.springframework.util.MultiValueMap;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 
 /**
@@ -35,7 +36,7 @@ public class X509CredentialFactory extends DefaultCredentialFactory {
         if (StringUtils.isBlank(cert)) {
             return super.fromRequestBody(requestBody);
         }
-        final InputStream is = new ByteArrayInputStream(cert.getBytes());
+        final InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8));
         final InputStreamSource iso = new InputStreamResource(is);
         final X509Certificate certificate = CertUtils.readCertificate(iso);
         final X509CertificateCredential credential = new X509CertificateCredential(new X509Certificate[]{certificate});

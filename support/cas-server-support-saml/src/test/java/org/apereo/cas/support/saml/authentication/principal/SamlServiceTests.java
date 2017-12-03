@@ -14,6 +14,7 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 
@@ -69,7 +70,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
                 + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
                 + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContent(body.getBytes());
+        request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
         final SamlService impl = new SamlServiceFactory().createService(request);
         assertEquals("artifact", impl.getArtifactId());
@@ -77,7 +78,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
     }
 
     @Test
-    public void verifyTargetMatchesingSamlService() {
+    public void verifyTargetMatchingSamlService() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "https://some.service.edu/path/to/app");
 
@@ -105,7 +106,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
                 + "MinorVersion=\"1\" RequestID=\"_192.168.16.51.1024506224022\" IssueInstant=\"2002-06-19T17:03:44.022Z\">"
                 + "<samlp:AssertionArtifact>artifact</samlp:AssertionArtifact></samlp:Request></SOAP-ENV:Body></SOAP-ENV:Envelope>";
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.setContent(body.getBytes());
+        request.setContent(body.getBytes(StandardCharsets.UTF_8));
 
         final SamlService serviceWritten = new SamlServiceFactory().createService(request);
         MAPPER.writeValue(JSON_FILE, serviceWritten);

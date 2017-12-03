@@ -20,9 +20,7 @@ import java.util.Map;
  */
 public class CasServerDiscoveryProfileController extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
-    
-    private final CasConfigurationProperties casProperties;
-    
+
     private final CasServerProfileRegistrar casServerProfileRegistrar;
 
     /**
@@ -38,7 +36,6 @@ public class CasServerDiscoveryProfileController extends BaseCasMvcEndpoint {
                                                final CasServerProfileRegistrar casServerProfileRegistrar) {
         super("casdiscovery", "/discovery", casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties);
         this.servicesManager = servicesManager;
-        this.casProperties = casProperties;
         this.casServerProfileRegistrar = casServerProfileRegistrar;
     }
 
@@ -53,7 +50,7 @@ public class CasServerDiscoveryProfileController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        
+
         final Map<String, Object> results = new LinkedHashMap<>();
         results.put("profile", casServerProfileRegistrar.getProfile());
         return results;

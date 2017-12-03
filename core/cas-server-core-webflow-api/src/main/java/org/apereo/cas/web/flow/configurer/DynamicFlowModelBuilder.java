@@ -19,6 +19,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@SuppressWarnings("JdkObsolete")
 public class DynamicFlowModelBuilder implements FlowModelBuilder {
     /**
      * The Flow model.

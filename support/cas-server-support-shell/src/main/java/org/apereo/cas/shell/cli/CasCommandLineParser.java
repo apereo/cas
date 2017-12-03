@@ -232,7 +232,7 @@ public class CasCommandLineParser {
     public static Banner.Mode getBannerMode(final String[] args) {
         final CasCommandLineParser parser = new CasCommandLineParser();
         final CommandLine line = parser.parse(args);
-        return (line != null && parser.isSkippingBanner(line) || isShell(args)) ? Banner.Mode.OFF : Banner.Mode.CONSOLE;
+        return (line != null && parser.isSkippingBanner(line)) || isShell(args) ? Banner.Mode.OFF : Banner.Mode.CONSOLE;
     }
 
     /**

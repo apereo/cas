@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.concurrent.Future;
 
 /**
  * Key-value ticket registry implementation that stores tickets in memcached keyed on the ticket ID.
@@ -17,6 +18,7 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.3
  */
+@SuppressWarnings("FutureReturnValueIgnored")
 public class MemcachedTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedTicketRegistry.class);
     /**

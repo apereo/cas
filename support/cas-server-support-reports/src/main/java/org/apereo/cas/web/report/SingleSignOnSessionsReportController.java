@@ -42,7 +42,6 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
     private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
 
-    private final CasConfigurationProperties casProperties;
 
     private enum SsoSessionReportOptions {
         ALL("all"),
@@ -108,7 +107,6 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
                                                 final CasConfigurationProperties casProperties) {
         super("ssosessions", "/ssosessions", casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
-        this.casProperties = casProperties;
     }
 
     /**

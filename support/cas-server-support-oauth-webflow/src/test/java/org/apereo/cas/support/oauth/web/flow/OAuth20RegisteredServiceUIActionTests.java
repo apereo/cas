@@ -97,7 +97,7 @@ public class OAuth20RegisteredServiceUIActionTests {
         final MockRequestContext ctx = new MockRequestContext();
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService());
         final Event event = oauth20RegisteredServiceUIAction.execute(ctx);
-        assertEquals(event.getId(), "success");
+        assertEquals("success", event.getId());
         final Serializable mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, Serializable.class);
         assertNull(mdui);
     }
@@ -119,7 +119,7 @@ public class OAuth20RegisteredServiceUIActionTests {
         WebUtils.putService(ctx, RegisteredServiceTestUtils.getService(
                 "https://www.example.org?client_id=id&client_secret=secret&redirect_uri=https://oauth.example.org"));
         final Event event = oauth20RegisteredServiceUIAction.execute(ctx);
-        assertEquals(event.getId(), "success");
+        assertEquals("success", event.getId());
         final DefaultRegisteredServiceUserInterfaceInfo mdui = WebUtils.getServiceUserInterfaceMetadata(ctx, DefaultRegisteredServiceUserInterfaceInfo.class);
         assertNotNull(mdui);
         

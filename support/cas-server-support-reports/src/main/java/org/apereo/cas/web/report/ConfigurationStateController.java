@@ -54,11 +54,8 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @Qualifier("configurationPropertiesEnvironmentManager")
     private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-    private final CasConfigurationProperties casProperties;
-
     public ConfigurationStateController(final CasConfigurationProperties casProperties) {
         super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties);
-        this.casProperties = casProperties;
     }
 
     /**
@@ -81,7 +78,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
 
     private Boolean isRefreshEnabled() {
         return !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint.isEnabled()
-                && environment.getProperty("spring.cloud.config.enabled", Boolean.class);
+            && environment.getProperty("spring.cloud.config.enabled", Boolean.class);
     }
 
     private Boolean isUpdateEnabled() {
@@ -105,18 +102,18 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
             final Map results = new TreeMap();
             final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
             environmentSettings.entrySet()
-                    .stream()
-                    .filter(entry -> pattern.matcher(entry.getKey()).matches())
-                    .forEach(entry -> {
-                        final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
-                        keys.keySet().forEach(key -> {
-                            if (!results.containsKey(key)) {
-                                final String propHolder = String.format("${%s}", key);
-                                final String value = this.environment.resolvePlaceholders(propHolder);
-                                results.put(key, environmentEndpoint.sanitize(key, value));
-                            }
-                        });
+                .stream()
+                .filter(entry -> pattern.matcher(entry.getKey()).matches())
+                .forEach(entry -> {
+                    final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
+                    keys.keySet().forEach(key -> {
+                        if (!results.containsKey(key)) {
+                            final String propHolder = String.format("${%s}", key);
+                            final String value = this.environment.resolvePlaceholders(propHolder);
+                            results.put(key, environmentEndpoint.sanitize(key, value));
+                        }
                     });
+                });
 
             return results;
         }

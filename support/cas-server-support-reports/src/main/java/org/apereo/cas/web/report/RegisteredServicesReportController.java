@@ -23,7 +23,6 @@ import java.util.stream.Collectors;
  */
 public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
-    private final CasConfigurationProperties casProperties;
 
     /**
      * Instantiates a new mvc endpoint.
@@ -37,7 +36,6 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
         super("casservices", "/services",
                 casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties);
         this.servicesManager = servicesManager;
-        this.casProperties = casProperties;
     }
 
     /**

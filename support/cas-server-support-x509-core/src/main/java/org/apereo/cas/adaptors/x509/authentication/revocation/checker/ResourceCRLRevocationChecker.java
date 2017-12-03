@@ -36,7 +36,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
     private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCRLRevocationChecker.class);
-    
+
     /**
      * Executor responsible for refreshing CRL data.
      */
@@ -68,21 +68,21 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         this.resources = resources;
     }
 
-    public ResourceCRLRevocationChecker(final Resource crl, 
+    public ResourceCRLRevocationChecker(final Resource crl,
                                         final RevocationPolicy<Void> unavailableCRLPolicy,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this(false, unavailableCRLPolicy, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
-                new ResourceCRLFetcher(), CollectionUtils.wrap(crl));
+            new ResourceCRLFetcher(), CollectionUtils.wrap(crl));
 
     }
 
     public ResourceCRLRevocationChecker(final Resource[] crl,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this(false, null, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
-                new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
+            new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
 
     }
-    
+
     /**
      * Creates a new instance using the specified resource for CRL data.
      *
@@ -105,7 +105,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public ResourceCRLRevocationChecker(final Resource... crls) {
         this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
     }
-    
+
     /**
      * Instantiates a new Resource cRL revocation checker.
      *
@@ -122,6 +122,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * Initializes the process that periodically fetches CRL data.
      */
     @PostConstruct
+    @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;
@@ -147,10 +148,10 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         };
         try {
             this.scheduler.scheduleAtFixedRate(
-                    scheduledFetcher,
-                    this.refreshInterval,
-                    this.refreshInterval,
-                    TimeUnit.SECONDS);
+                scheduledFetcher,
+                this.refreshInterval,
+                this.refreshInterval,
+                TimeUnit.SECONDS);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -159,7 +160,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     private boolean validateConfiguration() {
         if (this.resources == null || this.resources.isEmpty()) {
             LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
-                    this.getClass().getSimpleName());
+                this.getClass().getSimpleName());
             return false;
         }
         if (this.fetcher == null) {

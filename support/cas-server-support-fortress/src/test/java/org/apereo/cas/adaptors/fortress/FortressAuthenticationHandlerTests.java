@@ -52,10 +52,10 @@ public class FortressAuthenticationHandlerTests {
     @Test
     public void verifyUnauthorizedUserLoginIncorrect() throws Exception {
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean()))
-                .thenThrow(new PasswordException(GlobalErrIds.USER_PW_INVLD, "error message"));
+            .thenThrow(new PasswordException(GlobalErrIds.USER_PW_INVLD, "error message"));
         this.thrown.expect(FailedLoginException.class);
         fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
     }
 
     @Test
@@ -66,13 +66,15 @@ public class FortressAuthenticationHandlerTests {
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
         try {
             final HandlerResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
-                    CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
-            Assert.assertEquals(handlerResult.getPrincipal().getId(), CoreAuthenticationTestUtils.CONST_USERNAME);
+                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
+            Assert.assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
+                handlerResult.getPrincipal().getId());
             final JAXBContext jaxbContext = JAXBContext.newInstance(Session.class);
             final Marshaller marshaller = jaxbContext.createMarshaller();
             final StringWriter writer = new StringWriter();
             marshaller.marshal(session, writer);
-            Assert.assertEquals(writer.toString(), handlerResult.getPrincipal().getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY));
+            Assert.assertEquals(writer.toString(), handlerResult.getPrincipal()
+                .getAttributes().get(FortressAuthenticationHandler.FORTRESS_SESSION_KEY));
         } catch (final Exception e) {
             LOGGER.error("test failed", e);
         }

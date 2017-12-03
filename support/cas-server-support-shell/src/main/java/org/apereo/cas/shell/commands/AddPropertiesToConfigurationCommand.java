@@ -20,6 +20,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -96,7 +100,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
         final Yaml yaml = new Yaml(options);
-        try (FileWriter writer = new FileWriter(filePath)) {
+        try (Writer writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
             putResultsIntoProperties(results, yamlProps);
             yaml.dump(yamlProps, writer);
         }
@@ -138,7 +142,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
 
     private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         final Properties p = new Properties();
-        try (FileReader f = new FileReader(filePath)) {
+        try (Reader f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);
         }
         return p;
