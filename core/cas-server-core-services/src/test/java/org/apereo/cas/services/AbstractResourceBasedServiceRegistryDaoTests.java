@@ -61,7 +61,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         prepTests();
         verifySaveAttributeReleasePolicyMappingRules();
         verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
-        assertEquals(this.dao.load().size(), 2);
+        assertEquals(2, this.dao.load().size());
     }
 
     @Test

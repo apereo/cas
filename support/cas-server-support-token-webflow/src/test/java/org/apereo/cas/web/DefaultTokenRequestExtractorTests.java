@@ -20,7 +20,7 @@ public class DefaultTokenRequestExtractorTests {
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "test");
         final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
         final String token = e.extract(request);
-        assertEquals(token, "test");
+        assertEquals("test", token);
     }
 
     @Test
@@ -29,7 +29,7 @@ public class DefaultTokenRequestExtractorTests {
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, "test");
         final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
         final String token = e.extract(request);
-        assertEquals(token, "test");
+        assertEquals("test", token);
     }
 
     @Test

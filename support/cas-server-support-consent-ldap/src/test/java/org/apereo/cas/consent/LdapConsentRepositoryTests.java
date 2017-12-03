@@ -111,7 +111,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         
         final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNotNull(d);
-        assertEquals(d.getPrincipal(), USER_CN);
+        assertEquals(USER_CN, d.getPrincipal());
     }
     
     @Test
@@ -127,8 +127,8 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         
         final Collection<ConsentDecision> d = this.repository.findConsentDecisions(USER_CN);
         assertNotNull(d);
-        assertEquals(d.size(), 1);
-        assertEquals(d.iterator().next().getPrincipal(), USER_CN);
+        assertEquals(1, d.size());
+        assertEquals(USER_CN, d.iterator().next().getPrincipal());
     }
     
     @Test
@@ -145,7 +145,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final Collection<ConsentDecision> d = this.repository.findConsentDecisions();
         assertNotNull(d);
         assertFalse(d.isEmpty());
-        assertEquals(d.size(), 2);
+        assertEquals(2, d.size());
     }
     
     @Test
@@ -157,7 +157,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         assertTrue(r.getEntryCount() > 0);
         final ConsentDecision d = MAPPER.readValue(r.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
         assertNotNull(d);
-        assertEquals(d.getPrincipal(), USER_CN);
+        assertEquals(USER_CN, d.getPrincipal());
     }
     
     @Test
@@ -199,6 +199,6 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
 
         final SearchResult r = DIRECTORY.getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
-        assertEquals(r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length, 1);
+        assertEquals(1, r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length);
     }
 }

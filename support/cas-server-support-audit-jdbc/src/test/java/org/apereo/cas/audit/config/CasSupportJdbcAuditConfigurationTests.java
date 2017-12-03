@@ -80,6 +80,6 @@ public class CasSupportJdbcAuditConfigurationTests {
     @Test
     public void verifyAudit() {
         this.servicesManager.save(RegisteredServiceTestUtils.getRegisteredService("auditservicetest"));
-        assertEquals(this.auditTrailManager.get().size(), 1);
+        assertEquals(1, this.auditTrailManager.get().size());
     }
 }

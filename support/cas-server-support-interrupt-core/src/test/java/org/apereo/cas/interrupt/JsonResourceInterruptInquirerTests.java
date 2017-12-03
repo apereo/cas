@@ -38,6 +38,6 @@ public class JsonResourceInterruptInquirerTests {
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
-        assertEquals(response.getLinks().size(), 2);
+        assertEquals(2, response.getLinks().size());
     }
 }

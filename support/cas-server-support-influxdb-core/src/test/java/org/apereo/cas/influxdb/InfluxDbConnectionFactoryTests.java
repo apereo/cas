@@ -52,7 +52,7 @@ public class InfluxDbConnectionFactoryTests {
         final InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
         final List<InfluxEvent> resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
         assertNotNull(resultEvents);
-        assertEquals(resultEvents.size(), 1);
+        assertEquals(1, resultEvents.size());
         assertEquals(resultEvents.iterator().next().hostname, "cas.example.org");
     }
 

@@ -26,8 +26,8 @@ public abstract class AbstractU2FDeviceRepositoryTests {
         getDeviceRepository().registerDevice("casuser", r1);
         getDeviceRepository().registerDevice("casuser", r2);
         final Collection<DeviceRegistration> devs = getDeviceRepository().getRegisteredDevices("casuser");
-        assertEquals(devs.size(), 2);
+        assertEquals(2, devs.size());
     }
-    
+
     protected abstract U2FDeviceRepository getDeviceRepository();
 }

@@ -88,14 +88,21 @@ public final class SamlUtils {
      * @param xml         the xml
      * @return the t
      */
-    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml) {
+    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
+                                                              final Class<T> clazz) {
         try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
             final Document document = configBean.getParserPool().parse(in);
             final Element root = document.getDocumentElement();
 
             final Unmarshaller marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
-                return (T) marshaller.unmarshall(root);
+                final Object result = marshaller.unmarshall(root);
+                if (!clazz.isAssignableFrom(result.getClass())) {
+                    throw new ClassCastException("Result [" + result
+                        + " is of type " + result.getClass()
+                        + " when we were expecting " + clazz);
+                }
+                return (T) result;
             }
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
