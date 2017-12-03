@@ -44,7 +44,7 @@ public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthent
         final TicketGrantingTicketCheckAction action = new
             TicketGrantingTicketCheckAction(this.getCentralAuthenticationService());
         final Event event = action.doExecute(ctx);
-        assertEquals(event.getId(), TicketGrantingTicketCheckAction.INVALID);
+        assertEquals(TicketGrantingTicketCheckAction.INVALID, event.getId());
     }
 
     @Test

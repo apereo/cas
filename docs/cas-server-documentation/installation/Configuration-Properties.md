@@ -1273,33 +1273,25 @@ To learn more about this topic, [please review this guide](Digest-Authentication
 
 ## Radius Authentication
 
-To learn more about this topic, [please review this guide](RADIUS-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.radius`.
+To learn more about this topic, [please review this guide](RADIUS-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.radius`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.radius`. 
+
+Radius  settings for this feature are available [here](Configuration-Properties-Common.html#radius-configuration) under the configuration key `cas.authn.radius`.
 
 ```properties
-# cas.authn.radius.server.nasPortId=-1
-# cas.authn.radius.server.nasRealPort=-1
-# cas.authn.radius.server.protocol=EAP_MSCHAPv2
-# cas.authn.radius.server.retries=3
-# cas.authn.radius.server.nasPortType=-1
-# cas.authn.radius.server.nasPort=-1
-# cas.authn.radius.server.nasIpAddress=
-# cas.authn.radius.server.nasIpv6Address=
-# cas.authn.radius.server.nasIdentifier=-1
-
-# cas.authn.radius.client.authenticationPort=1812
-# cas.authn.radius.client.sharedSecret=N0Sh@ar3d$ecReT
-# cas.authn.radius.client.socketTimeout=0
-# cas.authn.radius.client.inetAddress=localhost
-# cas.authn.radius.client.accountingPort=1813
-
 # cas.authn.radius.name=
-# cas.authn.radius.failoverOnException=false
-# cas.authn.radius.failoverOnAuthenticationFailure=false
 ```
 
 ## File (Whitelist) Authentication
 
-To learn more about this topic, [please review this guide](Whitelist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.file`.
+To learn more about this topic, [please review this guide](Whitelist-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.file`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.file`.
 
 ```properties
 # cas.authn.file.separator=::
@@ -1309,7 +1301,11 @@ To learn more about this topic, [please review this guide](Whitelist-Authenticat
 
 ## Reject Users (Blacklist) Authentication
 
-To learn more about this topic, [please review this guide](Blacklist-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.reject`.
+To learn more about this topic, [please review this guide](Blacklist-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.reject`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.reject`.
 
 ```properties
 # cas.authn.reject.users=user1,user2
@@ -1323,7 +1319,13 @@ To learn more about this topic, [please review this guide](Database-Authenticati
 ### Query Database Authentication
 
 Authenticates a user by comparing the user password (which can be encoded with a password encoder)
-against the password on record determined by a configurable database query.  Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.query[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
+against the password on record determined by a configurable database query.  
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.query[0]`. 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.query[0]`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.query[0]`.
 
 ```properties
 # cas.authn.jdbc.query[0].credentialCriteria=
@@ -1339,7 +1341,13 @@ against the password on record determined by a configurable database query.  Dat
 
 ### Search Database Authentication
 
-Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.search[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.search[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.search[0]`.
+Searches for a user record by querying against a username and password; the user is authenticated if at least one result is found. 
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.search[0]`. 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.search[0]`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.search[0]`.
 
 ```properties
 # cas.authn.jdbc.search[0].fieldUser=
@@ -1352,7 +1360,13 @@ Searches for a user record by querying against a username and password; the user
 
 ### Bind Database Authentication
 
-Authenticates a user by attempting to create a database connection using the username and (hashed) password. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.bind[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.bind[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.bind[0]`.
+Authenticates a user by attempting to create a database connection using the username and (hashed) password. 
+
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.bind[0]`. 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.bind[0]`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.bind[0]`.
 
 ```properties
 # cas.authn.jdbc.bind[0].credentialCriteria=
@@ -1370,8 +1384,11 @@ This password encoding method combines the private Salt and the public salt whic
 If multiple iterations are used, the bytecode hash of the first iteration is rehashed without the salt values. The final hash
 is converted to hex before comparing it to the database value.
 
-Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.encode[0]`. Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.encode[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.encode[0]`.
+Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.jdbc.encode[0]`. 
 
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.jdbc.encode[0]`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.jdbc.encode[0]`.
 
 ```properties
 # cas.authn.jdbc.encode[0].numberOfIterations=0
@@ -1435,7 +1452,9 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 
 ### LDAP Password Encoding & Principal Transformation
 
-Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.ldap[0]`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.ldap[0]`.
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.ldap[0]`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.ldap[0]`.
 
 
 ### LDAP Password Policy
@@ -1652,7 +1671,11 @@ Database settings for this feature are available [here](Configuration-Properties
 
 ## Amazon Cloud Directory Authentication
 
-To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cloudDirectory`.
+To learn more about this topic, [please review this guide](AWS-CloudDirectory-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.cloudDirectory`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.cloudDirectory`.
 
 ```properties
 # cas.authn.cloudDirectory.credentialAccessKey=
@@ -1692,7 +1715,9 @@ use <strong>casuser</strong> and <strong>Mellon</strong> as the username and pas
 configured via the static authentication handler, and <strong>MUST</strong> be removed from the configuration
 prior to production rollouts.</p></div>
 
-Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.accept`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.accept`.
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.accept`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.accept`.
 
 ```properties
 # cas.authn.accept.users=
@@ -1729,7 +1754,7 @@ Available policies cover the following events:
 
 In either event, the following options are available:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `ALLOW`                 | Allow authentication to proceed.
 | `DENY`                  | Deny authentication and block.
@@ -1738,7 +1763,7 @@ In either event, the following options are available:
 
 Revocation certificate checking can be carried out in one of the following ways:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No revocation is performed.
 | `CRL`                   | The CRL URI(s) mentioned in the certificate `cRLDistributionPoints` extension field. Caches are available to prevent excessive IO against CRL endpoints; CRL data is fetched if does not exist in the cache or if it is expired.
@@ -1747,11 +1772,10 @@ Revocation certificate checking can be carried out in one of the following ways:
 
 To fetch CRLs, the following options are available:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `RESOURCE`              | By default, all revocation checks use fixed resources to fetch the CRL resource from the specified location.
 | `LDAP`                  | A CRL resource may be fetched from a pre-configured attribute, in the event that the CRL resource location is an LDAP URI
-
 
 ```properties
 # cas.authn.x509.crlExpiredPolicy=DENY|ALLOW|THRESHOLD
@@ -1800,7 +1824,11 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ## Shiro Authentication
 
-To learn more about this topic, [please review this guide](Shiro-Authentication.html). Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.shiro`. Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.shiro`.
+To learn more about this topic, [please review this guide](Shiro-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.shiro`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.shiro`.
 
 ```properties
 # cas.authn.shiro.requiredPermissions=value1,value2,...
@@ -2043,28 +2071,12 @@ Database settings for this feature are available [here](Configuration-Properties
 To learn more about this topic, [please review this guide](RADIUS-Authentication.html).
 
 ```properties
-# cas.authn.mfa.radius.failoverOnAuthenticationFailure=false
-# cas.authn.mfa.radius.failoverOnException=false
 # cas.authn.mfa.radius.rank=0
 # cas.authn.mfa.radius.trustedDeviceEnabled=false
 # cas.authn.mfa.radius.name=
-
-# cas.authn.mfa.radius.client.socketTimeout=0
-# cas.authn.mfa.radius.client.sharedSecret=N0Sh@ar3d$ecReT
-# cas.authn.mfa.radius.client.authenticationPort=1812
-# cas.authn.mfa.radius.client.accountingPort=1813
-# cas.authn.mfa.radius.client.inetAddress=localhost
-
-# cas.authn.mfa.radius.server.retries=3
-# cas.authn.mfa.radius.server.nasPortType=-1
-# cas.authn.mfa.radius.server.protocol=EAP_MSCHAPv2
-# cas.authn.mfa.radius.server.nasRealPort=-1
-# cas.authn.mfa.radius.server.nasPortId=-1
-# cas.authn.mfa.radius.server.nasIdentifier=-1
-# cas.authn.mfa.radius.server.nasPort=-1
-# cas.authn.mfa.radius.server.nasIpAddress=
-# cas.authn.mfa.radius.server.nasIpv6Address=
 ```
+
+Radius  settings for this feature are available [here](Configuration-Properties-Common.html#radius-configuration) under the configuration key `cas.authn.mfa.radius`.
 
 Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
 
@@ -3119,30 +3131,12 @@ Replication modes may be configured per the following options:
 ## Service Registry Replication Hazelcast
 
 Control how CAS services definition files should be replicated across a CAS cluster backed by a distributed Hazelcast cache.
-To learn more about this topic, [please review this guide](Configuring-Service-Replication.html)
+To learn more about this topic, [please review this guide](Configuring-Service-Replication.html).
+
+Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.serviceRegistry.stream.hazelcast.config`.
 
 ```properties
-# cas.serviceRegistry.stream.hazelcast.duration=PT30S
-# cas.serviceRegistry.stream.hazelcast.config.configLocation=
-# cas.serviceRegistry.stream.hazelcast.config.cluster.evictionPolicy=LRU
-# cas.serviceRegistry.stream.hazelcast.config.cluster.maxNoHeartbeatSeconds=300
-# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastEnabled=false
-# cas.serviceRegistry.stream.hazelcast.config.cluster.tcpipEnabled=true
-# cas.serviceRegistry.stream.hazelcast.config.cluster.members=localhost
-# cas.serviceRegistry.stream.hazelcast.config.cluster.loggingType=slf4j
-# cas.serviceRegistry.stream.hazelcast.config.cluster.instanceName=localhost
-# cas.serviceRegistry.stream.hazelcast.config.cluster.port=5801
-# cas.serviceRegistry.stream.hazelcast.config.cluster.portAutoIncrement=true
-# cas.serviceRegistry.stream.hazelcast.config.cluster.maxHeapSizePercentage=85
-# cas.serviceRegistry.stream.hazelcast.config.cluster.backupCount=1
-# cas.serviceRegistry.stream.hazelcast.config.cluster.asyncBackupCount=0
-# cas.serviceRegistry.stream.hazelcast.config.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
-# cas.serviceRegistry.stream.hazelcast.config.cluster.timeout=5
-# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTrustedInterfaces=
-# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastPort=
-# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastGroup=
-# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeout=2
-# cas.serviceRegistry.stream.hazelcast.config.cluster.multicastTimeToLive=32
+# cas.serviceRegistry.stream.hazelcast.duration=PT1M
 ```
 
 ## Ticket Registry
@@ -3185,31 +3179,7 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](Hazelcast-Ticket-Registry.html).
 
-
-```properties
-# cas.ticket.registry.hazelcast.pageSize=500
-
-# cas.ticket.registry.hazelcast.cluster.evictionPolicy=LRU
-# cas.ticket.registry.hazelcast.cluster.maxNoHeartbeatSeconds=300
-# cas.ticket.registry.hazelcast.cluster.multicastEnabled=false
-# cas.ticket.registry.hazelcast.cluster.tcpipEnabled=true
-# cas.ticket.registry.hazelcast.cluster.members=localhost
-# cas.ticket.registry.hazelcast.cluster.loggingType=slf4j
-# cas.ticket.registry.hazelcast.cluster.instanceName=localhost
-# cas.ticket.registry.hazelcast.cluster.port=5701
-# cas.ticket.registry.hazelcast.cluster.portAutoIncrement=true
-# cas.ticket.registry.hazelcast.cluster.maxHeapSizePercentage=85
-# cas.ticket.registry.hazelcast.cluster.backupCount=1
-# cas.ticket.registry.hazelcast.cluster.asyncBackupCount=0
-# cas.ticket.registry.hazelcast.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
-# cas.ticket.registry.hazelcast.cluster.timeout=5
-
-# cas.ticket.registry.hazelcast.cluster.multicastTrustedInterfaces=
-# cas.ticket.registry.hazelcast.cluster.multicastPort=
-# cas.ticket.registry.hazelcast.cluster.multicastGroup=
-# cas.ticket.registry.hazelcast.cluster.multicastTimeout=2
-# cas.ticket.registry.hazelcast.cluster.multicastTimeToLive=32
-```
+Hazlcast settings for this feature are available [here](Configuration-Properties-Common.html#hazelcast-configuration) under the configuration key `cas.ticket.registry.hazelcast`.
 
 Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.hazelcast`.
 

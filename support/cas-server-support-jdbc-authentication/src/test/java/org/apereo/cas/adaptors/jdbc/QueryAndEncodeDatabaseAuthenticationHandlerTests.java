@@ -139,7 +139,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final HandlerResult r = q.authenticate(c);
 
         assertNotNull(r);
-        assertEquals(r.getPrincipal().getId(), "user1");
+        assertEquals("user1", r.getPrincipal().getId());
     }
 
     @Test
@@ -187,7 +187,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
-        assertEquals(r.getPrincipal().getId(), "user1");
+        assertEquals("user1", r.getPrincipal().getId());
     }
 
     private static String buildSql(final String where) {

@@ -15,7 +15,6 @@ public class BaseHazelcastProperties implements Serializable {
      * Logging type property name.
      */
     public static final String LOGGING_TYPE_PROP = "hazelcast.logging.type";
-
     /**
      * Max num of seconds for heartbeat property name.
      */
