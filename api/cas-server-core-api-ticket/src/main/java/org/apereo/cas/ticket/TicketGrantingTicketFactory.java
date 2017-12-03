@@ -18,5 +18,5 @@ public interface TicketGrantingTicketFactory extends TicketFactory {
      * @param authentication the authentication
      * @return the t
      */
-    <T extends TicketGrantingTicket> T create(Authentication authentication);
+    <T extends TicketGrantingTicket> T create(Authentication authentication, Class<T> clazz);
 }

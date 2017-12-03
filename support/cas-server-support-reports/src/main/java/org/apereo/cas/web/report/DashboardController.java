@@ -80,11 +80,8 @@ public class DashboardController extends BaseCasMvcEndpoint {
     @Autowired
     private ApplicationContext applicationContext;
 
-    private final CasConfigurationProperties casProperties;
-
     public DashboardController(final CasConfigurationProperties casProperties) {
         super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
-        this.casProperties = casProperties;
     }
 
     /**
@@ -116,16 +113,16 @@ public class DashboardController extends BaseCasMvcEndpoint {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> endpointsModel = getEndpointsModelMap();
         return endpointsModel.entrySet()
-                .stream()
-                .map(entry -> {
-                    final EndpointBean bean = new EndpointBean();
-                    bean.setName(StringUtils.remove(entry.getKey(), "Enabled"));
-                    String title = StringUtils.capitalize(StringUtils.remove(bean.getName(), "Endpoint"));
-                    title = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(title), ' ');
-                    bean.setTitle(title);
-                    return bean;
-                })
-                .collect(Collectors.toSet());
+            .stream()
+            .map(entry -> {
+                final EndpointBean bean = new EndpointBean();
+                bean.setName(StringUtils.remove(entry.getKey(), "Enabled"));
+                String title = StringUtils.capitalize(StringUtils.remove(bean.getName(), "Endpoint"));
+                title = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(title), ' ');
+                bean.setTitle(title);
+                return bean;
+            })
+            .collect(Collectors.toSet());
     }
 
     private Map<String, Object> getEndpointsModelMap() {
@@ -145,9 +142,9 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("traceEndpointEnabled", traceEndpoint.isEnabled());
 
         model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
-                && isEndpointCapable(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties));
+            && isEndpointCapable(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties));
         model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository")
-                && isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties));
+            && isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties));
         model.put("singleSignOnReportEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties));
         model.put("statisticsEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties));
         model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnStatus(), casProperties));
@@ -158,13 +155,13 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("metricsEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getMetrics(), casProperties));
         model.put("servicesEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
         model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar")
-                && isEndpointCapable(casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties));
+            && isEndpointCapable(casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties));
         model.put("attributeResolutionEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
         model.put("configurationMetadataEndpointEnabled",
-                isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties));
+            isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties));
 
         final boolean endpointAvailable = model.entrySet().stream()
-                .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
+            .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
         model.put("dashboardEndpointsEnabled", endpointAvailable);
         model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
         return model;
