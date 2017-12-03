@@ -40,6 +40,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@SuppressWarnings("JdkObsolete")
 public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
     private static final Logger LOGGER = LoggerFactory.getLogger(DuoMultifactorWebflowConfigurer.class);
     private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
