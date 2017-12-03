@@ -39,7 +39,7 @@ public class WSFederationClaimsReleasePolicyTests {
         final Principal principal = CoreAuthenticationTestUtils.getPrincipal("casuser",
                 CollectionUtils.wrap("cn", "casuser", "email", "cas@example.org"));
         final Map<String, Object> results = policy.getAttributes(principal, CoreAuthenticationTestUtils.getService(), service);
-        assertSame(results.size(), 2);
+        assertSame(2, results.size());
         assertTrue(results.containsKey(WSFederationClaims.COMMON_NAME.getUri()));
         assertTrue(results.containsKey(WSFederationClaims.EMAIL_ADDRESS.getUri()));
     }

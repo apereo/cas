@@ -3,10 +3,10 @@ package org.apereo.cas.web.report;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.AutoConfigurationReportEndpoint;
 import org.springframework.boot.actuate.endpoint.BeansEndpoint;
 import org.springframework.boot.actuate.endpoint.ConfigurationPropertiesReportEndpoint;
@@ -19,7 +19,6 @@ import org.springframework.boot.actuate.endpoint.RequestMappingEndpoint;
 import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
 import org.springframework.boot.actuate.endpoint.TraceEndpoint;
 import org.springframework.cloud.context.restart.RestartEndpoint;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -39,12 +38,11 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 public class DashboardController extends BaseCasMvcEndpoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DashboardController.class);
 
-    @Autowired
+    @Autowired(required = false)
     private RestartEndpoint restartEndpoint;
 
-    @Autowired
+    @Autowired(required = false)
     private ShutdownEndpoint shutdownEndpoint;
 
     @Autowired
@@ -76,9 +74,6 @@ public class DashboardController extends BaseCasMvcEndpoint {
 
     @Autowired
     private EnvironmentEndpoint environmentEndpoint;
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     public DashboardController(final CasConfigurationProperties casProperties) {
         super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
@@ -126,45 +121,49 @@ public class DashboardController extends BaseCasMvcEndpoint {
     }
 
     private Map<String, Object> getEndpointsModelMap() {
-        final Map<String, Object> model = new HashMap<>(50);
-        model.put("restartEndpointEnabled", restartEndpoint.isEnabled() && endpointProperties.getEnabled());
-        model.put("environmentEndpointEnabled", environmentEndpoint.isEnabled() && endpointProperties.getEnabled());
-        model.put("shutdownEndpointEnabled", shutdownEndpoint.isEnabled() && endpointProperties.getEnabled());
-        model.put("serverFunctionsEnabled", (Boolean) model.get("restartEndpointEnabled") || (Boolean) model.get("shutdownEndpointEnabled"));
+        final Map<String, Object> model = new HashMap<>();
 
-        model.put("autoConfigurationEndpointEnabled", autoConfigurationReportEndpoint.isEnabled());
-        model.put("beansEndpointEnabled", beansEndpoint.isEnabled());
-        model.put("mappingsEndpointEnabled", requestMappingEndpoint.isEnabled());
-        model.put("configPropsEndpointEnabled", configPropertiesEndpoint.isEnabled());
-        model.put("dumpEndpointEnabled", dumpEndpoint.isEnabled());
-        model.put("infoEndpointEnabled", infoEndpoint.isEnabled());
-        model.put("healthEndpointEnabled", healthEndpoint.isEnabled());
-        model.put("traceEndpointEnabled", traceEndpoint.isEnabled());
+        model.put("restartEndpointEnabled", isNativeEndpointEnabled(restartEndpoint));
+        model.put("shutdownEndpointEnabled", isNativeEndpointEnabled(shutdownEndpoint));
+        model.put("environmentEndpointEnabled", isNativeEndpointEnabled(environmentEndpoint));
+        model.put("serverFunctionsEnabled", isNativeEndpointEnabled(restartEndpoint) || isNativeEndpointEnabled(shutdownEndpoint));
+        model.put("autoConfigurationEndpointEnabled", isNativeEndpointEnabled(autoConfigurationReportEndpoint));
+        model.put("beansEndpointEnabled", isNativeEndpointEnabled(beansEndpoint));
+        model.put("mappingsEndpointEnabled", isNativeEndpointEnabled(requestMappingEndpoint));
+        model.put("configPropsEndpointEnabled", isNativeEndpointEnabled(configPropertiesEndpoint));
+        model.put("dumpEndpointEnabled", isNativeEndpointEnabled(dumpEndpoint));
+        model.put("infoEndpointEnabled", isNativeEndpointEnabled(infoEndpoint));
+        model.put("healthEndpointEnabled", isNativeEndpointEnabled(healthEndpoint));
+        model.put("traceEndpointEnabled", isNativeEndpointEnabled(traceEndpoint));
 
+        final MonitorProperties.Endpoints endpoints = casProperties.getMonitor().getEndpoints();
         model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
-            && isEndpointCapable(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties));
+            && isEndpointCapable(endpoints.getTrustedDevices(), casProperties));
         model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository")
-            && isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuthenticationEvents(), casProperties));
-        model.put("singleSignOnReportEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties));
-        model.put("statisticsEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getStatistics(), casProperties));
-        model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSingleSignOnStatus(), casProperties));
-        model.put("springWebflowEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties));
-        model.put("auditLogEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getAuditEvents(), casProperties));
-        model.put("configurationStateEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties));
-        model.put("healthcheckEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getHealthCheck(), casProperties));
-        model.put("metricsEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getMetrics(), casProperties));
-        model.put("servicesEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties));
+            && isEndpointCapable(endpoints.getAuthenticationEvents(), casProperties));
+        model.put("singleSignOnReportEnabled", isEndpointCapable(endpoints.getSingleSignOnReport(), casProperties));
+        model.put("statisticsEndpointEnabled", isEndpointCapable(endpoints.getStatistics(), casProperties));
+        model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(endpoints.getSingleSignOnStatus(), casProperties));
+        model.put("springWebflowEndpointEnabled", isEndpointCapable(endpoints.getSpringWebflowReport(), casProperties));
+        model.put("auditLogEndpointEnabled", isEndpointCapable(endpoints.getAuditEvents(), casProperties));
+        model.put("configurationStateEnabled", isEndpointCapable(endpoints.getConfigurationState(), casProperties));
+        model.put("healthcheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), casProperties));
+        model.put("metricsEndpointEnabled", isEndpointCapable(endpoints.getMetrics(), casProperties));
+        model.put("servicesEndpointEnabled", isEndpointCapable(endpoints.getRegisteredServicesReport(), casProperties));
         model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar")
-            && isEndpointCapable(casProperties.getMonitor().getEndpoints().getDiscovery(), casProperties));
-        model.put("attributeResolutionEndpointEnabled", isEndpointCapable(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties));
-        model.put("configurationMetadataEndpointEnabled",
-            isEndpointCapable(casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties));
+            && isEndpointCapable(endpoints.getDiscovery(), casProperties));
+        model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), casProperties));
+        model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), casProperties));
 
         final boolean endpointAvailable = model.entrySet().stream()
             .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
         model.put("dashboardEndpointsEnabled", endpointAvailable);
         model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
         return model;
+    }
+
+    private boolean isNativeEndpointEnabled(final AbstractEndpoint endpoint) {
+        return endpoint != null && endpoint.isEnabled();
     }
 
     /**

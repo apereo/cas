@@ -52,7 +52,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
     private final CentralAuthenticationService centralAuthenticationService;
     private final MetricRegistry metricsRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
-    private final CasConfigurationProperties casProperties;
 
     public StatisticsController(final DelegatingAuditTrailManager auditTrailManager,
                                 final CentralAuthenticationService centralAuthenticationService,
@@ -64,7 +63,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         this.centralAuthenticationService = centralAuthenticationService;
         this.metricsRegistry = metricsRegistry;
         this.healthCheckRegistry = healthCheckRegistry;
-        this.casProperties = casProperties;
     }
 
     /**
@@ -148,14 +146,14 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
             final LocalDateTime endDate = startDate.plus(Duration.parse(range));
 
             final List<AuditActionContext> authnEvents = audits.stream()
-                    .filter(a -> {
-                        final LocalDateTime actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
-                        return (actionTime.isEqual(startDate) || actionTime.isAfter(startDate))
-                                && (actionTime.isEqual(endDate) || actionTime.isBefore(endDate))
-                                && a.getActionPerformed().matches("AUTHENTICATION_(SUCCESS|FAILED)");
-                    })
-                    .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed))
-                    .collect(Collectors.toList());
+                .filter(a -> {
+                    final LocalDateTime actionTime = DateTimeUtils.localDateTimeOf(a.getWhenActionWasPerformed());
+                    return (actionTime.isEqual(startDate) || actionTime.isAfter(startDate))
+                        && (actionTime.isEqual(endDate) || actionTime.isBefore(endDate))
+                        && a.getActionPerformed().matches("AUTHENTICATION_(SUCCESS|FAILED)");
+                })
+                .sorted(Comparator.comparing(AuditActionContext::getWhenActionWasPerformed))
+                .collect(Collectors.toList());
 
             final Duration steps = Duration.parse(scale);
             final Map<Integer, LocalDateTime> buckets = new LinkedHashMap<>();

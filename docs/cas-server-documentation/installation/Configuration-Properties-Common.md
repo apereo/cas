@@ -392,6 +392,16 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 # cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
 ```
 
+## Person Directory Principal Resolution
+
+The following options related to Person Directory support in CAS when it attempts to resolve and build the authenticated principal, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.principalAttribute=
+# ${configurationKey}.returnNull=false
+# ${configurationKey}.principalResolutionFailureFatal=false
+```
+
 ## InfluxDb Configuration
 
 The following options related to InfluxDb support in CAS apply equally to a number of CAS components given the component's *configuration key*:

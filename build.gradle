@@ -113,7 +113,7 @@ subprojects {
     }
     apply plugin: "kotlin"
     apply plugin: "java-library"
-    if (Boolean.getBoolean("enableErrorProneCompiler")) {
+    if (!Boolean.getBoolean("skipErrorProneCompiler")) {
         apply plugin: "net.ltgt.errorprone"
     }
     apply plugin: "checkstyle"
