@@ -225,7 +225,7 @@ public class JpaServiceRegistryDaoImplTests {
             return new TimeAwareServicesManager(serviceRegistryDao);
         }
         
-        public class TimeAwareServicesManager extends DefaultServicesManager {
+        public static class TimeAwareServicesManager extends DefaultServicesManager {
             public TimeAwareServicesManager(final ServiceRegistryDao serviceRegistryDao) {
                 super(serviceRegistryDao, null);
             }
