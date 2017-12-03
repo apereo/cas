@@ -165,14 +165,12 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
-
-    @RefreshScope
+    
     @Bean
     public UrlResolver casCallbackUrlResolver() {
         return new OAuth20CasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
     }
 
-    @RefreshScope
     @Bean
     public Config oauthSecConfig() {
         final CasConfiguration cfg = new CasConfiguration(casProperties.getServer().getLoginUrl());
@@ -198,21 +196,18 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAuthorizeInterceptor")
     @Bean
-    @RefreshScope
     public SecurityInterceptor requiresAuthenticationAuthorizeInterceptor() {
         return new SecurityInterceptor(oauthSecConfig(), Authenticators.CAS_OAUTH_CLIENT);
     }
 
     @ConditionalOnMissingBean(name = "consentApprovalViewResolver")
     @Bean
-    @RefreshScope
     public ConsentApprovalViewResolver consentApprovalViewResolver() {
         return new OAuth20ConsentApprovalViewResolver(casProperties);
     }
 
     @ConditionalOnMissingBean(name = "callbackAuthorizeViewResolver")
     @Bean
-    @RefreshScope
     public OAuth20CallbackAuthorizeViewResolver callbackAuthorizeViewResolver() {
         return new OAuth20CallbackAuthorizeViewResolver() {
         };
@@ -220,7 +215,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "requiresAuthenticationAccessTokenInterceptor")
     @Bean
-    @RefreshScope
     public SecurityInterceptor requiresAuthenticationAccessTokenInterceptor() {
         final String clients = Stream.of(Authenticators.CAS_OAUTH_CLIENT_BASIC_AUTHN,
             Authenticators.CAS_OAUTH_CLIENT_DIRECT_FORM,
@@ -230,7 +224,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "oauthInterceptor")
     @Bean
-    @RefreshScope
     public HandlerInterceptorAdapter oauthInterceptor() {
         final String throttler = casProperties.getAuthn().getOauth().getThrottler();
         final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
@@ -281,21 +274,18 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    @RefreshScope
     public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
 
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
-    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
         return new OAuthClientAuthenticator(oAuthValidator(), this.servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
-    @RefreshScope
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
         return new OAuthUserAuthenticator(authenticationSystemSupport, servicesManager, webApplicationServiceFactory);
     }
@@ -309,7 +299,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "oauthAccessTokenResponseGenerator")
     @Bean
-    @RefreshScope
     public AccessTokenResponseGenerator oauthAccessTokenResponseGenerator() {
         return new OAuth20AccessTokenResponseGenerator();
     }
@@ -408,7 +397,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "accessTokenController")
     @Bean
-    @RefreshScope
     public OAuth20AccessTokenEndpointController accessTokenController() {
         return new OAuth20AccessTokenEndpointController(
             servicesManager,
@@ -436,7 +424,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
-    @RefreshScope
     public OAuth20UserProfileEndpointController profileController() {
         return new OAuth20UserProfileEndpointController(servicesManager,
             ticketRegistry, oAuthValidator(), defaultAccessTokenFactory(),

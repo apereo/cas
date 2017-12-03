@@ -84,7 +84,6 @@ public class JpaTicketRegistryConfiguration {
         return mgmr;
     }
 
-    @RefreshScope
     @Bean
     public DataSource dataSourceTicket() {
         return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());

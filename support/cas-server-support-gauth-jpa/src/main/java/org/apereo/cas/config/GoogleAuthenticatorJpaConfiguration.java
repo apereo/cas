@@ -51,8 +51,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     public HibernateJpaVendorAdapter jpaGoogleAuthenticatorVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-    @RefreshScope
+    
     @Bean
     public DataSource dataSourceGoogleAuthenticator() {
         return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
