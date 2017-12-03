@@ -44,8 +44,7 @@ public class JpaEventsConfiguration {
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
-    @RefreshScope
+
     @Bean
     public DataSource dataSourceEvent() {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());
