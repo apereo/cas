@@ -147,7 +147,8 @@ public class JpaServiceRegistryDaoImplTests {
         this.serviceRegistryDao.save(r);
 
         final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
-        assertEquals(r2.getProperties().size(), 2);
+        assertEquals(2, r2.getProperties().size());
+
     }
 
     @Test

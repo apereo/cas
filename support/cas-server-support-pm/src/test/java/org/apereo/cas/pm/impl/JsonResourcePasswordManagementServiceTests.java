@@ -42,23 +42,23 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        PasswordManagementConfiguration.class})
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})
 public class JsonResourcePasswordManagementServiceTests {
 
@@ -73,7 +73,7 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyUserEmailCanBeFound() {
         final String email = passwordChangeService.findEmail("casuser");
-        assertEquals(email, "casuser@example.org");
+        assertEquals("casuser@example.org", email);
     }
 
     @Test
@@ -85,7 +85,8 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyUserQuestionsCanBeFound() {
         final Map questions = passwordChangeService.getSecurityQuestions("casuser");
-        assertEquals(questions.size(), 2);
+        assertEquals(2, questions.size());
+
     }
 
     @Test

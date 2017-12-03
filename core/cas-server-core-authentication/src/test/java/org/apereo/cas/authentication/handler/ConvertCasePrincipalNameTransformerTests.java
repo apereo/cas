@@ -22,7 +22,7 @@ public class ConvertCasePrincipalNameTransformerTests {
         final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
         final String result = transformer.transform(suffixTrans.transform("   uid  "));
-        assertEquals(result, "A   UID  Z");
+        assertEquals("A   UID  Z", result);
     }
 
     @Test
@@ -30,13 +30,13 @@ public class ConvertCasePrincipalNameTransformerTests {
         final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
         transformer.setToUpperCase(true);
         final String result = transformer.transform("   uid  ");
-        assertEquals(result, "UID");
+        assertEquals("UID", result);
     }
 
     @Test
     public void verifyLowerCaseTransformerWithTrim() {
         final ConvertCasePrincipalNameTransformer transformer = new ConvertCasePrincipalNameTransformer();
         final String result = transformer.transform("   UID  ");
-        assertEquals(result, "uid");
+        assertEquals("uid", result);
     }
 }
