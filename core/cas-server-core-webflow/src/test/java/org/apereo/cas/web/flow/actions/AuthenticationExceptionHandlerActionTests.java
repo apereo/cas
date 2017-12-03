@@ -58,7 +58,7 @@ public class AuthenticationExceptionHandlerActionTests {
         final Map<String, Class<? extends Throwable>> map = new HashMap<>();
         map.put("unknown", GeneralSecurityException.class);
         final String id = handler.handle(new AuthenticationException(map), req);
-        assertEquals(id, "UNKNOWN");
+        assertEquals("UNKNOWN", id);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class AuthenticationExceptionHandlerActionTests {
         final RequestContext req = getMockRequestContext();
 
         final String id = handler.handle(new InvalidTicketException("TGT"), req);
-        assertEquals(id, "UNKNOWN");
+        assertEquals("UNKNOWN", id);
     }
     
     @Test
@@ -80,7 +80,7 @@ public class AuthenticationExceptionHandlerActionTests {
 
         final ContextualAuthenticationPolicy<?> policy = new TestContextualAuthenticationPolicy();
         final String id = handler.handle(new UnsatisfiedAuthenticationPolicyException(policy), req);
-        assertEquals(id, "UnsatisfiedAuthenticationPolicyException");
+        assertEquals("UnsatisfiedAuthenticationPolicyException", id);
         final ArgumentCaptor<DefaultMessageResolver> message = ArgumentCaptor.forClass(DefaultMessageResolver.class);
         verify(req.getMessageContext(), times(1)).addMessage(message.capture());
         assertArrayEquals(new String[]{policy.getCode().get()}, message.getValue().getCodes());

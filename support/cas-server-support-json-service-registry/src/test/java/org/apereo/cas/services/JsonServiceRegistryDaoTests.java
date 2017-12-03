@@ -49,7 +49,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
         assertNotNull(service.getAttributeReleasePolicy());
         final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
-        assertEquals(policy.getAllowedAttributes().size(), 2);
+        assertEquals(2, policy.getAllowedAttributes().size());
     }
 
     @Test
@@ -61,7 +61,7 @@ public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceReg
         assertNotNull(service.getAttributeReleasePolicy());
         final ReturnMappedAttributeReleasePolicy policy = (ReturnMappedAttributeReleasePolicy) service.getAttributeReleasePolicy();
         assertNotNull(policy);
-        assertEquals(policy.getAllowedAttributes().size(), 2);
+        assertEquals(2, policy.getAllowedAttributes().size());
     }
     
 }

@@ -56,7 +56,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
         
-        final SAMLObject samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject());
+        final SAMLObject samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
         
         final Header header = newSoapObject(Header.class);

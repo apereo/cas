@@ -47,7 +47,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         when(p.getAttributes()).thenReturn(principalAttributes);
         final String id = provider.resolveUsername(p,
             RegisteredServiceTestUtils.getService("verifyUsernameByPrincipalAttributeWithMapping"), registeredService);
-        assertEquals(id, "user@example.org");
+        assertEquals("user@example.org", id);
     }
 
     @Test

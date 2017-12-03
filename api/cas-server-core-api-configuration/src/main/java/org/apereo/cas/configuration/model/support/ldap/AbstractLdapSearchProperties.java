@@ -49,7 +49,7 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
         return searchFilter;
     }
 
-    public void setSearchFilter(final String userFilter) {
-        this.searchFilter = userFilter;
+    public void setSearchFilter(final String searchFilter) {
+        this.searchFilter = searchFilter;
     }
 }

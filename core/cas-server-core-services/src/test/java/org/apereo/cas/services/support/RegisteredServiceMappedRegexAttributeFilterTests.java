@@ -82,7 +82,7 @@ public class RegisteredServiceMappedRegexAttributeFilterTests {
         this.filter.setPatterns(Collections.singletonMap("memberOf", "^m"));
         this.filter.setExcludeUnmappedAttributes(true);
         final Map<String, Object> attrs = this.filter.filter(this.givenAttributesMap);
-        assertEquals(attrs.size(), 1);
+        assertEquals(1, attrs.size());
         assertEquals(2, CollectionUtils.toCollection(attrs.get("memberOf")).size());
     }
 

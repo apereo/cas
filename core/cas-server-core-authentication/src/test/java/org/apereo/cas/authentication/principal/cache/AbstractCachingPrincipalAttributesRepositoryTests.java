@@ -59,14 +59,14 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         email = new ArrayList<>();
         email.add("final@school.com");
         this.principal = this.principalFactory.createPrincipal("uid",
-                Collections.singletonMap(MAIL, email));
+            Collections.singletonMap(MAIL, email));
     }
 
     protected abstract AbstractPrincipalAttributesRepository getPrincipalAttributesRepository(String unit, long duration);
 
     @Test
     public void checkExpiredCachedAttributes() throws Exception {
-        assertEquals(this.principal.getAttributes().size(), 1);
+        assertEquals(1, this.principal.getAttributes().size());
         try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.MILLISECONDS.name(), 100)) {
             assertEquals(repository.getAttributes(this.principal).size(), this.attributes.size());
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
@@ -93,7 +93,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
-            assertEquals(repository.getAttributes(this.principal).get(MAIL).toString(), "final@school.com");
+            assertEquals("final@school.com", repository.getAttributes(this.principal).get(MAIL).toString());
         }
     }
 
@@ -102,7 +102,7 @@ public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
         try (AbstractPrincipalAttributesRepository repository = getPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 5)) {
             repository.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.REPLACE);
             assertTrue(repository.getAttributes(this.principal).containsKey(MAIL));
-            assertEquals(repository.getAttributes(this.principal).get(MAIL).toString(), "final@example.com");
+            assertEquals("final@example.com", repository.getAttributes(this.principal).get(MAIL).toString());
         }
     }
 

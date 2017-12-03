@@ -19,16 +19,16 @@ public class DefaultPrincipalFactoryTests {
     public void checkCreatingSimplePrincipal() {
         final PrincipalFactory f = new DefaultPrincipalFactory();
         final Principal p = f.createPrincipal(UID);
-        assertEquals(p.getId(), UID);
-        assertEquals(p.getAttributes().size(), 0);
+        assertEquals(UID, p.getId());
+        assertTrue(p.getAttributes().isEmpty());
     }
 
     @Test
     public void checkCreatingSimplePrincipalWithAttributes() {
         final PrincipalFactory f = new DefaultPrincipalFactory();
         final Principal p = f.createPrincipal(UID, Collections.singletonMap("mail", "final@example.com"));
-        assertEquals(p.getId(), UID);
-        assertEquals(p.getAttributes().size(), 1);
+        assertEquals(UID, p.getId());
+        assertEquals(1, p.getAttributes().size());
         assertTrue(p.getAttributes().containsKey("mail"));
     }
 
@@ -36,8 +36,8 @@ public class DefaultPrincipalFactoryTests {
     public void checkCreatingSimplePrincipalWithDefaultRepository() {
         final PrincipalFactory f = new DefaultPrincipalFactory();
         final Principal p = f.createPrincipal(UID);
-        assertEquals(p.getId(), UID);
-        assertEquals(p.getAttributes().size(), 0);
+        assertEquals(UID, p.getId());
+        assertTrue(p.getAttributes().isEmpty());
     }
 
 }

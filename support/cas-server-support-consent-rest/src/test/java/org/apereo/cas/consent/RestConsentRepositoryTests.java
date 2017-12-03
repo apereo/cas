@@ -68,7 +68,7 @@ public class RestConsentRepositoryTests {
         final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
         final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(d);
-        assertEquals(d.getPrincipal(), "casuser");
+        assertEquals("casuser", d.getPrincipal());
         server.verify();
     }
     

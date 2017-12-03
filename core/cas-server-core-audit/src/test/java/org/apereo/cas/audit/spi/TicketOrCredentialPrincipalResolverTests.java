@@ -15,6 +15,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link TicketOrCredentialPrincipalResolver}
+ *
  * @author Misagh Moayyed
  * @since 4.0.0
  */
@@ -23,18 +24,18 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
     @Test
     public void verifyResolverByUnknownUser() {
         final TicketOrCredentialPrincipalResolver res =
-                new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
-        assertEquals(res.resolve(), PrincipalResolver.UNKNOWN_USER);
+            new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
+        assertEquals(PrincipalResolver.UNKNOWN_USER, res.resolve());
     }
 
     @Test
     public void verifyResolverCredential() {
         final TicketOrCredentialPrincipalResolver res =
-                new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
+            new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         final JoinPoint jp = mock(JoinPoint.class);
 
         final Credential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword();
-        when(jp.getArgs()).thenReturn(new Object[] {c});
+        when(jp.getArgs()).thenReturn(new Object[]{c});
 
         final String result = res.resolveFrom(jp, null);
         assertNotNull(result);
@@ -47,14 +48,14 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), c);
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService()
-                .createTicketGrantingTicket(ctx);
+            .createTicketGrantingTicket(ctx);
         final ServiceTicket st = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(),
-                CoreAuthenticationTestUtils.getService(), ctx);
+            CoreAuthenticationTestUtils.getService(), ctx);
 
         final TicketOrCredentialPrincipalResolver res = new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         final JoinPoint jp = mock(JoinPoint.class);
 
-        when(jp.getArgs()).thenReturn(new Object[] {st.getId()});
+        when(jp.getArgs()).thenReturn(new Object[]{st.getId()});
 
         final String result = res.resolveFrom(jp, null);
         assertNotNull(result);
@@ -72,7 +73,7 @@ public class TicketOrCredentialPrincipalResolverTests extends AbstractCentralAut
         final TicketOrCredentialPrincipalResolver res = new TicketOrCredentialPrincipalResolver(getCentralAuthenticationService());
         final JoinPoint jp = mock(JoinPoint.class);
 
-        when(jp.getArgs()).thenReturn(new Object[] {ticketId.getId()});
+        when(jp.getArgs()).thenReturn(new Object[]{ticketId.getId()});
 
         final String result = res.resolveFrom(jp, null);
         assertNotNull(result);
