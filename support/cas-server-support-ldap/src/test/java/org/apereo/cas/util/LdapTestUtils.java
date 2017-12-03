@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.stream.Collectors;
@@ -61,7 +62,7 @@ public final class LdapTestUtils {
      */
     public static Collection<LdapEntry> readLdif(final InputStream ldif, final String baseDn) throws IOException {
         final String ldapString;
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(ldif, StandardCharsets.UTF_8))) {
             ldapString = reader.lines()
                     .map(line -> {
                         if (line.contains(BASE_DN_PLACEHOLDER)) {

@@ -407,6 +407,6 @@ public abstract class AbstractTicketRegistryTests {
         });
 
         final int c = this.ticketRegistry.deleteTicket(TGT_ID);
-        assertEquals(c, 6);
+        assertEquals(6, c);
     }
 }
