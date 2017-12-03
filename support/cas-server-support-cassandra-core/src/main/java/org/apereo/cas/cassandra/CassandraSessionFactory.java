@@ -6,8 +6,6 @@ import com.datastax.driver.core.policies.DowngradingConsistencyRetryPolicy;
 import com.datastax.driver.core.policies.FallthroughRetryPolicy;
 import com.datastax.driver.core.policies.RetryPolicy;
 
-import javax.annotation.concurrent.Immutable;
-
 /**
  * This is {@link CassandraSessionFactory}.
  *
@@ -19,7 +17,6 @@ public interface CassandraSessionFactory {
     /**
      * The enum Retry policy type.
      */
-    @Immutable
     enum RetryPolicyType {
         /**
          * Default retry policy retry policy type.
@@ -37,6 +34,7 @@ public interface CassandraSessionFactory {
         /**
          * The Retry policy.
          */
+        @SuppressWarnings("ImmutableEnumChecker")
         private final RetryPolicy retryPolicy;
 
         /**

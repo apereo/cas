@@ -6,6 +6,7 @@ import java.io.OutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
+import java.nio.charset.StandardCharsets;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,10 +146,10 @@ public class MockWebServer {
         private void writeResponse(final Socket socket) throws IOException {
             LOGGER.debug("Socket response for resource [{}]", resource.getFilename());
             final OutputStream out = socket.getOutputStream();
-            out.write(STATUS_LINE.getBytes());
+            out.write(STATUS_LINE.getBytes(StandardCharsets.UTF_8));
             out.write(header("Content-Length", this.resource.contentLength()));
             out.write(header("Content-Type", this.contentType));
-            out.write(SEPARATOR.getBytes());
+            out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
             final byte[] buffer = new byte[BUFFER_SIZE];
             try(InputStream in = this.resource.getInputStream()) {
@@ -165,7 +166,7 @@ public class MockWebServer {
         }
 
         private static byte[] header(final String name, final Object value) {
-            return String.format("%s: %s\r\n", name, value).getBytes();
+            return String.format("%s: %s\r\n", name, value).getBytes(StandardCharsets.UTF_8);
         }
     }
 }

@@ -63,18 +63,18 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
         final String encryptionSecret = getRegisteredServiceJwtEncryptionSecret(service);
 
         final String serviceSigningAlg = getRegisteredServiceJwtProperty(service,
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING_ALG);
         final String signingSecretAlg = StringUtils.defaultString(serviceSigningAlg, JWSAlgorithm.HS256.getName());
 
         final String encryptionAlg = getRegisteredServiceJwtProperty(service,
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_ALG);
         final String encryptionSecretAlg = StringUtils.defaultString(encryptionAlg, JWEAlgorithm.DIR.getName());
 
         final String encryptionMethod = getRegisteredServiceJwtProperty(service,
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION_METHOD);
         final String encryptionSecretMethod = StringUtils.defaultString(encryptionMethod, EncryptionMethod.A192CBC_HS384.getName());
         final String secretIsBase64String = getRegisteredServiceJwtProperty(service,
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRETS_ARE_BASE64_ENCODED);
         final boolean secretsAreBase64Encoded = BooleanUtils.toBoolean(secretIsBase64String);
 
         if (StringUtils.isNotBlank(signingSecret)) {
@@ -84,7 +84,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             sets.addAll(JWSAlgorithm.Family.RSA);
             sets.addAll(JWSAlgorithm.Family.SIGNATURE);
 
-            final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg);
+            final JWSAlgorithm signingAlg = findAlgorithmFamily(sets, signingSecretAlg, JWSAlgorithm.class);
 
             final JwtAuthenticator a = new JwtAuthenticator();
             final byte[] secretBytes = getSecretBytes(signingSecret, secretsAreBase64Encoded);
@@ -100,13 +100,13 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
                 sets.addAll(JWEAlgorithm.Family.RSA);
                 sets.addAll(JWEAlgorithm.Family.SYMMETRIC);
 
-                final JWEAlgorithm encAlg = findAlgorithmFamily(sets, encryptionSecretAlg);
+                final JWEAlgorithm encAlg = findAlgorithmFamily(sets, encryptionSecretAlg, JWEAlgorithm.class);
 
                 sets = new HashSet<>();
                 sets.addAll(EncryptionMethod.Family.AES_CBC_HMAC_SHA);
                 sets.addAll(EncryptionMethod.Family.AES_GCM);
 
-                final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod);
+                final EncryptionMethod encMethod = findAlgorithmFamily(sets, encryptionSecretMethod, EncryptionMethod.class);
                 final byte[] encSecretBytes = getSecretBytes(encryptionSecret, secretsAreBase64Encoded);
                 a.setEncryptionConfiguration(new SecretEncryptionConfiguration(encSecretBytes, encAlg, encMethod));
             } else {
@@ -115,13 +115,24 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
             return a;
         }
         LOGGER.warn("No token signing secret is defined for service [{}]. Ensure [{}] property is defined for service",
-                service.getServiceId(),
-                RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName());
+            service.getServiceId(),
+            RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName());
         return null;
     }
 
-    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family, final String alg) {
-        return (T) family.stream().filter(l -> l.getName().equalsIgnoreCase(alg)).findFirst().get();
+    private static <T extends Algorithm> T findAlgorithmFamily(final Set<Algorithm> family,
+                                                               final String alg, final Class<T> clazz) {
+        final Algorithm result = family
+            .stream()
+            .filter(l -> l.getName().equalsIgnoreCase(alg))
+            .findFirst()
+            .get();
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     /**

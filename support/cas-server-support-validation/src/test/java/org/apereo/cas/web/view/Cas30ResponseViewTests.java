@@ -39,6 +39,7 @@ import org.springframework.web.servlet.support.RequestContext;
 import javax.crypto.Cipher;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.util.Map;
 
@@ -164,7 +165,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
 
             final byte[] cipherData = cipher.doFinal(cred64);
-            return new String(cipherData);
+            return new String(cipherData, StandardCharsets.UTF_8);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

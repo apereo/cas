@@ -60,7 +60,7 @@ public class JWTTokenTicketBuilderTests {
         assertNotNull(jwt);
         final Object result = tokenCipherExecutor.decode(jwt);
         final JWTClaimsSet claims = JWTClaimsSet.parse(result.toString());
-        assertEquals(claims.getSubject(), "casuser");
+        assertEquals("casuser", claims.getSubject());
     }
 
     @Test

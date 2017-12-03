@@ -24,9 +24,9 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class})
+    RefreshAutoConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class})
 @TestPropertySource(properties = "cas.authn.shibIdp.serverUrl=https://idp.example.com")
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
 
@@ -41,21 +41,21 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
         assertEquals(svc.getId(), result.getId());
         assertFalse(shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.supports(svc));
     }
-    
+
     @Test
     public void verifyServiceFound() {
         final Service svc = RegisteredServiceTestUtils.getService("https://www.example.org?entityId=https://idp.example.org");
         final Service result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
-        assertEquals(result.getId(), "https://idp.example.org");
+        assertEquals("https://idp.example.org", result.getId());
     }
 
     @Test
     public void verifyServiceFoundEncoded() {
         final String serviceUrl = "https%3A%2F%2Fidp.example.com%2Fidp%2FAuthn%2FExtCas%3Fconversation%3De1s1&entityId=https%3A%2F%2Fservice.example.com";
         final Service svc = RegisteredServiceTestUtils.getService(
-                "https://cas.example.com/login?service=" + serviceUrl);
+            "https://cas.example.com/login?service=" + serviceUrl);
         final Service result = shibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.resolveServiceFrom(svc);
-        assertEquals(result.getId(), "https://service.example.com");
+        assertEquals("https://service.example.com", result.getId());
     }
 
 }

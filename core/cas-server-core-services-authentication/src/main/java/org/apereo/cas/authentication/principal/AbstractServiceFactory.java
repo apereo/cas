@@ -14,19 +14,19 @@ import javax.servlet.http.HttpServletRequest;
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
     @Override
-    public <T> T createService(final String id, final Class<T> clazz) {
+    public <T extends Service> T createService(final String id, final Class<T> clazz) {
         final Service service = createService(id);
 
         if (!clazz.isAssignableFrom(service.getClass())) {
             throw new ClassCastException("Service [" + service.getId()
-                    + " is of type " + service.getClass()
-                    + " when we were expecting " + clazz);
+                + " is of type " + service.getClass()
+                + " when we were expecting " + clazz);
         }
         return (T) service;
     }
 
     @Override
-    public <T> T createService(final HttpServletRequest request, final Class<T> clazz) {
+    public <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
         final Service service = createService(request);
 
         if (!clazz.isAssignableFrom(service.getClass())) {
