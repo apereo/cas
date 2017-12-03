@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 
-import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -18,7 +17,7 @@ import java.io.Serializable;
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
     private static final long serialVersionUID = -1583614089051161614L;
-    
+
     /**
      * Default port.
      */
@@ -39,13 +38,6 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
     @NestedConfigurationProperty
     private BaseHazelcastProperties config = new BaseHazelcastProperties();
 
-    /**
-     * Settings that deal with setting up a threaded pool
-     * to spawn worker threads from the pool and process events.
-     */
-    @NestedConfigurationProperty
-    private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
-    
     public StreamServicesHazelcastProperties() {
         config.getCluster().setPort(PORT);
         config.getCluster().setInstanceName("localhost-services-replication");
@@ -65,13 +57,5 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
 
     public void setDuration(final String duration) {
         this.duration = duration;
-    }
-
-    public ConnectionPoolingProperties getPool() {
-        return pool;
-    }
-
-    public void setPool(final ConnectionPoolingProperties pool) {
-        this.pool = pool;
     }
 }

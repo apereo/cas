@@ -258,8 +258,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
         try {
             final String providerName = System.getProperty("jsr105Provider", SIGNATURE_FACTORY_PROVIDER_CLASS);
 
+            final Class<?> clazz = Class.forName(providerName);
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
-                    .getInstance("DOM", (Provider) Class.forName(providerName).newInstance());
+                    .getInstance("DOM", (Provider) clazz.getDeclaredConstructor().newInstance());
 
             final List<Transform> envelopedTransform = CollectionUtils.wrap(sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null));
 

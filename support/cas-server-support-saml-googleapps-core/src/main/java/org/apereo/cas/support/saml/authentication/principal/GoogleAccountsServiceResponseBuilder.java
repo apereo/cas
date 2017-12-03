@@ -97,10 +97,9 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
                                                 final int skewAllowance,
                                                 final String casServerPrefix) {
 
-        this(privateKeyLocation, publicKeyLocation, keyAlgorithm, 0);
+        this(privateKeyLocation, publicKeyLocation, keyAlgorithm, skewAllowance);
         this.samlObjectBuilder = samlObjectBuilder;
         this.servicesManager = servicesManager;
-        this.skewAllowance = skewAllowance;
         this.casServerPrefix = casServerPrefix;
     }
 
