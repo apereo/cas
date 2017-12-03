@@ -46,7 +46,7 @@ public class RestServiceRegistryConfiguration {
                     && StringUtils.isNotBlank(registry.getRest().getBasicAuthPassword())) {
                 final String auth = registry.getRest().getBasicAuthUsername() + ":" + registry.getRest().getBasicAuthPassword();
                 final byte[] encodedAuth = EncodingUtils.encodeBase64ToByteArray(auth.getBytes(StandardCharsets.UTF_8));
-                final String authHeader = "Basic " + new String(encodedAuth);
+                final String authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
                 headers.put("Authorization", CollectionUtils.wrap(authHeader));
             }
             return new RestServiceRegistryDao(restTemplate, registry.getRest().getUrl(), headers);

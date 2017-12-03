@@ -82,7 +82,7 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         final Set<Class<? extends BaseOidcScopeAttributeReleasePolicy>> subTypes =
             reflections.getSubTypesOf(BaseOidcScopeAttributeReleasePolicy.class);
         subTypes.forEach(Unchecked.consumer(t -> {
-            final BaseOidcScopeAttributeReleasePolicy ex = t.newInstance();
+            final BaseOidcScopeAttributeReleasePolicy ex = t.getDeclaredConstructor().newInstance();
 
             if (oidc.getScopes().contains(ex.getScopeName())) {
                 LOGGER.debug("Found OpenID Connect scope [{}] to filter attributes", ex.getScopeName());

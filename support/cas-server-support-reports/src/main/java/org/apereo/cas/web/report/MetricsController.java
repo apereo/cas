@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -26,9 +25,6 @@ import java.util.Properties;
 public class MetricsController extends BaseCasMvcEndpoint {
 
     private final Properties initParameters = new Properties();
-
-    @Autowired
-    private ApplicationContext applicationContext;
 
     @Autowired
     @Qualifier("metrics")
