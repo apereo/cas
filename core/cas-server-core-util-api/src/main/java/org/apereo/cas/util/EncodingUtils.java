@@ -14,6 +14,7 @@ import org.jose4j.jws.JsonWebSignature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.crypto.Cipher;
 import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -401,6 +402,20 @@ public final class EncodingUtils {
             return jwe.getPayload();
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Is jce installed ?
+     *
+     * @return the boolean
+     */
+    public static boolean isJceInstalled() {
+        try {
+            final int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
+            return maxKeyLen == Integer.MAX_VALUE;
+        } catch (final Exception e) {
+            return false;
         }
     }
 }
