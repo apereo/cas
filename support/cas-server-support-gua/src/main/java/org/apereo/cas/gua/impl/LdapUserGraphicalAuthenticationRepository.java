@@ -51,7 +51,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
 
     private Response<SearchResult> searchForId(final String id) throws LdapException {
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getUserFilter(),
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(

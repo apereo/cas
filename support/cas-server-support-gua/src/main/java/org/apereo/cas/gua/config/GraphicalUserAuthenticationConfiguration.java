@@ -72,7 +72,7 @@ public class GraphicalUserAuthenticationConfiguration {
         }
 
         if (StringUtils.isNotBlank(gua.getLdap().getLdapUrl())
-                && StringUtils.isNotBlank(gua.getLdap().getUserFilter())
+                && StringUtils.isNotBlank(gua.getLdap().getSearchFilter())
                 && StringUtils.isNotBlank(gua.getLdap().getBaseDn())
                 && StringUtils.isNotBlank(gua.getLdap().getImageAttribute())) {
             return new LdapUserGraphicalAuthenticationRepository();

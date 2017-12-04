@@ -9,7 +9,6 @@ import org.springframework.core.io.Resource;
 import javax.net.ssl.KeyManager;
 import javax.net.ssl.KeyManagerFactory;
 import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509KeyManager;
@@ -24,6 +23,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,8 +41,7 @@ public class DefaultCasSslContext {
 
     private final SSLContext sslContext;
 
-    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword,
-                                final String trustStoreType) {
+    public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
         try {
 
             final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
@@ -55,15 +54,17 @@ public class DefaultCasSslContext {
             final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
             final X509KeyManager customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
             final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
-            final X509TrustManager customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
-            final X509TrustManager jvmTrustManager = getTrustManager(defaultAlgorithm, null);
+
+            final String defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+            final Collection<X509TrustManager> customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
+            final Collection<X509TrustManager> jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
 
             final KeyManager[] keyManagers = {
                 new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
             };
-            final TrustManager[] trustManagers = {
-                new CompositeX509TrustManager(CollectionUtils.wrapList(jvmTrustManager, customTrustManager))
-            };
+            final List<X509TrustManager> allManagers = new ArrayList<>(customTrustManager);
+            allManagers.addAll(jvmTrustManagers);
+            final TrustManager[] trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
 
             this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
             sslContext.init(keyManagers, trustManagers, null);
@@ -72,10 +73,6 @@ public class DefaultCasSslContext {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    public SSLSocketFactory getSslSocketFactory() {
-        return this.sslContext.getSocketFactory();
     }
 
     /**
@@ -111,11 +108,13 @@ public class DefaultCasSslContext {
      * @return the trust manager
      * @throws Exception the exception
      */
-    private static X509TrustManager getTrustManager(final String algorithm,
-                                                    final KeyStore keystore) throws Exception {
+    private static Collection<X509TrustManager> getTrustManager(final String algorithm, final KeyStore keystore) throws Exception {
         final TrustManagerFactory factory = TrustManagerFactory.getInstance(algorithm);
         factory.init(keystore);
-        return (X509TrustManager) factory.getTrustManagers()[0];
+        return Arrays.stream(factory.getTrustManagers())
+            .filter(e -> e instanceof X509TrustManager)
+            .map(X509TrustManager.class::cast)
+            .collect(Collectors.toList());
     }
 
     private static class CompositeX509KeyManager implements X509KeyManager {
@@ -134,29 +133,29 @@ public class DefaultCasSslContext {
         @Override
         public String chooseClientAlias(final String[] keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseClientAlias(keyType, issuers, socket))
-                    .filter(Objects::nonNull).findFirst().orElse(null);
+                .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public String chooseServerAlias(final String keyType, final Principal[] issuers, final Socket socket) {
             return this.keyManagers.stream().map(keyManager -> keyManager.chooseServerAlias(keyType, issuers, socket))
-                    .filter(Objects::nonNull).findFirst().orElse(null);
+                .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public PrivateKey getPrivateKey(final String alias) {
             return this.keyManagers.stream().map(keyManager -> keyManager.getPrivateKey(alias))
-                    .filter(Objects::nonNull).findFirst().orElse(null);
+                .filter(Objects::nonNull).findFirst().orElse(null);
         }
 
 
         @Override
         public X509Certificate[] getCertificateChain(final String alias) {
             return this.keyManagers.stream().map(keyManager -> keyManager.getCertificateChain(alias))
-                    .filter(chain -> chain != null && chain.length > 0)
-                    .findFirst().orElse(null);
+                .filter(chain -> chain != null && chain.length > 0)
+                .findFirst().orElse(null);
         }
 
         @Override
@@ -202,13 +201,13 @@ public class DefaultCasSslContext {
                 } catch (final CertificateException e) {
                     final String msg = "Unable to trust the client certificates [%s] for auth type [%s]: [%s]";
                     LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
-                            authType, e.getMessage()), e);
+                        authType, e.getMessage()), e);
                     return false;
                 }
             });
 
             if (!trusted) {
-                throw new CertificateException("None of the TrustManagers can trust this certificate chain");
+                throw new CertificateException("None of the TrustManagers can trust this client certificate chain");
             }
         }
 
@@ -222,12 +221,12 @@ public class DefaultCasSslContext {
                 } catch (final CertificateException e) {
                     final String msg = "Unable to trust the server certificates [%s] for auth type [%s]: [%s]";
                     LOGGER.debug(String.format(msg, Arrays.stream(chain).map(Certificate::toString).collect(Collectors.toSet()),
-                            authType, e.getMessage()), e);
+                        authType, e.getMessage()), e);
                     return false;
                 }
             });
             if (!trusted) {
-                throw new CertificateException("None of the TrustManagers trust this certificate chain");
+                throw new CertificateException("None of the TrustManagers trust this server certificate chain");
             }
         }
 
