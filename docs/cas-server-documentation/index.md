@@ -44,15 +44,15 @@ and integration tests. They are <strong>NOT</strong> set up for internal demos a
 
 The following demos are provided by the Apereo CAS project:
 
-| Topic                                                                                      | Source Branch            | Location
-|-------------------------------------|-------------- --------|---------------------------------
+| Topic                                                                                      | Source Branch            | Location | Heroku
+|-------------------------------------|-------------- --------|--------------------------------------------------------|---------------------------------------
 | [CAS Overlay Project Initializr](installation/Maven-Overlay-Installation.html)            | `heroku-casinitializr`   | [Link](https://casinitializr.herokuapp.com) | ![](https://heroku-badge.herokuapp.com/?app=casinitializr)
-| [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas) | ![](https://heroku-badge.herokuapp.com/?app=casserver)
-| [CAS Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt)
+| [CAS Web Application Server](index.html)                                                  | `heroku-caswebapp`       | [Link](https://casserver.herokuapp.com/cas) | ![](https://heroku-badge.herokuapp.com/?app=casserver&root=cas)
+| [CAS Management Server](installation/Installing-ServicesMgmt-Webapp.html)        | `heroku-mgmtwebapp` | [Link](https://casservermgmt.herokuapp.com/cas-management)  | ![](https://heroku-badge.herokuapp.com/?app=casservermgmt&root=cas-management)
 | [CAS Boot Administration Server](installation/Configuring-Monitoring-Administration.html) | `heroku-bootadminserver` | [Link](https://casbootadminserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=casbootadminserver)
 | [CAS Zipkin Server](installation/Monitoring-Statistics.html#distributed-tracing)          | `heroku-zipkinserver`    | [Link](https://caszipkinserver.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caszipkinserver)
 | [CAS Service Discovery Server](installation/Service-Discovery-Guide.html)                 | `heroku-discoveryserver` | [Link](https://caseureka.herokuapp.com/) | ![](https://heroku-badge.herokuapp.com/?app=caseureka)
-| [CAS Configuration Server](installation/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver) | ![](https://heroku-badge.herokuapp.com/?app=casconfigserver)
+| [CAS Configuration Server](installation/Configuration-Server-Management.html)             | `heroku-casconfigserver` | [Link](https://casconfigserver.herokuapp.com/casconfigserver) | ![](https://heroku-badge.herokuapp.com/?app=casconfigserver&root=casconfigserver)
 
 Credentials used for the above demos, where needed, are: `casuser` / `Mellon`.
 
