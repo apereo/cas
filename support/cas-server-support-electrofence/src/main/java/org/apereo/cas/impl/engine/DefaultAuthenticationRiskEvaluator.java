@@ -31,8 +31,9 @@ public class DefaultAuthenticationRiskEvaluator implements AuthenticationRiskEva
         return calculators;
     }
 
-    @Audit(action = "EVALUATE_RISKY_AUTHENTICATION", actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
-            resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")
+    @Audit(action = "EVALUATE_RISKY_AUTHENTICATION",
+        actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
+        resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public AuthenticationRiskScore eval(final Authentication authentication,
                                         final RegisteredService service,

@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@SuppressWarnings("TypeParameterShadowing")
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
     @Override
