@@ -17,6 +17,13 @@ ext.libraries = [
         ],
         semver                  : [
                 dependencies.create("com.vdurmont:semver4j:$semverVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        oshi                  : [
+                dependencies.create("com.github.oshi:oshi-core:$oshiVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
@@ -2181,7 +2188,7 @@ ext.libraries = [
                 }
         ],
         springcloudeureka       : [
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-eureka:$springCloudEurekaVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-netflic-eureka:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "javax.servlet", module: "servlet-api")
