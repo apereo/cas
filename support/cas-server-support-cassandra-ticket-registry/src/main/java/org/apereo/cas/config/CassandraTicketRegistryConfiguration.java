@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import org.apereo.cas.cassandra.CassandraSessionFactory;
-import org.apereo.cas.serializer.JacksonJsonSerializer;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.CassandraTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -21,6 +20,6 @@ public class CassandraTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(final CassandraSessionFactory cassandraSessionFactory,
                                          @Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
 
-        return new CassandraTicketRegistry(cassandraSessionFactory.getSession(), ticketCatalog, new JacksonJsonSerializer());
+        return new CassandraTicketRegistry(cassandraSessionFactory.getSession(), ticketCatalog);
     }
 }
