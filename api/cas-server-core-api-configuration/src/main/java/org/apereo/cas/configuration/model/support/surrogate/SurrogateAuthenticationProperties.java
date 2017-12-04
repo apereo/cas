@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.surrogate;
 
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -169,19 +169,8 @@ public class SurrogateAuthenticationProperties implements Serializable {
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication-ldap")
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = -3848837302921751926L;
-        /**
-         * LDAP base DN used to locate the surrogate/admin accounts.
-         */
-        @RequiredProperty
-        private String baseDn;
-        /**
-         * Search filter used to locate the admin user in the LDAP tree
-         * and determine accounts qualified for impersonation.
-         */
-        @RequiredProperty
-        private String searchFilter;
         /**
          * LDAP search filter used to locate the surrogate account.
          */
@@ -224,21 +213,6 @@ public class SurrogateAuthenticationProperties implements Serializable {
             this.memberAttributeValueRegex = memberAttributeValueRegex;
         }
 
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getSearchFilter() {
-            return searchFilter;
-        }
-
-        public void setSearchFilter(final String searchFilter) {
-            this.searchFilter = searchFilter;
-        }
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication")

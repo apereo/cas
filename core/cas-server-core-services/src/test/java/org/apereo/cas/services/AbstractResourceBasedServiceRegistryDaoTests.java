@@ -61,7 +61,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         prepTests();
         verifySaveAttributeReleasePolicyMappingRules();
         verifySaveAttributeReleasePolicyAllowedAttrRulesAndFilter();
-        assertEquals(this.dao.load().size(), 2);
+        assertEquals(2, this.dao.load().size());
     }
 
     @Test
@@ -174,7 +174,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
                 (AnonymousRegisteredServiceUsernameAttributeProvider) r3.getUsernameAttributeProvider();
         final ShibbolethCompatiblePersistentIdGenerator ss =
                 (ShibbolethCompatiblePersistentIdGenerator) anon.getPersistentIdGenerator();
-        assertEquals(ss.getSalt(), "helloworld");
+        assertEquals("helloworld", ss.getSalt());
         assertEquals(r2, r3);
     }
 
@@ -496,10 +496,10 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
         this.dao.save(r);
         this.dao.load();
         assertNotNull(this.dao.findServiceById(r.getId()));
-        assertEquals(r.getProperties().size(), 2);
+        assertEquals(2, r.getProperties().size());
         assertNotNull(r.getProperties().get("field1"));
 
         final RegisteredServiceProperty prop = r.getProperties().get("field1");
-        assertEquals(prop.getValues().size(), 2);
+        assertEquals(2, prop.getValues().size());
     }
 }

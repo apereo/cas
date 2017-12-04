@@ -16,7 +16,8 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import java.io.File;
-import java.io.FileReader;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.Map;
@@ -91,10 +92,12 @@ public final class ScriptingUtils {
      * @param <T>       the type parameter
      * @param script    the script
      * @param variables the variables
+     * @param clazz     the clazz
      * @return the t
      */
     public static <T> T executeGroovyShellScript(final String script,
-                                                 final Map<String, Object> variables) {
+                                                 final Map<String, Object> variables,
+                                                 final Class<T> clazz) {
         try {
             final Binding binding = new Binding();
             final GroovyShell shell = new GroovyShell(binding);
@@ -105,7 +108,15 @@ public final class ScriptingUtils {
                 binding.setVariable("logger", LOGGER);
             }
             LOGGER.debug("Executing groovy script [{}] with variables [{}]", script, binding.getVariables());
-            return (T) shell.evaluate(script);
+
+            final Object result = shell.evaluate(script);
+            if (!clazz.isAssignableFrom(result.getClass())) {
+                throw new ClassCastException("Result [" + result
+                    + " is of type " + result.getClass()
+                    + " when we were expecting " + clazz);
+            }
+            return (T) result;
+
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -155,8 +166,9 @@ public final class ScriptingUtils {
     public static <T> T executeGroovyScript(final Resource groovyScript,
                                             final String methodName,
                                             final Class<T> clazz) {
-        return executeGroovyScript(groovyScript, methodName, new Object[] {}, clazz);
+        return executeGroovyScript(groovyScript, methodName, new Object[]{}, clazz);
     }
+
     /**
      * Execute groovy script t.
      *
@@ -188,16 +200,16 @@ public final class ScriptingUtils {
                 final Class<?> groovyClass = loader.parseClass(groovyFile);
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
 
-                final GroovyObject groovyObject = (GroovyObject) groovyClass.newInstance();
+                final GroovyObject groovyObject = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
 
                 LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
-                final T result = (T) groovyObject.invokeMethod(methodName, args);
+                final Object result = groovyObject.invokeMethod(methodName, args);
                 LOGGER.trace("Results returned by the groovy script are [{}]", result);
 
                 if (result != null && !clazz.isAssignableFrom(result.getClass())) {
                     throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
                 }
-                return result;
+                return (T) result;
             } else {
                 LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
             }
@@ -213,9 +225,10 @@ public final class ScriptingUtils {
      * @param <T>        the type parameter
      * @param scriptFile the script file
      * @param args       the args
+     * @param clazz      the clazz
      * @return the t
      */
-    public static <T> T executeGroovyScriptEngine(final String scriptFile, final Object[] args) {
+    public static <T> T executeGroovyScriptEngine(final String scriptFile, final Object[] args, final Class<T> clazz) {
         try {
             final String engineName = getScriptEngineName(scriptFile);
             final ScriptEngine engine = new ScriptEngineManager().getEngineByName(engineName);
@@ -229,13 +242,16 @@ public final class ScriptingUtils {
             if (theScriptFile.exists()) {
                 LOGGER.debug("Created object instance from class [{}]", theScriptFile.getCanonicalPath());
 
-                engine.eval(new FileReader(theScriptFile));
+                engine.eval(Files.newBufferedReader(theScriptFile.toPath(), StandardCharsets.UTF_8));
                 final Invocable invocable = (Invocable) engine;
 
                 LOGGER.debug("Executing script's run method, with parameters [{}]", args);
-                final T result = (T) invocable.invokeFunction("run", args);
+                final Object result = invocable.invokeFunction("run", args);
                 LOGGER.debug("Groovy script result is [{}]", result);
-                return result;
+                if (result != null && !clazz.isAssignableFrom(result.getClass())) {
+                    throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+                }
+                return (T) result;
             }
             LOGGER.warn("[{}] script [{}] does not exist, or cannot be loaded", StringUtils.capitalize(engineName), scriptFile);
         } catch (final Exception e) {
@@ -250,10 +266,12 @@ public final class ScriptingUtils {
      * @param <T>       the type parameter
      * @param script    the script
      * @param variables the variables
+     * @param clazz     the clazz
      * @return the t
      */
     public static <T> T executeGroovyScriptEngine(final String script,
-                                                  final Map<String, Object> variables) {
+                                                  final Map<String, Object> variables,
+                                                  final Class<T> clazz) {
         try {
             final ScriptEngine engine = new ScriptEngineManager().getEngineByName("groovy");
             if (engine == null) {
@@ -267,7 +285,11 @@ public final class ScriptingUtils {
             if (!binding.containsKey("logger")) {
                 binding.put("logger", LOGGER);
             }
-            return (T) engine.eval(script, binding);
+            final Object result = engine.eval(script, binding);
+            if (result != null && !clazz.isAssignableFrom(result.getClass())) {
+                throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
+            }
+            return (T) result;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -22,6 +22,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.DefaultConnectionStrategy;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.DerefAliases;
 import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -624,7 +625,7 @@ public final class LdapUtils {
         if (StringUtils.isBlank(l.getBaseDn())) {
             throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
         }
-        if (StringUtils.isBlank(l.getUserFilter())) {
+        if (StringUtils.isBlank(l.getSearchFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
         final PooledConnectionFactory connectionFactoryForSearch = newLdaptivePooledConnectionFactory(l);
@@ -633,8 +634,12 @@ public final class LdapUtils {
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
-        resolver.setUserFilter(l.getUserFilter());
+        resolver.setUserFilter(l.getSearchFilter());
 
+        if (StringUtils.isNotBlank(l.getDerefAliases())) {
+            resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+        }
+        
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
@@ -839,7 +844,7 @@ public final class LdapUtils {
         if (l.getProviderClass() != null) {
             try {
                 final Class clazz = ClassUtils.getClass(l.getProviderClass());
-                bindCf.setProvider(Provider.class.cast(clazz.newInstance()));
+                bindCf.setProvider(Provider.class.cast(clazz.getDeclaredConstructor().newInstance()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -942,15 +947,18 @@ public final class LdapUtils {
         if (StringUtils.isBlank(l.getBaseDn())) {
             throw new IllegalArgumentException("To create a search entry resolver, base dn cannot be empty/blank ");
         }
-        if (StringUtils.isBlank(l.getUserFilter())) {
+        if (StringUtils.isBlank(l.getSearchFilter())) {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
-        entryResolver.setUserFilter(l.getUserFilter());
+        entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+        if (StringUtils.isNotBlank(l.getDerefAliases())) {
+            entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+        }
 
         final List<SearchEntryHandler> handlers = new ArrayList<>();
         l.getSearchEntryHandlers().forEach(h -> {

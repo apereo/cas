@@ -11,7 +11,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapProperties {
+public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 3849857270054289852L;
 
@@ -66,32 +66,32 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
      * </p>
      */
     private String principalAttributePassword;
+
     /**
      * Specify the dn format accepted by the AD authenticator, etc.
      * Example format might be {@code uid=%s,ou=people,dc=example,dc=org}.
      */
     private String dnFormat;
+
     /**
      * Whether specific search entry resolvers need to be set
      * on the authenticator, or the default should be used.
      */
     private boolean enhanceWithEntryResolver = true;
+    
 
     /**
-     * Whether subtree searching is allowed.
+     * Define how aliases are de-referenced.
+     * Accepted values are:
+     * <ul>
+     *     <li>{@code NEVER}</li>
+     *     <li>{@code SEARCHING}: dereference when searching the entries beneath the starting point but not when searching for the starting entry.</li>
+     *     <li>{@code FINDING}: dereference when searching for the starting entry but not when searching the entries beneath the starting point.</li>
+     *     <li>{@code ALWAYS}: dereference when searching for the starting entry and when searching the entries beneath the starting point.</li>
+     * </ul>
      */
-    private boolean subtreeSearch = true;
-    /**
-     * Base DN to use.
-     */
-    private String baseDn;
-    /**
-     * User filter to use for searching.
-     * Syntax is {@code cn={user}} or {@code cn={0}}.
-     */
-    @RequiredProperty
-    private String userFilter;
-
+    private String derefAliases;
+    
     /**
      * Search entry to define on the authenticator.
      */
@@ -111,30 +111,6 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
 
     public void setType(final AuthenticationTypes type) {
         this.type = type;
-    }
-
-    public boolean isSubtreeSearch() {
-        return subtreeSearch;
-    }
-
-    public void setSubtreeSearch(final boolean subtreeSearch) {
-        this.subtreeSearch = subtreeSearch;
-    }
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
-    }
-
-    public String getUserFilter() {
-        return userFilter;
-    }
-
-    public void setUserFilter(final String userFilter) {
-        this.userFilter = userFilter;
     }
 
     public String getDnFormat() {
@@ -160,5 +136,12 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapP
     public void setPrincipalAttributePassword(final String principalAttributePassword) {
         this.principalAttributePassword = principalAttributePassword;
     }
-    
+
+    public String getDerefAliases() {
+        return derefAliases;
+    }
+
+    public void setDerefAliases(final String derefAliases) {
+        this.derefAliases = derefAliases;
+    }
 }

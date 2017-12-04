@@ -37,7 +37,8 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
     private boolean trackMostRecentSession = true;
 
-    public DefaultServiceTicketFactory(final ExpirationPolicy serviceTicketExpirationPolicy, final Map<String, UniqueTicketIdGenerator> ticketIdGeneratorMap,
+    public DefaultServiceTicketFactory(final ExpirationPolicy serviceTicketExpirationPolicy,
+                                       final Map<String, UniqueTicketIdGenerator> ticketIdGeneratorMap,
                                        final boolean onlyTrackMostRecentSession, final CipherExecutor cipherExecutor) {
         this.serviceTicketExpirationPolicy = serviceTicketExpirationPolicy;
         this.uniqueTicketIdGeneratorsForService = ticketIdGeneratorMap;
@@ -46,14 +47,15 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     }
 
     @Override
-    public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service, final boolean credentialProvided) {
+    public <T extends Ticket> T create(final TicketGrantingTicket ticketGrantingTicket, final Service service,
+                                       final boolean credentialProvided, final Class<T> clazz) {
         String ticketId = produceTicketIdentifier(service, ticketGrantingTicket, credentialProvided);
         if (this.cipherExecutor != null) {
             LOGGER.debug("Attempting to encode service ticket [{}]", ticketId);
             ticketId = this.cipherExecutor.encode(ticketId);
             LOGGER.debug("Encoded service ticket id [{}]", ticketId);
         }
-        return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId);
+        return produceTicket(ticketGrantingTicket, service, credentialProvided, ticketId, clazz);
     }
 
     /**
@@ -64,17 +66,24 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
      * @param service              the service
      * @param credentialProvided   the credential provided
      * @param ticketId             the ticket id
+     * @param clazz                the clazz
      * @return the ticket
      */
     protected <T extends Ticket> T produceTicket(final TicketGrantingTicket ticketGrantingTicket, final Service service,
-                                                 final boolean credentialProvided, final String ticketId) {
-        final ServiceTicket serviceTicket = ticketGrantingTicket.grantServiceTicket(
+                                                 final boolean credentialProvided, final String ticketId, final Class<T> clazz) {
+        final ServiceTicket result = ticketGrantingTicket.grantServiceTicket(
                 ticketId,
                 service,
                 this.serviceTicketExpirationPolicy,
                 credentialProvided,
                 trackMostRecentSession);
-        return (T) serviceTicket;
+
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     /**
@@ -103,7 +112,7 @@ public class DefaultServiceTicketFactory implements ServiceTicketFactory {
     }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return this;
     }
 }

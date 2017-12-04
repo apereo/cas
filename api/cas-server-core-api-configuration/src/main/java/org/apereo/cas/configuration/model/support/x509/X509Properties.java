@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.x509;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -515,17 +515,8 @@ public class X509Properties implements Serializable {
         this.principalHexSNZeroPadding = principalHexSNZeroPadding;
     }
 
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = -1655068554291000206L;
-        /**
-         * The LDAP base dn to start the search.
-         */
-        private String baseDn;
-        /**
-         * The search filter. Example: {@code cn={user}}.
-         */
-        private String searchFilter;
-
         /**
          * The LDAP attribute that holds the certificate revocation list.
          */
@@ -539,20 +530,5 @@ public class X509Properties implements Serializable {
             this.certificateAttribute = certificateAttribute;
         }
         
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getSearchFilter() {
-            return searchFilter;
-        }
-
-        public void setSearchFilter(final String searchFilter) {
-            this.searchFilter = searchFilter;
-        }
     }
 }

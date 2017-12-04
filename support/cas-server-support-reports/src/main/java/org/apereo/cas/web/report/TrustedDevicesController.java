@@ -29,13 +29,11 @@ import java.util.Set;
 public class TrustedDevicesController extends BaseCasMvcEndpoint {
 
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
-    private final CasConfigurationProperties casProperties;
 
     public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                     final CasConfigurationProperties casProperties) {
         super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties);
         this.mfaTrustEngine = mfaTrustEngine;
-        this.casProperties = casProperties;
     }
 
     /**

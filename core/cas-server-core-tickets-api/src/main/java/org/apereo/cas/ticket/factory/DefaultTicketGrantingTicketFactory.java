@@ -48,14 +48,14 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
     }
 
     @Override
-    public <T extends TicketGrantingTicket> T create(final Authentication authentication) {
+    public <T extends TicketGrantingTicket> T create(final Authentication authentication, final Class<T> clazz) {
         final String tgtId = produceTicketIdentifier(authentication);
-        return produceTicket(authentication, tgtId);
+        return produceTicket(authentication, tgtId, clazz);
     }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return this;
     }
 
     /**
@@ -64,12 +64,19 @@ public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketF
      * @param <T>            the type parameter
      * @param authentication the authentication
      * @param tgtId          the tgt id
+     * @param clazz          the clazz
      * @return the ticket.
      */
-    protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication, final String tgtId) {
-        final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(
-                tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
-        return (T) ticketGrantingTicket;
+    protected <T extends TicketGrantingTicket> T produceTicket(final Authentication authentication,
+                                                               final String tgtId, final Class<T> clazz) {
+        final TicketGrantingTicket result = new TicketGrantingTicketImpl(
+            tgtId, authentication, this.ticketGrantingTicketExpirationPolicy);
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     /**

@@ -48,7 +48,7 @@ public class WebApplicationServiceFactoryTests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
-        assertEquals(service.getArtifactId(), "ticket");
+        assertEquals("ticket", service.getArtifactId());
     }
 
     @Test

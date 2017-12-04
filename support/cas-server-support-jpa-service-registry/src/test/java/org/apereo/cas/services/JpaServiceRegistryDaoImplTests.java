@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -36,11 +37,13 @@ import static org.junit.Assert.*;
  * @since 3.1.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        JpaServiceRegistryConfiguration.class,
-        JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
-        CasCoreServicesConfiguration.class})
+@SpringBootTest(classes = {
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    JpaServiceRegistryConfiguration.class,
+    JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
+    CasCoreServicesConfiguration.class})
 @DirtiesContext
 public class JpaServiceRegistryDaoImplTests {
 
@@ -147,7 +150,8 @@ public class JpaServiceRegistryDaoImplTests {
         this.serviceRegistryDao.save(r);
 
         final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
-        assertEquals(r2.getProperties().size(), 2);
+        assertEquals(2, r2.getProperties().size());
+
     }
 
     @Test
@@ -211,20 +215,20 @@ public class JpaServiceRegistryDaoImplTests {
         assertNotNull(svc);
         assertFalse(svc.getAccessStrategy().isServiceAccessAllowed());
     }
-    
+
     @TestConfiguration("timeAwareServicesManagerConfiguration")
     public static class TimeAwareServicesManagerConfiguration {
 
         @Autowired
         @Qualifier("serviceRegistryDao")
         private ServiceRegistryDao serviceRegistryDao;
-        
+
         @Bean
         public ServicesManager servicesManager() {
             return new TimeAwareServicesManager(serviceRegistryDao);
         }
-        
-        public class TimeAwareServicesManager extends DefaultServicesManager {
+
+        public static class TimeAwareServicesManager extends DefaultServicesManager {
             public TimeAwareServicesManager(final ServiceRegistryDao serviceRegistryDao) {
                 super(serviceRegistryDao, null);
             }

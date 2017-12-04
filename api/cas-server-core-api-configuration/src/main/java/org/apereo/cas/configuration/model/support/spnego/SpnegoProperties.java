@@ -2,7 +2,7 @@ package org.apereo.cas.configuration.model.support.spnego;
 
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
+import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -410,32 +410,8 @@ public class SpnegoProperties implements Serializable {
         this.ldap = ldap;
     }
 
-    public static class Ldap extends AbstractLdapProperties {
+    public static class Ldap extends AbstractLdapSearchProperties {
         private static final long serialVersionUID = -8835216200501334936L;
-        /**
-         * LDAP base dn to start the search.
-         */
-        private String baseDn;
-        /**
-         * LDAP search filter to look up hosts. Example: {@code host={host}}.
-         */
-        private String searchFilter;
-
-        public String getBaseDn() {
-            return baseDn;
-        }
-
-        public void setBaseDn(final String baseDn) {
-            this.baseDn = baseDn;
-        }
-
-        public String getSearchFilter() {
-            return searchFilter;
-        }
-
-        public void setSearchFilter(final String searchFilter) {
-            this.searchFilter = searchFilter;
-        }
     }
 }
 

@@ -140,23 +140,24 @@ public class GenerateJwtCommand implements CommandMarker {
         LOGGER.debug("Encryption method: [{}]. Available methods are [{}]", encryptionMethod, acceptedEncMethods);
 
         final JWEAlgorithm algorithm = JWEAlgorithm.parse(encryptionAlgorithm);
-        if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm.getName())) {
-            if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethod)) {
+        final EncryptionMethod encryptionMethodAlg = EncryptionMethod.parse(encryptionMethod);
+        
+        if (DirectDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
+            if (!DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
                         encryptionMethod, encryptionAlgorithm, DirectDecrypter.SUPPORTED_ENCRYPTION_METHODS);
                 return;
             }
         }
         if (AESDecrypter.SUPPORTED_ALGORITHMS.contains(algorithm)) {
-            if (!AESDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethod)) {
+            if (!AESDecrypter.SUPPORTED_ENCRYPTION_METHODS.contains(encryptionMethodAlg)) {
                 LOGGER.warn("Encrypted method [{}] is not supported for algorithm [{}]. Accepted methods are [{}]",
                         encryptionMethod, encryptionAlgorithm, AESDecrypter.SUPPORTED_ENCRYPTION_METHODS);
                 return;
             }
         }
 
-        final EncryptionMethod encMethod = EncryptionMethod.parse(encryptionMethod);
-        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, algorithm, encMethod));
+        g.setEncryptionConfiguration(new SecretEncryptionConfiguration(encryptionSecret, algorithm, encryptionMethodAlg));
 
     }
 

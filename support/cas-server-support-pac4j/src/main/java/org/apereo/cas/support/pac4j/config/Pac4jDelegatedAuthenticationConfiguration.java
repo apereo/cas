@@ -7,6 +7,10 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
+import org.apereo.cas.validation.Pac4jServiceTicketValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.service.InMemoryProfileService;
@@ -29,7 +33,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("pac4jDelegatedAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class Pac4jDelegatedAuthenticationConfiguration {
+public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -78,4 +82,14 @@ public class Pac4jDelegatedAuthenticationConfiguration {
         return new InMemoryProfileService<>(profileFactory);
     }
 
+
+    @Bean
+    public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
+        return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager);
+    }
+
+    @Override
+    public void configureAuthorizersExecutionPlan(final ServiceTicketValidationAuthorizersExecutionPlan plan) {
+        plan.registerAuthorizer(pac4jServiceTicketValidationAuthorizer());
+    }
 }

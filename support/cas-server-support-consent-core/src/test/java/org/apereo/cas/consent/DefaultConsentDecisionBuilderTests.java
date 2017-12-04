@@ -41,7 +41,7 @@ public class DefaultConsentDecisionBuilderTests {
     public void verifyNewConsentDecision() {
         final ConsentDecision consentDecision = getConsentDecision();
         assertNotNull(consentDecision);
-        assertEquals(consentDecision.getPrincipal(), "casuser");
+        assertEquals("casuser", consentDecision.getPrincipal());
         assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());    
     }
 
@@ -64,7 +64,7 @@ public class DefaultConsentDecisionBuilderTests {
         final ConsentDecision consentDecision = getConsentDecision();
         final Map<String, Object> attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));
-        assertEquals(attrs.get("attr1"), "value1");
+        assertEquals("value1", attrs.get("attr1"));
     }
     
     private ConsentDecision getConsentDecision() {

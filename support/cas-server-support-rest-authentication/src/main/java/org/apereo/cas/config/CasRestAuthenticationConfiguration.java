@@ -83,7 +83,6 @@ public class CasRestAuthenticationConfiguration {
     }
 
     @Bean
-    @RefreshScope
     public AuthenticationHandler restAuthenticationHandler() {
         final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
         final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(), 

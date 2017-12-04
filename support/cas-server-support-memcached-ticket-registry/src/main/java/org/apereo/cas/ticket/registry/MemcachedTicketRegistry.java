@@ -17,6 +17,7 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.3
  */
+@SuppressWarnings("FutureReturnValueIgnored")
 public class MemcachedTicketRegistry extends AbstractTicketRegistry {
     private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedTicketRegistry.class);
     /**

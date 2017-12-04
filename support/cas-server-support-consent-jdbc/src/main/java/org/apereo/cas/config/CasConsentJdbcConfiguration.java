@@ -48,8 +48,7 @@ public class CasConsentJdbcConfiguration {
     public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-    @RefreshScope
+    
     @Bean
     public DataSource dataSourceConsent() {
         return JpaBeans.newDataSource(casProperties.getConsent().getJpa());

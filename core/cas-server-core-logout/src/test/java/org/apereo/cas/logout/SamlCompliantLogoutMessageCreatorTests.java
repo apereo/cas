@@ -12,6 +12,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -39,11 +40,11 @@ public class SamlCompliantLogoutMessageCreatorTests {
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder builder = factory.newDocumentBuilder();
 
-        final InputStream is = new ByteArrayInputStream(msg.getBytes());
+        final InputStream is = new ByteArrayInputStream(msg.getBytes(StandardCharsets.UTF_8));
         final Document document = builder.parse(is);
         
         final NodeList list = document.getDocumentElement().getElementsByTagName("samlp:SessionIndex");
-        assertEquals(list.getLength(), 1);
+        assertEquals(1, list.getLength());
         
         assertEquals(list.item(0).getTextContent(), request.getTicketId());
     }

@@ -9,8 +9,8 @@ import org.apereo.cas.ticket.registry.TicketRedisTemplate;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -28,23 +28,22 @@ public class RedisTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
+    @ConditionalOnMissingBean(name = "redisTicketConnectionFactory")
     @Bean
-    @RefreshScope
-    public RedisConnectionFactory redisConnectionFactory() {
+    public RedisConnectionFactory redisTicketConnectionFactory() {
         final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
         final RedisObjectFactory obj = new RedisObjectFactory();
         return obj.newRedisConnectionFactory(redis);
     }
 
     @Bean
-    @RefreshScope
+    @ConditionalOnMissingBean(name = "ticketRedisTemplate")
     public RedisTemplate<String, Ticket> ticketRedisTemplate() {
-        return new TicketRedisTemplate(redisConnectionFactory());
+        return new TicketRedisTemplate(redisTicketConnectionFactory());
     }
 
     @Bean
-    @RefreshScope
     public TicketRegistry ticketRegistry() {
         final RedisTicketRegistryProperties redis = casProperties.getTicket().getRegistry().getRedis();
         final RedisTicketRegistry r = new RedisTicketRegistry(ticketRedisTemplate());

@@ -20,6 +20,7 @@ public class OAuth20TokenResponseTypeRequestValidator extends OAuth20Authorizati
      *
      * @return the response type
      */
+    @Override
     public OAuth20ResponseTypes getResponseType() {
         return OAuth20ResponseTypes.TOKEN;
     }

@@ -70,10 +70,42 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
         assertEquals(url, new URL("https://localhost/logout?p=v"));
     }
+    
+    @Test
+    public void verifyLocalLogoutUrlWithValidRegExValidationAndLocalUrlNotAllowed() throws Exception {
+        final AbstractRegisteredService svc = getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\w*", true);
+        final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
+        assertEquals(url, new URL("https://localhost/logout?p=v"));
+    }
 
-    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls)
-            throws Exception{
-        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls).getObject();
+    @Test
+    public void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlAllowed() throws Exception {
+        final AbstractRegisteredService svc = getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(true, "\\d*", true);
+        final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
+        assertEquals(url, new URL("https://localhost/logout?p=v"));
+    }
+
+    @Test
+    public void verifyLocalLogoutUrlWithInvalidRegExValidationAndLocalUrlNotAllowed() throws Exception {
+        final AbstractRegisteredService svc = getRegisteredService(".+");
+        svc.setLogoutUrl(null);
+        final DefaultSingleLogoutServiceLogoutUrlBuilder builder = createDefaultSingleLogoutServiceLogoutUrlBuilder(false, "\\d*", true);
+        final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
+        assertNull(url);
+    }
+ 
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) throws Exception {
+        return createDefaultSingleLogoutServiceLogoutUrlBuilder(allowLocalLogoutUrls, null, true);
+    }
+    
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls, 
+            final String authorityValidationRegEx, final boolean authorityValidationRegExCaseSensitiv) throws Exception{
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, 
+            authorityValidationRegExCaseSensitiv).getObject();
         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
     }
 

@@ -14,6 +14,7 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -30,12 +31,26 @@ public final class CollectionUtils {
     }
 
     /**
+     * Converts the provided object into a collection
+     * and return the first element, or empty.
+     *
+     * @param obj the obj
+     * @return the optional
+     */
+    public static Optional<Object> firstElement(final Object obj) {
+        final Set<Object> object = CollectionUtils.toCollection(obj);
+        if (object.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(object.iterator().next());
+    }
+
+    /**
      * Convert the object given into a {@link Collection} instead.
      *
      * @param obj the object to convert into a collection
      * @return The collection instance containing the object provided
      */
-    @SuppressWarnings("unchecked")
     public static Set<Object> toCollection(final Object obj) {
         final Set<Object> c = new LinkedHashSet<>();
         if (obj == null) {
@@ -100,7 +115,7 @@ public final class CollectionUtils {
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
         final Map map = new HashMap<>();
-        if (StringUtils.isNotBlank(key) && value != null) {
+        if (value != null && StringUtils.isNotBlank(key)) {
             map.put(key, value);
         }
         return map;
@@ -117,7 +132,7 @@ public final class CollectionUtils {
      * @param value2 the value 2
      * @return the map
      */
-    public static <K, V> Map<K, V> wrap(final String key, final Object value,
+    public static <K extends String, V extends Object> Map<K, V> wrap(final String key, final Object value,
                                         final String key2, final Object value2) {
         final Map m = wrap(key, value);
         m.put(key2, value2);

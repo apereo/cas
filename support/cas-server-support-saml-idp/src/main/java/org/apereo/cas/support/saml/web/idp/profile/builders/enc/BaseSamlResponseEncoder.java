@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
@@ -8,7 +9,6 @@ import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.common.messaging.context.SAMLSelfEntityContext;
 import org.opensaml.saml.saml2.binding.encoding.impl.BaseSAML2MessageEncoder;
 import org.opensaml.saml.saml2.core.Response;
-import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -23,7 +23,7 @@ public abstract class BaseSamlResponseEncoder {
     /**
      * The Velocity engine factory.
      */
-    protected final VelocityEngineFactory velocityEngineFactory;
+    protected final VelocityEngine velocityEngineFactory;
     /**
      * The Adaptor.
      */
@@ -38,7 +38,7 @@ public abstract class BaseSamlResponseEncoder {
      */
     protected final HttpServletRequest httpRequest;
     
-    public BaseSamlResponseEncoder(final VelocityEngineFactory velocityEngineFactory,
+    public BaseSamlResponseEncoder(final VelocityEngine velocityEngineFactory,
                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                    final HttpServletResponse httpResponse,
                                    final HttpServletRequest httpRequest) {

@@ -30,8 +30,10 @@ import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -40,6 +42,7 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.test.web.client.ResponseActions;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.client.RestTemplate;
 
 import javax.security.auth.login.AccountNotFoundException;
@@ -59,24 +62,27 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasRestAuthenticationConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreUtilConfiguration.class})
+    CasCoreAuthenticationConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreUtilConfiguration.class})
 @TestPropertySource(properties = "cas.authn.rest.uri=http://localhost:8081/authn")
 @EnableScheduling
+@EnableTransactionManagement(proxyTargetClass = true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
 public class RestAuthenticationHandlerTests {
 
     @Rule
@@ -95,51 +101,42 @@ public class RestAuthenticationHandlerTests {
     @Before
     public void setUp() {
         server = MockRestServiceServer.bindTo(restAuthenticationTemplate).build()
-                .expect(manyTimes(), requestTo("http://localhost:8081/authn"))
-                .andExpect(method(HttpMethod.POST));
+            .expect(manyTimes(), requestTo("http://localhost:8081/authn"))
+            .andExpect(method(HttpMethod.POST));
     }
 
     @Test
     public void verifySuccess() throws Exception {
         final Principal principalWritten = new DefaultPrincipalFactory().createPrincipal("casuser");
 
-        final ObjectMapper mapper = new ObjectMapper();
+        final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
         final StringWriter writer = new StringWriter();
         mapper.writeValue(writer, principalWritten);
-        
+
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
 
         final HandlerResult res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
-        assertEquals(res.getPrincipal().getId(), "casuser");
+        assertEquals("casuser", res.getPrincipal().getId());
     }
 
     @Test
     public void verifyDisabledAccount() throws Exception {
-        server.andRespond(withStatus(HttpStatus.FORBIDDEN));
-
+        server.andRespond(withStatus(HttpStatus.FORBIDDEN).contentType(MediaType.APPLICATION_JSON));
         this.thrown.expect(AccountDisabledException.class);
-        this.thrown.expectMessage("Could not authenticate forbidden account for test");
-
         authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
     public void verifyUnauthorized() throws Exception {
         server.andRespond(withStatus(HttpStatus.UNAUTHORIZED));
-
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Could not authenticate account for test");
-
         authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
     @Test
     public void verifyNotFound() throws Exception {
         server.andRespond(withStatus(HttpStatus.NOT_FOUND));
-
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Could not locate account for test");
-
         authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 }

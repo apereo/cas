@@ -25,6 +25,6 @@ public class UpdateTicketMessageQueueCommandTests extends AbstractTicketMessageQ
         cmd.execute(ticketRegistry);
         ticket = ticketRegistry.getTicket(ticket.getId(), ticket.getClass());
         assertNotNull(ticket);
-        assertEquals(ticket.getId(), "TGT");
+        assertEquals("TGT", ticket.getId());
     }
 }

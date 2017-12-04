@@ -11,6 +11,7 @@ import org.springframework.webflow.engine.model.builder.FlowModelBuilder;
 import org.springframework.webflow.engine.model.builder.FlowModelBuilderException;
 
 import java.util.LinkedList;
+import java.util.List;
 
 /**
  * This is {@link DynamicFlowModelBuilder}.
@@ -18,6 +19,7 @@ import java.util.LinkedList;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@SuppressWarnings("JdkObsolete")
 public class DynamicFlowModelBuilder implements FlowModelBuilder {
     /**
      * The Flow model.
@@ -47,8 +49,8 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
      *
      * @param vars the vars
      */
-    public void setOnStartActions(final LinkedList<AbstractActionModel> vars) {
-        this.flowModel.setOnStartActions(vars);
+    public void setOnStartActions(final List<AbstractActionModel> vars) {
+        this.flowModel.setOnStartActions(new LinkedList<>(vars));
     }
 
     /**
@@ -65,8 +67,8 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
      *
      * @param vars the vars
      */
-    public void setVars(final LinkedList<VarModel> vars) {
-        this.flowModel.setVars(vars);
+    public void setVars(final List<VarModel> vars) {
+        this.flowModel.setVars(new LinkedList<>(vars));
     }
 
     /**
@@ -74,8 +76,8 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
      *
      * @param vars the vars
      */
-    public void setGlobalTransitions(final LinkedList<TransitionModel> vars) {
-        this.flowModel.setGlobalTransitions(vars);
+    public void setGlobalTransitions(final List<TransitionModel> vars) {
+        this.flowModel.setGlobalTransitions(new LinkedList<>(vars));
     }
 
     /**
@@ -83,8 +85,8 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
      *
      * @param states the states
      */
-    public void setStates(final LinkedList<AbstractStateModel> states) {
-        this.flowModel.setStates(states);
+    public void setStates(final List<AbstractStateModel> states) {
+        this.flowModel.setStates(new LinkedList<>(states));
     }
 
     @Override

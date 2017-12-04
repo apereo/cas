@@ -32,7 +32,7 @@ public class SimpleUrlValidator implements org.apereo.cas.web.UrlValidator {
     }
 
     /**
-     * Gets a static instance to be used internall only.
+     * Gets a static instance to be used internal only.
      *
      * @return the instance
      */

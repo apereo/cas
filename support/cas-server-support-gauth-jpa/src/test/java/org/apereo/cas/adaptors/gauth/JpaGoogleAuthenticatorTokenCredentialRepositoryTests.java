@@ -100,6 +100,6 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
     public void verifySave() {
         registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
         final OneTimeTokenAccount s = registry.get("uid");
-        assertEquals(s.getSecretKey(), "secret");
+        assertEquals("secret", s.getSecretKey());
     }
 }

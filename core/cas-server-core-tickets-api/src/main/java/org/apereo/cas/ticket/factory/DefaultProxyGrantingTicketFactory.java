@@ -50,9 +50,9 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,
-                                                    final Authentication authentication) throws AbstractTicketException {
+                                                    final Authentication authentication, final Class<T> clazz) throws AbstractTicketException {
         final String pgtId = produceTicketIdentifier();
-        return produceTicket(serviceTicket, authentication, pgtId);
+        return produceTicket(serviceTicket, authentication, pgtId, clazz);
     }
 
     /**
@@ -62,13 +62,19 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * @param serviceTicket  the service ticket
      * @param authentication the authentication
      * @param pgtId          the pgt id
+     * @param clazz          the clazz
      * @return the ticket
      */
     protected <T extends ProxyGrantingTicket> T produceTicket(final ServiceTicket serviceTicket, final Authentication authentication,
-                                                              final String pgtId) {
-        final ProxyGrantingTicket proxyGrantingTicket = serviceTicket.grantProxyGrantingTicket(pgtId,
+                                                              final String pgtId, final Class<T> clazz) {
+        final ProxyGrantingTicket result = serviceTicket.grantProxyGrantingTicket(pgtId,
                 authentication, this.ticketGrantingTicketExpirationPolicy);
-        return (T) proxyGrantingTicket;
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
+        }
+        return (T) result;
     }
 
     /**
@@ -87,7 +93,7 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
     }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return this;
     }
 }

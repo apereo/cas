@@ -17,6 +17,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
@@ -37,7 +38,7 @@ public class X509CredentialFactoryTests {
     @Test
     public void createX509Credential() throws IOException {
         final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
-        final Scanner scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile());
+        final Scanner scan = new Scanner(new ClassPathResource("ldap-crl.crt").getFile(), StandardCharsets.UTF_8.name());
         final String certStr = scan.useDelimiter("\\Z").next();
         scan.close();
         requestBody.add("cert", certStr);

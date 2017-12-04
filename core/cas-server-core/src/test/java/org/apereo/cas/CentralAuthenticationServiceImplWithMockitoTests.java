@@ -223,8 +223,6 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
     @Test
     public void verifyNonExistentServiceWhenDelegatingTicketGrantingTicket() {
         this.thrown.expect(InvalidTicketException.class);
-        this.thrown.expectMessage("bad-st");
-
         this.cas.createProxyGrantingTicket("bad-st", getAuthenticationContext());
     }
 
@@ -268,7 +266,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         assertNotNull(assertion);
 
         assertEquals(assertion.getService(), svc);
-        assertEquals(assertion.getPrimaryAuthentication().getPrincipal().getId(), PRINCIPAL);
+        assertEquals(PRINCIPAL, assertion.getPrimaryAuthentication().getPrincipal().getId());
         assertSame(2, assertion.getChainedAuthentications().size());
         IntStream.range(0, assertion.getChainedAuthentications().size())
                 .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));

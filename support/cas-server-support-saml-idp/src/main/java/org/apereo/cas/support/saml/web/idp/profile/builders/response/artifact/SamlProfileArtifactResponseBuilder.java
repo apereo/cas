@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.artifact;
 
+import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -20,7 +21,6 @@ import org.opensaml.saml.saml2.core.impl.ArtifactResponseBuilder;
 import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.soap11.Header;
-import org.springframework.ui.velocity.VelocityEngineFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -35,11 +35,12 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
     private static final long serialVersionUID = -5582616946993706815L;
 
     public SamlProfileArtifactResponseBuilder(final OpenSamlConfigBean openSamlConfigBean, final BaseSamlObjectSigner samlObjectSigner, 
-                                              final VelocityEngineFactory velocityEngineFactory, 
+                                              final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder, 
                                               final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder, 
                                               final SamlObjectEncrypter samlObjectEncrypter) {
-        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, saml2ResponseBuilder, samlObjectEncrypter);
+        super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder,
+            saml2ResponseBuilder, samlObjectEncrypter);
     }
 
     @Override
@@ -55,7 +56,7 @@ public class SamlProfileArtifactResponseBuilder extends SamlProfileSamlSoap11Res
         artifactResponse.setID(ticket.getId());
         artifactResponse.setStatus(newStatus(StatusCode.SUCCESS, "Success"));
         
-        final SAMLObject samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject());
+        final SAMLObject samlResponse = SamlUtils.transformSamlObject(configBean, ticket.getObject(), SAMLObject.class);
         artifactResponse.setMessage(samlResponse);
         
         final Header header = newSoapObject(Header.class);

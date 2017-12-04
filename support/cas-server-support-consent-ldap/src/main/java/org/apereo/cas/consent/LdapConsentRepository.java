@@ -46,7 +46,7 @@ public class LdapConsentRepository implements ConsentRepository {
     public LdapConsentRepository(final ConnectionFactory connectionFactory, final Ldap ldap) {
         this.connectionFactory = connectionFactory;
         this.ldap = ldap;
-        this.searchFilter = '(' + this.ldap.getUserFilter() + ')';
+        this.searchFilter = '(' + this.ldap.getSearchFilter() + ')';
     }
 
     @Override

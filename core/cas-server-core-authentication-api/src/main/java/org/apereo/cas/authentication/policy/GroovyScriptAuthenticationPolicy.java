@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.security.GeneralSecurityException;
+import java.util.Map;
 
 /**
  * This is {@link GroovyScriptAuthenticationPolicy}.
@@ -32,13 +33,12 @@ public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
     public boolean isSatisfiedBy(final Authentication auth) throws Exception {
         final Exception ex;
         if (ScriptingUtils.isInlineGroovyScript(script)) {
-            ex = ScriptingUtils.executeGroovyShellScript(script,
-                    CollectionUtils.wrap("principal", auth.getPrincipal(),
-                            "logger", LOGGER));
+            final Map<String, Object> args = CollectionUtils.wrap("principal", auth.getPrincipal(), "logger", LOGGER);
+            ex = ScriptingUtils.executeGroovyShellScript(script, args, Exception.class);
         } else {
             final Resource res = this.resourceLoader.getResource(script);
-            ex = ScriptingUtils.executeGroovyScript(res,
-                    new Object[]{auth.getPrincipal(), LOGGER}, Exception.class);
+            final Object[] args = {auth.getPrincipal(), LOGGER};
+            ex = ScriptingUtils.executeGroovyScript(res, args, Exception.class);
         }
 
         if (ex != null) {

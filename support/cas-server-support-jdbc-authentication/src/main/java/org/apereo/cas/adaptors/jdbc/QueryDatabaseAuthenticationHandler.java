@@ -73,8 +73,8 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             final Map<String, Object> dbFields = getJdbcTemplate().queryForMap(this.sql, username);
             final String dbPassword = (String) dbFields.get(this.fieldPassword);
 
-            if (StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword)
-                    || StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword)) {
+            if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
+                    || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             if (StringUtils.isNotBlank(this.fieldDisabled)) {
