@@ -19,6 +19,7 @@ import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.report.AuthenticationEventsController;
+import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasServerDiscoveryProfileController;
 import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.DashboardController;
@@ -37,6 +38,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
+import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
@@ -198,6 +200,10 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new LoggingOutputSocketMessagingController();
     }
 
+    @Bean
+    public InfoContributor casInfoEndpointContributor() {
+        return new CasInfoEndpointContributor();
+    }
 
     /**
      * The type Trusted devices configuration.
