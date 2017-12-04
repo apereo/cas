@@ -2188,7 +2188,7 @@ ext.libraries = [
                 }
         ],
         springcloudeureka       : [
-                dependencies.create("org.springframework.cloud:spring-cloud-starter-netflic-eureka:$springCloudEurekaVersion") {
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "com.google.code.findbugs", module: "jsr305")
                     exclude(group: "javax.servlet", module: "servlet-api")
