@@ -38,6 +38,6 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                connectionFactory, ldap.getUserFilter(), ldap.getBaseDn());
+                connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
     }
 }
