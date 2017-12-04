@@ -21,6 +21,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -54,27 +55,27 @@ public class JpaTicketRegistryConfiguration {
     @Bean
     public List<String> ticketPackagesToScan() {
         final Reflections reflections =
-                new Reflections(new ConfigurationBuilder()
-                        .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
-                        .setScanners(new SubTypesScanner(false)));
+            new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
+                .setScanners(new SubTypesScanner(false)));
         final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
         final List<String> packages = subTypes
-                .stream()
-                .map(t -> t.getPackage().getName())
-                .collect(Collectors.toList());
+            .stream()
+            .map(t -> t.getPackage().getName())
+            .collect(Collectors.toList());
         return packages;
     }
-    
+
     @Lazy
     @Bean
     public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
         return JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                        JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
-                        "jpaTicketRegistryContext",
-                        ticketPackagesToScan(),
-                        dataSourceTicket()),
-                casProperties.getTicket().getRegistry().getJpa());
+            new JpaConfigDataHolder(
+                JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
+                "jpaTicketRegistryContext",
+                ticketPackagesToScan(),
+                dataSourceTicket()),
+            casProperties.getTicket().getRegistry().getJpa());
     }
 
     @Bean
@@ -85,14 +86,14 @@ public class JpaTicketRegistryConfiguration {
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "dataSourceTicket")
     public DataSource dataSourceTicket() {
         return JpaBeans.newDataSource(casProperties.getTicket().getRegistry().getJpa());
     }
 
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog")
-                                            final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
         final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
         bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));

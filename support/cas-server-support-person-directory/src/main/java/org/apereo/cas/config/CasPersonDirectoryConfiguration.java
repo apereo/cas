@@ -172,14 +172,14 @@ public class CasPersonDirectoryConfiguration {
                 if (jdbc.isSingleRow()) {
                     LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new SingleRowJdbcPersonAttributeDao(
-                            JpaBeans.newDataSource(jdbc),
-                            jdbc.getSql()
+                        JpaBeans.newDataSource(jdbc),
+                        jdbc.getSql()
                     );
                 } else {
                     LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                            JpaBeans.newDataSource(jdbc),
-                            jdbc.getSql()
+                        JpaBeans.newDataSource(jdbc),
+                        jdbc.getSql()
                     );
                     LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
@@ -216,8 +216,8 @@ public class CasPersonDirectoryConfiguration {
                 ldapDao.setConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
-                LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getUserFilter());
-                ldapDao.setSearchFilter(ldap.getUserFilter());
+                LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
+                ldapDao.setSearchFilter(ldap.getSearchFilter());
 
                 final SearchControls constraints = new SearchControls();
                 if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
@@ -255,15 +255,15 @@ public class CasPersonDirectoryConfiguration {
     public List<IPersonAttributeDao> scriptedAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getScript()
-                .forEach(Unchecked.consumer(script -> {
-                    final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
-                    final String scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                    dao.setScriptFile(scriptFile);
-                    dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
-                    dao.setOrder(script.getOrder());
-                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
-                    list.add(dao);
-                }));
+            .forEach(Unchecked.consumer(script -> {
+                final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
+                final String scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
+                dao.setScriptFile(scriptFile);
+                dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
+                dao.setOrder(script.getOrder());
+                LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
+                list.add(dao);
+            }));
         return list;
     }
 
@@ -304,15 +304,15 @@ public class CasPersonDirectoryConfiguration {
         impl.setCacheNullResults(false);
 
         final Cache graphs = Caffeine.newBuilder()
-                .weakKeys()
-                .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
-                .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
-                .build();
+            .weakKeys()
+            .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
+            .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
+            .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
         LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-                casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+            casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
         return impl;
     }
 

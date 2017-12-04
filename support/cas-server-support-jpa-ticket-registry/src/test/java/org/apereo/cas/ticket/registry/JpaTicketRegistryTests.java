@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -75,28 +76,29 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        JpaTicketRegistryTests.JpaTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class})
+    JpaTicketRegistryTests.JpaTestConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 public class JpaTicketRegistryTests {
     /**
@@ -134,7 +136,7 @@ public class JpaTicketRegistryTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Test
     public void verifyTicketDeletionInBulk() {
         final TicketGrantingTicket newTgt = newTGT();
@@ -240,32 +242,32 @@ public class JpaTicketRegistryTests {
 
         assertEquals(CONCURRENT_SIZE, this.ticketRegistry.getTickets().size() - 1);
     }
-    
+
     static TicketGrantingTicket newTGT() {
         final Principal principal = new DefaultPrincipalFactory().createPrincipal(
-                "bob", Collections.singletonMap("displayName", "Bob"));
+            "bob", Collections.singletonMap("displayName", "Bob"));
         return new TicketGrantingTicketImpl(
-                ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
-                CoreAuthenticationTestUtils.getAuthentication(principal),
-                EXP_POLICY_TGT);
+            ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(principal),
+            EXP_POLICY_TGT);
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
         final Service testService = RegisteredServiceTestUtils.getService("https://service.example.com");
         return parent.grantServiceTicket(
-                ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
-                testService,
-                EXP_POLICY_ST,
-                false,
-                true);
+            ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
+            testService,
+            EXP_POLICY_ST,
+            false,
+            true);
     }
 
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
         try {
             return parent.grantProxyGrantingTicket(
-                    ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    EXP_POLICY_PGT);
+                ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
+                CoreAuthenticationTestUtils.getAuthentication(),
+                EXP_POLICY_PGT);
         } catch (final AbstractTicketException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -274,10 +276,10 @@ public class JpaTicketRegistryTests {
     static ProxyTicket newPT(final ProxyGrantingTicket parent) {
         final Service testService = RegisteredServiceTestUtils.getService("https://proxy-service.example.com");
         return parent.grantProxyTicket(
-                ID_GENERATOR.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX),
-                testService,
-                EXP_POLICY_PT,
-                false);
+            ID_GENERATOR.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX),
+            testService,
+            EXP_POLICY_PT,
+            false);
     }
 
     private void addTicketInTransaction(final Ticket ticket) {
