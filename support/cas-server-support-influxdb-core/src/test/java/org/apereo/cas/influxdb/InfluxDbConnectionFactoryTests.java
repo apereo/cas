@@ -53,7 +53,7 @@ public class InfluxDbConnectionFactoryTests {
         final List<InfluxEvent> resultEvents = resultMapper.toPOJO(result, InfluxEvent.class);
         assertNotNull(resultEvents);
         assertEquals(1, resultEvents.size());
-        assertEquals(resultEvents.iterator().next().hostname, "cas.example.org");
+        assertEquals("cas.example.org", resultEvents.iterator().next().hostname);
     }
 
     @Measurement(name = "events")

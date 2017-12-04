@@ -43,7 +43,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public String findEmail(final String username) {
         try {
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
@@ -85,7 +85,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
 
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
@@ -117,7 +117,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         final Map<String, String> set = new LinkedHashMap<>();
         try {
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
-            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getUserFilter(),
+            final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
                     LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                     CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
