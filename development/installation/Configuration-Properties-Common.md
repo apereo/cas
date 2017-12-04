@@ -392,6 +392,87 @@ In order to enable RSA functionality for encrypting payloads, you will need to e
 # cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
 ```
 
+## Person Directory Principal Resolution
+
+The following options related to Person Directory support in CAS when it attempts to resolve and build the authenticated principal, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.principalAttribute=
+# ${configurationKey}.returnNull=false
+# ${configurationKey}.principalResolutionFailureFatal=false
+```
+
+## InfluxDb Configuration
+
+The following options related to InfluxDb support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.url=http://localhost:8086
+# ${configurationKey}.username=root
+# ${configurationKey}.password=root
+# ${configurationKey}.retentionPolicy=autogen
+# ${configurationKey}.dropDatabase=false
+# ${configurationKey}.pointsToFlush=100
+# ${configurationKey}.batchInterval=PT5S
+# ${configurationKey}.consistencyLevel=ALL
+```
+
+## Hazelcast Configuration
+
+The following options related to Hazelcast support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.config.cluster.members=123.456.789.000,123.456.789.001
+# ${configurationKey}.config.cluster.instanceName=localhost
+# ${configurationKey}.config.cluster.port=5701
+```
+
+More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.config.cluster.evictionPolicy=LRU
+# ${configurationKey}.config.cluster.maxNoHeartbeatSeconds=300
+# ${configurationKey}.config.cluster.multicastEnabled=false
+# ${configurationKey}.config.cluster.tcpipEnabled=true
+# ${configurationKey}.config.cluster.loggingType=slf4j
+# ${configurationKey}.config.cluster.portAutoIncrement=true
+# ${configurationKey}.config.cluster.maxHeapSizePercentage=85
+# ${configurationKey}.config.cluster.backupCount=1
+# ${configurationKey}.config.cluster.asyncBackupCount=0
+# ${configurationKey}.config.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# ${configurationKey}.config.cluster.timeout=5
+# ${configurationKey}.config.cluster.multicastTrustedInterfaces=
+# ${configurationKey}.config.cluster.multicastPort=
+# ${configurationKey}.config.cluster.multicastGroup=
+# ${configurationKey}.config.cluster.multicastTimeout=2
+# ${configurationKey}.config.cluster.multicastTimeToLive=32
+```
+
+## RADIUS Configuration
+
+The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.server.nasPortId=-1
+# ${configurationKey}.server.nasRealPort=-1
+# ${configurationKey}.server.protocol=EAP_MSCHAPv2
+# ${configurationKey}.server.retries=3
+# ${configurationKey}.server.nasPortType=-1
+# ${configurationKey}.server.nasPort=-1
+# ${configurationKey}.server.nasIpAddress=
+# ${configurationKey}.server.nasIpv6Address=
+# ${configurationKey}.server.nasIdentifier=-1
+
+# ${configurationKey}.client.authenticationPort=1812
+# ${configurationKey}.client.sharedSecret=N0Sh@ar3d$ecReT
+# ${configurationKey}.client.socketTimeout=0
+# ${configurationKey}.client.inetAddress=localhost
+# ${configurationKey}.client.accountingPort=1813
+
+# ${configurationKey}.failoverOnException=false
+# ${configurationKey}.failoverOnAuthenticationFailure=false
+```
+
 ## MongoDb Configuration
 
 The following options related to MongoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
