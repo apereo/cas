@@ -140,7 +140,11 @@ subprojects {
         maven { url "https://jitpack.io" }
         jcenter()
     }
-
+    
+    tasks.withType(JavaCompile) {
+        options.compilerArgs += [ '-XepAllErrorsAsWarnings' ]
+    }
+    
     test {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()
