@@ -535,7 +535,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     }
 
     /**
-     * @deprecated Since 5.2. Use {{@link #setSearchFilter(String)} instead}.
+     * @deprecated Since 5.2. 
      * Sets user filter.
      *
      * @param filter the filter
@@ -547,7 +547,7 @@ public abstract class AbstractLdapProperties implements Serializable {
     }
 
     /**
-     * @deprecated Since 5.2. Use {{@link #getSearchFilter()} instead}.
+     * @deprecated Since 5.2.
      * Gets user filter.
      *
      * @return the user filter
