@@ -83,9 +83,10 @@ public final class SamlUtils {
     /**
      * Transform saml object t.
      *
-     * @param <T>         the type parameter
-     * @param configBean  the config bean
-     * @param xml         the xml
+     * @param <T>        the type parameter
+     * @param configBean the config bean
+     * @param xml        the xml
+     * @param clazz      the clazz
      * @return the t
      */
     public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,

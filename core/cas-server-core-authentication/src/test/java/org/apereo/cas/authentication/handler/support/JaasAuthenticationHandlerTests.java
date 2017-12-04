@@ -10,7 +10,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.LoginException;
 import java.io.File;
-import java.io.FileWriter;
 import java.io.Writer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
