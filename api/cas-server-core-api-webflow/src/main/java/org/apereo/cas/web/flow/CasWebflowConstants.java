@@ -115,11 +115,6 @@ public interface CasWebflowConstants {
     String STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
 
     /**
-     * The transition state 'sendTicketGrantingTicket'.
-     */
-    String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
-
-    /**
      * The state id 'sendTicketGrantingTicket'.
      */
     String STATE_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
