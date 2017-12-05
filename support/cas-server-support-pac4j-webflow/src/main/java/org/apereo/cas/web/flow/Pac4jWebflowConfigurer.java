@@ -62,7 +62,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         final ActionState actionState = createActionState(flow, DelegatedClientAuthenticationAction.CLIENT_ACTION,
                 createEvaluateAction(DelegatedClientAuthenticationAction.CLIENT_ACTION));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+                CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition(DelegatedClientAuthenticationAction.STOP,
                 DelegatedClientAuthenticationAction.STOP_WEBFLOW));
