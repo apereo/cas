@@ -17,7 +17,7 @@ import org.apereo.cas.configuration.model.core.sso.SsoProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
-import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
+import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
@@ -186,7 +186,7 @@ public class CasConfigurationProperties implements Serializable {
      * Settings that control filtering of the incoming http requests.
      */
     @NestedConfigurationProperty
-    private HttpWebRequestProperties httpWebRequest = new HttpWebRequestProperties();
+    private HttpRequestProperties httpWebRequest = new HttpRequestProperties();
 
     /**
      * Views and UI functionality.
@@ -450,11 +450,11 @@ public class CasConfigurationProperties implements Serializable {
         this.adminPagesSecurity = adminPagesSecurity;
     }
 
-    public HttpWebRequestProperties getHttpWebRequest() {
+    public HttpRequestProperties getHttpWebRequest() {
         return httpWebRequest;
     }
 
-    public void setHttpWebRequest(final HttpWebRequestProperties httpWebRequest) {
+    public void setHttpWebRequest(final HttpRequestProperties httpWebRequest) {
         this.httpWebRequest = httpWebRequest;
     }
 
