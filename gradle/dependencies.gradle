@@ -21,7 +21,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        oshi                  : [
+        oshi                    : [
                 dependencies.create("com.github.oshi:oshi-core:$oshiVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
@@ -502,9 +502,14 @@ ext.libraries = [
                     force = true
                 }
         ],
-        hazelcast               : dependencies.create("com.hazelcast:hazelcast:$hazelcastVersion") {
-            force = true
-        },
+        hazelcast               : [
+                dependencies.create("com.hazelcast:hazelcast:$hazelcastVersion") {
+                    force = true
+                },
+                dependencies.create("com.hazelcast:hazelcast-aws:$hazelcastAwsVersion") {
+                    force = true
+                }
+        ],
         jasypt                  : dependencies.create("org.jasypt:jasypt:$jasyptVersion") {
             exclude(group: "commons-cli", module: "commons-cli")
             force = true
@@ -624,7 +629,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        apachevelocity     : [
+        apachevelocity          : [
                 dependencies.create("org.apache.velocity:velocity-engine-core:$apacheVelocityVersion") {
                     force = true
                 }
