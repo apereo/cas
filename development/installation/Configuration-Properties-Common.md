@@ -422,30 +422,57 @@ The following options related to InfluxDb support in CAS apply equally to a numb
 The following options related to Hazelcast support in CAS apply equally to a number of CAS components given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.config.cluster.members=123.456.789.000,123.456.789.001
-# ${configurationKey}.config.cluster.instanceName=localhost
-# ${configurationKey}.config.cluster.port=5701
+# ${configurationKey}.cluster.members=123.456.789.000,123.456.789.001
+# ${configurationKey}.cluster.instanceName=localhost
+# ${configurationKey}.cluster.port=5701
 ```
 
 More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
 
 ```properties
-# ${configurationKey}.config.cluster.evictionPolicy=LRU
-# ${configurationKey}.config.cluster.maxNoHeartbeatSeconds=300
-# ${configurationKey}.config.cluster.multicastEnabled=false
-# ${configurationKey}.config.cluster.tcpipEnabled=true
-# ${configurationKey}.config.cluster.loggingType=slf4j
-# ${configurationKey}.config.cluster.portAutoIncrement=true
-# ${configurationKey}.config.cluster.maxHeapSizePercentage=85
-# ${configurationKey}.config.cluster.backupCount=1
-# ${configurationKey}.config.cluster.asyncBackupCount=0
-# ${configurationKey}.config.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
-# ${configurationKey}.config.cluster.timeout=5
-# ${configurationKey}.config.cluster.multicastTrustedInterfaces=
-# ${configurationKey}.config.cluster.multicastPort=
-# ${configurationKey}.config.cluster.multicastGroup=
-# ${configurationKey}.config.cluster.multicastTimeout=2
-# ${configurationKey}.config.cluster.multicastTimeToLive=32
+# ${configurationKey}.cluster.tcpipEnabled=true
+
+# ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
+
+# ${configurationKey}.cluster.evictionPolicy=LRU
+# ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
+# ${configurationKey}.cluster.loggingType=slf4j
+# ${configurationKey}.cluster.portAutoIncrement=true
+# ${configurationKey}.cluster.maxHeapSizePercentage=85
+# ${configurationKey}.cluster.backupCount=1
+# ${configurationKey}.cluster.asyncBackupCount=0
+# ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# ${configurationKey}.cluster.timeout=5
+```
+
+### Multicast Discovery
+
+```properties
+# ${configurationKey}.cluster.multicastTrustedInterfaces=
+# ${configurationKey}.cluster.multicastEnabled=false
+# ${configurationKey}.cluster.multicastPort=
+# ${configurationKey}.cluster.multicastGroup=
+# ${configurationKey}.cluster.multicastTimeout=2
+# ${configurationKey}.cluster.multicastTimeToLive=32
+```
+
+### AWS EC2 Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.aws.accessKey=
+# ${configurationKey}.cluster.discovery.aws.secretKey=
+
+# ${configurationKey}.cluster.discovery.aws.iamRole=
+
+# ${configurationKey}.cluster.discovery.aws.region=us-east-1
+# ${configurationKey}.cluster.discovery.aws.hostHeader=
+# ${configurationKey}.cluster.discovery.aws.securityGroupName=
+# ${configurationKey}.cluster.discovery.aws.tagKey=
+# ${configurationKey}.cluster.discovery.aws.tagValue=
+# ${configurationKey}.cluster.discovery.aws.port=-1
+# ${configurationKey}.cluster.discovery.aws.connectionTimeoutSeconds=5
 ```
 
 ## RADIUS Configuration
