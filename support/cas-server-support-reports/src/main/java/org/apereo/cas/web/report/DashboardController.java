@@ -11,7 +11,6 @@ import org.springframework.boot.actuate.endpoint.AutoConfigurationReportEndpoint
 import org.springframework.boot.actuate.endpoint.BeansEndpoint;
 import org.springframework.boot.actuate.endpoint.ConfigurationPropertiesReportEndpoint;
 import org.springframework.boot.actuate.endpoint.DumpEndpoint;
-import org.springframework.boot.actuate.endpoint.EndpointProperties;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
 import org.springframework.boot.actuate.endpoint.HealthEndpoint;
 import org.springframework.boot.actuate.endpoint.InfoEndpoint;
@@ -44,10 +43,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
 
     @Autowired(required = false)
     private ShutdownEndpoint shutdownEndpoint;
-
-    @Autowired
-    private EndpointProperties endpointProperties;
-
+    
     @Autowired
     private InfoEndpoint infoEndpoint;
 
@@ -106,6 +102,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
     public Set<EndpointBean> getEndpoints(final HttpServletRequest request,
                                           final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
+        
         final Map<String, Object> endpointsModel = getEndpointsModelMap();
         return endpointsModel.entrySet()
             .stream()
@@ -123,19 +120,18 @@ public class DashboardController extends BaseCasMvcEndpoint {
     private Map<String, Object> getEndpointsModelMap() {
         final Map<String, Object> model = new HashMap<>();
 
-        model.put("restartEndpointEnabled", isNativeEndpointEnabled(restartEndpoint));
-        model.put("shutdownEndpointEnabled", isNativeEndpointEnabled(shutdownEndpoint));
-        model.put("environmentEndpointEnabled", isNativeEndpointEnabled(environmentEndpoint));
-        model.put("serverFunctionsEnabled", isNativeEndpointEnabled(restartEndpoint) || isNativeEndpointEnabled(shutdownEndpoint));
-        model.put("autoConfigurationEndpointEnabled", isNativeEndpointEnabled(autoConfigurationReportEndpoint));
-        model.put("beansEndpointEnabled", isNativeEndpointEnabled(beansEndpoint));
-        model.put("mappingsEndpointEnabled", isNativeEndpointEnabled(requestMappingEndpoint));
-        model.put("configPropsEndpointEnabled", isNativeEndpointEnabled(configPropertiesEndpoint));
-        model.put("dumpEndpointEnabled", isNativeEndpointEnabled(dumpEndpoint));
-        model.put("infoEndpointEnabled", isNativeEndpointEnabled(infoEndpoint));
-        model.put("healthEndpointEnabled", isNativeEndpointEnabled(healthEndpoint));
-        model.put("traceEndpointEnabled", isNativeEndpointEnabled(traceEndpoint));
+        processSpringBootEndpoints(model);
+        processCasProvidedEndpoints(model);
 
+        final boolean endpointAvailable = model.entrySet()
+            .stream()
+            .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
+        model.put("dashboardEndpointsEnabled", endpointAvailable);
+        model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
+        return model;
+    }
+
+    private void processCasProvidedEndpoints(final Map<String, Object> model) {
         final MonitorProperties.Endpoints endpoints = casProperties.getMonitor().getEndpoints();
         model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
             && isEndpointCapable(endpoints.getTrustedDevices(), casProperties));
@@ -147,22 +143,31 @@ public class DashboardController extends BaseCasMvcEndpoint {
         model.put("springWebflowEndpointEnabled", isEndpointCapable(endpoints.getSpringWebflowReport(), casProperties));
         model.put("auditLogEndpointEnabled", isEndpointCapable(endpoints.getAuditEvents(), casProperties));
         model.put("configurationStateEnabled", isEndpointCapable(endpoints.getConfigurationState(), casProperties));
-        model.put("healthcheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), casProperties));
+        model.put("healthCheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), casProperties));
         model.put("metricsEndpointEnabled", isEndpointCapable(endpoints.getMetrics(), casProperties));
         model.put("servicesEndpointEnabled", isEndpointCapable(endpoints.getRegisteredServicesReport(), casProperties));
         model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar")
             && isEndpointCapable(endpoints.getDiscovery(), casProperties));
         model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), casProperties));
         model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), casProperties));
-
-        final boolean endpointAvailable = model.entrySet().stream()
-            .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
-        model.put("dashboardEndpointsEnabled", endpointAvailable);
-        model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
-        return model;
     }
 
-    private boolean isNativeEndpointEnabled(final AbstractEndpoint endpoint) {
+    private void processSpringBootEndpoints(final Map<String, Object> model) {
+        model.put("restartEndpointEnabled", isSpringBootEndpointEnabled(restartEndpoint));
+        model.put("shutdownEndpointEnabled", isSpringBootEndpointEnabled(shutdownEndpoint));
+        model.put("environmentEndpointEnabled", isSpringBootEndpointEnabled(environmentEndpoint));
+        model.put("serverFunctionsEnabled", isSpringBootEndpointEnabled(restartEndpoint) || isSpringBootEndpointEnabled(shutdownEndpoint));
+        model.put("autoConfigurationEndpointEnabled", isSpringBootEndpointEnabled(autoConfigurationReportEndpoint));
+        model.put("beansEndpointEnabled", isSpringBootEndpointEnabled(beansEndpoint));
+        model.put("mappingsEndpointEnabled", isSpringBootEndpointEnabled(requestMappingEndpoint));
+        model.put("configPropsEndpointEnabled", isSpringBootEndpointEnabled(configPropertiesEndpoint));
+        model.put("dumpEndpointEnabled", isSpringBootEndpointEnabled(dumpEndpoint));
+        model.put("infoEndpointEnabled", isSpringBootEndpointEnabled(infoEndpoint));
+        model.put("healthEndpointEnabled", isSpringBootEndpointEnabled(healthEndpoint));
+        model.put("traceEndpointEnabled", isSpringBootEndpointEnabled(traceEndpoint));
+    }
+
+    private boolean isSpringBootEndpointEnabled(final AbstractEndpoint endpoint) {
         return endpoint != null && endpoint.isEnabled();
     }
 
