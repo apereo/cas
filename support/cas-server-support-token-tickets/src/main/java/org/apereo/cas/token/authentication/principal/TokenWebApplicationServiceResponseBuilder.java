@@ -21,12 +21,11 @@ import java.util.Map;
 public class TokenWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
-    private final ServicesManager servicesManager;
     private final TokenTicketBuilder tokenTicketBuilder;
 
     public TokenWebApplicationServiceResponseBuilder(final ServicesManager servicesManager,
                                                      final TokenTicketBuilder tokenTicketBuilder) {
-        this.servicesManager = servicesManager;
+        super(servicesManager);
         this.tokenTicketBuilder = tokenTicketBuilder;
     }
 
