@@ -3,6 +3,7 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -13,9 +14,34 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-hazelcast-ticket-registry")
+@RequiresModule(name = "cas-server-support-hazelcast-core")
 public class HazelcastClusterProperties implements Serializable {
     private static final long serialVersionUID = 1817784607045775145L;
+    /**
+     * With PartitionGroupConfig, you can control how primary and backup partitions are mapped to physical Members.
+     * Hazelcast will always place partitions on different partition groups so as to provide redundancy.
+     * Accepted value are: {@code PER_MEMBER, HOST_AWARE, CUSTOM, ZONE_AWARE, SPI}.
+     * In all cases a partition will never be created on the same group. If there are more partitions defined than
+     * there are partition groups, then only those partitions, up to the number of partition groups, will be created.
+     * For example, if you define 2 backups, then with the primary, that makes 3. If you have only two partition groups
+     * only two will be created.
+     * <ul>
+     * <li>{@code}PER_MEMBER Partition Groups}: This is the default partition scheme and is used if no other scheme is defined.
+     * Each Member is in a group of its own.</li>
+     * <li>{@code}HOST_AWARE Partition Groups}: In this scheme, a group corresponds to a host, based on its IP address.
+     * Partitions will not be written to any other members on the same host. This scheme provides good redundancy when multiple
+     * instances are being run on the same host.</li>
+     * <li>{@code}CUSTOM Partition Groups}: In this scheme, IP addresses, or IP address ranges, are allocated to groups.
+     * Partitions are not written to the same
+     * group. This is very useful for ensuring partitions are written to different racks or even availability zones.</li>
+     * <li>{@code}ZONE_AWARE Partition Groups}:  In this scheme, groups are allocated according to the metadata provided
+     * by Discovery SPI Partitions are not written to the same group. This is very useful for ensuring partitions are written to availability
+     * zones or different racks without providing the IP addresses to the config ahead.</li>
+     * <li>{@code}SPI Partition Groups}:  In this scheme, groups are allocated
+     * according to the implementation provided by Discovery SPI.</li>
+     * </ul>
+     */
+    private String partitionMemberGroupType;
     /**
      * Hazelcast has a flexible logging configuration and doesn't depend on any logging framework except JDK logging.
      * It has in-built adaptors for a number of logging frameworks and also supports custom loggers by providing logging interfaces.
@@ -168,6 +194,12 @@ public class HazelcastClusterProperties implements Serializable {
      */
     private int multicastTimeToLive = 32;
 
+    /**
+     * Describe discovery strategies for Hazelcast.
+     */
+    @NestedConfigurationProperty
+    private HazelcastDiscoveryProperties discovery = new HazelcastDiscoveryProperties();
+    
     public int getBackupCount() {
         return backupCount;
     }
@@ -328,4 +360,19 @@ public class HazelcastClusterProperties implements Serializable {
         this.ipv4Enabled = ipv4Enabled;
     }
 
+    public HazelcastDiscoveryProperties getDiscovery() {
+        return discovery;
+    }
+
+    public void setDiscovery(final HazelcastDiscoveryProperties discovery) {
+        this.discovery = discovery;
+    }
+
+    public String getPartitionMemberGroupType() {
+        return partitionMemberGroupType;
+    }
+
+    public void setPartitionMemberGroupType(final String partitionMemberGroupType) {
+        this.partitionMemberGroupType = partitionMemberGroupType;
+    }
 }
