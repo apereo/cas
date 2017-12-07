@@ -15,7 +15,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
-- [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/01/moncfgsecvulndisc/)
+- [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
 - [Oct 24 2016 Vulnerability Disclosure](https://apereo.github.io/2016/10/24/servlvulndisc/)
 - [Apr 8 2016 Vulnerability Disclosure](https://apereo.github.io/2016/04/08/commonsvulndisc/)
 
