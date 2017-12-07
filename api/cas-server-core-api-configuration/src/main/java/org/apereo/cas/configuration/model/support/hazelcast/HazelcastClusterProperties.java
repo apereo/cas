@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 import java.util.List;
@@ -14,9 +15,35 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RequiresModule(name = "cas-server-support-hazelcast-ticket-registry")
+@RequiresModule(name = "cas-server-support-hazelcast-core")
 public class HazelcastClusterProperties implements Serializable {
     private static final long serialVersionUID = 1817784607045775145L;
+
+    /**
+     * With PartitionGroupConfig, you can control how primary and backup partitions are mapped to physical Members.
+     * Hazelcast will always place partitions on different partition groups so as to provide redundancy.
+     * Accepted value are: {@code PER_MEMBER, HOST_AWARE, CUSTOM, ZONE_AWARE, SPI}.
+     * In all cases a partition will never be created on the same group. If there are more partitions defined than
+     * there are partition groups, then only those partitions, up to the number of partition groups, will be created.
+     * For example, if you define 2 backups, then with the primary, that makes 3. If you have only two partition groups
+     * only two will be created.
+     * <ul>
+     * <li>{@code}PER_MEMBER Partition Groups}: This is the default partition scheme and is used if no other scheme is defined.
+     * Each Member is in a group of its own.</li>
+     * <li>{@code}HOST_AWARE Partition Groups}: In this scheme, a group corresponds to a host, based on its IP address.
+     * Partitions will not be written to any other members on the same host. This scheme provides good redundancy when multiple
+     * instances are being run on the same host.</li>
+     * <li>{@code}CUSTOM Partition Groups}: In this scheme, IP addresses, or IP address ranges, are allocated to groups.
+     * Partitions are not written to the same
+     * group. This is very useful for ensuring partitions are written to different racks or even availability zones.</li>
+     * <li>{@code}ZONE_AWARE Partition Groups}:  In this scheme, groups are allocated according to the metadata provided
+     * by Discovery SPI Partitions are not written to the same group. This is very useful for ensuring partitions are written to availability
+     * zones or different racks without providing the IP addresses to the config ahead.</li>
+     * <li>{@code}SPI Partition Groups}:  In this scheme, groups are allocated
+     * according to the implementation provided by Discovery SPI.</li>
+     * </ul>
+     */
+    private String partitionMemberGroupType;
     /**
      * Hazelcast has a flexible logging configuration and doesn't depend on any logging framework except JDK logging.
      * It has in-built adaptors for a number of logging frameworks and also supports custom loggers by providing logging interfaces.
@@ -72,7 +99,7 @@ public class HazelcastClusterProperties implements Serializable {
      * A member can be a comma separated string, e..g '10.11.12.1,10.11.12.2' which indicates multiple members are going to be added.
      */
     @RequiredProperty
-    private List<String> members = Stream.of("localhost").collect(Collectors.toList());;
+    private List<String> members = Stream.of("localhost").collect(Collectors.toList());
     /**
      * Sets the maximum size of the map.
      */
@@ -121,20 +148,17 @@ public class HazelcastClusterProperties implements Serializable {
      * fire and forget and do not require acknowledgements; the backup operations are performed at some point in time.
      */
     private int asyncBackupCount;
-
     /**
      * Connection timeout in seconds for the TCP/IP config
      * and members joining the cluster.
      */
     private int timeout = 5;
-
     /**
      * IPv6 support has been switched off by default, since some platforms
      * have issues in use of IPv6 stack. And some other platforms such as Amazon AWS have no support at all. To enable IPv6 support
      * set this setting to false.
      */
     private boolean ipv4Enabled = true;
-
     /**
      * Multicast trusted interfaces for discovery.
      * With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication.
@@ -168,6 +192,12 @@ public class HazelcastClusterProperties implements Serializable {
      * This is the default time-to-live for multicast packets sent out on the socket
      */
     private int multicastTimeToLive = 32;
+
+    /**
+     * Describe discovery strategies for Hazelcast.
+     */
+    @NestedConfigurationProperty
+    private HazelcastDiscoveryProperties discovery = new HazelcastDiscoveryProperties();
 
     public int getBackupCount() {
         return backupCount;
@@ -329,4 +359,19 @@ public class HazelcastClusterProperties implements Serializable {
         this.ipv4Enabled = ipv4Enabled;
     }
 
+    public String getPartitionMemberGroupType() {
+        return partitionMemberGroupType;
+    }
+
+    public void setPartitionMemberGroupType(final String partitionMemberGroupType) {
+        this.partitionMemberGroupType = partitionMemberGroupType;
+    }
+
+    public HazelcastDiscoveryProperties getDiscovery() {
+        return discovery;
+    }
+
+    public void setDiscovery(final HazelcastDiscoveryProperties discovery) {
+        this.discovery = discovery;
+    }
 }
