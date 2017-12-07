@@ -56,7 +56,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * An abstract builder to serve as the template handler
  * for SAML1 and SAML2 responses.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
