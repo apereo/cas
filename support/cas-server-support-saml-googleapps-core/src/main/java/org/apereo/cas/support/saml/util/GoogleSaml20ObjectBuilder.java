@@ -17,7 +17,7 @@ import java.lang.reflect.Field;
  * attempts to build the saml response. QName based on the spec described here:
  * https://developers.google.com/google-apps/sso/saml_reference_implementation_web#samlReferenceImplementationWebSetupChangeDomain
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1.0
  */
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {

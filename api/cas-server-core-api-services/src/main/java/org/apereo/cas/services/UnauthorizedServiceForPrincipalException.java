@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
  * attribute release policy that would otherwise grant access
  * to the service that is requesting authentication.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {

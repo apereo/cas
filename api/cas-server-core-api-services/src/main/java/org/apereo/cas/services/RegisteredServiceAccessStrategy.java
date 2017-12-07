@@ -12,7 +12,7 @@ import java.util.Map;
  * that can decide if a service is recognized and authorized to participate
  * in the CAS protocol flow during authentication/validation events.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
