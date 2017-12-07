@@ -32,8 +32,7 @@ public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceRes
         parameters.put(SamlProtocolConstants.CONST_PARAM_ARTIFACT, ticketId);
         return buildRedirect(service, parameters);
     }
-
-
+    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
