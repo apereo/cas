@@ -9,7 +9,7 @@ Various properties can be specified in CAS [either inside configuration files or
 line switches](Configuration-Management.html#overview). This section provides a list common CAS properties and
 references to the underlying modules that consume them.
 
-<div class="alert alert-info"><strong>Be Selective</strong><p>
+<div class="alert alert-warning"><strong>Be Selective</strong><p>
 This section is meant as a guide only. Do <strong>NOT</strong> copy/paste the entire collection of settings into your CAS configuration; rather pick only the properties that you need. Do NOT enable settings unless you are certain of their purpose and do NOT copy settings into your configuration only to keep them as <i>reference</i>. All these ideas lead to upgrade headaches, maintenance nightmares and premature aging.</p></div>
 
 Note that property names can be specified
@@ -941,8 +941,7 @@ Satisfied if and only if the requesting principal has not already authenticated 
 Otherwise the authentication event is blocked, preventing multiple logins. 
 
 <div class="alert alert-warning"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
-as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established
-a authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
+as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established a authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
 
 ```properties
 # cas.authn.policy.uniquePrincipal.enabled=true
