@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.HttpRequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -18,6 +20,15 @@ import java.util.Map;
  */
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     private static final long serialVersionUID = -4584738964007702423L;
+
+    /**
+     * Services manager instance.
+     */
+    protected final ServicesManager servicesManager;
+
+    public AbstractWebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
+        this.servicesManager = servicesManager;
+    }
 
     /**
      * Build redirect.
@@ -56,11 +67,18 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     /**
      * Determine response type response.
      *
+     * @param finalService the final service
      * @return the response type
      */
-    protected Response.ResponseType getWebApplicationServiceResponseType() {
+    protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
         final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
-        final String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        if (StringUtils.isBlank(method)) {
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(finalService);
+            if (registeredService != null) {
+                method = registeredService.getResponseType();
+            }
+        }
 
         if (StringUtils.isBlank(method)) {
             return Response.ResponseType.REDIRECT;

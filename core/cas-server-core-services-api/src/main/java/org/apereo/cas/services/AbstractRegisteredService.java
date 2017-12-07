@@ -74,6 +74,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(length = 255, updatable = true, insertable = true, nullable = true)
     private String privacyUrl;
 
+    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    private String responseType;
+
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -246,6 +249,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
             .append(this.privacyUrl, that.privacyUrl)
             .append(this.contacts, that.contacts)
             .append(this.expirationPolicy, that.expirationPolicy)
+            .append(this.responseType, that.responseType)
             .isEquals();
     }
 
@@ -273,6 +277,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
             .append(this.privacyUrl)
             .append(this.contacts)
             .append(this.expirationPolicy)
+            .append(this.responseType)
             .toHashCode();
     }
 
@@ -359,6 +364,15 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     }
 
     @Override
+    public String getResponseType() {
+        return responseType;
+    }
+
+    public void setResponseType(final String responseType) {
+        this.responseType = responseType;
+    }
+
+    @Override
     public AbstractRegisteredService clone() {
         final AbstractRegisteredService clone = newInstance();
         clone.copyFrom(this);
@@ -377,6 +391,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setName(source.getName());
         setServiceId(source.getServiceId());
         setTheme(source.getTheme());
+        setResponseType(source.getResponseType());
         setEvaluationOrder(source.getEvaluationOrder());
         setUsernameAttributeProvider(source.getUsernameAttributeProvider());
         setLogoutType(source.getLogoutType());
@@ -436,6 +451,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         builder.append("privacyUrl", this.privacyUrl);
         builder.append("contacts", this.contacts);
         builder.append("expirationPolicy", this.expirationPolicy);
+        builder.append("responseType", this.responseType);
         return builder.toString();
     }
 
