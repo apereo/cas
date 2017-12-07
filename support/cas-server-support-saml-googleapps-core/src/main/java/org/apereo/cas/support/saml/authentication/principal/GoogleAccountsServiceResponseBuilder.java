@@ -46,6 +46,7 @@ import java.util.Map;
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
+    
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
 
     private PrivateKey privateKey;
@@ -64,17 +65,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private String casServerPrefix;
 
-    /**
-     * Instantiates a new Google accounts service response builder.
-     *
-     * @param privateKeyLocation the private key
-     * @param publicKeyLocation  the public key
-     * @param keyAlgorithm       the key algorithm
-     * @param servicesManager    the services manager
-     * @param samlObjectBuilder  the saml object builder
-     * @param skewAllowance      the skew allowance
-     * @param casServerPrefix    the cas server prefix
-     */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,

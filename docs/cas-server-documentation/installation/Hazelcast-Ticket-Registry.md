@@ -9,7 +9,7 @@ Hazelcast Ticket Registry is a distributed ticket registry implementation
 based on [Hazelcast distributed grid library](http://hazelcast.org/). The registry implementation is
 cluster-aware and is able to auto-join a cluster of all the CAS nodes that expose this registry.
 Hazelcast will use port auto-increment feature to assign a TCP port to each member of a cluster starting
-from initially provided arbitrary port (`5701` by default).
+from initially provided arbitrary port, which is typically `5701` by default.
 
 Hazelcast will evenly distribute the ticket data among all the members of a cluster in a very
 efficient manner. Also, by default, the data collection on each node is configured with 1 backup copy,
@@ -27,12 +27,9 @@ Support is enabled by the following module:
 </dependency>
 ```
 
-
 ## Configuration
 
-This module has a configuration strategy which by default auto-configures a hazelcast instance used by the ticket registry
-implementation to build and retrieve Hazelcast's maps for its distributed tickets storage. Some aspects of hazelcast
-configuration in this auto-configuration mode are controlled by CAS properties.
+This module has a configuration strategy which by default auto-configures a hazelcast instance used by the ticket registry implementation to build and retrieve Hazelcast's maps for its distributed tickets storage. Some aspects of hazelcast configuration in this auto-configuration mode are controlled by CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#hazelcast-ticket-registry).
 
@@ -40,7 +37,11 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 </p></div>
 
 For more information on the Hazelcast configuration options available,
-refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.7/manual/html-single/index.html#hazelcast-configuration)
+refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.9.1/manual/html-single/index.html#hazelcast-configuration)
+
+## AWS EC2 Auto Discovery
+
+Hazelcast support in CAS may handle EC2 auto-discovery automatically. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. You optionally also have the ability to specify partitioning group that would be zone aware. When using the zone-aware configuration, backups are created in the other AZs. Each zone will be accepted as one partition group. Using the AWS Discovery cability requires that you turn off and disable multicast and TCP/IP config in the CAS settings, which should be done automatically by CAS at runtime.
 
 ## Multicast Auto Discovery
 
