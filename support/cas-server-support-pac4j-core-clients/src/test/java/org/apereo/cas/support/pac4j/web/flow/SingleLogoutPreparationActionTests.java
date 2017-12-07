@@ -11,7 +11,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.service.ProfileService;
+import org.pac4j.core.store.Store;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -71,13 +71,13 @@ public class SingleLogoutPreparationActionTests {
         profile.setClientName("UnitTestClient");
         profile.setId("Profile-1");
 
-        final ProfileService<CommonProfile> profileServiceMock = mock(ProfileService.class);
-        when(profileServiceMock.findByLinkedId(TGT_ID)).thenReturn(profile);
+        final Store<String, CommonProfile> profileStoreMock = mock(Store.class);
+        when(profileStoreMock.get(TGT_ID)).thenReturn(profile);
 
         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
         when(ticketGrantingTicketCookieGeneratorMock.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn(TGT_ID);
 
-        actionUnderTest = new SingleLogoutPreparationAction(ticketGrantingTicketCookieGeneratorMock, profileServiceMock);
+        actionUnderTest = new SingleLogoutPreparationAction(ticketGrantingTicketCookieGeneratorMock, profileStoreMock);
     }
 
 }

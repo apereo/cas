@@ -25,7 +25,7 @@ import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.service.ProfileService;
+import org.pac4j.core.store.Store;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -431,8 +431,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     public Action pac4jSingleLogoutPreparationAction(
             @Qualifier("ticketGrantingTicketCookieGenerator") final CookieRetrievingCookieGenerator tgtCookieGenerator,
-            @Qualifier("pac4jProfileService") final ProfileService<CommonProfile> pac4jProfileService) {
-        return new SingleLogoutPreparationAction(tgtCookieGenerator, pac4jProfileService);
+            @Qualifier("pac4jProfileStore") final Store<String, CommonProfile> pac4jProfileStore) {
+        return new SingleLogoutPreparationAction(tgtCookieGenerator, pac4jProfileStore);
     }
 
     @RefreshScope

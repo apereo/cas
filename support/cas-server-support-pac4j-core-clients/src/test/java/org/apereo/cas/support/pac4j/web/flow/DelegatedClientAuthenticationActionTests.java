@@ -21,7 +21,7 @@ import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.creator.ProfileCreator;
-import org.pac4j.core.profile.service.ProfileService;
+import org.pac4j.core.store.Store;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
@@ -91,7 +91,7 @@ public class DelegatedClientAuthenticationActionTests {
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
             mock(AuthenticationSystemSupport.class), mock(CentralAuthenticationService.class),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
-            false, getServicesManagerWith(service), mock(ProfileService.class));
+            false, getServicesManagerWith(service), mock(Store.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
             "theme", "locale", false,
-            getServicesManagerWith(service), mock(ProfileService.class));
+            getServicesManagerWith(service), mock(Store.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

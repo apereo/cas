@@ -24,7 +24,7 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.profile.service.ProfileService;
+import org.pac4j.core.store.Store;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -96,20 +96,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final String themeParamName;
     private final String localParamName;
     private final boolean autoRedirect;
-    private final ProfileService<CommonProfile> profileService;
+    private final Store<String, CommonProfile> profileStore;
     private final ServicesManager servicesManager;
 
     public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
                                                final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
                                                final String localParamName, final boolean autoRedirect, final ServicesManager servicesManager,
-                                               final ProfileService<CommonProfile> profileService) {
+                                               final Store<String, CommonProfile> profileStore) {
         Assert.notNull(clients, "The clients cannot be null.");
         Assert.notNull(authenticationSystemSupport, "The authentication system support cannot be null.");
         Assert.notNull(centralAuthenticationService, "The central authentication service cannot be null.");
         Assert.notNull(themeParamName, "The theme parameter name cannot be null.");
         Assert.notNull(localParamName, "The local parameter name cannot be null.");
         Assert.notNull(servicesManager, "The services manager cannot be null.");
-        Assert.notNull(profileService, "The profile service cannot be null.");
+        Assert.notNull(profileStore, "The profile store cannot be null.");
         this.clients = clients;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.centralAuthenticationService = centralAuthenticationService;
@@ -117,7 +117,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         this.localParamName = localParamName;
         this.autoRedirect = autoRedirect;
         this.servicesManager = servicesManager;
-        this.profileService = profileService;
+        this.profileStore = profileStore;
     }
 
     @Override
@@ -366,8 +366,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private void saveProfileIntoPersistentStore(final BaseClient<Credentials, ? extends UserProfile> client, final Credentials credentials,
             final WebContext webContext, final String tgtId) throws HttpAction {
         final CommonProfile profile = client.getUserProfile(credentials, webContext);
-        profile.setLinkedId(tgtId);
-        profileService.create(profile, null); // Do not use any password
+        profileStore.set(tgtId, profile);
     }
 
 
