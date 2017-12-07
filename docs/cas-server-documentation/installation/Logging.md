@@ -257,7 +257,7 @@ messages needs to be routed over to this instance:
 ...
 <Appenders>
     <Syslog name="SYSLOG" format="RFC5424" host="localhost" port="8514"
-            protocol="TCP" appName="MyApp" includeMDC="true"
+            protocol="TCP" appName="MyApp" includeMDC="true" mdcId="mdc"
             facility="LOCAL0" enterpriseNumber="18060" newLine="true"
             messageId="Audit" id="App"/>
 </Appenders>
