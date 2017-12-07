@@ -44,7 +44,7 @@ import java.util.Map;
 /**
  * This is the response builder for Saml1 Protocol.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {

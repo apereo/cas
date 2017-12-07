@@ -47,7 +47,7 @@ import java.util.stream.IntStream;
  * This is {@link AbstractSaml20ObjectBuilder}.
  * to build saml2 objects.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {

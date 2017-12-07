@@ -6,7 +6,7 @@ import static org.junit.Assert.*;
 
 /**
  * This is test cases for {@link InMemoryServiceRegistry}.
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1.0
  */
 public class InMemoryServiceRegistryTests {

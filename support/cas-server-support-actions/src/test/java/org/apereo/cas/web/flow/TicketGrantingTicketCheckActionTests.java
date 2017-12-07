@@ -18,7 +18,7 @@ import static org.junit.Assert.*;
 /**
  * Handles tests for {@link TicketGrantingTicketCheckAction}.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1.0
  */
 @DirtiesContext

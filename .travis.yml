@@ -56,6 +56,5 @@ addons:
     project:
       name: "apereo/cas"
       description: "Apereo CAS"
-    notification_email: mmoayyed@unicon.net
-    build_command: "./gradlew build -s --parallel -x javadoc -x check"
+    build_command: "sudo ./gradlew build -s --parallel -x javadoc -x check"
     branch_pattern: master

@@ -20,7 +20,7 @@ import static org.junit.Assert.*;
  * This is test cases for
  * {@link DefaultRegisteredServiceAccessStrategy}.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public class DefaultRegisteredServiceAccessStrategyTests {

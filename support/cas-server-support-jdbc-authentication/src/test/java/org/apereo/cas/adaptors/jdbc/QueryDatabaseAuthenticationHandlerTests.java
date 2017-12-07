@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
 /**
  * This is tests for {@link QueryDatabaseAuthenticationHandler}.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.0.0
  */
 @RunWith(SpringRunner.class)

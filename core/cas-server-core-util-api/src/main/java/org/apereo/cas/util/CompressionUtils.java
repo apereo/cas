@@ -22,7 +22,7 @@ import java.util.zip.InflaterInputStream;
  * that encapsulates common compression calls and operations
  * in one spot.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public final class CompressionUtils {
