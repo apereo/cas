@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.util.HttpRequestUtils;
@@ -46,11 +47,12 @@ public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceR
      * @param serverManager                the server manager
      * @param centralAuthenticationService the central authentication service
      */
-    public OpenIdServiceResponseBuilder(final String openIdPrefixUrl,
-                                        final ServerManager serverManager,
-                                        final CentralAuthenticationService centralAuthenticationService) {
-        this.openIdPrefixUrl = openIdPrefixUrl;
+    public OpenIdServiceResponseBuilder(final String openIdPrefixUrl, final ServerManager serverManager,
+                                        final CentralAuthenticationService centralAuthenticationService,
+                                        final ServicesManager servicesManager) {
+        super(servicesManager);
         this.serverManager = serverManager;
+        this.openIdPrefixUrl = openIdPrefixUrl;
         this.centralAuthenticationService = centralAuthenticationService;
     }
 

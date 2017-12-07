@@ -4,6 +4,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.services.ServicesManager;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -20,12 +21,12 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -851233878780818494L;
 
-    public WebApplicationServiceResponseBuilder() {
+    public WebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
+        super(servicesManager);
     }
 
     @Override
-    public Response build(final WebApplicationService service, final String serviceTicketId,
-                          final Authentication authentication) {
+    public Response build(final WebApplicationService service, final String serviceTicketId, final Authentication authentication) {
         final Map<String, String> parameters = new HashMap<>();
         if (StringUtils.hasText(serviceTicketId)) {
             parameters.put(CasProtocolConstants.PARAMETER_TICKET, serviceTicketId);
@@ -33,7 +34,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
         final WebApplicationService finalService = buildInternal(service, parameters);
 
-        final Response.ResponseType responseType = getWebApplicationServiceResponseType();
+        final Response.ResponseType responseType = getWebApplicationServiceResponseType(finalService);
         if (responseType == Response.ResponseType.POST) {
             return buildPost(finalService, parameters);
         }
@@ -70,15 +71,15 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
             return false;
         }
         return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
+            .appendSuper(super.equals(obj))
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
+            .appendSuper(super.hashCode())
+            .toHashCode();
     }
 
     @Override

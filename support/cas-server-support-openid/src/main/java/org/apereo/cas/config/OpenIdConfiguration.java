@@ -121,7 +121,7 @@ public class OpenIdConfiguration {
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
     private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
-    
+
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
@@ -141,7 +141,8 @@ public class OpenIdConfiguration {
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
-        return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
+        final String openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager);
     }
 
 
@@ -161,7 +162,7 @@ public class OpenIdConfiguration {
     @Bean
     public Action openIdSingleSignOnAction() {
         return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
+            adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
     }
 
     @Bean
@@ -171,17 +172,16 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Bean
-    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor")
-                                                                       final ArgumentExtractor argumentExtractor) {
+    public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final OpenIdValidateController c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
-                authenticationSystemSupport, servicesManager,
-                centralAuthenticationService, proxy20Handler,
-                argumentExtractor, multifactorTriggerSelectionStrategy,
-                authenticationContextValidator, cas3ServiceJsonView,
-                casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                serverManager(), validationAuthorizers);
-        
+            authenticationSystemSupport, servicesManager,
+            centralAuthenticationService, proxy20Handler,
+            argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, cas3ServiceJsonView,
+            casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
+            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            serverManager(), validationAuthorizers);
+
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 

@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 
 import java.util.HashMap;
@@ -20,6 +21,10 @@ import java.util.Map;
 public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584738964007702003L;
+
+    public SamlServiceResponseBuilder(final ServicesManager servicesManager) {
+        super(servicesManager);
+    }
 
     @Override
     public Response build(final WebApplicationService service, final String ticketId, final Authentication authentication) {

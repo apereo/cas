@@ -52,10 +52,10 @@ public class CasCoreServicesConfiguration {
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
-    
+
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -87,8 +87,10 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     @Bean
-    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder() {
-        return new WebApplicationServiceResponseBuilder();
+    @Autowired
+    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(@Qualifier("servicesManager")
+                                                                                           final ServicesManager servicesManager) {
+        return new WebApplicationServiceResponseBuilder(servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "registeredServiceCipherExecutor")
@@ -125,14 +127,14 @@ public class CasCoreServicesConfiguration {
     public RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy() {
         return new NoOpRegisteredServiceReplicationStrategy();
     }
-    
+
     @ConditionalOnMissingBean(name = "serviceRegistryDao")
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-                + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
-                + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
+            + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
+            + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
 
         final List<RegisteredService> services = new ArrayList<>();
         if (applicationContext.containsBean("inMemoryRegisteredServices")) {

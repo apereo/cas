@@ -120,7 +120,7 @@ public class SamlConfiguration {
     @ConditionalOnMissingBean(name = "samlServiceResponseBuilder")
     @Bean
     public ResponseBuilder samlServiceResponseBuilder() {
-        return new SamlServiceResponseBuilder();
+        return new SamlServiceResponseBuilder(servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "saml10ObjectBuilder")

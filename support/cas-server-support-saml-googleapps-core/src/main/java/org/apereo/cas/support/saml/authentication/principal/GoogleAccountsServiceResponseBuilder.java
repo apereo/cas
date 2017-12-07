@@ -1,8 +1,5 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -51,31 +48,20 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
     private static final long serialVersionUID = -4584732364007702423L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
 
-    @JsonIgnore
     private PrivateKey privateKey;
 
-    @JsonIgnore
     private PublicKey publicKey;
 
-    @JsonIgnore
-    private ServicesManager servicesManager;
-
-    @JsonProperty
     private final String publicKeyLocation;
 
-    @JsonProperty
     private final String privateKeyLocation;
 
-    @JsonProperty
     private final String keyAlgorithm;
 
-    @JsonProperty
     private GoogleSaml20ObjectBuilder samlObjectBuilder;
 
-    @JsonProperty
     private int skewAllowance;
 
-    @JsonProperty
     private String casServerPrefix;
 
     /**
@@ -90,43 +76,25 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
      * @param casServerPrefix    the cas server prefix
      */
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
-                                                final String publicKeyLocation,
-                                                final String keyAlgorithm,
+                                                final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
                                                 final GoogleSaml20ObjectBuilder samlObjectBuilder,
-                                                final int skewAllowance,
-                                                final String casServerPrefix) {
-
-        this(privateKeyLocation, publicKeyLocation, keyAlgorithm, skewAllowance);
+                                                final int skewAllowance, final String casServerPrefix) {
+        super(servicesManager);
+        this.privateKeyLocation = privateKeyLocation;
+        this.publicKeyLocation = publicKeyLocation;
+        this.keyAlgorithm = keyAlgorithm;
+        this.skewAllowance = skewAllowance;
         this.samlObjectBuilder = samlObjectBuilder;
-        this.servicesManager = servicesManager;
         this.casServerPrefix = casServerPrefix;
-    }
 
-    /**
-     * Instantiates a new Google accounts service response builder.
-     *
-     * @param privateKeyLocation the private key
-     * @param publicKeyLocation  the public key
-     * @param keyAlgorithm       the key algorithm
-     * @param skewAllowance      the skew allowance
-     */
-    @JsonCreator
-    public GoogleAccountsServiceResponseBuilder(@JsonProperty("privateKeyLocation") final String privateKeyLocation,
-                                                @JsonProperty("publicKeyLocation") final String publicKeyLocation,
-                                                @JsonProperty("keyAlgorithm") final String keyAlgorithm,
-                                                @JsonProperty("skewAllowance") final int skewAllowance) {
         try {
-            this.privateKeyLocation = privateKeyLocation;
-            this.publicKeyLocation = publicKeyLocation;
-            this.keyAlgorithm = keyAlgorithm;
-            this.skewAllowance = skewAllowance;
-
             createGoogleAppsPrivateKey();
             createGoogleAppsPublicKey();
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
+
     }
 
     @Override
@@ -157,26 +125,26 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
-        
+
         final Principal principal = authentication.getPrincipal();
         final String userId = registeredService.getUsernameAttributeProvider()
-                .resolveUsername(principal, service, registeredService);
+            .resolveUsername(principal, service, registeredService);
 
         final org.opensaml.saml.saml2.core.Response response = this.samlObjectBuilder.newResponse(
-                this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
+            this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
         final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceNative().nextLong()));
         final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
-                notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
+            notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
 
         final Conditions conditions = this.samlObjectBuilder.newConditions(notBeforeIssueInstant,
-                currentDateTime.plusSeconds(this.skewAllowance), service.getId());
+            currentDateTime.plusSeconds(this.skewAllowance), service.getId());
         assertion.setConditions(conditions);
-        
+
         final Subject subject = this.samlObjectBuilder.newSubject(NameID.EMAIL, userId,
-                service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
+            service.getId(), currentDateTime.plusSeconds(this.skewAllowance), service.getRequestId(), null);
         assertion.setSubject(subject);
 
         response.getAssertions().add(assertion);
@@ -223,7 +191,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         bean.setAlgorithm(this.keyAlgorithm);
         LOGGER.debug("Loading Google Apps private key from [{}] with key algorithm [{}]",
-                bean.getLocation(), bean.getAlgorithm());
+            bean.getLocation(), bean.getAlgorithm());
         bean.afterPropertiesSet();
         LOGGER.debug("Creating Google Apps private key instance via [{}]", this.privateKeyLocation);
         this.privateKey = bean.getObject();
@@ -251,7 +219,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         bean.setAlgorithm(this.keyAlgorithm);
         LOGGER.debug("Loading Google Apps public key from [{}] with key algorithm [{}]",
-                bean.getResource(), bean.getAlgorithm());
+            bean.getResource(), bean.getAlgorithm());
         bean.afterPropertiesSet();
         LOGGER.debug("Creating Google Apps public key instance via [{}]", this.publicKeyLocation);
         this.publicKey = bean.getObject();
@@ -259,8 +227,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private boolean isValidConfiguration() {
         return StringUtils.isNotBlank(this.privateKeyLocation)
-                || StringUtils.isNotBlank(this.publicKeyLocation)
-                || StringUtils.isNotBlank(this.keyAlgorithm);
+            || StringUtils.isNotBlank(this.publicKeyLocation)
+            || StringUtils.isNotBlank(this.keyAlgorithm);
     }
 
     @Override
@@ -277,25 +245,25 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final GoogleAccountsServiceResponseBuilder rhs = (GoogleAccountsServiceResponseBuilder) obj;
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
-                .appendSuper(super.equals(obj))
-                .append(this.publicKeyLocation, rhs.publicKeyLocation)
-                .append(this.privateKeyLocation, rhs.privateKeyLocation)
-                .append(this.keyAlgorithm, rhs.keyAlgorithm)
-                .append(this.samlObjectBuilder, rhs.samlObjectBuilder)
-                .append(this.skewAllowance, rhs.skewAllowance)
-                .isEquals();
+            .appendSuper(super.equals(obj))
+            .append(this.publicKeyLocation, rhs.publicKeyLocation)
+            .append(this.privateKeyLocation, rhs.privateKeyLocation)
+            .append(this.keyAlgorithm, rhs.keyAlgorithm)
+            .append(this.samlObjectBuilder, rhs.samlObjectBuilder)
+            .append(this.skewAllowance, rhs.skewAllowance)
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(publicKeyLocation)
-                .append(privateKeyLocation)
-                .append(keyAlgorithm)
-                .append(skewAllowance)
-                .append(samlObjectBuilder)
-                .toHashCode();
+            .appendSuper(super.hashCode())
+            .append(publicKeyLocation)
+            .append(privateKeyLocation)
+            .append(keyAlgorithm)
+            .append(skewAllowance)
+            .append(samlObjectBuilder)
+            .toHashCode();
     }
 
     @Override
