@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
-import org.apereo.cas.support.pac4j.web.flow.SingleLogoutPreparationAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
@@ -35,7 +34,7 @@ import java.util.Optional;
  */
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private final Logger logger = LoggerFactory.getLogger(Pac4jWebflowConfigurer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jWebflowConfigurer.class);
     
     private final Action saml2ClientLogoutAction;
     private final Action ignoreServiceRedirectForSamlSloAction;
@@ -65,7 +64,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         if (loginFlow != null) {
             createClientActionActionState(loginFlow);
             createStopWebflowViewState(loginFlow);
-            logger.debug("The Login webflow has been reconfigured by PAC4J.");
+            LOGGER.debug("The Login webflow has been reconfigured by PAC4J.");
         }
 
         final Flow logoutFlow = getLogoutFlow();
@@ -75,7 +74,7 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
             createIgnoreServiceRedirectUrlForForSamlSloAction(logoutFlow);
             switchOffSessionInvalidationDuringFlow();
             createSessionInvalidationActionAtFlowEnd(logoutFlow);
-            logger.debug("The Logout webflow has been reconfigured by PAC4J.");
+            LOGGER.debug("The Logout webflow has been reconfigured by PAC4J.");
         }
     }
 
@@ -120,8 +119,8 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
         // Create a new action state and let it transition to the previous start state
         final ActionState actionStateForPrepareSingleLogout = createActionState(logoutFlow,
-               SingleLogoutPreparationAction.WEBFLOW_ACTION_STATE_ID,
-               createEvaluateAction(SingleLogoutPreparationAction.WEBFLOW_ACTION_EVAL_EXPRESSION)); 
+               CasWebflowConstants.STATE_ID_PREPARE_FOR_SINGLE_LOGOUT,
+               createEvaluateAction(CasWebflowConstants.ACTION_ID_PREPARE_FOR_SINGLE_LOGOUT)); 
         actionStateForPrepareSingleLogout.getTransitionSet().add(transitionToInitiallyStartState);
 
         // Set a new start state

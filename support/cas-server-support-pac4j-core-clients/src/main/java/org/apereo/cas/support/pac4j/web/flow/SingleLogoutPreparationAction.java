@@ -32,13 +32,7 @@ import org.springframework.webflow.execution.RequestContext;
  */
 public class SingleLogoutPreparationAction extends AbstractAction {
 
-    /** ID of the web flow state where the action will be inserted. */
-    public static final String WEBFLOW_ACTION_STATE_ID = "prepareForSingleLogout";
-
-    /** Evaluation expression for the web flow state where the action will be called. */
-    public static final String WEBFLOW_ACTION_EVAL_EXPRESSION = "pac4jSingleLogoutPreparationAction";
-
-    private final Logger logger2 = LoggerFactory.getLogger(SingleLogoutPreparationAction.class);
+    private static final Logger LOGGER2 = LoggerFactory.getLogger(SingleLogoutPreparationAction.class);
 
     private final ProfileService<? extends CommonProfile> profileService;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -72,9 +66,9 @@ public class SingleLogoutPreparationAction extends AbstractAction {
             final ProfileManager pm = Pac4jUtils.getPac4jProfileManager(webContext);
             pm.save(true, profile, false);
             profileService.removeById(profile.getId());
-            logger2.debug("User profile restored from a long-term storage and saved in PAC4J Profile Manager.");
+            LOGGER2.debug("User profile restored from a long-term storage and saved in PAC4J Profile Manager.");
         } else {
-            logger2.debug("No user profile restored from a long-term storage. SAML Single Logout may not work properly."
+            LOGGER2.debug("No user profile restored from a long-term storage. SAML Single Logout may not work properly."
                     + " This is normal for non-SAML clients.");
         }
 

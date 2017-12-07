@@ -160,7 +160,7 @@ public class IgnoreServiceRedirectUrlForSamlActionTests {
     private void mockSamlClientMetadata(final SAML2Client client, final boolean hasLogoutService) {
         final IDPSSODescriptor idpssoDescriptor = mock(IDPSSODescriptor.class);
         if (hasLogoutService) {
-            final SingleLogoutService logoutService = new DummySingleLogoutService();
+            final SingleLogoutService logoutService = mock(SingleLogoutService.class);
             when(idpssoDescriptor.getSingleLogoutServices()).thenReturn(singletonList(logoutService));
         }
 

@@ -395,4 +395,15 @@ public interface CasWebflowConstants {
      * State id to check for do change password manual flag "checkDoChangePassword".
      */
     String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
+
+    /**
+     *  State ID to prepare PAC4J Profile Manager for Single Logout. Only used together with PAC4J.
+     */
+    String STATE_ID_PREPARE_FOR_SINGLE_LOGOUT = "prepareForSingleLogout";
+
+    /**
+     * Action ID to prepare PAC4J Profile Manager for Single Logout. Only used together with PAC4J.
+     */
+    String ACTION_ID_PREPARE_FOR_SINGLE_LOGOUT = "pac4jSingleLogoutPreparationAction";
+
 }

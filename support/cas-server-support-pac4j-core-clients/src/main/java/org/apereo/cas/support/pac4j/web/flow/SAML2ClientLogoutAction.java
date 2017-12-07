@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SAML2ClientLogoutAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SAML2ClientLogoutAction.class);
+    private static final Logger LOGGER2 = LoggerFactory.getLogger(SAML2ClientLogoutAction.class);
 
     private final Clients clients;
 
@@ -54,22 +54,22 @@ public class SAML2ClientLogoutAction extends AbstractAction {
                 client = (currentClientName == null) ? null : clients.findClient(currentClientName);
             } catch(final TechnicalException e) {
                 // this exception indicates that the SAML2Client is not in the list
-                LOGGER.debug("No SAML2 client found");
+                LOGGER2.debug("No SAML2 client found");
                 client = null;
             }
 
             // Call logout on SAML2 clients only
             if (client instanceof SAML2Client) {
                 final SAML2Client saml2Client = (SAML2Client) client;
-                LOGGER.debug("Located SAML2 client [{}]", saml2Client);
+                LOGGER2.debug("Located SAML2 client [{}]", saml2Client);
                 final RedirectAction action = saml2Client.getLogoutAction(context, null, null);
-                LOGGER.debug("Preparing logout message to send is [{}]", action.getLocation());
+                LOGGER2.debug("Preparing logout message to send is [{}]", action.getLocation());
                 action.perform(context);
             } else {
-                LOGGER.debug("The current client is not a SAML2 client or it cannot be found at all, no logout action will be executed.");
+                LOGGER2.debug("The current client is not a SAML2 client or it cannot be found at all, no logout action will be executed.");
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
+            LOGGER2.warn(e.getMessage(), e);
         }
         return null;
     }

@@ -20,9 +20,12 @@ import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.core.profile.creator.ProfileCreator;
+import org.pac4j.core.profile.service.ProfileService;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
 import org.pac4j.oauth.credentials.OAuth20Credentials;
+import org.pac4j.oauth.profile.facebook.FacebookProfile;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -86,9 +89,9 @@ public class DelegatedClientAuthenticationActionTests {
         final TwitterClient twitterClient = new TwitterClient("3nJPbVTVRZWAyUgoUKQ8UA", "h6LZyZJmcW46Vu8R47MYfeXTSYGI30EqnWaSwVhFkbA");
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient, twitterClient);
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
-            null, mock(CentralAuthenticationService.class),
+            mock(AuthenticationSystemSupport.class), mock(CentralAuthenticationService.class),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
-            false, getServicesManagerWith(service), null);
+            false, getServicesManagerWith(service), mock(ProfileService.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -130,7 +133,10 @@ public class DelegatedClientAuthenticationActionTests {
                 return new OAuth20Credentials("fakeVerifier", FacebookClient.class.getSimpleName());
             }
         };
+        final ProfileCreator<OAuth20Credentials, FacebookProfile> facebookProfileCreatorMock = mock(ProfileCreator.class);
+        when(facebookProfileCreatorMock.create(any(), any())).thenReturn(new FacebookProfile());
         facebookClient.setName(FacebookClient.class.getSimpleName());
+        facebookClient.setProfileCreator(facebookProfileCreatorMock);
         final Clients clients = new Clients(MY_LOGIN_URL, facebookClient);
         final TicketGrantingTicket tgt = new TicketGrantingTicketImpl(TGT_ID, mock(Authentication.class), mock(ExpirationPolicy.class));
         final CentralAuthenticationService casImpl = mock(CentralAuthenticationService.class);
@@ -148,7 +154,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
             "theme", "locale", false,
-            getServicesManagerWith(service), null);
+            getServicesManagerWith(service), mock(ProfileService.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

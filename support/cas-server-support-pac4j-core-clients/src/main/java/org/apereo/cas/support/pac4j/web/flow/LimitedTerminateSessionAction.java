@@ -38,7 +38,7 @@ import com.google.common.base.Throwables;
  */
 public class LimitedTerminateSessionAction extends AbstractAction {
 
-    private final Logger logger2 = LoggerFactory.getLogger(LimitedTerminateSessionAction.class);
+    private static final Logger LOGGER2 = LoggerFactory.getLogger(LimitedTerminateSessionAction.class);
 
 
     @Override
@@ -59,7 +59,7 @@ public class LimitedTerminateSessionAction extends AbstractAction {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             destroyApplicationSession(request, response);
-            logger2.debug("Terminated the application session successfully.");
+            LOGGER2.debug("Terminated the application session successfully.");
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -75,7 +75,7 @@ public class LimitedTerminateSessionAction extends AbstractAction {
      *            The HTTP response.
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        logger2.debug("Destroying application session");
+        LOGGER2.debug("Destroying application session");
         final ProfileManager<?> manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 

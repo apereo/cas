@@ -126,18 +126,10 @@ public class TerminateSessionAction extends AbstractAction {
         return request.getParameterMap().containsKey("LogoutRequestConfirmed");
     }
 
-    /**
-     * Getter for {@code applicationSessionDestroyDeferred}.
-     * @return The value of {@code applicationSessionDestroyDeferred}.
-     */
     public boolean isApplicationSessionDestroyDeferred() {
         return applicationSessionDestroyDeferred;
     }
 
-    /**
-     * Setter for {@code applicationSessionDestroyDeferred}.
-     * @param applicationSessionDestroyDeferred The new value of {@code applicationSessionDestroyDeferred}.
-     */
     public void setApplicationSessionDestroyDeferred(final boolean applicationSessionDestroyDeferred) {
         this.applicationSessionDestroyDeferred = applicationSessionDestroyDeferred;
     }
