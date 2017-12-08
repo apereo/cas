@@ -18,7 +18,9 @@ import javax.annotation.PostConstruct;
  * @since 5.1.0
  */
 public abstract class BaseCasSamlSPConfiguration {
-    /** CAS properties. */
+    /**
+     * CAS properties.
+     */
     @Autowired
     protected CasConfigurationProperties casProperties;
 
@@ -32,15 +34,14 @@ public abstract class BaseCasSamlSPConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                getServiceProvider(),
-                samlRegisteredServiceCachingMetadataResolver);
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
+            samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             finalizeRegisteredService(service);
             SamlSPUtils.saveService(service, this.servicesManager);
         }
     }
-    
+
     protected abstract AbstractSamlSPProperties getServiceProvider();
 
     /**
@@ -51,5 +52,5 @@ public abstract class BaseCasSamlSPConfiguration {
      * @param service the service
      */
     protected void finalizeRegisteredService(final SamlRegisteredService service) {
-    } 
+    }
 }

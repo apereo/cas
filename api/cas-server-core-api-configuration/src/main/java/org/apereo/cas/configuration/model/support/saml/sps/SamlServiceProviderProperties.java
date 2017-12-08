@@ -25,6 +25,10 @@ public class SamlServiceProviderProperties implements Serializable {
     private static final long serialVersionUID = 8602328179113963081L;
 
     /**
+     * Settings related to Gitlab acting as a SAML service provider.
+     */
+    private Gitlab gitlab = new Gitlab();
+    /**
      * Settings related to Dropbox acting as a SAML service provider.
      */
     private Dropbox dropbox = new Dropbox();
@@ -144,7 +148,6 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Sunshine state ed/release alliance acting as a SAML service provider.
      */
     private SunshineStateEdResearchAlliance sserca = new SunshineStateEdResearchAlliance();
-
     /**
      * Settings related to EverBridge acting as a SAML service provider.
      */
@@ -169,6 +172,14 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Symplicity acting as a SAML service provider.
      */
     private Symplicity symplicity = new Symplicity();
+
+    public Gitlab getGitlab() {
+        return gitlab;
+    }
+
+    public void setGitlab(final Gitlab gitlab) {
+        this.gitlab = gitlab;
+    }
 
     public Famis getFamis() {
         return famis;
@@ -788,6 +799,15 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Gartner() {
             setAttributes("urn:oid:2.5.4.42", "urn:oid:2.5.4.4", "urn:oid:0.9.2342.19200300.100.1.3");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    public static class Gitlab extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Gitlab() {
+            setAttributes(EMAIL, "last_name", "first_name", "name");
         }
     }
 }

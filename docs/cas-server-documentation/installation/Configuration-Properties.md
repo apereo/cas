@@ -2296,6 +2296,10 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 <div class="alert alert-info"><strong>Keep What You Need!</strong><p>The adopter is encouraged to only keep and maintain properties needed for their particular deployment and remove all other optional settings for which there exist sane defaults.</p></div>
 
+### Gitlab
+
+SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.gitlab`.
+
 ### Dropbox
 
 SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.dropbox`.
