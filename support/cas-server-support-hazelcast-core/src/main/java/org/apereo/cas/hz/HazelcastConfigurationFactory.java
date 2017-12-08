@@ -162,7 +162,7 @@ public class HazelcastConfigurationFactory {
         LOGGER.debug("Creating discovery strategy based on AWS");
         final DiscoveryStrategyConfig strategyConfig = new DiscoveryStrategyConfig(new AwsDiscoveryStrategyFactory(), properties);
         final DiscoveryConfig discoveryConfig = new DiscoveryConfig();
-        discoveryConfig.setDiscoveryStrategyConfigs(Arrays.asList(strategyConfig));
+        discoveryConfig.setDiscoveryStrategyConfigs(CollectionUtils.wrap(strategyConfig));
         joinConfig.setDiscoveryConfig(discoveryConfig);
 
         return joinConfig;
