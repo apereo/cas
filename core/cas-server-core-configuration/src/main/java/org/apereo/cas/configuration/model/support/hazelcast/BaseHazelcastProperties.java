@@ -2,7 +2,6 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
 
@@ -67,28 +66,14 @@ public class BaseHazelcastProperties implements Serializable {
      * Ipv4 protocol stack.
      */
     public static final String IPV4_STACK_PROP = "hazelcast.prefer.ipv4.stack";
-    
-    private static final long serialVersionUID = 4204884717547468480L;
 
-    /**
-     * Location of a {@code hazelcast.xml} file that fully takes over the construction and configuration
-     * of hazelcast caches, etc.
-     */
-    private Resource configLocation;
+    private static final long serialVersionUID = 4204884717547468480L;
 
     /**
      * Hazelcast cluster settings if CAS is able to auto-create caches.
      */
     @NestedConfigurationProperty
     private HazelcastClusterProperties cluster = new HazelcastClusterProperties();
-    
-    public Resource getConfigLocation() {
-        return configLocation;
-    }
-
-    public void setConfigLocation(final Resource configLocation) {
-        this.configLocation = configLocation;
-    }
 
     public HazelcastClusterProperties getCluster() {
         return cluster;
