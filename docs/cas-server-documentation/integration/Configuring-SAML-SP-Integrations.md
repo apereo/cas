@@ -115,6 +115,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="http://www.accruent.com/">
 <img src="https://user-images.githubusercontent.com/1205228/30735450-f9a12792-9f8b-11e7-941d-7ab4ac7628b9.png" height="48" width="120"></a>
 
+<a href="https://www.gitlab.com/">
+<img src="https://user-images.githubusercontent.com/1205228/33747990-4d8da06e-db83-11e7-9551-f52630f7d4f0.png" height="38" width="120"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
