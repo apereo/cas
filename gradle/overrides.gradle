@@ -14,7 +14,7 @@
  */
 ext["hibernateVersion"] = "5.2.11.Final"
 ext["springBootTomcatVersion"] = "8.5.24"
-ext["hazelcastVersion"] = "3.8.6"
+ext["hazelcastVersion"] = "3.9.1"
 ext["infinispanVersion"] = "9.1.1.Final"
 ext["springVersion"] = "4.3.12.RELEASE"
 ext["jacksonDatabindVersion"] = "2.9.0"
