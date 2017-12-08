@@ -2293,160 +2293,49 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 <div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time.</p></div>
 
-
-<div class="alert alert-info"><strong>Keep What You Need!</strong><p>The adopter is encouraged to only keep and maintain properties needed for their particular deployment and remove all other optional settings for which there exist sane defaults.</p></div>
-
-### Gitlab
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.gitlab`.
-
-### Dropbox
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.dropbox`.
-
-### TestShib
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.testShib`.
-
-### OpenAthens
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.openAthens`.
-
-### Egnyte
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.egnyte`.
-
-### EverBridge
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.everBridge`.
-
-### Symplicity
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.simplicity`.
-
-### Yuja
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.yuja`.
-
-### New Relic
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.newRelic`.
-
-### Sunshine State Education and Research Computing Alliance
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.sserca`.
-
-### CherWell
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.cherWell`.
-
-### FAMIS
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.famis`.
-
-### Bynder
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.bynder`.
-
-### Web Advisor
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.webAdvisor`.
-
-### Adobe Creative Cloud
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.adobeCloud`.
-
-### Securing The Human
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.sansSth`.
-
-### Easy IEP
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.easyIep`.
-
-### Infinite Campus
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.infiniteCampus`.
-
-### Slack
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.slack`.
-
-### Zendesk
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.zendesk`.
-
-### Gartner
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.gartner`.
-
-### Arc GIS
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.arcGIS`.
-
-### Benefit Focus
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.benefitFocus`.
-
-### Office365
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.office365`.
-
-### SAManage
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.saManage`.
-
-### Workday
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.workday`.
-
-### Salesforce
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.salesforce`.
-
-### Academic Works
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.academicWorks`.
-
-### Zoom
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.zoom`.
-
-### Evernote
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.evernote`.
-
-### Tableau
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.tableau`.
-
-### Asana
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.asana`.
-
-### Box
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.box`.
-
-### Service Now
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.serviceNow`.
-
-### Net Partner
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.netPartner`.
-
-### Webex
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.webex`.
-
-### InCommon
-
-Multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates).
+| Service Provider              | Settings              | Configuration Key
+|-----------------------|-----------------|----------------------------------------------------------
+| Gitlab          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.gitlab`.
+| Dropbox          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.dropbox`.
+| TestShib          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.testShib`.
+| OpenAthens          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.openAthens`.
+| Egnyte          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.egnyte`.
+| EverBridge          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.everBridge`.
+| Simplicity          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.simplicity`.
+| Yuja          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.yuja`.
+| Simplicity          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.simplicity`.
+| New Relic          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.newRelic`.
+|  Sunshine State Education and Research Computing Alliance          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.sserca`.
+| CherWell          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.cherWell`.
+| FAMIS          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.famis`.
+| Bynder          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.bynder`.
+| Web Advisor          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.webAdvisor`.
+| Adobe Creative Cloud          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.adobeCloud`.
+| Bynder          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.bynder`.
+| Securing The Human          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.sansSth`.
+| Easy IEP          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.easyIep`.
+| Infinite Campus          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.infiniteCampus`.
+| Slack          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.slack`.
+| Zendesk          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.zendesk`.
+| Gartner          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.gartner`.
+| Arc GIS          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.arcGIS`.
+| Benefit Focus          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.benefitFocus`.
+| Office365          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.office365`.
+| SAManage          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.saManage`.
+| Salesforce          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.salesforce`.
+| Workday          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.workday`.
+| Academic Works          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.academicWorks`.
+| ZOOM          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.zoom`.
+| Evernote          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.evernote`.
+| Tableau          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.tableau`.
+| Asana          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.asana`.
+| Box          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.box`.
+| Service Now          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.serviceNow`.
+| Net Partner          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.netPartner`.
+| Webex          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.webex`.
+| InCommon          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations). Multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates).
 EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry.
-The signature location MUST BE the public key used to sign the metadata.
-
-SAML2 integration settings for this service provider are available [here](Configuration-Properties-Common.html#saml2-service-provider-integrations) under the configuration key `cas.samlSp.inCommon`.
+The signature location MUST BE the public key used to sign the metadata.      | `cas.samlSp.inCommon`.
 
 ## OpenID Connect
 

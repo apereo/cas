@@ -25,6 +25,10 @@ public class SamlServiceProviderProperties implements Serializable {
     private static final long serialVersionUID = 8602328179113963081L;
 
     /**
+     * Settings related to Hipchat acting as a SAML service provider.
+     */
+    private Hipchat hipchat = new Hipchat();
+    /**
      * Settings related to Gitlab acting as a SAML service provider.
      */
     private Gitlab gitlab = new Gitlab();
@@ -469,6 +473,14 @@ public class SamlServiceProviderProperties implements Serializable {
         this.benefitFocus = benefitFocus;
     }
 
+    public Hipchat getHipchat() {
+        return hipchat;
+    }
+
+    public void setHipchat(final Hipchat hipchat) {
+        this.hipchat = hipchat;
+    }
+
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
     public static class Dropbox extends AbstractSamlSPProperties {
         private static final long serialVersionUID = -8275173711355379058L;
@@ -808,6 +820,15 @@ public class SamlServiceProviderProperties implements Serializable {
 
         public Gitlab() {
             setAttributes(EMAIL, "last_name", "first_name", "name");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    public static class Hipchat extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Hipchat() {
+            setAttributes(EMAIL, "last_name", "first_name", "title");
         }
     }
 }
