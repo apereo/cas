@@ -29,6 +29,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     /**
      * {@inheritDoc}
      * Resets the pattern because we just changed the id.
+     *
      * @param id the new service id
      */
     @Override
@@ -36,7 +37,7 @@ public class RegexRegisteredService extends AbstractRegisteredService {
         this.serviceId = id;
         this.servicePattern = null;
     }
-    
+
     @Override
     public boolean matches(final Service service) {
         return service != null && matches(service.getId());
@@ -60,4 +61,5 @@ public class RegexRegisteredService extends AbstractRegisteredService {
     public String getFriendlyName() {
         return "CAS Client";
     }
+
 }

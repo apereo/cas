@@ -28,7 +28,7 @@ import java.util.stream.Collectors;
  * that otherwise grant access to the service.</li>
  * </ul>
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
