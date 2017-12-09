@@ -121,6 +121,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.hipchat.com/">
 <img src="https://user-images.githubusercontent.com/1205228/33751445-2b45394e-db98-11e7-9526-1eda07a70d99.png" height="58" width="140"></a>
 
+<a href="https://www.appdynamics.com/">
+<img src="https://user-images.githubusercontent.com/1205228/33800340-3c2c072e-dcfb-11e7-9f10-7a7b2488c9b2.png" height="58" width="140"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).

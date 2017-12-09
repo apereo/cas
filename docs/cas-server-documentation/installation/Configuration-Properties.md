@@ -2331,6 +2331,7 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Egnyte               | `cas.samlSp.egnyte` | N/A
 | EverBridge               | `cas.samlSp.everBridge` | N/A
 | Simplicity               | `cas.samlSp.simplicity` | N/A
+| App Dynamics               | `cas.samlSp.appDynamics` | `User.OpenIDName`, `User.email`, `User.fullName`, `AccessControl`, `Groups-Membership`
 | Yuja               | `cas.samlSp.yuja` | N/A
 | Simplicity               | `cas.samlSp.simplicity` | N/A
 | New Relic               | `cas.samlSp.newRelic` | N/A
