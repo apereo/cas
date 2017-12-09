@@ -54,8 +54,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-
+    
     @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
