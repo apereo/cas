@@ -105,7 +105,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
 
         final RegisteredService rService = this.servicesManager.findServiceBy(service);
         if (rService == null || !rService.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.warn("No registered service is found to match [{}] or service access is disallowed. Using default theme [{}]", service, getDefaultThemeName());
+            LOGGER.warn("No registered service is found to match [{}] or access is denied. Using default theme [{}]", service, getDefaultThemeName());
             return getDefaultThemeName();
         }
         if (StringUtils.isBlank(rService.getTheme())) {
