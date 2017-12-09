@@ -243,6 +243,11 @@ To see the relevant list of CAS properties for this feature, please [review this
 CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
 
+##### HashiCorp Consul
+
+CAS is also able to use [Consul](https://www.consul.io/) to
+locate properties and settings. [Please review this guide](Service-Discovery-Guide-Consul.html).
+
 ##### Apache ZooKeeper
 
 CAS is also able to use [Apache ZooKeeper](https://zookeeper.apache.org/) to locate properties and settings.
