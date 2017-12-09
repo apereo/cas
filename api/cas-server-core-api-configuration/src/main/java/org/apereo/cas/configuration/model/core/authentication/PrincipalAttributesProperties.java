@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link PrincipalAttributesProperties}.
@@ -35,8 +36,13 @@ public class PrincipalAttributesProperties implements Serializable {
      * Indicates the global cache expiration period, once attributes
      * are fetched from the underlying attribute repository.
      */
-    private int expireInMinutes = 30;
+    private int expirationTime = 30;
 
+    /**
+     * Expiration caching timeunit for attributes.
+     */
+    private String expirationTimeUnit = TimeUnit.MINUTES.name();
+    
     /**
      * Indicates the global cache size used to store attributes
      * retrieved from the attribute repository.
@@ -178,12 +184,12 @@ public class PrincipalAttributesProperties implements Serializable {
         this.merger = merger;
     }
 
-    public int getExpireInMinutes() {
-        return expireInMinutes;
+    public int getExpirationTime() {
+        return expirationTime;
     }
 
-    public void setExpireInMinutes(final int expireInMinutes) {
-        this.expireInMinutes = expireInMinutes;
+    public void setExpirationTime(final int expirationTime) {
+        this.expirationTime = expirationTime;
     }
 
     public int getMaximumCacheSize() {
@@ -210,4 +216,11 @@ public class PrincipalAttributesProperties implements Serializable {
         this.defaultAttributesToRelease = defaultAttributesToRelease;
     }
 
+    public String getExpirationTimeUnit() {
+        return expirationTimeUnit;
+    }
+
+    public void setExpirationTimeUnit(final String expirationTimeUnit) {
+        this.expirationTimeUnit = expirationTimeUnit;
+    }
 }

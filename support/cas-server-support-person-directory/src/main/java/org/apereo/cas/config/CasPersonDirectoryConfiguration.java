@@ -303,16 +303,17 @@ public class CasPersonDirectoryConfiguration {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
+        final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
             .weakKeys()
-            .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
-            .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
+            .maximumSize(props.getMaximumCacheSize())
+            .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
             .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
         LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-            casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+            props.getExpirationTime());
         return impl;
     }
 

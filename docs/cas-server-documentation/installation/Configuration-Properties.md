@@ -656,7 +656,8 @@ If multiple attribute repository sources are defined, they are added into a list
 and their results are cached and merged.
 
 ```properties
-# cas.authn.attributeRepository.expireInMinutes=30
+# cas.authn.attributeRepository.expirationTime=30
+# cas.authn.attributeRepository.expirationTimeUnit=MINUTES
 # cas.authn.attributeRepository.maximumCacheSize=10000
 # cas.authn.attributeRepository.merger=REPLACE|ADD|MERGE
 ```

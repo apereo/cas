@@ -49,16 +49,18 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     @Lazy
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
-    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(@Qualifier("servicesManager")
+                                                                                            final ServicesManager servicesManager) {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager);
     }
 
     @Autowired
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("principalElectionStrategy") 
-                                                                          final PrincipalElectionStrategy principalElectionStrategy,
-                                                                          @Qualifier("authenticationTransactionManager") 
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("principalElectionStrategy")
+                                                                              final PrincipalElectionStrategy principalElectionStrategy,
+                                                                          @Qualifier("authenticationTransactionManager")
                                                                           final AuthenticationTransactionManager authenticationTransactionManager) {
         return new DefaultAuthenticationSystemSupport(authenticationTransactionManager, principalElectionStrategy);
     }
+
 }
