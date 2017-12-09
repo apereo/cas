@@ -12,8 +12,8 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 public class PersonDirectoryPrincipalResolverProperties implements Serializable {
-
     private static final long serialVersionUID = 8929912041234879300L;
+
     /**
      * Attribute name to use to indicate the identifier of the principal constructed.
      * If the attribute is blank or has no values, the default principal id will be used
