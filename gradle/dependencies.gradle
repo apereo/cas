@@ -2197,6 +2197,11 @@ ext.libraries = [
                     force = true
                 }
         ],
+        springcloudconsul : [
+                dependencies.create("org.springframework.cloud:spring-cloud-starter-consul-all:$springCloudConsulVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         springcloudeureka       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:$springCloudEurekaVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
