@@ -12,6 +12,7 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface AuthenticationHandler extends Ordered {
 
     /** Attribute name containing collection of handler names that successfully authenticated credential. */
@@ -77,5 +78,10 @@ public interface AuthenticationHandler extends Ordered {
      */
     default String getName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    default int getOrder() {
+        return Integer.MAX_VALUE;
     }
 }

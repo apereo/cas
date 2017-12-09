@@ -55,7 +55,8 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param order            the order
      * @param users            the users
      */
-    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory,
                                             final Integer order, final Map<String, String> users) {
         super(name, servicesManager, principalFactory, order);
         this.users = users;
