@@ -30,7 +30,6 @@ MANIFEST.MF
 classes/
 *.bin
 
-**/tomcat/
 out
 ajcore.*
 reports
