@@ -8,6 +8,7 @@ org.apereo.cas.config.CasSamlSPAdobeCreativeCloudConfiguration,\
 org.apereo.cas.config.CasSamlSPHipchatConfiguration,\
 org.apereo.cas.config.CasSamlSPGitlabConfiguration,\
 org.apereo.cas.config.CasSamlSPTableauConfiguration,\
+org.apereo.cas.config.CasSamlSPAppDynamicsConfiguration,\
 org.apereo.cas.config.CasSamlSPGartnerConfiguration,\
 org.apereo.cas.config.CasSamlSPAcademicWorksConfiguration,\
 org.apereo.cas.config.CasSamlSPSalesforceConfiguration,\
