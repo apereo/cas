@@ -2321,47 +2321,48 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
 
-| Service Provider                       | Configuration Key
+| Service Provider                       | Configuration Key | Attributes
 |---------------------------|----------------------------------------------------------
-| Gitlab               | `cas.samlSp.gitlab`
-| Dropbox               | `cas.samlSp.dropbox`
-| TestShib               | `cas.samlSp.testShib`
-| OpenAthens               | `cas.samlSp.openAthens`
-| Egnyte               | `cas.samlSp.egnyte`
-| EverBridge               | `cas.samlSp.everBridge`
-| Simplicity               | `cas.samlSp.simplicity`
-| Yuja               | `cas.samlSp.yuja`
-| Simplicity               | `cas.samlSp.simplicity`
-| New Relic               | `cas.samlSp.newRelic`
-|  Sunshine State Education and Research Computing Alliance               | `cas.samlSp.sserca`
-| CherWell               | `cas.samlSp.cherWell`
-| FAMIS               | `cas.samlSp.famis`
+| Gitlab               | `cas.samlSp.gitlab` | `last_name`,`first_name`,`name`
+| Hipchat               | `cas.samlSp.hipchat` | `last_name`,`first_name`,`title`
+| Dropbox               | `cas.samlSp.dropbox` | `mail`
+| TestShib               | `cas.samlSp.testShib` | `eduPersonPrincipalName`
+| OpenAthens               | `cas.samlSp.openAthens` | `email`, `eduPersonPrincipalName`
+| Egnyte               | `cas.samlSp.egnyte` | N/A
+| EverBridge               | `cas.samlSp.everBridge` | N/A
+| Simplicity               | `cas.samlSp.simplicity` | N/A
+| Yuja               | `cas.samlSp.yuja` | N/A
+| Simplicity               | `cas.samlSp.simplicity` | N/A
+| New Relic               | `cas.samlSp.newRelic` | N/A
+| Sunshine State Education and Research Computing Alliance               | `cas.samlSp.sserca` | N/A
+| CherWell               | `cas.samlSp.cherWell` | N/A
+| FAMIS               | `cas.samlSp.famis` | N/A
+| Bynder               | `cas.samlSp.bynder` | N/A
+| Web Advisor               | `cas.samlSp.webAdvisor` | `uid`
+| Adobe Creative Cloud               | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
 | Bynder               | `cas.samlSp.bynder`
-| Web Advisor               | `cas.samlSp.webAdvisor`
-| Adobe Creative Cloud               | `cas.samlSp.adobeCloud`
-| Bynder               | `cas.samlSp.bynder`
-| Securing The Human               | `cas.samlSp.sansSth`
-| Easy IEP               | `cas.samlSp.easyIep`
-| Infinite Campus               | `cas.samlSp.infiniteCampus`
-| Slack               | `cas.samlSp.slack`
-| Zendesk               | `cas.samlSp.zendesk`
-| Gartner               | `cas.samlSp.gartner`
-| Arc GIS               | `cas.samlSp.arcGIS`
-| Benefit Focus               | `cas.samlSp.benefitFocus`
-| Office365               | `cas.samlSp.office365`
-| SAManage               | `cas.samlSp.saManage`
-| Salesforce               | `cas.samlSp.salesforce`
-| Workday               | `cas.samlSp.workday`
-| Academic Works               | `cas.samlSp.academicWorks`
-| ZOOM               | `cas.samlSp.zoom`
-| Evernote               | `cas.samlSp.evernote`
-| Tableau               | `cas.samlSp.tableau`
-| Asana               | `cas.samlSp.asana`
-| Box               | `cas.samlSp.box`
-| Service Now               | `cas.samlSp.serviceNow`
-| Net Partner               | `cas.samlSp.netPartner`
-| Webex               | `cas.samlSp.webex`
-| InCommon        |  `cas.samlSp.inCommon`
+| Securing The Human               | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
+| Easy IEP               | `cas.samlSp.easyIep` | `employeeId`
+| Infinite Campus               | `cas.samlSp.infiniteCampus` | `employeeId`
+| Slack               | `cas.samlSp.slack` | `User.Email`, `User.Username`, `first_name`, `last_name`, `employeeId`
+| Zendesk               | `cas.samlSp.zendesk` | `organization`, `tags`, `phone`, `role`, `email`
+| Gartner               | `cas.samlSp.gartner` | `urn:oid:2.5.4.42`, `urn:oid:2.5.4.4`, `urn:oid:0.9.2342.19200300.100.1.3`
+| Arc GIS               | `cas.samlSp.arcGIS` | `arcNameId`, `mail`, `givenName`
+| Benefit Focus               | `cas.samlSp.benefitFocus` | `benefitFocusUniqueId`
+| Office365               | `cas.samlSp.office365` | `IDPEmail`, `ImmutableID`, `scopedImmutableID`
+| SAManage               | `cas.samlSp.saManage` | `mail`
+| Salesforce               | `cas.samlSp.salesforce` | `eduPersonPrincipalName`
+| Workday               | `cas.samlSp.workday` | N/A
+| Academic Works               | `cas.samlSp.academicWorks` | `displayName`
+| ZOOM               | `cas.samlSp.zoom` | `mail`, `sn`, `givenName`
+| Evernote               | `cas.samlSp.evernote` | `email`
+| Tableau               | `cas.samlSp.tableau` | `username`
+| Asana               | `cas.samlSp.asana` | `email`
+| Box               | `cas.samlSp.box` | `email`, `firstName`, `lastName`
+| Service Now               | `cas.samlSp.serviceNow` | `eduPersonPrincipalName`
+| Net Partner               | `cas.samlSp.netPartner` | `studentId`
+| Webex               | `cas.samlSp.webex` | `firstName`, `lastName` 
+| InCommon        |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata. 
 
