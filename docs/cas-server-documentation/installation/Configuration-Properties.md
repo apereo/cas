@@ -3538,7 +3538,7 @@ To learn more about this topic, [please review this guide](../integration/Shibbo
 
 ## Eureka Service Discovery
 
-To learn more about this topic, [please review this guide](Service-Discovery-Guide.html).
+To learn more about this topic, [please review this guide](Service-Discovery-Guide-Eureka.html).
 
 ```properties
 # eureka.client.serviceUrl.defaultZone=${EUREKA_SERVER_HOST:http://localhost:8761}/eureka/
@@ -3549,6 +3549,24 @@ To learn more about this topic, [please review this guide](Service-Discovery-Gui
 # eureka.client.healthcheck.enabled=true
 
 # spring.cloud.config.discovery.enabled=false
+```
+
+## Consul Service Discovery
+
+To learn more about this topic, [please review this guide](Service-Discovery-Guide-Consul.html).
+
+```properties
+# spring.cloud.consul.port=8500
+# spring.cloud.consul.enabled=true
+# spring.cloud.consul.host=localhost
+
+# spring.cloud.consul.discovery.healthCheckPath=${management.context-path}/health
+# spring.cloud.consul.discovery.healthCheckPath=15s
+# spring.cloud.consul.discovery.instanceId=${spring.application.name}:${random.value}
+
+# spring.cloud.consul.discovery.heartbeat.enabled=true
+# spring.cloud.consul.discovery.heartbeat.ttlValue=60
+# spring.cloud.consul.discovery.heartbeat.ttlUnit=s
 ```
 
 ## Provisioning
