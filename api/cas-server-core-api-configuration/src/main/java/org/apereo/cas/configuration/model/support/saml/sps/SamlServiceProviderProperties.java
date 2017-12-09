@@ -176,7 +176,11 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to Symplicity acting as a SAML service provider.
      */
     private Symplicity symplicity = new Symplicity();
-
+    /**
+     * Settings related to AppDynamics acting as a SAML service provider.
+     */
+    private AppDynamics appDynamics = new AppDynamics();
+    
     public Gitlab getGitlab() {
         return gitlab;
     }
@@ -479,6 +483,14 @@ public class SamlServiceProviderProperties implements Serializable {
 
     public void setHipchat(final Hipchat hipchat) {
         this.hipchat = hipchat;
+    }
+
+    public AppDynamics getAppDynamics() {
+        return appDynamics;
+    }
+
+    public void setAppDynamics(final AppDynamics appDynamics) {
+        this.appDynamics = appDynamics;
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -831,4 +843,14 @@ public class SamlServiceProviderProperties implements Serializable {
             setAttributes(EMAIL, "last_name", "first_name", "title");
         }
     }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    public static class AppDynamics extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public AppDynamics() {
+            setAttributes("User.OpenIDName", "User.email", "User.fullName", "AccessControl", "Groups-Membership");
+        }
+    }
+    
 }
