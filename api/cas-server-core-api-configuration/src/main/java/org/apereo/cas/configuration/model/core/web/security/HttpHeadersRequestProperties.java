@@ -42,12 +42,38 @@ public class HttpHeadersRequestProperties implements Serializable {
     private boolean xss = true;
 
     /**
+     * Will inject values into the {@code X-Frame-Options} header into the response.
+     */
+    private String xframeOptions = "DENY";
+
+    /**
+     * Will inject values into the {@code X-XSS-Protection} header into the response.
+     */
+    private String xssOptions = "1; mode=block";
+
+    /**
      * Helps you reduce XSS risks on modern browsers by declaring what dynamic
      * resources are allowed to load via a HTTP Header.
      * Header value is made up of one or more directives.
      * Multiple directives are separated with a semicolon.
      */
     private String contentSecurityPolicy;
+
+    public String getXframeOptions() {
+        return xframeOptions;
+    }
+
+    public void setXframeOptions(final String xframeOptions) {
+        this.xframeOptions = xframeOptions;
+    }
+
+    public String getXssOptions() {
+        return xssOptions;
+    }
+
+    public void setXssOptions(final String xssOptions) {
+        this.xssOptions = xssOptions;
+    }
 
     public boolean isCache() {
         return cache;
