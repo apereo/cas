@@ -5,8 +5,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatRewriteValveProperties}.
