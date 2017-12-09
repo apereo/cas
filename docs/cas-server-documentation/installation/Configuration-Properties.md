@@ -2293,49 +2293,51 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 <div class="alert alert-warning"><strong>Remember</strong><p>SAML2 service provider integrations listed here simply attempt to automate CAS configuration based on known and documented integration guidelines and recipes provided by the service provider owned by the vendor. These recipes can change and break CAS over time.</p></div>
 
-| Service Provider              | Settings              | Configuration Key
-|-----------------------|-----------------|----------------------------------------------------------
-| Gitlab          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.gitlab`.
-| Dropbox          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.dropbox`.
-| TestShib          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.testShib`.
-| OpenAthens          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.openAthens`.
-| Egnyte          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.egnyte`.
-| EverBridge          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.everBridge`.
-| Simplicity          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.simplicity`.
-| Yuja          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.yuja`.
-| Simplicity          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.simplicity`.
-| New Relic          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.newRelic`.
-|  Sunshine State Education and Research Computing Alliance          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.sserca`.
-| CherWell          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.cherWell`.
-| FAMIS          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.famis`.
-| Bynder          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.bynder`.
-| Web Advisor          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.webAdvisor`.
-| Adobe Creative Cloud          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.adobeCloud`.
-| Bynder          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.bynder`.
-| Securing The Human          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.sansSth`.
-| Easy IEP          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.easyIep`.
-| Infinite Campus          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.infiniteCampus`.
-| Slack          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.slack`.
-| Zendesk          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.zendesk`.
-| Gartner          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.gartner`.
-| Arc GIS          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.arcGIS`.
-| Benefit Focus          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.benefitFocus`.
-| Office365          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.office365`.
-| SAManage          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.saManage`.
-| Salesforce          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.salesforce`.
-| Workday          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.workday`.
-| Academic Works          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.academicWorks`.
-| ZOOM          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.zoom`.
-| Evernote          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.evernote`.
-| Tableau          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.tableau`.
-| Asana          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.asana`.
-| Box          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.box`.
-| Service Now          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.serviceNow`.
-| Net Partner          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.netPartner`.
-| Webex          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations)      | `cas.samlSp.webex`.
-| InCommon          | [Click here](Configuration-Properties-Common.html#saml2-service-provider-integrations). Multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates).
-EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry.
-The signature location MUST BE the public key used to sign the metadata.      | `cas.samlSp.inCommon`.
+Configuration settings for all SAML2 service providers are [available here](Configuration-Properties-Common.html#saml2-service-provider-integrations).
+
+| Service Provider                       | Configuration Key
+|---------------------------|----------------------------------------------------------
+| Gitlab               | `cas.samlSp.gitlab`
+| Dropbox               | `cas.samlSp.dropbox`
+| TestShib               | `cas.samlSp.testShib`
+| OpenAthens               | `cas.samlSp.openAthens`
+| Egnyte               | `cas.samlSp.egnyte`
+| EverBridge               | `cas.samlSp.everBridge`
+| Simplicity               | `cas.samlSp.simplicity`
+| Yuja               | `cas.samlSp.yuja`
+| Simplicity               | `cas.samlSp.simplicity`
+| New Relic               | `cas.samlSp.newRelic`
+|  Sunshine State Education and Research Computing Alliance               | `cas.samlSp.sserca`
+| CherWell               | `cas.samlSp.cherWell`
+| FAMIS               | `cas.samlSp.famis`
+| Bynder               | `cas.samlSp.bynder`
+| Web Advisor               | `cas.samlSp.webAdvisor`
+| Adobe Creative Cloud               | `cas.samlSp.adobeCloud`
+| Bynder               | `cas.samlSp.bynder`
+| Securing The Human               | `cas.samlSp.sansSth`
+| Easy IEP               | `cas.samlSp.easyIep`
+| Infinite Campus               | `cas.samlSp.infiniteCampus`
+| Slack               | `cas.samlSp.slack`
+| Zendesk               | `cas.samlSp.zendesk`
+| Gartner               | `cas.samlSp.gartner`
+| Arc GIS               | `cas.samlSp.arcGIS`
+| Benefit Focus               | `cas.samlSp.benefitFocus`
+| Office365               | `cas.samlSp.office365`
+| SAManage               | `cas.samlSp.saManage`
+| Salesforce               | `cas.samlSp.salesforce`
+| Workday               | `cas.samlSp.workday`
+| Academic Works               | `cas.samlSp.academicWorks`
+| ZOOM               | `cas.samlSp.zoom`
+| Evernote               | `cas.samlSp.evernote`
+| Tableau               | `cas.samlSp.tableau`
+| Asana               | `cas.samlSp.asana`
+| Box               | `cas.samlSp.box`
+| Service Now               | `cas.samlSp.serviceNow`
+| Net Partner               | `cas.samlSp.netPartner`
+| Webex               | `cas.samlSp.webex`
+| InCommon        |  `cas.samlSp.inCommon`
+
+**Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata. 
 
 ## OpenID Connect
 
@@ -2393,37 +2395,6 @@ Delegate authentication to an external CAS server.
 # (Optional) Friendly name for CAS, e.g. "This Organization" or "That Organization"
 # cas.authn.pac4j.cas[0].clientName=
 ```
-
-### Facebook
-
-Delegate authentication to Facebook. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.facebook`.
-
-```properties
-# cas.authn.pac4j.facebook.fields=
-# cas.authn.pac4j.facebook.scope=
-```
-
-### LinkedIn
-
-Delegate authentication to LinkedIn. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.linkedin`.
-
-```properties
-# cas.authn.pac4j.linkedIn.fields=
-# cas.authn.pac4j.linkedIn.scope=
-```
-
-### Twitter
-
-Delegate authentication to Twitter. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
-
-
-### Paypal
-
-Delegate authentication to Paypal. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.paypal`.
-
-### Wordpress
-
-Delegate authentication to Wordpress. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.wordpress`.
 
 ### OAuth20
 
@@ -2499,6 +2470,36 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
+
+### Facebook
+
+Delegate authentication to Facebook. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.facebook`.
+
+```properties
+# cas.authn.pac4j.facebook.fields=
+# cas.authn.pac4j.facebook.scope=
+```
+
+### LinkedIn
+
+Delegate authentication to LinkedIn. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.linkedin`.
+
+```properties
+# cas.authn.pac4j.linkedIn.fields=
+# cas.authn.pac4j.linkedIn.scope=
+```
+
+### Twitter
+
+Delegate authentication to Twitter. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
+
+### Paypal
+
+Delegate authentication to Paypal. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.paypal`.
+
+### Wordpress
+
+Delegate authentication to Wordpress. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.wordpress`.
 
 ### Yahoo
 
@@ -2824,7 +2825,11 @@ Control how CAS should respond and validate incoming HTTP requests.
 
 ```properties
 # cas.httpWebRequest.header.xframe=true
+# cas.httpWebRequest.header.xframeOptions=DENY
+
 # cas.httpWebRequest.header.xss=true
+ # cas.httpWebRequest.header.xssOptions=1; mode=block
+
 # cas.httpWebRequest.header.hsts=true
 # cas.httpWebRequest.header.xcontent=true
 # cas.httpWebRequest.header.cache=true
@@ -2845,9 +2850,9 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.onlyPostParams=username,password
 # cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
 
-spring.http.encoding.charset=UTF-8
-spring.http.encoding.enabled=true
-spring.http.encoding.force=true
+# spring.http.encoding.charset=UTF-8
+# spring.http.encoding.enabled=true
+# spring.http.encoding.force=true
 ```
 
 ## Http Client

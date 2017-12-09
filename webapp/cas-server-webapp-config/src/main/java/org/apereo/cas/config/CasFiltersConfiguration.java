@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties;
+import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
@@ -42,9 +43,8 @@ public class CasFiltersConfiguration {
     @Bean
     public FilterRegistrationBean characterEncodingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new CharacterEncodingFilter(
-            casProperties.getHttpWebRequest().getWeb().getEncoding(),
-            casProperties.getHttpWebRequest().getWeb().isForceEncoding()));
+        final HttpWebRequestProperties web = casProperties.getHttpWebRequest().getWeb();
+        bean.setFilter(new CharacterEncodingFilter(web.getEncoding(), web.isForceEncoding()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("characterEncodingFilter");
         bean.setAsyncSupported(true);
@@ -81,7 +81,13 @@ public class CasFiltersConfiguration {
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(header.isXcontent()));
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
         initParams.put("enableXFrameOptions", BooleanUtils.toStringTrueFalse(header.isXframe()));
+        if (header.isXframe()) {
+            initParams.put("XFrameOptions", header.getXframeOptions());
+        }
         initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(header.isXss()));
+        if (header.isXss()) {
+            initParams.put("XSSProtection", header.getXssOptions());
+        }
         if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
