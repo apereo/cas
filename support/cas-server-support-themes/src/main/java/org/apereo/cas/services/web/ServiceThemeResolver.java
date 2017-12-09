@@ -133,7 +133,7 @@ public class ServiceThemeResolver extends AbstractThemeResolver {
             LOGGER.debug("Service [{}] is configured to use a custom theme [{}]", rService, rService.getTheme());
             
             final Resource resource = ResourceUtils.getRawResourceFrom(rService.getTheme());
-            if (resource instanceof FileSystemResource) {
+            if (resource instanceof FileSystemResource && resource.exists()) {
                 LOGGER.debug("Executing groovy script to determine theme for [{}]", service.getId());
                 final String result = ScriptingUtils.executeGroovyScript(resource, new Object[]{service, rService,
                         request.getQueryString(), HttpRequestUtils.getRequestHeaders(request), LOGGER}, String.class);
