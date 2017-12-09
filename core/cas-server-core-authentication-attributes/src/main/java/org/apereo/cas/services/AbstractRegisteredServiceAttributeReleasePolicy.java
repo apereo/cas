@@ -107,7 +107,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
     public void setAuthorizedToReleaseProxyGrantingTicket(final boolean authorizedToReleaseProxyGrantingTicket) {
         this.authorizedToReleaseProxyGrantingTicket = authorizedToReleaseProxyGrantingTicket;
     }
-    
+
     public boolean isExcludeDefaultAttributes() {
         return excludeDefaultAttributes;
     }
@@ -136,7 +136,7 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         LOGGER.debug("Initial set of consentable attributes are [{}]", attributes);
         if (this.consentPolicy != null) {
             LOGGER.debug("Activating consent policy [{}] for service [{}]", this.consentPolicy, service);
-            
+
             if (consentPolicy.getExcludedAttributes() != null && !consentPolicy.getExcludedAttributes().isEmpty()) {
                 consentPolicy.getExcludedAttributes().forEach(attributes::remove);
                 LOGGER.debug("Consentable attributes after removing excluded attributes are [{}]", attributes);
@@ -163,11 +163,10 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
                                              final RegisteredService registeredService) {
 
         LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-                principal.getId(), selectedService.getId(), registeredService.getServiceId());
+            principal.getId(), selectedService.getId(), registeredService.getServiceId());
 
         LOGGER.debug("Locating principal attributes for [{}]", principal.getId());
-        final Map<String, Object> principalAttributes = getPrincipalAttributesRepository() == null
-                ? principal.getAttributes() : getPrincipalAttributesRepository().getAttributes(principal);
+        final Map<String, Object> principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
 
         LOGGER.debug("Calling attribute policy [{}] to process attributes for [{}]", getClass().getSimpleName(), principal.getId());
@@ -197,8 +196,35 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             return getAttributeFilter().filter(attributesToRelease);
         }
         LOGGER.debug("Finalizing attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
-                principal.getId(), selectedService.getId(), registeredService.getServiceId());
+            principal.getId(), selectedService.getId(), registeredService.getServiceId());
         return returnFinalAttributesCollection(attributesToRelease, registeredService);
+    }
+
+    /**
+     * Resolve attributes from principal attribute repository.
+     *
+     * @param principal the principal
+     * @return the map
+     */
+    protected Map<String, Object> resolveAttributesFromPrincipalAttributeRepository(final Principal principal) {
+        PrincipalAttributesRepository repository = getPrincipalAttributesRepository();
+        if (repository == null) {
+            LOGGER.debug("No principal attribute repository is defined for the service. Evaluating global attribute caching policy...");
+            final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
+            if (applicationContext != null) {
+                if (applicationContext.containsBean("globalPrincipalAttributeRepository")) {
+                    LOGGER.debug("Loading global principal attribute repository with caching policies...");
+                    repository = applicationContext.getBean("globalPrincipalAttributeRepository", PrincipalAttributesRepository.class);
+                } else {
+                    LOGGER.warn("No global principal attribute repository can be located from the application context.");
+                }
+            }
+        }
+        if (repository != null) {
+            LOGGER.debug("Using principal attribute repository [{}] to retrieve attributes", repository);
+            return repository.getAttributes(principal);
+        }
+        return principal.getAttributes();
     }
 
     /**
@@ -273,21 +299,21 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @return the attributes allowed for release
      */
     public abstract Map<String, Object> getAttributesInternal(Principal principal,
-                                                                 Map<String, Object> attributes,
-                                                                 RegisteredService service);
+                                                              Map<String, Object> attributes,
+                                                              RegisteredService service);
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder(13, 133)
-                .append(getAttributeFilter())
-                .append(isAuthorizedToReleaseCredentialPassword())
-                .append(isAuthorizedToReleaseProxyGrantingTicket())
-                .append(getPrincipalAttributesRepository())
-                .append(isExcludeDefaultAttributes())
-                .append(getPrincipalIdAttribute())
-                .append(getConsentPolicy())
-                .append(isAuthorizedToReleaseAuthenticationAttributes())
-                .toHashCode();
+            .append(getAttributeFilter())
+            .append(isAuthorizedToReleaseCredentialPassword())
+            .append(isAuthorizedToReleaseProxyGrantingTicket())
+            .append(getPrincipalAttributesRepository())
+            .append(isExcludeDefaultAttributes())
+            .append(getPrincipalIdAttribute())
+            .append(getConsentPolicy())
+            .append(isAuthorizedToReleaseAuthenticationAttributes())
+            .toHashCode();
     }
 
     @Override
@@ -307,30 +333,30 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         final AbstractRegisteredServiceAttributeReleasePolicy that = (AbstractRegisteredServiceAttributeReleasePolicy) o;
         final EqualsBuilder builder = new EqualsBuilder();
         return builder
-                .append(getAttributeFilter(), that.getAttributeFilter())
-                .append(isAuthorizedToReleaseCredentialPassword(), that.isAuthorizedToReleaseCredentialPassword())
-                .append(isAuthorizedToReleaseProxyGrantingTicket(), that.isAuthorizedToReleaseProxyGrantingTicket())
-                .append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository())
-                .append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
-                .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute())
-                .append(getConsentPolicy(), that.getConsentPolicy())
-                .append(isAuthorizedToReleaseAuthenticationAttributes(), that.isAuthorizedToReleaseAuthenticationAttributes())
-                .isEquals();
+            .append(getAttributeFilter(), that.getAttributeFilter())
+            .append(isAuthorizedToReleaseCredentialPassword(), that.isAuthorizedToReleaseCredentialPassword())
+            .append(isAuthorizedToReleaseProxyGrantingTicket(), that.isAuthorizedToReleaseProxyGrantingTicket())
+            .append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository())
+            .append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
+            .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute())
+            .append(getConsentPolicy(), that.getConsentPolicy())
+            .append(isAuthorizedToReleaseAuthenticationAttributes(), that.isAuthorizedToReleaseAuthenticationAttributes())
+            .isEquals();
     }
 
 
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .append("attributeFilter", getAttributeFilter())
-                .append("principalAttributesRepository", getPrincipalAttributesRepository())
-                .append("authorizedToReleaseCredentialPassword", isAuthorizedToReleaseCredentialPassword())
-                .append("authorizedToReleaseAuthenticationAttributes", isAuthorizedToReleaseAuthenticationAttributes())
-                .append("authorizedToReleaseProxyGrantingTicket", isAuthorizedToReleaseProxyGrantingTicket())
-                .append("excludeDefaultAttributes", isExcludeDefaultAttributes())
-                .append("principalIdAttribute", getPrincipalIdAttribute())
-                .append("consentPolicy", getConsentPolicy())
-                .toString();
+            .append("attributeFilter", getAttributeFilter())
+            .append("principalAttributesRepository", getPrincipalAttributesRepository())
+            .append("authorizedToReleaseCredentialPassword", isAuthorizedToReleaseCredentialPassword())
+            .append("authorizedToReleaseAuthenticationAttributes", isAuthorizedToReleaseAuthenticationAttributes())
+            .append("authorizedToReleaseProxyGrantingTicket", isAuthorizedToReleaseProxyGrantingTicket())
+            .append("excludeDefaultAttributes", isExcludeDefaultAttributes())
+            .append("principalIdAttribute", getPrincipalIdAttribute())
+            .append("consentPolicy", getConsentPolicy())
+            .toString();
     }
 }
 
