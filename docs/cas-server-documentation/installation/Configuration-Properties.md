@@ -2397,6 +2397,31 @@ To learn more about this topic, [please review this guide](../integration/Delega
 # cas.authn.pac4j.name=
 ```
 
+The following external identity providers share [common blocks of settings](Configuration-Properties-Common.html#delegated-authentication-settings) under the listed configuration keys listed below:
+
+| Identity Provider                       | Configuration Key
+|---------------------------|----------------------------------------------------------
+| Twitter               | `cas.authn.pac4j.twitter`
+| Paypal               | `cas.authn.pac4j.paypal`
+| Wordpress               | `cas.authn.pac4j.wordpress`
+| Yahoo               | `cas.authn.pac4j.yahoo`
+| Orcid               | `cas.authn.pac4j.orcid`
+| Dropbox               | `cas.authn.pac4j.dropbox`
+| GitHub               | `cas.authn.pac4j.github`
+| Foursquare               | `cas.authn.pac4j.foursquare`
+| WindowsLive               | `cas.authn.pac4j.windowsLive`
+|  Google               | `cas.authn.pac4j.google`
+
+See below for other identity providers such as CAS, SAML2 and more.
+
+### Google
+
+In addition to the [common block of settings](Configuration-Properties-Common.html#delegated-authentication-settings) , the following properties are additionally supported, when delegating authentication to Google:
+
+```properties
+# cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
+```
+
 ### CAS
 
 Delegate authentication to an external CAS server.
@@ -2436,7 +2461,7 @@ Delegate authentication to an external OpenID Connect server. Common settings fo
 # cas.authn.pac4j.oidc[0].customParams.param1=value1
 ```
 
-### SAML
+### SAML2
 
 Delegate authentication to an external SAML2 IdP (do not use the `resource:` or `classpath:`
 prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
@@ -2501,49 +2526,6 @@ Delegate authentication to LinkedIn. Common settings for this identity provider 
 # cas.authn.pac4j.linkedIn.scope=
 ```
 
-### Twitter
-
-Delegate authentication to Twitter. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.twitter`.
-
-### Paypal
-
-Delegate authentication to Paypal. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.paypal`.
-
-### Wordpress
-
-Delegate authentication to Wordpress. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.wordpress`.
-
-### Yahoo
-
-Delegate authentication to Yahoo. Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.yahoo`.
-
-### Orcid
-
-Delegate authentication to Orcid.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.orcid`.
-
-### Dropbox
-
-Delegate authentication to Dropbox.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.dropbox`.
-
-### GitHub
-
-Delegate authentication to GitHub.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.github`.
-
-### Foursquare
-
-Delegate authentication to Foursquare.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.foursquare`.
-
-### WindowsLive
-
-Delegate authentication to WindowsLive.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.windowsLive`.
-
-### Google
-
-Delegate authentication to Google.  Common settings for this identity provider are available [here](Configuration-Properties-Common.html#delegated-authentication-settings) under the configuration key `cas.authn.pac4j.google`.
-
-```properties
-# cas.authn.pac4j.google.scope=EMAIL|PROFILE|EMAIL_AND_PROFILE
-```
 
 ## WS Federation
 
