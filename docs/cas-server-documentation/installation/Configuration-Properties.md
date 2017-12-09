@@ -105,6 +105,18 @@ Load settings from a MongoDb instance.
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds135522.mlab.com:35522/jasigcas
 ```
 
+### Azure KeyVault Secrets
+
+Load settings from Microsoft Azure's KeyVault instance.
+
+```properties
+# azure.keyvault.enabled=true
+# azure.keyvault.uri=put-your-azure-keyvault-uri-here
+# azure.keyvault.client-id=put-your-azure-client-id-here
+# azure.keyvault.client-key=put-your-azure-client-key-here
+# azure.keyvault.token-acquire-timeout-seconds=60
+```
+
 ### ZooKeeper
 
 Load settings from an Apache ZooKeeper instance.

@@ -10,7 +10,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http2.Http2Protocol;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.CasServerProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatAjpProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatExtendedAccessLogProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatSslValveProperties;
 import org.apereo.cas.util.ResourceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +58,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
     @Bean
     public EmbeddedServletContainerFactory servletContainer() {
@@ -74,7 +78,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final Resource res = casProperties.getServer().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
             LOGGER.debug("Configuring rewrite valve at [{}]", res);
-            
+
             final RewriteValve valve = new RewriteValve() {
                 @Override
                 protected synchronized void startInternal() throws LifecycleException {
@@ -97,7 +101,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureExtendedAccessLogValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.ExtendedAccessLog ext = casProperties.getServer().getExtAccessLog();
+        final CasEmbeddedApacheTomcatExtendedAccessLogProperties ext = casProperties.getServer().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
             LOGGER.debug("Creating extended access log valve configuration for the embedded tomcat container...");
@@ -121,7 +125,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.Http http = casProperties.getServer().getHttp();
+        final CasEmbeddedApacheTomcatHttpProperties http = casProperties.getServer().getHttp();
         if (http.isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
             final Connector connector = new Connector(http.getProtocol());
@@ -142,7 +146,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureHttpProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.HttpProxy proxy = casProperties.getServer().getHttpProxy();
+        final CasEmbeddedApacheTomcatHttpProxyProperties proxy = casProperties.getServer().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
             tomcat.getTomcatConnectorCustomizers().add(connector -> {
@@ -172,7 +176,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.Ajp ajp = casProperties.getServer().getAjp();
+        final CasEmbeddedApacheTomcatAjpProperties ajp = casProperties.getServer().getAjp();
         if (ajp.isEnabled() && ajp.getPort() > 0) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
             final Connector ajpConnector = new Connector(ajp.getProtocol());
@@ -203,7 +207,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasServerProperties.SslValve valveConfig = casProperties.getServer().getSslValve();
+        final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getSslValve();
 
         if (valveConfig.isEnabled()) {
             LOGGER.debug("Adding SSLValve to engine of the embedded tomcat container...");

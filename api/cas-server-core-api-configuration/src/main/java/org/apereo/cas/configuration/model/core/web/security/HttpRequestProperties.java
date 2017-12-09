@@ -49,7 +49,7 @@ public class HttpRequestProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HttpCorsRequestProperties cors = new HttpCorsRequestProperties();
-
+    
     public boolean isAllowMultiValueParameters() {
         return allowMultiValueParameters;
     }

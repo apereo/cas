@@ -1128,6 +1128,11 @@ ext.libraries = [
                     force = true
                 }
         ],
+        azurekeyvault : [
+                dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                }
+        ],
         cosmosdb                : [
                 dependencies.create("com.microsoft.azure:azure-documentdb:$cosmosdbVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
