@@ -80,6 +80,20 @@ Load settings from an internal/external Git repository.
 
 The above configuration also applies to online git-based repositories such as Github, BitBucket, etc.
 
+### Consul
+
+Load settings from [HashiCorp's Consul](Service-Discovery-Guide-Consul.html).
+
+```properties
+# spring.cloud.consul.config.enabled=true
+# spring.cloud.consul.config.prefix=configuration
+# spring.cloud.consul.config.defaultContext=apps
+# spring.cloud.consul.config.profileSeparator=::
+
+# spring.cloud.consul.config.watch.delay=1000
+# spring.cloud.consul.config.watch.enabled=false
+```
+
 ### Vault
 
 Load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
