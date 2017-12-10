@@ -3,7 +3,7 @@ package org.apereo.cas.config;
 import org.springframework.context.annotation.Configuration;
 
 /**
- * This is {@link CasEurekaDiscoveryClientConfiguration}.
+ * This is {@link CasConsulDiscoveryClientConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
