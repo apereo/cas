@@ -4,6 +4,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.binding.expression.Expression;
 import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;
@@ -32,6 +34,8 @@ import java.util.stream.StreamSupport;
  * @since 5.1.0
  */
 public class SpringWebflowReportController extends BaseCasMvcEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpringWebflowReportController.class);
+    
     /**
      * Instantiates a new Base cas mvc endpoint.
      *
@@ -102,10 +106,13 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
                     }
 
                     final Field field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
-                    ReflectionUtils.makeAccessible(field);
-                    final Expression exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
-                    stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
-
+                    if (field != null) {
+                        ReflectionUtils.makeAccessible(field);
+                        final Expression exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
+                        stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
+                    } else {
+                        LOGGER.warn("Field viewId cannot be located on view state [{}]", state);
+                    }
                 }
 
                 if (state instanceof TransitionableState) {
