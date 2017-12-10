@@ -1,10 +1,5 @@
 description = "Apereo CAS Core Logging Splunk Support"
 
-repositories {
-    maven { url "https://repo.spring.io/plugins-release/" }
-    jcenter()
-}
-
 dependencies {
     api project(":api:cas-server-core-api-ticket")
 
