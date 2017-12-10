@@ -155,6 +155,12 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setEvaluationOrder(1000);
         l.add(svc);
 
+        svc = RegisteredServiceTestUtils.getRegisteredService("https://localhost.*");
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        svc.setEvaluationOrder(100);
+        l.add(svc);
+        
         svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
