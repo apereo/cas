@@ -47,7 +47,7 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
         try (StringWriter writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
             final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(),
-                    CollectionUtils.wrap("principal", principal.getId(), "service", service.getId()));
+                    CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 return MAPPER.readValue(response.getEntity().getContent(),
                         new TypeReference<Map<String, Object>>() {
