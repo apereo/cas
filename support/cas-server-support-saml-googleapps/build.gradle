@@ -28,4 +28,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-cookie")
     testImplementation project(":core:cas-server-core-webflow")
     testImplementation project(":core:cas-server-core-webflow-api")
+
+    testImplementation libraries.thymeleaf
 }
