@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 public class DefaultRegisteredServiceAccessStrategyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "x509CertificateCredential.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+    private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     
     private static final String TEST = "test";
     private static final String PHONE = "phone";
