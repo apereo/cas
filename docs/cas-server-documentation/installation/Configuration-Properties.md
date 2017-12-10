@@ -2342,7 +2342,6 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Bynder               | `cas.samlSp.bynder` | N/A
 | Web Advisor               | `cas.samlSp.webAdvisor` | `uid`
 | Adobe Creative Cloud               | `cas.samlSp.adobeCloud` | `firstName`, `lastName`, `email`
-| Bynder               | `cas.samlSp.bynder`
 | Securing The Human               | `cas.samlSp.sansSth` | `firstName`, `lastName`, `scopedUserId`, `department`, `reference`, `email`
 | Easy IEP               | `cas.samlSp.easyIep` | `employeeId`
 | Infinite Campus               | `cas.samlSp.infiniteCampus` | `employeeId`
