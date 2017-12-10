@@ -135,7 +135,7 @@ subprojects {
         if (rootProject.publishSnapshots) {
             maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         }
-
+        maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
         jcenter()
