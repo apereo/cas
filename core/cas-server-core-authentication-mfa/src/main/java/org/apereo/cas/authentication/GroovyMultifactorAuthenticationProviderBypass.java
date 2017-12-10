@@ -29,16 +29,17 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
     }
 
     @Override
-    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
+    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
+                                                                  final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         try {
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                            + "service [{}] and provider [{}] via Groovy script [{}]",
-                    principal.getId(), registeredService, provider, this.groovyScript);
+                    + "service [{}] and provider [{}] via Groovy script [{}]",
+                principal.getId(), registeredService, provider, this.groovyScript);
             return ScriptingUtils.executeGroovyScript(this.groovyScript,
-                    new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
+                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
