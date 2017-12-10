@@ -22,19 +22,19 @@ Splunk Enterprise management port.
 
 ```xml
 <Appenders>
-		<Socket name="SocketAppender" host="127.0.0.1" port="15000">
-		    <PatternLayout pattern="%p: %m%n" charset="UTF-8"/>
-		</Socket>
-		...
-		<SplunkAppender name="SplunkAppender">
-            <AppenderRef ref="SocketAppender" />
-        </SplunkAppender>
+   <Socket name="SocketAppender" host="127.0.0.1" port="15000">
+      <PatternLayout pattern="%p: %m%n" charset="UTF-8"/>
+   </Socket>
+...
+   <SplunkAppender name="SplunkAppender">
+      <AppenderRef ref="SocketAppender" />
+   </SplunkAppender>
 </Appenders>
 ...
 <Loggers>
-		<AsyncLogger name="org.apereo" level="debug">
-		    <AppenderRef ref="SplunkAppender"/>
-		</AsyncLogger>
+   <AsyncLogger name="org.apereo" level="debug">
+      <AppenderRef ref="SplunkAppender"/>
+   </AsyncLogger>
 </Loggers>
 ```
 
