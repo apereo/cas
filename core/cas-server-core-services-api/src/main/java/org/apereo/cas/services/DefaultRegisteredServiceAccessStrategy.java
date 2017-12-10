@@ -321,7 +321,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         }
 
         if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.requiredAttributes)) {
-            LOGGER.debug("Access is denied. The principal does not have the required attributes specified by this strategy");
+            LOGGER.debug("Access is denied. The principal does not have the required attributes [{}] specified by this strategy", this.requiredAttributes);
             return false;
         }
         
