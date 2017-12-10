@@ -37,7 +37,6 @@ import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.util.CompressionUtils;
-import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
@@ -50,15 +49,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import javax.annotation.PostConstruct;
 import java.io.File;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -74,7 +70,7 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-    GoogleAccountsServiceTests.CasTestConfiguration.class,
+    AbstractOpenSamlTests.SamlTestConfiguration.class,
     SamlGoogleAppsConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
     CasCoreServicesAuthenticationConfiguration.class,
@@ -122,17 +118,6 @@ public class GoogleAccountsServiceTests extends AbstractOpenSamlTests {
     private ResponseBuilder<GoogleAccountsService> googleAccountsServiceResponseBuilder;
 
     private GoogleAccountsService googleAccountsService;
-
-    @TestConfiguration
-    public static class CasTestConfiguration {
-        @Autowired
-        protected ApplicationContext applicationContext;
-
-        @PostConstruct
-        public void init() {
-            SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
-        }
-    }
 
     public GoogleAccountsService getGoogleAccountsService() throws Exception {
         final MockHttpServletRequest request = new MockHttpServletRequest();
