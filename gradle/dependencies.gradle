@@ -21,6 +21,12 @@ ext.libraries = [
                     force = true
                 }
         ],
+        splunklogging : [
+                dependencies.create("com.splunk.logging:splunk-library-javalogging:$splunkLoggingVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
         oshi                    : [
                 dependencies.create("com.github.oshi:oshi-core:$oshiVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
