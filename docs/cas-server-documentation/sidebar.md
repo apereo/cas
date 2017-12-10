@@ -159,6 +159,7 @@ layout: null
         *   [Papertrail](/$version/installation/Logging-Papertrail.html)
         *   [Sentry](/$version/installation/Logging-Sentry.html)
         *   [SysLog](/$version/installation/Logging-SysLog.html)
+        *   [Splunk](/$version/installation/Logging-Splunk.html)
     *   [Audits](/$version/installation/Audits.html)
     
 * [Monitoring & Statistics](#monitoroverview)
