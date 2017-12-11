@@ -264,11 +264,11 @@ The `dataSourceName` property can be either a JNDI name for the datasource or a 
 CAS overlay. It should contain an entry like this:
 
 ```xml
-    <resource-ref>
-        <res-ref-name>jdbc/casDataSource</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
+<resource-ref>
+    <res-ref-name>jdbc/casDataSource</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+</resource-ref>
 ```
 
 In Apache Tomcat a container datasource can be defined like this in the `context.xml`:
