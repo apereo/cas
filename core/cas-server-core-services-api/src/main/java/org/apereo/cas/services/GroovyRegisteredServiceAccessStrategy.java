@@ -34,6 +34,9 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     @Transient
     private transient RegisteredServiceAccessStrategy groovyStrategyInstance;
 
+    public GroovyRegisteredServiceAccessStrategy() {
+    }
+
     @Override
     @JsonIgnore
     public boolean isServiceAccessAllowed() {
@@ -97,15 +100,14 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
         try {
             if (this.groovyStrategyInstance == null) {
                 final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
-                this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource,
-                    new Class[]{}, new Object[]{}, RegisteredServiceAccessStrategy.class);
+                this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
