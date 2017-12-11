@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.web.config.CasProtocolViewsConfiguration;
 import org.apereo.cas.web.config.CasValidationConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
@@ -27,7 +28,9 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@Import({ProxyControllerTests.ProxyTestConfiguration.class, CasValidationConfiguration.class})
+@Import({ProxyControllerTests.ProxyTestConfiguration.class,
+    CasProtocolViewsConfiguration.class,
+    CasValidationConfiguration.class})
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired
