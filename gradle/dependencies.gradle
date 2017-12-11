@@ -21,6 +21,13 @@ ext.libraries = [
                     force = true
                 }
         ],
+        azuread                  : [
+                dependencies.create("com.microsoft.azure:adal4j:$azureActiveDirectoryVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        
         splunklogging : [
                 dependencies.create("com.splunk.logging:splunk-library-javalogging:$splunkLoggingVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

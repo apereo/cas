@@ -137,7 +137,6 @@ public class WsFederationAction extends AbstractAction {
         final String url = String.format(getAuthorizationUrl(config), getRelyingPartyIdentifier(service, context, config), requestUUID.toString());
         LOGGER.info("Preparing to redirect to the IdP [{}]", url);
         context.getFlowScope().put(PROVIDERURL, url);
-        LOGGER.debug("Returning error event");
         return error();
     }
 
