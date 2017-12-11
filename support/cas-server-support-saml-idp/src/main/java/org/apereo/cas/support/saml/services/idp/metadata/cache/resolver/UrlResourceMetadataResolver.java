@@ -30,8 +30,11 @@ import java.util.UUID;
 public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolver.class);
 
+    /**
+     * Http client instance.
+     */
     private final HttpClient httpClient;
-    
+
     public UrlResourceMetadataResolver(final SamlIdPProperties samlIdPProperties,
                                        final OpenSamlConfigBean configBean,
                                        final HttpClient httpClient) {
@@ -46,15 +49,15 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
             final String metadataLocation = service.getMetadataLocation();
             LOGGER.info("Loading SAML metadata from [{}]", metadataLocation);
             final AbstractResource metadataResource = ResourceUtils.getResourceFrom(metadataLocation);
-            
+
             final File backupFile = getMetadataBackupFile(metadataResource, service);
             final String canonicalPath = backupFile.getCanonicalPath();
             LOGGER.debug("Metadata backup file will be at [{}]", canonicalPath);
             FileUtils.forceMkdirParent(backupFile);
 
             final FileBackedHTTPMetadataResolver metadataProvider = new FileBackedHTTPMetadataResolver(
-                    this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
-                    canonicalPath);
+                this.httpClient.getWrappedHttpClient(), metadataResource.getURL().toExternalForm(),
+                canonicalPath);
             buildSingleMetadataResolver(metadataProvider, service);
             return CollectionUtils.wrap(metadataProvider);
         } catch (final Exception e) {
@@ -68,7 +71,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         final SamlIdPProperties.Metadata md = samlIdPProperties.getMetadata();
         final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         LOGGER.debug("Metadata backup directory is at [{}]", backupDirectory.getCanonicalPath());
-        
+
         final String metadataFileName = service.getName().concat("-").concat(UUID.randomUUID().toString()).concat(metadataResource.getFilename());
         final File backupFile = new File(backupDirectory, metadataFileName);
         if (backupFile.exists()) {
@@ -76,8 +79,13 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         } else {
             LOGGER.debug("Metadata to fetch for service [{}] will be placed at [{}]", service.getName(), backupFile.getCanonicalPath());
         }
-        FileUtils.forceMkdir(backupDirectory);
-        return backupFile;
+        try {
+            FileUtils.forceMkdir(backupDirectory);
+            return backupFile;
+        } catch (final Exception e) {
+            LOGGER.warn("Unable to create metadata backup directory [{}]. This is likely due to a permission issue", backupDirectory);
+            throw new IOException(e.getMessage(), e);
+        }
     }
 
     @Override
