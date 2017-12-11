@@ -160,6 +160,12 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
         svc.setEvaluationOrder(100);
         l.add(svc);
+
+        svc = RegisteredServiceTestUtils.getRegisteredService("https://carmenwiki.osu.edu.*");
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        svc.setEvaluationOrder(99);
+        l.add(svc);
         
         svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
