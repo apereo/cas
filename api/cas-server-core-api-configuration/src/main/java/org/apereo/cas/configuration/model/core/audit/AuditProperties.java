@@ -13,6 +13,14 @@ import java.io.Serializable;
 public class AuditProperties implements Serializable {
 
     private static final long serialVersionUID = 3946106584608417663L;
+
+    /**
+     * Whether ticket validation events in the audit log should include
+     * information about the assertion that is validated; things such as
+     * the principal id and attributes released.
+     */
+    private boolean includeValidationAssertion;
+
     /**
      * Application code to use in the audit logs.
      *
@@ -162,4 +170,11 @@ public class AuditProperties implements Serializable {
         this.useServerHostAddress = useServerHostAddress;
     }
 
+    public boolean isIncludeValidationAssertion() {
+        return includeValidationAssertion;
+    }
+
+    public void setIncludeValidationAssertion(final boolean includeValidationAssertion) {
+        this.includeValidationAssertion = includeValidationAssertion;
+    }
 }
