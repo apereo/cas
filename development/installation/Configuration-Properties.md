@@ -2151,11 +2151,11 @@ Multifacor authentication bypass settings for this provider are available [here]
 # cas.authn.mfa.u2f.cleaner.schedule.repeatInterval=PT60S
 ```
 
-#### FIDO U2F MongoDb
+### FIDO U2F MongoDb
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
  
-#### FIDO U2F JPA
+### FIDO U2F JPA
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.u2f.jpa`.
 
