@@ -7,8 +7,6 @@ import org.junit.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import static org.junit.Assert.*;
 
@@ -23,12 +21,12 @@ public class GroovyRegisteredServiceAccessStrategyTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "GroovyRegisteredServiceAccessStrategyTests.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    
+
     @Test
     public void checkDefaultAuthzStrategyConfig() {
         final GroovyRegisteredServiceAccessStrategy authz = new GroovyRegisteredServiceAccessStrategy();
         authz.setGroovyScript("classpath:accessstrategy.groovy");
-        
+
         assertTrue(authz.isServiceAccessAllowed());
         assertTrue(authz.isServiceAccessAllowedForSso());
         assertTrue(authz.doPrincipalAttributesAllowServiceAccess("test", new HashMap<>()));
