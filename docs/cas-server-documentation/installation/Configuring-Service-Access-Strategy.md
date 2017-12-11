@@ -242,7 +242,7 @@ This strategy delegates to a Groovy script to dynamically decide the access rule
   "id" : 1,
   "accessStrategy" : {
     "@class" : "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
-    "groovyScript" : "file:///groovy-access-strategy.groovy"
+    "groovyScript" : "file:///etc/cas/config/access-strategy.groovy"
   }
 }
 ```
