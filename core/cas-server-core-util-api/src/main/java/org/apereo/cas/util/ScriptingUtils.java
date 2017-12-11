@@ -301,6 +301,19 @@ public final class ScriptingUtils {
     /**
      * Gets object instance from groovy resource.
      *
+     * @param <T>          the type parameter
+     * @param resource     the resource
+     * @param expectedType the expected type
+     * @return the object instance from groovy resource
+     */
+    public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
+                                                            final Class<T> expectedType) {
+        return getObjectInstanceFromGroovyResource(resource, new Class[]{}, new Object[]{}, expectedType);
+    }
+
+    /**
+     * Gets object instance from groovy resource.
+     *
      * @param <T>             the type parameter
      * @param resource        the resource
      * @param constructorArgs the constructor args
