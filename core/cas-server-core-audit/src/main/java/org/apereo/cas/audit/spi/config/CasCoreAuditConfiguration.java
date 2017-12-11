@@ -55,10 +55,10 @@ public class CasCoreAuditConfiguration {
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailManager") final AuditTrailManager auditTrailManager) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
-                casProperties.getAudit().getAppCode(),
-                auditablePrincipalResolver(auditPrincipalIdProvider()),
-                CollectionUtils.wrap(auditTrailManager), auditActionResolverMap(),
-                auditResourceResolverMap());
+            casProperties.getAudit().getAppCode(),
+            auditablePrincipalResolver(auditPrincipalIdProvider()),
+            CollectionUtils.wrap(auditTrailManager), auditActionResolverMap(),
+            auditResourceResolverMap());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }
@@ -186,19 +186,19 @@ public class CasCoreAuditConfiguration {
         final AuditResourceResolver ticketResourceResolver = ticketResourceResolver();
         map.put("DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
         map.put("DESTROY_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER", ticketResourceResolver);
-        
+
         map.put("GRANT_SERVICE_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
         map.put("GRANT_PROXY_TICKET_RESOURCE_RESOLVER", new ServiceResourceResolver());
 
         map.put("VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER", ticketValidationResourceResolver());
-        
+
         final AuditResourceResolver returnValueResourceResolver = returnValueResourceResolver();
         map.put("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("SAVE_CONSENT_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
         map.put("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
-        
+
         map.put("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
         map.putAll(customAuditResourceResolverMap());
         return map;
@@ -230,7 +230,11 @@ public class CasCoreAuditConfiguration {
     @ConditionalOnMissingBean(name = "ticketValidationResourceResolver")
     @Bean
     public AuditResourceResolver ticketValidationResourceResolver() {
-        return new TicketValidationResourceResolver();
+        final AuditProperties audit = casProperties.getAudit();
+        if (audit.isIncludeValidationAssertion()) {
+            return new TicketValidationResourceResolver();
+        }
+        return ticketResourceResolver();
     }
 
     @ConditionalOnMissingBean(name = "messageBundleAwareResourceResolver")
