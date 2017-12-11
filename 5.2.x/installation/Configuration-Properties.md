@@ -4052,7 +4052,7 @@ Control how audit messages are formatted.
 To learn more about this topic, [please review this guide](Audits.html).
 
 ```properties
-# cas.audit.auditFormat=DEFAULT
+# cas.audit.auditFormat=DEFAULT|JSON
 # cas.audit.ignoreAuditFailures=false
 # cas.audit.singlelineSeparator=|
 # cas.audit.useSingleLine=false
