@@ -20,7 +20,7 @@ public class AzureActiveDirectoryDelegationProperties implements Serializable {
      * Name the authentication handler.
      */
     private String name;
-    
+
     /**
      * Azure active directory instance url.
      */
@@ -51,11 +51,6 @@ public class AzureActiveDirectoryDelegationProperties implements Serializable {
      */
     @RequiredProperty
     private String clientSecret;
-
-    /**
-     * Groups and roles to retrieve from Azure.
-     */
-    private String groups;
 
     public String getInstance() {
         return StringUtils.appendIfMissing(instance, "/");
@@ -95,14 +90,6 @@ public class AzureActiveDirectoryDelegationProperties implements Serializable {
 
     public void setClientSecret(final String clientSecret) {
         this.clientSecret = clientSecret;
-    }
-
-    public String getGroups() {
-        return groups;
-    }
-
-    public void setGroups(final String groups) {
-        this.groups = groups;
     }
 
     public String getName() {
