@@ -4,7 +4,8 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
 import org.apache.commons.io.filefilter.TrueFileFilter;
-import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.jooq.lambda.Unchecked;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,56 +33,55 @@ import java.util.Properties;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link CasConfigurationPropertiesSourceLocator}.
+ * This is {@link DefaultCasConfigurationPropertiesSourceLocator}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class CasConfigurationPropertiesSourceLocator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationPropertiesSourceLocator.class);
+public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasConfigurationPropertiesSourceLocator.class);
 
-    /**
-     * Locate property source.
-     *
-     * @param environment    the environment
-     * @param resourceLoader the resource loader
-     * @param manager        the configuration properties environment manager
-     * @return the property source
-     */
-    public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader,
-                                    final CasConfigurationPropertiesEnvironmentManager manager) {
-        final CasConfigurationJasyptCipherExecutor configurationJasyptDecryptor = new CasConfigurationJasyptCipherExecutor(environment);
+    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
+    private final CipherExecutor<String, String> configurationCipherExecutor;
+
+    public DefaultCasConfigurationPropertiesSourceLocator(final CipherExecutor<String, String> configurationCipherExecutor,
+                                                          final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager) {
+        this.casConfigurationPropertiesEnvironmentManager = casConfigurationPropertiesEnvironmentManager;
+        this.configurationCipherExecutor = configurationCipherExecutor;
+    }
+
+    @Override
+    public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {
         final CompositePropertySource compositePropertySource = new CompositePropertySource("casCompositePropertySource");
 
-        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(environment, resourceLoader, configurationJasyptDecryptor);
+        final PropertySource<?> sourceYaml = loadEmbeddedYamlOverriddenProperties(resourceLoader);
         compositePropertySource.addPropertySource(sourceYaml);
 
-        final File config = manager.getStandaloneProfileConfigurationDirectory();
+        final File config = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
         LOGGER.debug("Located CAS standalone configuration directory at [{}]", config);
         if (config.isDirectory() && config.exists()) {
-            final PropertySource<?> sourceProfiles = loadSettingsByApplicationProfiles(environment, config, manager, configurationJasyptDecryptor);
+            final PropertySource<?> sourceProfiles = loadSettingsByApplicationProfiles(environment, config);
             compositePropertySource.addPropertySource(sourceProfiles);
         } else {
             LOGGER.info("Configuration directory [{}] is not a directory or cannot be found at the specific path", config);
         }
 
-        final File configFile = manager.getStandaloneProfileConfigurationFile();
+        final File configFile = casConfigurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationFile();
         if (configFile != null) {
-            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile, configurationJasyptDecryptor);
+            final PropertySource<?> sourceStandalone = loadSettingsFromStandaloneConfigFile(configFile);
             compositePropertySource.addFirstPropertySource(sourceStandalone);
         }
         return compositePropertySource;
     }
 
-    private PropertySource<?> loadSettingsFromStandaloneConfigFile(final File configFile,
-                                                                   final CasConfigurationJasyptCipherExecutor jasypt) {
+    private PropertySource<?> loadSettingsFromStandaloneConfigFile(final File configFile) {
         final Properties props = new Properties();
 
         try (Reader r = Files.newBufferedReader(configFile.toPath(), StandardCharsets.UTF_8)) {
             LOGGER.debug("Located CAS standalone configuration file at [{}]", configFile);
             props.load(r);
             LOGGER.debug("Found settings [{}] in file [{}]", props.keySet(), configFile);
-            props.putAll(decryptProperties(props, jasypt));
+            props.putAll(decryptProperties(props));
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
         }
@@ -89,12 +89,10 @@ public class CasConfigurationPropertiesSourceLocator {
         return new PropertiesPropertySource("standaloneConfigurationFileProperties", props);
     }
 
-    private PropertySource<?> loadSettingsByApplicationProfiles(final Environment environment,
-                                                                final File config, final CasConfigurationPropertiesEnvironmentManager manager,
-                                                                final CasConfigurationJasyptCipherExecutor jasypt) {
+    private PropertySource<?> loadSettingsByApplicationProfiles(final Environment environment, final File config) {
         final Properties props = new Properties();
 
-        final List<String> profiles = getApplicationProfiles(environment, manager);
+        final List<String> profiles = getApplicationProfiles(environment);
         final String regex = buildPatternForConfigurationFileDiscovery(config, profiles);
         final Collection<File> configFiles = scanForConfigurationFilesByPattern(config, regex);
 
@@ -104,21 +102,19 @@ public class CasConfigurationPropertiesSourceLocator {
             if (f.getName().toLowerCase().endsWith("yml")) {
                 final Map<String, Object> pp = loadYamlProperties(new FileSystemResource(f));
                 LOGGER.debug("Found settings [{}] in YAML file [{}]", pp.keySet(), f);
-                props.putAll(decryptProperties(pp, jasypt));
+                props.putAll(decryptProperties(pp));
             } else {
                 final Properties pp = new Properties();
                 pp.load(Files.newBufferedReader(f.toPath(), StandardCharsets.UTF_8));
                 LOGGER.debug("Found settings [{}] in file [{}]", pp.keySet(), f);
-                props.putAll(decryptProperties(pp, jasypt));
+                props.putAll(decryptProperties(pp));
             }
         }));
 
         return new PropertiesPropertySource("applicationProfilesProperties", props);
     }
 
-    private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final Environment environment,
-                                                                   final ResourceLoader resourceLoader,
-                                                                   final CasConfigurationJasyptCipherExecutor configurationJasyptDecryptor) {
+    private PropertySource<?> loadEmbeddedYamlOverriddenProperties(final ResourceLoader resourceLoader) {
         final Properties props = new Properties();
         final Resource resource = resourceLoader.getResource("classpath:/application.yml");
         if (resource != null && resource.exists()) {
@@ -127,7 +123,7 @@ public class CasConfigurationPropertiesSourceLocator {
                 LOGGER.debug("No properties were located inside [{}]", resource);
             } else {
                 LOGGER.info("Found settings [{}] in YAML file [{}]", pp.keySet(), resource);
-                props.putAll(decryptProperties(pp, configurationJasyptDecryptor));
+                props.putAll(decryptProperties(pp));
             }
         }
         return new PropertiesPropertySource("embeddedYamlOverriddenProperties", props);
@@ -140,8 +136,8 @@ public class CasConfigurationPropertiesSourceLocator {
             .collect(Collectors.toList());
     }
 
-    private Map<String, Object> decryptProperties(final Map properties, final CasConfigurationJasyptCipherExecutor jasypt) {
-        return jasypt.decrypt(properties);
+    private Map<String, Object> decryptProperties(final Map properties) {
+        return this.configurationCipherExecutor.decode(properties);
     }
 
     private static String buildPatternForConfigurationFileDiscovery(final File config, final List<String> profiles) {
@@ -155,10 +151,9 @@ public class CasConfigurationPropertiesSourceLocator {
         return regex;
     }
 
-    private List<String> getApplicationProfiles(final Environment environment,
-                                                final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
+    private List<String> getApplicationProfiles(final Environment environment) {
         final List<String> profiles = new ArrayList<>();
-        profiles.add(configurationPropertiesEnvironmentManager.getApplicationName());
+        profiles.add(casConfigurationPropertiesEnvironmentManager.getApplicationName());
         profiles.addAll(Arrays.stream(environment.getActiveProfiles()).collect(Collectors.toList()));
         return profiles;
     }
