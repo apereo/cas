@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.config;
 
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
-import org.apereo.cas.configuration.CasConfigurationPropertiesSourceLocator;
 import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverter;
+import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBinding;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
@@ -28,10 +29,14 @@ import java.util.List;
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casStandaloneBootstrapConfiguration")
+@AutoConfigureAfter(CasCoreBootstrapStandaloneLocatorConfiguration.class)
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
 
     @Autowired
     private ResourceLoader resourceLoader;
+
+    @Autowired
+    private CasConfigurationPropertiesSourceLocator casConfigurationPropertiesSourceLocator;
 
     @ConfigurationPropertiesBinding
     @Bean
@@ -46,10 +51,9 @@ public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLo
 
     @Override
     public PropertySource<?> locate(final Environment environment) {
-        final CasConfigurationPropertiesSourceLocator locator = new CasConfigurationPropertiesSourceLocator();
-        return locator.locate(environment, this.resourceLoader, configurationPropertiesEnvironmentManager());
+        return casConfigurationPropertiesSourceLocator.locate(environment, this.resourceLoader);
     }
-    
+
     @Override
     public int getOrder() {
         return Ordered.LOWEST_PRECEDENCE;
