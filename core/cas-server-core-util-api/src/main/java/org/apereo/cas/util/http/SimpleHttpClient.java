@@ -116,12 +116,10 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
                     return msg;
                 }
             }
-            LOGGER.warn("Response code [{}] from [{}] did not match any of the acceptable response codes.",
-                    responseCode, url);
+            LOGGER.warn("Response code [{}] from [{}] did not match any of the acceptable response codes.", responseCode, url);
             if (responseCode == HttpStatus.SC_INTERNAL_SERVER_ERROR) {
                 final String value = response.getStatusLine().getReasonPhrase();
-                LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(),
-                        value);
+                LOGGER.error("There was an error contacting the endpoint: [{}]; The error:\n[{}]", url.toExternalForm(), value);
             }
         } catch (final Exception e) {
             LOGGER.error("Unable to send message", e);
@@ -173,7 +171,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
 
     /**
      * Shutdown the executor service and close the http client.
-     *
      */
     @Override
     public void destroy() {

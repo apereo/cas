@@ -1,1 +1,2 @@
-org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.config.CasAzureActiveDirectoryAuthenticationConfiguration
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=org.apereo.cas.web.config.CasAzureActiveDirectoryAuthenticationConfiguration,\
+  org.apereo.cas.web.config.CasAzureActiveDirectoryAuthenticationEventExecutionPlanConfiguration
