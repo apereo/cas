@@ -112,7 +112,6 @@ public class WsFederationCredential implements Credential {
      */
     @Override
     public String toString() {
-
         return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
                 .append("ID", this.id)
                 .append("Issuer", this.issuer)
@@ -123,7 +122,6 @@ public class WsFederationCredential implements Credential {
                 .append("Valid Before", this.notOnOrAfter)
                 .append("Attributes", this.attributes)
                 .build();
-
     }
 
     /**
