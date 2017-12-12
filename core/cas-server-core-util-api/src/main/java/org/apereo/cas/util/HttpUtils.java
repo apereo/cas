@@ -217,6 +217,17 @@ public final class HttpUtils {
     /**
      * Execute post http response.
      *
+     * @param url    the url
+     * @param entity the entity
+     * @return the http response
+     */
+    public static HttpResponse executePost(final String url, final HttpEntity entity) {
+        return executePost(url, entity, new HashMap<>());
+    }
+
+    /**
+     * Execute post http response.
+     *
      * @param url               the url
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
@@ -287,6 +298,6 @@ public final class HttpUtils {
             builder.setDefaultCredentialsProvider(provider);
         }
     }
-    
-    
+
+
 }
