@@ -1,10 +1,11 @@
 package org.apereo.cas.web.config;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
-import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryDelegationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AzureActiveDirectoryAuthenticationAction;
 import org.apereo.cas.web.flow.AzureActiveDirectoryAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -32,6 +33,18 @@ import org.springframework.webflow.execution.Action;
 public class CasAzureActiveDirectoryAuthenticationConfiguration {
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired(required = false)
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
@@ -50,7 +63,8 @@ public class CasAzureActiveDirectoryAuthenticationConfiguration {
         if (StringUtils.isBlank(azure.getTenant()) || StringUtils.isBlank(azure.getClientId()) || StringUtils.isBlank(azure.getClientSecret())) {
             throw new BeanCreationException("No tenant, client id or client secret is defined for Azure Active Directory authentication.");
         }
-        return new AzureActiveDirectoryAuthenticationAction(casProperties);
+        return new AzureActiveDirectoryAuthenticationAction(casProperties, centralAuthenticationService,
+            authenticationSystemSupport, servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "azureActiveDirectoryAuthenticationWebflowConfigurer")
@@ -63,9 +77,4 @@ public class CasAzureActiveDirectoryAuthenticationConfiguration {
         return w;
     }
 
-    @ConditionalOnMissingBean(name = "azureActiveDirectoryPrincipalFactory")
-    @Bean
-    public PrincipalFactory azureActiveDirectoryPrincipalFactory() {
-        return new DefaultPrincipalFactory();
-    }
 }

@@ -17,19 +17,26 @@ public class AzureActiveDirectoryDelegationProperties implements Serializable {
     private static final long serialVersionUID = 5934626199445757568L;
 
     /**
+     * Name the authentication handler.
+     */
+    private String name;
+    
+    /**
      * Azure active directory instance url.
      */
     @RequiredProperty
     private String instance = "https://login.microsoftonline.com/";
 
     /**
-     * Azure active directory tenant id.
+     * Azure active directory tenant id.  This is the directory id
+     * in Azure active directory.
      */
     @RequiredProperty
     private String tenant;
 
     /**
-     * Azure active directory client id.
+     * Azure active directory client id. This is the application id that is registered
+     * in Azure active directory.
      */
     @RequiredProperty
     private String clientId;
@@ -96,5 +103,13 @@ public class AzureActiveDirectoryDelegationProperties implements Serializable {
 
     public void setGroups(final String groups) {
         this.groups = groups;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
     }
 }
