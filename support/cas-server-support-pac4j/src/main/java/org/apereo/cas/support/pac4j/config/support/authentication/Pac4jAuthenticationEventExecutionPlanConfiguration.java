@@ -237,143 +237,144 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     private void configureCasClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getCas()
-                .stream()
-                .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
-                .forEach(cas -> {
-                    final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
-                    final CasClient client = new CasClient(cfg);
-                    final int count = index.intValue();
-                    if (StringUtils.isNotBlank(cas.getClientName())) {
-                        client.setName(cas.getClientName());
-                    } else if (count > 0) {
-                        client.setName(client.getClass().getSimpleName() + count);
-                    }
-                    index.incrementAndGet();
-                    LOGGER.debug("Created client [{}]", client);
-                    properties.add(client);
-                });
+            .stream()
+            .filter(cas -> StringUtils.isNotBlank(cas.getLoginUrl()))
+            .forEach(cas -> {
+                final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
+                final CasClient client = new CasClient(cfg);
+                final int count = index.intValue();
+                if (StringUtils.isNotBlank(cas.getClientName())) {
+                    client.setName(cas.getClientName());
+                } else if (count > 0) {
+                    client.setName(client.getClass().getSimpleName() + count);
+                }
+                index.incrementAndGet();
+                LOGGER.debug("Created client [{}]", client);
+                properties.add(client);
+            });
     }
 
     private void configureSamlClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getSaml()
-                .stream()
-                .filter(saml -> StringUtils.isNotBlank(saml.getKeystorePath()) && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath()))
-                .forEach(saml -> {
-                    final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
-                            saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
-                    cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
-                    cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
-                    cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
-                    cfg.setDestinationBindingType(saml.getDestinationBinding());
-                    cfg.setForceAuth(saml.isForceAuth());
-                    cfg.setPassive(saml.isPassive());
-                    cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+            .stream()
+            .filter(saml -> StringUtils.isNotBlank(saml.getKeystorePath())
+                && StringUtils.isNotBlank(saml.getIdentityProviderMetadataPath())
+                && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
+                && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
+            .forEach(saml -> {
+                final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
+                    saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
+                cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
+                cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());
+                cfg.setServiceProviderMetadataPath(saml.getServiceProviderMetadataPath());
+                cfg.setDestinationBindingType(saml.getDestinationBinding());
+                cfg.setForceAuth(saml.isForceAuth());
+                cfg.setPassive(saml.isPassive());
+                cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
 
-                    if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
-                        cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
-                        cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
-                    }
-                    if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
-                        cfg.setKeystoreAlias(saml.getKeystoreAlias());
-                    }
-                    if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
-                        cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
-                    }
-                    final SAML2Client client = new SAML2Client(cfg);
+                if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
+                    cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
+                    cfg.setAuthnContextClassRef(saml.getAuthnContextClassRef());
+                }
+                if (StringUtils.isNotBlank(saml.getKeystoreAlias())) {
+                    cfg.setKeystoreAlias(saml.getKeystoreAlias());
+                }
+                if (StringUtils.isNotBlank(saml.getNameIdPolicyFormat())) {
+                    cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
+                }
+                final SAML2Client client = new SAML2Client(cfg);
+                final int count = index.intValue();
+                if (saml.getClientName() != null) {
+                    client.setName(saml.getClientName());
+                } else if (count > 0) {
+                    client.setName(client.getClass().getSimpleName() + count);
+                }
 
-                    final int count = index.intValue();
-                    if (saml.getClientName() != null) {
-                        client.setName(saml.getClientName());
-                    } else if (count > 0) {
-                        client.setName(client.getClass().getSimpleName() + count);
-                    }
-
-                    index.incrementAndGet();
-                    LOGGER.debug("Created client [{}]", client);
-                    properties.add(client);
-                });
+                index.incrementAndGet();
+                LOGGER.debug("Created client [{}]", client);
+                properties.add(client);
+            });
     }
 
     private void configureOAuth20Client(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getOauth2()
-                .stream()
-                .filter(oauth -> StringUtils.isNotBlank(oauth.getId()) && StringUtils.isNotBlank(oauth.getSecret()))
-                .forEach(oauth -> {
-                    final GenericOAuth20Client client = new GenericOAuth20Client();
-                    client.setKey(oauth.getId());
-                    client.setSecret(oauth.getSecret());
-                    client.setProfileAttrs(oauth.getProfileAttrs());
-                    client.setProfileNodePath(oauth.getProfilePath());
-                    client.setProfileUrl(oauth.getProfileUrl());
-                    client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
-                    client.setTokenUrl(oauth.getTokenUrl());
-                    client.setAuthUrl(oauth.getAuthUrl());
-                    client.setCustomParams(oauth.getCustomParams());
-                    final int count = index.intValue();
-                    if (StringUtils.isNotBlank(oauth.getClientName())) {
-                        client.setName(oauth.getClientName());
-                    } else if (count > 0) {
-                        client.setName(client.getClass().getSimpleName() + count);
-                    }
-                    index.incrementAndGet();
-                    LOGGER.debug("Created client [{}]", client);
-                    properties.add(client);
-                });
+            .stream()
+            .filter(oauth -> StringUtils.isNotBlank(oauth.getId()) && StringUtils.isNotBlank(oauth.getSecret()))
+            .forEach(oauth -> {
+                final GenericOAuth20Client client = new GenericOAuth20Client();
+                client.setKey(oauth.getId());
+                client.setSecret(oauth.getSecret());
+                client.setProfileAttrs(oauth.getProfileAttrs());
+                client.setProfileNodePath(oauth.getProfilePath());
+                client.setProfileUrl(oauth.getProfileUrl());
+                client.setProfileVerb(Verb.valueOf(oauth.getProfileVerb().toUpperCase()));
+                client.setTokenUrl(oauth.getTokenUrl());
+                client.setAuthUrl(oauth.getAuthUrl());
+                client.setCustomParams(oauth.getCustomParams());
+                final int count = index.intValue();
+                if (StringUtils.isNotBlank(oauth.getClientName())) {
+                    client.setName(oauth.getClientName());
+                } else if (count > 0) {
+                    client.setName(client.getClass().getSimpleName() + count);
+                }
+                index.incrementAndGet();
+                LOGGER.debug("Created client [{}]", client);
+                properties.add(client);
+            });
     }
 
     private void configureOidcClient(final Collection<BaseClient> properties) {
         final AtomicInteger index = new AtomicInteger();
         casProperties.getAuthn().getPac4j().getOidc()
-                .stream()
-                .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
-                .forEach(oidc -> {
+            .stream()
+            .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
+            .forEach(oidc -> {
 
-                    final OidcConfiguration cfg = new OidcConfiguration();
-                    if (StringUtils.isNotBlank(oidc.getScope())) {
-                        cfg.setScope(oidc.getScope());
-                    }
-                    cfg.setUseNonce(oidc.isUseNonce());
-                    cfg.setSecret(oidc.getSecret());
-                    cfg.setClientId(oidc.getId());
+                final OidcConfiguration cfg = new OidcConfiguration();
+                if (StringUtils.isNotBlank(oidc.getScope())) {
+                    cfg.setScope(oidc.getScope());
+                }
+                cfg.setUseNonce(oidc.isUseNonce());
+                cfg.setSecret(oidc.getSecret());
+                cfg.setClientId(oidc.getId());
 
-                    if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-                        cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-                    }
-                    cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-                    cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-                    cfg.setCustomParams(oidc.getCustomParams());
+                if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+                    cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+                }
+                cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+                cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+                cfg.setCustomParams(oidc.getCustomParams());
 
-                    final OidcClient client;
-                    switch (oidc.getType().toUpperCase()) {
-                        case "GOOGLE":
-                            client = new GoogleOidcClient(cfg);
-                            break;
-                        case "AZURE":
-                            client = new AzureAdClient(cfg);
-                            break;
-                        case "KEYCLOAK":
-                            client = new KeycloakOidcClient(cfg);
-                            break;
-                        case "GENERIC":
-                        default:
-                            client = new OidcClient(cfg);
-                            break;
-                    }
-                    final int count = index.intValue();
-                    if (StringUtils.isNotBlank(oidc.getClientName())) {
-                        client.setName(oidc.getClientName());
-                    } else if (count > 0) {
-                        client.setName(client.getClass().getSimpleName() + count);
-                    }
-                    index.incrementAndGet();
-                    LOGGER.debug("Created client [{}]", client);
-                    properties.add(client);
-                });
+                final OidcClient client;
+                switch (oidc.getType().toUpperCase()) {
+                    case "GOOGLE":
+                        client = new GoogleOidcClient(cfg);
+                        break;
+                    case "AZURE":
+                        client = new AzureAdClient(cfg);
+                        break;
+                    case "KEYCLOAK":
+                        client = new KeycloakOidcClient(cfg);
+                        break;
+                    case "GENERIC":
+                    default:
+                        client = new OidcClient(cfg);
+                        break;
+                }
+                final int count = index.intValue();
+                if (StringUtils.isNotBlank(oidc.getClientName())) {
+                    client.setName(oidc.getClientName());
+                } else if (count > 0) {
+                    client.setName(client.getClass().getSimpleName() + count);
+                }
+                index.incrementAndGet();
+                LOGGER.debug("Created client [{}]", client);
+                properties.add(client);
+            });
     }
 
-    @RefreshScope
     @Bean
     public Clients builtClients() {
         final Set<BaseClient> clients = new LinkedHashSet<>();
@@ -429,7 +430,7 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     public AuthenticationHandler clientAuthenticationHandler() {
         final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
-                clientPrincipalFactory(), builtClients());
+            clientPrincipalFactory(), builtClients());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }
