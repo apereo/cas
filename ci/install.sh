@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew $@"
 
-gradleBuildOptions="--stacktrace"
+gradleBuildOptions="--stacktrace --parallel"
 gradleBuild="assemble"
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
