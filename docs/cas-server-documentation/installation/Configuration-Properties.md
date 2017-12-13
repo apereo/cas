@@ -2873,6 +2873,9 @@ Control how CAS should respond and validate incoming HTTP requests.
 # cas.httpWebRequest.onlyPostParams=username,password
 # cas.httpWebRequest.paramsToCheck=ticket,service,renew,gateway,warn,method,target,SAMLart,pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token
 
+# cas.httpWebRequest.customHeaders.headerName1=headerValue1
+# cas.httpWebRequest.customHeaders.headerName2=headerValue2
+
 # spring.http.encoding.charset=UTF-8
 # spring.http.encoding.enabled=true
 # spring.http.encoding.force=true
