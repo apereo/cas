@@ -1,9 +1,5 @@
 description = "Apereo CAS ‌‌Bill of Material"
 
-ext {
-    forceBom = Boolean.getBoolean('forceBom')
-}
-
 artifacts {
     archives(file("cas-server-support-bom.md"))
 }
