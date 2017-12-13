@@ -6,16 +6,17 @@ if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; 
 fi
 
 gradle="sudo ./gradlew $@"
-
-gradleBuildOptions="--stacktrace --parallel"
 gradleBuild="assemble"
+gradleBuildOptions="--stacktrace "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
     gradleBuild="$gradleBuild checkstyleMain"
+    
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
         echo -e "The build commit message indicates that tests should be skipped.\n"
         gradleBuild="$gradleBuild -x test"
+        gradleBuildOptions+="--parallel "
     else
         echo -e "The build indicates that tests along with coveralls test coverage should run.\n"
         gradleBuild="$gradleBuild checkstyleTest test coveralls"
@@ -26,6 +27,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
 else
     echo -e "The build is publishing snapshots; Skipping tests and checks...\n"
     gradleBuild="$gradleBuild -x test -x check -x javadoc"
+    gradleBuildOptions+="-parallel"
 fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
