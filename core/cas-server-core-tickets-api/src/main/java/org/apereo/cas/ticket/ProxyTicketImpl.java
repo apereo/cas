@@ -52,6 +52,6 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
 
     @Override
     public String getPrefix() {
-        return ProxyTicket.PREFIX;
+        return ProxyTicket.PROXY_TICKET_PREFIX;
     }
 }
