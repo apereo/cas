@@ -286,13 +286,8 @@ public class MongoDbConnectionFactory {
     }
 
     private Mongo buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
-        final MongoClientURI uri = buildMongoClientURI(clientUri);
-        final MongoCredential credential = buildMongoCredential(uri);
-
-        final String hostUri = uri.getHosts().get(0);
-        final String[] host = hostUri.split(":");
-        final ServerAddress addr = new ServerAddress(host[0], host.length > 1 ? Integer.parseInt(host[1]) : DEFAULT_PORT);
-        return new MongoClient(addr, Collections.singletonList(credential), clientOptions);
+        final MongoClientURI uri = buildMongoClientURI(clientUri, clientOptions);
+        return new MongoClient(uri);
     }
 
     private MongoCredential buildMongoCredential(final MongoClientURI uri) {
@@ -306,5 +301,10 @@ public class MongoDbConnectionFactory {
 
     private MongoClientURI buildMongoClientURI(final String clientUri) {
         return new MongoClientURI(clientUri);
+    }
+
+    private MongoClientURI buildMongoClientURI(final String clientUri, final MongoClientOptions clientOptions) {
+        final MongoClientOptions.Builder builder = new MongoClientOptions.Builder(clientOptions);
+        return new MongoClientURI(clientUri, builder);
     }
 }
