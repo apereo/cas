@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.support;
 
-import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,29 +41,25 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryptionPairNotNeeded() {
-        final Pair<String, Object> pair = Pair.of("keyName", "keyValue");
-        final Pair<String, Object> result = jasypt.decryptPair(pair);
+        final String result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
-        assertEquals(result.getKey(), pair.getKey());
-        assertEquals(result.getValue(), pair.getValue());
+        assertEquals(result, "keyValue");
 
     }
 
     @Test
     public void verifyDecryptionEncryptionPairFails() {
-        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue");
-        final Pair<String, Object> result = jasypt.decryptPair(pair);
+        final String encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
+        final String result = jasypt.decode(encVal);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         final String value = jasypt.encryptValue("Testing");
-        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + value);
-        final Pair<String, Object> result = jasypt.decryptPair(pair);
+        final String result = jasypt.decode(value);
         assertNotNull(result);
-        assertEquals(result.getKey(), pair.getKey());
-        assertEquals("Testing", result.getValue());
+        assertEquals("Testing", result);
     }
 }
 
