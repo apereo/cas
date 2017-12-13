@@ -110,7 +110,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
     "ssoEnabled" : true,
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ]
+      "cn" : [ "java.util.HashSet", [ "admin", "Admin", "TheAdmin" ] ]
     }
   }
 }
@@ -136,7 +136,7 @@ OR the principal must have a `member` attribute whose value is either of `admins
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
       "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
-      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+      "member" : [ "java.util.HashSet", [ "admins", "adminGroup", "staff" ] ]
     }
   }
 }
@@ -163,7 +163,7 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
       "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
-      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+      "member" : [ "java.util.HashSet", [ "admins", "adminGroup", "staff" ] ]
     },
     "rejectedAttributes" : {
       "@class" : "java.util.HashMap",

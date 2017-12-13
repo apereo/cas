@@ -7,7 +7,9 @@ title: CAS - Microsoft Azure Authentication
 
 Azure Multi-Factor Authentication (MFA) is Microsoft's two-step verification solution. Azure MFA helps safeguard access to data and applications while meeting user demand for a simple sign-in process. It delivers strong authentication via a range of verification methods, including phone call, text message, etc.
 
-To learn more about Microsoft Azure and its multifactor authentication features, [refer to Microsoft's documentation](https://docs.microsoft.com/en-us/azure/multi-factor-authentication/multi-factor-authentication).
+To learn more about Microsoft Azure and its multifactor authentication features, [refer to Microsoft's documentation](https://docs.microsoft.com/en-us/azure/multi-factor-authentication/multi-factor-authentication) and the [SDK documentation](https://docs.microsoft.com/en-us/azure/multi-factor-authentication/multi-factor-authentication-sdk).
+
+<div class="alert alert-warning"><strong>Important</strong><p>The deprecation of the Azure Multi-Factor Authentication Software Development Kit (SDK) has been announced. This feature is no longer supported for new customers. Current customers can continue using the SDK until November 14, 2018. After that time, calls to the SDK will fail.</p></div>
 
 Support is enabled by including the following module in the WAR overlay:
 
