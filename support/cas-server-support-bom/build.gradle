@@ -52,6 +52,16 @@ def generateBom() {
             asNode().children().last() + {
                 delegate.dependencyManagement {
                     delegate.dependencies {
+                        rootProject.subprojects.findAll { p -> p != project && p.tasks.asMap['install']?.enabled }.each { p ->
+                            delegate.dependency {
+                                delegate.groupId(groupId)
+                                delegate.artifactId(p.name)
+                                delegate.version(version)
+                                if (p.tasks.asMap['war']) {
+                                    delegate.type('war')
+                                }
+                            }
+                        }
                         libraries.each {
                             if (it.value instanceof List) {
                                 it.value.each { d ->
@@ -80,7 +90,7 @@ def generateBom() {
 
 install {
     doFirst {
-        if (publishingRelease || publishSnapshots) {
+        if (publishingRelease || publishSnapshots || forceBom) {
             repositories.mavenInstaller.pom = generateBom()
         }
     }
@@ -88,7 +98,7 @@ install {
 
 uploadArchives {
     doFirst {
-        if (publishingRelease || publishSnapshots) {
+        if (publishingRelease || publishSnapshots || forceBom) {
             repositories.mavenDeployer.pom = generateBom()
         }
     }
