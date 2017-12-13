@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
+import org.apereo.cas.security.AddResponseHeadersFilter;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
@@ -51,6 +52,20 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
+    @RefreshScope
+    @Bean
+    public FilterRegistrationBean responseHeadersFilter() {
+        final FilterRegistrationBean bean = new FilterRegistrationBean();
+        final AddResponseHeadersFilter filter = new AddResponseHeadersFilter();
+        filter.setHeadersMap(casProperties.getHttpWebRequest().getCustomHeaders());
+        bean.setFilter(filter);
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
+        bean.setName("responseHeadersFilter");
+        bean.setAsyncSupported(true);
+        return bean;
+    }
+
+
     @ConditionalOnProperty(prefix = "cas.httpWebRequest.cors", name = "enabled", havingValue = "true")
     @Bean
     @RefreshScope
@@ -71,6 +86,7 @@ public class CasFiltersConfiguration {
         bean.setOrder(0);
         return bean;
     }
+
 
     @RefreshScope
     @Bean

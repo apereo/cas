@@ -4,6 +4,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * This is {@link HttpRequestProperties}.
@@ -33,6 +35,11 @@ public class HttpRequestProperties implements Serializable {
     private String paramsToCheck =
         "ticket,service,renew,gateway,warn,method,target,SAMLart,"
             + "pgtUrl,pgt,pgtId,pgtIou,targetService,entityId,token";
+
+    /**
+     * Custom response headers to inject into the response as needed.
+     */
+    private Map<String, String> customHeaders = new LinkedHashMap<>();
 
     /**
      * Control http request settings.
@@ -98,4 +105,11 @@ public class HttpRequestProperties implements Serializable {
         this.header = header;
     }
 
+    public Map<String, String> getCustomHeaders() {
+        return customHeaders;
+    }
+
+    public void setCustomHeaders(final Map<String, String> customHeaders) {
+        this.customHeaders = customHeaders;
+    }
 }
