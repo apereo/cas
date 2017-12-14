@@ -30,7 +30,7 @@ serviceId: "testId"
 name: "YAML"
 id: 1000
 description: "description"
-attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy>
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy> {}
 accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy>
   enabled: true
   ssoEnabled: true
