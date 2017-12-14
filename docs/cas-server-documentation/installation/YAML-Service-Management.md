@@ -36,6 +36,10 @@ accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
   ssoEnabled: true
 ```
 
+<div class="alert alert-warning"><strong>YAML Validation</strong><p>
+The tags containing classname hints (i.e. !&lt;classname&gt;) cause problems with many YAML validators. If you need to validate your YAML, try removing those takes for validation and add them back for use with CAS. Remember that an empty map ('{}') may be required after the tag if you are not including any attributes for a property.
+</p></div>
+
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have
 access to the same set of configuration files as the other, or you may have to devise a strategy to keep
