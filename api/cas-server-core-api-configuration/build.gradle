@@ -7,7 +7,7 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.bouncycastle
 
-    compileOnly libraries.springbootconfigmetadata
+    optional libraries.springbootconfigmetadata
     
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
