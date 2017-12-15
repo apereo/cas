@@ -22,7 +22,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 The [Logging](../installation/Logging.html) configuration file must be adjusted to match the following:
 
 ```xml
-<Configuration ... packages="...,org.apache.logging.log4j.core,com.getsentry.raven.log4j2">
+<Configuration packages="...,org.apache.logging.log4j.core,com.getsentry.raven.log4j2">
     <Appenders>
         <Raven name="Sentry">
           <dsn><!-- provided by sentry --></dsn>
