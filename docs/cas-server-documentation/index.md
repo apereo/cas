@@ -39,7 +39,7 @@ We recommend reading the following documentation in order to plan and execute a 
 
 ## Demos
 
-<div class="alert alert-warning"><strong>Usage Warning!</strong><p>It is important to note that these are public demo sites, used by the project for basic showcases 
+<div class="alert alert-warning"><strong>Usage Warning!</strong><p>Note that these are public demo sites, used by the project for basic showcases 
 and integration tests. They are <strong>NOT</strong> set up for internal demos as they may go up and down as the project needs without notice. </p></div>
 
 The following demos are provided by the Apereo CAS project:
