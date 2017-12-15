@@ -15,6 +15,7 @@ import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
 import javax.security.auth.callback.PasswordCallback;
 import javax.security.auth.callback.UnsupportedCallbackException;
+import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import java.security.GeneralSecurityException;
@@ -97,12 +98,12 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
         Assert.notNull(Configuration.getConfiguration(),
-                "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+            "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+        throws GeneralSecurityException, PreventedException {
 
         if (this.kerberosKdcSystemProperty != null) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -116,19 +117,24 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         final String username = credential.getUsername();
         final String password = credential.getPassword();
 
+        Principal principal = null;
         final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
+            final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+            LOGGER.debug("JAAS subject principals found for [{}] are [{}]", username, principals);
+            if (principals != null && !principals.isEmpty()) {
+                final java.security.Principal secPrincipal = principals.iterator().next();
+                LOGGER.debug("Located JAAS principal [{}]", secPrincipal.getName());
+                principal = this.principalFactory.createPrincipal(secPrincipal.getName());
+            }
         } finally {
             lc.logout();
         }
 
-        Principal principal = null;
-        final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
-        if (principals != null && !principals.isEmpty()) {
-            final java.security.Principal secPrincipal = principals.iterator().next();
-            principal = this.principalFactory.createPrincipal(secPrincipal.getName());
+        if (principal == null) {
+            throw new AccountNotFoundException("Could not authenticate principal via JAAS");
         }
         return createHandlerResult(credential, principal, null);
     }
