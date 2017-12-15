@@ -7,13 +7,12 @@ dependencies {
     implementation libraries.groovy
     implementation libraries.bouncycastle
 
-    optional libraries.springbootconfigmetadata
+    compileOnly libraries.springbootconfigmetadata
     
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
 }
-
 
 task generateConfigurationMetadata(type: JavaExec) {
     doFirst {
