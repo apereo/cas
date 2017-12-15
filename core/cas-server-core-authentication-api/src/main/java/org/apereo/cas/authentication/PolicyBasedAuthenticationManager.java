@@ -68,7 +68,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
-    
+
     /**
      * Creates a new authentication manager with a map of authentication handlers to the principal resolvers that
      * should be used upon successful authentication if no principal is resolved by the authentication handler. If
@@ -145,11 +145,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final Collection<AuthenticationPostProcessor> pops = authenticationEventExecutionPlan.getAuthenticationPostProcessors(transaction);
 
         final Collection<AuthenticationPostProcessor> supported = pops.stream().filter(processor -> transaction.getCredentials()
-                .stream()
-                .filter(processor::supports)
-                .findFirst()
-                .isPresent())
-                .collect(Collectors.toList());
+            .stream()
+            .filter(processor::supports)
+            .findFirst()
+            .isPresent())
+            .collect(Collectors.toList());
         for (final AuthenticationPostProcessor p : supported) {
             p.process(builder, transaction);
         }
@@ -166,7 +166,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
         final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
         pops.forEach(populator -> transaction.getCredentials().stream().filter(populator::supports)
-                .forEach(credential -> populator.populateAttributes(builder, transaction)));
+            .forEach(credential -> populator.populateAttributes(builder, transaction)));
     }
 
     /**
@@ -201,17 +201,17 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             }
         } else {
             LOGGER.warn(
-                    "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
-                    handler.getName(), resolver, credential);
+                "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
+                handler.getName(), resolver, credential);
         }
         return null;
     }
 
     @Override
     @Audit(
-            action = "AUTHENTICATION",
-            actionResolverName = "AUTHENTICATION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
+        action = "AUTHENTICATION",
+        actionResolverName = "AUTHENTICATION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
     @Timed(name = "AUTHENTICATE_TIMER")
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
@@ -219,7 +219,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
         AuthenticationCredentialsLocalBinder.bindCurrent(builder);
-        
+
         final Authentication authentication = builder.build();
         addAuthenticationMethodAttribute(builder, authentication);
         populateAuthenticationMetadataAttributes(builder, transaction);
@@ -231,9 +231,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             throw new UnresolvedPrincipalException(auth);
         }
         LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
-                principal.getId(), principal.getAttributes(), transaction.getCredentials());
+            principal.getId(), principal.getAttributes(), transaction.getCredentials());
         AuthenticationCredentialsLocalBinder.bindCurrent(auth);
-        
+
         return auth;
     }
 
@@ -263,25 +263,29 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         principal = result.getPrincipal();
 
+        final String resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
         if (resolver == null) {
             LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
-                    handler.getName(),
-                    principal);
+                handler.getName(),
+                principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
                 if (this.principalResolutionFailureFatal) {
                     LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                                    + "CAS is configured to treat principal resolution failures as fatal.",
-                            resolver.getClass().getSimpleName(), credential);
+                            + "CAS is configured to treat principal resolution failures as fatal.",
+                        resolverName, credential);
                     throw new UnresolvedPrincipalException();
                 }
                 LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
-                        + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
-                        + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
+                    + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                    + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
             }
         }
-        if (principal != null) {
+
+        if (principal == null) {
+            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal. ");
+        } else {
             builder.setPrincipal(principal);
         }
         LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
@@ -317,7 +321,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @return the authentication metadata populators for transaction
      */
     protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
-            final AuthenticationTransaction transaction) {
+        final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
 
@@ -351,30 +355,30 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         final boolean success = credentials
-                .stream()
-                .anyMatch(credential -> {
-                    final boolean isSatisfied = handlerSet
-                            .stream()
-                            .filter(handler -> handler.supports(credential))
-                            .anyMatch(handler -> {
-                                try {
-                                    final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
-                                    authenticateAndResolvePrincipal(builder, credential, resolver, handler);
-                                    final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build());
-                                    return failures.getKey();
-                                } catch (final Exception e) {
-                                    handleAuthenticationException(e, handler.getName(), builder);
-                                }
-                                return false;
-                            });
+            .stream()
+            .anyMatch(credential -> {
+                final boolean isSatisfied = handlerSet
+                    .stream()
+                    .filter(handler -> handler.supports(credential))
+                    .anyMatch(handler -> {
+                        try {
+                            final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            authenticateAndResolvePrincipal(builder, credential, resolver, handler);
+                            final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build());
+                            return failures.getKey();
+                        } catch (final Exception e) {
+                            handleAuthenticationException(e, handler.getName(), builder);
+                        }
+                        return false;
+                    });
 
-                    if (!isSatisfied) {
-                        LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
-                                        + "find authentication handler that supports [{}] of type [{}].",
-                                credential, credential.getClass().getSimpleName());
-                    }
-                    return isSatisfied;
-                });
+                if (!isSatisfied) {
+                    LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
+                            + "find authentication handler that supports [{}] of type [{}].",
+                        credential, credential.getClass().getSimpleName());
+                }
+                return isSatisfied;
+            });
 
         if (!success) {
             evaluateFinalAuthentication(builder, transaction);
@@ -396,7 +400,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                final AuthenticationTransaction transaction) throws AuthenticationException {
         if (builder.getSuccesses().isEmpty()) {
             publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(),
-                    transaction.getCredentials()));
+                transaction.getCredentials()));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
@@ -420,22 +424,22 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         final List<AuthenticationPolicy> policies = new ArrayList<>(this.authenticationPolicies);
         OrderComparator.sort(policies);
         policies
-                .stream()
-                .forEach(p -> {
-                    try {
-                        final String simpleName = p.getClass().getSimpleName();
-                        LOGGER.debug("Executing authentication policy [{}]", simpleName);
-                        if (!p.isSatisfiedBy(authentication)) {
-                            failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
-                        }
-                    } catch (final GeneralSecurityException e) {
-                        LOGGER.debug(e.getMessage(), e);
-                        failures.add(e.getCause());
-                    } catch (final Exception e) {
-                        LOGGER.debug(e.getMessage(), e);
-                        failures.add(e);
+            .stream()
+            .forEach(p -> {
+                try {
+                    final String simpleName = p.getClass().getSimpleName();
+                    LOGGER.debug("Executing authentication policy [{}]", simpleName);
+                    if (!p.isSatisfiedBy(authentication)) {
+                        failures.add(new AuthenticationException("Unable to satisfy authentication policy " + simpleName));
                     }
-                });
+                } catch (final GeneralSecurityException e) {
+                    LOGGER.debug(e.getMessage(), e);
+                    failures.add(e.getCause());
+                } catch (final Exception e) {
+                    LOGGER.debug(e.getMessage(), e);
+                    failures.add(e);
+                }
+            });
 
         return Pair.of(failures.isEmpty(), failures);
     }
