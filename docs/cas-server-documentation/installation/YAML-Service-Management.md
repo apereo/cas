@@ -37,7 +37,7 @@ accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy
 ```
 
 <div class="alert alert-warning"><strong>YAML Validation</strong><p>
-The tags containing classname hints (!&lt;classname&gt;) cause problems with many YAML validators. If you need to validate your YAML, try removing those tags for validation. Remember that an empty map ({}) may be required after the tag if you are not including any attributes for a property.
+The tags containing classname hints (<code>!&lt;classname&gt;</code>) cause problems with many YAML validators. If you need to validate your YAML, try removing those tags for validation. Remember that an empty map (<code>{}</code>) may be required after the tag if you are not including any attributes for a property.
 </p></div>
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
