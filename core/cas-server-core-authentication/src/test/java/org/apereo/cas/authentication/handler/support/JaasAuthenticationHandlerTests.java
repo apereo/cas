@@ -59,7 +59,7 @@ public class JaasAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifyWithValidCredenials() throws Exception {
+    public void verifyWithValidCredentials() throws Exception {
         assertNotNull(this.handler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword()));
     }
 
