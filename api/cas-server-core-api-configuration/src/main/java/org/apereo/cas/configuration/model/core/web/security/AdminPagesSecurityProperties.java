@@ -28,6 +28,14 @@ public class AdminPagesSecurityProperties implements Serializable {
     private String ip = "a^";
 
     /**
+     * Alternative header name to use when extracting the IP address.
+     * If left blank, the request's remote ip address will be pulled.
+     * When dealing with proxies or load balancers, this value should likely
+     * be set to {@code X-Forwarded-For}.
+     */
+    private String alternateIpHeaderName;
+    
+    /**
      * Roles that are required for access to the admin status endpoint
      * in the event that access is controlled via external authentication
      * means such as Spring Security's authentication providers.
@@ -45,7 +53,6 @@ public class AdminPagesSecurityProperties implements Serializable {
      * for the redirect.
      */
     private String service;
-
     /**
      * List of users allowed access to the admin status endpoint
      * provided CAS is controlling access to the status endpoint.
@@ -98,6 +105,14 @@ public class AdminPagesSecurityProperties implements Serializable {
 
     public void setActuatorEndpointsEnabled(final boolean actuatorEndpointsEnabled) {
         this.actuatorEndpointsEnabled = actuatorEndpointsEnabled;
+    }
+
+    public String getAlternateIpHeaderName() {
+        return alternateIpHeaderName;
+    }
+
+    public void setAlternateIpHeaderName(final String alternateIpHeaderName) {
+        this.alternateIpHeaderName = alternateIpHeaderName;
     }
 
     public String getIp() {

@@ -454,8 +454,11 @@ management.security.sessions=if_required
 # endpoints.heapdump.enabled=true
 
 # IP address may be enough to protect all endpoints.
-# If you wish to protect the admin pages via CAS itself, configure the rest.
+# It's set to always protect the /status endpoint.
 # cas.adminPagesSecurity.ip=127\.0\.0\.1
+# cas.adminPagesSecurity.alternateIpHeaderName=X-Forwarded-For
+
+# If you wish to protect the admin pages via CAS itself, configure the rest.
 # cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
