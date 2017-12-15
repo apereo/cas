@@ -23,7 +23,7 @@ public abstract class AbstractLdapTests {
         try {
             final boolean createInstance = DIRECTORY == null || !DIRECTORY.isAlive();
             if (createInstance) {
-                final ClassPathResource properties = new ClassPathResource("ldap.properties");
+                final ClassPathResource properties = new ClassPathResource("ldapserver.properties");
                 final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
                 DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream(), port);
             }
