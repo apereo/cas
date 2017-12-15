@@ -918,7 +918,7 @@ public final class LdapUtils {
                         final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
                                 .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                                 .collect(Collectors.toList());
-                        LOGGER.warn("[{}] pool passivator could be created for [{}] given bind credentials are not specified. "
+                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
                                 + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
                                 + "set the pool passivator setting to one of [{}]",
                                 l.getPoolPassivator(), l.getLdapUrl(), values);
