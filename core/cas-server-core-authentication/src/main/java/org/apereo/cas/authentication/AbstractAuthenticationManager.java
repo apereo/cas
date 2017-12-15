@@ -1,4 +1,4 @@
-    package org.apereo.cas.authentication;
+package org.apereo.cas.authentication;
 
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
@@ -86,7 +86,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
         final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
         pops.forEach(populator -> transaction.getCredentials().stream().filter(populator::supports)
-                .forEach(credential -> populator.populateAttributes(builder, transaction)));
+            .forEach(credential -> populator.populateAttributes(builder, transaction)));
     }
 
     /**
@@ -121,17 +121,17 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
             }
         } else {
             LOGGER.warn(
-                    "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
-                    handler.getName(), resolver, credential);
+                "[{}] is configured to use [{}] but it does not support [{}], which suggests a configuration problem.",
+                handler.getName(), resolver, credential);
         }
         return null;
     }
 
     @Override
     @Audit(
-            action = "AUTHENTICATION",
-            actionResolverName = "AUTHENTICATION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
+        action = "AUTHENTICATION",
+        actionResolverName = "AUTHENTICATION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_RESOURCE_RESOLVER")
     @Timed(name = "AUTHENTICATE_TIMER")
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
@@ -145,7 +145,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         }
         addAuthenticationMethodAttribute(builder, authentication);
         LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
-                principal.getId(), principal.getAttributes(), transaction.getCredentials());
+            principal.getId(), principal.getAttributes(), transaction.getCredentials());
         populateAuthenticationMetadataAttributes(builder, transaction);
         final Authentication a = builder.build();
         AuthenticationCredentialsLocalBinder.bindCurrent(a);
@@ -178,27 +178,26 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
         principal = result.getPrincipal();
 
+        final String resolveName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
+
         if (resolver == null) {
-            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
-                    handler.getName(),
-                    principal);
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", handler.getName(), principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
-            if (principal == null) {
-                if (this.principalResolutionFailureFatal) {
-                    LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
-                                    + "CAS is configured to treat principal resolution failures as fatal.",
-                            resolver.getClass().getSimpleName(), credential);
-                    throw new UnresolvedPrincipalException();
-                }
-                LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
-                        + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
-                        + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
+        }
+
+        if (principal == null) {
+            if (this.principalResolutionFailureFatal) {
+                LOGGER.warn("Principal resolution handled by [{}] produced a null principal for: [{}]"
+                    + "CAS is configured to treat principal resolution failures as fatal.", resolveName, credential);
+                throw new UnresolvedPrincipalException();
             }
+            LOGGER.warn("Principal resolution handled by [{}] produced a null principal. "
+                + "This is likely due to misconfiguration or missing attributes; CAS will attempt to use the principal "
+                + "produced by the authentication handler, if any.", resolver.getClass().getSimpleName());
         }
-        if (principal != null) {
-            builder.setPrincipal(principal);
-        }
+
+        builder.setPrincipal(principal);
         LOGGER.debug("Final principal resolved for this authentication event is [{}]", principal);
         publishEvent(new CasAuthenticationPrincipalResolvedEvent(this, principal));
     }
@@ -242,7 +241,7 @@ public abstract class AbstractAuthenticationManager implements AuthenticationMan
      * @return the authentication metadata populators for transaction
      */
     protected Collection<AuthenticationMetaDataPopulator> getAuthenticationMetadataPopulatorsForTransaction(
-            final AuthenticationTransaction transaction) {
+        final AuthenticationTransaction transaction) {
         return this.authenticationEventExecutionPlan.getAuthenticationMetadataPopulators(transaction);
     }
 

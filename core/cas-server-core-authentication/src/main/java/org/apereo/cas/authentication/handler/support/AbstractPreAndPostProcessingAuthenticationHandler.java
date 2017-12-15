@@ -63,6 +63,9 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @return the constructed handler result
      */
     protected HandlerResult createHandlerResult(final Credential credential, final Principal principal, final List<MessageDescriptor> warnings) {
+        if (principal == null) {
+            throw new RuntimeException("Cannot create handler result for authentication with a null principal for credential " + credential.getId());
+        }
         return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 }
