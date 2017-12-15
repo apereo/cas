@@ -7,6 +7,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link EchoingPrincipalResolver}.
@@ -15,8 +17,11 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 5.1.0
  */
 public class EchoingPrincipalResolver implements PrincipalResolver {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EchoingPrincipalResolver.class);
+
     @Override
     public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
+        LOGGER.debug("Echoing back the authenticated principal [{}]", principal);
         return principal;
     }
 
@@ -24,7 +29,7 @@ public class EchoingPrincipalResolver implements PrincipalResolver {
     public boolean supports(final Credential credential) {
         return StringUtils.isNotBlank(credential.getId());
     }
-    
+
     @Override
     public String toString() {
         return new ToStringBuilder(this).toString();
