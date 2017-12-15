@@ -5,9 +5,7 @@ title: CAS - JWT Service Tickets
 
 # JWT Service Tickets
 
-[JSON Web Tokens](http://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties. CAS may also be allowed to fully create signed/encrypted JWTs and pass them back to the application in form of service tickets.
-
-JWTs are entirely self-contained and contain the authenticated principal as well as all authorized attributes in form of JWT claims.
+[JSON Web Tokens](http://jwt.io/) are an open, industry standard RFC 7519 method for representing claims securely between two parties. CAS may also be allowed to fully create signed/encrypted JWTs and pass them back to the application in form of service tickets. JWTs are entirely self-contained and contain the authenticated principal as well as all authorized attributes in form of JWT claims.
 
 <div class="alert alert-info"><strong>JCE Requirement</strong><p>Make sure you have the proper JCE bundle installed in your Java environment that is used by CAS, specially if you need to use specific signing/encryption algorithms and methods. Be sure to pick the right version of the JCE for your Java version. Java versions can be detected via the <code>java -version</code> command.</p></div>
 
