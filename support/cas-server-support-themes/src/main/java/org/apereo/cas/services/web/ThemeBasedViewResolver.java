@@ -9,7 +9,6 @@ import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Map;
@@ -42,13 +41,11 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     @Nullable
     @Override
     public View resolveViewName(final String viewName, final Locale locale) {
-        // resolve the theme for this request
         final Optional<String> theme = Optional.of(RequestContextHolder.currentRequestAttributes())
-                .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)
-                .map(ServletRequestAttributes::getRequest)
-                .map(themeResolver::resolveThemeName);
+            .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)
+            .map(ServletRequestAttributes::getRequest)
+            .map(themeResolver::resolveThemeName);
 
-        // try resolving the view with the correct ViewResolver
         try {
             final Optional<ViewResolver> delegate = theme.map(this::getViewResolver);
             if (delegate.isPresent()) {
@@ -62,8 +59,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         return null;
     }
 
-    @Nullable
-    private ViewResolver getViewResolver(@Nonnull final String theme) {
+    private ViewResolver getViewResolver(final String theme) {
         // load the actual view resolver (using/updating cache as necessary)
         final ViewResolver resolver;
         if (resolvers.containsKey(theme)) {
