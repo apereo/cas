@@ -88,50 +88,7 @@ public class CasThemesConfiguration {
         factory.setApplicationContext(applicationContext);
         return factory;
     }
-
-    protected ThymeleafViewResolver nonCachingThymeleafViewResolver() {
-        // clone existing ThymeleafViewResolver
-        final ThymeleafViewResolver r = new ThymeleafViewResolver();
-
-        r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
-        r.setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
-        r.setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
-        r.setContentType(this.thymeleafViewResolver.getContentType());
-        r.setExcludedViewNames(this.thymeleafViewResolver.getExcludedViewNames());
-        r.setOrder(this.thymeleafViewResolver.getOrder());
-        r.setRedirectContextRelative(this.thymeleafViewResolver.isRedirectContextRelative());
-        r.setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
-        r.setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
-
-        final SpringTemplateEngine engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
-        engine.addDialect(new IPostProcessorDialect() {
-            @Override
-            public int getDialectPostProcessorPrecedence() {
-                return Integer.MAX_VALUE;
-            }
-
-            @Override
-            public Set<IPostProcessor> getPostProcessors() {
-                return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
-                        CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
-            }
-
-            @Override
-            public String getName() {
-                return CasThymeleafOutputTemplateHandler.class.getSimpleName();
-            }
-        });
-
-        r.setTemplateEngine(engine);
-        r.setViewNames(this.thymeleafViewResolver.getViewNames());
-
-        // disable the cache
-        r.setCache(false);
-
-        // return this ViewResolver
-        return r;
-    }
-
+    
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -180,4 +137,49 @@ public class CasThemesConfiguration {
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
+
+    private ThymeleafViewResolver nonCachingThymeleafViewResolver() {
+        final ThymeleafViewResolver r = new ThymeleafViewResolver();
+
+        r.setAlwaysProcessRedirectAndForward(this.thymeleafViewResolver.getAlwaysProcessRedirectAndForward());
+        r.setApplicationContext(this.thymeleafViewResolver.getApplicationContext());
+        r.setCacheUnresolved(this.thymeleafViewResolver.isCacheUnresolved());
+        r.setCharacterEncoding(this.thymeleafViewResolver.getCharacterEncoding());
+        r.setContentType(this.thymeleafViewResolver.getContentType());
+        r.setExcludedViewNames(this.thymeleafViewResolver.getExcludedViewNames());
+        r.setOrder(this.thymeleafViewResolver.getOrder());
+        r.setRedirectContextRelative(this.thymeleafViewResolver.isRedirectContextRelative());
+        r.setRedirectHttp10Compatible(this.thymeleafViewResolver.isRedirectHttp10Compatible());
+        r.setStaticVariables(this.thymeleafViewResolver.getStaticVariables());
+        r.setForceContentType(this.thymeleafViewResolver.getForceContentType());
+
+        final SpringTemplateEngine engine = SpringTemplateEngine.class.cast(this.thymeleafViewResolver.getTemplateEngine());
+        engine.addDialect(new IPostProcessorDialect() {
+            @Override
+            public int getDialectPostProcessorPrecedence() {
+                return Integer.MAX_VALUE;
+            }
+
+            @Override
+            public Set<IPostProcessor> getPostProcessors() {
+                return CollectionUtils.wrapSet(new PostProcessor(TemplateMode.parse(thymeleafProperties.getMode()),
+                    CasThymeleafOutputTemplateHandler.class, Integer.MAX_VALUE));
+            }
+
+            @Override
+            public String getName() {
+                return CasThymeleafOutputTemplateHandler.class.getSimpleName();
+            }
+        });
+
+        r.setTemplateEngine(engine);
+        r.setViewNames(this.thymeleafViewResolver.getViewNames());
+        
+        // disable the cache
+        r.setCache(false);
+
+        // return this ViewResolver
+        return r;
+    }
+
 }
