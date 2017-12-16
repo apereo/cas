@@ -31,7 +31,7 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
     private final String theme;
 
     public ThemeViewResolver(@Nonnull final ViewResolver baseResolver,
-                             @Nonnull final ThymeleafProperties thymeleafProperties, @Nonnull final String theme) {
+                             final ThymeleafProperties thymeleafProperties, final String theme) {
         this.delegate = baseResolver;
         this.thymeleafProperties = thymeleafProperties;
         this.theme = theme;
@@ -41,15 +41,13 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
     protected View loadView(final String viewName, final Locale locale) throws Exception {
         final View view = delegate.resolveViewName(viewName, locale);
 
-        // support fallback for ThymeleafViews
         if (view instanceof AbstractThymeleafView) {
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
             final String baseTemplateName = thymeleafView.getTemplateName();
 
-            // check for a template for this theme
             final String templateName = theme + "/" + baseTemplateName;
-            final TemplateLocation location = new TemplateLocation(thymeleafProperties.getPrefix().concat(templateName)
-                    .concat(thymeleafProperties.getSuffix()));
+            final String path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
+            final TemplateLocation location = new TemplateLocation(path);
             if (location.exists(getApplicationContext())) {
                 thymeleafView.setTemplateName(templateName);
             }
@@ -62,20 +60,19 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
      * {@link ThemeViewResolverFactory} that will create a ThemeViewResolver for the specified theme.
      */
     public static class Factory implements ThemeViewResolverFactory, ApplicationContextAware {
-        @Nonnull
         private final ViewResolver delegate;
-        @Nonnull
+
         private final ThymeleafProperties thymeleafProperties;
 
         private ApplicationContext applicationContext;
 
-        public Factory(@Nonnull final ViewResolver delegate, @Nonnull final ThymeleafProperties thymeleafProperties) {
+        public Factory(final ViewResolver delegate, final ThymeleafProperties thymeleafProperties) {
             this.delegate = delegate;
             this.thymeleafProperties = thymeleafProperties;
         }
 
         @Override
-        public ThemeViewResolver create(@Nonnull final String theme) {
+        public ThemeViewResolver create(final String theme) {
             final ThemeViewResolver resolver = new ThemeViewResolver(delegate, thymeleafProperties, theme);
             resolver.setApplicationContext(applicationContext);
             resolver.setCache(thymeleafProperties.isCache());

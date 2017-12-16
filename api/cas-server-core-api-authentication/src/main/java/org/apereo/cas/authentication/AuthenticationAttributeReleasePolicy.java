@@ -1,8 +1,5 @@
-package org.apereo.cas.services.web.support;
+package org.apereo.cas.authentication;
 
-import org.apereo.cas.authentication.Authentication;
-
-import javax.annotation.Nonnull;
 import java.util.Map;
 
 /**
@@ -19,5 +16,5 @@ public interface AuthenticationAttributeReleasePolicy {
      * @param authentication The authentication object we are processing.
      * @return The attributes to be released
      */
-    Map<String, Object> getAuthenticationAttributesForRelease(@Nonnull Authentication authentication);
+    Map<String, Object> getAuthenticationAttributesForRelease(Authentication authentication);
 }

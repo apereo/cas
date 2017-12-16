@@ -2,7 +2,7 @@ package org.apereo.cas.services.web.view;
 
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;

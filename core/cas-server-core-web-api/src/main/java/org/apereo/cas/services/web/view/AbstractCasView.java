@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.slf4j.Logger;

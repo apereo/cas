@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;

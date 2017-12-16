@@ -1,6 +1,4 @@
-package org.apereo.cas.services.web.support;
-
-import org.apereo.cas.authentication.Authentication;
+package org.apereo.cas.authentication;
 
 import javax.annotation.Nonnull;
 import java.util.Collection;
