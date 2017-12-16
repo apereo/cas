@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.core.web.view;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link ViewProperties}.
@@ -18,6 +20,11 @@ public class ViewProperties implements Serializable {
      * after a successful authentication event.
      */
     private String defaultRedirectUrl;
+
+    /**
+     * Comma separated paths to where CAS templates may be found.
+     */
+    private List<String> templatePrefixes = new ArrayList<>();
 
     /**
      * CAS2 views and locations.
@@ -50,6 +57,14 @@ public class ViewProperties implements Serializable {
 
     public void setDefaultRedirectUrl(final String defaultRedirectUrl) {
         this.defaultRedirectUrl = defaultRedirectUrl;
+    }
+
+    public List<String> getTemplatePrefixes() {
+        return templatePrefixes;
+    }
+
+    public void setTemplatePrefixes(final List<String> templatePrefixes) {
+        this.templatePrefixes = templatePrefixes;
     }
 
     public static class Cas2 implements Serializable {
