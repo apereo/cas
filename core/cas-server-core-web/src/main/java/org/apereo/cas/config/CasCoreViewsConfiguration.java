@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.view.ChainingTemplateViewResolver;
+import org.apereo.cas.web.view.ThemeFileTemplateResolver;
 import org.jooq.lambda.Unchecked;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -35,10 +36,17 @@ public class CasCoreViewsConfiguration {
         final ChainingTemplateViewResolver chain = new ChainingTemplateViewResolver();
 
         casProperties.getView().getTemplatePrefixes().forEach(Unchecked.consumer(prefix -> {
+            final String prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
+            final String viewPath = StringUtils.appendIfMissing(prefixPath, "/");
+            
+            final ThemeFileTemplateResolver theme = new ThemeFileTemplateResolver(casProperties);
+            configureTemplateViewResolver(theme);
+            theme.setPrefix(viewPath + "themes/%s/");
+            chain.addResolver(theme);
+
             final FileTemplateResolver file = new FileTemplateResolver();
             configureTemplateViewResolver(file);
-            final String prefixPath = ResourceUtils.getFile(prefix).getCanonicalPath();
-            file.setPrefix(StringUtils.appendIfMissing(prefixPath, "/"));
+            file.setPrefix(viewPath);
             chain.addResolver(file);
         }));
 
