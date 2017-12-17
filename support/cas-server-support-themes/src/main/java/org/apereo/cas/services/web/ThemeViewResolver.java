@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
@@ -10,7 +11,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
 import org.thymeleaf.spring4.view.AbstractThymeleafView;
 
-import javax.annotation.Nonnull;
 import java.util.Locale;
 
 /**
@@ -21,19 +21,20 @@ import java.util.Locale;
  * @since 5.2.0
  */
 public class ThemeViewResolver extends AbstractCachingViewResolver {
-    @Nonnull
+
     private final ViewResolver delegate;
 
-    @Nonnull
     private final ThymeleafProperties thymeleafProperties;
-
-    @Nonnull
+    private final CasConfigurationProperties casProperties;
     private final String theme;
 
-    public ThemeViewResolver(@Nonnull final ViewResolver baseResolver,
-                             final ThymeleafProperties thymeleafProperties, final String theme) {
+    public ThemeViewResolver(final ViewResolver baseResolver,
+                             final ThymeleafProperties thymeleafProperties,
+                             final CasConfigurationProperties casProperties,
+                             final String theme) {
         this.delegate = baseResolver;
         this.thymeleafProperties = thymeleafProperties;
+        this.casProperties = casProperties;
         this.theme = theme;
     }
 
@@ -43,17 +44,20 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
 
         if (view instanceof AbstractThymeleafView) {
             final AbstractThymeleafView thymeleafView = (AbstractThymeleafView) view;
-            final String baseTemplateName = thymeleafView.getTemplateName();
-
-            final String templateName = theme + "/" + baseTemplateName;
-            final String path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
-            final TemplateLocation location = new TemplateLocation(path);
-            if (location.exists(getApplicationContext())) {
-                thymeleafView.setTemplateName(templateName);
-            }
+            configureTemplateThemeDefaultLocation(thymeleafView);
         }
 
         return view;
+    }
+
+    private void configureTemplateThemeDefaultLocation(final AbstractThymeleafView thymeleafView) {
+        final String baseTemplateName = thymeleafView.getTemplateName();
+        final String templateName = theme + "/" + baseTemplateName;
+        final String path = thymeleafProperties.getPrefix().concat(templateName).concat(thymeleafProperties.getSuffix());
+        final TemplateLocation location = new TemplateLocation(path);
+        if (location.exists(getApplicationContext())) {
+            thymeleafView.setTemplateName(templateName);
+        }
     }
 
     /**
@@ -63,17 +67,18 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
         private final ViewResolver delegate;
 
         private final ThymeleafProperties thymeleafProperties;
-
+        private final CasConfigurationProperties casProperties;
         private ApplicationContext applicationContext;
 
-        public Factory(final ViewResolver delegate, final ThymeleafProperties thymeleafProperties) {
+        public Factory(final ViewResolver delegate, final ThymeleafProperties thymeleafProperties, final CasConfigurationProperties casProperties) {
             this.delegate = delegate;
+            this.casProperties = casProperties;
             this.thymeleafProperties = thymeleafProperties;
         }
 
         @Override
         public ThemeViewResolver create(final String theme) {
-            final ThemeViewResolver resolver = new ThemeViewResolver(delegate, thymeleafProperties, theme);
+            final ThemeViewResolver resolver = new ThemeViewResolver(delegate, thymeleafProperties, casProperties, theme);
             resolver.setApplicationContext(applicationContext);
             resolver.setCache(thymeleafProperties.isCache());
             return resolver;

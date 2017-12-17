@@ -84,7 +84,7 @@ public class CasThemesConfiguration {
     @ConditionalOnMissingBean(name = "themeViewResolverFactory")
     @Bean
     public ThemeViewResolverFactory themeViewResolverFactory() {
-        final ThemeViewResolver.Factory factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties);
+        final ThemeViewResolver.Factory factory = new ThemeViewResolver.Factory(nonCachingThymeleafViewResolver(), thymeleafProperties, casProperties);
         factory.setApplicationContext(applicationContext);
         return factory;
     }
@@ -122,7 +122,7 @@ public class CasThemesConfiguration {
 
         final RegisteredServiceThemeResolver serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
                 serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
-                this.resourceLoader);
+                this.resourceLoader, new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
         final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
