@@ -19,10 +19,10 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
     
-    public static void bootstrap() {
+    public static void bootstrap(final int port) {
         try {
-            getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
-            populateCertificateRevocationListAttribute();
+            getDirectory(port).populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
+            populateCertificateRevocationListAttribute(port);
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -36,8 +36,8 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
      * without dependencies on the classpath and or filesystem.
      * @throws Exception the exception
      */
-    private static void populateCertificateRevocationListAttribute() throws Exception {
-        final Collection<LdapEntry> col = getDirectory().getLdapEntries();
+    private static void populateCertificateRevocationListAttribute(final int port) throws Exception {
+        final Collection<LdapEntry> col = getDirectory(port).getLdapEntries();
         for (final LdapEntry ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
                 final LdapAttribute attr = new LdapAttribute(true);
@@ -47,7 +47,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
                 value = EncodingUtils.encodeBase64ToByteArray(value);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
-                LdapTestUtils.modifyLdapEntry(getDirectory().getConnection(), ldapEntry, attr);
+                LdapTestUtils.modifyLdapEntry(getDirectory(port).getConnection(), ldapEntry, attr);
 
             }
         }

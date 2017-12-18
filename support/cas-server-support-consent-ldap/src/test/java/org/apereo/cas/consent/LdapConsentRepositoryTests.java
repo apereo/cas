@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {CasConsentLdapConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/ldapconsent.properties")
 public class LdapConsentRepositoryTests extends AbstractLdapTests {
-    
+    private static final int LDAP_PORT = 1387;
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(NoOpCipherExecutor.getInstance());
     
@@ -65,12 +65,12 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
     @BeforeClass
     public static void bootstrap() throws Exception {
         initDirectoryServer(1387);
-        DIRECTORY.populateEntries(new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
+        getLdapDirectory(LDAP_PORT).populateEntries(new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
     }
     
     @After
     public void cleanDecisions() throws Exception {
-        final LDAPConnection conn = DIRECTORY.getConnection();
+        final LDAPConnection conn = getLdapDirectory(LDAP_PORT).getConnection();
         final SearchResult res = conn.search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         if (res.getEntryCount() != 0 && res.getSearchEntry(USER_DN).hasAttribute(ATTR_NAME)) {
             conn.modify(USER_DN, new Modification(ModificationType.DELETE, ATTR_NAME));
@@ -92,7 +92,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod).getResultCode());
         
         final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("unknownUser"));
         assertNull(d);
@@ -107,7 +107,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod).getResultCode());
         
         final ConsentDecision d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication(USER_CN));
         assertNotNull(d);
@@ -119,11 +119,11 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod).getResultCode());
         final ConsentDecision decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
         decision2.setId(2);
         final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER2_DN, mod2).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER2_DN, mod2).getResultCode());
         
         final Collection<ConsentDecision> d = this.repository.findConsentDecisions(USER_CN);
         assertNotNull(d);
@@ -136,11 +136,11 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod).getResultCode());
         final ConsentDecision decision2 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
         decision2.setId(2);
         final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER2_DN, mod2).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER2_DN, mod2).getResultCode());
         
         final Collection<ConsentDecision> d = this.repository.findConsentDecisions();
         assertNotNull(d);
@@ -153,7 +153,7 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         
         this.repository.storeConsentDecision(decision);
-        final SearchResult r = DIRECTORY.getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        final SearchResult r = getLdapDirectory(LDAP_PORT).getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
         final ConsentDecision d = MAPPER.readValue(r.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
         assertNotNull(d);
@@ -165,14 +165,14 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod).getResultCode());
                 
         final LocalDateTime t = LocalDateTime.now();
         assertNotEquals(t, decision.getCreatedDate());
         decision.setCreatedDate(t);
         this.repository.storeConsentDecision(decision);
         
-        final SearchResult r2 = DIRECTORY.getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        final SearchResult r2 = getLdapDirectory(LDAP_PORT).getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r2.getEntryCount() > 0);
         final ConsentDecision d = MAPPER.readValue(r2.getSearchEntry(USER_DN).getAttributeValue(ATTR_NAME), ConsentDecision.class);
         assertNotNull(d);
@@ -185,19 +185,19 @@ public class LdapConsentRepositoryTests extends AbstractLdapTests {
         final ConsentDecision decision = BUILDER.build(SVC, REG_SVC, USER_CN, ATTR);
         decision.setId(1);
         final Modification mod = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod).getResultCode());
         final ConsentDecision decision2 = BUILDER.build(SVC2, REG_SVC2, USER_CN, ATTR);
         decision2.setId(2);
         final Modification mod2 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision2));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER_DN, mod2).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER_DN, mod2).getResultCode());
         final ConsentDecision decision3 = BUILDER.build(SVC, REG_SVC, USER2_CN, ATTR);
         decision3.setId(3);
         final Modification mod3 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision3));
-        assertEquals(ResultCode.SUCCESS, DIRECTORY.getConnection().modify(USER2_DN, mod3).getResultCode());
+        assertEquals(ResultCode.SUCCESS, getLdapDirectory(LDAP_PORT).getConnection().modify(USER2_DN, mod3).getResultCode());
 
         assertTrue(this.repository.deleteConsentDecision(decision2.getId(), USER_CN));
 
-        final SearchResult r = DIRECTORY.getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        final SearchResult r = getLdapDirectory(LDAP_PORT).getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
         assertEquals(1, r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length);
     }
