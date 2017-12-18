@@ -62,7 +62,6 @@ layout: null
         *   [Custom](/$version/installation/Configuring-Custom-Authentication.html)
     *   [Delegation](/$version/integration/Delegate-Authentication.html)
         *   [ADFS](/$version/integration/ADFS-Integration.html)
-        *   [Azure Active Directory](/$version/integration/Azure-ActiveDirectory-Integration.html)
     *   [Throttling](/$version/installation/Configuring-Authentication-Throttling.html)
     *   [Proxying](/$version/installation/Configuring-Proxy-Authentication.html)
     *   [Events](/$version/installation/Configuring-Authentication-Events.html)
