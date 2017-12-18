@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
-import org.apereo.cas.configuration.model.support.azuread.AzureActiveDirectoryDelegationProperties;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
@@ -256,12 +255,6 @@ public class AuthenticationProperties implements Serializable {
      * These settings are required to be indexed (i.e. wsfed[0].xyz).
      */
     private List<WsFederationDelegationProperties> wsfed = new ArrayList<>();
-
-    /**
-     * Collection of settings related to Azure AD delegated authentication.
-     */
-    @NestedConfigurationProperty
-    private AzureActiveDirectoryDelegationProperties azureAd = new AzureActiveDirectoryDelegationProperties();
     
     /**
      * WS-FED IdP authentication settings.
@@ -617,13 +610,5 @@ public class AuthenticationProperties implements Serializable {
 
     public void setFortress(final FortressAuthenticationProperties fortress) {
         this.fortress = fortress;
-    }
-
-    public AzureActiveDirectoryDelegationProperties getAzureAd() {
-        return azureAd;
-    }
-
-    public void setAzureAd(final AzureActiveDirectoryDelegationProperties azureAd) {
-        this.azureAd = azureAd;
     }
 }
