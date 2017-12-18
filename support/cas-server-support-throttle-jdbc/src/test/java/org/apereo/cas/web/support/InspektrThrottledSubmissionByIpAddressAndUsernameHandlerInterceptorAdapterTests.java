@@ -91,6 +91,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
+        request.setRequestURI("/cas/login");
         final MockRequestContext context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);

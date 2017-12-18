@@ -36,7 +36,6 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
     private static final String INSPEKTR_ACTION_THROTTLED = "THROTTLED_LOGIN_ATTEMPT";
-    private static final String INSPEKTR_ACTION_FAILED = "FAILED_LOGIN_ATTEMPT";
     
     private final AuditTrailManager auditTrailManager;
     private final DataSource dataSource;
@@ -106,7 +105,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     @Override
     public void recordSubmissionFailure(final HttpServletRequest request) {
         super.recordSubmissionFailure(request);
-        recordAnyAction(request, INSPEKTR_ACTION_FAILED, "recordSubmissionFailure()");
+        recordAnyAction(request, this.authenticationFailureCode, "recordSubmissionFailure()");
     }
 
     @Override
