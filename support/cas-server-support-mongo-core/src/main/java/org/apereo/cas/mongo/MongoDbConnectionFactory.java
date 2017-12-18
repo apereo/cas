@@ -288,11 +288,7 @@ public class MongoDbConnectionFactory {
         final MongoClientURI uri = buildMongoClientURI(clientUri, clientOptions);
         return new MongoClient(uri);
     }
-
-    private MongoCredential buildMongoCredential(final MongoClientURI uri) {
-        return MongoCredential.createCredential(uri.getUsername(), uri.getDatabase(), uri.getPassword());
-    }
-
+    
     private MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
         final String dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
