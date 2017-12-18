@@ -43,7 +43,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
     public void verifyDecryptionEncryptionPairNotNeeded() {
         final String result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
-        assertEquals(result, "keyValue");
+        assertEquals("keyValue", result);
 
     }
 
