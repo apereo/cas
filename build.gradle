@@ -33,6 +33,8 @@ apply plugin: "com.github.kt3k.coveralls"
 buildscript {
     repositories {
         mavenLocal()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
+        mavenCentral()
         jcenter()
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
@@ -98,6 +100,7 @@ allprojects {
 
     repositories {
         mavenLocal()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         mavenCentral()
         jcenter()
     }
@@ -130,6 +133,7 @@ subprojects {
 
     repositories {
         mavenLocal()
+        maven { url "http://maven.aliyun.com/nexus/content/groups/public/" }
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
 
