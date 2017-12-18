@@ -1873,19 +1873,6 @@ To learn more about this topic, [please review this guide](Trusted-Authenticatio
 # cas.authn.trusted.remotePrincipalHeader=
 ```
 
-## Azure Active Directory Authentication
-
-To learn more about this topic, [please review this guide](../integration/Azure-ActiveDirectory-Integration.html).
-
-```properties
-# cas.authn.azureAd.name=
-# cas.authn.azureAd.instance=https://login.microsoftonline.com/
-# cas.authn.azureAd.extraQueryParameters=nux=1
-# cas.authn.azureAd.tenant=
-# cas.authn.azureAd.clientId=
-# cas.authn.azureAd.clientSecret=
-```
-
 ## WS-Fed Delegated Authentication
 
 To learn more about this topic, [please review this guide](../integration/ADFS-Integration.html).
