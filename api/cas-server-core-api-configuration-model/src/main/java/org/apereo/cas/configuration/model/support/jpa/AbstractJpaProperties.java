@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.hibernate.ogm.cfg.OgmProperties;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -163,14 +164,41 @@ public abstract class AbstractJpaProperties implements Serializable {
     private boolean dataSourceProxy;
 
     /**
-     * The Jpa Driver type: only JDBC currently.
+     * The Jpa Driver type: NOSQL or JDBC.
      */
     private JpaType type = JpaType.JDBC;
+
+    /**
+     * OGM configuration: NoSQL host for connection.
+     */
+    private String host;
+
+    /**
+     * OGM configuration: NoSQL provider.
+     * @see OgmProperties
+     */
+    private String provider;
+
+    /**
+     * OGM configuration: Database name.
+     * @see OgmProperties
+     */
+    private String database = "cas";
+
+    /**
+     * OGM configuration: Create the database if it doesn't exist.
+     * @see OgmProperties
+     */
+    private Boolean createDatabase = true;
 
     public enum JpaType {
         /**
          * RDBMS type using hibernate.
          */
-        JDBC
+        JDBC,
+        /**
+         * NoSQL backends using Hibernate-OGM.
+         */
+        NOSQL
     }
 }

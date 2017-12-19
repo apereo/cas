@@ -320,6 +320,7 @@ subprojects {
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
+        api libraries.hibernate_ogm
 
         provided libraries.javax
 

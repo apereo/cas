@@ -74,6 +74,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
+
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     CasCoreAuthenticationConfiguration.class,

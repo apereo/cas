@@ -12,6 +12,8 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.support.jpa.JpaEntityManagerFactoryBeanFactory;
 import org.apereo.cas.support.jpa.JpaRuntimeException;
 import org.hibernate.cfg.Environment;
+import org.hibernate.ogm.cfg.OgmProperties;
+import org.hibernate.ogm.jpa.HibernateOgmPersistence;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -32,13 +34,15 @@ import java.util.Properties;
 public class JpaBeans {
 
     /**
-     * Get new data source, for JDBC.
+     * Get new data source, for JDBC or platform default for NoSQL/OGM.
      *
      * @param jpa the jpa properties
      * @return the data source
      */
     public static DataSource newDataSource(final AbstractJpaProperties jpa) {
         switch (jpa.getType()){
+            case NOSQL:
+                return newDefaultDataSource();
             case JDBC:
             default:
                 return newJdbcDataSource(jpa);
@@ -150,6 +154,7 @@ public class JpaBeans {
         putPropertyUnlessBlank(properties, Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
+
         properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
 
@@ -174,6 +179,35 @@ public class JpaBeans {
         }
 
         return jpaEmfbf.newEntityManagerFactoryBean(configDataHolder, jpaProperties);
+    }
+
+    /**
+     * New entity manager factory bean.
+     *
+     * @param config        the config
+     * @param jpaProperties the jpa properties
+     * @return the local container entity manager factory bean
+     */
+    private static LocalContainerEntityManagerFactoryBean newNoSqlEntityManagerFactoryBean(final JpaConfigDataHolder config,
+                                                                                           final AbstractJpaProperties jpaProperties) {
+        final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
+
+        if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
+            bean.setPersistenceUnitName(config.getPersistenceUnitName());
+        }
+        bean.setPersistenceProviderClass(HibernateOgmPersistence.class);
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[] {}));
+
+        final Properties properties = new Properties();
+
+        properties.put(OgmProperties.DATASTORE_PROVIDER, jpaProperties.getProvider());
+        putPropertyUnlessBlank(properties, OgmProperties.HOST, jpaProperties.getHost());
+        putPropertyUnlessBlank(properties, OgmProperties.USERNAME, jpaProperties.getUser());
+        putPropertyUnlessBlank(properties, OgmProperties.PASSWORD, jpaProperties.getPassword());
+        properties.putAll(jpaProperties.getProperties());
+        bean.setJpaProperties(properties);
+
+        return bean;
     }
 
     /**
@@ -232,5 +266,18 @@ public class JpaBeans {
         } else {
             LOGGER.trace("Property [{}] not set: no failover.", name);
         }
+    }
+
+    private static DataSource newDefaultDataSource() {
+        final String dataSourceName = "java:comp/DefaultDataSource";
+        try {
+            final JndiDataSourceLookup dsLookup = new JndiDataSourceLookup();
+            dsLookup.setResourceRef(false);
+            return dsLookup.getDataSource(dataSourceName);
+        } catch (final DataSourceLookupFailureException e) {
+            LOGGER.warn("Lookup of datasource [{}] failed due to [{}]. "
+                + "Datasource is ignored by hibernate-ogm: returning null.", dataSourceName, e.getMessage());
+        }
+        return null;
     }
 }

@@ -609,6 +609,36 @@ ext.libraries = [
                     force = true
                 }
         ],
+        hibernate_ogm                 : [
+                dependencies.create("org.hibernate.ogm:hibernate-ogm-core:$hibernateOgmVersion"){
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.jboss.spec.javax.transaction", module: "jboss-transaction-api_1.2_spec")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging-processor")
+                    exclude(group: "org.javassist", module: "javassist")
+                    exclude(group: "com.fasterxml", module: "classmate")
+                    force = true
+                },
+                dependencies.create("org.hibernate:hibernate-search-orm:$hibernateSearchVersion"){
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                }
+        ],
+        hibernate_ogm_cassandra           : [
+                dependencies.create("org.hibernate.ogm:hibernate-ogm-cassandra:$hibernateOgmVersion"){
+                    exclude(group: "com.datastax.cassandra", module: "cassandra-driver-core")
+                    exclude(group: "org.jboss.logging", module: "jboss-logging-processor")
+                },
+                dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
+                    exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
+                    exclude(group: "com.google.guava", module: "guava")
+                    force = true
+                }
+        ],
         httpclient              : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")
