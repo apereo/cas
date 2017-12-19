@@ -1,6 +1,6 @@
 package org.apereo.cas.web.view;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
 import org.thymeleaf.IEngineConfiguration;
