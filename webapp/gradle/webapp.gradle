@@ -16,7 +16,9 @@ node {
     download = true
 }
 
-npm_install.dependsOn(npm_cache_clean)
+if (!Boolean.getBoolean("skipNpmCache")) {
+    npm_install.dependsOn(npm_cache_clean)
+}
 
 task npmLint(type: NpmTask) {
     dependsOn npm_install
