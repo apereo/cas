@@ -2,6 +2,7 @@ package org.apereo.cas.monitor;
 
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
@@ -23,12 +24,9 @@ public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
 
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
-    /**
-     * Creates a new monitor that observes the given memcached client.
-     *
-     * @param client Memcached client.
-     */
-    public MemcachedHealthIndicator(final ObjectPool<MemcachedClientIF> client) {
+    public MemcachedHealthIndicator(final ObjectPool<MemcachedClientIF> client,
+                                    final CasConfigurationProperties casProperties) {
+        super(casProperties);
         this.connectionPool = client;
     }
 

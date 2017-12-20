@@ -6,6 +6,7 @@ import org.springframework.boot.actuate.health.Health;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.sql.DataSource;
+import java.util.concurrent.ExecutorService;
 
 /**
  * Monitors a data source that describes a single connection or connection pool to a database.
@@ -19,19 +20,11 @@ public class JdbcDataSourceHealthIndicator extends AbstractPoolHealthIndicator {
     private final JdbcTemplate jdbcTemplate;
     private final String validationQuery;
 
-    /**
-     * Creates a new instance that monitors the given data source.
-     *
-     * @param executorService the executor service
-     * @param maxWait         the max wait
-     * @param dataSource      Data source to monitor.
-     * @param validationQuery validation query used to monitor the data source. The validation query
-     *                        should return at least one result; otherwise results are ignored.
-     */
     public JdbcDataSourceHealthIndicator(final int maxWait,
                                          final DataSource dataSource,
+                                         final ExecutorService executor,
                                          final String validationQuery) {
-        super(maxWait);
+        super(maxWait, executor);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
         this.validationQuery = validationQuery;
     }
