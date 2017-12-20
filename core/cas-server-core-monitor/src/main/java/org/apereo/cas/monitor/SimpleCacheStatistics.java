@@ -21,18 +21,8 @@ public class SimpleCacheStatistics implements CacheStatistics {
 
     private String name;
 
-    /**
-     * Creates a new instance with given parameters.
-     *
-     * @param size      Current cache size (e.g. items, bytes, etc).
-     * @param capacity  Current cache capacity (e.g. items, bytes, etc).  The units of capacity must be equal to size
-     *                  in order to produce a meaningful value for {@link #getPercentFree}.
-     * @param evictions Number of evictions reported by cache.
-     */
     public SimpleCacheStatistics(final long size, final long capacity, final long evictions) {
-        this.size = size;
-        this.capacity = capacity;
-        this.evictions = evictions;
+        this(size, capacity, evictions, "N/A");
     }
 
     /**

@@ -1,7 +1,7 @@
 package org.apereo.cas.monitor.config;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorWarningProperties;
 import org.apereo.cas.monitor.MemoryMonitor;
 import org.apereo.cas.monitor.SessionMonitor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -48,8 +48,8 @@ public class CasCoreMonitorConfiguration {
     @ConditionalOnMissingBean(name = "sessionHealthIndicator")
     @Bean
     public HealthIndicator sessionHealthIndicator() {
-        final MonitorProperties.Warn warnSt = casProperties.getMonitor().getSt().getWarn();
-        final MonitorProperties.Warn warnTgt = casProperties.getMonitor().getTgt().getWarn();
+        final MonitorWarningProperties warnSt = casProperties.getMonitor().getSt().getWarn();
+        final MonitorWarningProperties warnTgt = casProperties.getMonitor().getTgt().getWarn();
         if (warnSt.getThreshold() > 0 && warnTgt.getThreshold() > 0) {
             LOGGER.debug("Configured session monitor with service ticket threshold [{}] and session threshold [{}]",
                 warnSt.getThreshold(), warnTgt.getThreshold());

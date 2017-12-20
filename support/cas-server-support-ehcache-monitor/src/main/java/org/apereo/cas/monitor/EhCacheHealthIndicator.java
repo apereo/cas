@@ -2,6 +2,7 @@ package org.apereo.cas.monitor;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,12 +23,8 @@ public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
      */
     private final CacheManager ehcacheTicketsCache;
 
-    /**
-     * Instantiates a new Eh cache monitor.
-     *
-     * @param ehcacheTicketsCache the tickets cache
-     */
-    public EhCacheHealthIndicator(final CacheManager ehcacheTicketsCache) {
+    public EhCacheHealthIndicator(final CacheManager ehcacheTicketsCache, final CasConfigurationProperties casProperties) {
+        super(casProperties);
         this.ehcacheTicketsCache = ehcacheTicketsCache;
     }
 
