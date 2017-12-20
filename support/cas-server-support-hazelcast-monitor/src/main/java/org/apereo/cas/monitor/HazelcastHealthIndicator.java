@@ -12,17 +12,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link HazelcastMonitor}.
+ * This is {@link HazelcastHealthIndicator}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class HazelcastMonitor extends AbstractCacheMonitor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastMonitor.class);
+public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
+    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastHealthIndicator.class);
 
-    public HazelcastMonitor() {
-        super(HazelcastMonitor.class.getSimpleName());
-    }
 
     @Override
     protected CacheStatistics[] getStatistics() {

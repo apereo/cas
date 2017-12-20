@@ -35,6 +35,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.Status;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
@@ -59,7 +61,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @Transactional
 @SpringBootTest(classes = {
-    SessionMonitorJpaTests.JpaTestConfiguration.class,
+    SessionHealthIndicatorJpaTests.JpaTestConfiguration.class,
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreAuthenticationConfiguration.class,
@@ -82,7 +84,7 @@ import static org.junit.Assert.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-public class SessionMonitorJpaTests {
+public class SessionHealthIndicatorJpaTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator();
@@ -108,10 +110,8 @@ public class SessionMonitorJpaTests {
         addTicketsToRegistry(jpaRegistry, 5, 5);
         assertEquals(10, jpaRegistry.getTickets().size());
         final SessionMonitor monitor = new SessionMonitor(jpaRegistry, -1, -1);
-        final SessionStatus status = monitor.observe();
-        assertEquals(5, status.getSessionCount());
-        assertEquals(5, status.getServiceTicketCount());
-        assertEquals(StatusCode.OK, status.getCode());
+        final Health status = monitor.health();
+        assertEquals(Status.UP, status.getStatus());
     }
 
     private static void addTicketsToRegistry(final TicketRegistry registry, final int tgtCount, final int stCount) {

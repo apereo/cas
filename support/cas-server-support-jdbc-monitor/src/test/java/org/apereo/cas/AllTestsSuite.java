@@ -1,6 +1,6 @@
 package org.apereo.cas;
 
-import org.apereo.cas.monitor.JdbcDataSourceMonitorTests;
+import org.apereo.cas.monitor.JdbcDataSourceHealthIndicatorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -13,6 +13,6 @@ import org.junit.runners.Suite;
  */
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses(JdbcDataSourceMonitorTests.class)
+@Suite.SuiteClasses(JdbcDataSourceHealthIndicatorTests.class)
 public class AllTestsSuite {
 }

@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
-public class EhCacheMonitor extends AbstractCacheMonitor {
+public class EhCacheHealthIndicator extends AbstractCacheHealthIndicator {
 
     /**
      * The Ticket granting tickets cache.
@@ -27,8 +27,7 @@ public class EhCacheMonitor extends AbstractCacheMonitor {
      *
      * @param ehcacheTicketsCache the tickets cache
      */
-    public EhCacheMonitor(final CacheManager ehcacheTicketsCache) {
-        super(EhCacheMonitor.class.getSimpleName());
+    public EhCacheHealthIndicator(final CacheManager ehcacheTicketsCache) {
         this.ehcacheTicketsCache = ehcacheTicketsCache;
     }
 

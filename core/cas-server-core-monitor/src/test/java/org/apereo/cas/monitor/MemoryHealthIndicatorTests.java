@@ -1,6 +1,9 @@
 package org.apereo.cas.monitor;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.springframework.boot.actuate.health.Status;
 
 import static org.junit.Assert.*;
 
@@ -10,16 +13,17 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
-public class MemoryMonitorTests {
+@RunWith(JUnit4.class)
+public class MemoryHealthIndicatorTests {
 
     @Test
     public void verifyObserveOk() {
-        assertEquals(StatusCode.OK, new MemoryMonitor(0).observe().getCode());
+        assertEquals(Status.UP, new MemoryMonitor(0).health().getStatus());
     }
 
     @Test
     public void verifyObserveWarn() {
         final MemoryMonitor monitor = new MemoryMonitor(100);
-        assertEquals(StatusCode.WARN, monitor.observe().getCode());
+        assertEquals(Status.DOWN, monitor.health().getStatus());
     }
 }
