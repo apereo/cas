@@ -21,8 +21,11 @@ import org.springframework.context.annotation.Configuration;
 public class EhCacheMonitorConfiguration {
 
     @Autowired
+    private CasConfigurationProperties casProperties;
+
+    @Autowired
     @Bean
     public HealthIndicator ehcacheHealthIndicator(@Qualifier("ehcacheTicketCacheManager") final CacheManager ehcacheTicketCacheManager) {
-        return new EhCacheHealthIndicator(ehcacheTicketCacheManager);
+        return new EhCacheHealthIndicator(ehcacheTicketCacheManager, casProperties);
     }
 }

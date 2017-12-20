@@ -74,6 +74,6 @@ public class EhCacheHealthIndicatorTests {
         });
 
         status = monitor.health();
-        assertEquals(Status.DOWN, status.getStatus());
+        assertEquals("WARN", status.getStatus().getCode());
     }
 }

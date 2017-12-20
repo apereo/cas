@@ -1,6 +1,7 @@
 package org.apereo.cas.monitor;
 
 import com.mongodb.DBCollection;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
@@ -16,7 +17,9 @@ import java.util.stream.Collectors;
 public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
     private final MongoTemplate mongoTemplate;
 
-    public MongoDbHealthIndicator(final MongoTemplate mongoTemplate) {
+    public MongoDbHealthIndicator(final MongoTemplate mongoTemplate,
+                                  final CasConfigurationProperties casProperties) {
+        super(casProperties);
         this.mongoTemplate = mongoTemplate;
     }
 

@@ -1,10 +1,9 @@
 package org.apereo.cas.monitor;
 
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.configuration.model.core.monitor.MonitorWarningProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -23,10 +22,13 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
     private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCacheHealthIndicator.class);
 
     /**
-     * CAS properties.
+     * CAS settings.
      */
-    @Autowired
-    protected CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
+
+    public AbstractCacheHealthIndicator(final CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+    }
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) throws Exception {
@@ -34,7 +36,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
         try {
             final CacheStatistics[] statistics = getStatistics();
             if (statistics == null || statistics.length == 0) {
-                builder.outOfService().withDetail("message", "Cache statistics not available.");
+                builder.outOfService().withDetail("message", "Cache statistics are not available.");
                 return;
             }
 
@@ -43,21 +45,19 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
                 builder.outOfService();
             } else if (statuses.contains(Status.DOWN)) {
                 builder.down();
+            } else if (statuses.contains(new Status("WARN"))) {
+                builder.status("WARN");
             } else {
                 builder.up();
             }
 
-            Arrays.stream(statistics).forEach(s -> {
+            Arrays.stream(statistics).forEach(s ->
                 builder.withDetail("size", s.getSize())
                     .withDetail("capacity", s.getCapacity())
                     .withDetail("evictions", s.getEvictions())
                     .withDetail("percentFree", s.getPercentFree())
-                    .withDetail("name", s.getName());
-            });
-        } catch (
-            final Exception e)
-
-        {
+                    .withDetail("name", s.getName()));
+        } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             builder.down(e);
         }
@@ -79,9 +79,9 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
      * percent free space is below threshold, otherwise {@link StatusCode#OK}.
      */
     protected Status status(final CacheStatistics statistics) {
-        final MonitorProperties.Warn warn = casProperties.getMonitor().getWarn();
+        final MonitorWarningProperties warn = casProperties.getMonitor().getWarn();
         if (statistics.getEvictions() > 0 && statistics.getEvictions() > warn.getEvictionThreshold()) {
-            return Status.DOWN;
+            return new Status("WARN");
         }
         if (statistics.getPercentFree() > 0 && statistics.getPercentFree() < warn.getThreshold()) {
             return Status.OUT_OF_SERVICE;

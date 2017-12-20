@@ -5,6 +5,8 @@ import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
 import org.springframework.boot.actuate.health.Health;
 
+import java.util.concurrent.ExecutorService;
+
 /**
  * Monitors an ldaptive {@link PooledConnectionFactory}.
  *
@@ -23,16 +25,11 @@ public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHeal
      */
     private final Validator<Connection> validator;
 
-    /**
-     * Creates a new instance that monitors the given pooled connection factory.
-     *
-     * @param executorService the executor service
-     * @param maxWait         the max wait
-     * @param factory         Connection factory to monitor.
-     * @param validator       Validates connections from the factory.
-     */
-    public PooledLdapConnectionFactoryHealthIndicator(final int maxWait, final PooledConnectionFactory factory, final Validator<Connection> validator) {
-        super(maxWait);
+    public PooledLdapConnectionFactoryHealthIndicator(final int maxWait,
+                                                      final PooledConnectionFactory factory,
+                                                      final ExecutorService executor,
+                                                      final Validator<Connection> validator) {
+        super(maxWait, executor);
         this.connectionFactory = factory;
         this.validator = validator;
     }

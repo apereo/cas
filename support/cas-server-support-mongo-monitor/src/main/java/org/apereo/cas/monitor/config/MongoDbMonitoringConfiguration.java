@@ -29,6 +29,6 @@ public class MongoDbMonitoringConfiguration {
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MonitorProperties.MongoDb mongoProps = casProperties.getMonitor().getMongo();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
-        return new MongoDbHealthIndicator(mongoTemplate);
+        return new MongoDbHealthIndicator(mongoTemplate, casProperties);
     }
 }

@@ -4,6 +4,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,9 @@ import java.util.List;
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
     private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastHealthIndicator.class);
 
+    public HazelcastHealthIndicator(final CasConfigurationProperties casProperties) {
+        super(casProperties);
+    }
 
     @Override
     protected CacheStatistics[] getStatistics() {

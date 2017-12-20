@@ -3,6 +3,10 @@ package org.apereo.cas.monitor;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 /**
@@ -19,6 +23,11 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
     private final long maxWait;
 
     /**
+     * Executor that performs pool resource validation.
+     */
+    private final ExecutorService executor;
+
+    /**
      * Creates a new instance.
      *
      * @param name            monitor name
@@ -27,29 +36,31 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
      *                        If the pool defines a maximum time to wait for a resource, this property
      *                        should be set less than that value.
      */
-    public AbstractPoolHealthIndicator(final long maxWait) {
+    public AbstractPoolHealthIndicator(final long maxWait, final ExecutorService executorService) {
         this.maxWait = maxWait;
+        this.executor = executorService;
     }
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {
         Health.Builder poolBuilder = builder.up();
-
-        String description;
+        final Future<Health.Builder> result = this.executor.submit(new Validator(this, builder));
+        String message;
         try {
-            poolBuilder = checkPool(builder);
-            description = "OK";
+            poolBuilder = result.get(this.maxWait, TimeUnit.MILLISECONDS);
+            message = "OK";
         } catch (final InterruptedException e) {
-            description = "Validator thread interrupted during pool validation.";
+            message = "Validator thread interrupted during pool validation.";
+            poolBuilder.outOfService();
         } catch (final TimeoutException e) {
-            poolBuilder.status("WARN");
-            description = String.format("Pool validation timed out. Max wait is %s ms.", this.maxWait);
+            poolBuilder.down();
+            message = String.format("Pool validation timed out. Max wait is %s ms.", this.maxWait);
         } catch (final Exception e) {
             poolBuilder.outOfService();
-            description = e.getMessage();
+            message = e.getMessage();
         }
         poolBuilder
-            .withDetail("message", description)
+            .withDetail("message", message)
             .withDetail("activeCount", getActiveCount())
             .withDetail("idleCount", getIdleCount());
     }
@@ -80,5 +91,26 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
      */
     protected int getActiveCount() {
         return -1;
+    }
+
+    private static class Validator implements Callable<Health.Builder> {
+        private final AbstractPoolHealthIndicator monitor;
+        private final Health.Builder builder;
+
+        /**
+         * Instantiates a new Validator.
+         *
+         * @param monitor the monitor
+         * @param builder the health check builder
+         */
+        Validator(final AbstractPoolHealthIndicator monitor, final Health.Builder builder) {
+            this.monitor = monitor;
+            this.builder = builder;
+        }
+
+        @Override
+        public Health.Builder call() throws Exception {
+            return this.monitor.checkPool(this.builder);
+        }
     }
 }
