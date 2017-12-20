@@ -34,6 +34,7 @@ import org.springframework.web.servlet.mvc.WebContentInterceptor;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Properties;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -67,7 +68,9 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         final AdminPagesSecurityProperties secProps = casProperties.getAdminPagesSecurity();
         final IpRegexpAuthenticator authn = new IpRegexpAuthenticator(secProps.getIp());
         final IpClient ipClient = new IpClient(authn);
-        final IpExtractor credentialsExtractor = new IpExtractor(ipClient.getClass().getSimpleName(), secProps.getAlternateIpHeaderName());
+
+        final Set<String> headerNames = org.springframework.util.StringUtils.commaDelimitedListToSet(secProps.getAlternateIpHeaderName());
+        final IpExtractor credentialsExtractor = new IpExtractor(ipClient.getClass().getSimpleName(), headerNames.toArray(new String[]{}));
         ipClient.setCredentialsExtractor(credentialsExtractor);
         return new CasSecurityInterceptor(new Config(ipClient), ipClient.getClass().getSimpleName());
     }
