@@ -41,7 +41,8 @@ public class MonitorProperties implements Serializable {
     /**
      * Warning options that generally deal with cache-based resources, etc.
      */
-    private Warn warn = new Warn();
+    @NestedConfigurationProperty
+    private MonitorWarningProperties warn = new MonitorWarningProperties();
 
     /**
      * Options for monitoring sensitive CAS endpoints and resources.
@@ -95,11 +96,11 @@ public class MonitorProperties implements Serializable {
         this.jdbc = jdbc;
     }
 
-    public Warn getWarn() {
+    public MonitorWarningProperties getWarn() {
         return warn;
     }
 
-    public void setWarn(final Warn warn) {
+    public void setWarn(final MonitorWarningProperties warn) {
         this.warn = warn;
     }
 
@@ -151,13 +152,13 @@ public class MonitorProperties implements Serializable {
          * Warning settings for this monitor.
          */
         @NestedConfigurationProperty
-        private Warn warn = new Warn(5000);
+        private MonitorWarningProperties warn = new MonitorWarningProperties(5000);
 
-        public Warn getWarn() {
+        public MonitorWarningProperties getWarn() {
             return warn;
         }
 
-        public void setWarn(final Warn warn) {
+        public void setWarn(final MonitorWarningProperties warn) {
             this.warn = warn;
         }
     }
@@ -170,54 +171,14 @@ public class MonitorProperties implements Serializable {
          * Warning options for monitoring TGT production.
          */
         @NestedConfigurationProperty
-        private Warn warn = new Warn(10000);
+        private MonitorWarningProperties warn = new MonitorWarningProperties(10000);
 
-        public Warn getWarn() {
+        public MonitorWarningProperties getWarn() {
             return warn;
         }
 
-        public void setWarn(final Warn warn) {
+        public void setWarn(final MonitorWarningProperties warn) {
             this.warn = warn;
-        }
-    }
-
-    @RequiresModule(name = "cas-server-core-monitor", automated = true)
-    public static class Warn implements Serializable {
-
-        private static final long serialVersionUID = 2788617778375787703L;
-        /**
-         * The monitor threshold where if reached, CAS might generate a warning status for health checks.
-         */
-        private int threshold = 10;
-
-        /**
-         * The monitor eviction threshold where if reached, CAS might generate a warning status for health checks.
-         * The underlying data source and monitor (i.e. cache) must support the concept of evictions.
-         */
-        private long evictionThreshold;
-
-
-        public Warn() {
-        }
-
-        public Warn(final int threshold) {
-            this.threshold = threshold;
-        }
-
-        public int getThreshold() {
-            return threshold;
-        }
-
-        public void setThreshold(final int threshold) {
-            this.threshold = threshold;
-        }
-
-        public long getEvictionThreshold() {
-            return evictionThreshold;
-        }
-
-        public void setEvictionThreshold(final long evictionThreshold) {
-            this.evictionThreshold = evictionThreshold;
         }
     }
 
