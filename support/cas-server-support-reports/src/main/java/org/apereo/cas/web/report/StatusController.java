@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 
 /**
- * Reports overall CAS health based on the observations of the configured {@link HealthCheckMonitor} instance.
+ * Reports overall CAS health based on the observations of the configured {@link HealthEndpoint} instance.
  *
  * @author Marvin S. Addison
  * @since 3.5

@@ -75,8 +75,7 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
      * Computes the status code for a given set of cache statistics.
      *
      * @param statistics Cache statistics.
-     * @return {@link StatusCode#WARN} if eviction count is above threshold or if
-     * percent free space is below threshold, otherwise {@link StatusCode#OK}.
+     * @return WARN or OUT_OF_SERVICE OR UP.
      */
     protected Status status(final CacheStatistics statistics) {
         final MonitorWarningProperties warn = casProperties.getMonitor().getWarn();

@@ -30,7 +30,6 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
     /**
      * Creates a new instance.
      *
-     * @param name            monitor name
      * @param executorService executor service responsible for pool resource validation.
      * @param maxWait         Set the maximum amount of time wait while validating pool resources.
      *                        If the pool defines a maximum time to wait for a resource, this property
