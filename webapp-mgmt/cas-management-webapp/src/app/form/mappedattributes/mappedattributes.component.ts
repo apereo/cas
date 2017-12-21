@@ -22,18 +22,16 @@ export class MappedattributesComponent implements OnInit {
 
 
   constructor(public messages: Messages,
-              public data: Data,
-              private changeDetector: ChangeDetectorRef) {
+              public data: Data) {
     this.formData = data.formData;
   }
 
   ngOnInit() {
-    const rows = [];
-    for (const key of Array.from(Object.keys(this.attributes))) {
-      rows.push(new Row(key as string));
-    };
-    this.dataSource = new RowDataSource(rows);
-    this.changeDetector.detectChanges();
+      const rows = [];
+      for (const p of Array.from(Object.keys(this.attributes))) {
+          rows.push(new Row(p));
+      }
+      this.dataSource = new RowDataSource(rows);
   }
 
 }

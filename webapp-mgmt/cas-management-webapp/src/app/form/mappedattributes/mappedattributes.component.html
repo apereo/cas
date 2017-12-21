@@ -7,7 +7,7 @@
           {{ messages.services_form_label_attrRelease_policies_sourceAttribute }}
         </ng-container>
       </mat-header-cell>
-      <mat-cell *cdkCellDef="let row"> {{ row.source }}</mat-cell>
+      <mat-cell *cdkCellDef="let row"> {{ row.key }}</mat-cell>
     </ng-container>
 
     <ng-container cdkColumnDef="mapped">
@@ -19,8 +19,8 @@
       <mat-cell *cdkCellDef="let row">
         <mat-form-field>
           <input matInput
-                 [ngModel]="attributes[row.source]"
-                 (ngModelChange)="attributes[row.source] = $event.split(',')">
+                 [ngModel]="attributes[row.key]"
+                 (ngModelChange)="attributes[row.key] = $event.split(',')">
         </mat-form-field>
       </mat-cell>
     </ng-container>
