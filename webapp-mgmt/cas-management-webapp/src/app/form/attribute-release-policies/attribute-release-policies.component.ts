@@ -104,14 +104,13 @@ export class AttributeReleasePoliciesComponent implements OnInit {
   changeType() {
     switch (+this.type) {
       case Type.RETURN_ALL:
-        console.log('Changed to return all');
         this.data.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.DENY_ALL :
         this.data.service.attributeReleasePolicy = new DenyAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.RETURN_MAPPED :
-        const mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
+        const mapped: ReturnMappedAttributeReleasePolicy = new ReturnMappedAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         mapped.allowedAttributes = new Map();
         this.formData.availableAttributes.forEach((item: any) => {
           mapped.allowedAttributes[item] = [item];
@@ -119,7 +118,7 @@ export class AttributeReleasePoliciesComponent implements OnInit {
         this.data.service.attributeReleasePolicy = mapped;
         break;
       case Type.RETURN_ALLOWED :
-        this.data.service.attributeReleasePolicy = new ReturnAllAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
+        this.data.service.attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         break;
       case Type.SCRIPT :
         this.data.service.attributeReleasePolicy = new ScriptedRegisteredServiceAttributeReleasePolicy(
