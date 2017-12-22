@@ -37,11 +37,11 @@ public class JWTTicketStatusResourcePreprocessor implements TicketStatusResource
             return id;
         }
 
-        JWTClaimsSet claimsSet;
+        final JWTClaimsSet claimsSet;
         try {
-            String jwtJson = tokenCipherExecutor.decode(id);
+            final String jwtJson = tokenCipherExecutor.decode(id);
             claimsSet = JWTClaimsSet.parse(jwtJson);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             LOGGER.error("Could not extract JWT from {}", id, e);
             return id;
         }
