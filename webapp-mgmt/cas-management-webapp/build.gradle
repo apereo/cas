@@ -15,7 +15,9 @@ node {
     download = true
 }
 
-npm_install.dependsOn(npm_cache_clean)
+if (!Boolean.getBoolean("skipNpmCache")) {
+    npm_install.dependsOn(npm_cache_clean)
+}
 
 task buildClientDev(type: NpmTask, dependsOn: "npm_install", group: "build",
         description: "Compile client side folder for development") {
