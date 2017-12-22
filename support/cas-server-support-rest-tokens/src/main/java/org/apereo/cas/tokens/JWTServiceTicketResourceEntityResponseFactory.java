@@ -8,7 +8,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.factory.DefaultServiceTicketResourceEntityResponseFactory;
-import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,17 +26,13 @@ public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServic
      */
     private final TokenTicketBuilder tokenTicketBuilder;
 
-    private final TicketRegistrySupport ticketRegistrySupport;
-
     private final ServicesManager servicesManager;
 
     public JWTServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService,
                                                          final TokenTicketBuilder tokenTicketBuilder,
-                                                         final TicketRegistrySupport ticketRegistrySupport,
                                                          final ServicesManager servicesManager) {
         super(centralAuthenticationService);
         this.tokenTicketBuilder = tokenTicketBuilder;
-        this.ticketRegistrySupport = ticketRegistrySupport;
         this.servicesManager = servicesManager;
     }
 

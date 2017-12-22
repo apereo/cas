@@ -2,7 +2,6 @@ package org.apereo.cas.tokens;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
@@ -25,15 +24,12 @@ import javax.servlet.http.HttpServletRequest;
 public class JWTTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(JWTTicketGrantingTicketResourceEntityResponseFactory.class);
     
-    private final ServicesManager servicesManager;
-
     /**
      * The ticket builder that produces tokens.
      */
     private final TokenTicketBuilder tokenTicketBuilder;
     
-    public JWTTicketGrantingTicketResourceEntityResponseFactory(final ServicesManager servicesManager, final TokenTicketBuilder tokenTicketBuilder) {
-        this.servicesManager = servicesManager;
+    public JWTTicketGrantingTicketResourceEntityResponseFactory(final TokenTicketBuilder tokenTicketBuilder) {
         this.tokenTicketBuilder = tokenTicketBuilder;
     }
 
