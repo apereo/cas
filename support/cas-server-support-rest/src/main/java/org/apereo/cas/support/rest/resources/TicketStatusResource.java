@@ -1,6 +1,8 @@
 package org.apereo.cas.support.rest.resources;
 
+import javax.servlet.http.HttpServletRequest;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.support.rest.factory.TicketStatusResourcePreprocessor;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.slf4j.Logger;
@@ -33,20 +35,28 @@ public class TicketStatusResource {
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    public TicketStatusResource(final CentralAuthenticationService centralAuthenticationService) {
+    private final TicketStatusResourcePreprocessor ticketStatusResourcePreprocessor;
+
+    public TicketStatusResource(
+            final CentralAuthenticationService centralAuthenticationService,
+            final TicketStatusResourcePreprocessor ticketStatusResourcePreprocessor) {
+
         this.centralAuthenticationService = centralAuthenticationService;
+        this.ticketStatusResourcePreprocessor = ticketStatusResourcePreprocessor;
     }
 
     /**
      * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.
      *
      * @param id ticket id
+     * @param request raw HttpServletRequest used to call this method
      * @return {@link ResponseEntity} representing RESTful response
      */
     @GetMapping(value = "/v1/tickets/{id:.+}")
-    public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id) {
+    public ResponseEntity<String> getTicketStatus(@PathVariable("id") final String id, final HttpServletRequest request) {
         try {
-            final Ticket ticket = this.centralAuthenticationService.getTicket(id);
+            final Ticket ticket = this.centralAuthenticationService.getTicket(
+                    ticketStatusResourcePreprocessor.preprocess(id, request));
             return new ResponseEntity<>(ticket.getId(), HttpStatus.OK);
         } catch (final InvalidTicketException e) {
             return new ResponseEntity<>("Ticket could not be found", HttpStatus.NOT_FOUND);

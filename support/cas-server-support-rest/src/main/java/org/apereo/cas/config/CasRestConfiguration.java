@@ -29,6 +29,8 @@ import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.apereo.cas.support.rest.factory.DefaultTicketStatusResourcePreprocessor;
+import org.apereo.cas.support.rest.factory.TicketStatusResourcePreprocessor;
 
 /**
  * This is {@link CasRestConfiguration}.
@@ -72,7 +74,15 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
 
     @Bean
     public TicketStatusResource ticketStatusResource() {
-        return new TicketStatusResource(centralAuthenticationService);
+        return new TicketStatusResource(
+                centralAuthenticationService,
+                applicationContext.getBean("ticketStatusResourcePreprocessor", TicketStatusResourcePreprocessor.class));
+    }
+
+    @Bean
+    @ConditionalOnMissingBean(name = "ticketStatusResourcePreprocessor")
+    public TicketStatusResourcePreprocessor ticketStatusResourcePreprocessor() {
+        return new DefaultTicketStatusResourcePreprocessor();
     }
 
     @Bean
@@ -96,7 +106,8 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public TicketGrantingTicketResource ticketResourceRestController() {
         return new TicketGrantingTicketResource(authenticationSystemSupport, credentialFactory,
-                centralAuthenticationService, webApplicationServiceFactory, ticketGrantingTicketResourceEntityResponseFactory());
+                centralAuthenticationService, webApplicationServiceFactory,
+                ticketGrantingTicketResourceEntityResponseFactory());
     }
 
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
@@ -107,10 +118,11 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter {
             return this.applicationContext.getBean(throttler, HandlerInterceptor.class);
         }
         return new HandlerInterceptorAdapter() {
+
             @Override
             public boolean preHandle(final HttpServletRequest request,
-                                     final HttpServletResponse response,
-                                     final Object handler) {
+                    final HttpServletResponse response,
+                    final Object handler) {
                 return true;
             }
         };
