@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FMongoDbConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,8 @@ import org.springframework.test.context.junit4.SpringRunner;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {U2FMongoDbConfiguration.class,
+@SpringBootTest(classes = {U2FConfiguration.class,
+        U2FMongoDbConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/mongou2f.properties")

@@ -54,7 +54,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                     .setParameter("expdate", expirationDate)
                     .getResultList()
                     .stream()
-                    .map(r -> DeviceRegistration.fromJson(r.getRecord()))
+                    .map(r -> DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord())))
                     .collect(Collectors.toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No device registration was found for [{}]", username);
@@ -73,7 +73,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         final U2FDeviceRegistration jpa = new U2FDeviceRegistration();
         jpa.setUsername(username);
-        jpa.setRecord(registration.toJson());
+        jpa.setRecord(getCipherExecutor().encode(registration.toJson()));
         jpa.setCreatedDate(LocalDate.now());
         this.entityManager.merge(jpa);
     }
