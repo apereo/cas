@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
@@ -68,6 +69,12 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
      */
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
+
+    /**
+     * Crypto settings that sign/encrypt the u2f registration records.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public U2FMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
@@ -151,6 +158,14 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
 
     public void setGroovy(final Groovy groovy) {
         this.groovy = groovy;
+    }
+
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
     }
 
     public static class Jpa extends AbstractJpaProperties {

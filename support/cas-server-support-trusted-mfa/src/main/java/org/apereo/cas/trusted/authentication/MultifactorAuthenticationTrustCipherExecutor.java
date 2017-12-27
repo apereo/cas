@@ -22,11 +22,11 @@ public class MultifactorAuthenticationTrustCipherExecutor extends BaseStringCiph
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.mfa.trusted.encryption.key";
+        return "cas.authn.mfa.trusted.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.mfa.trusted.signing.key";
+        return "cas.authn.mfa.trusted.crypto.signing.key";
     }
 }

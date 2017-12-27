@@ -4,6 +4,8 @@ package org.apereo.cas.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.adaptors.u2f.U2FAuthenticationRegistrationRecordCipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FGroovyResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FInMemoryDeviceRepository;
@@ -11,7 +13,9 @@ import org.apereo.cas.adaptors.u2f.storage.U2FJsonResourceDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FRestResourceDeviceRepository;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +23,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -106,5 +111,22 @@ public class U2FConfiguration {
             LOGGER.debug("Starting to clean expired U2F devices from repository");
             this.repository.clean();
         }
+    }
+
+    @Bean
+    @RefreshScope
+    public CipherExecutor u2fRegistrationRecordCipherExecutor() {
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getU2f().getCrypto();
+        if (crypto.isEnabled()) {
+            return new U2FAuthenticationRegistrationRecordCipherExecutor(
+                    crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg());
+        }
+        LOGGER.info("U2F registration record encryption/signing is turned off and "
+                + "MAY NOT be safe in a production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of "
+                + "U2F registration records for MFA");
+        return NoOpCipherExecutor.getInstance();
     }
 }
