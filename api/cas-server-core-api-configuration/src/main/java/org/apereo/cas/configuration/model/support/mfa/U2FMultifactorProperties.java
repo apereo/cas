@@ -160,6 +160,14 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
         this.groovy = groovy;
     }
 
+    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
+        return crypto;
+    }
+
+    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
+        this.crypto = crypto;
+    }
+
     public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -4334840263678287815L;
     }
@@ -185,14 +193,6 @@ public class U2FMultifactorProperties extends BaseMultifactorProviderProperties 
     @RequiresModule(name = "cas-server-support-u2f")
     public static class Groovy extends SpringResourceProperties {
         private static final long serialVersionUID = 8079027843747126083L;
-    }
-
-    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(EncryptionJwtSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
     }
 }
 
