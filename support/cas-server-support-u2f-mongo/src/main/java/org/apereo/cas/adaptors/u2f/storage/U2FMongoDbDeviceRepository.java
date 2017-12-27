@@ -49,7 +49,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
             query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
             return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
                     .stream()
-                    .map(r -> DeviceRegistration.fromJson(r.getRecord()))
+                    .map(r -> DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord())))
                     .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -66,7 +66,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         final U2FDeviceRegistration record = new U2FDeviceRegistration();
         record.setUsername(username);
-        record.setRecord(registration.toJson());
+        record.setRecord(getCipherExecutor().encode(registration.toJson()));
         record.setCreatedDate(LocalDate.now());
         this.mongoTemplate.save(record, this.collectionName);
     }
