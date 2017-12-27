@@ -20,7 +20,7 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
         return cipherExecutor;
     }
 
-    public void setCipherExecutor(CipherExecutor<Serializable, String> cipherExecutor) {
+    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
     }
 
