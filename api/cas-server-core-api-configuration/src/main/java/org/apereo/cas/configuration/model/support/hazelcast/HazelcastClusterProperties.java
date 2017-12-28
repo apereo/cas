@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastDiscoveryProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
