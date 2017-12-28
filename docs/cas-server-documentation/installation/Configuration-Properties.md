@@ -382,12 +382,23 @@ for the embedded Tomcat container.
 # cas.server.extAccessLog.directory=
 ```
 
-#### Rewrite Valve Valve
+#### Rewrite Valve
 
 Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
 
 ```properties
 # cas.server.rewriteValve.location=classpath://container/tomcat/rewrite.config
+```
+
+#### Basic Authentication
+
+Enable basic authentication for the embedded Apache Tomcat.
+
+```properties
+# cas.server.basicAuthn.enabled=true
+# cas.server.basicAuthn.securityRoles[0]=admin
+# cas.server.basicAuthn.authRoles[0]=admin
+# cas.server.basicAuthn.patterns[0]=/*
 ```
 
 ## CAS Server
