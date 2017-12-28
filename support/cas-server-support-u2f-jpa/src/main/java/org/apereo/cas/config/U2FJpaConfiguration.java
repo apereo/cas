@@ -92,7 +92,7 @@ public class U2FJpaConfiguration {
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(key -> StringUtils.EMPTY);
-        U2FJpaDeviceRepository repo = new U2FJpaDeviceRepository(requestStorage,
+        final U2FJpaDeviceRepository repo = new U2FJpaDeviceRepository(requestStorage,
                 u2f.getExpireRegistrations(),
                 u2f.getExpireDevicesTimeUnit());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
