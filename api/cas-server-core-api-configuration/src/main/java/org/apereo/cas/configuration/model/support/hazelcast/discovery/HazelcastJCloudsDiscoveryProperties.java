@@ -125,7 +125,8 @@ public class HazelcastJCloudsDiscoveryProperties implements Serializable {
     private String roleName;
 
     /**
-     * Used for cloud providers which require an extra JSON or P12 key file. This denotes the path of that file. Only tested with Google Compute Engine. (Required if Google Compute Engine is used.)
+     * Used for cloud providers which require an extra JSON or P12 key file. This denotes the path of that file. Only tested with Google Compute Engine.
+     * (Required if Google Compute Engine is used.)
      */
     private String credentialPath;
 
