@@ -23,43 +23,6 @@ public class BaseHazelcastProperties implements Serializable {
     public static final String HAZELCAST_DISCOVERY_ENABLED = "hazelcast.discovery.enabled";
 
     /**
-     * AWS discovery access key property.
-     */
-    public static final String AWS_DISCOVERY_ACCESS_KEY = "access-key";
-    /**
-     * AWS discovery secret key property.
-     */
-    public static final String AWS_DISCOVERY_SECRET_KEY = "secret-key";
-    /**
-     * AWS discovery IAM role property.
-     */
-    public static final String AWS_DISCOVERY_IAM_ROLE = "iam-role";
-    /**
-     * AWS discovery  region property.
-     */
-    public static final String AWS_DISCOVERY_REGION = "region";
-    /**
-     * AWS discovery host header property.
-     */
-    public static final String AWS_DISCOVERY_HOST_HEADER = "host-header";
-    /**
-     * AWS discovery security group name property.
-     */
-    public static final String AWS_DISCOVERY_SECURITY_GROUP_NAME = "security-group-name";
-    /**
-     * AWS discovery  tag key property.
-     */
-    public static final String AWS_DISCOVERY_TAG_KEY = "tag-key";
-    /**
-     * AWS discovery tag value property.
-     */
-    public static final String AWS_DISCOVERY_TAG_VALUE = "tag-value";
-    /**
-     * AWS discovery HZ port property.
-     */
-    public static final String AWS_DISCOVERY_PORT = "hz-port";
-
-    /**
      * Max num of seconds for heartbeat property name.
      */
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";

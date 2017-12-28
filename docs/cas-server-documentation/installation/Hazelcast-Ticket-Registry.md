@@ -43,6 +43,10 @@ refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/d
 
 Hazelcast support in CAS may handle EC2 auto-discovery automatically. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. You optionally also have the ability to specify partitioning group that would be zone aware. When using the zone-aware configuration, backups are created in the other AZs. Each zone will be accepted as one partition group. Using the AWS Discovery cability requires that you turn off and disable multicast and TCP/IP config in the CAS settings, which should be done automatically by CAS at runtime.
 
+## Apache jclouds Auto Discovery
+
+Hazelcast support in CAS may handle auto-discovery automatically via [Apache JClouds](https://jclouds.apache.org/). It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. Apache jclouds® is an open source multi-cloud toolkit for the Java platform that gives you the freedom to create applications that are portable across clouds while giving you full control to use cloud-specific features. To see the full list of supported cloud environments, [please see this link](https://jclouds.apache.org/reference/providers/#compute).
+
 ## Multicast Auto Discovery
 
 With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication. The cluster members do not need to know the concrete addresses of the other members, as they just multicast to all the other members for listening. Whether multicast is possible or allowed **depends on your environment**.
