@@ -494,6 +494,19 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.jclouds.credentialPath=
 ```
 
+### Microsoft Azure Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.azure.subscriptionId=
+# ${configurationKey}.cluster.discovery.azure.clientId=
+# ${configurationKey}.cluster.discovery.azure.clientSecret=
+# ${configurationKey}.cluster.discovery.azure.tenantId=
+# ${configurationKey}.cluster.discovery.azure.clusterId=
+# ${configurationKey}.cluster.discovery.azure.groupName=
+```
+
 ## RADIUS Configuration
 
 The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) given the component's *configuration key*:

@@ -38,6 +38,11 @@ public class HazelcastDiscoveryProperties implements Serializable {
      * Describe discovery strategy based on JClouds.
      */
     private HazelcastJCloudsDiscoveryProperties jclouds = new HazelcastJCloudsDiscoveryProperties();
+
+    /**
+     * Describe discovery strategy based on Azure.
+     */
+    private HazelcastAzureDiscoveryProperties azure = new HazelcastAzureDiscoveryProperties();
     
     public boolean isEnabled() {
         return enabled;
@@ -61,5 +66,13 @@ public class HazelcastDiscoveryProperties implements Serializable {
 
     public void setJclouds(final HazelcastJCloudsDiscoveryProperties jclouds) {
         this.jclouds = jclouds;
+    }
+
+    public HazelcastAzureDiscoveryProperties getAzure() {
+        return azure;
+    }
+
+    public void setAzure(final HazelcastAzureDiscoveryProperties azure) {
+        this.azure = azure;
     }
 }
