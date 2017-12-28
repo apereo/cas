@@ -475,6 +475,25 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 # ${configurationKey}.cluster.discovery.aws.connectionTimeoutSeconds=5
 ```
 
+### Apache jclouds Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.jclouds.provider=
+# ${configurationKey}.cluster.discovery.jclouds.identity=
+# ${configurationKey}.cluster.discovery.jclouds.credential=
+# ${configurationKey}.cluster.discovery.jclouds.endpoint=
+# ${configurationKey}.cluster.discovery.jclouds.zones=
+# ${configurationKey}.cluster.discovery.jclouds.regions=
+# ${configurationKey}.cluster.discovery.jclouds.tagKeys=
+# ${configurationKey}.cluster.discovery.jclouds.tagValues=
+# ${configurationKey}.cluster.discovery.jclouds.group=
+# ${configurationKey}.cluster.discovery.jclouds.port=-1
+# ${configurationKey}.cluster.discovery.jclouds.roleName=
+# ${configurationKey}.cluster.discovery.jclouds.credentialPath=
+```
+
 ## RADIUS Configuration
 
 The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) given the component's *configuration key*:
