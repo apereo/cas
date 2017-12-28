@@ -13,8 +13,11 @@ import java.io.Serializable;
  */
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     private final LoadingCache<String, String> requestStorage;
-
     private CipherExecutor<Serializable, String> cipherExecutor;
+
+    public BaseU2FDeviceRepository(final LoadingCache<String, String> requestStorage) {
+        this.requestStorage = requestStorage;
+    }
 
     public CipherExecutor<Serializable, String> getCipherExecutor() {
         return cipherExecutor;
@@ -22,10 +25,6 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
-    }
-
-    public BaseU2FDeviceRepository(final LoadingCache<String, String> requestStorage) {
-        this.requestStorage = requestStorage;
     }
 
     @Override
