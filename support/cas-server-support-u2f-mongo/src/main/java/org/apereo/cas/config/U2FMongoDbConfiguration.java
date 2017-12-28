@@ -47,7 +47,7 @@ public class U2FMongoDbConfiguration {
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(key -> StringUtils.EMPTY);
-        U2FMongoDbDeviceRepository repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
+        final U2FMongoDbDeviceRepository repo = new U2FMongoDbDeviceRepository(requestStorage, mongoTemplate, u2f.getExpireRegistrations(),
                 u2f.getExpireDevicesTimeUnit(), mongoProps.getCollection());
         repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
         return repo;
