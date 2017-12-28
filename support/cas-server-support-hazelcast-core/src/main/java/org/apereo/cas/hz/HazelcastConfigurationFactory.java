@@ -12,10 +12,12 @@ import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
+import com.hazelcast.jclouds.JCloudsDiscoveryStrategyFactory;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastDiscoveryProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAwsDiscoveryProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastJCloudsDiscoveryProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -118,53 +120,30 @@ public class HazelcastConfigurationFactory {
     }
 
     private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
-        final HazelcastDiscoveryProperties.HazelcastAwsDiscoveryProperties aws = cluster.getDiscovery().getAws();
-        final JoinConfig joinConfig = new JoinConfig();
+        final HazelcastAwsDiscoveryProperties aws = cluster.getDiscovery().getAws();
+        final HazelcastJCloudsDiscoveryProperties jclouds = cluster.getDiscovery().getJclouds();
 
-        if ((!StringUtils.hasText(aws.getAccessKey()) && !StringUtils.hasText(aws.getSecretKey())) && !StringUtils.hasText(aws.getIamRole())) {
-            LOGGER.error("Ignoring discovery strategy based AWS; No credentials or roles are defined");
-            return joinConfig;
-        }
+        final JoinConfig joinConfig = new JoinConfig();
 
         LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
         joinConfig.getMulticastConfig().setEnabled(false);
         joinConfig.getTcpIpConfig().setEnabled(false);
 
-        final Map<String, Comparable> properties = new HashMap<>();
-
-        if (StringUtils.hasText(aws.getAccessKey())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_ACCESS_KEY, aws.getAccessKey());
-        }
-        if (StringUtils.hasText(aws.getSecretKey())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_SECRET_KEY, aws.getSecretKey());
-        }
-        if (StringUtils.hasText(aws.getIamRole())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_IAM_ROLE, aws.getIamRole());
-        }
-        if (StringUtils.hasText(aws.getHostHeader())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_HOST_HEADER, aws.getHostHeader());
-        }
-        if (aws.getPort() > 0) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_PORT, aws.getPort());
-        }
-        if (StringUtils.hasText(aws.getRegion())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_REGION, aws.getRegion());
-        }
-        if (StringUtils.hasText(aws.getSecurityGroupName())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_SECURITY_GROUP_NAME, aws.getSecurityGroupName());
-        }
-        if (StringUtils.hasText(aws.getTagKey())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_TAG_KEY, aws.getTagKey());
-        }
-        if (StringUtils.hasText(aws.getTagValue())) {
-            properties.put(BaseHazelcastProperties.AWS_DISCOVERY_TAG_VALUE, aws.getTagValue());
-        }
-        LOGGER.debug("Creating discovery strategy based on AWS");
-        final DiscoveryStrategyConfig strategyConfig = new DiscoveryStrategyConfig(new AwsDiscoveryStrategyFactory(), properties);
         final DiscoveryConfig discoveryConfig = new DiscoveryConfig();
+        final DiscoveryStrategyConfig strategyConfig;
+        if (StringUtils.hasText(aws.getAccessKey()) && StringUtils.hasText(aws.getSecretKey()) && StringUtils.hasText(aws.getIamRole())) {
+            LOGGER.debug("Creating discovery strategy based on AWS");
+            strategyConfig = getDiscoveryStrategyConfigByAws(cluster);
+        } else if (StringUtils.hasText(jclouds.getCredential()) && StringUtils.hasText(jclouds.getIdentity()) && StringUtils.hasText(jclouds.getProvider())) {
+            LOGGER.debug("Creating discovery strategy based on Apache jclouds");
+            strategyConfig = getDiscoveryStrategyConfigByJClouds(cluster);
+        } else {
+            throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
+        }
+
+        LOGGER.debug("Creating discovery strategy configuration as [{}]", strategyConfig);
         discoveryConfig.setDiscoveryStrategyConfigs(CollectionUtils.wrap(strategyConfig));
         joinConfig.setDiscoveryConfig(discoveryConfig);
-
         return joinConfig;
     }
 
@@ -205,5 +184,81 @@ public class HazelcastConfigurationFactory {
             partitionGroupConfig.setEnabled(true).setGroupType(type);
         }
         return config;
+    }
+
+    private DiscoveryStrategyConfig getDiscoveryStrategyConfigByJClouds(final HazelcastClusterProperties cluster) {
+        final HazelcastJCloudsDiscoveryProperties jclouds = cluster.getDiscovery().getJclouds();
+        final Map<String, Comparable> properties = new HashMap<>();
+        if (StringUtils.hasText(jclouds.getCredential())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_CREDENTIAL, jclouds.getCredential());
+        }
+        if (StringUtils.hasText(jclouds.getCredentialPath())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_CREDENTIAL_PATH, jclouds.getCredentialPath());
+        }
+        if (StringUtils.hasText(jclouds.getEndpoint())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_ENDPOINT, jclouds.getEndpoint());
+        }
+        if (StringUtils.hasText(jclouds.getGroup())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_GROUP, jclouds.getGroup());
+        }
+        if (StringUtils.hasText(jclouds.getIdentity())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_IDENTITY, jclouds.getIdentity());
+        }
+        if (jclouds.getPort() > 0) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_HZ_PORT, jclouds.getPort());
+        }
+        if (StringUtils.hasText(jclouds.getProvider())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_PROVIDER, jclouds.getProvider());
+        }
+        if (StringUtils.hasText(jclouds.getRegions())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_REGIONS, jclouds.getRegions());
+        }
+        if (StringUtils.hasText(jclouds.getRoleName())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_ROLE_NAME, jclouds.getRoleName());
+        }
+        if (StringUtils.hasText(jclouds.getTagKeys())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_TAG_KEYS, jclouds.getTagKeys());
+        }
+        if (StringUtils.hasText(jclouds.getTagValues())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_TAG_VALUES, jclouds.getTagValues());
+        }
+        if (StringUtils.hasText(jclouds.getZones())) {
+            properties.put(HazelcastJCloudsDiscoveryProperties.JCLOUDS_DISCOVERY_ZONES, jclouds.getZones());
+        }
+        return new DiscoveryStrategyConfig(new JCloudsDiscoveryStrategyFactory(), properties);
+    }
+
+    private DiscoveryStrategyConfig getDiscoveryStrategyConfigByAws(final HazelcastClusterProperties cluster) {
+        final HazelcastAwsDiscoveryProperties aws = cluster.getDiscovery().getAws();
+        final Map<String, Comparable> properties = new HashMap<>();
+        if (StringUtils.hasText(aws.getAccessKey())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_ACCESS_KEY, aws.getAccessKey());
+        }
+        if (StringUtils.hasText(aws.getSecretKey())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_SECRET_KEY, aws.getSecretKey());
+        }
+        if (StringUtils.hasText(aws.getIamRole())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_IAM_ROLE, aws.getIamRole());
+        }
+        if (StringUtils.hasText(aws.getHostHeader())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_HOST_HEADER, aws.getHostHeader());
+        }
+        if (aws.getPort() > 0) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_PORT, aws.getPort());
+        }
+        if (StringUtils.hasText(aws.getRegion())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_REGION, aws.getRegion());
+        }
+        if (StringUtils.hasText(aws.getSecurityGroupName())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_SECURITY_GROUP_NAME, aws.getSecurityGroupName());
+        }
+        if (StringUtils.hasText(aws.getTagKey())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_TAG_KEY, aws.getTagKey());
+        }
+        if (StringUtils.hasText(aws.getTagValue())) {
+            properties.put(HazelcastAwsDiscoveryProperties.AWS_DISCOVERY_TAG_VALUE, aws.getTagValue());
+        }
+
+        return new DiscoveryStrategyConfig(new AwsDiscoveryStrategyFactory(), properties);
     }
 }

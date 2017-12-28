@@ -21,14 +21,14 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azuread                  : [
+        azuread                 : [
                 dependencies.create("com.microsoft.azure:adal4j:$azureActiveDirectoryVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
-        
-        splunklogging : [
+
+        splunklogging           : [
                 dependencies.create("com.splunk.logging:splunk-library-javalogging:$splunkLoggingVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
@@ -520,6 +520,20 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("com.hazelcast:hazelcast-aws:$hazelcastAwsVersion") {
+                    force = true
+                },
+                dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
+                    force = true
+                }
+        ],
+        jclouds                 : [
+                dependencies.create("org.apache.jclouds:jclouds-compute:$jcloudsVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.jclouds:jclouds-allcompute:$jcloudsVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsVersion") {
                     force = true
                 }
         ],
@@ -1139,7 +1153,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azurekeyvault : [
+        azurekeyvault           : [
                 dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
@@ -2218,7 +2232,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springcloudconsul : [
+        springcloudconsul       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-consul-all:$springCloudConsulVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
