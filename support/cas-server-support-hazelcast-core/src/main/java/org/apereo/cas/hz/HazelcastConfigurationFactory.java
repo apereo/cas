@@ -1,6 +1,7 @@
 package org.apereo.cas.hz;
 
 import com.hazelcast.aws.AwsDiscoveryStrategyFactory;
+import com.hazelcast.azure.AzureDiscoveryStrategyFactory;
 import com.hazelcast.config.Config;
 import com.hazelcast.config.DiscoveryConfig;
 import com.hazelcast.config.DiscoveryStrategyConfig;
@@ -17,6 +18,7 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAwsDiscoveryProperties;
+import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastAzureDiscoveryProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastJCloudsDiscoveryProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
@@ -122,7 +124,8 @@ public class HazelcastConfigurationFactory {
     private JoinConfig createDiscoveryJoinConfig(final Config config, final HazelcastClusterProperties cluster) {
         final HazelcastAwsDiscoveryProperties aws = cluster.getDiscovery().getAws();
         final HazelcastJCloudsDiscoveryProperties jclouds = cluster.getDiscovery().getJclouds();
-
+        final HazelcastAzureDiscoveryProperties azure = cluster.getDiscovery().getAzure();
+        
         final JoinConfig joinConfig = new JoinConfig();
 
         LOGGER.debug("Disabling multicast and TCP/IP configuration for discovery");
@@ -137,6 +140,9 @@ public class HazelcastConfigurationFactory {
         } else if (StringUtils.hasText(jclouds.getCredential()) && StringUtils.hasText(jclouds.getIdentity()) && StringUtils.hasText(jclouds.getProvider())) {
             LOGGER.debug("Creating discovery strategy based on Apache jclouds");
             strategyConfig = getDiscoveryStrategyConfigByJClouds(cluster);
+        } else if (StringUtils.hasText(azure.getClientId()) && StringUtils.hasText(azure.getClientSecret()) && StringUtils.hasText(azure.getClusterId())) {
+            LOGGER.debug("Creating discovery strategy based on Microsoft Azure");
+            strategyConfig = getDiscoveryStrategyConfigByAzure(cluster);
         } else {
             throw new IllegalArgumentException("Could not create discovery strategy configuration. No discovery provider is defined in the settings");
         }
@@ -260,5 +266,29 @@ public class HazelcastConfigurationFactory {
         }
 
         return new DiscoveryStrategyConfig(new AwsDiscoveryStrategyFactory(), properties);
+    }
+
+    private DiscoveryStrategyConfig getDiscoveryStrategyConfigByAzure(final HazelcastClusterProperties cluster) {
+        final HazelcastAzureDiscoveryProperties azure = cluster.getDiscovery().getAzure();
+        final Map<String, Comparable> properties = new HashMap<>();
+        if (StringUtils.hasText(azure.getClientId())) {
+            properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_CLIENT_ID, azure.getClientId());
+        }
+        if (StringUtils.hasText(azure.getClientSecret())) {
+            properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_CLIENT_SECRET, azure.getClientSecret());
+        }
+        if (StringUtils.hasText(azure.getClusterId())) {
+            properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_CLUSTER_ID, azure.getClusterId());
+        }
+        if (StringUtils.hasText(azure.getGroupName())) {
+            properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_GROUP_NAME, azure.getGroupName());
+        }
+        if (StringUtils.hasText(azure.getSubscriptionId())) {
+            properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_SUBSCRIPTION_ID, azure.getSubscriptionId());
+        }
+        if (StringUtils.hasText(azure.getTenantId())) {
+            properties.put(HazelcastAzureDiscoveryProperties.AZURE_DISCOVERY_TENANT_ID, azure.getTenantId());
+        }
+        return new DiscoveryStrategyConfig(new AzureDiscoveryStrategyFactory(), properties);
     }
 }

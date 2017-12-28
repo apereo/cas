@@ -524,6 +524,9 @@ ext.libraries = [
                 },
                 dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
                     force = true
+                },
+                dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
+                    force = true
                 }
         ],
         jclouds                 : [
@@ -533,7 +536,7 @@ ext.libraries = [
                 dependencies.create("org.apache.jclouds:jclouds-allcompute:$jcloudsVersion") {
                     force = true
                 },
-                dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsVersion") {
+                dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsGoogleEngineVersion") {
                     force = true
                 }
         ],
