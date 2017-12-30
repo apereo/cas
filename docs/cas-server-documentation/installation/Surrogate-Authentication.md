@@ -27,6 +27,10 @@ Surrogate authentication is enabled by including the following dependencies in t
 </dependency>
 ```
 
+## Known bugs
+
+Surrogate authentication doesn't play well with multifactor authentication, as implementation is intercepting actual webflow.
+
 ## Account Storage
 
 The following account stores may be configured and used to locate surrogates authorized for a particular user.
