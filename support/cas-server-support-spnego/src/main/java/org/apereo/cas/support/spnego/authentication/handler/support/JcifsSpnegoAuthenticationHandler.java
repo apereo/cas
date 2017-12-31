@@ -34,16 +34,16 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     
     private Authentication authentication;
     private boolean principalWithDomainName;
-    private boolean isNTLMallowed;
+    private boolean ntlmAllowed;
 
     private final Object lock = new Object();
     
     public JcifsSpnegoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                            final Authentication authentication, final boolean principalWithDomainName, final boolean isNTLMallowed) {
+                                            final Authentication authentication, final boolean principalWithDomainName, final boolean ntlmAllowed) {
         super(name, servicesManager, principalFactory, null);
         this.authentication = authentication;
         this.principalWithDomainName = principalWithDomainName;
-        this.isNTLMallowed = isNTLMallowed;
+        this.ntlmAllowed = ntlmAllowed;
     }
 
     @Override
@@ -51,11 +51,10 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
         final java.security.Principal principal;
         final byte[] nextToken;
-        if (!this.isNTLMallowed && spnegoCredential.isNtlm()) {
+        if (!this.ntlmAllowed && spnegoCredential.isNtlm()) {
             throw new FailedLoginException("NTLM not allowed");
         }
         try {
-            // proceed authentication using jcifs
             synchronized (this.lock) {
                 this.authentication.reset();
                 
@@ -72,8 +71,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
             LOGGER.debug("Processing SPNEGO authentication failed with exception", e);
             throw new FailedLoginException(e.getMessage());
         }
-
-        // evaluate jcifs response
+        
         if (nextToken != null) {
             LOGGER.debug("Setting nextToken in credential");
             spnegoCredential.setNextToken(nextToken);
@@ -111,8 +109,8 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         this.principalWithDomainName = principalWithDomainName;
     }
 
-    public void setNTLMallowed(final boolean isNTLMallowed) {
-        this.isNTLMallowed = isNTLMallowed;
+    public void setNtlmAllowed(final boolean isNTLMallowed) {
+        this.ntlmAllowed = isNTLMallowed;
     }
 
     /**

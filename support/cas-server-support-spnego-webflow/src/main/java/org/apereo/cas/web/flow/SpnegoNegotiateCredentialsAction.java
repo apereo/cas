@@ -31,9 +31,9 @@ import java.util.List;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
-public class SpnegoNegociateCredentialsAction extends AbstractAction {
+public class SpnegoNegotiateCredentialsAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegociateCredentialsAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegotiateCredentialsAction.class);
 
     /** Whether this is using the NTLM protocol or not. */
     private final boolean ntlm;
@@ -78,7 +78,7 @@ public class SpnegoNegociateCredentialsAction extends AbstractAction {
      *
      * @since 4.1
      */
-    public SpnegoNegociateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
+    public SpnegoNegotiateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
         super();
 
         this.ntlm = ntlm;
