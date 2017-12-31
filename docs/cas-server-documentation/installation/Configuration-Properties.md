@@ -1859,6 +1859,20 @@ Principal resolution and Person Directory settings for this feature are availabl
 
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
 
+## Syncope Authentication
+
+To learn more about this topic, [please review this guide](Syncope-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.syncope`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.syncope`.
+
+```properties
+# cas.authn.syncope.domain=Master
+# cas.authn.syncope.url=https://idm.instance.org/syncope
+# cas.authn.syncope.name=
+```
+
 ## Shiro Authentication
 
 To learn more about this topic, [please review this guide](Shiro-Authentication.html). 
