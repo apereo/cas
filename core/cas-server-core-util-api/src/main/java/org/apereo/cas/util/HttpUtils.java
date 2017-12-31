@@ -5,6 +5,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -47,7 +48,7 @@ public final class HttpUtils {
     public static HttpResponse execute(final String url, final String method,
                                        final String basicAuthUsername,
                                        final String basicAuthPassword) {
-        return execute(url, method, basicAuthUsername, basicAuthPassword, new HashMap<>());
+        return execute(url, method, basicAuthUsername, basicAuthPassword, new HashMap<>(), new HashMap<>());
     }
 
     /**
@@ -58,17 +59,19 @@ public final class HttpUtils {
      * @param basicAuthUsername the basic auth username
      * @param basicAuthPassword the basic auth password
      * @param parameters        the parameters
+     * @param headers           the headers
      * @return the http response
      */
     public static HttpResponse execute(final String url, final String method,
                                        final String basicAuthUsername,
                                        final String basicAuthPassword,
-                                       final Map<String, String> parameters) {
+                                       final Map<String, String> parameters,
+                                       final Map<String, String> headers) {
         try {
             final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
             final URI uri = buildHttpUri(url, parameters);
-
             final HttpUriRequest request = method.equalsIgnoreCase(HttpMethod.GET.name()) ? new HttpGet(uri) : new HttpPost(uri);
+            headers.forEach(request::addHeader);
             return client.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -84,8 +87,7 @@ public final class HttpUtils {
 
     private static HttpClient buildHttpClient(final String basicAuthUsername, final String basicAuthPassword) {
         final HttpClientBuilder builder = HttpClientBuilder.create();
-        prepareCredentialsIfNeeded(builder, basicAuthUsername, basicAuthPassword);
-        return builder.build();
+        return prepareCredentialsIfNeeded(builder, basicAuthUsername, basicAuthPassword).build();
     }
 
     /**
@@ -102,7 +104,30 @@ public final class HttpUtils {
                                           final String basicAuthPassword,
                                           final Map<String, String> parameters) {
         try {
-            return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters);
+            return executeGet(url, basicAuthUsername, basicAuthPassword, parameters, new HashMap<>());
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute get http response.
+     *
+     * @param url               the url
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param parameters        the parameters
+     * @param headers           the headers
+     * @return the http response
+     */
+    public static HttpResponse executeGet(final String url,
+                                          final String basicAuthUsername,
+                                          final String basicAuthPassword,
+                                          final Map<String, String> parameters,
+                                          final Map<String, String> headers) {
+        try {
+            return execute(url, HttpMethod.GET.name(), basicAuthUsername, basicAuthPassword, parameters, headers);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -159,7 +184,7 @@ public final class HttpUtils {
                                            final String basicAuthPassword,
                                            final Map<String, String> parameters) {
         try {
-            return execute(url, basicAuthPassword, basicAuthUsername, HttpMethod.POST.name(), parameters);
+            return execute(url, basicAuthPassword, basicAuthUsername, HttpMethod.POST.name(), parameters, new HashMap<>());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -289,15 +314,16 @@ public final class HttpUtils {
      * @param builder           the builder
      * @param basicAuthUsername username for basic auth
      * @param basicAuthPassword password for basic auth
+     * @return the http client builder
      */
-    private static void prepareCredentialsIfNeeded(final HttpClientBuilder builder, final String basicAuthUsername, final String basicAuthPassword) {
+    private static HttpClientBuilder prepareCredentialsIfNeeded(final HttpClientBuilder builder, final String basicAuthUsername,
+                                                                final String basicAuthPassword) {
         if (StringUtils.isNotBlank(basicAuthUsername) && StringUtils.isNotBlank(basicAuthPassword)) {
-            final BasicCredentialsProvider provider = new BasicCredentialsProvider();
+            final CredentialsProvider provider = new BasicCredentialsProvider();
             final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(basicAuthUsername, basicAuthPassword);
             provider.setCredentials(AuthScope.ANY, credentials);
-            builder.setDefaultCredentialsProvider(provider);
+            return builder.setDefaultCredentialsProvider(provider);
         }
+        return builder;
     }
-
-
 }

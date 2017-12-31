@@ -81,10 +81,10 @@ public class SpnegoConfiguration {
     public AuthenticationHandler spnegoHandler() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final JcifsSpnegoAuthenticationHandler h = new JcifsSpnegoAuthenticationHandler(spnegoProperties.getName(), servicesManager, spnegoPrincipalFactory(),
-                spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
+            spnegoAuthentication(), spnegoProperties.isPrincipalWithDomainName(), spnegoProperties.isNtlmAllowed());
         h.setAuthentication(spnegoAuthentication());
         h.setPrincipalWithDomainName(spnegoProperties.isPrincipalWithDomainName());
-        h.setNTLMallowed(spnegoProperties.isNtlmAllowed());
+        h.setNtlmAllowed(spnegoProperties.isNtlmAllowed());
         return h;
     }
 
@@ -92,8 +92,9 @@ public class SpnegoConfiguration {
     @RefreshScope
     public AuthenticationHandler ntlmAuthenticationHandler() {
         final NtlmProperties ntlmProperties = casProperties.getAuthn().getNtlm();
-        return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager, ntlmPrincipalFactory(), ntlmProperties.isLoadBalance(),
-                ntlmProperties.getDomainController(), ntlmProperties.getIncludePattern());
+        return new NtlmAuthenticationHandler(ntlmProperties.getName(), servicesManager, ntlmPrincipalFactory(),
+            ntlmProperties.isLoadBalance(),
+            ntlmProperties.getDomainController(), ntlmProperties.getIncludePattern());
     }
 
     @ConditionalOnMissingBean(name = "ntlmPrincipalFactory")
@@ -107,9 +108,9 @@ public class SpnegoConfiguration {
     public PrincipalResolver spnegoPrincipalResolver() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoPrincipalResolver(attributeRepository, spnegoPrincipalFactory(),
-                spnegoProperties.getPrincipal().isReturnNull(),
-                PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
-                spnegoProperties.getPrincipal().getPrincipalAttribute());
+            spnegoProperties.getPrincipal().isReturnNull(),
+            PrincipalNameTransformerUtils.newPrincipalNameTransformer(spnegoProperties.getPrincipalTransformation()),
+            spnegoProperties.getPrincipal().getPrincipalAttribute());
     }
 
     @ConditionalOnMissingBean(name = "spnegoPrincipalFactory")

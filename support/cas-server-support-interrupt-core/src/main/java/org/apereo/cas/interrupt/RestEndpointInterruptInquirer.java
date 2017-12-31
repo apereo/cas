@@ -48,7 +48,7 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             }
             final HttpResponse response = HttpUtils.execute(restProperties.getUrl(), restProperties.getMethod(),
                     restProperties.getBasicAuthUsername(), restProperties.getBasicAuthPassword(),
-                    parameters);
+                    parameters, new HashMap<>());
             return MAPPER.readValue(response.getEntity().getContent(), InterruptResponse.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

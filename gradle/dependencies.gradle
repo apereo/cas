@@ -27,7 +27,15 @@ ext.libraries = [
                     force = true
                 }
         ],
-
+        apachesyncope           : [
+                dependencies.create("org.apache.syncope.common:syncope-common-lib:$apacheSyncopeVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.cxf", module: "cxf-rt-transports-http")
+                    exclude(group: "org.apache.cxf", module: "cxf-rt-frontend-jaxrs")
+                    exclude(group: "org.apache.cxf", module: "cxf-core")
+                    force = true
+                }
+        ],
         splunklogging           : [
                 dependencies.create("com.splunk.logging:splunk-library-javalogging:$splunkLoggingVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

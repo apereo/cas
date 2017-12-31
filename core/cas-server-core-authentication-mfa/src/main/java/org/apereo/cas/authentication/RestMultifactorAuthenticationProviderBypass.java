@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -46,7 +47,7 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
             }
 
             final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                    rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters);
+                    rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

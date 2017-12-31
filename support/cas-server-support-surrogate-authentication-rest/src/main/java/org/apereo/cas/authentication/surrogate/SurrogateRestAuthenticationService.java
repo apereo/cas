@@ -16,6 +16,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -45,7 +46,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
         try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                     properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                    CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()));
+                    CollectionUtils.wrap("surrogate", surrogate, "principal", principal.getId()), new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -58,7 +59,7 @@ public class SurrogateRestAuthenticationService extends BaseSurrogateAuthenticat
         try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                     properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                    CollectionUtils.wrap("principal", username));
+                    CollectionUtils.wrap("principal", username), new HashMap<>());
             return MAPPER.readValue(response.getEntity().getContent(), List.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
