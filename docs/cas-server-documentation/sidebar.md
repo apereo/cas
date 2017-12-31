@@ -47,6 +47,7 @@ layout: null
         *   [Apache Cassandra](/$version/installation/Cassandra-Authentication.html)
         *   [Apache Fortress](/$version/integration/Configuring-Fortress-Integration.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
+        *   [Apache Syncope](/$version/installation/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
             *   [Overview](/$version/installation/JWT-Authentication.html)
             *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
