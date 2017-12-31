@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
-import org.apereo.cas.web.flow.SpnegoNegociateCredentialsAction;
+import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.HostNameSpnegoKnownClientSystemsFilterAction;
 import org.apereo.cas.web.flow.client.LdapSpnegoKnownClientSystemsFilterAction;
@@ -70,7 +70,7 @@ public class SpnegoWebflowActionsConfiguration {
     public Action negociateSpnego() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final List<String> supportedBrowsers = Stream.of(spnegoProperties.getSupportedBrowsers().split(",")).collect(Collectors.toList());
-        return new SpnegoNegociateCredentialsAction(supportedBrowsers, spnegoProperties.isNtlm(), spnegoProperties.isMixedModeAuthentication());
+        return new SpnegoNegotiateCredentialsAction(supportedBrowsers, spnegoProperties.isNtlm(), spnegoProperties.isMixedModeAuthentication());
     }
 
     @Bean
