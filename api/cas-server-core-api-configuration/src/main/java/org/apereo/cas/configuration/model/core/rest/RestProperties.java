@@ -21,6 +21,7 @@ public class RestProperties implements Serializable {
     /**
      * Matching authorization attribute value, pulled from the attribute
      * required by the REST endpoint in order to allow for the requested operation.
+     * The attribute value may also be constructed as a regex pattern.
      */
     private String attributeValue;
 

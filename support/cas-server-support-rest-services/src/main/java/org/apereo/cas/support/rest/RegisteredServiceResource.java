@@ -14,6 +14,7 @@ import org.apereo.cas.rest.BadRequestException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * {@link RestController} implementation of a REST API
@@ -95,9 +97,10 @@ public class RegisteredServiceResource {
             LOGGER.error("No attribute name or value is defined to authorize this request");
             return false;
         }
+        final Pattern pattern = RegexUtils.createPattern(this.attributeValue);
         if (attributes.containsKey(this.attributeName)) {
             final Collection<Object> values = CollectionUtils.toCollection(attributes.get(this.attributeName));
-            return values.contains(this.attributeValue);
+            return values.stream().anyMatch(t -> RegexUtils.matches(pattern, t.toString()));
         }
         return false;
     }

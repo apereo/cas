@@ -8,6 +8,7 @@ import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.support.rest.RegisteredServiceResource;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -49,8 +50,13 @@ public class RestServicesConfiguration {
     @Bean
     public RegisteredServiceResource registeredServiceResourceRestController() {
         final RestProperties rest = casProperties.getRest();
-        if (StringUtils.isBlank(rest.getAttributeName()) || StringUtils.isBlank(rest.getAttributeValue())) {
-            throw new IllegalArgumentException("Attribute name and/or value must be configured");
+        if (StringUtils.isBlank(rest.getAttributeName())) {
+            throw new BeanCreationException("No attribute name is defined to enforce authorization when adding services via CAS REST APIs. "
+            + "This is likely due to misconfiguration in CAS settings where the attribute name definition is absent");
+        }
+        if (StringUtils.isBlank(rest.getAttributeValue())) {
+            throw new BeanCreationException("No attribute value is defined to enforce authorization when adding services via CAS REST APIs. "
+                + "This is likely due to misconfiguration in CAS settings where the attribute value definition is absent");
         }
         return new RegisteredServiceResource(authenticationSystemSupport, webApplicationServiceFactory,
             servicesManager, rest.getAttributeName(), rest.getAttributeValue());
