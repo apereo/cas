@@ -2,9 +2,12 @@ package org.apereo.cas.web.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,9 +36,10 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
                                  final ProtocolAttributeEncoder protocolAttributeEncoder,
                                  final ServicesManager servicesManager,
                                  final String authenticationContextAttribute,
-                                 final boolean releaseProtocolAttributes) {
+                                 final boolean releaseProtocolAttributes,
+                                 final AuthenticationServiceSelectionPlan selectionStrategies) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                createDelegatedView(), releaseProtocolAttributes);
+            createDelegatedView(), releaseProtocolAttributes, selectionStrategies);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
@@ -93,7 +97,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         final Collection<Authentication> chainedAuthentications = getChainedAuthentications(model);
         if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
             final List<String> proxies = chainedAuthentications.stream()
-                    .map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
+                .map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
             success.setProxies(proxies);
         }
         return success;
