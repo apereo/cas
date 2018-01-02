@@ -40,6 +40,7 @@ import static org.junit.Assert.*;
  */
 public abstract class AbstractResourceBasedServiceRegistryDaoTests {
 
+
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");
     private static final String SERVICE_ID = "testId";
     private static final String THEME = "theme";
