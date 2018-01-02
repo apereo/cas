@@ -14,7 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RequiresModule(name = "cas-server-support-syncope")
+@RequiresModule(name = "cas-server-support-syncope-authentication")
 public class SyncopeAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2446926316502297496L;
 
