@@ -15,7 +15,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStrategy  {
+public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override
     public DiscoveryStrategyConfig get(final HazelcastClusterProperties cluster) {
