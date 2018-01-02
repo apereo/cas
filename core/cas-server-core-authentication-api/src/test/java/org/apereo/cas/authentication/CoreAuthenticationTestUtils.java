@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
 import java.net.MalformedURLException;
@@ -83,10 +84,10 @@ public final class CoreAuthenticationTestUtils {
 
     public static StubPersonAttributeDao getAttributeRepository() {
         final Map<String, List<Object>> attributes = new HashMap<>();
-        attributes.put("uid", Collections.singletonList(CONST_USERNAME));
-        attributes.put("cn", Collections.singletonList(CONST_USERNAME.toUpperCase()));
-        attributes.put("givenName", Collections.singletonList(CONST_USERNAME));
-        attributes.put("memberOf", Arrays.asList("system", "admin", "cas", "staff"));
+        attributes.put("uid", CollectionUtils.wrap(CONST_USERNAME));
+        attributes.put("cn", CollectionUtils.wrap(CONST_USERNAME.toUpperCase()));
+        attributes.put("givenName", CollectionUtils.wrap(CONST_USERNAME));
+        attributes.put("memberOf", CollectionUtils.wrapList("system", "admin", "cas", "staff"));
         return new StubPersonAttributeDao(attributes);
     }
 
