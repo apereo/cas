@@ -2,6 +2,7 @@ package org.apereo.cas.web.config;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -103,6 +104,10 @@ public class CasValidationConfiguration {
     @Qualifier("defaultMultifactorTriggerSelectionStrategy")
     private MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan selectionStrategies;
+    
     @Bean
     public View cas1ServiceSuccessView() {
         return new Cas10ResponseView(true, protocolAttributeEncoder, servicesManager,
@@ -120,7 +125,7 @@ public class CasValidationConfiguration {
     public View cas2ServiceSuccessView() {
         return new Cas20ResponseView(true, protocolAttributeEncoder,
                 servicesManager, casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                this.cas2SuccessView);
+                this.cas2SuccessView, selectionStrategies);
     }
 
     @Bean
@@ -130,7 +135,7 @@ public class CasValidationConfiguration {
                 protocolAttributeEncoder,
                 servicesManager,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                casProperties.getAuthn().isReleaseProtocolAttributes());
+                casProperties.getAuthn().isReleaseProtocolAttributes(), selectionStrategies);
     }
 
     @Bean
@@ -139,7 +144,7 @@ public class CasValidationConfiguration {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         final boolean isReleaseProtocolAttributes = casProperties.getAuthn().isReleaseProtocolAttributes();
         return new Cas30ResponseView(true, protocolAttributeEncoder,
-                servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes);
+                servicesManager, authenticationContextAttribute, cas3SuccessView, isReleaseProtocolAttributes, selectionStrategies);
     }
 
     @Autowired
