@@ -1,6 +1,6 @@
 package org.apereo.cas.support.x509.rest.config;
 
-import org.apereo.cas.support.rest.CredentialFactory;
+import org.apereo.cas.rest.CredentialFactory;
 import org.apereo.cas.support.x509.rest.X509CredentialFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
