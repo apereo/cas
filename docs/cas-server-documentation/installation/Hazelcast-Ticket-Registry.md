@@ -55,7 +55,7 @@ Support is enabled by the following module:
 
 ## Apache jclouds Auto Discovery
 
-Hazelcast support in CAS may handle auto-discovery automatically via [Apache JClouds](https://jclouds.apache.org/). It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. Apache jclouds® is an open source multi-cloud toolkit for the Java platform that gives you the freedom to create applications that are portable across clouds while giving you full control to use cloud-specific features. To see the full list of supported cloud environments, [please see this link](https://jclouds.apache.org/reference/providers/#compute).
+Hazelcast support in CAS may handle auto-discovery automatically via [Apache jclouds®](https://jclouds.apache.org/). It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. Apache jclouds® is an open source multi-cloud toolkit for the Java platform that gives you the freedom to create applications that are portable across clouds while giving you full control to use cloud-specific features. To see the full list of supported cloud environments, [please see this link](https://jclouds.apache.org/reference/providers/#compute).
 
 ```xml
 <dependency>
