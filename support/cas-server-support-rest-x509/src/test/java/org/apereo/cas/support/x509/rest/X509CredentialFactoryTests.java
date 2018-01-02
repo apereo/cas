@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.support.rest.BadRequestException;
+import org.apereo.cas.rest.BadRequestException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
