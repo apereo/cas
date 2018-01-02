@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest;
+package org.apereo.cas.rest;
 
 import org.apereo.cas.authentication.Credential;
 import org.springframework.util.MultiValueMap;
