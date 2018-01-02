@@ -15,7 +15,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-syncope</artifactId>
+  <artifactId>cas-server-support-syncope-authentication</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
@@ -27,7 +27,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 As part of a successful authentication attempt, the following attributes provided by Apache Syncope are collected by CAS:
 
 | Attribute Name             
-|---------------------------------------------------------
+|------------------------------------
 | `syncopeUserRoles`
 | `syncopeUserSecurityQuestion`
 | `syncopeUserStatus`
