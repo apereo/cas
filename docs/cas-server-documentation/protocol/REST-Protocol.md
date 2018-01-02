@@ -159,28 +159,27 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-Invoke CAS to register applications into its own service registry. The REST
-call must be authenticated as it requires a TGT from the CAS server, and furthermore,
-the authenticated principal that submits the request must be authorized with a
-pre-configured role name and value that is designated in the CAS configuration
-via the CAS properties.
+Invoke CAS to register applications into its own service registry. The REST call must be authenticated using basic authentication where credentials are authenticated and accepted by the existing CAS authentication strategy, and furthermore the authenticated principal must be authorized with a pre-configured role/attribute name and value that is designated in the CAS configuration via the CAS properties. The body of the request must be the service definition that shall be registered in JSON format and of course, CAS must be configured to accept the particular service type defined in the body. The accepted media type for this request is `application/json`.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-api).
 
 ```bash
-POST /cas/v1/services/add/{TGT id} HTTP/1.0
-serviceId=svcid&name=svcname&description=svcdesc&evaluationOrder=1234&enabled=true&ssoEnabled=true
+POST /cas/v1/services HTTP/1.0
 ```
 
-### Successful Response
+...where body of the request may be:
 
-If the request is successful, the returned value in the response would be
-the generated identifier of the new service.
-
-```bash
-200 OK
-5463544213
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "description": "..."
+}
 ```
+
+A successful response will produce a `200` status code in return.
 
 ## X.509 Authentication
 
