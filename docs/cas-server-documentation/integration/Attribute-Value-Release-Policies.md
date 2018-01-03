@@ -221,9 +221,25 @@ An external groovy filter allows you to define the script in file located outsid
     "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
     "attributeFilter" : {
       "@class" : "org.apereo.cas.services.support.RegisteredServiceScriptedAttributeFilter",
-      "script" : "file:/etc/cas/filter-this.groovy}"
+      "script" : "file:/etc/cas/filter-this.groovy"
     },
     "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
   }
 }
 ```
+
+The outline of the script may be as follows:
+
+```groovy
+import java.util.*
+logger.info "Attributes currently resolved: ${attributes}"
+def map =...
+return map
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------
+| `attributes`      | A `Map` of current  attributes resolved from sources.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
