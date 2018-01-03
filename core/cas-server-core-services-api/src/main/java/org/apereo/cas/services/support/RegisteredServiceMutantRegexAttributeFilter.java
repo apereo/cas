@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
@@ -53,7 +54,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                         })
                         .flatMap(Collection::stream)
                         .collect(Collectors.toList());
-                    
+
                     if (finalValues.isEmpty()) {
                         LOGGER.debug("Attribute [{}] has no values remaining and shall be excluded", attributeName);
                     } else {
@@ -74,10 +75,16 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
             .stream()
             .map(p -> {
                 final int index = p.toString().indexOf("->");
-                final String returnValue = p.toString().substring(index + 2).trim();
-                final String patternStr = p.toString().substring(0, index).trim();
-                final Pattern pattern = RegexUtils.createPattern(patternStr, isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
-                return Pair.of(pattern, returnValue);
+                if (index != -1) {
+                    final String patternStr = p.toString().substring(0, index).trim();
+                    final Pattern pattern = RegexUtils.createPattern(patternStr, isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
+                    final String returnValue = p.toString().substring(index + 2).trim();
+                    LOGGER.debug("Created attribute filter pattern [{}] with the mapped return value template [{}]", patternStr, returnValue);
+                    return Pair.of(pattern, returnValue);
+                }
+                final Pattern pattern = RegexUtils.createPattern(p.toString().trim(), isCaseInsensitive() ? Pattern.CASE_INSENSITIVE : 0);
+                LOGGER.debug("Created attribute filter pattern [{}] without a mapped return value template", pattern.pattern());
+                return Pair.of(pattern, StringUtils.EMPTY);
             })
             .collect(Collectors.toList());
     }
@@ -94,12 +101,18 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
                 matches = matcher.find();
             }
             if (matches) {
+                LOGGER.debug("Found a successful match for [{}] while filtering attribute values with [{}]", v.toString(), pattern.pattern());
                 final int count = matcher.groupCount();
-                String resultValue = new String(returnValue);
-                for (int i = 1; i <= count; i++) {
-                    resultValue = resultValue.replace("$" + i, matcher.group(i));
+                if (StringUtils.isNotBlank(returnValue)) {
+                    String resultValue = new String(returnValue);
+                    for (int i = 1; i <= count; i++) {
+                        resultValue = resultValue.replace("$" + i, matcher.group(i));
+                    }
+                    LOGGER.debug("Final attribute value after template processing for return is [{}]", resultValue);
+                    values.add(resultValue);
+                } else {
+                    values.add(v);
                 }
-                values.add(resultValue);
             }
         });
         return values;
