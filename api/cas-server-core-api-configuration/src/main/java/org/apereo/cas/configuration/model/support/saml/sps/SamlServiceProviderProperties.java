@@ -180,7 +180,19 @@ public class SamlServiceProviderProperties implements Serializable {
      * Settings related to AppDynamics acting as a SAML service provider.
      */
     private AppDynamics appDynamics = new AppDynamics();
-    
+    /**
+     * Settings related to Amazon acting as a SAML service provider.
+     */
+    private Amazon amazon = new Amazon();
+
+    public Amazon getAmazon() {
+        return amazon;
+    }
+
+    public void setAmazon(final Amazon amazon) {
+        this.amazon = amazon;
+    }
+
     public Gitlab getGitlab() {
         return gitlab;
     }
@@ -852,5 +864,17 @@ public class SamlServiceProviderProperties implements Serializable {
             setAttributes("User.OpenIDName", "User.email", "User.fullName", "AccessControl", "Groups-Membership");
         }
     }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    public static class Amazon extends AbstractSamlSPProperties {
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public Amazon() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            setAttributes("awsRoles", "awsRoleSessionName");
+        }
+    }
+
     
 }
