@@ -118,9 +118,8 @@ The following fields are supported by this filter:
 
 ## Reverse Mapped Regex
 
-Identical to the above filter, except that the filter only allows a selected set of attributes whose value
+Identical to the *Mapped Regex* filter, except that the filter only allows a selected set of attributes whose value
 **does not match** a certain regex pattern are released.
-
 
 ```json
 {
@@ -144,6 +143,7 @@ Identical to the above filter, except that the filter only allows a selected set
   }
 }
 ```
+
 
 ## Groovy
 
