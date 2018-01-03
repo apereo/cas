@@ -10,7 +10,7 @@ Log data can be automatically routed to [Splunk](https://splunk.com/). Support i
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-logging-config-splunk</artifactId>
+     <artifactId>cas-server-support-logging-config-splunk</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```
