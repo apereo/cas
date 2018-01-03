@@ -10,8 +10,8 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.rest.BadRequestException;
-import org.apereo.cas.rest.CredentialFactory;
+import org.apereo.cas.rest.BadRestRequestException;
+import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,13 +55,13 @@ public class TicketGrantingTicketResource {
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory serviceFactory;
-    private final CredentialFactory credentialFactory;
+    private final RestHttpRequestCredentialFactory credentialFactory;
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
     private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     public TicketGrantingTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                        final CredentialFactory credentialFactory,
+                                        final RestHttpRequestCredentialFactory credentialFactory,
                                         final CentralAuthenticationService centralAuthenticationService,
                                         final ServiceFactory serviceFactory,
                                         final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory) {
@@ -87,7 +88,7 @@ public class TicketGrantingTicketResource {
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
             return createResponseEntityForAuthnFailure(e);
-        } catch (final BadRequestException e) {
+        } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
@@ -121,8 +122,7 @@ public class TicketGrantingTicketResource {
                                                                    final TicketGrantingTicket tgtId) throws Exception {
         return this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
-
-
+    
     /**
      * Create ticket granting ticket for request ticket granting ticket.
      *
@@ -132,7 +132,10 @@ public class TicketGrantingTicketResource {
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                                         final HttpServletRequest request) {
-        final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
+        final Collection<Credential> credential = this.credentialFactory.fromRequestBody(requestBody);
+        if (credential == null || credential.isEmpty()) {
+            throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
+        }
         final Service service = this.serviceFactory.createService(request);
         final AuthenticationResult authenticationResult =
                 authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
