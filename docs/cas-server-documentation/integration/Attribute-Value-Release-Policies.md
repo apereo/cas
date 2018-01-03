@@ -101,6 +101,7 @@ For example, the below example only allows release of `memberOf` if it contains 
       },
       "excludeUnmappedAttributes": false,
       "completeMatch": false,
+      "caseInsensitive": true,
       "order": 0
     },
     "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "memberOf" ] ]
@@ -115,6 +116,7 @@ The following fields are supported by this filter:
 | `patterns`           | A map of attributes and their associated pattern tried against value(s).
 | `completeMatch`      | Indicates whether pattern-matching should execute over the entire value region.
 | `excludeUnmappedAttributes` | Indicates whether unmapped attributes should be removed from the final bundle.
+| `caseInsensitive` | Indicates whether pattern matching should be done in a case-insensitive manner.
 
 ## Reverse Mapped Regex
 
@@ -137,13 +139,44 @@ Identical to the *Mapped Regex* filter, except that the filter only allows a sel
       },
       "excludeUnmappedAttributes": false,
       "completeMatch": false,
+      "caseInsensitive": true,
       "order": 0
     },
-    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "memberOf" ] ]
   }
 }
 ```
 
+## Mutant Mapped Regex
+
+This filter structurally, in terms of settings and properties, is identical to the *Mapped Regex* filter. Its main main ability is to filter attribute values by a collection of patterns and then supplant the value dynamically based on the results of the regex match.
+
+For example, the following definition attempts to filter all values assigned to the attribute `memberOf` based on the given patterns. Each pattern is linked via `->` to the expected return value that may reference specific groups in the produced regex result. Assuming the attribute `memberOf` has values of `math101` and `marathon101`, the filter will produce values `courseA-athon101` and `courseB-h101` after processing. 
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "sample",
+  "name" : "sample",
+  "id" : 200,
+  "description" : "sample",
+  "attributeReleasePolicy" : {
+    "@class" : "org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy",
+    "attributeFilter" : {
+      "@class": "org.apereo.cas.services.support.RegisteredServiceMutantRegexAttributeFilter",
+      "patterns": {
+          "@class" : "java.util.TreeMap",
+          "memberOf": [ "java.util.ArrayList", [ "^mar(.+)(101) -> courseA-$1$2", "^mat(.+)(101) -> courseB-$1$2" ] ]
+      },
+      "excludeUnmappedAttributes": false,
+      "completeMatch": false,
+      "caseInsensitive": true,
+      "order": 0
+    },
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "memberOf" ] ]
+  }
+}
+```
 
 ## Groovy
 

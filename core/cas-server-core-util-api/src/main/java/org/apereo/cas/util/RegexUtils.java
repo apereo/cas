@@ -17,12 +17,15 @@ import java.util.stream.Collectors;
  */
 public final class RegexUtils {
 
-    /** A pattern match that does not match anything. */
+    /**
+     * A pattern match that does not match anything.
+     */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
 
-    private RegexUtils() {}
+    private RegexUtils() {
+    }
 
     /**
      * Check to see if the specified pattern is a valid regular expression.
@@ -49,8 +52,11 @@ public final class RegexUtils {
      * @param caseInsensitive the case insensitive
      * @return the pattern
      */
-    public static Pattern concatenate(final Collection<String> requiredValues, final boolean caseInsensitive) {
-        final String pattern = requiredValues.stream().collect(Collectors.joining("|", "(", ")"));
+    public static Pattern concatenate(final Collection<?> requiredValues, final boolean caseInsensitive) {
+        final String pattern = requiredValues
+            .stream()
+            .map(Object::toString)
+            .collect(Collectors.joining("|", "(", ")"));
         return createPattern(pattern, caseInsensitive ? Pattern.CASE_INSENSITIVE : 0);
     }
 
@@ -70,10 +76,10 @@ public final class RegexUtils {
      * Creates the pattern with the given flags.
      *
      * @param pattern the pattern, may be null.
-     * @return the compiled pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN}
-     * if pattern is null or invalid.
+     * @param flags   the flags
+     * @return the compiled pattern or {@link RegexUtils#MATCH_NOTHING_PATTERN} if pattern is null or invalid.
      */
-    private static Pattern createPattern(final String pattern, final int flags) {
+    public static Pattern createPattern(final String pattern, final int flags) {
         if (pattern == null) {
             LOGGER.debug("Pattern cannot be null");
             return MATCH_NOTHING_PATTERN;
@@ -99,6 +105,23 @@ public final class RegexUtils {
     }
 
     /**
+     * Matches boolean.
+     *
+     * @param pattern       the pattern
+     * @param value         the value
+     * @param completeMatch the complete match
+     * @return the boolean
+     */
+    public static boolean matches(final Pattern pattern, final String value, final boolean completeMatch) {
+        final Matcher matcher = pattern.matcher(value);
+        LOGGER.debug("Matching value [{}] against pattern [{}]", value, pattern.pattern());
+        if (completeMatch) {
+            return matcher.matches();
+        }
+        return matcher.find();
+    }
+
+    /**
      * Attempts to find the next sub-sequence of the input sequence that matches the pattern.
      *
      * @param pattern the pattern
@@ -120,5 +143,5 @@ public final class RegexUtils {
     public static boolean find(final String pattern, final String string) {
         return createPattern(pattern, Pattern.CASE_INSENSITIVE).matcher(string).find();
     }
-    
+
 }
