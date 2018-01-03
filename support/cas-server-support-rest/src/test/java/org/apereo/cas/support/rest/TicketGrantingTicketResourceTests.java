@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.rest.DefaultCredentialFactory;
+import org.apereo.cas.rest.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -70,7 +70,7 @@ public class TicketGrantingTicketResourceTests {
 
         this.ticketGrantingTicketResourceUnderTest = new TicketGrantingTicketResource(
                 new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
-                        new DefaultPrincipalElectionStrategy()), new DefaultCredentialFactory(),
+                        new DefaultPrincipalElectionStrategy()), new UsernamePasswordRestHttpRequestCredentialFactory(),
                 casMock, new WebApplicationServiceFactory(), new DefaultTicketGrantingTicketResourceEntityResponseFactory());
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.ticketGrantingTicketResourceUnderTest)

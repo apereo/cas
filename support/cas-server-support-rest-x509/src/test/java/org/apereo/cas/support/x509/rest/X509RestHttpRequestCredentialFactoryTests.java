@@ -5,7 +5,7 @@ import static org.junit.Assert.*;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.rest.BadRequestException;
+import org.apereo.cas.rest.BadRestRequestException;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -21,19 +21,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
 /**
- * Unit tests for {@link X509CredentialFactory}.
+ * Unit tests for {@link X509RestHttpRequestCredentialFactory}.
  *
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
-public class X509CredentialFactoryTests {
+public class X509RestHttpRequestCredentialFactoryTests {
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @InjectMocks
-    private X509CredentialFactory factory;
+    private X509RestHttpRequestCredentialFactory factory;
 
     @Test
     public void createX509Credential() throws IOException {
@@ -43,7 +43,7 @@ public class X509CredentialFactoryTests {
         scan.close();
         requestBody.add("cert", certStr);
 
-        final Credential cred = factory.fromRequestBody(requestBody);
+        final Credential cred = factory.fromRequestBody(requestBody).iterator().next();
         assertTrue(cred instanceof X509CertificateCredential);
     }
 
@@ -53,7 +53,7 @@ public class X509CredentialFactoryTests {
         requestBody.add("username", "name");
         requestBody.add("password", "passwd");
 
-        final Credential cred = factory.fromRequestBody(requestBody);
+        final Credential cred = factory.fromRequestBody(requestBody).iterator().next();
         assertTrue(cred instanceof UsernamePasswordCredential);
     }
 
@@ -62,7 +62,7 @@ public class X509CredentialFactoryTests {
         final MultiValueMap<String, String> requestBody = new LinkedMultiValueMap<>();
         requestBody.add("username", "name");
 
-        thrown.expect(BadRequestException.class);
+        thrown.expect(BadRestRequestException.class);
         factory.fromRequestBody(requestBody);
         fail();
     }

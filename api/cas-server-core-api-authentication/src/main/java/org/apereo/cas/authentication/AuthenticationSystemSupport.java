@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Service;
 
+import java.util.Collection;
+
 /**
  * This is {@link AuthenticationSystemSupport} - a facade that exposes a high level authentication system API to CAS core.
  * <p>
@@ -86,6 +88,19 @@ public interface AuthenticationSystemSupport {
      * @throws AuthenticationException exception to indicate authentication processing failure.
      * @since 5.0.0
      */
-    AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(Service service, Credential... credential)
-            throws AuthenticationException;
+    AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(Service service, Credential... credential) throws AuthenticationException;
+
+    /**
+     * Handle a single-transaction authentication event and immediately produce a finalized {@link AuthenticationResult}.
+     *
+     * @param service    a service for this authentication event.
+     * @param credentials credentials used for this single-transaction authentication event.
+     * @return authentication result representing a final outcome of the authentication event.
+     * @throws AuthenticationException exception to indicate authentication processing failure.
+     * @since 5.3.0
+     */
+    default AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service,
+                                                                                  final Collection<Credential> credentials) throws AuthenticationException {
+        return handleAndFinalizeSingleAuthenticationTransaction(service, credentials.toArray(new Credential[]{}));
+    }
 }

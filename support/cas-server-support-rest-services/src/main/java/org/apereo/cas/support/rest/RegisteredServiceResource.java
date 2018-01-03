@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.rest.BadRequestException;
+import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
@@ -116,6 +116,6 @@ public class RegisteredServiceResource {
             final AuthenticationResult result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
             return result.getAuthentication();
         }
-        throw new BadRequestException("Could not authenticate request");
+        throw new BadRestRequestException("Could not authenticate request");
     }
 }
