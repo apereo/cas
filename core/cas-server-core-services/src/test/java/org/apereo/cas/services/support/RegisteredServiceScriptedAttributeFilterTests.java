@@ -31,7 +31,7 @@ public class RegisteredServiceScriptedAttributeFilterTests {
     }
 
     @Test
-    public void testScript() throws Exception {
+    public void verifyScriptedAttributeFilter() throws Exception {
         final RegisteredServiceScriptedAttributeFilter filter = new RegisteredServiceScriptedAttributeFilter();
         final File f = File.createTempFile("attr", ".groovy");
         final InputStream stream = new ClassPathResource("groovy-attr-filter.groovy").getInputStream();

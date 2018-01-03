@@ -305,7 +305,6 @@ public class CasPersonDirectoryConfiguration {
 
         final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
-            .weakKeys()
             .maximumSize(props.getMaximumCacheSize())
             .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
             .build();
