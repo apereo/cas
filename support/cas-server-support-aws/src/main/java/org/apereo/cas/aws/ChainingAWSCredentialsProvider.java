@@ -126,7 +126,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
         }
         chain.add(new SystemPropertiesCredentialsProvider());
         chain.add(new EnvironmentVariableCredentialsProvider());
-        chain.add(new ClasspathPropertiesFileCredentialsProvider("awscloudwatch.properties"));
+        chain.add(new ClasspathPropertiesFileCredentialsProvider("awscredentials.properties"));
         if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
             final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
             chain.add(new AWSStaticCredentialsProvider(credentials));
