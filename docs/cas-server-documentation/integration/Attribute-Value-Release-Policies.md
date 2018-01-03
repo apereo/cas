@@ -103,7 +103,7 @@ For example, the below example only allows release of `memberOf` if it contains 
       "completeMatch": false,
       "order": 0
     },
-    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "groupMembership" ] ]
+    "allowedAttributes" : [ "java.util.ArrayList", [ "uid", "memberOf" ] ]
   }
 }
 ```
