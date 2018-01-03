@@ -10,7 +10,7 @@ Log data can be automatically routed to [AWS CloudWatch](https://aws.amazon.com/
 ```xml
 <dependency>
      <groupId>org.apereo.cas</groupId>
-     <artifactId>cas-server-core-logging-config-cloudwatch</artifactId>
+     <artifactId>cas-server-support-logging-config-cloudwatch</artifactId>
      <version>${cas.version}</version>
 </dependency>
 ```

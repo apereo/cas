@@ -1,7 +1,5 @@
 package org.apereo.cas.logging;
 
-import com.amazonaws.auth.AWSStaticCredentialsProvider;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
@@ -26,6 +24,7 @@ import org.apache.logging.log4j.core.config.plugins.PluginAttribute;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
+import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
@@ -85,8 +84,7 @@ public class CloudWatchAppender extends AbstractAppender {
 
             LOGGER.debug("Connecting to AWS CloudWatch...");
             final AWSLogsClientBuilder builder = AWSLogsClient.builder();
-            final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
-            builder.setCredentials(new AWSStaticCredentialsProvider(credentials));
+            builder.setCredentials(ChainingAWSCredentialsProvider.getInstance(credentialAccessKey, credentialSecretKey));
             builder.setRegion(awsLogRegionName);
 
             this.awsLogsClient = builder.build();
