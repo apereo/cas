@@ -88,6 +88,7 @@ public class CloudWatchAppender extends AbstractAppender {
             final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
             builder.setCredentials(new AWSStaticCredentialsProvider(credentials));
             builder.setRegion(awsLogRegionName);
+
             this.awsLogsClient = builder.build();
             this.logGroupName = awsLogGroupName;
             this.logStreamName = awsLogStreamName;
@@ -149,7 +150,7 @@ public class CloudWatchAppender extends AbstractAppender {
     private String createLogGroupAndLogStreamIfNeeded() {
         LOGGER.debug("Attempting to locate the log group [{}]", logGroupName);
         final DescribeLogGroupsResult describeLogGroupsResult =
-                awsLogsClient.describeLogGroups(new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName));
+            awsLogsClient.describeLogGroups(new DescribeLogGroupsRequest().withLogGroupNamePrefix(logGroupName));
         boolean createLogGroup = true;
         if (describeLogGroupsResult != null && describeLogGroupsResult.getLogGroups() != null && !describeLogGroupsResult.getLogGroups().isEmpty()) {
             createLogGroup = !describeLogGroupsResult.getLogGroups().stream().anyMatch(g -> g.getLogGroupName().equals(logGroupName));
@@ -253,13 +254,13 @@ public class CloudWatchAppender extends AbstractAppender {
                                                     @PluginAttribute("awsLogRegionName") final String awsLogRegionName,
                                                     @PluginElement("Layout") final Layout<Serializable> layout) {
         return new CloudWatchAppender(
-                name,
-                awsLogGroupName,
-                awsLogStreamName,
-                awsLogStreamFlushPeriodInSeconds,
-                StringUtils.defaultIfBlank(credentialAccessKey, System.getProperty("AWS_ACCESS_KEY")),
-                StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
-                StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
-                layout);
+            name,
+            awsLogGroupName,
+            awsLogStreamName,
+            awsLogStreamFlushPeriodInSeconds,
+            StringUtils.defaultIfBlank(credentialAccessKey, System.getProperty("AWS_ACCESS_KEY")),
+            StringUtils.defaultIfBlank(credentialSecretKey, System.getProperty("AWS_SECRET_KEY")),
+            StringUtils.defaultIfBlank(awsLogRegionName, System.getProperty("AWS_REGION_NAME")),
+            layout);
     }
 }
