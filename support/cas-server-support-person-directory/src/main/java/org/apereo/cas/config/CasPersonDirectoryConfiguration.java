@@ -304,7 +304,6 @@ public class CasPersonDirectoryConfiguration {
         impl.setCacheNullResults(false);
 
         final Cache graphs = Caffeine.newBuilder()
-                .weakKeys()
                 .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
                 .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
                 .build();
