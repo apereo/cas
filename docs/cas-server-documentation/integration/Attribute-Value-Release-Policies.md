@@ -149,7 +149,7 @@ Identical to the *Mapped Regex* filter, except that the filter only allows a sel
 
 ## Mutant Mapped Regex
 
-This filter structurally, in terms of settings and properties, is identical to the *Mapped Regex* filter. Its main main ability is to filter attribute values by a collection of patterns and then supplant the value dynamically based on the results of the regex match.
+This filter structurally, in terms of settings and properties, is identical to the *Mapped Regex* filter. Its main ability is to filter attribute values by a collection of patterns and then supplant the value dynamically based on the results of the regex match.
 
 For example, the following definition attempts to filter all values assigned to the attribute `memberOf` based on the given patterns. Each pattern is linked via `->` to the expected return value that may reference specific groups in the produced regex result. Assuming the attribute `memberOf` has values of `math101` and `marathon101`, the filter will produce values `courseA-athon101` and `courseB-h101` after processing. 
 
