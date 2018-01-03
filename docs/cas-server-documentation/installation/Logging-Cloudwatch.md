@@ -35,6 +35,12 @@ With the above module, you may then declare a specific appender to communicate w
 </AsyncLogger>
 ```
 
-The AWS credentials for access key, secret key and region, if left undefined, may also be retrieved from
-system properties via `AWS_ACCESS_KEY`, `AWS_SECRET_KEY` and `AWS_REGION_NAME`.
-The group name as well as the stream name are automatically created by CAS, if they are not already found.
+AWS credentials are fetched from the following sources automatically, where relevant and made possible via CAS configuration:
+
+1. EC2 instance metadata linked to the IAM role.
+2. External properties file that contains `accessKey` and `secretKey` as property keys.
+3. AWS profile path and profile name.
+4. System properties that include `aws.accessKeyId`, `aws.secretKey` and `aws.sessionToken`
+5. Environment variables that include `AWS_ACCESS_KEY_ID`, `AWS_SECRET_KEY` and `AWS_SESSION_TOKEN`.
+6. Properties file on the classpath as `awscredentials.properties` that contains `accessKey` and `secretKey` as property keys.
+7. Static credentials for access key and secret provided directly by the configuration at hand (logging, etc).
