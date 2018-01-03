@@ -30,7 +30,6 @@ public abstract class AbstractSamlSPProperties implements Serializable {
      * Description of this service provider as it's stored in the registry.
      */
     private String description = this.getClass().getSimpleName().concat(" SAML SP Integration");
-
     /**
      * Attribute to use when generating nameids for this SP.
      */
@@ -45,7 +44,6 @@ public abstract class AbstractSamlSPProperties implements Serializable {
      * Attributes should be separated by commas and can be virtually mapped and renamed.
      */
     private List<String> attributes = new ArrayList<>();
-
     /**
      * Signature location used to verify metadata.
      */

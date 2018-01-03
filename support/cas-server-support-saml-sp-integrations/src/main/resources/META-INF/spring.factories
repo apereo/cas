@@ -7,6 +7,7 @@ org.apereo.cas.config.CasSamlSPWebexConfiguration,\
 org.apereo.cas.config.CasSamlSPAdobeCreativeCloudConfiguration,\
 org.apereo.cas.config.CasSamlSPHipchatConfiguration,\
 org.apereo.cas.config.CasSamlSPGitlabConfiguration,\
+org.apereo.cas.config.CasSamlSPAmazonConfiguration,\
 org.apereo.cas.config.CasSamlSPTableauConfiguration,\
 org.apereo.cas.config.CasSamlSPAppDynamicsConfiguration,\
 org.apereo.cas.config.CasSamlSPGartnerConfiguration,\

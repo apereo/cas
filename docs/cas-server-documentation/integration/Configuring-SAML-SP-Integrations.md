@@ -124,6 +124,9 @@ The following SAML SP integrations, as samples, are provided by CAS:
 <a href="https://www.appdynamics.com/">
 <img src="https://user-images.githubusercontent.com/1205228/33800340-3c2c072e-dcfb-11e7-9f10-7a7b2488c9b2.png" height="58" width="120"></a>
 
+<a href="https://docs.aws.amazon.com/IAM/latest/UserGuide/id_roles_providers_enable-console-saml.html">
+<img src="https://user-images.githubusercontent.com/1205228/34523704-d33a2054-f0ad-11e7-9fd7-444c30772a2a.png" height="58" width="120"></a>
+
 </div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#saml-sps).
