@@ -24,12 +24,12 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
-    private final String casServerPrefix;
+    private final String casServiceUrlPattern;
 
     public SamlIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory,
                                                                  final String casServerPrefix) {
         this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.casServerPrefix = casServerPrefix;
+        this.casServiceUrlPattern = "^".concat(casServerPrefix).concat(".*");
     }
 
     @Override
@@ -41,8 +41,7 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
 
     @Override
     public boolean supports(final Service service) {
-        final String casPattern = "^".concat(casServerPrefix).concat(".*");
-        return service != null && service.getId().matches(casPattern)
+        return service != null && service.getId().matches(this.casServiceUrlPattern)
                 && getEntityIdAsParameter(service).isPresent();
     }
 
