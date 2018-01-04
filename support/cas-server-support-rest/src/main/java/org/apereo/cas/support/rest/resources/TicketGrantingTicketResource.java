@@ -122,7 +122,7 @@ public class TicketGrantingTicketResource {
                                                                    final TicketGrantingTicket tgtId) throws Exception {
         return this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
-    
+
     /**
      * Create ticket granting ticket for request ticket granting ticket.
      *
@@ -130,7 +130,7 @@ public class TicketGrantingTicketResource {
      * @param request     the request
      * @return the ticket granting ticket
      */
-    protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
+    protected TicketGrantingTicket createTicketGrantingTicketForRequest(final Map<String, String> requestBody,
                                                                         final HttpServletRequest request) {
         final Collection<Credential> credential = this.credentialFactory.fromRequestBody(requestBody);
         if (credential == null || credential.isEmpty()) {
@@ -138,7 +138,7 @@ public class TicketGrantingTicketResource {
         }
         final Service service = this.serviceFactory.createService(request);
         final AuthenticationResult authenticationResult =
-                authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
     }
 
@@ -150,8 +150,8 @@ public class TicketGrantingTicketResource {
      */
     private ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
         final List<String> authnExceptions = e.getHandlerErrors().values().stream()
-                .map(Class::getSimpleName)
-                .collect(Collectors.toList());
+            .map(Class::getSimpleName)
+            .collect(Collectors.toList());
         final Map<String, List<String>> errorsMap = new HashMap<>();
         errorsMap.put("authentication_exceptions", authnExceptions);
         LOGGER.warn("[{}] Caused by: [{}]", e.getMessage(), authnExceptions);

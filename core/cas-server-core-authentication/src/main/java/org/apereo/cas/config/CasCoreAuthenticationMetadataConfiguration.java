@@ -80,7 +80,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             final ClearpassProperties cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
                 LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
-                    + "is generally NOT recommended and may lead to security vulnerabilities.");
+                    + "is generally NOT recommended, may lead to security vulnerabilities and MUST only be used as a last resort .");
                 plan.registerMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
             }
         };
