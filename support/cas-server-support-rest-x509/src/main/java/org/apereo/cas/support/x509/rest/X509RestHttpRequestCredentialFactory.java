@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This is {@link X509RestHttpRequestCredentialFactory} that attempts to read the contents
@@ -32,8 +33,8 @@ public class X509RestHttpRequestCredentialFactory extends UsernamePasswordRestHt
     private static final String CERTIFICATE = "cert";
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String cert = requestBody.getFirst(CERTIFICATE);
+    public List<Credential> fromRequestBody(final Map<String, String> requestBody) {
+        final String cert = requestBody.get(CERTIFICATE);
         LOGGER.debug("Certificate in the request body: [{}]", cert);
         if (StringUtils.isBlank(cert)) {
             return super.fromRequestBody(requestBody);
