@@ -5,6 +5,7 @@ import org.springframework.core.OrderComparator;
 import org.springframework.util.MultiValueMap;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -39,7 +40,7 @@ public class ChainingRestHttpRequestCredentialFactory implements RestHttpRequest
     }
 
     @Override
-    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+    public List<Credential> fromRequestBody(final Map<String, String> requestBody) {
         OrderComparator.sort(this.chain);
         return this.chain
             .stream()
