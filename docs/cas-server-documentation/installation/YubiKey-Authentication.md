@@ -4,13 +4,12 @@ title: CAS - YubiKey Authentication
 ---
 
 # YubiKey Authentication
-Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords
-through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the configuration option
-is available to use YubiKey devices as a primary authentication source that CAS server could use to authenticate users.
+
+Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the configuration optionis available to use YubiKey devices as a primary authentication source that CAS server could use to authenticate users.
+
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
-[YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the
-following dependencies in the WAR overlay:
+[YubiKey](https://www.yubico.com/products/yubikey-hardware) authentication components are enabled by including the following dependencies in the WAR overlay:
 
 ```xml
 <dependency>
@@ -62,7 +61,6 @@ The expected database schema that is automatically created and configured by CAS
 | `id`               | Unique record identifier, acting as the primary key.
 | `publicId`         | The public identifier/key of the device used for authentication.
 | `username`         | The username whose device is registered.
-
 
 ### MongoDb
 
@@ -123,5 +121,8 @@ public class MyYubiKeyConfiguration {
 }
 ```
 
-
 [See this guide](Configuration-Management-Extensions.html) to learn more about how to register configurations into the CAS runtime.
+
+## REST Protocol Credential Extraction 
+
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize YubiKey credentials and authenticate them as part of the REST request. The expected parameter name in the request body is `yubikeyotp`.

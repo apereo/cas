@@ -79,7 +79,6 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 service={form encoded parameter for the service url}
 ```
 
-
 ### Successful Response
 
 ```bash
@@ -111,7 +110,6 @@ via any of the validation endpoints such as `/p3/serviceValidate`.
 ```bash
 GET /cas/p3/serviceValidate?service={service url}&ticket={service ticket}
 ``` 
-
 
 ### Unsuccessful Response
 
@@ -192,9 +190,7 @@ the CAS server from external users behind firewall or a messaging bus and
 allows only trusted applications to connect to the CAS server.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
-provides a tremendously convenient target for claiming user identities. To securely use this feature, network
-configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
-have strict security limitations and logging.</p></div>
+provides a tremendously convenient target for claiming user identities. To securely use this feature, network configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn have strict security limitations and logging.</p></div>
 
 Support is enabled by including the following in your overlay:
 
@@ -206,19 +202,25 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-## Request a Ticket Granting Ticket
+### Request a Ticket Granting Ticket
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 cert=<ascii certificate>
 ```
 
-### Successful Response
+#### Successful Response
 
 ```bash
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
+
+## Multiple Credentials
+
+The CAS REST API machinery has the ability to use multiple *credential extractors* that are tasked with analyzing the request body in order to fetch credentials and pass them along. While by default expected credentials that may be extracted are based on username/password, additional modules automatically lend themselves into this design and inject their opiniated credential extractor into the REST engine automatically so that the final collection of credentials may be used for issuing tickets, etc. This is, in a sense, how the X.509 authentication is integrated with the CAS REST Protocol. 
+
+This indicates you may pass along multiple credentials to the REST protocol in the request body and so long as CAS is cofigured to understand and extract those credentials and if the authentication machinery is configured to also execute and validate those credentials. For instance, you may achieve a scenario where two sets of credentials in form of username/password and otp are provided to the REST protocol and CAS would then attempt to authenticate both credentials and produce a response on a successful validation, assuming that primary authentication strategies for username/password and otp are properly configured in CAS.
 
 ## CAS REST Clients
 
