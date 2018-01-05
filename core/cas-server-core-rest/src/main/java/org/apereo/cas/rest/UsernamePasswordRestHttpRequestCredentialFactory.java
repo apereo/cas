@@ -9,7 +9,6 @@ import org.springframework.util.MultiValueMap;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link UsernamePasswordRestHttpRequestCredentialFactory}.
@@ -24,14 +23,19 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
     private static final String PASSWORD = "password";
 
     @Override
-    public List<Credential> fromRequestBody(final Map<String, String> requestBody) {
-        final String username = requestBody.get(USERNAME);
-        final String password = requestBody.get(PASSWORD);
+    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+        final String username = requestBody.getFirst(USERNAME);
+        final String password = requestBody.getFirst(PASSWORD);
         if (username == null || password == null) {
             LOGGER.debug("Invalid payload. 'username' and 'password' form fields are required.");
             return new ArrayList<>(0);
         }
         final Credential c = new UsernamePasswordCredential(username, password);
         return CollectionUtils.wrap(c);
+    }
+
+    @Override
+    public int getOrder() {
+        return 0;
     }
 }

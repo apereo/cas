@@ -2,6 +2,8 @@ package org.apereo.cas.authentication;
 
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
@@ -20,6 +22,8 @@ import java.util.function.Predicate;
  */
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private static final long serialVersionUID = -8504842011648432398L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationBuilder.class);
+    
     /** Authenticated principal. */
     private Principal principal;
 
@@ -33,7 +37,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private final Map<String, HandlerResult> successes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication failures. */
-    private final Map<String, Class<? extends Throwable>> failures = new LinkedHashMap<>();
+    private final Map<String, Throwable> failures = new LinkedHashMap<>();
 
     /** Authentication date. */
     private ZonedDateTime authenticationDate;
@@ -241,6 +245,10 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public AuthenticationBuilder addSuccess(final String key, final HandlerResult value) {
+        LOGGER.debug("Recording authentication handler result success under key [{}]", key);
+        if (this.successes.containsKey(key)) {
+            LOGGER.debug("Key mapped to authentication handler result [{}] is already recorded in the list of successful attempts. Overriding...", key);
+        }
         this.successes.put(key, value);
         return this;
     }
@@ -251,7 +259,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return Non-null authentication failure map.
      */
     @Override
-    public Map<String, Class<? extends Throwable>> getFailures() {
+    public Map<String, Throwable> getFailures() {
         return this.failures;
     }
 
@@ -263,14 +271,14 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setFailures(final Map<String, Class<? extends Throwable>> failures) {
+    public AuthenticationBuilder setFailures(final Map<String, Throwable> failures) {
         Assert.notNull(failures, "Failures cannot be null");
         this.failures.clear();
         return addFailures(failures);
     }
 
     @Override
-    public AuthenticationBuilder addFailures(final Map<String, Class<? extends Throwable>> failures) {
+    public AuthenticationBuilder addFailures(final Map<String, Throwable> failures) {
         failures.entrySet().stream().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
         return this;
     }
@@ -284,7 +292,11 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder addFailure(final String key, final Class<? extends Throwable> value) {
+    public AuthenticationBuilder addFailure(final String key, final Throwable value) {
+        LOGGER.debug("Recording authentication handler failure under key [{}]", key);
+        if (this.successes.containsKey(key)) {
+            LOGGER.debug("Key mapped to authentication handler failure [{}] is already recorded in the list of failed attempts. Overriding...", key);
+        }
         this.failures.put(key, value);
         return this;
     }

@@ -15,9 +15,11 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URI;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Performs two important error handling functions on an
@@ -43,7 +45,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     /**
      * Ordered list of error classes that this class knows how to handle.
      */
-    private final Set<Class<? extends Exception>> errors;
+    private final Set<Class<? extends Throwable>> errors;
 
     /**
      * String appended to exception class name to create a message bundle key for that particular error.
@@ -54,11 +56,11 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         this(new LinkedHashSet<>());
     }
 
-    public AuthenticationExceptionHandlerAction(final Set<Class<? extends Exception>> errors) {
+    public AuthenticationExceptionHandlerAction(final Set<Class<? extends Throwable>> errors) {
         this.errors = errors;
     }
 
-    public Set<Class<? extends Exception>> getErrors() {
+    public Set<Class<? extends Throwable>> getErrors() {
         return new LinkedHashSet<>(this.errors);
     }
 
@@ -99,9 +101,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
      * @param requestContext the spring context
      * @return Name of next flow state to transition to or {@value #UNKNOWN}
      */
-    protected String handleAuthenticationException(final AuthenticationException e,
-                                                   final RequestContext requestContext) {
-
+    protected String handleAuthenticationException(final AuthenticationException e, final RequestContext requestContext) {
         if (e.getHandlerErrors().containsKey(UnauthorizedServiceForPrincipalException.class.getSimpleName())) {
             final URI url = WebUtils.getUnauthorizedRedirectUrlIntoFlowScope(requestContext);
             if (url != null) {
@@ -110,15 +110,16 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
             }
         }
 
+        final Collection<Class> values = e.getHandlerErrors().values().stream().map(Throwable::getClass).collect(Collectors.toList());
         final String handlerErrorName = this.errors
-                .stream()
-                .filter(e.getHandlerErrors().values()::contains)
-                .map(Class::getSimpleName)
-                .findFirst()
-                .orElseGet(() -> {
-                    LOGGER.debug("Unable to translate handler errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
-                    return UNKNOWN;
-                });
+            .stream()
+            .filter(values::contains)
+            .map(Class::getSimpleName)
+            .findFirst()
+            .orElseGet(() -> {
+                LOGGER.debug("Unable to translate handler errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
+                return UNKNOWN;
+            });
 
         final MessageContext messageContext = requestContext.getMessageContext();
         final String messageCode = this.messageBundlePrefix + handlerErrorName;
@@ -139,8 +140,8 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     protected String handleAbstractTicketException(final AbstractTicketException e, final RequestContext requestContext) {
         final MessageContext messageContext = requestContext.getMessageContext();
         final Optional<String> match = this.errors.stream()
-                .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
-                .findFirst();
+            .filter(c -> c.isInstance(e)).map(Class::getSimpleName)
+            .findFirst();
 
         match.ifPresent(s -> messageContext.addMessage(new MessageBuilder().error().code(e.getCode()).build()));
         return match.orElse(UNKNOWN);

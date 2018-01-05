@@ -2,9 +2,9 @@ package org.apereo.cas.rest;
 
 import org.apereo.cas.authentication.Credential;
 import org.springframework.core.Ordered;
+import org.springframework.util.MultiValueMap;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Strategy interface for enabling plug-in point for constructing {@link Credential}
@@ -22,7 +22,7 @@ public interface RestHttpRequestCredentialFactory extends Ordered {
      * @param requestBody to construct Credential from
      * @return Credential instance
      */
-    List<Credential> fromRequestBody(Map<String, String> requestBody);
+    List<Credential> fromRequestBody(MultiValueMap<String, String> requestBody);
 
     @Override
     default int getOrder() {
