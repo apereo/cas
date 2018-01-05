@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * This is {@link SamlIdPProperties}.
@@ -51,7 +50,7 @@ public class SamlIdPProperties implements Serializable {
      * <p>
      * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
      */
-    private Set<String> authenticationContextClassMappings;
+    private List<String> authenticationContextClassMappings;
 
     /**
      * Settings related to SAML2 responses.
@@ -82,11 +81,11 @@ public class SamlIdPProperties implements Serializable {
         this.attributeQueryProfileEnabled = attributeQueryProfileEnabled;
     }
 
-    public Set<String> getAuthenticationContextClassMappings() {
+    public List<String> getAuthenticationContextClassMappings() {
         return authenticationContextClassMappings;
     }
 
-    public void setAuthenticationContextClassMappings(final Set<String> authenticationContextClassMappings) {
+    public void setAuthenticationContextClassMappings(final List<String> authenticationContextClassMappings) {
         this.authenticationContextClassMappings = authenticationContextClassMappings;
     }
 
