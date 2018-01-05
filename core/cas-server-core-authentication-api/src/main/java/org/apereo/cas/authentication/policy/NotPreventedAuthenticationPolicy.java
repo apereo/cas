@@ -15,15 +15,16 @@ import org.slf4j.LoggerFactory;
  */
 public class NotPreventedAuthenticationPolicy extends AnyAuthenticationPolicy {
     private static final Logger LOGGER = LoggerFactory.getLogger(NotPreventedAuthenticationPolicy.class);
-    
+
     public NotPreventedAuthenticationPolicy() {
         super(true);
     }
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {
-        final boolean fail = authentication.getFailures().values().stream()
-                .anyMatch(failure -> failure.isAssignableFrom(PreventedException.class));
+        final boolean fail = authentication.getFailures().values()
+            .stream()
+            .anyMatch(failure -> failure.getClass().isAssignableFrom(PreventedException.class));
         if (fail) {
             LOGGER.warn("Authentication policy has failed given at least one authentication failure is found to prevent authentication");
             return false;

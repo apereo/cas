@@ -16,6 +16,8 @@ import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,10 +41,11 @@ import java.util.List;
 @Configuration("casCoreAuthenticationPolicyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasCoreAuthenticationPolicyConfiguration {
-    
+    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationPolicyConfiguration.class);
+
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired(required = false)
     @Qualifier("geoLocationService")
     private GeoLocationService geoLocationService;
@@ -60,16 +63,19 @@ public class CasCoreAuthenticationPolicyConfiguration {
         final List<AuthenticationPolicy> policies = new ArrayList<>();
 
         if (police.getReq().isEnabled()) {
+            LOGGER.debug("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
             policies.add(new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll()));
             return policies;
         }
 
         if (police.getAll().isEnabled()) {
+            LOGGER.debug("Activating authentication policy [{}]", AllAuthenticationPolicy.class.getSimpleName());
             policies.add(new AllAuthenticationPolicy());
             return policies;
         }
 
         if (police.getNotPrevented().isEnabled()) {
+            LOGGER.debug("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
             policies.add(new NotPreventedAuthenticationPolicy());
             return policies;
         }
@@ -79,22 +85,28 @@ public class CasCoreAuthenticationPolicyConfiguration {
              * This is explicitly retrieved from the application context
              * in order to avoid circular and leaking dependencies.
              */
+            LOGGER.debug("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
             final TicketRegistry ticketRegistry = this.applicationContext.getBean("ticketRegistry", TicketRegistry.class);
             policies.add(new UniquePrincipalAuthenticationPolicy(ticketRegistry));
             return policies;
         }
-        
+
         if (!police.getGroovy().isEmpty()) {
+            LOGGER.debug("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
             police.getGroovy().forEach(groovy -> policies.add(new GroovyScriptAuthenticationPolicy(resourceLoader, groovy.getScript())));
             return policies;
         }
 
         if (!police.getRest().isEmpty()) {
+            LOGGER.debug("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
             police.getRest().forEach(r -> policies.add(new RestfulAuthenticationPolicy(new RestTemplate(), r.getEndpoint())));
             return policies;
         }
 
-        policies.add(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
+        if (police.getAny().isEnabled()) {
+            LOGGER.debug("Activating authentication policy [{}]", AnyAuthenticationPolicy.class.getSimpleName());
+            policies.add(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
+        }
         return policies;
     }
 
