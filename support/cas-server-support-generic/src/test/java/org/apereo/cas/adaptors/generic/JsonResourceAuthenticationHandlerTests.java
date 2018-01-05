@@ -47,41 +47,41 @@ public class JsonResourceAuthenticationHandlerTests {
     private JsonResourceAuthenticationHandler handler;
 
     public JsonResourceAuthenticationHandlerTests() throws Exception {
-        final Map<String, JsonUserAccount> accounts = new LinkedHashMap<>();
+        final Map<String, CasUserAccount> accounts = new LinkedHashMap<>();
 
-        JsonUserAccount acct = new JsonUserAccount();
+        CasUserAccount acct = new CasUserAccount();
         acct.setPassword("Mellon");
         acct.setExpirationDate(LocalDate.now(ZoneOffset.UTC).plusWeeks(2));
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("casexpiring", acct);
 
-        acct = new JsonUserAccount();
+        acct = new CasUserAccount();
         acct.setPassword("Mellon");
-        acct.setStatus(JsonUserAccount.AccountStatus.OK);
+        acct.setStatus(CasUserAccount.AccountStatus.OK);
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("casuser", acct);
 
-        acct = new JsonUserAccount();
+        acct = new CasUserAccount();
         acct.setPassword("Mellon");
-        acct.setStatus(JsonUserAccount.AccountStatus.DISABLED);
+        acct.setStatus(CasUserAccount.AccountStatus.DISABLED);
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("casdisabled", acct);
 
-        acct = new JsonUserAccount();
+        acct = new CasUserAccount();
         acct.setPassword("Mellon");
-        acct.setStatus(JsonUserAccount.AccountStatus.MUST_CHANGE_PASSWORD);
+        acct.setStatus(CasUserAccount.AccountStatus.MUST_CHANGE_PASSWORD);
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("casmustchange", acct);
 
-        acct = new JsonUserAccount();
+        acct = new CasUserAccount();
         acct.setPassword("Mellon");
-        acct.setStatus(JsonUserAccount.AccountStatus.LOCKED);
+        acct.setStatus(CasUserAccount.AccountStatus.LOCKED);
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("caslocked", acct);
 
-        acct = new JsonUserAccount();
+        acct = new CasUserAccount();
         acct.setPassword("Mellon");
-        acct.setStatus(JsonUserAccount.AccountStatus.EXPIRED);
+        acct.setStatus(CasUserAccount.AccountStatus.EXPIRED);
         acct.setAttributes(CollectionUtils.wrap("firstName", "Apereo", "lastName", "CAS"));
         accounts.put("casexpired", acct);
 
