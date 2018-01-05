@@ -39,8 +39,7 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                             + "service [{}] and provider [{}] via REST endpoint [{}]",
                     principal.getId(), registeredService, provider, rest.getUrl());
 
-            final Map<String, String> parameters = CollectionUtils.wrap("principal", CollectionUtils.wrap(principal.getId()),
-                    "provider", CollectionUtils.wrap(provider.getId()));
+            final Map<String, String> parameters = CollectionUtils.wrap("principal", principal.getId(), "provider", provider.getId());
             if (registeredService != null) {
                 parameters.put("service", registeredService.getServiceId());
             }
