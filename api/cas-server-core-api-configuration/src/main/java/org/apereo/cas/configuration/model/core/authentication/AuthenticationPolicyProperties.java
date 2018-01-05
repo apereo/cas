@@ -149,11 +149,24 @@ public class AuthenticationPolicyProperties implements Serializable {
     public static class Any implements Serializable {
         private static final long serialVersionUID = 4600357071276768175L;
         /**
+         * Enables the policy.
+         */
+        private boolean enabled = true;
+
+        /**
          * Avoid short circuiting and try every handler even if one prior succeeded.
          * Ensure number of provided credentials does not match the sum of authentication successes and failures
          */
         private boolean tryAll;
 
+        public boolean isEnabled() {
+            return enabled;
+        }
+
+        public void setEnabled(final boolean enabled) {
+            this.enabled = enabled;
+        }
+        
         public boolean isTryAll() {
             return tryAll;
         }
