@@ -48,10 +48,9 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
             this.ldapServiceMapper = ldapServiceMapper;
         }
 
-        this.searchFilter = '(' + this.ldapServiceMapper.getIdAttribute() + "={0})";
-        LOGGER.debug("Configured search filter to [{}]", this.searchFilter);
-        this.loadFilter = "(objectClass=" + this.ldapServiceMapper.getObjectClass() + ')';
-        LOGGER.debug("Configured load filter to [{}]", this.loadFilter);
+        this.loadFilter =ldapProperties.getLoadFilter();
+        this.searchFilter = ldapProperties.getSearchFilter();
+        LOGGER.debug("Configured search filter to [{}] and load filter to [{}]", this.searchFilter, this.loadFilter);
     }
 
     @Override
