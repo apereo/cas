@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -91,6 +91,6 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
-            .addSuccess("test", new DefaultHandlerResult(handler, meta));
+            .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
     }
 }

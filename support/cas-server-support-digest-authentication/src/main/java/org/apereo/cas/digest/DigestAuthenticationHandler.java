@@ -3,8 +3,8 @@ package org.apereo.cas.digest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 
@@ -24,10 +24,10 @@ public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
         final DigestCredential c = (DigestCredential) credential;
         if (StringUtils.isNotBlank(c.getId()) && StringUtils.isNotBlank(c.getHash())) {
-            return new DefaultHandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+            return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
         }
         throw new FailedLoginException("Could not authenticate " + c.getId());
     }

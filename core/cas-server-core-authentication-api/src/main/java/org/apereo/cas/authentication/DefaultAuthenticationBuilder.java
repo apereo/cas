@@ -34,7 +34,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private final Map<String, Object> attributes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication successes. */
-    private final Map<String, HandlerResult> successes = new LinkedHashMap<>();
+    private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
 
     /** Map of handler names to authentication failures. */
     private final Map<String, Throwable> failures = new LinkedHashMap<>();
@@ -211,7 +211,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return Non-null map of handler names to successful handler authentication results.
      */
     @Override
-    public Map<String, HandlerResult> getSuccesses() {
+    public Map<String, AuthenticationHandlerExecutionResult> getSuccesses() {
         return this.successes;
     }
 
@@ -223,14 +223,14 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setSuccesses(final Map<String, HandlerResult> successes) {
+    public AuthenticationBuilder setSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
         Assert.notNull(successes, "Successes cannot be null");
         this.successes.clear();
         return addSuccesses(successes);
     }
 
     @Override
-    public AuthenticationBuilder addSuccesses(final Map<String, HandlerResult> successes) {
+    public AuthenticationBuilder addSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
         successes.entrySet().stream().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
         return this;
     }
@@ -244,7 +244,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder addSuccess(final String key, final HandlerResult value) {
+    public AuthenticationBuilder addSuccess(final String key, final AuthenticationHandlerExecutionResult value) {
         LOGGER.debug("Recording authentication handler result success under key [{}]", key);
         if (this.successes.containsKey(key)) {
             LOGGER.debug("Key mapped to authentication handler result [{}] is already recorded in the list of successful attempts. Overriding...", key);

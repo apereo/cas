@@ -6,8 +6,8 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificate
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.util.RegexUtils;
@@ -96,7 +96,7 @@ public class X509CredentialsAuthenticationHandlerTests {
         // Test case #2:Valid certificate
         handler = new X509CredentialsAuthenticationHandler(RegexUtils.createPattern(".*"));
         credential = new X509CertificateCredential(createCertificates(USER_VALID_CRT));
-        params.add(new Object[]{handler, credential, true, new DefaultHandlerResult(handler, credential,
+        params.add(new Object[]{handler, credential, true, new DefaultAuthenticationHandlerExecutionResult(handler, credential,
                 new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
@@ -136,7 +136,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
             credential,
             true,
-            new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+            new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
     });
 
         // Test case #7: Require key usage on a cert without keyUsage extension
@@ -156,7 +156,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 credential,
                 true,
-                new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+                new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #9: Require key usage on a cert with unacceptable keyUsage extension values
@@ -184,7 +184,7 @@ public class X509CredentialsAuthenticationHandlerTests {
                 handler,
                 new X509CertificateCredential(createCertificates(USER_VALID_CRT)),
                 true,
-                new DefaultHandlerResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
+                new DefaultAuthenticationHandlerExecutionResult(handler, credential, new DefaultPrincipalFactory().createPrincipal(credential.getId())),
         });
 
         // Test case #11: Revoked end user certificate
@@ -220,8 +220,8 @@ public class X509CredentialsAuthenticationHandlerTests {
     public void verifyAuthenticate() {
         try {
             if (this.handler.supports(this.credential)) {
-                final HandlerResult result = this.handler.authenticate(this.credential);
-                if (this.expectedResult instanceof DefaultHandlerResult) {
+                final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.credential);
+                if (this.expectedResult instanceof DefaultAuthenticationHandlerExecutionResult) {
                     assertEquals(this.expectedResult, result);
                 } else {
                     fail("Authentication succeeded when it should have failed with " + this.expectedResult);

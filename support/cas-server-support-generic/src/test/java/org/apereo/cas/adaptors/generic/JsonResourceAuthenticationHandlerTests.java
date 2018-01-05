@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -107,7 +107,7 @@ public class JsonResourceAuthenticationHandlerTests {
     public void verifyExpiringAccount() throws Exception {
         final UsernamePasswordCredential c =
             CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casexpiring", "Mellon");
-        final HandlerResult result = handler.authenticate(c);
+        final AuthenticationHandlerExecutionResult result = handler.authenticate(c);
         assertFalse(result.getWarnings().isEmpty());
     }
 

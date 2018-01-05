@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -49,7 +49,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
      * @throws GeneralSecurityException general security exception for errors
      */
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         if (credential instanceof DuoDirectCredential) {
             LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);
@@ -57,7 +57,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         return authenticateDuoCredential(credential);
     }
 
-    private HandlerResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
+    private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
             final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
@@ -72,7 +72,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         throw new FailedLoginException("Duo authentication has failed");
     }
 
-    private HandlerResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
+    private AuthenticationHandlerExecutionResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
         try {
             final DuoCredential duoCredential = (DuoCredential) credential;
             if (!duoCredential.isValid()) {

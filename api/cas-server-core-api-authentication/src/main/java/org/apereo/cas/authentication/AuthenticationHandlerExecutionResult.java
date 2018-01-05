@@ -7,13 +7,13 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * This is {@link HandlerResult} that describes the result of an authentication attempt.
+ * This is {@link AuthenticationHandlerExecutionResult} that describes the result of an authentication attempt.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-public interface HandlerResult extends Serializable {
+public interface AuthenticationHandlerExecutionResult extends Serializable {
 
     /**
      * Gets handler name.
