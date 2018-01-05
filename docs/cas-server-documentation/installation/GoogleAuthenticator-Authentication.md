@@ -117,3 +117,7 @@ and otherwise CAS may fallback to keeping records in memory. This feature is mos
 useful during development and for demo purposes.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#google-authenticator-json).
+
+## REST Protocol Credential Extraction 
+
+In the event that the [CAS REST Protocol](../protocol/REST-Protocol.html) is turned on, a special credential extractor is injected into the REST authentication engine in order to recognize YubiKey credentials and authenticate them as part of the REST request. The expected parameter name in the request body is `gauthotp`.
