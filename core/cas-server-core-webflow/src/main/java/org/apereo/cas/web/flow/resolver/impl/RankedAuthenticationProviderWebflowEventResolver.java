@@ -75,16 +75,6 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
             LOGGER.trace("TGT has no authentication and is blank; proceed with flow normally.");
             return resumeFlow();
         }
-        
-        if (!service.getRequiredHandlers().isEmpty()) {
-            boolean handlerMatch = authentication.getSuccesses().values().stream()
-                    .filter(h -> service.getRequiredHandlers().contains(h.getHandlerName()))
-                    .findAny().isPresent();
-            if (!handlerMatch) {
-                LOGGER.trace("Current authentication from TGT does not fulfills requirements for service.requiredHandlers; returning weblow event as [{}]", CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
-                return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE));
-            }
-        }
 
         final Credential credential = WebUtils.getCredential(context);
         final AuthenticationResultBuilder builder = this.authenticationSystemSupport.establishAuthenticationContextFromInitial(authentication, credential);
