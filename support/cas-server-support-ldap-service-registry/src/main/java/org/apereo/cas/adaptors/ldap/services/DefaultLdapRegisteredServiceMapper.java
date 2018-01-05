@@ -26,7 +26,6 @@ import java.util.Collection;
  * @since 4.1.0
  */
 public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
-
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
     private final LdapServiceRegistryProperties ldap;
 
@@ -43,17 +42,21 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
                 ((AbstractRegisteredService) svc).setId(System.currentTimeMillis());
             }
             final String newDn = getDnForRegisteredService(dn, svc);
-            LOGGER.debug("Creating entry [{}]", newDn);
-            
+            LOGGER.debug("Creating entry DN [{}]", newDn);
+
             final Collection<LdapAttribute> attrs = new ArrayList<>();
             attrs.add(new LdapAttribute(ldap.getIdAttribute(), String.valueOf(svc.getId())));
 
-            final StringWriter writer = new StringWriter();
-            this.jsonSerializer.to(writer, svc);
-            attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), writer.toString()));
-            attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
+            try (StringWriter writer = new StringWriter()) {
+                this.jsonSerializer.to(writer, svc);
+                attrs.add(new LdapAttribute(ldap.getServiceDefinitionAttribute(), writer.toString()));
+                attrs.add(new LdapAttribute(LdapUtils.OBJECT_CLASS_ATTRIBUTE, "top", ldap.getObjectClass()));
+            }
+            LOGGER.debug("LDAP attributes assigned to the DN [{}] are [{}]", newDn, attrs);
 
-            return new LdapEntry(newDn, attrs);
+            final LdapEntry entry = new LdapEntry(newDn, attrs);
+            LOGGER.debug("Created LDAP entry [{}]", entry);
+            return entry;
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -64,9 +67,11 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
         try {
             final String value = LdapUtils.getString(entry, ldap.getServiceDefinitionAttribute());
             if (StringUtils.hasText(value)) {
+                LOGGER.debug("Transforming LDAP entry [{}] into registered service definition", entry);
                 return this.jsonSerializer.from(value);
             }
-
+            LOGGER.warn("LDAP entry [{}] is not assigned the service definition attribute [{}] and will be ignored",
+                entry, ldap.getServiceDefinitionAttribute());
             return null;
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
@@ -81,11 +86,6 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     @Override
     public String getIdAttribute() {
         return ldap.getIdAttribute();
-    }
-
-
-    public void setJsonSerializer(final StringSerializer<RegisteredService> jsonSerializer) {
-        this.jsonSerializer = jsonSerializer;
     }
 
     @Override
