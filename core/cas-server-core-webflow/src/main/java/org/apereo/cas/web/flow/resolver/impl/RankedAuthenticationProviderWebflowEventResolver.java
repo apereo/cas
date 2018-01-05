@@ -77,12 +77,11 @@ public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCa
         }
         
         if (!service.getRequiredHandlers().isEmpty()) {
-            final boolean handlerMatch = authentication.getSuccesses().values().stream()
+            boolean handlerMatch = authentication.getSuccesses().values().stream()
                     .filter(h -> service.getRequiredHandlers().contains(h.getHandlerName()))
                     .findAny().isPresent();
             if (!handlerMatch) {
-                LOGGER.trace("Current authentication from TGT does not fulfills requirements for service.requiredHandlers; returning weblow event as [{}]",
-                        CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+                LOGGER.trace("Current authentication from TGT does not fulfills requirements for service.requiredHandlers; returning weblow event as [{}]", CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
                 return CollectionUtils.wrapSet(new Event(this, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE));
             }
         }
