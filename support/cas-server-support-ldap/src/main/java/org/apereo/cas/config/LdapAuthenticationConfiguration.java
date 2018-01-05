@@ -10,12 +10,12 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.support.DefaultAccountStateHandler;
+import org.apereo.cas.authentication.support.DefaultLdapLdapAccountStateHandler;
 import org.apereo.cas.authentication.support.DefaultLdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.GroovyLdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyConfiguration;
 import org.apereo.cas.authentication.support.LdapPasswordPolicyHandlingStrategy;
-import org.apereo.cas.authentication.support.OptionalWarningAccountStateHandler;
+import org.apereo.cas.authentication.support.OptionalWarningLdapLdapAccountStateHandler;
 import org.apereo.cas.authentication.support.RejectResultCodeLdapPasswordPolicyHandlingStrategy;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -181,7 +181,8 @@ public class LdapAuthenticationConfiguration {
     private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
                                                                                   final Authenticator authenticator,
                                                                                   final Multimap<String, String> attributes) {
-        final LdapPasswordPolicyConfiguration cfg = new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
+        final LdapPasswordPolicyConfiguration cfg =
+            new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
 
         final String customPolicyClass = l.getPasswordPolicy().getCustomPolicyClass();
@@ -232,7 +233,7 @@ public class LdapAuthenticationConfiguration {
         if (StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeName())
                 && StringUtils.isNotBlank(l.getPasswordPolicy().getWarningAttributeValue())) {
 
-            final OptionalWarningAccountStateHandler accountHandler = new OptionalWarningAccountStateHandler();
+            final OptionalWarningLdapLdapAccountStateHandler accountHandler = new OptionalWarningLdapLdapAccountStateHandler();
             accountHandler.setDisplayWarningOnMatch(l.getPasswordPolicy().isDisplayWarningOnMatch());
             accountHandler.setWarnAttributeName(l.getPasswordPolicy().getWarningAttributeName());
             accountHandler.setWarningAttributeValue(l.getPasswordPolicy().getWarningAttributeValue());
@@ -241,7 +242,7 @@ public class LdapAuthenticationConfiguration {
             LOGGER.debug("Configuring an warning account state handler for LDAP authentication for warning attribute [{}] and value [{}]",
                     l.getPasswordPolicy().getWarningAttributeName(), l.getPasswordPolicy().getWarningAttributeValue());
         } else {
-            final DefaultAccountStateHandler accountHandler = new DefaultAccountStateHandler();
+            final DefaultLdapLdapAccountStateHandler accountHandler = new DefaultLdapLdapAccountStateHandler();
             accountHandler.setAttributesToErrorMap(l.getPasswordPolicy().getPolicyAttributes());
             cfg.setAccountStateHandler(accountHandler);
             LOGGER.debug("Configuring the default account state handler for LDAP authentication");
