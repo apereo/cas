@@ -8,13 +8,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * This is {@link JsonUserAccount}.
+ * This is {@link CasUserAccount}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-public class JsonUserAccount implements Serializable {
+public class CasUserAccount implements Serializable {
     private static final long serialVersionUID = 7579594722197541062L;
 
     public enum AccountStatus {

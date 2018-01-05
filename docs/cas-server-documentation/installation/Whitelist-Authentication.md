@@ -37,7 +37,7 @@ The password file may also be specified as a JSON resource instead which allows 
 {
   "@class" : "java.util.LinkedHashMap",
   "casuser" : {
-    "@class" : "org.apereo.cas.adaptors.generic.JsonUserAccount",
+    "@class" : "org.apereo.cas.adaptors.generic.CasUserAccount",
     "password" : "Mellon",
     "attributes" : {
       "@class" : "java.util.LinkedHashMap",

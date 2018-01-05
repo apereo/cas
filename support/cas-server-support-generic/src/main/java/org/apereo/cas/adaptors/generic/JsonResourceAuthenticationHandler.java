@@ -55,10 +55,10 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
     @Override
     protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
                                                                  final String originalPassword) throws GeneralSecurityException, PreventedException {
-        final Map<String, JsonUserAccount> map;
+        final Map<String, CasUserAccount> map;
         try {
             map = mapper.readValue(resource.getInputStream(),
-                new TypeReference<Map<String, JsonUserAccount>>() {
+                new TypeReference<Map<String, CasUserAccount>>() {
                 });
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -70,7 +70,7 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
             throw new AccountNotFoundException();
         }
 
-        final JsonUserAccount account = map.get(username);
+        final CasUserAccount account = map.get(username);
         if (matches(password, account.getPassword())) {
             switch (account.getStatus()) {
                 case DISABLED:
