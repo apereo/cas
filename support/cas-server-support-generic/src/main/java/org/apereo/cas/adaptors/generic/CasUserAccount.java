@@ -17,6 +17,9 @@ import java.util.Map;
 public class CasUserAccount implements Serializable {
     private static final long serialVersionUID = 7579594722197541062L;
 
+    /**
+     * Indicates user account status.
+     */
     public enum AccountStatus {
         /**
          * Ok account status.
