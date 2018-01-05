@@ -15,7 +15,7 @@ public class SurrogateAuthenticationException extends AuthenticationException {
         super(msg);
     }
 
-    public SurrogateAuthenticationException(final Map<String, Class<? extends Throwable>> handlerErrors) {
+    public SurrogateAuthenticationException(final Map<String, Throwable> handlerErrors) {
         super(handlerErrors);
     }
 }

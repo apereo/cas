@@ -18,7 +18,7 @@ public abstract class BaseOneTimeTokenRepository implements OneTimeTokenReposito
         LOGGER.debug("Starting to clean expiring and previously used google authenticator tokens");
         SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
         cleanInternal();
-        LOGGER.info("Finished cleaning google authenticator tokens");
+        LOGGER.debug("Finished cleaning google authenticator tokens");
     }
 
     /**

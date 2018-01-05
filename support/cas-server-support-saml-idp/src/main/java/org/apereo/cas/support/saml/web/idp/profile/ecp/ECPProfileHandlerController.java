@@ -44,6 +44,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.LinkedHashMap;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -84,10 +85,10 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final CasConfigurationProperties casProperties,
                                        final SamlObjectSignatureValidator samlObjectSignatureValidator) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
-                servicesManager, webApplicationServiceFactory,
-                samlRegisteredServiceCachingMetadataResolver,
-                configBean, responseBuilder, casProperties,
-                samlObjectSignatureValidator);
+            servicesManager, webApplicationServiceFactory,
+            samlRegisteredServiceCachingMetadataResolver,
+            configBean, responseBuilder, casProperties,
+            samlObjectSignatureValidator);
         this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
 
@@ -98,8 +99,8 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param request  the request
      */
     @PostMapping(path = SamlIdPConstants.ENDPOINT_SAML2_IDP_ECP_PROFILE_SSO,
-            consumes = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE},
-            produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
+        consumes = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE},
+        produces = {MediaType.TEXT_XML_VALUE, SamlIdPConstants.ECP_SOAP_PAOS_CONTENT_TYPE})
     public void handleEcpRequest(final HttpServletResponse response,
                                  final HttpServletRequest request) {
         final MessageContext soapContext = decodeSoapRequest(request);
@@ -138,12 +139,12 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         try {
             LOGGER.debug("Verifying ECP authentication request [{}]", authnRequest);
             final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> serviceRequest =
-                    verifySamlAuthenticationRequest(authenticationContext, request);
+                verifySamlAuthenticationRequest(authenticationContext, request);
 
             LOGGER.debug("Attempting to authenticate ECP request for credential id [{}]", credential.getId());
             final Authentication authentication = authenticateEcpRequest(credential, authenticationContext);
             LOGGER.debug("Authenticated [{}] successfully with authenticated principal [{}]",
-                    credential.getId(), authentication.getPrincipal());
+                credential.getId(), authentication.getPrincipal());
 
             LOGGER.debug("Building ECP SAML response for [{}]", credential.getId());
             final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
@@ -155,9 +156,10 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         } catch (final AuthenticationException e) {
             LOGGER.error(e.getMessage(), e);
             final String error = e.getHandlerErrors().values()
-                    .stream()
-                    .map(Class::getSimpleName)
-                    .collect(Collectors.joining(","));
+                .stream()
+                .map(Throwable::getMessage)
+                .filter(Objects::nonNull)
+                .collect(Collectors.joining(","));
             buildEcpFaultResponse(response, request, Pair.of(authnRequest, error));
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -177,7 +179,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                          final Pair<RequestAbstractType, String> authenticationContext) {
         request.setAttribute(SamlIdPConstants.REQUEST_ATTRIBUTE_ERROR, authenticationContext.getValue());
         samlEcpFaultResponseBuilder.build(authenticationContext.getKey(), request, response,
-                null, null, null, SAMLConstants.SAML2_PAOS_BINDING_URI);
+            null, null, null, SAMLConstants.SAML2_PAOS_BINDING_URI);
 
     }
 
@@ -199,7 +201,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
         return authenticationResult.getAuthentication();
     }
 
-    
+
     private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         try {

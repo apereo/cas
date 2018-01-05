@@ -7,4 +7,6 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-otp-mfa")
+
+    compileOnly project(":core:cas-server-core-rest")
 }

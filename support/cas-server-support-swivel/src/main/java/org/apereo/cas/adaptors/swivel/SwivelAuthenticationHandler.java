@@ -6,6 +6,7 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -50,11 +51,12 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         if (context == null) {
             throw new IllegalArgumentException("No request context could be found to locate an authentication event");
         }
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final Authentication authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
-            throw new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
+            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final String uid = authentication.getPrincipal().getId();
+        final Principal principal = authentication.getPrincipal();
+        final String uid = principal.getId();
         LOGGER.debug("Received principal id [{}]", uid);
         return sendAuthenticationRequestToSwivel(swivelCredential, uid);
     }

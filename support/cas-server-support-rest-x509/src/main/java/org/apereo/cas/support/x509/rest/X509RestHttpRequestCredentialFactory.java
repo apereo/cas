@@ -3,7 +3,7 @@ package org.apereo.cas.support.x509.rest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.rest.UsernamePasswordRestHttpRequestCredentialFactory;
+import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.slf4j.Logger;
@@ -16,8 +16,8 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  * This is {@link X509RestHttpRequestCredentialFactory} that attempts to read the contents
@@ -28,16 +28,16 @@ import java.util.Map;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
-public class X509RestHttpRequestCredentialFactory extends UsernamePasswordRestHttpRequestCredentialFactory {
+public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
     private static final Logger LOGGER = LoggerFactory.getLogger(X509RestHttpRequestCredentialFactory.class);
     private static final String CERTIFICATE = "cert";
 
     @Override
-    public List<Credential> fromRequestBody(final Map<String, String> requestBody) {
-        final String cert = requestBody.get(CERTIFICATE);
+    public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
+        final String cert = requestBody.getFirst(CERTIFICATE);
         LOGGER.debug("Certificate in the request body: [{}]", cert);
         if (StringUtils.isBlank(cert)) {
-            return super.fromRequestBody(requestBody);
+            return new ArrayList<>(0);
         }
         final InputStream is = new ByteArrayInputStream(cert.getBytes(StandardCharsets.UTF_8));
         final InputStreamSource iso = new InputStreamResource(is);

@@ -7,16 +7,16 @@ import com.yubico.client.v2.exceptions.YubicoValidationFailure;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -63,7 +63,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
         this(StringUtils.EMPTY, null, null,
-                client, new OpenYubiKeyAccountRegistry());
+            client, new OpenYubiKeyAccountRegistry());
     }
 
     @Override
@@ -77,8 +77,12 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             throw new AccountNotFoundException("OTP format is invalid");
         }
 
-        final RequestContext context = RequestContextHolder.getRequestContext();
-        final String uid = WebUtils.getAuthentication(context).getPrincipal().getId();
+        final Authentication authentication = WebUtils.getInProgressAuthentication();
+        if (authentication == null) {
+            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
+        }
+        final Principal principal = authentication.getPrincipal();
+        final String uid = principal.getId();
         final String publicId = YubicoClient.getPublicId(otp);
         if (!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             LOGGER.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);

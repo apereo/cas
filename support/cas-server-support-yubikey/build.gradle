@@ -24,4 +24,5 @@ dependencies {
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
 
     compileOnly project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":core:cas-server-core-rest")
 }

@@ -10,5 +10,11 @@ import org.apereo.cas.otp.authentication.OneTimeTokenCredential;
  */
 public class GoogleAuthenticatorTokenCredential extends OneTimeTokenCredential {
     private static final long serialVersionUID = -7570600701132111037L;
-    
+
+    public GoogleAuthenticatorTokenCredential() {
+    }
+
+    public GoogleAuthenticatorTokenCredential(final String token) {
+        super(token);
+    }
 }

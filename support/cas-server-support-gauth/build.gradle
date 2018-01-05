@@ -1,5 +1,7 @@
 description = "Apereo CAS Google Authenticator Support"
 dependencies {
+    api project(":api:cas-server-core-api-webflow")
+    
     implementation project(":support:cas-server-support-gauth-core")
     implementation project(":support:cas-server-support-otp-mfa")
     implementation project(":support:cas-server-support-gauth-core-mfa")
@@ -7,9 +9,9 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-mfa")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
-    api project(":api:cas-server-core-api-webflow")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
-    
+
     compileOnly project(":support:cas-server-support-trusted-mfa")
+    compileOnly project(":core:cas-server-core-rest")
 }

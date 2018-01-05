@@ -54,7 +54,6 @@ public class CasKryoTranscoderTests {
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
 
-
     private final CasKryoTranscoder transcoder;
 
     private final Map<String, Object> principalAttributes;
@@ -93,7 +92,7 @@ public class CasKryoTranscoderTests {
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
-        bldr.addFailure("error", AccountNotFoundException.class);
+        bldr.addFailure("error", new AccountNotFoundException());
         bldr.addSuccess("authn", new DefaultHandlerResult(
                 new AcceptUsersAuthenticationHandler(""),
                 new BasicCredentialMetaData(userPassCredential)));

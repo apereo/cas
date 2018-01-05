@@ -75,7 +75,8 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             throw new FailedLoginException();
         } catch (final Exception e) {
             publishFailureEvent(principal, targetUserId);
-            final Map<String, Class<? extends Throwable>> map = CollectionUtils.wrap(getClass().getSimpleName(), SurrogateAuthenticationException.class);
+            final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
+                new SurrogateAuthenticationException("Principal " + principal+ " is unauthorized to authenticate as " + targetUserId));
             throw new AuthenticationException(map);
         }
     }
