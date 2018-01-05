@@ -102,8 +102,6 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword("user");
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
-
         this.authenticationHandler.authenticate(c);
     }
 

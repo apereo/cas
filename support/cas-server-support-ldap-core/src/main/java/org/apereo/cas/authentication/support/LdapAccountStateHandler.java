@@ -13,7 +13,7 @@ import org.ldaptive.auth.AuthenticationResponse;
  * @since 4.0.0
  */
 @FunctionalInterface
-public interface AccountStateHandler {
+public interface LdapAccountStateHandler {
     /**
      * Handles the account state producing an error or warning messages as appropriate to the state.
      *
