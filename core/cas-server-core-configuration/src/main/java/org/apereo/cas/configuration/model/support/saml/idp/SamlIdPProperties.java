@@ -1,7 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -51,7 +50,7 @@ public class SamlIdPProperties implements Serializable {
      * <p>
      * Example might be {@code urn:oasis:names:tc:SAML:2.0:ac:classes:SomeClassName->mfa-duo}.
      */
-    private Set<String> authenticationContextClassMappings;
+    private List<String> authenticationContextClassMappings;
 
     /**
      * Settings related to SAML2 responses.
@@ -78,11 +77,11 @@ public class SamlIdPProperties implements Serializable {
         this.attributeQueryProfileEnabled = attributeQueryProfileEnabled;
     }
 
-    public Set<String> getAuthenticationContextClassMappings() {
+    public List<String> getAuthenticationContextClassMappings() {
         return authenticationContextClassMappings;
     }
 
-    public void setAuthenticationContextClassMappings(final Set<String> authenticationContextClassMappings) {
+    public void setAuthenticationContextClassMappings(final List<String> authenticationContextClassMappings) {
         this.authenticationContextClassMappings = authenticationContextClassMappings;
     }
 
