@@ -53,8 +53,7 @@ public interface Authentication extends Serializable {
      * @return the map of attributes.
      */
     Map<String, Object> getAttributes();
-
-
+    
     /**
      * Add attribute to the authentication object and update the instance.
      *
@@ -86,7 +85,7 @@ public interface Authentication extends Serializable {
      *
      * @return Map of authentication handler names to the authentication errors produced on attempted authentication.
      */
-    Map<String, Class<? extends Throwable>> getFailures();
+    Map<String, Throwable> getFailures();
 
     /**
      * Updates the authentication object with what's passed.

@@ -30,7 +30,7 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * Yubikey client id.
      */
     @RequiredProperty
-    private Integer clientId;
+    private Integer clientId = 0;
     /**
      *  Yubikey secret key.
      */
@@ -47,7 +47,6 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * the value is the whitelisted collection of yubikey device ids.
      */
     private Map<String, String> allowedDevices;
-
     /**
      * YubiKey API urls to contact for verification of credentials.
      */
@@ -56,12 +55,10 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * Indicates whether this provider should support trusted devices.
      */
     private boolean trustedDeviceEnabled;
-
     /**
      * Keep device registration records inside a JDBC resource.
      */
     private Jpa jpa = new Jpa();
-
     /**
      * Keep device registration records inside a MongoDb resource.
      */
