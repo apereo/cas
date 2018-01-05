@@ -6,6 +6,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -92,11 +93,18 @@ public class AuthenticationTransaction implements Serializable {
         }
     }
 
+    /**
+     * Sanitize credentials set. It's important to keep the order of
+     * the credentials in the final set as they were presented.
+     *
+     * @param credentials the credentials
+     * @return the set
+     */
     private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
         if (credentials != null && credentials.length > 0) {
             return Arrays.stream(credentials)
                     .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
+                    .collect(Collectors.toCollection(LinkedHashSet::new));
         }
         return new HashSet<>(0);
     }
