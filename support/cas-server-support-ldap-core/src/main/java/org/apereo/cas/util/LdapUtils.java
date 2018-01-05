@@ -285,8 +285,11 @@ public final class LdapUtils {
      * @return true, if successful
      */
     public static boolean containsResultEntry(final Response<SearchResult> response) {
-        final SearchResult result = response.getResult();
-        return result != null && result.getEntry() != null;
+        if (response != null) {
+            final SearchResult result = response.getResult();
+            return result != null && result.getEntry() != null;
+        }
+        return false;
     }
 
     /**
