@@ -47,7 +47,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     private final Resource fileName;
 
-    public FileAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public FileAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                     final PrincipalFactory principalFactory,
                                      final Resource fileName, final String separator) {
         super(name, servicesManager, principalFactory, null);
         this.fileName = fileName;
@@ -55,8 +56,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                 final String originalPassword)
+    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential, final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         try {
             if (this.fileName == null) {

@@ -42,8 +42,8 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class DefaultAccountStateHandler implements AccountStateHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAccountStateHandler.class);
+public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapLdapAccountStateHandler.class);
     /**
      * Map of account state error to CAS authentication exception.
      */
@@ -54,7 +54,7 @@ public class DefaultAccountStateHandler implements AccountStateHandler {
      * Instantiates a new account state handler, that populates
      * the error map with LDAP error codes and corresponding exceptions.
      */
-    public DefaultAccountStateHandler() {
+    public DefaultLdapLdapAccountStateHandler() {
         this.errorMap = new HashMap<>();
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_DISABLED, new AccountDisabledException());
         this.errorMap.put(ActiveDirectoryAccountState.Error.ACCOUNT_LOCKED_OUT, new AccountLockedException());

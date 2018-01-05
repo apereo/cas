@@ -16,8 +16,8 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class OptionalWarningAccountStateHandler extends DefaultAccountStateHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OptionalWarningAccountStateHandler.class);
+public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapAccountStateHandler {
+    private static final Logger LOGGER = LoggerFactory.getLogger(OptionalWarningLdapLdapAccountStateHandler.class);
     
     private String warnAttributeName;
     private String warningAttributeValue;

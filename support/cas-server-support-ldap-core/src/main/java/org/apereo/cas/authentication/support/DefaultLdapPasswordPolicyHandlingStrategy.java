@@ -25,7 +25,7 @@ public class DefaultLdapPasswordPolicyHandlingStrategy implements LdapPasswordPo
             LOGGER.debug("No ldap password policy configuration is defined");
             return new ArrayList<>(0);
         }
-        final AccountStateHandler accountStateHandler = configuration.getAccountStateHandler();
+        final LdapAccountStateHandler accountStateHandler = configuration.getAccountStateHandler();
         LOGGER.debug("Applying password policy [{}] to [{}]", response, accountStateHandler);
         return accountStateHandler.handle(response, configuration);
     }

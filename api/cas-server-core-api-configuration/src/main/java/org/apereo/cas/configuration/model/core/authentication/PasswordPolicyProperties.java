@@ -85,7 +85,6 @@ public class PasswordPolicyProperties implements Serializable {
      * matches the {@link #warningAttributeValue}.
      */
     private boolean displayWarningOnMatch = true;
-
     /**
      * Always display the password expiration warning regardless.
      */

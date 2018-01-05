@@ -14,20 +14,28 @@ public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration
     /**
      * Directory-specific account state handler component.
      */
-    private AccountStateHandler accountStateHandler;
+    private LdapAccountStateHandler accountStateHandler;
 
-    public LdapPasswordPolicyConfiguration(final PasswordPolicyProperties passwordPolicyProperties) {
-        super(passwordPolicyProperties);
+    public LdapPasswordPolicyConfiguration(final boolean alwaysDisplayPasswordExpirationWarning,
+                                           final int passwordWarningNumberOfDays, final int loginFailures) {
+        super(alwaysDisplayPasswordExpirationWarning, passwordWarningNumberOfDays, loginFailures);
+    }
+
+    public LdapPasswordPolicyConfiguration(final PasswordPolicyProperties props) {
+       super(props);
+    }
+
+    public LdapPasswordPolicyConfiguration() {
     }
 
     /**
      * @return Account state handler component.
      */
-    public AccountStateHandler getAccountStateHandler() {
+    public LdapAccountStateHandler getAccountStateHandler() {
         return this.accountStateHandler;
     }
     
-    public void setAccountStateHandler(final AccountStateHandler accountStateHandler) {
+    public void setAccountStateHandler(final LdapAccountStateHandler accountStateHandler) {
         this.accountStateHandler = accountStateHandler;
     }
 }
