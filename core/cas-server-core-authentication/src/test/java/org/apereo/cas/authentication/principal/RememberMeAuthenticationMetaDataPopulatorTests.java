@@ -9,7 +9,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -60,7 +60,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
                 .addCredential(meta)
-                .addSuccess("test", new DefaultHandlerResult(handler, meta));
+                .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (this.p.supports(credential)) {
             this.p.populateAttributes(builder, AuthenticationTransaction.wrap(credential));

@@ -18,7 +18,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
-public class DefaultHandlerResult implements HandlerResult {
+public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     /**
      * Serialization support.
@@ -48,7 +48,7 @@ public class DefaultHandlerResult implements HandlerResult {
     /**
      * No-arg constructor for serialization support.
      */
-    private DefaultHandlerResult() {
+    private DefaultAuthenticationHandlerExecutionResult() {
     }
 
     /**
@@ -57,7 +57,7 @@ public class DefaultHandlerResult implements HandlerResult {
      * @param source   the source
      * @param metaData the meta data
      */
-    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
         this(source, metaData, null, null);
     }
 
@@ -68,7 +68,7 @@ public class DefaultHandlerResult implements HandlerResult {
      * @param metaData the meta data
      * @param p        the p
      */
-    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
         this(source, metaData, p, null);
     }
 
@@ -79,8 +79,8 @@ public class DefaultHandlerResult implements HandlerResult {
      * @param metaData the meta data
      * @param warnings the warnings
      */
-    public DefaultHandlerResult(final AuthenticationHandler source, final CredentialMetaData metaData, 
-                                final List<MessageDescriptor> warnings) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+                                                       final List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
@@ -92,7 +92,7 @@ public class DefaultHandlerResult implements HandlerResult {
      * @param p        the p
      * @param warnings the warnings
      */
-    public DefaultHandlerResult(
+    public DefaultAuthenticationHandlerExecutionResult(
             final AuthenticationHandler source,
             final CredentialMetaData metaData,
             final Principal p,
@@ -109,7 +109,7 @@ public class DefaultHandlerResult implements HandlerResult {
      * @param p           the p
      * @param warnings    the warnings
      */
-    public DefaultHandlerResult(
+    public DefaultAuthenticationHandlerExecutionResult(
             final String handlerName,
             final CredentialMetaData metaData,
             final Principal p, final List<MessageDescriptor> warnings) {
@@ -154,13 +154,13 @@ public class DefaultHandlerResult implements HandlerResult {
 
     @Override
     public boolean equals(final Object obj) {
-        if (!(obj instanceof DefaultHandlerResult)) {
+        if (!(obj instanceof DefaultAuthenticationHandlerExecutionResult)) {
             return false;
         }
         if (obj == this) {
             return true;
         }
-        final DefaultHandlerResult other = (DefaultHandlerResult) obj;
+        final DefaultAuthenticationHandlerExecutionResult other = (DefaultAuthenticationHandlerExecutionResult) obj;
         final EqualsBuilder builder = new EqualsBuilder();
         builder.append(this.handlerName, other.handlerName);
         builder.append(this.credentialMetaData, other.credentialMetaData);

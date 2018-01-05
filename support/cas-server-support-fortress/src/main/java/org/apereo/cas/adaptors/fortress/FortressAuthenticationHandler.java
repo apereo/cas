@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.fortress;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -54,10 +54,10 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential usernamePasswordCredential,
-                                                                 final String originalPassword) throws GeneralSecurityException, PreventedException {
-        final String username = usernamePasswordCredential.getUsername();
-        final String password = usernamePasswordCredential.getPassword();
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(
+        final UsernamePasswordCredential c, final String originalPassword) throws GeneralSecurityException, PreventedException {
+        final String username = c.getUsername();
+        final String password = c.getPassword();
         Session fortressSession = null;
         try {
             LOGGER.debug("Trying to delegate authentication for [{}] to fortress", new Object[]{username});
@@ -70,8 +70,8 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                 LOGGER.debug("Fortress session result: [{}]", fortressXmlSession);
                 final Map<String, Object> attributes = new HashMap<>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
-                return createHandlerResult(usernamePasswordCredential,
-                        principalFactory.createPrincipal(username, attributes), null);
+                return createHandlerResult(c,
+                    principalFactory.createPrincipal(username, attributes), null);
             } else {
                 LOGGER.warn("Could not establish a fortress session or session cannot authenticate");
             }

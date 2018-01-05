@@ -1,7 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -48,7 +48,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
             final ClientCredential clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);

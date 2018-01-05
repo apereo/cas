@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -38,7 +38,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @return the built handler result
      * @throws GeneralSecurityException On authentication failure.
      */
-    protected HandlerResult createResult(final ClientCredential credentials, final UserProfile profile)
+    protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials, final UserProfile profile)
             throws GeneralSecurityException {
 
         if (profile == null) {

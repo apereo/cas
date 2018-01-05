@@ -35,6 +35,8 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&additionalParam1=paramvalue
 ```
 
+You may also specify a `service` parameter to verify whether the authenticated user may be allowed to access the given service.
+
 ### Successful Response
 
 ```bash
@@ -70,6 +72,19 @@ username=battags&password=password&token=true&additionalParam1=paramvalue
 
 The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
 
+## Authenticate Credentials
+
+Similar to asking for ticket-granting tickets, this endpoint allows one to only verify the validity of provided credentials as they are extracted from the request body:
+
+```bash
+POST /cas/v1/users HTTP/1.0
+
+username=battags&password=password
+```
+
+You may also specify a `service` parameter to verify whether the authenticated user may be allowed to access the given service. While the above example shows `username` and `password` as the provided credentials, you are practically allowed to provide multiple sets and different types of credentials provided CAS is equipped to extract and recognize those from the request body. See [this  for more info](#multiple-credentials).
+
+A successful response will produce a `200 OK` status code along with a JSON representation of the authentication result, which may include the authentication object, authenticated principal along with any captured attributes and/or metadata fetched for the authenticated user.
 
 ## Request a Service Ticket
 
