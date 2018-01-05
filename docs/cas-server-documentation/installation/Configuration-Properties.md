@@ -2991,6 +2991,8 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
 # cas.serviceRegistry.ldap.idAttribute=uid
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
+# cas.serviceRegistry.ldap.searchFilter=(%s={0})
+# cas.serviceRegistry.ldap.loadFilter=(objectClass=%s)
 ```
 
 ### Couchbase Service Registry
