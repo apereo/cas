@@ -3,8 +3,8 @@ package org.apereo.cas.adaptors.swivel;
 import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -42,7 +42,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final SwivelCredential swivelCredential = (SwivelCredential) credential;
         if (swivelCredential == null || StringUtils.isBlank(swivelCredential.getToken())) {
             throw new IllegalArgumentException("No credential could be found or credential token is blank");
@@ -61,8 +61,8 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         return sendAuthenticationRequestToSwivel(swivelCredential, uid);
     }
 
-    private HandlerResult sendAuthenticationRequestToSwivel(final SwivelCredential swivelCredential,
-                                                            final String uid) throws FailedLoginException {
+    private AuthenticationHandlerExecutionResult sendAuthenticationRequestToSwivel(final SwivelCredential swivelCredential,
+                                                                                   final String uid) throws FailedLoginException {
         if (StringUtils.isBlank(swivelProperties.getSwivelUrl()) || StringUtils.isBlank(swivelProperties.getSharedSecret())) {
             throw new FailedLoginException("Swivel url/shared secret is not specified and cannot be blank.");
         }

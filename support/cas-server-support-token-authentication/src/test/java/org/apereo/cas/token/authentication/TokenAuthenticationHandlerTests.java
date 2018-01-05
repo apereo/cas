@@ -4,7 +4,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -94,7 +94,7 @@ public class TokenAuthenticationHandlerTests {
         profile.setId("casuser");
         final String token = g.generate(profile);
         final TokenCredential c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
-        final HandlerResult result = this.tokenAuthenticationHandler.authenticate(c);
+        final AuthenticationHandlerExecutionResult result = this.tokenAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }

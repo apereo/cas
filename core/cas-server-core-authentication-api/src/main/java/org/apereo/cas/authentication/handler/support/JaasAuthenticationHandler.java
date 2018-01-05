@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -96,12 +96,12 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
         Assert.notNull(Configuration.getConfiguration(),
-                "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+            "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
 
         if (this.kerberosKdcSystemProperty != null) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);

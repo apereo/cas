@@ -1,6 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -62,7 +62,7 @@ public class ClientAuthenticationHandlerTests {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final HandlerResult result = this.handler.authenticate(this.clientCredential);
+        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
@@ -74,7 +74,7 @@ public class ClientAuthenticationHandlerTests {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final HandlerResult result = this.handler.authenticate(this.clientCredential);
+        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }

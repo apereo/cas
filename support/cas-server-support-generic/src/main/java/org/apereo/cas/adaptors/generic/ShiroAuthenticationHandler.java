@@ -14,7 +14,7 @@ import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -53,8 +53,8 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                 final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                                        final String originalPassword)
             throws GeneralSecurityException {
         try {
             final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
@@ -116,7 +116,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      * @param currentUser the current user
      * @return the handler result
      */
-    protected HandlerResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
+    protected AuthenticationHandlerExecutionResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
         final String username = currentUser.getPrincipal().toString();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }

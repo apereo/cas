@@ -6,7 +6,7 @@ import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -65,7 +65,7 @@ public class FortressAuthenticationHandlerTests {
         session.setAuthenticated(true);
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
         try {
-            final HandlerResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
+            final AuthenticationHandlerExecutionResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
             Assert.assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
                 handlerResult.getPrincipal().getId());

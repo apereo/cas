@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -63,8 +63,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
@@ -88,7 +88,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
-            return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential),
+            return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
                     this.principalFactory.createPrincipal(username));
         }
         LOGGER.debug("User [{}] failed authentication", username);

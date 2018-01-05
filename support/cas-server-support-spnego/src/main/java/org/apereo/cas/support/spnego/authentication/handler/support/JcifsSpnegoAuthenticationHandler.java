@@ -1,10 +1,10 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import jcifs.spnego.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -47,7 +47,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
         final java.security.Principal principal;
         final byte[] nextToken;
@@ -93,7 +93,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
         if (!success) {
             throw new FailedLoginException("Principal is null, the processing of the SPNEGO Token failed");
         }
-        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), spnegoCredential.getPrincipal());
     }
 
     @Override
