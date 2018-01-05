@@ -6,7 +6,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -58,7 +58,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
                 new DefaultPrincipalFactory().createPrincipal(principal, attributes))
                 .addCredential(metaData)
                 .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                        new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
+                        new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
                 .build();
 
         created = ZonedDateTime.now(ZoneOffset.UTC);

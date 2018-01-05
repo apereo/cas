@@ -74,7 +74,7 @@ public class MongoAuthenticationHandlerTests {
     }
     @Test
     public void verifyAuthentication() throws Exception {
-        final HandlerResult result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
+        final AuthenticationHandlerExecutionResult result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
                 .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());
         assertTrue(result.getPrincipal().getAttributes().containsKey("loc"));

@@ -36,8 +36,8 @@ public class CloudDirectoryAuthenticationHandler extends AbstractUsernamePasswor
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
 
         final String username = credential.getUsername();
 

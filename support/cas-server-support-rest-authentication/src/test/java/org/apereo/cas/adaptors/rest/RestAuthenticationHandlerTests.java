@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -115,7 +115,8 @@ public class RestAuthenticationHandlerTests {
 
         server.andRespond(withSuccess(writer.toString(), MediaType.APPLICATION_JSON));
 
-        final HandlerResult res = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationHandlerExecutionResult res =
+            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("casuser", res.getPrincipal().getId());
     }
 

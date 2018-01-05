@@ -20,7 +20,7 @@ import de.javakaffee.kryoserializers.guava.ImmutableSetSerializer;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -234,7 +234,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
         kryo.register(BasicCredentialMetaData.class);
         kryo.register(BasicIdentifiableCredential.class);
-        kryo.register(DefaultHandlerResult.class);
+        kryo.register(DefaultAuthenticationHandlerExecutionResult.class);
         kryo.register(DefaultAuthentication.class);
         kryo.register(UsernamePasswordCredential.class);
         kryo.register(SimplePrincipal.class);

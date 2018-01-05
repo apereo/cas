@@ -3,8 +3,8 @@ package org.apereo.cas.adaptors.authy;
 import com.authy.api.Token;
 import com.authy.api.User;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -36,7 +36,7 @@ public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuth
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final AuthyTokenCredential tokenCredential = (AuthyTokenCredential) credential;
 
         final Authentication authentication = WebUtils.getInProgressAuthentication();

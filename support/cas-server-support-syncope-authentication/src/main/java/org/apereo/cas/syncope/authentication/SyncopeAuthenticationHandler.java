@@ -8,7 +8,7 @@ import org.apache.http.HttpStatus;
 import org.apache.syncope.common.lib.to.MembershipTO;
 import org.apache.syncope.common.lib.to.RelationshipTO;
 import org.apache.syncope.common.lib.to.UserTO;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -51,8 +51,8 @@ public class SyncopeAuthenticationHandler extends AbstractUsernamePasswordAuthen
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
-                                                                 final String originalPassword) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
         try {
             final String syncopeUrl = StringUtils.appendIfMissing(this.syncopeUrl, "/rest/users/self");
             final HttpResponse response = HttpUtils.executeGet(syncopeUrl, c.getUsername(), c.getPassword(),

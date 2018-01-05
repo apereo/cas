@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -43,7 +43,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         String sql = null;

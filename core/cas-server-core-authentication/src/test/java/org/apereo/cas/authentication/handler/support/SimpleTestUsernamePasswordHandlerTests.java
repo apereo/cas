@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Rule;
@@ -47,7 +47,8 @@ public class SimpleTestUsernamePasswordHandlerTests {
 
     @Test
     public void verifyValidUsernamePassword() throws Exception {
-        final HandlerResult result = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationHandlerExecutionResult result =
+            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 

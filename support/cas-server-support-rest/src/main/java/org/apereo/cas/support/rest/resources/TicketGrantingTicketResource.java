@@ -1,8 +1,5 @@
 package org.apereo.cas.support.rest.resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -28,10 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -57,8 +50,6 @@ public class TicketGrantingTicketResource {
     private final ServiceFactory serviceFactory;
     private final RestHttpRequestCredentialFactory credentialFactory;
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
-
-    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
     public TicketGrantingTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
                                         final RestHttpRequestCredentialFactory credentialFactory,
@@ -86,7 +77,7 @@ public class TicketGrantingTicketResource {
             final TicketGrantingTicket tgtId = createTicketGrantingTicketForRequest(requestBody, request);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
-            return createResponseEntityForAuthnFailure(e);
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
         } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
@@ -139,27 +130,5 @@ public class TicketGrantingTicketResource {
         final AuthenticationResult authenticationResult =
             authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-    }
-
-    /**
-     * Create response entity for authn failure response entity.
-     *
-     * @param e the e
-     * @return the response entity
-     */
-    private ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
-        try {
-            final List<String> authnExceptions = e.getHandlerErrors().values()
-                .stream()
-                .map(ex -> ex.getClass().getSimpleName() + ":" + ex.getMessage())
-                .collect(Collectors.toList());
-            final Map<String, List<String>> errorsMap = new HashMap<>();
-            errorsMap.put("authentication_exceptions", authnExceptions);
-            LOGGER.warn("[{}] Caused by: [{}]", e.getMessage(), authnExceptions);
-            return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-        } catch (final JsonProcessingException exception) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

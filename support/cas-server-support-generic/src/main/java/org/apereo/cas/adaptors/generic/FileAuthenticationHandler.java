@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -56,7 +56,8 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential, final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                                        final String originalPassword)
         throws GeneralSecurityException, PreventedException {
         try {
             if (this.fileName == null) {

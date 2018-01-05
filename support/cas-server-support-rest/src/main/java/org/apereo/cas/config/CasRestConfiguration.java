@@ -11,11 +11,14 @@ import org.apereo.cas.rest.RestHttpRequestCredentialFactoryConfigurer;
 import org.apereo.cas.rest.UsernamePasswordRestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.factory.DefaultServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.rest.factory.DefaultUserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.rest.factory.UserAuthenticationResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
+import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -93,12 +96,26 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter implements Res
         return new DefaultTicketGrantingTicketResourceEntityResponseFactory();
     }
 
+    @Bean
+    @ConditionalOnMissingBean(name = "userAuthenticationResourceEntityResponseFactory")
+    public UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory() {
+        return new DefaultUserAuthenticationResourceEntityResponseFactory();
+    }
+
     @Autowired
     @Bean
     public TicketGrantingTicketResource ticketResourceRestController(
         @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
         return new TicketGrantingTicketResource(authenticationSystemSupport, restHttpRequestCredentialFactory,
             centralAuthenticationService, webApplicationServiceFactory, ticketGrantingTicketResourceEntityResponseFactory());
+    }
+
+    @Autowired
+    @Bean
+    public UserAuthenticationResource userAuthenticationRestController(
+        @Qualifier("restHttpRequestCredentialFactory") final RestHttpRequestCredentialFactory restHttpRequestCredentialFactory) {
+        return new UserAuthenticationResource(authenticationSystemSupport, restHttpRequestCredentialFactory,
+            webApplicationServiceFactory, userAuthenticationResourceEntityResponseFactory());
     }
 
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")

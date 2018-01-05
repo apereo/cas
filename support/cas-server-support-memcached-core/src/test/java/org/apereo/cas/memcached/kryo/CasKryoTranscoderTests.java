@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -93,7 +93,7 @@ public class CasKryoTranscoderTests {
         bldr.setAuthenticationDate(ZonedDateTime.now());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
         bldr.addFailure("error", new AccountNotFoundException());
-        bldr.addSuccess("authn", new DefaultHandlerResult(
+        bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
                 new AcceptUsersAuthenticationHandler(""),
                 new BasicCredentialMetaData(userPassCredential)));
 

@@ -151,8 +151,9 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
-                                                                 final String originalPassword) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential upc,
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
         final AuthenticationResponse response;
         try {
             LOGGER.debug("Attempting LDAP authentication for [{}]. Authenticator pre-configured attributes are [{}], "

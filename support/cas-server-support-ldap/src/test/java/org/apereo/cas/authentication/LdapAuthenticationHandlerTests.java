@@ -87,7 +87,7 @@ public class LdapAuthenticationHandlerTests {
 
         this.handler.forEach(Unchecked.consumer(h -> {
             final UsernamePasswordCredential credential = new UsernamePasswordCredential("castest1", "castest1");
-            final HandlerResult result = h.authenticate(credential);
+            final AuthenticationHandlerExecutionResult result = h.authenticate(credential);
             assertNotNull(result.getPrincipal());
             assertEquals(credential.getUsername(), result.getPrincipal().getId());
             final Map<String, Object> attributes = result.getPrincipal().getAttributes();

@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.adaptive;
 
 import org.apereo.cas.authentication.AuthenticationException;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -28,13 +28,14 @@ public class UnauthorizedAuthenticationException extends AuthenticationException
         super(handlerErrors);
     }
 
-    public UnauthorizedAuthenticationException(final Map<String, Throwable> handlerErrors, final Map<String, HandlerResult> handlerSuccesses) {
+    public UnauthorizedAuthenticationException(final Map<String, Throwable> handlerErrors,
+                                               final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(handlerErrors, handlerSuccesses);
     }
 
     public UnauthorizedAuthenticationException(final String message, 
                                                final Map<String, Throwable> handlerErrors,
-                                               final Map<String, HandlerResult> handlerSuccesses) {
+                                               final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(message, handlerErrors, handlerSuccesses);
     }
 }

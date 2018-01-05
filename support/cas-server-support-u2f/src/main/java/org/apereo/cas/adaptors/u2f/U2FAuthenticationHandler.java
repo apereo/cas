@@ -7,8 +7,8 @@ import com.yubico.u2f.data.messages.SignResponse;
 import com.yubico.u2f.exceptions.DeviceCompromisedException;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
@@ -34,7 +34,7 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
         final U2FTokenCredential tokenCredential = (U2FTokenCredential) credential;
 
         final Authentication authentication = WebUtils.getInProgressAuthentication();

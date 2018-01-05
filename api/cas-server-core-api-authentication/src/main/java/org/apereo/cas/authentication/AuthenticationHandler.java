@@ -23,7 +23,7 @@ public interface AuthenticationHandler extends Ordered {
      * MUST adhere to the following contract:
      *
      * <ol>
-     *     <li>Success -- return {@link HandlerResult}</li>
+     *     <li>Success -- return {@link AuthenticationHandlerExecutionResult}</li>
      *     <li>Failure -- throw {@link GeneralSecurityException}</li>
      *     <li>Indeterminate -- throw {@link PreventedException}</li>
      * </ol>
@@ -54,7 +54,7 @@ public interface AuthenticationHandler extends Ordered {
      * @throws PreventedException On errors that prevented authentication from occurring. Implementing classes SHOULD
      * take care to populate the cause, where applicable, with the error that prevented authentication.
      */
-    HandlerResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
+    AuthenticationHandlerExecutionResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
     
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,

@@ -4,12 +4,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -170,7 +170,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      */
     private static boolean addWarningMessagesToMessageContextIfNeeded(final TicketGrantingTicket tgtId, final MessageContext messageContext) {
         boolean foundAndAddedWarnings = false;
-        for (final Map.Entry<String, HandlerResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
+        for (final Map.Entry<String, AuthenticationHandlerExecutionResult> entry : tgtId.getAuthentication().getSuccesses().entrySet()) {
             for (final MessageDescriptor message : entry.getValue().getWarnings()) {
                 addMessageDescriptorToMessageContext(messageContext, message);
                 foundAndAddedWarnings = true;

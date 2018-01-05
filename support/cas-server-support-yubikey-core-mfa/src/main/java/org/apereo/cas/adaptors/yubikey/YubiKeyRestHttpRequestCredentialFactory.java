@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * This is {@link GoogleAuthenticatorRestHttpRequestCredentialFactory}.
+ * This is {@link YubiKeyRestHttpRequestCredentialFactory}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0

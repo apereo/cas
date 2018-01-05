@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.handler.support;
 
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PreventedException;
@@ -33,7 +33,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
@@ -49,7 +49,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      *                                  {@link #authenticate(Credential)}.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
+    protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
 
     /**
      * Helper method to construct a handler result
@@ -62,10 +62,11 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal, final List<MessageDescriptor> warnings) {
+    protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential, final Principal principal,
+                                                                       final List<MessageDescriptor> warnings) {
         if (principal == null) {
             throw new RuntimeException("Cannot create authentication handler result with a null principal for credential " + credential.getId());
         }
-        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 }

@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.jdbc;
 import com.google.common.collect.Multimap;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -153,7 +153,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
                 this.dataSource, SQL, PASSWORD_FIELD,
                 null, null,
                 CollectionUtils.wrap(map));
-        final HandlerResult result = q.authenticate(
+        final AuthenticationHandlerExecutionResult result = q.authenticate(
                 CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user3", "psw3"));
         assertNotNull(result);
         assertNotNull(result.getPrincipal());

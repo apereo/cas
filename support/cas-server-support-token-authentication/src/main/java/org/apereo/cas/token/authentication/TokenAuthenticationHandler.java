@@ -8,7 +8,7 @@ import com.nimbusds.jose.util.Base64;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -47,7 +47,7 @@ public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticati
     }
 
     @Override
-    public HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
+    public AuthenticationHandlerExecutionResult postAuthenticate(final Credential credential, final AuthenticationHandlerExecutionResult result) {
         final TokenCredential tokenCredential = (TokenCredential) credential;
         tokenCredential.setId(result.getPrincipal().getId());
         return super.postAuthenticate(credential, result);

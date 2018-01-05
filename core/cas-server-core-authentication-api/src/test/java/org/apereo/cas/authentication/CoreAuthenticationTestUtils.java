@@ -121,7 +121,7 @@ public final class CoreAuthenticationTestUtils {
         final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
         return new DefaultAuthenticationBuilder(principal)
             .addCredential(meta)
-            .addSuccess("testHandler", new DefaultHandlerResult(handler, meta))
+            .addSuccess("testHandler", new DefaultAuthenticationHandlerExecutionResult(handler, meta))
             .setAttributes(attributes)
             .build();
     }

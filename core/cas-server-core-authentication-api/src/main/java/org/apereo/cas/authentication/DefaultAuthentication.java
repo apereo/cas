@@ -50,7 +50,7 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication success event.
      */
-    private final Map<String, HandlerResult> successes;
+    private final Map<String, AuthenticationHandlerExecutionResult> successes;
 
     /**
      * Map of handler name to handler authentication failure cause.
@@ -81,7 +81,7 @@ public class DefaultAuthentication implements Authentication {
             final ZonedDateTime date,
             final Principal principal,
             final Map<String, Object> attributes,
-            final Map<String, HandlerResult> successes) {
+            final Map<String, AuthenticationHandlerExecutionResult> successes) {
 
         Assert.notNull(date, "Date cannot be null");
         Assert.notNull(principal, "Principal cannot be null");
@@ -111,7 +111,7 @@ public class DefaultAuthentication implements Authentication {
             final List<CredentialMetaData> credentials,
             final Principal principal,
             final Map<String, Object> attributes,
-            final Map<String, HandlerResult> successes,
+            final Map<String, AuthenticationHandlerExecutionResult> successes,
             final Map<String, Throwable> failures) {
 
         this(date, principal, attributes, successes);
@@ -144,7 +144,7 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public Map<String, HandlerResult> getSuccesses() {
+    public Map<String, AuthenticationHandlerExecutionResult> getSuccesses() {
         return new HashMap<>(this.successes);
     }
 

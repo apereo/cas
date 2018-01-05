@@ -3,8 +3,8 @@ package org.apereo.cas.adaptors.generic.remote;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.slf4j.Logger;
@@ -43,13 +43,13 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
         final RemoteAddressCredential c = (RemoteAddressCredential) credential;
         if (this.inetNetmask != null && this.inetNetwork != null) {
             try {
                 final InetAddress inetAddress = InetAddress.getByName(c.getRemoteAddress().trim());
                 if (containsAddress(this.inetNetwork, this.inetNetmask, inetAddress)) {
-                    return new DefaultHandlerResult(this, c, this.principalFactory.createPrincipal(c.getId()));
+                    return new DefaultAuthenticationHandlerExecutionResult(this, c, this.principalFactory.createPrincipal(c.getId()));
                 }
             } catch (final UnknownHostException e) {
                 LOGGER.debug("Unknown host [{}]", c.getRemoteAddress());

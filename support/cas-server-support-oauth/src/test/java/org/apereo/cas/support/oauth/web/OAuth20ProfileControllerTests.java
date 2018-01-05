@@ -8,8 +8,8 @@ import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -172,7 +172,7 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     protected static Authentication getAuthentication(final Principal principal) {
         final CredentialMetaData metadata = new BasicCredentialMetaData(new BasicIdentifiableCredential(principal.getId()));
-        final HandlerResult handlerResult = new DefaultHandlerResult(principal.getClass().getCanonicalName(),
+        final AuthenticationHandlerExecutionResult handlerResult = new DefaultAuthenticationHandlerExecutionResult(principal.getClass().getCanonicalName(),
                 metadata, principal, new ArrayList<>());
 
         return DefaultAuthenticationBuilder.newInstance()

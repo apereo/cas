@@ -258,7 +258,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
-        final HandlerResult result = handler.authenticate(credential);
+        final AuthenticationHandlerExecutionResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 

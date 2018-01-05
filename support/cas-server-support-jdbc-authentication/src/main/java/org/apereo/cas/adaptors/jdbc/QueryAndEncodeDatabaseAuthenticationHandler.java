@@ -6,7 +6,7 @@ import org.apache.shiro.crypto.hash.ConfigurableHashService;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
 import org.apache.shiro.util.ByteSource;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -117,8 +117,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                 final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                                        final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || StringUtils.isBlank(this.algorithmName) || getJdbcTemplate() == null) {

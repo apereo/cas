@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.jdbc;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -58,12 +58,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
-
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
         if (StringUtils.isBlank(this.sql) || getJdbcTemplate() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly. "
-                    + "No SQL statement or JDBC template is found.");
+                + "No SQL statement or JDBC template is found.");
         }
 
         final Map<String, Object> attributes = new LinkedHashMap<>(this.principalAttributeMap.size());
@@ -74,7 +74,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             final String dbPassword = (String) dbFields.get(this.fieldPassword);
 
             if ((StringUtils.isNotBlank(originalPassword) && !matches(originalPassword, dbPassword))
-                    || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
+                || (StringUtils.isBlank(originalPassword) && !StringUtils.equals(password, dbPassword))) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
             if (StringUtils.isNotBlank(this.fieldDisabled)) {
@@ -91,7 +91,7 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
             }
             this.principalAttributeMap.forEach((key, attributeNames) -> {
                 final Object attribute = dbFields.get(key);
-  
+
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", key);
                     attributeNames.forEach(s -> {

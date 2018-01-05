@@ -21,7 +21,7 @@ public class AuthenticationException extends RuntimeException {
     private final Map<String, Throwable> handlerErrors;
 
     /** Immutable map of handler names to an authentication success metadata instance. */
-    private final Map<String, HandlerResult> handlerSuccesses;
+    private final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses;
 
     /**
      * Creates a new instance for the case when no handlers were attempted, i.e. no successes or failures.
@@ -58,7 +58,7 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
     public AuthenticationException(final Map<String, Throwable> handlerErrors,
-                                   final Map<String, HandlerResult> handlerSuccesses) {
+                                   final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         this(
             String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()),
             handlerErrors,
@@ -76,7 +76,7 @@ public class AuthenticationException extends RuntimeException {
     public AuthenticationException(
             final String message,
             final Map<String, Throwable> handlerErrors,
-            final Map<String, HandlerResult> handlerSuccesses) {
+            final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(message);
         this.handlerErrors = new HashMap<>(handlerErrors);
         this.handlerSuccesses = new HashMap<>(handlerSuccesses);
@@ -96,7 +96,7 @@ public class AuthenticationException extends RuntimeException {
      *
      * @return Immutable map of handler names to authentication successes.
      */
-    public Map<String, HandlerResult> getHandlerSuccesses() {
+    public Map<String, AuthenticationHandlerExecutionResult> getHandlerSuccesses() {
         return this.handlerSuccesses;
     }
 }
