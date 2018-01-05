@@ -48,8 +48,10 @@ public class AnyAuthenticationPolicy implements AuthenticationPolicy {
     @Override
     public boolean isSatisfiedBy(final Authentication authn) throws Exception {
         if (this.tryAll) {
-            if (authn.getCredentials().size() != authn.getSuccesses().size() + authn.getFailures().size()) {
-                LOGGER.warn("Number of provided credentials does not match the sum of authentication successes and failures");
+            final int sum = authn.getSuccesses().size() + authn.getFailures().size();
+            if (authn.getCredentials().size() != sum) {
+                LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]",
+                    authn.getCredentials().size(), sum);
                 return false;
             }
             LOGGER.debug("Authentication policy is satisfied with all authentication transactions");

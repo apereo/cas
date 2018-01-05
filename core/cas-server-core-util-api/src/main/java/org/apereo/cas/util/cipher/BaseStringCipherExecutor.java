@@ -168,8 +168,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
-
-
+    
     /**
      * Gets encryption key setting.
      *

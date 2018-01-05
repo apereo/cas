@@ -19,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -175,7 +176,8 @@ public class PolicyBasedAuthenticationManagerTests {
      * @throws Exception On errors.
      */
     private static AuthenticationHandler newMockHandler(final boolean success) throws Exception {
-        return newMockHandler("MockAuthenticationHandler" + System.nanoTime(), success);
+        final String name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
+        return newMockHandler(name, success);
     }
 
     /**

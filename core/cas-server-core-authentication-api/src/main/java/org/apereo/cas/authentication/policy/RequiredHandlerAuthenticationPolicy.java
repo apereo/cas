@@ -51,26 +51,28 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
     @Override
     public boolean isSatisfiedBy(final Authentication authn) {
         boolean credsOk = true;
+        final int sum = authn.getSuccesses().size() + authn.getFailures().size();
         if (this.tryAll) {
-            credsOk = authn.getCredentials().size() == authn.getSuccesses().size() + authn.getFailures().size();
+            credsOk = authn.getCredentials().size() == sum;
         }
 
         if (!credsOk) {
-            LOGGER.warn("Number of provided credentials does not match the sum of authentication successes and failures");
+            LOGGER.warn("Number of provided credentials [{}] does not match the sum of authentication successes and failures [{}]. "
+                + "Successful authentication handlers are [{}]", authn.getCredentials().size(), sum, authn.getSuccesses().keySet());
             return false;
         }
 
         LOGGER.debug("Examining authentication successes for authentication handler [{}]", this.requiredHandlerName);
         if (StringUtils.isNotBlank(this.requiredHandlerName)) {
             credsOk = authn.getSuccesses().keySet()
-                    .stream()
-                    .filter(s -> s.equalsIgnoreCase(this.requiredHandlerName))
-                    .findAny()
-                    .isPresent();
+                .stream()
+                .filter(s -> s.equalsIgnoreCase(this.requiredHandlerName))
+                .findAny()
+                .isPresent();
 
             if (!credsOk) {
                 LOGGER.warn("Required authentication handler [{}] is not present in the list of recorded successful authentications",
-                        this.requiredHandlerName);
+                    this.requiredHandlerName);
                 return false;
             }
         }
