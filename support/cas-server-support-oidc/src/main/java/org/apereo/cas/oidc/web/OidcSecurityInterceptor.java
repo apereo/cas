@@ -40,7 +40,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         boolean clearCreds = false;
         // check if CasAuthentication Available(if the TGT is Effective）
         Optional<Authentication> authentication=authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
-        if(!authentication.isPresent()) {
+        if (!authentication.isPresent()) {
             clearCreds=true;
         }
         
