@@ -61,7 +61,7 @@ public class PasswordManagementWebflowConfiguration {
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("loginFlowExecutor")
+    @Qualifier("casWebFlowExecutor")
     private FlowExecutor loginFlowExecutor;
 
     @Autowired

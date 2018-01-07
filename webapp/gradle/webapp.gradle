@@ -34,7 +34,7 @@ task compileSass(type: NpmTask) {
     args = ['run', 'gulp', '--silent']
 }
 
-if (!rootProject.publishingRelease) {
+if (!rootProject.publishingRelease && !Boolean.getBoolean("skipNpmLint")) {
     processResources.dependsOn npmLint
 }
 
