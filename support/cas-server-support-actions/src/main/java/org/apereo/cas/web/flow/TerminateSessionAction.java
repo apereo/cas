@@ -105,7 +105,7 @@ public class TerminateSessionAction extends AbstractAction {
 
         final HttpSession session = request.getSession();
         if (session != null) {
-            session.invalidate();            
+             session.invalidate();            
         	String requestedUrl=request.getSession().getAttribute("pac4jRequestedUrl").toString();        	
             session.invalidate();
             // copy pac4jRequestedUrl in  new session 
