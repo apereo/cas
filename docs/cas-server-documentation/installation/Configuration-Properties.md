@@ -2709,6 +2709,10 @@ Store audit logs inside a MongoDb database.
 
 Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.audit.jdbc`.
 
+### REST Audits
+
+Store audit logs inside a database. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+
 ## Sleuth Distributed Tracing
 
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html#distributed-tracing).

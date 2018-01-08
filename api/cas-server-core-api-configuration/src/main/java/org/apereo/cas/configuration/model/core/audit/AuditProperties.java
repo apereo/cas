@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -71,12 +72,20 @@ public class AuditProperties implements Serializable {
     /**
      * Family of sub-properties pertaining to Jdbc-based audit destinations.
      */
+    @NestedConfigurationProperty
     private AuditJdbcProperties jdbc = new AuditJdbcProperties();
 
     /**
      * Family of sub-properties pertaining to MongoDb-based audit destinations.
      */
+    @NestedConfigurationProperty
     private AuditMongoDbProperties mongo = new AuditMongoDbProperties();
+
+    /**
+     * Family of sub-properties pertaining to rest-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditRestProperties rest = new AuditRestProperties();
 
     /**
      * The audit format to use in the logs.
@@ -176,5 +185,13 @@ public class AuditProperties implements Serializable {
 
     public void setIncludeValidationAssertion(final boolean includeValidationAssertion) {
         this.includeValidationAssertion = includeValidationAssertion;
+    }
+
+    public AuditRestProperties getRest() {
+        return rest;
+    }
+
+    public void setRest(final AuditRestProperties rest) {
+        this.rest = rest;
     }
 }
