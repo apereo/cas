@@ -82,7 +82,7 @@ Audit events may also be `POST`ed to an endpoint of your choosing. To activate t
 </dependency>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
+The body of the HTTP request is a JSON representation of the audit record. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
 
 ## Audit Events
 
