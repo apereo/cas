@@ -172,8 +172,11 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
         String copy = renderViewAndGetResult(this.cas1ServiceSuccessView, model, request, response).getKey().getCopy();
         resValidation.put("cas1Response", StringEscapeUtils.escapeXml11(copy));
 
-        copy = renderViewAndGetResult(this.cas2ServiceSuccessView, model, request, response).getKey().getCopy();
-        resValidation.put("cas2Response", StringEscapeUtils.escapeXml11(copy));
+        if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
+            copy = renderViewAndGetResult(this.cas3ServiceSuccessView, model, request, response).getKey().getCopy();
+        } else {
+            copy = renderViewAndGetResult(this.cas2ServiceSuccessView, model, request, response).getKey().getCopy();
+        }
 
         copy = renderViewAndGetResult(this.cas3ServiceSuccessView, model, request, response).getKey().getCopy();
         resValidation.put("cas3XmlResponse", StringEscapeUtils.escapeXml11(copy));
