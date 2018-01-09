@@ -14,6 +14,12 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 4227475246873515918L;
 
     /**
+     * Execute the recording of audit records in async manner.
+     * This setting must almost always be set to true.
+     */
+    private boolean asynchronous = true;
+    
+    /**
      * Indicates how long audit records should be kept in the database.
      * This is used by the clean-up criteria to clean up after stale audit records.
      */
@@ -32,6 +38,14 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * @see org.springframework.transaction.TransactionDefinition
      */
     private String propagationBehaviorName = "PROPAGATION_REQUIRED";
+
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setAsynchronous(final boolean asynchronous) {
+        this.asynchronous = asynchronous;
+    }
 
     public int getMaxAgeDays() {
         return maxAgeDays;
