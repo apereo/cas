@@ -1346,7 +1346,7 @@ Principal transformation settings for this feature are available [here](Configur
 
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.json`.
 
-LDAP password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.json.passwordPolicy`. 
+Password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.json.passwordPolicy`. 
 
 ```properties
 # cas.authn.json.location=file:///path/to/users/file.json
