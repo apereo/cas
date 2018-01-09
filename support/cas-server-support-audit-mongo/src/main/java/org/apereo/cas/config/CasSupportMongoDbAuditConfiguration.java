@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.MongoDbAuditTrailManager;
-import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditMongoDbProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -36,8 +35,7 @@ public class CasSupportMongoDbAuditConfiguration {
     }
 
     @Bean
-    public DelegatingAuditTrailManager auditTrailManager() {
-        return new DefaultDelegatingAuditTrailManager(mongoDbAuditTrailManager());
+    public AuditTrailExecutionPlanConfigurer mongoDbAuditTrailExecutionPlanConfigurer() {
+        return plan -> plan.registerAuditTrailManager(mongoDbAuditTrailManager());
     }
-
 }

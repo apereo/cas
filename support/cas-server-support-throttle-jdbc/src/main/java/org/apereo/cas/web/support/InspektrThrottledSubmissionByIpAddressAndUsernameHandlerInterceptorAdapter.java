@@ -1,9 +1,9 @@
 package org.apereo.cas.web.support;
 
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
@@ -32,12 +32,12 @@ import java.util.List;
  */
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
     private static final Logger LOGGER = LoggerFactory.getLogger(InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter.class);
-    
+
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
     private static final String INSPEKTR_ACTION_THROTTLED = "THROTTLED_LOGIN_ATTEMPT";
-    
-    private final AuditTrailManager auditTrailManager;
+
+    private final AuditTrailExecutionPlan auditTrailManager;
     private final DataSource dataSource;
     private final String applicationCode;
     private final String authenticationFailureCode;
@@ -57,9 +57,10 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @param sqlQueryAudit             the sql query audit
      * @param authenticationFailureCode the authentication failure code
      */
-    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
+    public InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(final int failureThreshold,
+                                                                                      final int failureRangeInSeconds,
                                                                                       final String usernameParameter,
-                                                                                      final AuditTrailManager auditTrailManager,
+                                                                                      final AuditTrailExecutionPlan auditTrailManager,
                                                                                       final DataSource dataSource, final String appCode,
                                                                                       final String sqlQueryAudit, final String authenticationFailureCode) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter);
@@ -84,7 +85,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
             final String remoteAddress = clientInfo.getClientIpAddress();
-            
+
             final List<Timestamp> failures = this.jdbcTemplate.query(
                 this.sqlQueryAudit,
                 new Object[]{
@@ -116,8 +117,8 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
 
     /**
      * Records an audit action.
-     * 
-     * @param request The current HTTP request.
+     *
+     * @param request    The current HTTP request.
      * @param actionName Name of the action to be recorded.
      * @param methodName Name of the method where the action occurred.
      */
@@ -134,14 +135,14 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                 }
             };
             final AuditActionContext context = new AuditActionContext(
-                    userToUse,
-                    userToUse,
-                    actionName,
-                    this.applicationCode,
-                    DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
-                    clientInfo.getClientIpAddress(),
-                    clientInfo.getServerIpAddress(),
-                    auditPointRuntimeInfo);
+                userToUse,
+                userToUse,
+                actionName,
+                this.applicationCode,
+                DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
+                clientInfo.getClientIpAddress(),
+                clientInfo.getServerIpAddress(),
+                auditPointRuntimeInfo);
             this.auditTrailManager.record(context);
         } else {
             LOGGER.warn("No data source is defined for [{}]. Ignoring audit record-keeping", this.getName());
@@ -151,7 +152,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     /**
      * Construct username from the request.
      *
-     * @param request the request
+     * @param request           the request
      * @param usernameParameter the username parameter
      * @return the string
      */
