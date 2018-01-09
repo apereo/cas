@@ -78,9 +78,7 @@ public class CasWebflowContextConfiguration {
 
     @Bean
     public ExpressionParser expressionParser() {
-        return new WebFlowSpringELExpressionParser(
-            new SpelExpressionParser(),
-            logoutConversionService());
+        return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), logoutConversionService());
     }
 
     @Bean
@@ -117,7 +115,7 @@ public class CasWebflowContextConfiguration {
                 return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
             }
         };
-        handler.setFlowExecutor(casWebFlowExecutor());
+        handler.setFlowExecutor(logoutFlowExecutor());
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
     }
@@ -142,7 +140,7 @@ public class CasWebflowContextConfiguration {
                     .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGIN);
             }
         };
-        handler.setFlowExecutor(casWebFlowExecutor());
+        handler.setFlowExecutor(loginFlowExecutor());
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
     }
@@ -203,7 +201,15 @@ public class CasWebflowContextConfiguration {
 
     @RefreshScope
     @Bean
-    public FlowExecutor casWebFlowExecutor() {
+    public FlowExecutor logoutFlowExecutor() {
+        final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
+            logoutFlowRegistry(), this.webflowCipherExecutor);
+        return factory.build();
+    }
+
+    @RefreshScope
+    @Bean
+    public FlowExecutor loginFlowExecutor() {
         final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
             loginFlowRegistry(), this.webflowCipherExecutor);
         return factory.build();

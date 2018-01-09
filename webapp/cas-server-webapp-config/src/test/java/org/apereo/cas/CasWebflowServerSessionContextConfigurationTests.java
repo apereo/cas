@@ -15,7 +15,7 @@ import org.springframework.webflow.executor.FlowExecutor;
 public class CasWebflowServerSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfigurationTests {
 
     @Autowired
-    @Qualifier("casWebFlowExecutor")
+    @Qualifier("loginFlowExecutor")
     private FlowExecutor flowExecutorViaServerSessionBindingExecution;
 
     @Override

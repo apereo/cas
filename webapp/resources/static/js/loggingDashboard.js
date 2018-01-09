@@ -240,17 +240,17 @@ var loggingDashboard = (function () {
         var btnColor;
 
         switch (data.toLowerCase()) {
-            case 'error':
-                btnColor = 'danger';
-                break;
-            case 'info':
-                btnColor = 'info';
-                break;
-            case 'warn':
-                btnColor = 'warning';
-                break;
-            default:
-                btnColor = 'default';
+        case 'error':
+            btnColor = 'danger';
+            break;
+        case 'info':
+            btnColor = 'info';
+            break;
+        case 'warn':
+            btnColor = 'warning';
+            break;
+        default:
+            btnColor = 'default';
         }
         var btnGroup = '<div class="btn-group btn-block" data-logger="' + full + '"><button class="btn btn-sm btn-block bg-' + btnColor + ' dropdown-toggle" name="recordinput" data-toggle="dropdown">' + data + ' <span class="caret"></span></button>' +
             '<ul class="dropdown-menu">';
