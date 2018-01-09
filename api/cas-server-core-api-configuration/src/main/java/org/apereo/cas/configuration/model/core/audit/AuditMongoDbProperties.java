@@ -13,7 +13,21 @@ import org.apereo.cas.configuration.support.RequiresModule;
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
     private static final long serialVersionUID = 4940497540189318943L;
 
+    /**
+     * Execute the recording of audit records in async manner.
+     * This setting must almost always be set to true.
+     */
+    private boolean asynchronous = true;
+    
     public AuditMongoDbProperties() {
         setCollection("MongoDbCasAuditRepository");
+    }
+
+    public boolean isAsynchronous() {
+        return asynchronous;
+    }
+
+    public void setAsynchronous(final boolean asynchronous) {
+        this.asynchronous = asynchronous;
     }
 }

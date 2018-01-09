@@ -31,7 +31,9 @@ public class CasSupportMongoDbAuditConfiguration {
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        return new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
+        final MongoDbAuditTrailManager mgmr = new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
+        mgmr.setAsynchronous(mongo.isAsynchronous());
+        return mgmr;
     }
 
     @Bean
