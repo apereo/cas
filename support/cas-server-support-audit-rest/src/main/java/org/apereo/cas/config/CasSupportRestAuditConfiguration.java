@@ -1,8 +1,7 @@
 package org.apereo.cas.config;
 
+import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.RestAuditTrailManager;
-import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class CasSupportRestAuditConfiguration {
     }
 
     @Bean
-    public DelegatingAuditTrailManager auditTrailManager() {
-        return new DefaultDelegatingAuditTrailManager(restAuditTrailManager());
+    public AuditTrailExecutionPlanConfigurer restAuditTrailExecutionPlanConfigurer() {
+        return plan -> plan.registerAuditTrailManager(restAuditTrailManager());
     }
 }

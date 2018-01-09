@@ -654,11 +654,12 @@ Note that the default value for Hibernate's DDL setting is `create-drop` which m
 | `update`             | Update the schema.
 | `create`             | Create the schema, destroying previous data.
 | `create-drop`        | Drop the schema at the end of the session.
+| `none`        | Do nothing.
 
 Note that during a version migration where any schema has changed `create-drop` will result
 in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
 not an issue, but in cases like the audit table important data could be lost. Using `update`, while safe
-for data, is confirmed to result in invalid database state. `validate` or the undocumented `none` settings
+for data, is confirmed to result in invalid database state. `validate` or `none` settings
 are likely the only safe options for production use.
 
 For more information on configuration of transaction levels and propagation behaviors,

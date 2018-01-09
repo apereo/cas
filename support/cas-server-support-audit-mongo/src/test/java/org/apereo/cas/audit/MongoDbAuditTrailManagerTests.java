@@ -6,7 +6,6 @@ import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
-import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,8 @@ import java.util.Date;
 public class MongoDbAuditTrailManagerTests {
 
     @Autowired
-    @Qualifier("auditTrailManager")
-    private AuditTrailManager auditTrailManager;
+    @Qualifier("auditTrailExecutionPlan")
+    private AuditTrailExecutionPlan auditTrailManager;
 
     @Test
     public void verify() {

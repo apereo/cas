@@ -4,7 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -167,7 +167,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     @Autowired
-    public MvcEndpoint loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
+    public MvcEndpoint loggingConfigController(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
         return new LoggingConfigController(auditTrailManager, casProperties);
     }
 
@@ -183,7 +183,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     @Bean
-    public MvcEndpoint statisticsController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
+    public MvcEndpoint statisticsController(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
         return new StatisticsController(auditTrailManager, centralAuthenticationService,
             metricsRegistry, healthCheckRegistry, casProperties);
     }

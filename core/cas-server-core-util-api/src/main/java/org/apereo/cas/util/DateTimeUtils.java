@@ -55,7 +55,7 @@ public final class DateTimeUtils {
                 result = null;
             }
         }
-        
+
         if (result == null) {
             try {
                 result = LocalDateTime.parse(value.toUpperCase(), DateTimeFormatter.ofPattern("MM/dd/yyyy hh:mm a"));
@@ -88,7 +88,7 @@ public final class DateTimeUtils {
                 result = null;
             }
         }
-        
+
         if (result == null) {
             try {
                 final LocalDate ld = LocalDate.parse(value);
@@ -227,6 +227,15 @@ public final class DateTimeUtils {
         return dateOf(time.toInstant());
     }
 
+    /**
+     * Date of local date.
+     *
+     * @param time the time
+     * @return the date
+     */
+    public static Date dateOf(final LocalDate time) {
+        return Date.from(time.atStartOfDay(ZoneOffset.UTC).toInstant());
+    }
 
     /**
      * Gets Date for Instant.
