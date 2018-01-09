@@ -18,6 +18,8 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This is {@link RestAuditTrailManager}.
@@ -27,8 +29,11 @@ import java.util.Set;
  */
 public class RestAuditTrailManager implements AuditTrailManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(RestAuditTrailManager.class);
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private boolean asynchronous = true;
     private final AuditActionContextJsonSerializer serializer;
     private final AuditRestProperties properties;
 
@@ -38,11 +43,23 @@ public class RestAuditTrailManager implements AuditTrailManager {
         Assert.notNull(properties.getUrl());
     }
 
+    public void setAsynchronous(final boolean asynchronous) {
+        this.asynchronous = asynchronous;
+    }
+
     @Override
     public void record(final AuditActionContext audit) {
-        final String auditJson = this.serializer.toString(audit);
-        LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
-        HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+        final Runnable task = () -> {
+            final String auditJson = serializer.toString(audit);
+            LOGGER.debug("Sending audit action context to REST endpoint [{}]", properties.getUrl());
+            HttpUtils.executePost(properties.getUrl(), properties.getBasicAuthUsername(), properties.getBasicAuthPassword(), auditJson);
+        };
+
+        if (this.asynchronous) {
+            this.executorService.execute(task);
+        } else {
+            task.run();
+        }
     }
 
     @Override

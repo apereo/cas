@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * This is {@link MongoDbAuditTrailManager}.
@@ -23,6 +25,9 @@ import java.util.Set;
 public class MongoDbAuditTrailManager implements AuditTrailManager {
     private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbAuditTrailManager.class);
 
+    private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+    private boolean asynchronous = true;
+
     private final String collectionName;
     private final MongoTemplate mongoTemplate;
 
@@ -31,9 +36,19 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
         this.collectionName = collectionName;
     }
 
+    public void setAsynchronous(final boolean asynchronous) {
+        this.asynchronous = asynchronous;
+    }
+
     @Override
     public void record(final AuditActionContext audit) {
-        this.mongoTemplate.save(audit, this.collectionName);
+        if (this.asynchronous) {
+            this.executorService.execute(() -> {
+                this.mongoTemplate.save(audit, this.collectionName);
+            });
+        } else {
+            this.mongoTemplate.save(audit, this.collectionName);
+        }
     }
 
     @Override
