@@ -5,7 +5,6 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasSupportMongoDbAuditConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,12 +25,12 @@ import java.util.Date;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                CasSupportMongoDbAuditConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreWebConfiguration.class})
+    classes = {
+        CasSupportMongoDbAuditConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/mongoaudit.properties"})
 public class MongoDbAuditTrailManagerTests {
 
@@ -41,10 +40,9 @@ public class MongoDbAuditTrailManagerTests {
 
     @Test
     public void verify() {
-        final AuditPointRuntimeInfo runtime = (AuditPointRuntimeInfo) () -> null;
         final AuditActionContext ctx = new AuditActionContext("casuser", "resource",
-                "action", "appcode", new Date(), "clientIp",
-                "serverIp", runtime);
+            "action", "appcode", new Date(), "clientIp",
+            "serverIp");
         auditTrailManager.record(ctx);
     }
 
