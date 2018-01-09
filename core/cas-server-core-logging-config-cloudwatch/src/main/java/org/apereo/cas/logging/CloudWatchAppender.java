@@ -2,6 +2,7 @@ package org.apereo.cas.logging;
 
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.services.logs.AWSLogs;
 import com.amazonaws.services.logs.AWSLogsClient;
 import com.amazonaws.services.logs.AWSLogsClientBuilder;
@@ -85,8 +86,16 @@ public class CloudWatchAppender extends AbstractAppender {
 
             LOGGER.debug("Connecting to AWS CloudWatch...");
             final AWSLogsClientBuilder builder = AWSLogsClient.builder();
-            final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
-            builder.setCredentials(new AWSStaticCredentialsProvider(credentials));
+
+            if (StringUtils.isNotBlank(credentialAccessKey) && StringUtils.isNotBlank(credentialSecretKey)) {
+                LOGGER.debug("Loading AWS credentials directly from the logging configuration");
+                final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
+                builder.setCredentials(new AWSStaticCredentialsProvider(credentials));
+            } else {
+                LOGGER.debug("Loading AWS credentials directly from the EC2 instance profile metadata");
+                builder.setCredentials(new InstanceProfileCredentialsProvider(false));
+            }
+            
             builder.setRegion(awsLogRegionName);
             this.awsLogsClient = builder.build();
             this.logGroupName = awsLogGroupName;

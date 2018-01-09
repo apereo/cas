@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Implementation of the ServiceRegistryDao interface which stores the services in a LDAP Directory.
@@ -143,6 +144,7 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
                 response.getResult().getEntries()
                         .stream()
                         .map(this.ldapServiceMapper::mapToRegisteredService)
+                        .filter(Objects::nonNull)
                         .forEach(s -> {
                             publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
                             list.add(s);
