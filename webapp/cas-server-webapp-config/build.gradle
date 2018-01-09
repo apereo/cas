@@ -15,6 +15,9 @@ dependencies {
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-pac4j-core")
 
+    testImplementation libraries.thymeleaf
+    testImplementation libraries.thymeleafdialect
+    
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":support:cas-server-support-themes")
     testImplementation project(":core:cas-server-core")
@@ -36,5 +39,6 @@ dependencies {
     testImplementation project(":core:cas-server-core-services-authentication")
     testImplementation project(":core:cas-server-core-authentication-attributes")
     testImplementation project(":core:cas-server-core-authentication")
+    
     compileOnly libraries.bouncycastle
 }

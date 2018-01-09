@@ -2688,15 +2688,36 @@ Control how audit messages are formatted.
 To learn more about this topic, [please review this guide](Audits.html).
 
 ```properties
-# cas.audit.auditFormat=DEFAULT|JSON
 # cas.audit.ignoreAuditFailures=false
-# cas.audit.singlelineSeparator=|
-# cas.audit.useSingleLine=false
 # cas.audit.appCode=CAS
+# cas.audit.numberOfDaysInHistory=30
 # cas.audit.includeValidationAssertion=false
 # cas.audit.alternateServerAddrHeaderName=
 # cas.audit.alternateClientAddrHeaderName=X-Forwarded-For
 # cas.audit.useServerHostAddress=false
+```
+
+### Slf4j Audits
+
+Route audit logs to the Slf4j logging system which might in turn store audit logs in a file or any other 
+destination that the logging system supports. 
+
+The logger name is fixed at `org.apereo.inspektr.audit.support`.
+
+```xml
+<AsyncLogger name="org.apereo.inspektr.audit.support" level="info">
+    <!-- Route the audit data to any number of appenders supported by the logging framework. -->
+</AsyncLogger>
+```
+
+<div class="alert alert-info"><strong></strong><p>Audit records routed to the Slf4j log are not 
+able to read the audit data back given the abstraction layer between CAS, the logging system
+and any number of log appenders that might push data to a variety of systems.</p></div>
+
+```properties
+# cas.audit.slf4j.auditFormat=DEFAULT|JSON
+# cas.audit.slf4j.singlelineSeparator=|
+# cas.audit.slf4j.useSingleLine=false
 ```
 
 ### MongoDb Audits
