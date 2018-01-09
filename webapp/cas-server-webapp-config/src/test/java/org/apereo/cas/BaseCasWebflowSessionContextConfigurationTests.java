@@ -28,7 +28,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.config.CasLoggingConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -49,9 +48,6 @@ import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.view.BeanNameViewResolver;
-import org.springframework.web.servlet.view.ContentNegotiatingViewResolver;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.LocalAttributeMap;

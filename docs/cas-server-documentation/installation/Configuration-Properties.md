@@ -2728,7 +2728,15 @@ Store audit logs inside a MongoDb database.
  
 ### Database Audits
 
-Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.audit.jdbc`.
+Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) 
+under the configuration key `cas.audit.jdbc`.
+
+```properties
+# cas.audit.jdbc.asynchronous=true
+# cas.audit.jdbc.maxAge=180
+# cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
+# cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
+```
 
 ### REST Audits
 

@@ -44,6 +44,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * This is {@link MongoDbConnectionFactory}.
@@ -59,7 +60,14 @@ public class MongoDbConnectionFactory {
     private final CustomConversions customConversions;
 
     public MongoDbConnectionFactory() {
-        final List<Converter> converters = new ArrayList();
+        this(new ArrayList<>());
+    }
+
+    public MongoDbConnectionFactory(final Converter... converters) {
+        this(Stream.of(converters).collect(Collectors.toList()));
+    }
+
+    public MongoDbConnectionFactory(final List<Converter> converters) {
         converters.add(new BaseConverters.LoggerConverter());
         converters.add(new BaseConverters.ClassConverter());
         converters.add(new BaseConverters.CommonsLogConverter());
@@ -121,7 +129,7 @@ public class MongoDbConnectionFactory {
             mongoTemplate.createCollection(collectionName);
         }
     }
-    
+
     private MongoMappingContext mongoMappingContext() {
         final MongoMappingContext mappingContext = new MongoMappingContext();
         mappingContext.setInitialEntitySet(getInitialEntitySet());
@@ -151,7 +159,7 @@ public class MongoDbConnectionFactory {
 
         if (StringUtils.isBlank(dbName)) {
             LOGGER.error("Database name cannot be undefined. It must be specified as part of the client URI connection string if used, or "
-                    + "as an individual setting for the MongoDb connection");
+                + "as an individual setting for the MongoDb connection");
         }
         return new SimpleMongoDbFactory(mongo, dbName, null, props.getAuthenticationDatabaseName());
     }
@@ -181,7 +189,7 @@ public class MongoDbConnectionFactory {
 
         if (StringUtils.isNotBlank(basePackage)) {
             final ClassPathScanningCandidateComponentProvider componentProvider = new ClassPathScanningCandidateComponentProvider(
-                    false);
+                false);
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Document.class));
             componentProvider.addIncludeFilter(new AnnotationTypeFilter(Persistent.class));
 
@@ -203,7 +211,7 @@ public class MongoDbConnectionFactory {
 
     private FieldNamingStrategy fieldNamingStrategy() {
         return abbreviateFieldNames() ? new CamelCaseAbbreviatingFieldNamingStrategy()
-                : PropertyNameFieldNamingStrategy.INSTANCE;
+            : PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
     private MongoClientOptionsFactoryBean buildMongoDbClientOptionsFactoryBean(final BaseMongoDbProperties mongo) {
@@ -268,11 +276,11 @@ public class MongoDbConnectionFactory {
         List<ServerAddress> servers = new ArrayList<>();
         if (serverAddresses.length > 1) {
             LOGGER.debug("Multiple MongoDb server addresses are defined. Ignoring port [{}], "
-                    + "assuming ports are defined as part of the address", mongo.getPort());
+                + "assuming ports are defined as part of the address", mongo.getPort());
             servers = Arrays.stream(serverAddresses)
-                    .filter(StringUtils::isNotBlank)
-                    .map(ServerAddress::new)
-                    .collect(Collectors.toList());
+                .filter(StringUtils::isNotBlank)
+                .map(ServerAddress::new)
+                .collect(Collectors.toList());
         } else {
             final int port = mongo.getPort() > 0 ? mongo.getPort() : DEFAULT_PORT;
             LOGGER.debug("Found single MongoDb server address [{}] using port [{}]" + mongo.getHost(), port);
@@ -288,7 +296,7 @@ public class MongoDbConnectionFactory {
         final MongoClientURI uri = buildMongoClientURI(clientUri, clientOptions);
         return new MongoClient(uri);
     }
-    
+
     private MongoCredential buildMongoCredential(final BaseMongoDbProperties mongo) {
         final String dbName = StringUtils.defaultIfBlank(mongo.getAuthenticationDatabaseName(), mongo.getDatabaseName());
         return MongoCredential.createCredential(mongo.getUserId(), dbName, mongo.getPassword().toCharArray());
