@@ -1,6 +1,5 @@
 package org.apereo.cas.configuration.model.core.audit;
 
-import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -12,8 +11,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 public class AuditProperties implements Serializable {
-
     private static final long serialVersionUID = 3946106584608417663L;
+
+    /**
+     * Retrieve audit records from storage, starting from now
+     * and going back the indicated number of days in history.
+     */
+    private int numberOfDaysInHistory = 30;
 
     /**
      * Whether ticket validation events in the audit log should include
@@ -30,11 +34,6 @@ public class AuditProperties implements Serializable {
      * to identify the application and filter results based on the code.
      */
     private String appCode = "CAS";
-
-    /**
-     * Character to separate audit fields if single-line audits are used.
-     */
-    private String singlelineSeparator = "|";
 
     /**
      * Request header to use identify the server address.
@@ -60,15 +59,7 @@ public class AuditProperties implements Serializable {
      * this option allows one to query DNS to look up the server address of the CAS server processing requests.
      */
     private boolean useServerHostAddress;
-
-    /**
-     * Indicates whether audit logs should be recorded as a single-line.
-     *
-     * By default, audit logs are split into multiple lines where each action and activity
-     * takes up a full line. This is a more compact version.
-     */
-    private boolean useSingleLine;
-
+    
     /**
      * Family of sub-properties pertaining to Jdbc-based audit destinations.
      */
@@ -88,11 +79,11 @@ public class AuditProperties implements Serializable {
     private AuditRestProperties rest = new AuditRestProperties();
 
     /**
-     * The audit format to use in the logs.
+     * Family of sub-properties pertaining to file-based audit destinations.
      */
-    private AbstractStringAuditTrailManager.AuditFormats auditFormat =
-            AbstractStringAuditTrailManager.AuditFormats.DEFAULT;
-
+    @NestedConfigurationProperty
+    private AuditSlf4jLogProperties slf4j = new AuditSlf4jLogProperties();
+    
     /**
      * Indicates whether catastrophic audit failures should simply be logged
      * or whether errors should bubble up and thrown back.
@@ -121,30 +112,6 @@ public class AuditProperties implements Serializable {
 
     public void setAppCode(final String appCode) {
         this.appCode = appCode;
-    }
-
-    public String getSinglelineSeparator() {
-        return singlelineSeparator;
-    }
-
-    public void setSinglelineSeparator(final String singlelineSeparator) {
-        this.singlelineSeparator = singlelineSeparator;
-    }
-
-    public boolean isUseSingleLine() {
-        return useSingleLine;
-    }
-
-    public void setUseSingleLine(final boolean useSingleLine) {
-        this.useSingleLine = useSingleLine;
-    }
-
-    public AbstractStringAuditTrailManager.AuditFormats getAuditFormat() {
-        return auditFormat;
-    }
-
-    public void setAuditFormat(final AbstractStringAuditTrailManager.AuditFormats auditFormat) {
-        this.auditFormat = auditFormat;
     }
 
     public boolean isIgnoreAuditFailures() {
@@ -193,5 +160,21 @@ public class AuditProperties implements Serializable {
 
     public void setRest(final AuditRestProperties rest) {
         this.rest = rest;
+    }
+
+    public int getNumberOfDaysInHistory() {
+        return numberOfDaysInHistory;
+    }
+
+    public void setNumberOfDaysInHistory(final int numberOfDaysInHistory) {
+        this.numberOfDaysInHistory = numberOfDaysInHistory;
+    }
+
+    public AuditSlf4jLogProperties getSlf4j() {
+        return slf4j;
+    }
+
+    public void setSlf4j(final AuditSlf4jLogProperties slf4j) {
+        this.slf4j = slf4j;
     }
 }

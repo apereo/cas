@@ -5,7 +5,7 @@ import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -24,6 +24,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -42,18 +43,17 @@ import java.util.stream.Collectors;
  * @since 3.3.5
  */
 public class StatisticsController extends BaseCasMvcEndpoint implements ServletContextAware {
-
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
     private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
 
     private final ZonedDateTime upTimeStartDate = ZonedDateTime.now(ZoneOffset.UTC);
 
-    private final DelegatingAuditTrailManager auditTrailManager;
+    private final AuditTrailExecutionPlan auditTrailManager;
     private final CentralAuthenticationService centralAuthenticationService;
     private final MetricRegistry metricsRegistry;
     private final HealthCheckRegistry healthCheckRegistry;
 
-    public StatisticsController(final DelegatingAuditTrailManager auditTrailManager,
+    public StatisticsController(final AuditTrailExecutionPlan auditTrailManager,
                                 final CentralAuthenticationService centralAuthenticationService,
                                 final MetricRegistry metricsRegistry,
                                 final HealthCheckRegistry healthCheckRegistry,
@@ -93,14 +93,14 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getMemStats")
     @ResponseBody
-    public Map<String, Object> getMemoryStats(final HttpServletRequest request,
-                                              final HttpServletResponse response) {
+    public Map<String, Object> getMemoryStats(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = new HashMap<>();
-        model.put("totalMemory", convertToMegaBytes(Runtime.getRuntime().totalMemory()));
-        model.put("maxMemory", convertToMegaBytes(Runtime.getRuntime().maxMemory()));
-        model.put("freeMemory", convertToMegaBytes(Runtime.getRuntime().freeMemory()));
+        final Runtime runtime = Runtime.getRuntime();
+        model.put("totalMemory", convertToMegaBytes(runtime.totalMemory()));
+        model.put("maxMemory", convertToMegaBytes(runtime.maxMemory()));
+        model.put("freeMemory", convertToMegaBytes(runtime.freeMemory()));
         return model;
     }
 
@@ -114,10 +114,10 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
      */
     @GetMapping(value = "/getAuthnAudit")
     @ResponseBody
-    public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request,
-                                                 final HttpServletResponse response) {
+    public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        return this.auditTrailManager.get();
+        final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 
     /**
