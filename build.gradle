@@ -125,11 +125,7 @@ subprojects {
         mavenLocal()
         mavenCentral()
         maven { url "https://build.shibboleth.net/nexus/content/repositories/releases" }
-        
-        if (rootProject.publishSnapshots) {
-            maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
-        }
-        
+        maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://oss.sonatype.org/content/repositories/releases" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
