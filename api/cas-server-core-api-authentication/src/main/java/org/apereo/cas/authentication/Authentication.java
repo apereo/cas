@@ -94,4 +94,12 @@ public interface Authentication extends Serializable {
      * @param authn the authn object
      */
     void updateAll(Authentication authn);
+    
+    /**
+     * Checks if two authentications are the same (same principal, attributes and authorization handlers).
+     * 
+     * @param other Other authn object.
+     * @return True if authorization objects (ignoring authorizationDate) are same.
+     */
+    boolean equalsIgnoreDate(Object other);
 }
