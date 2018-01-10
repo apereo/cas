@@ -126,14 +126,6 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         if (this.dataSource != null && this.jdbcTemplate != null) {
             final String userToUse = constructUsername(request, getUsernameParameter());
             final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            final AuditPointRuntimeInfo auditPointRuntimeInfo = new AuditPointRuntimeInfo() {
-                private static final long serialVersionUID = 1L;
-
-                @Override
-                public String asString() {
-                    return String.format("%s.%s", this.getClass().getName(), methodName);
-                }
-            };
             final AuditActionContext context = new AuditActionContext(
                 userToUse,
                 userToUse,
@@ -141,8 +133,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
                 this.applicationCode,
                 DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
                 clientInfo.getClientIpAddress(),
-                clientInfo.getServerIpAddress(),
-                auditPointRuntimeInfo);
+                clientInfo.getServerIpAddress());
             this.auditTrailManager.record(context);
         } else {
             LOGGER.warn("No data source is defined for [{}]. Ignoring audit record-keeping", this.getName());
