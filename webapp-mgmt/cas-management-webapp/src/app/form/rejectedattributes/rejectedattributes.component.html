@@ -5,8 +5,8 @@
       <mat-header-cell *cdkHeaderCellDef [ngClass]="'nameWidth'">Name</mat-header-cell>
       <mat-cell *cdkCellDef="let row" [ngClass]="'nameWidth'">
         <mat-form-field>
-          <input matInput #text
-                 [ngModel]="row.key"
+          <input matInput #text [matAutocomplete]="auto"
+                 [ngModel]="row.key" (click)="selectedRow = row"
                  (change)="doChange(row,$event.target.value)">
         </mat-form-field>
       </mat-cell>
@@ -38,3 +38,7 @@
     <button mat-mini-fab (click)="addRow()" style="float:right;">+</button>
   </div>
 </div>
+
+<mat-autocomplete #auto="matAutocomplete" (optionSelected)="selection($event)">
+  <mat-option *ngFor="let opt of attributeNames" [value]="opt">{{ opt }}</mat-option>
+</mat-autocomplete>
