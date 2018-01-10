@@ -18,7 +18,7 @@ public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {
     /**
      * Page size is used by a special Predicate which helps to get a page-by-page result of a query.
      */
-    private int pageSize = 500;
+    private long pageSize = 500;
     
     /**
      * Crypto settings for the registry.
@@ -38,11 +38,11 @@ public class HazelcastTicketRegistryProperties extends BaseHazelcastProperties {
         this.crypto = crypto;
     }
 
-    public int getPageSize() {
+    public long getPageSize() {
         return pageSize;
     }
 
-    public void setPageSize(final int pageSize) {
+    public void setPageSize(final long pageSize) {
         this.pageSize = pageSize;
     }
 }
