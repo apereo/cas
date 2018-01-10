@@ -55,10 +55,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         }
 
         final Set<String> prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
-        /*
-         *  when prompt=login,the following code will result in a loop of authentication and this SecurityInterceptor  will return
-         *  FALSE forever.
-         */ 
+       
         if (!clearCreds) {
             clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
         }
