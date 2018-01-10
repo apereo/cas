@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
+import com.google.common.base.Splitter;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -35,7 +36,7 @@ public class SamlIdPProperties implements Serializable {
      */
     @RequiredProperty
     private String entityId = "https://cas.example.org/idp";
-    
+
     /**
      * The scope used in generation of metadata.
      */
@@ -67,7 +68,7 @@ public class SamlIdPProperties implements Serializable {
      * SAML2 logout related settings.
      */
     private Logout logout = new Logout();
-    
+
     /**
      * Settings related to algorithms used for signing, etc.
      */
@@ -159,7 +160,7 @@ public class SamlIdPProperties implements Serializable {
          * Indicate the encoding type of the credential used when rendering the saml response.
          */
         private SignatureCredentialTypes credentialType = SignatureCredentialTypes.X509;
-        
+
         /**
          * Time unit in seconds used to skew authentication dates such
          * as valid-from and valid-until elements.
@@ -258,9 +259,10 @@ public class SamlIdPProperties implements Serializable {
             }
             final Map<String, String> nameFormats = new HashMap<>();
             this.attributeNameFormats.forEach(value -> Arrays.stream(value.split(",")).forEach(format -> {
-                final String[] values = format.split("->");
-                if (values.length == 2) {
-                    nameFormats.put(values[0], values[1]);
+                final List<String> values = Splitter.on("->").splitToList(format);
+                
+                if (values.size() == 2) {
+                    nameFormats.put(values.get(0), values.get(1));
                 }
             }));
             return nameFormats;

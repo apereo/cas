@@ -62,7 +62,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport());
             assertNotNull(getCentralAuthenticationService().createTicketGrantingTicket(ctx));
         } catch (final AbstractTicketException e) {
-            fail("Exception expected");
+            throw new AssertionError("Exception expected", e);
         }
     }
 

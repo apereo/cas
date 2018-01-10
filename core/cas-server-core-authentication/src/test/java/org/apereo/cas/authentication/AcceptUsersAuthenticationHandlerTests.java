@@ -63,7 +63,7 @@ public class AcceptUsersAuthenticationHandlerTests {
                     .supports(new HttpBasedServiceCredential(new URL(
                             "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
-            fail("Could not resolve URL.");
+            throw new AssertionError("Could not resolve URL.", e);
         }
     }
 
@@ -77,7 +77,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         try {
             assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
-            fail("Authentication exception caught but it should not have been thrown.");
+            throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
         }
     }
 

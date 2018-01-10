@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
@@ -61,9 +62,9 @@ public final class CoreAuthenticationUtils {
             list.forEach(a -> {
                 final String attributeName = a.trim();
                 if (attributeName.contains(":")) {
-                    final String[] attrCombo = attributeName.split(":");
-                    final String name = attrCombo[0].trim();
-                    final String value = attrCombo[1].trim();
+                    final List<String> attrCombo = Splitter.on(":").splitToList(attributeName);
+                    final String name = attrCombo.get(0).trim();
+                    final String value = attrCombo.get(1).trim();
                     LOGGER.debug("Mapped principal attribute name [{}] to [{}]", name, value);
                     multimap.put(name, value);
                 } else {
@@ -94,7 +95,7 @@ public final class CoreAuthenticationUtils {
                 if (resource != null) {
                     final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
                     final GroovyClassLoader classLoader = new GroovyClassLoader(Beans.class.getClassLoader(),
-                            new CompilerConfiguration(), true);
+                        new CompilerConfiguration(), true);
                     final Class<Predicate> clz = classLoader.parseClass(script);
                     return clz.getDeclaredConstructor().newInstance();
                 }
