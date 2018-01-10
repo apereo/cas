@@ -16,6 +16,7 @@ import {
 } from '../../../domain/attribute-release';
 import {Data} from '../data';
 import {SamlRegisteredService} from '../../../domain/saml-service';
+import {Util} from '../../util/util';
 
 enum Type {
   RETURN_ALL,
@@ -56,9 +57,9 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       this.type = Type.DENY_ALL;
     } else if (ReturnMappedAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       const mapped: ReturnMappedAttributeReleasePolicy = this.data.service.attributeReleasePolicy as ReturnMappedAttributeReleasePolicy;
-      this.formData.availableAttributes.forEach((item: any) => {
-        mapped.allowedAttributes[item] = mapped.allowedAttributes[item] || [item];
-      });
+      if (Util.isEmpty(mapped.allowedAttributes)) {
+        mapped.allowedAttributes = new Map();
+      }
       this.type = Type.RETURN_MAPPED;
     } else if (ReturnAllowedAttributeReleasePolicy.instanceOf(this.data.service.attributeReleasePolicy)) {
       this.type = Type.RETURN_ALLOWED;
@@ -112,9 +113,6 @@ export class AttributeReleasePoliciesComponent implements OnInit {
       case Type.RETURN_MAPPED :
         const mapped: ReturnMappedAttributeReleasePolicy = new ReturnMappedAttributeReleasePolicy(this.data.service.attributeReleasePolicy);
         mapped.allowedAttributes = new Map();
-        this.formData.availableAttributes.forEach((item: any) => {
-          mapped.allowedAttributes[item] = [item];
-        });
         this.data.service.attributeReleasePolicy = mapped;
         break;
       case Type.RETURN_ALLOWED :

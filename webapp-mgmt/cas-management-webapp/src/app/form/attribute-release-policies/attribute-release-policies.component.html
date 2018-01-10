@@ -54,8 +54,10 @@
   </mat-icon>
 </div>
 
-<div *ngIf="type == TYPE.RETURN_MAPPED && !isEmpty( formData.availableAttributes )">
-  <app-mappedattributes [attributes]="data.service.attributeReleasePolicy.allowedAttributes"></app-mappedattributes>
+<div *ngIf="type == TYPE.RETURN_MAPPED">
+  <app-rejectedattributes [attributes]="data.service.attributeReleasePolicy.allowedAttributes"
+                          [attributeNames]="data.formData.availableAttributes">
+  </app-rejectedattributes>
 </div>
 
 <div *ngIf="type == TYPE.METADATA" style="padding-top:25px;">

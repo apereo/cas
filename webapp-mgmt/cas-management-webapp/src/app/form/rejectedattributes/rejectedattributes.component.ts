@@ -5,6 +5,7 @@ import 'rxjs/add/operator/startWith';
 import 'rxjs/add/observable/merge';
 import 'rxjs/add/operator/map';
 import {Row, RowDataSource} from '../row';
+import {MatAutocompleteSelectedEvent} from '@angular/material';
 
 @Component({
   selector: 'app-rejectedattributes',
@@ -18,6 +19,11 @@ export class RejectedattributesComponent implements OnInit {
 
   @Input()
   attributes: Map<String, String[]>;
+
+  @Input()
+  attributeNames: String[];
+
+  selectedRow;
 
   constructor(public messages: Messages,
               public data: Data) {
@@ -44,5 +50,10 @@ export class RejectedattributesComponent implements OnInit {
   delete(row: Row) {
     delete this.attributes[row.key as string];
     this.dataSource.removeRow(row);
+  }
+
+  selection(val: MatAutocompleteSelectedEvent) {
+    const opt =  val.option.value;
+    this.doChange(this.selectedRow, opt)
   }
 }
