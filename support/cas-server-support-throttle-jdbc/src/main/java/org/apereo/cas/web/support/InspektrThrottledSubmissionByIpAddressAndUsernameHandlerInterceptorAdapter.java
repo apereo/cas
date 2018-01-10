@@ -3,7 +3,6 @@ package org.apereo.cas.web.support;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.slf4j.Logger;
