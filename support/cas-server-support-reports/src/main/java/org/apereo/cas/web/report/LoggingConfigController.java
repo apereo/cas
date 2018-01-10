@@ -223,7 +223,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param additive    the additive nature of the logger
      * @param request     the request
      * @param response    the response
-     * @throws Exception the exception
      */
     @PostMapping(value = "/updateLoggerLevel")
     @ResponseBody

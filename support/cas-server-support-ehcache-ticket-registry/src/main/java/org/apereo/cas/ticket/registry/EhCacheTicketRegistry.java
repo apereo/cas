@@ -42,8 +42,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
      * @param cacheManager  the cache manager
      * @param cipher        the cipher
      */
-    public EhCacheTicketRegistry(final TicketCatalog ticketCatalog, final CacheManager cacheManager,
-                                 final CipherExecutor cipher) {
+    public EhCacheTicketRegistry(final TicketCatalog ticketCatalog, final CacheManager cacheManager, final CipherExecutor cipher) {
         this.ticketCatalog = ticketCatalog;
         this.cacheManager = cacheManager;
         setCipherExecutor(cipher);
