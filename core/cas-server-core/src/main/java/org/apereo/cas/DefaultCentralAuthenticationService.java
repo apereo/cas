@@ -142,7 +142,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final Service selectedService = resolveServiceFromAuthenticationRequest(service);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
-        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, ticketGrantingTicket);
+        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, ticketGrantingTicket, false);
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
         RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket);
@@ -182,7 +182,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
-                    registeredService, proxyGrantingTicketObject);
+                    registeredService, proxyGrantingTicketObject, false);
             RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
         } catch (final PrincipalException e) {
             throw new UnauthorizedSsoServiceException();
@@ -365,7 +365,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, authentication);
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService,
+                authentication, false);
         }
 
         final TicketGrantingTicketFactory factory = this.ticketFactory.get(TicketGrantingTicket.class);

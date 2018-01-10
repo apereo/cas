@@ -138,34 +138,39 @@ public final class RegisteredServiceAccessStrategyUtils {
     /**
      * Ensure service access is allowed.
      *
-     * @param serviceTicket        the service ticket
-     * @param registeredService    the registered service
-     * @param ticketGrantingTicket the ticket granting ticket
+     * @param serviceTicket                                the service ticket
+     * @param registeredService                            the registered service
+     * @param ticketGrantingTicket                         the ticket granting ticket
+     * @param retrievePrincipalAttributesFromReleasePolicy the retrieve principal attributes from release policy
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
     public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final RegisteredService registeredService,
-                                                                final TicketGrantingTicket ticketGrantingTicket)
+                                                                final TicketGrantingTicket ticketGrantingTicket,
+                                                                final boolean retrievePrincipalAttributesFromReleasePolicy)
             throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(),
-                registeredService, ticketGrantingTicket.getAuthentication());
+                registeredService, ticketGrantingTicket.getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
     }
 
     /**
      * Ensure service access is allowed. Determines the final authentication object
      * by looking into the chained authentications of the ticket granting ticket.
      *
-     * @param service              the service
-     * @param registeredService    the registered service
-     * @param ticketGrantingTicket the ticket granting ticket
+     * @param service                                      the service
+     * @param registeredService                            the registered service
+     * @param ticketGrantingTicket                         the ticket granting ticket
+     * @param retrievePrincipalAttributesFromReleasePolicy the retrieve principal attributes from release policy
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
     public static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
-                                                                final TicketGrantingTicket ticketGrantingTicket)
+                                                                final TicketGrantingTicket ticketGrantingTicket,
+                                                                final boolean retrievePrincipalAttributesFromReleasePolicy)
             throws UnauthorizedServiceException, PrincipalException {
-        ensurePrincipalAccessIsAllowedForService(service, registeredService, ticketGrantingTicket.getRoot().getAuthentication());
+        ensurePrincipalAccessIsAllowedForService(service, registeredService,
+            ticketGrantingTicket.getRoot().getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
 
     }
 
