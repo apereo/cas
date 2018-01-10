@@ -58,7 +58,7 @@ public interface CipherExecutor<I, O> {
                     LOGGER.debug("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);
                 }
-            } catch(ClassCastException e) {
+            } catch(final ClassCastException e) {
                 LOGGER.debug("Value of key {}, is not the correct type, not decrypting, but using value as-is.", key);
                 decrypted.put(key, value);
             }
