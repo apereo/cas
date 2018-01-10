@@ -7,7 +7,7 @@ title: CAS - Monitoring
 
 CAS takes advantage of the [Spring Boot Admin][bootadmindocs] to manage and monitor its internal state visually. As a Spring Boot Admin client, CAS registers itself with the Spring Boot Admin server over HTTP and reports back its status and health to the server's web interface.
 
-## Admin Server
+## Administration Server
 
 To run the Spring Boot Admin server, please use [this WAR overlay](https://github.com/apereo/cas-bootadmin-overlay).
 
