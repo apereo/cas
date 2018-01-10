@@ -43,7 +43,9 @@
     <h5>Required Attributes</h5>
   </mat-card-title>
   <div class="cardContent">
-    <app-rejectedattributes [attributes]="data.service.accessStrategy.requiredAttributes"></app-rejectedattributes>
+    <app-rejectedattributes [attributes]="data.service.accessStrategy.requiredAttributes"
+                            [attributeNames]="data.formData.availableAttributes">
+    </app-rejectedattributes>
     <div>
       <mat-checkbox [(ngModel)]="data.service.accessStrategy.caseInsensitive">
         <ng-container i18n="services.form.label.sas.caseinsensitive">
