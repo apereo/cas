@@ -32,7 +32,7 @@ public class IgniteTicketRegistryTicketCatalogConfiguration extends CasCoreTicke
 
     @Override
     protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
-        metadata.getProperties().setStorageName("serviceTicketsCache");
+        metadata.getProperties().setStorageName("proxyTicketsCache");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getPt().getTimeToKillInSeconds());
         super.buildAndRegisterServiceTicketDefinition(plan, metadata);
     }
