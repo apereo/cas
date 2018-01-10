@@ -1,9 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
+import com.google.common.base.Splitter;
 import org.apereo.cas.util.EncodingUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -80,35 +82,35 @@ public class DefaultResponse implements Response {
      */
     public static Response getRedirectResponse(final String url, final Map<String, String> parameters) {
         final StringBuilder builder = new StringBuilder(parameters.size()
-                * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
+            * CONST_REDIRECT_RESPONSE_MULTIPLIER + CONST_REDIRECT_RESPONSE_BUFFER);
 
         final String sanitizedUrl = sanitizeUrl(url);
         LOGGER.debug("Sanitized URL for redirect response is [{}]", sanitizedUrl);
 
-        final String[] fragmentSplit = sanitizedUrl.split("#");
+        final List<String> fragmentSplit = Splitter.on("#").splitToList(sanitizedUrl);
 
-        builder.append(fragmentSplit[0]);
+        builder.append(fragmentSplit.get(0));
         final String params = parameters.entrySet()
-                .stream()
-                .filter(entry -> entry.getValue() != null).map(entry -> {
-                    String param;
-                    try {
-                        param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
-                    } catch (final Exception e) {
-                        param = String.join("=", entry.getKey(), entry.getValue());
-                    }
-                    return param;
-                })
-                .collect(Collectors.joining("&"));
+            .stream()
+            .filter(entry -> entry.getValue() != null).map(entry -> {
+                String param;
+                try {
+                    param = String.join("=", entry.getKey(), EncodingUtils.urlEncode(entry.getValue()));
+                } catch (final Exception e) {
+                    param = String.join("=", entry.getKey(), entry.getValue());
+                }
+                return param;
+            })
+            .collect(Collectors.joining("&"));
 
         if (!(params == null || params.isEmpty())) {
             builder.append(url.contains("?") ? "&" : "?");
             builder.append(params);
         }
 
-        if (fragmentSplit.length > 1) {
+        if (fragmentSplit.size() > 1) {
             builder.append('#');
-            builder.append(fragmentSplit[1]);
+            builder.append(fragmentSplit.get(1));
         }
 
         final String urlRedirect = builder.toString();
