@@ -5,7 +5,6 @@ import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
-import org.apereo.inspektr.audit.AuditPointRuntimeInfo;
 import org.apereo.inspektr.audit.AuditTrailManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -51,14 +50,7 @@ public class CasSupportJdbcAuditConfigurationTests {
         final Date since = DateTimeUtils.dateOf(LocalDate.now().minusDays(2));
         final AuditActionContext ctx = new AuditActionContext("casuser", "TEST", "TEST",
             "CAS", since, "1.2.3.4",
-            "1.2.3.4", new AuditPointRuntimeInfo() {
-            private static final long serialVersionUID = 2411879127970527584L;
-
-            @Override
-            public String asString() {
-                return "Testing";
-            }
-        });
+            "1.2.3.4");
         jdbcAuditTrailManager.record(ctx);
         final Set results = jdbcAuditTrailManager.getAuditRecordsSince(LocalDate.now());
         assertFalse(results.isEmpty());
