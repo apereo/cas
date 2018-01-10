@@ -19,7 +19,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.UUID;
 
 /**
  * This is {@link UrlResourceMetadataResolver}.
@@ -72,7 +71,7 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         final File backupDirectory = new File(md.getLocation().getFile(), "metadata-backups");
         LOGGER.debug("Metadata backup directory is at [{}]", backupDirectory.getCanonicalPath());
 
-        final String metadataFileName = service.getName().concat("-").concat(UUID.randomUUID().toString()).concat(metadataResource.getFilename());
+        final String metadataFileName = service.getName().concat("-").concat(Long.toString(service.getId())).concat(metadataResource.getFilename());
         final File backupFile = new File(backupDirectory, metadataFileName);
         if (backupFile.exists()) {
             LOGGER.warn("Metadata file designated for service [{}] already exists at path [{}].", service.getName(), backupFile.getCanonicalPath());
