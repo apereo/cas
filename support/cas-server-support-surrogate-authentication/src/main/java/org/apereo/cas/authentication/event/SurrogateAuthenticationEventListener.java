@@ -61,9 +61,14 @@ public class SurrogateAuthenticationEventListener {
         }
         if (communicationsManager.isMailSenderDefined()) {
             final EmailProperties mail = casProperties.getAuthn().getSurrogate().getMail();
-            final String to = principal.getAttributes().get(mail.getAttributeName()).toString();
-            final String text = mail.getText().concat("\n").concat(eventDetails);
-            this.communicationsManager.email(text, mail.getFrom(), mail.getSubject(), to, mail.getCc(), mail.getBcc());
+            final String emailAttribute = mail.getAttributeName();
+            final Object to = principal.getAttributes().get(emailAttribute);
+            if (to != null) {
+                final String text = mail.getText().concat("\n").concat(eventDetails);
+                this.communicationsManager.email(text, mail.getFrom(), mail.getSubject(), to.toString(), mail.getCc(), mail.getBcc());
+            } else {
+                LOGGER.trace("The principal has no {} attribute, cannot send email notification", emailAttribute);
+            }
         } else {
             LOGGER.trace("CAS is unable to send surrogate-authentication email messages given no settings are defined to account for servers, etc");
         }
