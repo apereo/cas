@@ -167,7 +167,8 @@ public final class RegisteredServiceAccessStrategyUtils {
      * @throws PrincipalException           the principal exception
      */
     public static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
-                                                                final TicketGrantingTicket ticketGrantingTicket, final boolean retrievePrincipalAttributesFromReleasePolicy)
+                                                                final TicketGrantingTicket ticketGrantingTicket,
+                                                                final boolean retrievePrincipalAttributesFromReleasePolicy)
         throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(service, registeredService,
             ticketGrantingTicket.getRoot().getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
