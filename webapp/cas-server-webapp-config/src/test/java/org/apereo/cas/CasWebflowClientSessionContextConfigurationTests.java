@@ -10,7 +10,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class CasWebflowClientSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfigurationTests {
+public class CasWebflowClientSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfiguration {
 
     @Autowired
     @Qualifier("loginFlowExecutor")
