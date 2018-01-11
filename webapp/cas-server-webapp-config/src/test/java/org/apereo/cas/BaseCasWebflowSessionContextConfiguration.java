@@ -66,7 +66,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link BaseCasWebflowSessionContextConfigurationTests}.
+ * This is {@link BaseCasWebflowSessionContextConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -112,7 +112,7 @@ import static org.junit.Assert.*;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
-public abstract class BaseCasWebflowSessionContextConfigurationTests {
+public abstract class BaseCasWebflowSessionContextConfiguration {
 
     @Test
     public void verifyExecutorsAreBeans() {
