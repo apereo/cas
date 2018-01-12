@@ -53,16 +53,17 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                                        final RequestAbstractType authnRequest,
                                                        final SamlRegisteredService service,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        
+
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
-        
+
         final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
         final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
-        return newAttributeStatement(encodedAttrs, resp.isUseAttributeFriendlyName(), nameFormats,
-                casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAttributeNameFormat());
+        return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
+            nameFormats,
+            resp.getDefaultAttributeNameFormat());
     }
 }

@@ -1708,6 +1708,7 @@ ext.libraries = [
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "joda-time", module: "joda-time")
                     exclude(group: "xml-apis", module: "xml-apis")
+                    exclude(group: "org.apache.velocity", module: "velocity")
                     exclude(group: "commons-lang", module: "commons-lang")
                     exclude(group: "com.google.guava", module: "guava")
                     exclude(group: "org.springframework", module: "spring-core")
