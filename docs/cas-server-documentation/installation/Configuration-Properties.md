@@ -4543,6 +4543,8 @@ To learn more about this topic, [please review this guide](Redis-Service-Managem
 To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html).
 
 ```properties
+# cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
+
 # Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
 # cas.serviceRegistry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
 
