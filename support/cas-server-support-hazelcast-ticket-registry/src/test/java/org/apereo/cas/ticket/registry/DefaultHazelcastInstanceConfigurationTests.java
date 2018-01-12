@@ -37,7 +37,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
@@ -76,7 +75,6 @@ import static org.junit.Assert.*;
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@TestPropertySource(properties = {"cas.ticket.registry.hazelcast.configLocation="})
 @DirtiesContext
 public class DefaultHazelcastInstanceConfigurationTests {
     private static final Logger LOGGER = LoggerFactory.getLogger(DefaultHazelcastInstanceConfigurationTests.class);
