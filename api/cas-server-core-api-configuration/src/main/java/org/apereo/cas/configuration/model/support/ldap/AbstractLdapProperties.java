@@ -1,7 +1,5 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
-import org.apache.commons.lang3.NotImplementedException;
-import org.springframework.boot.context.properties.DeprecatedConfigurationProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -532,29 +530,5 @@ public abstract class AbstractLdapProperties implements Serializable {
 
     public void setResponseTimeout(final String responseTimeout) {
         this.responseTimeout = responseTimeout;
-    }
-
-    /**
-     * @deprecated Since 5.2. 
-     * Sets user filter.
-     *
-     * @param filter the filter
-     */
-    @Deprecated
-    @DeprecatedConfigurationProperty(reason = "userFilter is replaced with searchFilter instead.", replacement = "searchFilter")
-    public void setUserFilter(final String filter) {
-        throw new NotImplementedException("userFilter is no longer supported. Use searchFilter instead");
-    }
-
-    /**
-     * @deprecated Since 5.2.
-     * Gets user filter.
-     *
-     * @return the user filter
-     */
-    @Deprecated
-    @DeprecatedConfigurationProperty(reason = "userFilter is replaced with searchFilter instead.", replacement = "searchFilter")
-    public String getUserFilter() {
-        throw new NotImplementedException("userFilter is no longer supported. Use searchFilter instead");
     }
 }

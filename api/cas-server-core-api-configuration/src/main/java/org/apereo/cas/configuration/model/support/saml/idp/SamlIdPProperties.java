@@ -181,12 +181,6 @@ public class SamlIdPProperties implements Serializable {
          */
         private String defaultAttributeNameFormat = "uri";
         /**
-         * When creating attribute definitions, will ensure
-         * the attribute's friendly name is set to the actual attribute name
-         * in the event that the service provider wishes to use the friendly name.
-         */
-        private boolean useAttributeFriendlyName = true;
-        /**
          * Each individual attribute can be mapped to a particular name-format.
          * Example: {@code attributeName->basic|uri|unspecified|custom-format-etc,...}.
          */
@@ -223,15 +217,7 @@ public class SamlIdPProperties implements Serializable {
         public void setAttributeNameFormats(final List<String> attributeNameFormats) {
             this.attributeNameFormats = attributeNameFormats;
         }
-
-        public boolean isUseAttributeFriendlyName() {
-            return useAttributeFriendlyName;
-        }
-
-        public void setUseAttributeFriendlyName(final boolean useAttributeFriendlyName) {
-            this.useAttributeFriendlyName = useAttributeFriendlyName;
-        }
-
+        
         public int getSkewAllowance() {
             return skewAllowance;
         }

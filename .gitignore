@@ -6,6 +6,7 @@ argfile*
 target
 test-output/
 bin/
+*.ignore
 *.ipr
 *.iml
 *.iws
