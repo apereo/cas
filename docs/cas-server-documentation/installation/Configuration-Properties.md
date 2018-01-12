@@ -2302,7 +2302,6 @@ Database settings for this feature are available [here](Configuration-Properties
 # cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
-# cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
 
