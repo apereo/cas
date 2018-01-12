@@ -1,7 +1,8 @@
 description = 'Apereo CAS Amazon Cloud Directory Authentication Support'
 dependencies {
-    implementation project(":core:cas-server-core-authentication-api")
     api project(":api:cas-server-core-api")
+    implementation project(":support:cas-server-support-aws")
+    implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-webflow")
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-web-api")

@@ -14,7 +14,7 @@ public interface CacheStatistics {
      * @return Current cache size.
      */
     default long getSize() {
-        return Status.UNKNOWN.getCode().value();
+        return 0;
     }
 
     /**
@@ -23,7 +23,7 @@ public interface CacheStatistics {
      * @return Current cache capacity.
      */
     default long getCapacity() {
-        return Status.UNKNOWN.getCode().value();
+        return 0;
     }
 
     /**
@@ -32,7 +32,7 @@ public interface CacheStatistics {
      * @return Eviction count.
      */
     default long getEvictions() {
-        return Status.UNKNOWN.getCode().value();
+        return 0;
     }
 
     /**
@@ -41,7 +41,7 @@ public interface CacheStatistics {
      * @return Percent of space/capacity free.
      */
     default int getPercentFree() {
-        return Status.UNKNOWN.getCode().value();
+        return 0;
     }
 
     /**

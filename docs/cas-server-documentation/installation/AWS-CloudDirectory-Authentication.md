@@ -22,3 +22,13 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#amazon-cloud-directory-authentication).
+
+AWS credentials are fetched from the following sources automatically, where relevant and made possible via CAS configuration:
+
+1. EC2 instance metadata linked to the IAM role.
+2. External properties file that contains `accessKey` and `secretKey` as property keys.
+3. AWS profile path and profile name.
+4. System properties that include `aws.accessKeyId`, `aws.secretKey` and `aws.sessionToken`
+5. Environment variables that include `AWS_ACCESS_KEY_ID`, `AWS_SECRET_KEY` and `AWS_SESSION_TOKEN`.
+6. Properties file on the classpath as `awscredentials.properties` that contains `accessKey` and `secretKey` as property keys.
+7. Static credentials for access key and secret provided directly by the configuration at hand (logging, etc).

@@ -33,7 +33,7 @@ public class U2FDeviceRegistration {
     private String username;
 
     @Lob
-    @Column(name = "record")
+    @Column(name = "record", length = 4000)
     private String record;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")

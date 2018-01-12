@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -39,14 +40,14 @@ public class RestMultifactorAuthenticationProviderBypass extends DefaultMultifac
                             + "service [{}] and provider [{}] via REST endpoint [{}]",
                     principal.getId(), registeredService, provider, rest.getUrl());
 
-            final Map<String, String> parameters = CollectionUtils.wrap("principal", CollectionUtils.wrap(principal.getId()),
-                    "provider", CollectionUtils.wrap(provider.getId()));
+            final Map<String, String> parameters = CollectionUtils.wrap("principal", principal.getId(),
+                    "provider", provider.getId());
             if (registeredService != null) {
                 parameters.put("service", registeredService.getServiceId());
             }
 
             final HttpResponse response = HttpUtils.execute(rest.getUrl(), rest.getMethod(),
-                    rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters);
+                    rest.getBasicAuthUsername(), rest.getBasicAuthPassword(), parameters, new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

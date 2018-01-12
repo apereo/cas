@@ -35,6 +35,8 @@ POST /cas/v1/tickets HTTP/1.0
 username=battags&password=password&additionalParam1=paramvalue
 ```
 
+You may also specify a `service` parameter to verify whether the authenticated user may be allowed to access the given service.
+
 ### Successful Response
 
 ```bash
@@ -70,6 +72,19 @@ username=battags&password=password&token=true&additionalParam1=paramvalue
 
 The `token` parameter may either be passed as a request parameter or a request header. The body of the response will include the ticket-granting ticket as a JWT. Note that JWTs created are typically signed and encrypted by default with pre-generated keys. To control settings or to see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#jwt-tickets).
 
+## Authenticate Credentials
+
+Similar to asking for ticket-granting tickets, this endpoint allows one to only verify the validity of provided credentials as they are extracted from the request body:
+
+```bash
+POST /cas/v1/users HTTP/1.0
+
+username=battags&password=password
+```
+
+You may also specify a `service` parameter to verify whether the authenticated user may be allowed to access the given service. While the above example shows `username` and `password` as the provided credentials, you are practically allowed to provide multiple sets and different types of credentials provided CAS is equipped to extract and recognize those from the request body. See [this  for more info](#multiple-credentials).
+
+A successful response will produce a `200 OK` status code along with a JSON representation of the authentication result, which may include the authentication object, authenticated principal along with any captured attributes and/or metadata fetched for the authenticated user.
 
 ## Request a Service Ticket
 
@@ -78,7 +93,6 @@ POST /cas/v1/tickets/{TGT id} HTTP/1.0
 
 service={form encoded parameter for the service url}
 ```
-
 
 ### Successful Response
 
@@ -111,7 +125,6 @@ via any of the validation endpoints such as `/p3/serviceValidate`.
 ```bash
 GET /cas/p3/serviceValidate?service={service url}&ticket={service ticket}
 ``` 
-
 
 ### Unsuccessful Response
 
@@ -159,28 +172,27 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-Invoke CAS to register applications into its own service registry. The REST
-call must be authenticated as it requires a TGT from the CAS server, and furthermore,
-the authenticated principal that submits the request must be authorized with a
-pre-configured role name and value that is designated in the CAS configuration
-via the CAS properties.
+Invoke CAS to register applications into its own service registry. The REST call must be authenticated using basic authentication where credentials are authenticated and accepted by the existing CAS authentication strategy, and furthermore the authenticated principal must be authorized with a pre-configured role/attribute name and value that is designated in the CAS configuration via the CAS properties. The body of the request must be the service definition that shall be registered in JSON format and of course, CAS must be configured to accept the particular service type defined in the body. The accepted media type for this request is `application/json`.
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#rest-api).
 
 ```bash
-POST /cas/v1/services/add/{TGT id} HTTP/1.0
-serviceId=svcid&name=svcname&description=svcdesc&evaluationOrder=1234&enabled=true&ssoEnabled=true
+POST /cas/v1/services HTTP/1.0
 ```
 
-### Successful Response
+...where body of the request may be:
 
-If the request is successful, the returned value in the response would be
-the generated identifier of the new service.
-
-```bash
-200 OK
-5463544213
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "...",
+  "name" : "...",
+  "id" : 1,
+  "description": "..."
+}
 ```
+
+A successful response will produce a `200` status code in return.
 
 ## X.509 Authentication
 
@@ -193,9 +205,7 @@ the CAS server from external users behind firewall or a messaging bus and
 allows only trusted applications to connect to the CAS server.
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>The X.509 feature over REST
-provides a tremendously convenient target for claiming user identities. To securely use this feature, network
-configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn
-have strict security limitations and logging.</p></div>
+provides a tremendously convenient target for claiming user identities. To securely use this feature, network configuration <strong>MUST</strong> allow connections to the CAS server only from trusted hosts which in turn have strict security limitations and logging.</p></div>
 
 Support is enabled by including the following in your overlay:
 
@@ -207,19 +217,25 @@ Support is enabled by including the following in your overlay:
 </dependency>
 ```
 
-## Request a Ticket Granting Ticket
+### Request a Ticket Granting Ticket
 
 ```bash
 POST /cas/v1/tickets HTTP/1.0
 cert=<ascii certificate>
 ```
 
-### Successful Response
+#### Successful Response
 
 ```bash
 201 Created
 Location: http://www.whatever.com/cas/v1/tickets/{TGT id}
 ```
+
+## Multiple Credentials
+
+The CAS REST API machinery has the ability to use multiple *credential extractors* that are tasked with analyzing the request body in order to fetch credentials and pass them along. While by default expected credentials that may be extracted are based on username/password, additional modules automatically lend themselves into this design and inject their opiniated credential extractor into the REST engine automatically so that the final collection of credentials may be used for issuing tickets, etc. This is, in a sense, how the [X.509 authentication](#x509-authentication) is integrated with the CAS REST Protocol. 
+
+This indicates that you may pass along multiple credentials to the REST protocol in the request body and so long as CAS is cofigured to understand and extract those credentials and the authentication machinery is configured to also execute and validate those credentials. For instance, you may deliver a use case where two sets of credentials in form of username/password and OTP are provided to the REST protocol and CAS would then attempt to authenticate both credentials and produce a response on a successful validation, assuming that authentication strategies for username/password and OTP are properly configured in CAS.
 
 ## CAS REST Clients
 

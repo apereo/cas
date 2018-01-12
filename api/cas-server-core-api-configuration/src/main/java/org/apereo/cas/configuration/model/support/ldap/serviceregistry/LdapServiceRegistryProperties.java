@@ -31,6 +31,18 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
      */
     private String serviceDefinitionAttribute = "description";
 
+    /**
+     * The search filter used to load entries by the {@link #idAttribute}.
+     * This is typically used to load a specific service definition by its id during search operations.
+     */
+    private String searchFilter = "(%s={0})";
+
+    /**
+     * The search filter used to load entries by the {@link #objectClass}.
+     * This is typically used to load all definitions that might be mapped to a service definition.
+     */
+    private String loadFilter = "(objectClass=%s)";
+    
     public String getObjectClass() {
         return objectClass;
     }
@@ -53,6 +65,24 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
 
     public void setServiceDefinitionAttribute(final String serviceDefinitionAttribute) {
         this.serviceDefinitionAttribute = serviceDefinitionAttribute;
+    }
+
+    @Override
+    public String getSearchFilter() {
+        return String.format(this.searchFilter, getIdAttribute());
+    }
+
+    @Override
+    public void setSearchFilter(final String searchFilter) {
+        this.searchFilter = searchFilter;
+    }
+
+    public String getLoadFilter() {
+        return String.format(this.loadFilter, getObjectClass());
+    }
+
+    public void setLoadFilter(final String loadFilter) {
+        this.loadFilter = loadFilter;
     }
 }
 

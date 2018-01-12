@@ -21,14 +21,22 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azuread                  : [
+        azuread                 : [
                 dependencies.create("com.microsoft.azure:adal4j:$azureActiveDirectoryVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
                 }
         ],
-        
-        splunklogging : [
+        apachesyncope           : [
+                dependencies.create("org.apache.syncope.common:syncope-common-lib:$apacheSyncopeVersion") {
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.apache.cxf", module: "cxf-rt-transports-http")
+                    exclude(group: "org.apache.cxf", module: "cxf-rt-frontend-jaxrs")
+                    exclude(group: "org.apache.cxf", module: "cxf-core")
+                    force = true
+                }
+        ],
+        splunklogging           : [
                 dependencies.create("com.splunk.logging:splunk-library-javalogging:$splunkLoggingVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     force = true
@@ -518,8 +526,29 @@ ext.libraries = [
         hazelcast               : [
                 dependencies.create("com.hazelcast:hazelcast:$hazelcastVersion") {
                     force = true
-                },
+                }
+        ],
+        hazelcastaws : [
                 dependencies.create("com.hazelcast:hazelcast-aws:$hazelcastAwsVersion") {
+                    force = true
+                }
+        ],
+        hazelcastazure : [
+                dependencies.create("com.hazelcast:hazelcast-azure:$hazelcastAzureVersion") {
+                    force = true
+                }
+        ],
+        jclouds                 : [
+                dependencies.create("com.hazelcast:hazelcast-jclouds:$hazelcastJCloudsVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.jclouds:jclouds-compute:$jcloudsVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.jclouds:jclouds-allcompute:$jcloudsVersion") {
+                    force = true
+                },
+                dependencies.create("org.apache.jclouds.labs:google-compute-engine:$jcloudsGoogleEngineVersion") {
                     force = true
                 }
         ],
@@ -597,6 +626,17 @@ ext.libraries = [
         ],
         awsclouddirectory       : [
                 dependencies.create("com.amazonaws:aws-java-sdk-clouddirectory:$amazonSdkVersion") {
+                    exclude(group: "commons-logging", module: "commons-logging")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient")
+                    exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                }
+        ],
+        aws       : [
+                dependencies.create("com.amazonaws:aws-java-sdk-core:$amazonSdkVersion") {
                     exclude(group: "commons-logging", module: "commons-logging")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient")
                     exclude(group: "org.apache.httpcomponents", module: "httpclient-cache")
@@ -1139,7 +1179,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azurekeyvault : [
+        azurekeyvault           : [
                 dependencies.create("com.microsoft.azure:azure-keyvault-secrets-spring-boot-starter:$azureKeyVaultSecretsVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }
@@ -1770,6 +1810,16 @@ ext.libraries = [
             exclude(group: "commons-lang", module: "commons-lang")
             force = true
         },
+        /*
+        springcomponentindexer: [
+                dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                }
+        ],
+        */
         springbootconfigmetadata: [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -2208,7 +2258,7 @@ ext.libraries = [
                     force = true
                 }
         ],
-        springcloudconsul : [
+        springcloudconsul       : [
                 dependencies.create("org.springframework.cloud:spring-cloud-starter-consul-all:$springCloudConsulVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                 }

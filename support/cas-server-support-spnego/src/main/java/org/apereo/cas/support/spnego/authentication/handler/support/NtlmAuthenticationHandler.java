@@ -10,10 +10,10 @@ import jcifs.smb.NtlmPasswordAuthentication;
 import jcifs.smb.SmbAuthException;
 import jcifs.smb.SmbSession;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -65,7 +65,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final SpnegoCredential ntlmCredential = (SpnegoCredential) credential;
         final byte[] src = ntlmCredential.getInitToken();
 
@@ -124,7 +124,7 @@ public class NtlmAuthenticationHandler extends AbstractPreAndPostProcessingAuthe
         if (!success) {
             throw new FailedLoginException();
         }
-        return new DefaultHandlerResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(ntlmCredential), ntlmCredential.getPrincipal());
     }
 
     @Override

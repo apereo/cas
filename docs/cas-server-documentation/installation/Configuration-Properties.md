@@ -382,12 +382,23 @@ for the embedded Tomcat container.
 # cas.server.extAccessLog.directory=
 ```
 
-#### Rewrite Valve Valve
+#### Rewrite Valve
 
 Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
 
 ```properties
 # cas.server.rewriteValve.location=classpath://container/tomcat/rewrite.config
+```
+
+#### Basic Authentication
+
+Enable basic authentication for the embedded Apache Tomcat.
+
+```properties
+# cas.server.basicAuthn.enabled=true
+# cas.server.basicAuthn.securityRoles[0]=admin
+# cas.server.basicAuthn.authRoles[0]=admin
+# cas.server.basicAuthn.patterns[0]=/*
 ```
 
 ## CAS Server
@@ -1327,6 +1338,21 @@ Password encoding  settings for this feature are available [here](Configuration-
 # cas.authn.file.name=
 ```
 
+## JSON (Whitelist) Authentication
+
+To learn more about this topic, [please review this guide](Whitelist-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.json`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.json`.
+
+LDAP password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.json.passwordPolicy`. 
+
+```properties
+# cas.authn.json.location=file:///path/to/users/file.json
+# cas.authn.json.name=
+```
+
 ## Reject Users (Blacklist) Authentication
 
 To learn more about this topic, [please review this guide](Blacklist-Authentication.html). 
@@ -1478,73 +1504,15 @@ To learn more about this topic, [please review this guide](LDAP-Authentication.h
 # cas.authn.ldap[0].credentialCriteria=
 ```
 
+### LDAP Password Policy
+
+LDAP password policy settings for this feature are available [here](Configuration-Properties-Common.html#password-policy-settings) under the configuration key `cas.authn.ldap[0].passwordPolicy`. 
+
 ### LDAP Password Encoding & Principal Transformation
 
 Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.ldap[0]`. 
 
 Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.ldap[0]`.
-
-
-### LDAP Password Policy
-
-```properties
-# cas.authn.ldap[0].passwordPolicy.type=GENERIC|AD|FreeIPA|EDirectory
-
-# cas.authn.ldap[0].passwordPolicy.enabled=true
-# cas.authn.ldap[0].passwordPolicy.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
-# cas.authn.ldap[0].passwordPolicy.loginFailures=5
-# cas.authn.ldap[0].passwordPolicy.warningAttributeValue=
-# cas.authn.ldap[0].passwordPolicy.warningAttributeName=
-# cas.authn.ldap[0].passwordPolicy.displayWarningOnMatch=true
-# cas.authn.ldap[0].passwordPolicy.warnAll=true
-# cas.authn.ldap[0].passwordPolicy.warningDays=30
-
-# An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
-# cas.authn.ldap[0].passwordPolicy.customPolicyClass=com.example.MyAuthenticationResponseHandler
-
-# cas.authn.ldap[0].passwordPolicy.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
-# cas.authn.ldap[0].passwordPolicy.groovy.location=file:/etc/cas/config/password-policy.groovy
-```
-
-#### Password Policy Strategies
-
-Password policy strategy types are outlined below. The strategy evaluates the authentication response received from LDAP and is allowed to review it upfront in order to further examine whether account state, messages and warnings is eligible for further investigation.
-
-| Option        | Description
-|---------------|-----------------------------------------------------------------------------
-| `DEFAULT`     | Accepts the auhentication response as is, and processes account state, if any.
-| `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
-| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
-
-If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
-
-```groovy
-import java.util.*
-import org.ldaptive.auth.*
-import org.apereo.cas.*
-import org.apereo.cas.authentication.*
-import org.apereo.cas.authentication.support.*
-
-def List<MessageDescriptor> run(final Object... args) {
-    def response = args[0]
-    def configuration = args[1];
-    def logger = args[2]
-
-    logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
-
-    def accountStateHandler = configuration.getAccountStateHandler()
-    return accountStateHandler.handle(response, configuration)
-}
-```
-
-The parameters passed are as follows:
-
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------------------
-| `response`            | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse`
-| `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
-
 
 ## REST Authentication
 
@@ -1586,31 +1554,33 @@ Principal resolution and Person Directory settings for this feature are availabl
 
 ```properties
 # cas.authn.spnego.kerberosConf=
+# cas.authn.spnego.loginConf=
+# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
+
+# cas.authn.spnego.jcifsUsername=
+# cas.authn.spnego.jcifsDomainController=
+# cas.authn.spnego.jcifsDomain=
+# cas.authn.spnego.jcifsServicePassword=
+# cas.authn.spnego.jcifsPassword=
+
 # cas.authn.spnego.mixedModeAuthentication=false
 # cas.authn.spnego.cachePolicy=600
 # cas.authn.spnego.timeout=300000
 # cas.authn.spnego.jcifsServicePrincipal=HTTP/cas.example.com@EXAMPLE.COM
 # cas.authn.spnego.jcifsNetbiosWins=
-# cas.authn.spnego.loginConf=
 # cas.authn.spnego.ntlmAllowed=true
 # cas.authn.spnego.hostNamePatternString=.+
-# cas.authn.spnego.jcifsUsername=
 # cas.authn.spnego.useSubjectCredsOnly=false
 # cas.authn.spnego.supportedBrowsers=MSIE,Trident,Firefox,AppleWebKit
-# cas.authn.spnego.jcifsDomainController=
 # cas.authn.spnego.dnsTimeout=2000
 # cas.authn.spnego.hostNameClientActionStrategy=hostnameSpnegoClientAction
 # cas.authn.spnego.kerberosKdc=172.10.1.10
 # cas.authn.spnego.alternativeRemoteHostAttribute=alternateRemoteHeader
-# cas.authn.spnego.jcifsDomain=
 # cas.authn.spnego.ipsToCheckPattern=127.+
 # cas.authn.spnego.kerberosDebug=true
 # cas.authn.spnego.send401OnAuthenticationFailure=true
-# cas.authn.spnego.kerberosRealm=EXAMPLE.COM
 # cas.authn.spnego.ntlm=false
 # cas.authn.spnego.principalWithDomainName=false
-# cas.authn.spnego.jcifsServicePassword=
-# cas.authn.spnego.jcifsPassword=
 # cas.authn.spnego.spnegoAttributeName=distinguishedName
 # cas.authn.spnego.name=
 ```
@@ -1847,6 +1817,20 @@ Principal resolution and Person Directory settings for this feature are availabl
 ### X509 LDAP Integration
 
 LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.authn.x509.ldap`.
+
+## Syncope Authentication
+
+To learn more about this topic, [please review this guide](Syncope-Authentication.html). 
+
+Principal transformation settings for this feature are available [here](Configuration-Properties-Common.html#authentication-principal-transformation) under the configuration key `cas.authn.syncope`. 
+
+Password encoding  settings for this feature are available [here](Configuration-Properties-Common.html#password-encoding) under the configuration key `cas.authn.syncope`.
+
+```properties
+# cas.authn.syncope.domain=Master
+# cas.authn.syncope.url=https://idm.instance.org/syncope
+# cas.authn.syncope.name=
+```
 
 ## Shiro Authentication
 
@@ -2144,7 +2128,7 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`.
+Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`. The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F JSON
 
@@ -2725,6 +2709,10 @@ Store audit logs inside a MongoDb database.
 
 Store audit logs inside a database. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.audit.jdbc`.
 
+### REST Audits
+
+Store audit logs inside a database. RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.audit.rest`.
+
 ## Sleuth Distributed Tracing
 
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html#distributed-tracing).
@@ -3007,6 +2995,8 @@ To learn more about this topic, [please review this guide](LDAP-Service-Manageme
 # cas.serviceRegistry.ldap.serviceDefinitionAttribute=description
 # cas.serviceRegistry.ldap.idAttribute=uid
 # cas.serviceRegistry.ldap.objectClass=casRegisteredService
+# cas.serviceRegistry.ldap.searchFilter=(%s={0})
+# cas.serviceRegistry.ldap.loadFilter=(objectClass=%s)
 ```
 
 ### Couchbase Service Registry

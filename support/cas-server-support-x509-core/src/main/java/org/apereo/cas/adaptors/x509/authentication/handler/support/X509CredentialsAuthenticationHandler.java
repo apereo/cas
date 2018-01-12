@@ -4,10 +4,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -152,7 +152,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
 
         final X509CertificateCredential x509Credential = (X509CertificateCredential) credential;
         final X509Certificate[] certificates = x509Credential.getCertificates();
@@ -181,7 +181,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
-            return new DefaultHandlerResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
+            return new DefaultAuthenticationHandlerExecutionResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
         }
         LOGGER.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();

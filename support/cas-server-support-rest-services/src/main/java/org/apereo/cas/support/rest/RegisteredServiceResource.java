@@ -1,29 +1,39 @@
 package org.apereo.cas.support.rest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
-import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.InvalidTicketException;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.RegexUtils;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.WebContext;
+import org.pac4j.core.credentials.UsernamePasswordCredentials;
+import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.Serializable;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * {@link RestController} implementation of a REST API
@@ -38,15 +48,18 @@ public class RegisteredServiceResource {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceResource.class);
 
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final ServiceFactory serviceFactory;
     private final ServicesManager servicesManager;
-    private final CentralAuthenticationService centralAuthenticationService;
     private final String attributeName;
     private final String attributeValue;
 
-    public RegisteredServiceResource(final ServicesManager servicesManager, final CentralAuthenticationService centralAuthenticationService,
+    public RegisteredServiceResource(final AuthenticationSystemSupport authenticationSystemSupport,
+                                     final ServiceFactory serviceFactory, final ServicesManager servicesManager,
                                      final String attributeName, final String attributeValue) {
+        this.authenticationSystemSupport = authenticationSystemSupport;
+        this.serviceFactory = serviceFactory;
         this.servicesManager = servicesManager;
-        this.centralAuthenticationService = centralAuthenticationService;
         this.attributeName = attributeName;
         this.attributeValue = attributeValue;
     }
@@ -54,97 +67,55 @@ public class RegisteredServiceResource {
     /**
      * Create new service.
      *
-     * @param tgtId             ticket granting ticket id URI path param
-     * @param serviceDataHolder the service to register and save in rest form
+     * @param service  the service
+     * @param request  the request
+     * @param response the response
      * @return {@link ResponseEntity} representing RESTful response
      */
-    @PostMapping(value = "/v1/services/add/{tgtId:.+}", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-    public ResponseEntity<String> createService(@ModelAttribute final ServiceDataHolder serviceDataHolder, @PathVariable("tgtId") final String tgtId) {
+    @PostMapping(value = "/v1/services", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<String> createService(@RequestBody final RegisteredService service,
+                                                final HttpServletRequest request, final HttpServletResponse response) {
         try {
-            if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
-                throw new IllegalArgumentException("Attribute name and/or value must be configured");
+            final Authentication auth = authenticateRequest(request, response);
+            if (isAuthenticatedPrincipalAuthorized(auth)) {
+                this.servicesManager.save(service);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
-
-            final TicketGrantingTicket ticket = this.centralAuthenticationService.getTicket(tgtId, TicketGrantingTicket.class);
-            if (ticket == null || ticket.isExpired()) {
-                throw new InvalidTicketException("Ticket-granting ticket " + tgtId + " is not found");
-            }
-            final Map<String, Object> attributes = ticket.getAuthentication().getPrincipal().getAttributes();
-            if (attributes.containsKey(this.attributeName)) {
-                final Collection<String> attributeValuesToCompare = new HashSet<>();
-                final Object value = attributes.get(this.attributeName);
-                if (value instanceof Collection) {
-                    attributeValuesToCompare.addAll((Collection<String>) value);
-                } else {
-                    attributeValuesToCompare.add(value.toString());
-                }
-
-                if (attributeValuesToCompare.contains(this.attributeValue)) {
-                    final RegisteredService service = serviceDataHolder.getRegisteredService();
-                    final RegisteredService savedService = this.servicesManager.save(service);
-                    return new ResponseEntity<>(String.valueOf(savedService.getId()), HttpStatus.OK);
-                }
-            }
-            throw new IllegalArgumentException("Request is not authorized");
-
-        } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>("TicketGrantingTicket could not be found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>("Request is not authorized", HttpStatus.FORBIDDEN);
+        } catch (final AuthenticationException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.UNAUTHORIZED);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         }
     }
 
-    private static class ServiceDataHolder implements Serializable {
-
-        private static final long serialVersionUID = 3035541944428412672L;
-
-        private String serviceId;
-        private String name;
-        private String description;
-        private int evaluationOrder = Integer.MAX_VALUE;
-        private boolean enabled;
-        private boolean ssoEnabled;
-
-        public void setServiceId(final String serviceId) {
-            this.serviceId = serviceId;
+    private boolean isAuthenticatedPrincipalAuthorized(final Authentication auth) {
+        final Map<String, Object> attributes = auth.getPrincipal().getAttributes();
+        LOGGER.debug("Evaluating principal attributes [{}]", attributes.keySet());
+        if (StringUtils.isBlank(this.attributeName) || StringUtils.isBlank(this.attributeValue)) {
+            LOGGER.error("No attribute name or value is defined to authorize this request");
+            return false;
         }
-
-        public void setName(final String serviceName) {
-            this.name = serviceName;
+        final Pattern pattern = RegexUtils.createPattern(this.attributeValue);
+        if (attributes.containsKey(this.attributeName)) {
+            final Collection<Object> values = CollectionUtils.toCollection(attributes.get(this.attributeName));
+            return values.stream().anyMatch(t -> RegexUtils.matches(pattern, t.toString()));
         }
+        return false;
+    }
 
-        public void setDescription(final String description) {
-            this.description = description;
+    private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+        final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
+        final WebContext webContext = new J2EContext(request, response);
+        final UsernamePasswordCredentials credentials = extractor.extract(webContext);
+        if (credentials != null) {
+            LOGGER.debug("Received basic authentication request from credentials [{}]", credentials);
+            final Credential c = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
+            final Service serviceRequest = this.serviceFactory.createService(request);
+            final AuthenticationResult result = authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(serviceRequest, c);
+            return result.getAuthentication();
         }
-
-        public void setEvaluationOrder(final int evaluationOrder) {
-            this.evaluationOrder = evaluationOrder;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public void setSsoEnabled(final boolean ssoEnabled) {
-            this.ssoEnabled = ssoEnabled;
-        }
-
-        public RegisteredService getRegisteredService() {
-            if (StringUtils.isBlank(this.serviceId) || StringUtils.isBlank(this.name)
-                    || StringUtils.isBlank(this.description)) {
-                throw new IllegalArgumentException("Service name/description/id is missing");
-            }
-
-            final RegexRegisteredService service = new RegexRegisteredService();
-            service.setServiceId(this.serviceId);
-            service.setDescription(this.description);
-            service.setName(this.name);
-            service.setEvaluationOrder(this.evaluationOrder);
-            service.setAccessStrategy(
-                    new DefaultRegisteredServiceAccessStrategy(this.enabled, this.ssoEnabled));
-            return service;
-        }
-
+        throw new BadRestRequestException("Could not authenticate request");
     }
 }

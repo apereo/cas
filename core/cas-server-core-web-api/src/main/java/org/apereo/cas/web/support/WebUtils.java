@@ -3,6 +3,7 @@ package org.apereo.cas.web.support;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
@@ -30,6 +31,7 @@ import org.springframework.webflow.context.servlet.ServletExternalContext;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.FlowSession;
 import org.springframework.webflow.execution.RequestContext;
+import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -86,8 +88,8 @@ public final class WebUtils {
      */
     public static HttpServletRequest getHttpServletRequestFromExternalWebflowContext(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
-                "Cannot obtain HttpServletRequest from event of type: "
-                        + context.getExternalContext().getClass().getName());
+            "Cannot obtain HttpServletRequest from event of type: "
+                + context.getExternalContext().getClass().getName());
 
         return (HttpServletRequest) context.getExternalContext().getNativeRequest();
     }
@@ -105,7 +107,7 @@ public final class WebUtils {
         return null;
 
     }
-    
+
     /**
      * Gets the http servlet response from the context.
      *
@@ -114,7 +116,7 @@ public final class WebUtils {
      */
     public static HttpServletResponse getHttpServletResponseFromExternalWebflowContext(final RequestContext context) {
         Assert.isInstanceOf(ServletExternalContext.class, context.getExternalContext(),
-                "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
+            "Cannot obtain HttpServletResponse from event of type: " + context.getExternalContext().getClass().getName());
         return (HttpServletResponse) context.getExternalContext().getNativeResponse();
     }
 
@@ -130,7 +132,7 @@ public final class WebUtils {
         }
         return null;
     }
-    
+
 
     /**
      * Gets the service.
@@ -256,7 +258,7 @@ public final class WebUtils {
     public static URI getUnauthorizedRedirectUrlIntoFlowScope(final RequestContext context) {
         return context.getFlowScope().get(PARAMETER_UNAUTHORIZED_REDIRECT_URL, URI.class);
     }
-    
+
     /**
      * Put logout requests into flow scope.
      *
@@ -334,8 +336,8 @@ public final class WebUtils {
         }
         if (!clazz.isAssignableFrom(credential.getClass())) {
             throw new ClassCastException("credential [" + credential.getId()
-                    + " is of type " + credential.getClass()
-                    + " when we were expecting " + clazz);
+                + " is of type " + credential.getClass()
+                + " when we were expecting " + clazz);
         }
         return (T) credential;
     }
@@ -390,7 +392,7 @@ public final class WebUtils {
             context.getConversationScope().put(PARAMETER_CREDENTIAL, c);
         }
     }
-    
+
 
     /**
      * Is authenticating at a public workstation?
@@ -512,7 +514,7 @@ public final class WebUtils {
     public static AuthenticationResult getAuthenticationResult(final RequestContext ctx) {
         return ctx.getConversationScope().get(PARAMETER_AUTHENTICATION_RESULT, AuthenticationResult.class);
     }
-    
+
     /**
      * Gets http servlet request user agent.
      *
@@ -522,7 +524,7 @@ public final class WebUtils {
         final HttpServletRequest httpServletRequestFromExternalWebflowContext = getHttpServletRequestFromExternalWebflowContext();
         return HttpRequestUtils.getHttpServletRequestUserAgent(httpServletRequestFromExternalWebflowContext);
     }
-    
+
     /**
      * Gets http servlet request geo location.
      *
@@ -734,5 +736,22 @@ public final class WebUtils {
         final Map model = new HashMap<>();
         model.put("rootCauseException", e);
         return new ModelAndView(CasWebflowConstants.VIEW_ID_SERVICE_ERROR, model);
+    }
+
+    /**
+     * Gets in progress authentication.
+     *
+     * @return the in progress authentication
+     */
+    public static Authentication getInProgressAuthentication() {
+        Authentication authentication = null;
+        final RequestContext context = RequestContextHolder.getRequestContext();
+        if (context != null) {
+            authentication = WebUtils.getAuthentication(context);
+        }
+        if (authentication == null) {
+            authentication = AuthenticationCredentialsLocalBinder.getInProgressAuthentication();
+        }
+        return authentication;
     }
 }

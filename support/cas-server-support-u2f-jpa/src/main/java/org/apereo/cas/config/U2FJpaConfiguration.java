@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.storage.U2FJpaDeviceRepository;
@@ -41,6 +42,10 @@ public class U2FJpaConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("u2fRegistrationRecordCipherExecutor")
+    private CipherExecutor u2fRegistrationRecordCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -87,7 +92,11 @@ public class U2FJpaConfiguration {
                 Caffeine.newBuilder()
                         .expireAfterWrite(u2f.getExpireRegistrations(), u2f.getExpireRegistrationsTimeUnit())
                         .build(key -> StringUtils.EMPTY);
-        return new U2FJpaDeviceRepository(requestStorage, u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
+        final U2FJpaDeviceRepository repo = new U2FJpaDeviceRepository(requestStorage,
+                u2f.getExpireRegistrations(),
+                u2f.getExpireDevicesTimeUnit());
+        repo.setCipherExecutor(this.u2fRegistrationRecordCipherExecutor);
+        return repo;
     }
 
 }

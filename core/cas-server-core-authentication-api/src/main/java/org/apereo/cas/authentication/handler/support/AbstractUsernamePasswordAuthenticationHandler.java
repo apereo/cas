@@ -2,8 +2,8 @@ package org.apereo.cas.authentication.handler.support;
 
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -43,7 +43,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
 
         final UsernamePasswordCredential originalUserPass = (UsernamePasswordCredential) credential;
         final UsernamePasswordCredential userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
@@ -80,15 +80,16 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      * Authenticates a username/password credential by an arbitrary strategy with extra parameter original credential password before
      * encoding password. Override it if implementation need to use original password for authentication.
      *
-     * @param transformedCredential the credential object bearing the transformed username and password.
-     * @param originalPassword      original password from credential before password encoding
-     * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
+     * @param credential       the credential object bearing the transformed username and password.
+     * @param originalPassword original password from credential before password encoding
+     * @return AuthenticationHandlerExecutionResult resolved from credential on authentication success or null if no principal could be resolved
      * from the credential.
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword)
-            throws GeneralSecurityException, PreventedException;
+    protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential,
+                                                                                                 String originalPassword)
+        throws GeneralSecurityException, PreventedException;
 
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
@@ -120,7 +121,7 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
         LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
         final boolean result = this.credentialSelectionPredicate.test(credential);
         LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]",
-                credential, getName(), BooleanUtils.toStringTrueFalse(result));
+            credential, getName(), BooleanUtils.toStringTrueFalse(result));
         return result;
     }
 

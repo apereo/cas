@@ -25,9 +25,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.Assert;
 
+import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -165,7 +167,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                             final AuthenticationTransaction transaction) {
         LOGGER.debug("Invoking authentication metadata populators for authentication transaction");
         final Collection<AuthenticationMetaDataPopulator> pops = getAuthenticationMetadataPopulatorsForTransaction(transaction);
-        pops.forEach(populator -> transaction.getCredentials().stream().filter(populator::supports)
+        pops.forEach(populator -> transaction.getCredentials()
+            .stream()
+            .filter(populator::supports)
             .forEach(credential -> populator.populateAttributes(builder, transaction)));
     }
 
@@ -252,22 +256,18 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                                                    final PrincipalResolver resolver,
                                                    final AuthenticationHandler handler) throws GeneralSecurityException, PreventedException {
 
-        Principal principal;
-
         publishEvent(new CasAuthenticationTransactionStartedEvent(this, credential));
 
-        final HandlerResult result = handler.authenticate(credential);
+        final AuthenticationHandlerExecutionResult result = handler.authenticate(credential);
         builder.addSuccess(handler.getName(), result);
         LOGGER.debug("Authentication handler [{}] successfully authenticated [{}]", handler.getName(), credential);
 
         publishEvent(new CasAuthenticationTransactionSuccessfulEvent(this, credential));
-        principal = result.getPrincipal();
+        Principal principal = result.getPrincipal();
 
         final String resolverName = resolver != null ? resolver.getClass().getSimpleName() : "N/A";
         if (resolver == null) {
-            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]",
-                handler.getName(),
-                principal);
+            LOGGER.debug("No principal resolution is configured for [{}]. Falling back to handler principal [{}]", handler.getName(), principal);
         } else {
             principal = resolvePrincipal(handler, resolver, credential, principal);
             if (principal == null) {
@@ -284,7 +284,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         if (principal == null) {
-            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal. ");
+            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.");
         } else {
             builder.setPrincipal(principal);
         }
@@ -345,46 +345,64 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     protected AuthenticationBuilder authenticateInternal(final AuthenticationTransaction transaction) throws AuthenticationException {
         final Collection<Credential> credentials = transaction.getCredentials();
+        LOGGER.debug("Authentication credentials provided for this transaction are [{}]", credentials);
+
+        if (credentials.isEmpty()) {
+            LOGGER.error("Resolved authentication handlers for this transaction are empty");
+            throw new AuthenticationException("Resolved credentials for this transaction are empty");
+        }
+
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
         credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
         final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);
         Assert.notNull(handlerSet, "Resolved authentication handlers for this transaction cannot be null");
-        if (handlerSet.isEmpty()) {
-            LOGGER.warn("Resolved authentication handlers for this transaction are empty");
-        }
+        LOGGER.debug("Candidate resolved authentication handlers for this transaction are [{}]", handlerSet);
 
-        final boolean success = credentials
-            .stream()
-            .anyMatch(credential -> {
-                final boolean isSatisfied = handlerSet
-                    .stream()
-                    .filter(handler -> handler.supports(credential))
-                    .anyMatch(handler -> {
+        if (handlerSet.isEmpty()) {
+            LOGGER.error("Resolved authentication handlers for this transaction are empty");
+            throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
+        }
+        
+        try {
+            final Iterator<Credential> it = credentials.iterator();
+            AuthenticationCredentialsLocalBinder.clearInProgressAuthentication();
+            while (it.hasNext()) {
+                final Credential credential = it.next();
+                LOGGER.debug("Attempting to authenticate credential [{}]", credential);
+
+                final Iterator<AuthenticationHandler> itHandlers = handlerSet.iterator();
+                boolean proceedWithNextHandler = true;
+                while (proceedWithNextHandler && itHandlers.hasNext()) {
+                    final AuthenticationHandler handler = itHandlers.next();
+                    if (handler.supports(credential)) {
                         try {
                             final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
+                            LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
+                            AuthenticationCredentialsLocalBinder.bindInProgress(builder.build());
+
                             final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build());
-                            return failures.getKey();
+                            proceedWithNextHandler = !failures.getKey();
                         } catch (final Exception e) {
+                            LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
+                                + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
+                                + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
+                                + "the authentication event.", credential, credential.getClass().getSimpleName());
+
                             handleAuthenticationException(e, handler.getName(), builder);
+                            proceedWithNextHandler = true;
                         }
-                        return false;
-                    });
-
-                if (!isSatisfied) {
-                    LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
-                            + "find authentication handler that supports [{}] of type [{}].",
-                        credential, credential.getClass().getSimpleName());
+                    } else {
+                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}]. Trying next...", handler.getName(), credential);
+                    }
                 }
-                return isSatisfied;
-            });
-
-        if (!success) {
+            }
             evaluateFinalAuthentication(builder, transaction);
+            return builder;
+        } finally {
+            AuthenticationCredentialsLocalBinder.clearInProgressAuthentication();
         }
-
-        return builder;
     }
 
     /**
@@ -399,8 +417,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     protected void evaluateFinalAuthentication(final AuthenticationBuilder builder,
                                                final AuthenticationTransaction transaction) throws AuthenticationException {
         if (builder.getSuccesses().isEmpty()) {
-            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(),
-                transaction.getCredentials()));
+            publishEvent(new CasAuthenticationTransactionFailureEvent(this, builder.getFailures(), transaction.getCredentials()));
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
@@ -447,22 +464,25 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     /**
      * Handle authentication exception.
      *
-     * @param e       the exception
+     * @param ex      the exception
      * @param name    the name
      * @param builder the builder
      */
-    protected void handleAuthenticationException(final Throwable e, final String name,
-                                                 final AuthenticationBuilder builder) {
+    protected void handleAuthenticationException(final Throwable ex, final String name, final AuthenticationBuilder builder) {
+        Throwable e = ex;
+        if (ex instanceof UndeclaredThrowableException) {
+            e = ((UndeclaredThrowableException) ex).getUndeclaredThrowable();
+        }
         String msg = e.getMessage();
         if (e.getCause() != null) {
             msg += " / " + e.getCause().getMessage();
         }
         if (e instanceof GeneralSecurityException) {
             LOGGER.debug("[{}] exception details: [{}].", name, msg);
-            builder.addFailure(name, e.getClass());
+            builder.addFailure(name, e);
         } else {
             LOGGER.error("[{}]: [{}]", name, msg);
-            builder.addFailure(name, e.getClass());
+            builder.addFailure(name, e);
         }
     }
 }

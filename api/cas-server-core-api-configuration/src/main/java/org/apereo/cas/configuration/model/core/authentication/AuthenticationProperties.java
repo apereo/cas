@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.model.support.digest.DigestProperties;
 import org.apereo.cas.configuration.model.support.fortress.FortressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.generic.JsonResourceAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.generic.ShiroAuthenticationProperties;
@@ -28,6 +29,7 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.shibboleth.ShibbolethIdPProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.syncope.SyncopeAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
 import org.apereo.cas.configuration.model.support.token.TokenAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.trusted.TrustedAuthenticationProperties;
@@ -51,6 +53,18 @@ import java.util.List;
 public class AuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1233126985007049516L;
+
+    /**
+     * JSON authentication settings.
+     */
+    @NestedConfigurationProperty
+    private JsonResourceAuthenticationProperties json = new JsonResourceAuthenticationProperties();
+
+    /**
+     * Syncope authentication settings.
+     */
+    @NestedConfigurationProperty
+    private SyncopeAuthenticationProperties syncope = new SyncopeAuthenticationProperties();
 
     /**
      * Couchbase authentication settings.
@@ -610,5 +624,21 @@ public class AuthenticationProperties implements Serializable {
 
     public void setFortress(final FortressAuthenticationProperties fortress) {
         this.fortress = fortress;
+    }
+
+    public SyncopeAuthenticationProperties getSyncope() {
+        return syncope;
+    }
+
+    public void setSyncope(final SyncopeAuthenticationProperties syncope) {
+        this.syncope = syncope;
+    }
+
+    public JsonResourceAuthenticationProperties getJson() {
+        return json;
+    }
+
+    public void setJson(final JsonResourceAuthenticationProperties json) {
+        this.json = json;
     }
 }

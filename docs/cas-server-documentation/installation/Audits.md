@@ -11,9 +11,7 @@ coarse-grained execution paths e.g. Spring-managed beans method executions by us
 and Spring-managed `@Aspect`-style aspects.
 
 
-CAS server auto-configures all the relevant Inspektr components.
-All the available configuration
-options that are injected to Inspektr classes are available to
+CAS server auto-configures all the relevant Inspektr components.   All the available configuration options that are injected to Inspektr classes are available to
 deployers via relevant CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
@@ -71,6 +69,20 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 ```
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-audits).
+
+## REST Audits
+
+Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-rest</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+The body of the HTTP request is a JSON representation of the audit record. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
 
 ## Audit Events
 

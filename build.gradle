@@ -211,8 +211,8 @@ subprojects {
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
+    compileJava.options.compilerArgs << '-parameters'
     compileJava.options.fork = true
-
     if (Boolean.getBoolean("enableIncremental")) {
         compileJava.options.incremental = true
     }
@@ -278,6 +278,8 @@ subprojects {
     }
 
     dependencies {
+        //optional libraries.springcomponentindexer
+        
         implementation libraries.aspectj
         implementation libraries.validationapi
 

@@ -1,8 +1,5 @@
 package org.apereo.cas.support.rest.resources;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -10,8 +7,8 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
-import org.apereo.cas.support.rest.BadRequestException;
-import org.apereo.cas.support.rest.CredentialFactory;
+import org.apereo.cas.rest.BadRestRequestException;
+import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.slf4j.Logger;
@@ -27,10 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import java.util.Collection;
 
 /**
  * {@link RestController} implementation of CAS' REST API.
@@ -54,13 +48,11 @@ public class TicketGrantingTicketResource {
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory serviceFactory;
-    private final CredentialFactory credentialFactory;
+    private final RestHttpRequestCredentialFactory credentialFactory;
     private final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory;
 
-    private final ObjectWriter jacksonPrettyWriter = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
-
     public TicketGrantingTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                        final CredentialFactory credentialFactory,
+                                        final RestHttpRequestCredentialFactory credentialFactory,
                                         final CentralAuthenticationService centralAuthenticationService,
                                         final ServiceFactory serviceFactory,
                                         final TicketGrantingTicketResourceEntityResponseFactory ticketGrantingTicketResourceEntityResponseFactory) {
@@ -81,13 +73,12 @@ public class TicketGrantingTicketResource {
     @PostMapping(value = "/v1/tickets", consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
     public ResponseEntity<String> createTicketGrantingTicket(@RequestBody final MultiValueMap<String, String> requestBody,
                                                              final HttpServletRequest request) {
-
         try {
             final TicketGrantingTicket tgtId = createTicketGrantingTicketForRequest(requestBody, request);
             return createResponseEntityForTicket(request, tgtId);
         } catch (final AuthenticationException e) {
-            return createResponseEntityForAuthnFailure(e);
-        } catch (final BadRequestException e) {
+            return RestResourceUtils.createResponseEntityForAuthnFailure(e);
+        } catch (final BadRestRequestException e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (final Exception e) {
@@ -122,7 +113,6 @@ public class TicketGrantingTicketResource {
         return this.ticketGrantingTicketResourceEntityResponseFactory.build(tgtId, request);
     }
 
-
     /**
      * Create ticket granting ticket for request ticket granting ticket.
      *
@@ -132,31 +122,13 @@ public class TicketGrantingTicketResource {
      */
     protected TicketGrantingTicket createTicketGrantingTicketForRequest(final MultiValueMap<String, String> requestBody,
                                                                         final HttpServletRequest request) {
-        final Credential credential = this.credentialFactory.fromRequestBody(requestBody);
+        final Collection<Credential> credential = this.credentialFactory.fromRequestBody(requestBody);
+        if (credential == null || credential.isEmpty()) {
+            throw new BadRestRequestException("No credentials are provided or extracted to authenticate the REST request");
+        }
         final Service service = this.serviceFactory.createService(request);
         final AuthenticationResult authenticationResult =
-                authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
         return centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-    }
-
-    /**
-     * Create response entity for authn failure response entity.
-     *
-     * @param e the e
-     * @return the response entity
-     */
-    private ResponseEntity<String> createResponseEntityForAuthnFailure(final AuthenticationException e) {
-        final List<String> authnExceptions = e.getHandlerErrors().values().stream()
-                .map(Class::getSimpleName)
-                .collect(Collectors.toList());
-        final Map<String, List<String>> errorsMap = new HashMap<>();
-        errorsMap.put("authentication_exceptions", authnExceptions);
-        LOGGER.warn("[{}] Caused by: [{}]", e.getMessage(), authnExceptions);
-        try {
-            return new ResponseEntity<>(this.jacksonPrettyWriter.writeValueAsString(errorsMap), HttpStatus.UNAUTHORIZED);
-        } catch (final JsonProcessingException exception) {
-            LOGGER.error(e.getMessage(), e);
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
-        }
     }
 }

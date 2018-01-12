@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
 import org.apache.catalina.startup.Tomcat;
 import org.apache.catalina.valves.ExtendedAccessLogValve;
@@ -8,9 +9,13 @@ import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.coyote.http2.Http2Protocol;
+import org.apache.tomcat.util.descriptor.web.LoginConfig;
+import org.apache.tomcat.util.descriptor.web.SecurityCollection;
+import org.apache.tomcat.util.descriptor.web.SecurityConstraint;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatAjpProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatBasicAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatExtendedAccessLogProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
@@ -70,8 +75,32 @@ public class CasEmbeddedContainerTomcatConfiguration {
         configureExtendedAccessLogValve(tomcat);
         configureRewriteValve(tomcat);
         configureSSLValve(tomcat);
+        configureBasicAuthn(tomcat);
 
         return tomcat;
+    }
+
+    private void configureBasicAuthn(final TomcatEmbeddedServletContainerFactory tomcat) {
+        final CasEmbeddedApacheTomcatBasicAuthenticationProperties basic = casProperties.getServer().getBasicAuthn();
+        if (basic.isEnabled()) {
+            tomcat.addContextCustomizers(ctx -> {
+                final LoginConfig config = new LoginConfig();
+                config.setAuthMethod("BASIC");
+                ctx.setLoginConfig(config);
+
+                basic.getSecurityRoles().forEach(ctx::addSecurityRole);
+
+                basic.getAuthRoles().forEach(r -> {
+                    final SecurityConstraint constraint = new SecurityConstraint();
+                    constraint.addAuthRole(r);
+                    final SecurityCollection collection = new SecurityCollection();
+                    basic.getPatterns().forEach(collection::addPattern);
+                    constraint.addCollection(collection);
+                    ctx.addConstraint(constraint);
+                });
+            });
+            tomcat.addContextValves(new BasicAuthenticator());
+        }
     }
 
     private void configureRewriteValve(final TomcatEmbeddedServletContainerFactory tomcat) {

@@ -47,6 +47,7 @@ layout: null
         *   [Apache Cassandra](/$version/installation/Cassandra-Authentication.html)
         *   [Apache Fortress](/$version/integration/Configuring-Fortress-Integration.html)
         *   [Apache Shiro](/$version/installation/Shiro-Authentication.html)
+        *   [Apache Syncope](/$version/installation/Syncope-Authentication.html)
         *   [JWT](#jwtauthn)
             *   [Overview](/$version/installation/JWT-Authentication.html)
             *   [JWT Service Tickets](/$version/installation/Configure-ServiceTicket-JWT.html) 
@@ -135,6 +136,7 @@ layout: null
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
     *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
+    *   [Required Authentication](/$version/installation/Configuring-Service-Required-AuthN.html)
     *   [Replication](/$version/installation/Configuring-Service-Replication.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
@@ -203,7 +205,6 @@ layout: null
         *   [SAML1](/$version/protocol/SAML-Protocol.html)
         *   [SAML2](/$version/installation/Configuring-SAML2-Authentication.html)
     *   [REST](/$version/protocol/REST-Protocol.html)
-
 
 * [Integration](#appintegration)
     *   [SAML2 Service Providers](/$version/integration/Configuring-SAML-SP-Integrations.html)

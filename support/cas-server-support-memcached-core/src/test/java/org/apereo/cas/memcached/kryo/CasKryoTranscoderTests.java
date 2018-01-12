@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -54,7 +54,6 @@ public class CasKryoTranscoderTests {
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
 
-
     private final CasKryoTranscoder transcoder;
 
     private final Map<String, Object> principalAttributes;
@@ -93,8 +92,8 @@ public class CasKryoTranscoderTests {
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
-        bldr.addFailure("error", AccountNotFoundException.class);
-        bldr.addSuccess("authn", new DefaultHandlerResult(
+        bldr.addFailure("error", new AccountNotFoundException());
+        bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
                 new AcceptUsersAuthenticationHandler(""),
                 new BasicCredentialMetaData(userPassCredential)));
 

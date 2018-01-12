@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.HashMap;
+
 /**
  * This is {@link RestAcceptableUsagePolicyRepository}.
  * Examines the principal attribute collection to determine if
@@ -39,7 +41,7 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                     properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                    CollectionUtils.wrap("username", credential.getId()));
+                    CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

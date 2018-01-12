@@ -11,6 +11,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -114,7 +115,7 @@ public final class CollectionUtils {
      * @return the map
      */
     public static <K, V> Map<K, V> wrap(final String key, final Object value) {
-        final Map map = new HashMap<>();
+        final Map map = new LinkedHashMap();
         if (value != null && StringUtils.isNotBlank(key)) {
             map.put(key, value);
         }

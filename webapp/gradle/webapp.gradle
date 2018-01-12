@@ -16,7 +16,9 @@ node {
     download = true
 }
 
-npm_install.dependsOn(npm_cache_clean)
+if (!Boolean.getBoolean("skipNpmCache")) {
+    npm_install.dependsOn(npm_cache_clean)
+}
 
 task npmLint(type: NpmTask) {
     dependsOn npm_install
@@ -32,7 +34,7 @@ task compileSass(type: NpmTask) {
     args = ['run', 'gulp', '--silent']
 }
 
-if (!rootProject.publishingRelease) {
+if (!rootProject.publishingRelease && !Boolean.getBoolean("skipNpmLint")) {
     processResources.dependsOn npmLint
 }
 
@@ -138,7 +140,7 @@ dependencies {
     implementation project(":support:cas-server-support-themes")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
-    
+
     implementation project(":webapp:cas-server-webapp-config")
     implementation project(":webapp:cas-server-webapp-init")
 
@@ -148,6 +150,7 @@ dependencies {
     implementation libraries.cassecurityfilter
     implementation libraries.metrics
     implementation libraries.bouncycastle
-    runtime libraries.webjars
     implementation libraries.springcloudconfigclient
+
+    runtime libraries.webjars
 }

@@ -63,7 +63,7 @@ public interface AuthenticationBuilder extends Serializable {
      *
      * @return Non -null map of handler names to successful handler authentication results.
      */
-    Map<String, HandlerResult> getSuccesses();
+    Map<String, AuthenticationHandlerExecutionResult> getSuccesses();
 
     /**
      * Set successes authentication builder.
@@ -72,7 +72,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the authentication builder
      * @since 4.2.0
      */
-    AuthenticationBuilder setSuccesses(Map<String, HandlerResult> successes);
+    AuthenticationBuilder setSuccesses(Map<String, AuthenticationHandlerExecutionResult> successes);
 
     /**
      * Adds successes authentication builder.
@@ -81,7 +81,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the authentication builder
      * @since 4.2.0
      */
-    AuthenticationBuilder addSuccesses(Map<String, HandlerResult> successes);
+    AuthenticationBuilder addSuccesses(Map<String, AuthenticationHandlerExecutionResult> successes);
 
     /**
      * Sets failures.
@@ -89,7 +89,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param failures the failures
      * @return the failures
      */
-    AuthenticationBuilder setFailures(Map<String, Class<? extends Throwable>> failures);
+    AuthenticationBuilder setFailures(Map<String, Throwable> failures);
 
     /**
      * Adds failures.
@@ -98,7 +98,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @return the failures
      * @since 4.2.0
      */
-    AuthenticationBuilder addFailures(Map<String, Class<? extends Throwable>> failures);
+    AuthenticationBuilder addFailures(Map<String, Throwable> failures);
 
     /**
      * Adds an authentication success to the map of handler names to successful authentication handler results.
@@ -107,7 +107,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param value Successful authentication handler result produced by handler of given name.
      * @return This builder instance.
      */
-    AuthenticationBuilder addSuccess(String key, HandlerResult value);
+    AuthenticationBuilder addSuccess(String key, AuthenticationHandlerExecutionResult value);
 
     /**
      * Sets the authentication date and returns this instance.
@@ -129,7 +129,7 @@ public interface AuthenticationBuilder extends Serializable {
      *
      * @return Non -null authentication failure map.
      */
-    Map<String, Class<? extends Throwable>> getFailures();
+    Map<String, Throwable> getFailures();
 
     /**
      * Adds an authentication failure to the map of handler names to the authentication handler failures.
@@ -138,7 +138,7 @@ public interface AuthenticationBuilder extends Serializable {
      * @param value Exception raised on handler failure to authenticate credential.
      * @return This builder instance.
      */
-    AuthenticationBuilder addFailure(String key, Class<? extends Throwable> value);
+    AuthenticationBuilder addFailure(String key, Throwable value);
 
     /**
      * Sets the authentication metadata attributes.

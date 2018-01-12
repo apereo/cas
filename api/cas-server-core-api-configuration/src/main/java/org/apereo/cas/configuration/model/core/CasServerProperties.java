@@ -2,6 +2,7 @@ package org.apereo.cas.configuration.model.core;
 
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatAjpProperties;
+import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatBasicAuthenticationProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatCsrfProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatExtendedAccessLogProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
@@ -83,6 +84,13 @@ public class CasServerProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private CasEmbeddedApacheTomcatCsrfProperties csrf = new CasEmbeddedApacheTomcatCsrfProperties();
+
+    /**
+     * Enable basic authentication for the embedded tomcat.
+     */
+    @NestedConfigurationProperty
+    private CasEmbeddedApacheTomcatBasicAuthenticationProperties basicAuthn =
+        new CasEmbeddedApacheTomcatBasicAuthenticationProperties();
 
     public CasEmbeddedApacheTomcatCsrfProperties getCsrf() {
         return csrf;
@@ -170,5 +178,13 @@ public class CasServerProperties implements Serializable {
 
     public void setRewriteValve(final CasEmbeddedApacheTomcatRewriteValveProperties rewriteValve) {
         this.rewriteValve = rewriteValve;
+    }
+
+    public CasEmbeddedApacheTomcatBasicAuthenticationProperties getBasicAuthn() {
+        return basicAuthn;
+    }
+
+    public void setBasicAuthn(final CasEmbeddedApacheTomcatBasicAuthenticationProperties basicAuthn) {
+        this.basicAuthn = basicAuthn;
     }
 }
