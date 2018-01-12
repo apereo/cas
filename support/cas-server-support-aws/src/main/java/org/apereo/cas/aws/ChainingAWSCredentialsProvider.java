@@ -103,6 +103,19 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
      * @param credentialAccessKey      the credential access key
      * @param credentialSecretKey      the credential secret key
      * @param credentialPropertiesFile the credential properties file
+     * @return the instance
+     */
+    public static AWSCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey,
+                                                     final Resource credentialPropertiesFile) {
+        return getInstance(credentialAccessKey, credentialSecretKey, credentialPropertiesFile, null, null);
+    }
+
+    /**
+     * Gets instance.
+     *
+     * @param credentialAccessKey      the credential access key
+     * @param credentialSecretKey      the credential secret key
+     * @param credentialPropertiesFile the credential properties file
      * @param profilePath              the profile path
      * @param profileName              the profile name
      * @return the instance

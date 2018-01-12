@@ -2,13 +2,12 @@ package org.apereo.cas.config;
 
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
-import com.amazonaws.auth.AWSCredentials;
-import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.auth.PropertiesCredentials;
+import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.services.DynamoDbServiceRegistryDao;
@@ -68,20 +67,10 @@ public class DynamoDbServiceRegistryConfiguration {
                 cfg.setLocalAddress(InetAddress.getByName(dynamoDbProperties.getLocalAddress()));
             }
 
-            AWSCredentials credentials = null;
-            if (dynamoDbProperties.getCredentialsPropertiesFile() != null) {
-                credentials = new PropertiesCredentials(dynamoDbProperties.getCredentialsPropertiesFile().getInputStream());
-            } else if (StringUtils.isNotBlank(dynamoDbProperties.getCredentialAccessKey())
-                    && StringUtils.isNotBlank(dynamoDbProperties.getCredentialSecretKey())) {
-                credentials = new BasicAWSCredentials(dynamoDbProperties.getCredentialAccessKey(), dynamoDbProperties.getCredentialSecretKey());
-            }
-
-            final AmazonDynamoDBClient client;
-            if (credentials == null) {
-                client = new AmazonDynamoDBClient(cfg);
-            } else {
-                client = new AmazonDynamoDBClient(credentials, cfg);
-            }
+            final AWSCredentialsProvider provider =
+                ChainingAWSCredentialsProvider.getInstance(dynamoDbProperties.getCredentialAccessKey(),
+                    dynamoDbProperties.getCredentialSecretKey(), dynamoDbProperties.getCredentialsPropertiesFile());
+            final AmazonDynamoDBClient client = new AmazonDynamoDBClient(provider, cfg);
 
             if (StringUtils.isNotBlank(dynamoDbProperties.getEndpoint())) {
                 client.setEndpoint(dynamoDbProperties.getEndpoint());

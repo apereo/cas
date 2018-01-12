@@ -2,6 +2,8 @@ description = "Apereo CAS DynamoDb Ticket Registry"
 
 dependencies {
     implementation libraries.awsjavadynamodb
+    
+    implementation project(":support:cas-server-support-aws")
     implementation project(":core:cas-server-core-tickets-api")
     implementation project(":core:cas-server-core-tickets")
     implementation project(":core:cas-server-core-configuration-api")
