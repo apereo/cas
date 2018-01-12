@@ -43,7 +43,6 @@ import java.util.stream.Collectors;
  */
 public class DynamoDbServiceRegistryFacilitator {
     private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbServiceRegistryFacilitator.class);
-    private static final String TABLE_NAME = "DynamoDbCasServices";
 
     private final StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();
 
@@ -67,7 +66,7 @@ public class DynamoDbServiceRegistryFacilitator {
 
     private final DynamoDbServiceRegistryProperties dynamoDbProperties;
     private final AmazonDynamoDBClient amazonDynamoDBClient;
-
+    
     public DynamoDbServiceRegistryFacilitator(final DynamoDbServiceRegistryProperties dynamoDbProperties,
                                               final AmazonDynamoDBClient amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
@@ -83,7 +82,7 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     public boolean delete(final RegisteredService service) {
         final DeleteItemRequest del = new DeleteItemRequest()
-                .withTableName(TABLE_NAME)
+                .withTableName(dynamoDbProperties.getTableName())
                 .withKey(CollectionUtils.wrap(ColumnNames.ID.getName(),
                         new AttributeValue(String.valueOf(service.getId()))));
 
@@ -100,7 +99,7 @@ public class DynamoDbServiceRegistryFacilitator {
      * @return the long
      */
     public long count() {
-        final ScanRequest scan = new ScanRequest(TABLE_NAME);
+        final ScanRequest scan = new ScanRequest(dynamoDbProperties.getTableName());
         LOGGER.debug("Scanning table with request [{}] to count items", scan);
         final ScanResult result = this.amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
@@ -114,7 +113,7 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     public List<RegisteredService> getAll() {
         final List<RegisteredService> services = new ArrayList<>();
-        final ScanRequest scan = new ScanRequest(TABLE_NAME);
+        final ScanRequest scan = new ScanRequest(dynamoDbProperties.getTableName());
         LOGGER.debug("Scanning table with request [{}]", scan);
         final ScanResult result = this.amazonDynamoDBClient.scan(scan);
         LOGGER.debug("Scanned table with result [{}]", scan);
@@ -161,7 +160,7 @@ public class DynamoDbServiceRegistryFacilitator {
     private RegisteredService getRegisteredServiceByKeys(final Map<String, AttributeValue> keys) {
         final GetItemRequest request = new GetItemRequest()
                 .withKey(keys)
-                .withTableName(TABLE_NAME);
+                .withTableName(dynamoDbProperties.getTableName());
 
         LOGGER.debug("Submitting request [{}] to get service with keys [{}]", request, keys);
         final Map<String, AttributeValue> returnItem = amazonDynamoDBClient.getItem(request).getItem();
@@ -180,7 +179,7 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     public void put(final RegisteredService service) {
         final Map<String, AttributeValue> values = buildTableAttributeValuesMapFromService(service);
-        final PutItemRequest putItemRequest = new PutItemRequest(TABLE_NAME, values);
+        final PutItemRequest putItemRequest = new PutItemRequest(dynamoDbProperties.getTableName(), values);
         LOGGER.debug("Submitting put request [{}] for service id [{}]", putItemRequest, service.getServiceId());
         final PutItemResult putItemResult = amazonDynamoDBClient.putItem(putItemRequest);
         LOGGER.debug("Service added with result [{}]", putItemResult);
@@ -198,7 +197,7 @@ public class DynamoDbServiceRegistryFacilitator {
                     .withKeySchema(new KeySchemaElement(ColumnNames.ID.getName(), KeyType.HASH))
                     .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
                             dynamoDbProperties.getWriteCapacity()))
-                    .withTableName(TABLE_NAME);
+                    .withTableName(dynamoDbProperties.getTableName());
 
             if (deleteTables) {
                 final DeleteTableRequest delete = new DeleteTableRequest(request.getTableName());
