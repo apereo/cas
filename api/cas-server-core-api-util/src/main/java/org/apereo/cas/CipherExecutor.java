@@ -51,11 +51,16 @@ public interface CipherExecutor<I, O> {
     default Map<String, Object> decode(Map<String, Object> properties) {
         final Map<String, Object> decrypted = new HashMap<>();
         properties.forEach((key, value) -> {
-            LOGGER.debug("Attempting to decode key [{}]", key);
-            final Object result = decode((I) value);
-            if (result != null) {
-                LOGGER.debug("Decrypted key [{}] successfully", key);
-                decrypted.put(key, result);
+            try {
+                LOGGER.debug("Attempting to decode key [{}]", key);
+                final Object result = decode((I) value);
+                if (result != null) {
+                    LOGGER.debug("Decrypted key [{}] successfully", key);
+                    decrypted.put(key, result);
+                }
+            } catch(final ClassCastException e) {
+                LOGGER.debug("Value of key {}, is not the correct type, not decrypting, but using value as-is.", key);
+                decrypted.put(key, value);
             }
         });
         return decrypted;

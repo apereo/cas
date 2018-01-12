@@ -31,7 +31,6 @@ import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.i18n.LocaleChangeInterceptor;
 import org.springframework.webflow.config.FlowBuilderServicesBuilder;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
-import org.springframework.webflow.config.FlowExecutorBuilder;
 import org.springframework.webflow.context.servlet.FlowUrlHandler;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.ViewFactoryCreator;
@@ -79,9 +78,7 @@ public class CasWebflowContextConfiguration {
 
     @Bean
     public ExpressionParser expressionParser() {
-        return new WebFlowSpringELExpressionParser(
-            new SpelExpressionParser(),
-            logoutConversionService());
+        return new WebFlowSpringELExpressionParser(new SpelExpressionParser(), logoutConversionService());
     }
 
     @Bean
@@ -115,8 +112,7 @@ public class CasWebflowContextConfiguration {
         final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
             @Override
             public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler)
-                    .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
+                return super.supports(handler) && ((FlowHandler) handler).getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
             }
         };
         handler.setFlowExecutor(logoutFlowExecutor());
@@ -144,7 +140,7 @@ public class CasWebflowContextConfiguration {
                     .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGIN);
             }
         };
-        handler.setFlowExecutor(casWebFlowExecutor());
+        handler.setFlowExecutor(loginFlowExecutor());
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
     }
@@ -187,15 +183,6 @@ public class CasWebflowContextConfiguration {
         return handler;
     }
 
-    @RefreshScope
-    @Bean
-    public FlowExecutor logoutFlowExecutor() {
-        final FlowExecutorBuilder builder = new FlowExecutorBuilder(logoutFlowRegistry(), this.applicationContext);
-        builder.setAlwaysRedirectOnPause(casProperties.getWebflow().isAlwaysPauseRedirect());
-        builder.setRedirectInSameState(casProperties.getWebflow().isRedirectSameState());
-        return builder.build();
-    }
-
     @Bean
     public FlowDefinitionRegistry logoutFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, builder());
@@ -214,8 +201,17 @@ public class CasWebflowContextConfiguration {
 
     @RefreshScope
     @Bean
-    public FlowExecutor casWebFlowExecutor() {
-        final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(), loginFlowRegistry(), this.webflowCipherExecutor);
+    public FlowExecutor logoutFlowExecutor() {
+        final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
+            logoutFlowRegistry(), this.webflowCipherExecutor);
+        return factory.build();
+    }
+
+    @RefreshScope
+    @Bean
+    public FlowExecutor loginFlowExecutor() {
+        final WebflowExecutorFactory factory = new WebflowExecutorFactory(casProperties.getWebflow(),
+            loginFlowRegistry(), this.webflowCipherExecutor);
         return factory.build();
     }
 

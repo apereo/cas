@@ -14,7 +14,7 @@ import org.apache.logging.log4j.core.appender.RollingRandomAccessFileAppender;
 import org.apache.logging.log4j.core.config.Configuration;
 import org.apache.logging.log4j.core.config.LoggerConfig;
 import org.apache.logging.slf4j.Log4jLoggerFactory;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
@@ -36,6 +36,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,7 +50,6 @@ import java.util.Set;
  * @since 4.2
  */
 public class LoggingConfigController extends BaseCasMvcEndpoint {
-
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
     private static final String FILE_PARAM = "file";
@@ -57,7 +57,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
     private LoggerContext loggerContext;
 
-    private final DelegatingAuditTrailManager auditTrailManager;
+    private final AuditTrailExecutionPlan auditTrailManager;
 
     @Autowired
     private Environment environment;
@@ -67,7 +67,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
     private Resource logConfigurationFile;
 
-    public LoggingConfigController(final DelegatingAuditTrailManager auditTrailManager, final CasConfigurationProperties casProperties) {
+    public LoggingConfigController(final AuditTrailExecutionPlan auditTrailManager, final CasConfigurationProperties casProperties) {
         super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
         this.auditTrailManager = auditTrailManager;
     }
@@ -223,7 +223,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @param additive    the additive nature of the logger
      * @param request     the request
      * @param response    the response
-     * @throws Exception the exception
      */
     @PostMapping(value = "/updateLoggerLevel")
     @ResponseBody
@@ -231,18 +230,18 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
                                   @RequestParam final String loggerLevel,
                                   @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
-                                  final HttpServletResponse response) throws Exception {
+                                  final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         Assert.notNull(this.loggerContext);
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
-                filter(cfg -> cfg.getName().equals(loggerName))
-                .forEachOrdered(cfg -> {
-                    cfg.setLevel(Level.getLevel(loggerLevel));
-                    cfg.setAdditive(additive);
-                });
+            filter(cfg -> cfg.getName().equals(loggerName))
+            .forEachOrdered(cfg -> {
+                cfg.setLevel(Level.getLevel(loggerLevel));
+                cfg.setAdditive(additive);
+            });
         this.loggerContext.updateLoggers();
     }
 
@@ -258,7 +257,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         Assert.notNull(this.loggerContext);
-
-        return this.auditTrailManager.get();
+        final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 }

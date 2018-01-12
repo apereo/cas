@@ -8,6 +8,7 @@
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
+        <module name="SuppressionCommentFilter"/>
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
