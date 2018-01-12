@@ -91,7 +91,7 @@ public class CasJdbcAuthenticationConfiguration {
 
     private AuthenticationHandler bindModeSearchDatabaseAuthenticationHandler(final BindJdbcAuthenticationProperties b) {
         final BindModeSearchDatabaseAuthenticationHandler h = new BindModeSearchDatabaseAuthenticationHandler(b.getName(), servicesManager,
-                jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b));
+                jdbcPrincipalFactory(), b.getOrder(), JpaBeans.newDataSource(b), b);
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(b.getPasswordEncoder()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(b.getPrincipalTransformation()));
 
