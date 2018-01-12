@@ -2146,7 +2146,7 @@ Multifacor authentication bypass settings for this provider are available [here]
 
 ### FIDO U2F MongoDb
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.u2f`.
  
 ### FIDO U2F JPA
 
@@ -2272,7 +2272,7 @@ Database settings for this feature are available [here](Configuration-Properties
 
 #### SAML Metadata MongoDb
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
  
 ### SAML Logout
 
@@ -2302,7 +2302,6 @@ Database settings for this feature are available [here](Configuration-Properties
 # cas.authn.samlIdp.response.defaultAttributeNameFormat=uri
 # cas.authn.samlIdp.response.signError=false
 # cas.authn.samlIdp.response.signingCredentialType=X509|BASIC
-# cas.authn.samlIdp.response.useAttributeFriendlyName=true
 # cas.authn.samlIdp.response.attributeNameFormats=attributeName->basic|uri|unspecified|custom-format-etc,...
 ```
 
@@ -2724,7 +2723,7 @@ and any number of log appenders that might push data to a variety of systems.</p
 
 Store audit logs inside a MongoDb database.
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.audit`.
  
 ### Database Audits
 
@@ -2791,7 +2790,7 @@ Decide how CAS should monitor the internal state of a memcached connection pool.
 
 ### MongoDb Monitors
 
-Decide how CAS should monitor the internal state of a MongoDb instance.  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.monitor`.
+Decide how CAS should monitor the internal state of a MongoDb instance.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.monitor`.
 
 ### Database Monitoring
 
@@ -2845,7 +2844,7 @@ To learn more about this topic, [please review this guide](Configuring-Authentic
 
 ### InfluxDb Events
 
-Decide how CAS should store authentication events inside an InfluxDb instance. Configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
+Decide how CAS should store authentication events inside an InfluxDb instance. Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.events.influxDb`.
 
 ### Database Events
 
@@ -2853,7 +2852,7 @@ Decide how CAS should store authentication events inside a database instance. Da
 
 ### MongoDb Events
 
-Decide how CAS should store authentication events inside a MongoDb instance.  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
+Decide how CAS should store authentication events inside a MongoDb instance.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.events`.
 
 ## Http Web Requests
 
@@ -2990,7 +2989,7 @@ To learn more about this topic, [please review this guide](REST-Service-Manageme
 
 ### Redis Service Registry
 
-To learn more about this topic, [please review this guide](Redis-Service-Management.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](Redis-Service-Management.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.serviceRegistry`.
 
 ### CosmosDb Service Registry
 
@@ -3008,12 +3007,18 @@ To learn more about this topic, [please review this guide](CosmosDb-Service-Mana
 
 ### DynamoDb Service Registry
 
-To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.serviceRegistry`.
+To learn more about this topic, [please review this guide](DynamoDb-Service-Management.html). 
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) 
+under the configuration key `cas.serviceRegistry`.
+
+```properties
+# cas.serviceRegistry.dynamoDb.tableName=DynamoDbCasServices
+```
 
 ### MongoDb Service Registry
 
 Store CAS service definitions inside a MongoDb instance. To learn more about this topic, [please review this guide](Mongo-Service-Management.html).
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.serviceRegistry`.
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.serviceRegistry`.
  
 ### LDAP Service Registry
 
@@ -3240,15 +3245,15 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 ### DynamoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.ticket.registry.dynamoDb`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
+To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.ticket.registry.dynamoDb`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
 
 ### MongoDb Ticket Registry
 
-To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html). Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.mongo`.  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`. 
+To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html). Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`. 
 
 ### Redis Ticket Registry
 
-To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html). Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
+To learn more about this topic, [please review this guide](Redis-Ticket-Registry.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.ticket.registry`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.redis`.
 
 ## Protocol Ticket Security
 
@@ -3507,7 +3512,7 @@ If AUP is controlled via JDBC, decide how choices should be remembered back insi
 
 #### MongoDb
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptableUsagePolicy`. 
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.acceptableUsagePolicy`. 
 
 #### LDAP
 
@@ -3541,7 +3546,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # cas.metrics.redis.prefix=
 ```
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.metrics`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#redis-configuration) under the configuration key `cas.metrics`.
 
 #### Statsd
 
@@ -3553,7 +3558,7 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 #### MongoDb
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.metrics.mongo`. 
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.metrics.mongo`. 
 
 #### Open TSDB
 
@@ -3565,7 +3570,7 @@ Configuration settings for this feature are available [here](Configuration-Prope
 
 #### InfluxDb
 
-Configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.metrics.influxDb`.
+Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#influxdb-configuration) under the configuration key `cas.metrics.influxDb`.
 
 ## SAML Metadata UI
 
@@ -3670,7 +3675,7 @@ LDAP settings for this feature are available [here](Configuration-Properties-Com
 
 ### MongoDb Attribute Consent
 
- Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`. 
+ Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.consent`. 
 
 ### REST Attribute Consent
 
