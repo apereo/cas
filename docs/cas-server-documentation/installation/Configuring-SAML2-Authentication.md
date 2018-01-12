@@ -178,6 +178,7 @@ The following fields are available for SAML services:
 | `metadataCriteriaRemoveEmptyEntitiesDescriptors` | Controls whether to keep entities descriptors that contain no entity descriptors. Default is `true`.
 | `metadataCriteriaRemoveRolelessEntityDescriptors` | Controls whether to keep entity descriptors that contain no roles. Default is `true`.
 | `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.
+| `attributeFriendlyNames` | Map that defines attribute friendly names for a given attribute name to be encoded in the SAML response.
 | `nameIdQualifier` | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id.
 | `serviceProviderNameIdQualifier` | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id.
 | `skipGeneratingAssertionNameId` | Whether generation of a name identifer should be skipped for assertions. Default is `false`.
@@ -216,7 +217,11 @@ metadata and thus load times are improved.
 
 ### Metadata Resolution
 
-Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, will resort to actually resolving the metadata by loading or contacting the configured resource. Each service provider definition that is registered with CAS may optionally also specifically an expiration period of metadata resolution to override the default global value.
+Service provider metadata is fetched and loaded on demand for every service and then cached in a global cache for a 
+configurable duration. Subsequent requests for service metadata will always consult the cache first and if missed, 
+will resort to actually resolving the metadata by loading or contacting the configured resource. 
+Each service provider definition that is registered with CAS may optionally also specifically an expiration period of 
+metadata resolution to override the default global value.
 
 ### Attribute Name Formats
 
@@ -227,6 +232,7 @@ Attribute name formats can be specified per relying party in the service registr
   "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
   "serviceId" : "the-entity-id-of-the-sp",
   "name": "SAML Service",
+  "metadataLocation" : "../../sp-metadata.xml",
   "id": 100001,
   "attributeNameFormats": {
     "@class": "java.util.HashMap",
@@ -238,171 +244,29 @@ Attribute name formats can be specified per relying party in the service registr
 You may also have the option to define attributes and their relevant name format globally
 via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
+### Attribute Friendly Names
+
+Attribute friendly names can be specified per relying party in the service registry. If there is no friendly name defined for the attribute, the 
+attribute name will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider,
+specially if the original attribute is *mapped* to a different name.
+
+```json
+{
+  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name": "SAML Service",
+  "metadataLocation" : "../../sp-metadata.xml",
+  "id": 100001,
+  "attributeFriendlyNames": {
+    "@class": "java.util.HashMap",
+    "urn:oid:2.5.4.42": "friendly-name-to-use"
+  }
+}
+```
+
 ### Attribute Release
 
-Attribute filtering and release policies are defined per SAML service.
-See [this guide](../integration/Attribute-Release-Policies.html) for more info.
-
-A few additional policies specific to SAML services are also provided below.
-
-#### InCommon Research and Scholarship
-
-A specific attribute release policy is available to release the [attribute bundles](https://spaces.internet2.edu/display/InCFederation/Research+and+Scholarship+Attribute+Bundle)
-needed for InCommon's Research and Scholarship service providers:
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId": "entity-ids-allowed-via-regex",
-  "name": "SAML",
-  "id": 10,
-  "metadataLocation": "path/to/incommon/metadata.xml",
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.services.ChainingAttributeReleasePolicy",
-    "policies": [ "java.util.ArrayList",
-      [
-         {"@class": "org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy"}
-      ]
-    ]
-  }
-}
-```
-
-#### Groovy Script
-
-This policy allows a Groovy script to calculate the collection of released attributes.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId": "entity-ids-allowed-via-regex",
-  "name": "SAML",
-  "id": 10,
-  "metadataLocation": "path/to/incommon/metadata.xml",
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.GroovySamlRegisteredServiceAttributeReleasePolicy",
-    "groovyScript": "file:/etc/cas/config/script.groovy"
-  }
-}
-```
-
-The outline of the script may be designed as:
-
-```groovy
-import java.util.*
-import org.apereo.cas.support.saml.services.*
-import org.apereo.cas.support.saml.*
-
-def Map<String, Object> run(final Object... args) {
-    def attributes = args[0]
-    def service = args[1]
-    def resolver = args[2]
-    def facade = args[3]
-    def entityDescriptor = args[4]
-    def applicationContext = args[5]
-    def logger = args[6]
-    ...
-    return null;
-}
-```
-
-The following parameters are passed to the script:
-
-| Parameter        | Description
-|------------------|--------------------------------------------------------------------------------------------
-| `attributes`     | Map of current attributes resolved and available for release.
-| `service`        | The SAML service definition matched in the service registry.
-| `resolver`       | The metadata resolver instance of this service provider.
-| `facade`         | A wrapper on top of the metadata resolver that allows access to utility functions.
-| `entityDescriptor`    | The `EntityDescriptor` object matched and linked to this service provider's metadata.
-| `applicationContext`  | CAS application context allowing direct access to beans, etc.
-| `logger`         | The object responsible for issuing log messages such as `logger.info(...)`.
-
-An example script follows:
-
-```groovy
-import java.util.*
-import org.apereo.cas.support.saml.services.*
-import org.apereo.cas.support.saml.*
-
-def Map<String, Object> run(final Object... args) {
-    def attributes = args[0]
-    def service = args[1]
-    def resolver = args[2]
-    def facade = args[3]
-    def entityDescriptor = args[4]
-    def applicationContext = args[5]
-    def logger = args[6]
-
-    if (entityDescriptor.entityId == "TestingSAMLApplication") {
-      return [username:["something"], another:"attribute"]
-    }
-    return [:]
-}
-```
-
-#### Pattern Matching Entity Ids
-
-In the event that an aggregate is defined containing multiple entity ids, the below attribute release policy may be used to release a collection of allowed attributes to entity ids grouped together by a regular expression pattern:
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId": "entity-ids-allowed-via-regex",
-  "name": "SAML",
-  "id": 10,
-  "metadataLocation": "path/to/incommon/metadata.xml",
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.PatternMatchingEntityIdAttributeReleasePolicy",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
-    "fullMatch" : "true",
-    "entityIds" : "entityId1|entityId2|somewhere.+"
-  }
-}
-```
-
-#### Entity Attributes Filter
-
-This attribute release policy authorizes the release of defined attributes, provided the accompanying metadata for the service provider contains attributes that match certain values.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId": "entity-ids-allowed-via-regex",
-  "name": "SAML",
-  "id": 10,
-  "metadataLocation": "path/to/metadata.xml",
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.MetadataEntityAttributesAttributeReleasePolicy",
-    "allowedAttributes" : [ "java.util.ArrayList", [ "cn", "mail", "sn" ] ],
-    "entityAttributeValues" : [ "java.util.LinkedHashSet", [ "entity-attribute-value" ] ],
-    "entityAttribute" : "http://somewhere.org/category-x",
-    "entityAttributeFormat" : "urn:oasis:names:tc:SAML:2.0:attrname-format:unspecified"
-  }
-}
-```
-
-The specification of `entityAttributeFormat` is optional.
-
-#### Requested Attributes Filter
-
-This attribute release policy authorizes the release of defined attributes, based on the accompanying metadata for the service provider having requested attributes as part of its `AttributeConsumingService` element.
-
-```json
-{
-  "@class": "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId": "entity-ids-allowed-via-regex",
-  "name": "SAML",
-  "id": 10,
-  "metadataLocation": "path/to/metadata.xml",
-  "attributeReleasePolicy": {
-    "@class": "org.apereo.cas.support.saml.services.MetadataRequestedAttributesAttributeReleasePolicy",
-    "useFriendlyName" : false
-  }
-}
-```
-
-The `useFriendlyName` allows the filter to compare the requested attribute's friendly name with the resolved attribute.
+Attribute filtering and release policies are defined per SAML service. See [this guide](Configuring-SAML2-Attribute-Release.html) for more info.
 
 ### Name ID Selection
 
@@ -414,140 +278,9 @@ that value will then be used to construct the Name ID along with the right forma
 
 ### Dynamic Metadata
 
-#### Metadata Query Protocol
-
-CAS also supports the [Dynamic Metadata Query Protocol](https://spaces.internet2.edu/display/InCFederation/Metadata+Query+Protocol)
-which is a REST-like API for requesting and receiving arbitrary metadata. In order to configure a CAS SAML service to retrieve its metadata
-from a Metadata query server, the metadata location must be configured to point to the query server instance. Here is an example:
-
-```json
-{
-  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name" : "SAMLService",
-  "id" : 10000003,
-  "evaluationOrder" : 10,
-  "metadataLocation" : "http://mdq.server.org/entities/{0}"
-}
-```
-
-...where `{0}` serves as an entityID placeholder for which metadata is to be queried.
-
-#### MongoDb
-
-Metadata documents may also be stored in and fetched from a MongoDb instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined collection that is taught to CAS via settings.  The outline of the document is as follows:
-
-| Field                     | Description
-|--------------|---------------------------------------------------
-| `id`                          | The identifier of the record.
-| `name`             | Indexed field which describes and names the metadata briefly.
-| `value`              | The XML document representing the metadata for the service provider.
-| `signature`              | The contents of the signing key to validate metadata, if any.
-
-Support is enabled by including the following module in the overlay:
-
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-mongo</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
-
-SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from MongoDb instances:
-
-```json
-{
-  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name" : "SAMLService",
-  "id" : 10000003,
-  "description" : "A MongoDb-based metadata resolver",
-  "metadataLocation" : "mongodb://"
-}
-```
-
-#### JPA
-
-Metadata documents may also be stored in and fetched from a relational database instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
-
-| Field                     | Description
-|--------------|---------------------------------------------------
-| `id`                          | The identifier of the record.
-| `name`             | Indexed field which describes and names the metadata briefly.
-| `value`              | The XML document representing the metadata for the service provider.
-| `signature`              | The contents of the signing key to validate metadata, if any.
-
-Support is enabled by including the following module in the overlay:
-
-```xml
-<dependency>
-  <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-saml-idp-metadata-jpa</artifactId>
-  <version>${cas.version}</version>
-</dependency>
-```
-
-SAML service definitions must then be designed as follows to allow CAS to fetch metadata documents from database  instances:
-
-```json
-{
-  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name" : "SAMLService",
-  "id" : 10000003,
-  "description" : "A relational-db-based metadata resolver",
-  "metadataLocation" : "jdbc://"
-}
-```
-
-#### Groovy
-
-A metadata location for a SAML service definition may  point to an external Groovy script, allowing the script to programmatically determine and build the metadata resolution machinery to be added to the collection of the existing resolvers. 
-
-```json
-{
-  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
-  "serviceId" : "the-entity-id-of-the-sp",
-  "name" : "SAMLService",
-  "id" : 10000003,
-  "description" : "A Groovy-based metadata resolver",
-  "metadataLocation" : "file:/etc/cas/config/groovy-metadata.groovy"
-}
-```
-
-The outline of the script may be as follows:
-
-```groovy
-import java.util.*
-import org.apereo.cas.support.saml.*;
-import org.apereo.cas.support.saml.services.*;
-import org.opensaml.saml.metadata.resolver.*;
-
-def Collection<MetadataResolver> run(final Object... args) {
-    def registeredService = args[0]
-    def samlConfigBean = args[1]
-    def samlProperties = args[2]
-    def logger = args[3]
-
-    /*
-     Stuff happens where you build the relevant metadata resolver instance(s).
-     When done, simply wrap the results into a collection and return.
-     A null or empty collection will be ignored by CAS.
-  */
-  def metadataResolver = ...
-   return CollectionUtils.wrap(metadataResolver);
-}
-```
-
-The parameters passed are as follows:
-
-| Parameter             | Description
-|-----------------------|-----------------------------------------------------------------------
-| `registeredService`             | The object representing the corresponding service definition in the registry.
-| `samlConfigBean`            | The object representing the OpenSAML configuration class holding various builder and marshaller factory instances.
-| `samlProperties`         | The object responsible for capturing the CAS SAML IdP properties defined in the configuration.
-| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
+provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
+To learn more, please [review this guide](../integration/Configuring-SAML2-DynamicMetadata.html).
 
 ## SP Integrations
 
