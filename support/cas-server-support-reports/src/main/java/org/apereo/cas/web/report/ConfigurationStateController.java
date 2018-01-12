@@ -7,6 +7,8 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
@@ -22,7 +24,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -35,13 +36,14 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 public class ConfigurationStateController extends BaseCasMvcEndpoint {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationStateController.class);
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
-    @Autowired
+    @Autowired(required = false)
     private RefreshEndpoint refreshEndpoint;
 
-    @Autowired
+    @Autowired(required = false)
     private EnvironmentEndpoint environmentEndpoint;
 
     @Autowired
@@ -77,7 +79,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     }
 
     private Boolean isRefreshEnabled() {
-        return !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint.isEnabled()
+        return !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint != null && refreshEndpoint.isEnabled()
             && environment.getProperty("spring.cloud.config.enabled", Boolean.class);
     }
 
@@ -95,30 +97,30 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @GetMapping("/getConfiguration")
     @ResponseBody
     public Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
+        final Map results = new TreeMap();
         ensureEndpointAccessIsAuthorized(request, response);
-        final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
-
-        if (environmentEndpoint.isEnabled()) {
-            final Map results = new TreeMap();
-            final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
-            environmentSettings.entrySet()
-                .stream()
-                .filter(entry -> pattern.matcher(entry.getKey()).matches())
-                .forEach(entry -> {
-                    final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
-                    keys.keySet().forEach(key -> {
-                        if (!results.containsKey(key)) {
-                            final String propHolder = String.format("${%s}", key);
-                            final String value = this.environment.resolvePlaceholders(propHolder);
-                            results.put(key, environmentEndpoint.sanitize(key, value));
-                        }
-                    });
-                });
-
+        if (environmentEndpoint == null || !environmentEndpoint.isEnabled()) {
+            LOGGER.warn("Environment endpoint is either undefined or disabled");
             return results;
         }
 
-        return new LinkedHashMap();
+        final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
+        final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
+        environmentSettings.entrySet()
+            .stream()
+            .filter(entry -> pattern.matcher(entry.getKey()).matches())
+            .forEach(entry -> {
+                final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
+                keys.keySet().forEach(key -> {
+                    if (!results.containsKey(key)) {
+                        final String propHolder = String.format("${%s}", key);
+                        final String value = this.environment.resolvePlaceholders(propHolder);
+                        results.put(key, environmentEndpoint.sanitize(key, value));
+                    }
+                });
+            });
+
+        return results;
     }
 
     /**
