@@ -137,6 +137,9 @@ public abstract class BaseCasWebflowSessionContextConfiguration {
 
     public abstract FlowExecutor getFlowExecutor();
 
+    /**
+     * The type Test webflow context configuration.
+     */
     @TestConfiguration("testWebflowContextConfiguration")
     public static class TestWebflowContextConfiguration {
 
