@@ -364,7 +364,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
 
-        List<AuthenticationHandler> sortedHandlers = new ArrayList<>(handlerSet);
+        final List<AuthenticationHandler> sortedHandlers = new ArrayList<>(handlerSet);
         OrderComparator.sort(sortedHandlers);
 
         try {
