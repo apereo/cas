@@ -363,7 +363,10 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             LOGGER.error("Resolved authentication handlers for this transaction are empty");
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
-        
+
+        List<AuthenticationHandler> sortedHandlers = new ArrayList<>(handlerSet);
+        OrderComparator.sort(sortedHandlers);
+
         try {
             final Iterator<Credential> it = credentials.iterator();
             AuthenticationCredentialsLocalBinder.clearInProgressAuthentication();
@@ -371,7 +374,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                 final Credential credential = it.next();
                 LOGGER.debug("Attempting to authenticate credential [{}]", credential);
 
-                final Iterator<AuthenticationHandler> itHandlers = handlerSet.iterator();
+                final Iterator<AuthenticationHandler> itHandlers = sortedHandlers.iterator();
                 boolean proceedWithNextHandler = true;
                 while (proceedWithNextHandler && itHandlers.hasNext()) {
                     final AuthenticationHandler handler = itHandlers.next();
