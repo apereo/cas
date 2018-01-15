@@ -42,6 +42,7 @@ buildscript {
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
         classpath "com.netflix.nebula:gradle-lint-plugin:8.3.1"
+        classpath "io.franzbecker:gradle-lombok:1.11"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
         classpath "org.ajoberstar:grgit:2.1.0"
@@ -118,6 +119,7 @@ subprojects {
         apply plugin: "net.ltgt.errorprone"
     }
     apply plugin: "checkstyle"
+    apply plugin: "io.franzbecker.gradle-lombok"
     apply plugin: "findbugs"
     apply plugin: "propdeps"
     apply plugin: "propdeps-maven"
@@ -226,6 +228,11 @@ subprojects {
         project.buildDate != null || !project.buildJarFile.exists()
     }
 
+    lombok {
+        version = "$lombokVersion"
+        sha256 = ""
+    }
+    
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
