@@ -6,6 +6,7 @@ import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
+import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.ProfileManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,8 +105,11 @@ public class TerminateSessionAction extends AbstractAction {
         manager.logout();
 
         final HttpSession session = request.getSession();
-        if (session != null) {
+        if (session != null) {            
+            final Object requestedUrl=request.getSession().getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
+            // copy pac4jRequestedUrl to  new session
+            request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
         }
     }
 
