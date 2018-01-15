@@ -8,11 +8,16 @@ import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
 import org.apereo.cas.web.flow.Pac4jWebflowConfigurer;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.pac4j.core.client.Clients;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +25,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
+import org.apereo.cas.web.flow.initialFlowSetupP4jAction;
 
 /**
  * This is {@link Pac4jWebflowConfiguration}.
@@ -57,6 +63,14 @@ public class Pac4jWebflowConfiguration {
     @Qualifier("logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
     @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
@@ -76,5 +90,18 @@ public class Pac4jWebflowConfiguration {
     @Autowired
     public Saml2ClientMetadataController saml2ClientMetadataController(@Qualifier("builtClients") final Clients builtClients) {
         return new Saml2ClientMetadataController(builtClients, configBean);
+    }
+
+    @RefreshScope
+    @Bean
+    @Autowired
+    @ConditionalOnMissingBean(name = "initialFlowSetupP4jAction")
+    public Action initialFlowSetupP4jAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+        return new initialFlowSetupP4jAction(
+            CollectionUtils.wrap(argumentExtractor),
+            servicesManager,
+            authenticationRequestServiceSelectionStrategies,
+            casProperties
+        );
     }
 }
