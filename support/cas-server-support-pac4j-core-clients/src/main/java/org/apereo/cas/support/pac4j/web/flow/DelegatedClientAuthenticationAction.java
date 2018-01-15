@@ -9,8 +9,10 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
@@ -24,7 +26,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.ExternalContext;
+import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -145,8 +149,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 final ClientCredential clientCredential = new ClientCredential(credentials);
                 final AuthenticationResult authenticationResult =
                         this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+                try {
+                    final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+                    WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+                } catch (final PrincipalException e) {
+                    LOGGER.warn("Could not grant service ticket [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+                    return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
+                }
                 return success();
             }
         }
@@ -223,10 +232,10 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             LOGGER.warn("No clients could be determined based on the provided configuration");
         }
     }
-    
+
     /**
      * Get a valid CSS class for the given provider name.
-     * 
+     *
      * @param name Name of the provider
      */
     private String getCssClass(final String name) {
@@ -235,7 +244,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             computedCssClass = computedCssClass.concat(" " + PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN.matcher(name).replaceAll("-"));
         }
         LOGGER.debug("cssClass for {} is {} ", name, computedCssClass);
-        return computedCssClass;            
+        return computedCssClass;
     }
 
     /**
@@ -338,9 +347,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         public String getType() {
             return type;
         }
-        
+
         public String getCssClass() {
             return cssClass;
         }
+    }
+
+    /**
+     * New event based on the id, which contains an error attribute referring to the exception occurred.
+     *
+     * @param id    the id
+     * @param error the error
+     * @return the event
+     */
+    private Event newEvent(final String id, final Exception error) {
+        return new EventFactorySupport().event(this, id, new LocalAttributeMap<>("error", error));
     }
 }
