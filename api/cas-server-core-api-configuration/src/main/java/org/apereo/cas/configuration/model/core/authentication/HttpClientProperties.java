@@ -56,7 +56,7 @@ public class HttpClientProperties implements Serializable {
      * Whether the regular expression specified with {@code authorityValidationRegEx} should be handled as case-sensitive
      * ({@code true}) or case-insensitive ({@code false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
      */
-    private boolean authorityValidationRegExCaseSensitiv = true;
+    private boolean authorityValidationRegExCaseSensitive = true;
     
     public String getHostNameVerifier() {
         return hostNameVerifier;
@@ -114,12 +114,12 @@ public class HttpClientProperties implements Serializable {
         this.authorityValidationRegEx = authorityValidationRegEx;
     }
 
-    public boolean isAuthorityValidationRegExCaseSensitiv() {
-        return this.authorityValidationRegExCaseSensitiv;
+    public boolean isAuthorityValidationRegExCaseSensitive() {
+        return this.authorityValidationRegExCaseSensitive;
     }
 
-    public void setAuthorityValidationRegExCaseSensitiv(final boolean authorityValidationRegExCaseSensitiv) {
-        this.authorityValidationRegExCaseSensitiv = authorityValidationRegExCaseSensitiv;
+    public void setAuthorityValidationRegExCaseSensitive(final boolean authorityValidationRegExCaseSensitive) {
+        this.authorityValidationRegExCaseSensitive = authorityValidationRegExCaseSensitive;
     }
 
     public static class Truststore implements Serializable {
