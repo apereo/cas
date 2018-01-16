@@ -2,7 +2,6 @@ package org.apereo.cas.ws.idp.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import javax.servlet.http.HttpServletRequest;
 import lombok.ToString;
@@ -43,7 +42,10 @@ public class WSFederationRequest {
 
     private final String wreq;
 
-    protected WSFederationRequest(final String wtrealm, final String wreply, final String wctx, final String wfresh, final String whr, final String wresult, final String relayState, final String samlResponse, final String state, final String code, final String wa, final String wauth, final String wreq) {
+    protected WSFederationRequest(final String wtrealm, final String wreply, final String wctx,
+                                  final String wfresh, final String whr, final String wresult, final String relayState,
+                                  final String samlResponse, final String state, final String code, final String wa,
+                                  final String wauth, final String wreq) {
         this.wtrealm = wtrealm;
         this.wreply = wreply;
         this.wctx = wctx;

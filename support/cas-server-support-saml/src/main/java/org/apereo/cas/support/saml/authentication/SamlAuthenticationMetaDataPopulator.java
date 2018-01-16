@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
@@ -11,6 +11,12 @@ import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulato
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Capture SAML authentication metadata.
+ *
+ * @author Misagh Moayyed
+ * @since 5.0.0
+ */
 @Slf4j
 @ToString(callSuper = true)
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {

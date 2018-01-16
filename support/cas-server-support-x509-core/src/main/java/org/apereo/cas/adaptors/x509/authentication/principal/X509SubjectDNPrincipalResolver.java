@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import java.security.cert.X509Certificate;
@@ -19,7 +19,9 @@ public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolve
     public X509SubjectDNPrincipalResolver() {
     }
 
-    public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                          final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                          final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

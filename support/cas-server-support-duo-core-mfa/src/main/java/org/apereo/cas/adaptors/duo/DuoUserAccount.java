@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.duo;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import lombok.ToString;
 
 /**

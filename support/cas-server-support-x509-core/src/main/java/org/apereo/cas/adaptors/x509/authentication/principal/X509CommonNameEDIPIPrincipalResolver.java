@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -32,7 +32,9 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
     public X509CommonNameEDIPIPrincipalResolver() {
     }
 
-    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                                final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                                final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

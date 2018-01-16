@@ -1,7 +1,6 @@
 package org.apereo.cas.util.http;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.http.MediaType;
 import java.io.Serializable;
