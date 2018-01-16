@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.junit.Test;
 
 import static org.junit.Assert.*;

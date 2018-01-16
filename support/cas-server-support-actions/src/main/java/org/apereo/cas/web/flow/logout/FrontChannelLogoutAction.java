@@ -1,10 +1,11 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.logout;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutHttpMessage;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -24,7 +25,6 @@ import java.util.Map;
  */
 @Slf4j
 public class FrontChannelLogoutAction extends AbstractLogoutAction {
-
     
     private final LogoutManager logoutManager;
 
@@ -46,22 +46,22 @@ public class FrontChannelLogoutAction extends AbstractLogoutAction {
 
         if (logoutRequests != null) {
             logoutRequests.stream()
-                    .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
-                    .forEach(r -> {
-                        LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
-                        final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
-                        LOGGER.debug("Front-channel logout message to send is [{}]", logoutMessage);
-                        final LogoutHttpMessage msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
-                        logoutUrls.put(r, msg);
-                        r.setStatus(LogoutRequestStatus.SUCCESS);
-                        r.getService().setLoggedOutAlready(true);
-                    });
-            
+                .filter(r -> r.getStatus() == LogoutRequestStatus.NOT_ATTEMPTED)
+                .forEach(r -> {
+                    LOGGER.debug("Using logout url [{}] for front-channel logout requests", r.getLogoutUrl().toExternalForm());
+                    final String logoutMessage = this.logoutManager.createFrontChannelLogoutMessage(r);
+                    LOGGER.debug("Front-channel logout message to send is [{}]", logoutMessage);
+                    final LogoutHttpMessage msg = new LogoutHttpMessage(r.getLogoutUrl(), logoutMessage, true);
+                    logoutUrls.put(r, msg);
+                    r.setStatus(LogoutRequestStatus.SUCCESS);
+                    r.getService().setLoggedOutAlready(true);
+                });
+
             if (!logoutUrls.isEmpty()) {
                 context.getFlowScope().put("logoutUrls", logoutUrls);
-                return new EventFactorySupport().event(this, "propagate");
+                return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_PROPAGATE);
             }
         }
-        return new EventFactorySupport().event(this, FINISH_EVENT);
+        return new EventFactorySupport().event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }

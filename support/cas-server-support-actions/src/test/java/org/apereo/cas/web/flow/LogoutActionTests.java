@@ -11,6 +11,7 @@ import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -66,7 +67,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutProperties properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FINISH_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
@@ -80,7 +81,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         properties.setFollowServiceRedirects(true);
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FINISH_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertEquals(TEST_SERVICE_ID, this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
 
@@ -90,7 +91,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutProperties properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FINISH_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
 
@@ -104,7 +105,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutProperties properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FINISH_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
         assertNull(this.requestContext.getFlowScope().get("logoutRedirectUrl"));
     }
 
@@ -115,7 +116,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutProperties properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FINISH_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @Test
@@ -128,7 +129,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutProperties properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FINISH_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
     }
 
     @SuppressWarnings("unchecked")
@@ -141,7 +142,7 @@ public class LogoutActionTests extends AbstractCentralAuthenticationServiceTests
         final LogoutProperties properties = new LogoutProperties();
         this.logoutAction = new LogoutAction(getWebApplicationServiceFactory(), this.serviceManager, properties);
         final Event event = this.logoutAction.doExecute(this.requestContext);
-        assertEquals(LogoutAction.FRONT_EVENT, event.getId());
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FRONT, event.getId());
         final List<LogoutRequest> logoutRequests = WebUtils.getLogoutRequests(this.requestContext);
         assertEquals(1, logoutRequests.size());
         assertEquals(logoutRequest, logoutRequests.get(0));

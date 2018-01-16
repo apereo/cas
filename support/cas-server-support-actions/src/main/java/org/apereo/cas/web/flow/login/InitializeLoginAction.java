@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.login;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;

@@ -35,13 +35,13 @@ import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 
 /**
- * This is {@link DefaultWebflowConfigurer}.
+ * This is {@link DefaultLoginWebflowConfigurer}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     /**
      * Instantiates a new Default webflow configurer.
@@ -51,10 +51,10 @@ public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
      * @param applicationContext     the application context
      * @param casProperties          the cas properties
      */
-    public DefaultWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                    final FlowDefinitionRegistry flowDefinitionRegistry,
-                                    final ApplicationContext applicationContext,
-                                    final CasConfigurationProperties casProperties) {
+    public DefaultLoginWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                         final FlowDefinitionRegistry flowDefinitionRegistry,
+                                         final ApplicationContext applicationContext,
+                                         final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, flowDefinitionRegistry, applicationContext, casProperties);
     }
 

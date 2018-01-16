@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.logout;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -11,6 +11,7 @@ import org.apereo.cas.logout.LogoutRequest;
 import org.apereo.cas.logout.LogoutRequestStatus;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,8 +32,7 @@ import java.util.List;
  */
 @Slf4j
 public class LogoutAction extends AbstractLogoutAction {
-
-
+    
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     private final ServicesManager servicesManager;
@@ -82,9 +82,9 @@ public class LogoutAction extends AbstractLogoutAction {
         // there are some front services to logout, perform front SLO
         if (needFrontSlo) {
             LOGGER.debug("Proceeding forward with front-channel single logout");
-            return new Event(this, FRONT_EVENT);
+            return new Event(this, CasWebflowConstants.TRANSITION_ID_FRONT);
         }
         LOGGER.debug("Moving forward to finish the logout process");
-        return new Event(this, FINISH_EVENT);
+        return new Event(this, CasWebflowConstants.TRANSITION_ID_FINISH);
     }
 }
