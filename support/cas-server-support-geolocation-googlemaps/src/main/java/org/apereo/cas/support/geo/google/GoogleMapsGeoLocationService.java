@@ -11,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
 
 import java.net.InetAddress;
@@ -25,9 +26,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
-
-
-
+    
     private final GeoApiContext context;
 
     public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
@@ -41,7 +40,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             builder.enterpriseCredentials(properties.getClientId(), properties.getClientSecret());
         }
         builder.apiKey(properties.getApiKey())
-                .connectTimeout(properties.getConnectTimeout(), TimeUnit.MILLISECONDS);
+                .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
         
         this.context = builder.build();
     }

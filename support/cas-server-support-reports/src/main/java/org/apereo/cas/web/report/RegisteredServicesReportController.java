@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
@@ -54,6 +55,7 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
         final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
                 .stream()
                 .collect(Collectors.toMap(RegisteredService::getName, Function.identity()));
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        return new WebAsyncTask<>(timeout, asyncTask);
     }
 }

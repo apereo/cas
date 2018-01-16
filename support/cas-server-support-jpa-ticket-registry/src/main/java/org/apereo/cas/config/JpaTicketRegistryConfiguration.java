@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -106,6 +107,7 @@ public class JpaTicketRegistryConfiguration {
     public LockingStrategy lockingStrategy() {
         final TicketRegistryProperties registry = casProperties.getTicket().getRegistry();
         final String uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
-        return new JpaLockingStrategy("cas-ticket-registry-cleaner", uniqueId, registry.getJpa().getJpaLockingTimeout());
+        return new JpaLockingStrategy("cas-ticket-registry-cleaner", uniqueId,
+            Beans.newDuration(registry.getJpa().getJpaLockingTimeout()).toMillis());
     }
 }

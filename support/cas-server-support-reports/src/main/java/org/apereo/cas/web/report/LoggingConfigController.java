@@ -118,7 +118,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        Assert.notNull(this.loggerContext);
+        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
 
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
@@ -141,7 +141,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        Assert.notNull(this.loggerContext);
+        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -235,7 +235,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
                                   final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        Assert.notNull(this.loggerContext);
+        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
@@ -258,7 +258,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        Assert.notNull(this.loggerContext);
+        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
         final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
