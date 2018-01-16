@@ -3,11 +3,11 @@ package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link StreamServicesHazelcastProperties}.
@@ -17,7 +17,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
 @Slf4j
+@Getter
+@Setter
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
+
     private static final long serialVersionUID = -1583614089051161614L;
 
     /**
@@ -43,21 +46,5 @@ public class StreamServicesHazelcastProperties extends BaseStreamServicesPropert
     public StreamServicesHazelcastProperties() {
         config.getCluster().setPort(PORT);
         config.getCluster().setInstanceName("localhost-services-replication");
-    }
-
-    public BaseHazelcastProperties getConfig() {
-        return config;
-    }
-
-    public void setConfig(final BaseHazelcastProperties config) {
-        this.config = config;
-    }
-
-    public long getDuration() {
-        return Beans.newDuration(this.duration).toMillis();
-    }
-
-    public void setDuration(final String duration) {
-        this.duration = duration;
     }
 }

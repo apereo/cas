@@ -1,11 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.core.io.Resource;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for http.client.truststore.
@@ -15,8 +15,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class HttpClientProperties implements Serializable {
+
     private static final long serialVersionUID = -7494946569869245770L;
+
     /**
      * Connection timeout for all operations that reach out to URL endpoints.
      */
@@ -46,87 +50,26 @@ public class HttpClientProperties implements Serializable {
     /**
      * Whether CAS should accept local logout URLs.
      * For example http(s)://localhost/logout
-     */    
+     */
     private boolean allowLocalLogoutUrls;
 
     /**
      * If specified the regular expression will be used to validate the url's authority.
      */
     private String authorityValidationRegEx;
-    
+
     /**
      * Whether the regular expression specified with {@code authorityValidationRegEx} should be handled as case-sensitive
      * ({@code true}) or case-insensitive ({@code false}). If no {@code authorityValidationRegEx} is set, this value does not have any effect.
      */
     private boolean authorityValidationRegExCaseSensitive = true;
-    
-    public String getHostNameVerifier() {
-        return hostNameVerifier;
-    }
 
-    public void setHostNameVerifier(final String hostNameVerifier) {
-        this.hostNameVerifier = hostNameVerifier;
-    }
-
-    public long getAsyncTimeout() {
-        return Beans.newDuration(this.asyncTimeout).toMillis();
-    }
-
-    public void setAsyncTimeout(final String asyncTimeout) {
-        this.asyncTimeout = asyncTimeout;
-    }
-
-    public Truststore getTruststore() {
-        return truststore;
-    }
-
-    public void setTruststore(final Truststore truststore) {
-        this.truststore = truststore;
-    }
-
-    public long getConnectionTimeout() {
-        return Beans.newDuration(this.connectionTimeout).toMillis();
-    }
-
-    public void setConnectionTimeout(final String connectionTimeout) {
-        this.connectionTimeout = connectionTimeout;
-    }
-
-    public long getReadTimeout() {
-        return Beans.newDuration(this.readTimeout).toMillis();
-    }
-
-    public void setReadTimeout(final String readTimeout) {
-        this.readTimeout = readTimeout;
-    }
-    
-    public boolean isAllowLocalLogoutUrls() {
-        return this.allowLocalLogoutUrls;
-    }
-
-    public void setAllowLocalLogoutUrls(final boolean allowLocalLogoutUrls) {
-        this.allowLocalLogoutUrls = allowLocalLogoutUrls;
-    }
-
-    public String getAuthorityValidationRegEx() {
-        return this.authorityValidationRegEx;
-    }
-
-    public void setAuthorityValidationRegEx(final String authorityValidationRegEx) {
-        this.authorityValidationRegEx = authorityValidationRegEx;
-    }
-
-    public boolean isAuthorityValidationRegExCaseSensitive() {
-        return this.authorityValidationRegExCaseSensitive;
-    }
-
-    public void setAuthorityValidationRegExCaseSensitive(final boolean authorityValidationRegExCaseSensitive) {
-        this.authorityValidationRegExCaseSensitive = authorityValidationRegExCaseSensitive;
-    }
-
+    @Getter
+    @Setter
     public static class Truststore implements Serializable {
 
         private static final long serialVersionUID = -1357168622083627654L;
+
         /**
          * The CAS local truststore resource to contain certificates to the CAS deployment.
          * In the event that local certificates are to be imported into the CAS running environment,
@@ -138,21 +81,5 @@ public class HttpClientProperties implements Serializable {
          * The truststore password.
          */
         private String psw = "changeit";
-
-        public Resource getFile() {
-            return file;
-        }
-
-        public void setFile(final Resource file) {
-            this.file = file;
-        }
-
-        public String getPsw() {
-            return psw;
-        }
-
-        public void setPsw(final String psw) {
-            this.psw = psw;
-        }
     }
 }

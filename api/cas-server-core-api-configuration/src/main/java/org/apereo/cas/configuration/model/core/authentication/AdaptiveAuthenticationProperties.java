@@ -5,7 +5,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,6 +24,7 @@ import java.util.Map;
 public class AdaptiveAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1840174229142982880L;
+
     /**
      * Comma-separated list of strings representing countries to be rejected from participating in authentication transactions.
      */

@@ -8,8 +8,9 @@ import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProper
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for {@code ticket}.
@@ -19,9 +20,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class TicketProperties implements Serializable {
 
     private static final long serialVersionUID = 5586947805593202037L;
+
     /**
      * Properties and settings related to proxy-granting tickets.
      */
@@ -60,53 +64,5 @@ public class TicketProperties implements Serializable {
 
     public TicketProperties() {
         this.crypto.setEnabled(false);
-    }
-
-    public ProxyGrantingTicketProperties getPgt() {
-        return pgt;
-    }
-
-    public void setPgt(final ProxyGrantingTicketProperties pgt) {
-        this.pgt = pgt;
-    }
-
-    public ProxyTicketProperties getPt() {
-        return pt;
-    }
-
-    public void setPt(final ProxyTicketProperties pt) {
-        this.pt = pt;
-    }
-
-    public TicketRegistryProperties getRegistry() {
-        return registry;
-    }
-
-    public void setRegistry(final TicketRegistryProperties registry) {
-        this.registry = registry;
-    }
-
-    public ServiceTicketProperties getSt() {
-        return st;
-    }
-
-    public void setSt(final ServiceTicketProperties st) {
-        this.st = st;
-    }
-
-    public TicketGrantingTicketProperties getTgt() {
-        return tgt;
-    }
-
-    public void setTgt(final TicketGrantingTicketProperties tgt) {
-        this.tgt = tgt;
-    }
-
-    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
     }
 }

@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.oauth;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link OAuthGrantsProperties}.
@@ -13,24 +14,24 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-oauth")
 @Slf4j
+@Getter
+@Setter
 public class OAuthGrantsProperties implements Serializable {
+
     private static final long serialVersionUID = -2246860215082703251L;
+
     /**
      * Resource owner grant settings.
      */
     private ResourceOwner resourceOwner = new ResourceOwner();
 
-    public ResourceOwner getResourceOwner() {
-        return resourceOwner;
-    }
-
-    public void setResourceOwner(final ResourceOwner resourceOwner) {
-        this.resourceOwner = resourceOwner;
-    }
-
     @RequiresModule(name = "cas-server-support-oauth")
+    @Getter
+    @Setter
     public static class ResourceOwner implements Serializable {
+
         private static final long serialVersionUID = 3171206304518294330L;
+
         /**
          * Whether using the resource-owner grant should
          * enforce authorization rules and per-service policies
@@ -38,13 +39,5 @@ public class OAuthGrantsProperties implements Serializable {
          * outside the normal semantics of the grant and protocol.
          */
         private boolean requireServiceHeader;
-
-        public boolean isRequireServiceHeader() {
-            return requireServiceHeader;
-        }
-
-        public void setRequireServiceHeader(final boolean requireServiceHeader) {
-            this.requireServiceHeader = requireServiceHeader;
-        }
     }
 }

@@ -5,11 +5,12 @@ import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPri
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link X509Properties}.
@@ -19,38 +20,36 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiresModule(name = "cas-server-support-x509-webflow")
 @Slf4j
+@Getter
+@Setter
 public class X509Properties implements Serializable {
-    
+
     private static final long serialVersionUID = -9032744084671270366L;
 
     /**
      * The  Principal types.
      */
     public enum PrincipalTypes {
+
         /**
          * Create principal by subject.
          */
-        SUBJECT,
-        /**
+        SUBJECT, /**
          * Create principal by subject DN.
          */
-        SUBJECT_DN,
-        /**
+        SUBJECT_DN, /**
          * Create principal by serial no.
          */
-        SERIAL_NO,
-        /**
+        SERIAL_NO, /**
          * Create principal by serial no and DN.
          */
-        SERIAL_NO_DN,
-        /**
+        SERIAL_NO_DN, /**
          * Create principal by subject alternative name.
          */
-        SUBJECT_ALT_NAME,
-        /**
+        SUBJECT_ALT_NAME, /**
          * Create principal by common name and EDIPI.
          */
-        CN_EDIPI,
+        CN_EDIPI
     }
 
     /**
@@ -78,34 +77,41 @@ public class X509Properties implements Serializable {
      * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
      */
     private String serialNumberPrefix = "SERIALNUMBER=";
+
     /**
      * Value delimiter used for principal resolution
      * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
      */
     private String valueDelimiter = ", ";
+
     /**
      * Threshold value if expired CRL revocation policy is to be handled via threshold.
      */
     private int revocationPolicyThreshold = 172_800;
+
     /**
      * Whether revocation checking should check all resources, or stop at first one.
      */
     private boolean checkAll;
+
     /**
      * The refresh interval of the internal scheduler in cases where CRL revocation checking
      * is done via resources.
      */
     private int refreshIntervalSeconds = 3_600;
+
     /**
      * The principal descriptor used for principal resolution
      * when type is set to {@link PrincipalTypes#SUBJECT}.
      */
     private String principalDescriptor;
+
     /**
      * When CRL revocation checking is done via distribution points,
      * decide if fetch failures should throw errors.
      */
     private boolean throwOnFetchFailure;
+
     /**
      * Indicates the type of principal resolution for X509.
      * <ul>
@@ -119,6 +125,7 @@ public class X509Properties implements Serializable {
      * </ul>
      */
     private PrincipalTypes principalType;
+
     /**
      * Revocation certificate checking can be carried out in one of the following ways:
      * <ul>
@@ -129,6 +136,7 @@ public class X509Properties implements Serializable {
      * </ul>
      */
     private String revocationChecker = "NONE";
+
     /**
      * To fetch CRLs, the following options are available:
      * <ul>
@@ -137,30 +145,37 @@ public class X509Properties implements Serializable {
      * </ul>
      */
     private String crlFetcher = "RESOURCE";
+
     /**
      * List of CRL resources to use for fetching.
      */
     private List<String> crlResources = new ArrayList<>();
+
     /**
      * When CRLs are cached, indicate maximum number of elements kept in memory.
      */
     private int cacheMaxElementsInMemory = 1_000;
+
     /**
      * When CRLs are cached, indicate whether cache should overflow to disk.
      */
     private boolean cacheDiskOverflow;
+
     /**
      * When CRLs are cached, indicate if cache items should be eternal.
      */
     private boolean cacheEternal;
+
     /**
      * When CRLs are cached, indicate the time-to-live of cache items.
      */
     private long cacheTimeToLiveSeconds = TimeUnit.HOURS.toSeconds(4);
+
     /**
      * When CRLs are cached, indicate the idle timeout of cache items.
      */
     private long cacheTimeToIdleSeconds = TimeUnit.MINUTES.toSeconds(30);
+
     /**
      * If the CRL resource is unavailable, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code RESOURCE}.
@@ -173,6 +188,7 @@ public class X509Properties implements Serializable {
      * </ul>
      */
     private String crlResourceUnavailablePolicy = "DENY";
+
     /**
      * If the CRL resource has expired, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code RESOURCE}.
@@ -185,6 +201,7 @@ public class X509Properties implements Serializable {
      * </ul>
      */
     private String crlResourceExpiredPolicy = "DENY";
+
     /**
      * If the CRL is unavailable, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code CRL}.
@@ -197,6 +214,7 @@ public class X509Properties implements Serializable {
      * </ul>
      */
     private String crlUnavailablePolicy = "DENY";
+
     /**
      * If the CRL has expired, activate the this policy.
      * Activated if {@link #revocationChecker} is {@code CRL}.
@@ -214,6 +232,7 @@ public class X509Properties implements Serializable {
      * Radix used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
      */
     private int principalSNRadix;
+
     /**
      * If radix hex padding should be used when {@link #principalType} is {@link PrincipalTypes#SERIAL_NO}.
      */
@@ -267,270 +286,16 @@ public class X509Properties implements Serializable {
      * The authentication handler name.
      */
     private String name;
-    
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public int getCacheMaxElementsInMemory() {
-        return cacheMaxElementsInMemory;
-    }
-
-    public void setCacheMaxElementsInMemory(final int cacheMaxElementsInMemory) {
-        this.cacheMaxElementsInMemory = cacheMaxElementsInMemory;
-    }
-
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
-    public boolean isCacheDiskOverflow() {
-        return cacheDiskOverflow;
-    }
-
-    public void setCacheDiskOverflow(final boolean cacheDiskOverflow) {
-        this.cacheDiskOverflow = cacheDiskOverflow;
-    }
-
-    public boolean isCacheEternal() {
-        return cacheEternal;
-    }
-
-    public void setCacheEternal(final boolean cacheEternal) {
-        this.cacheEternal = cacheEternal;
-    }
-
-    public long getCacheTimeToLiveSeconds() {
-        return cacheTimeToLiveSeconds;
-    }
-
-    public void setCacheTimeToLiveSeconds(final long cacheTimeToLiveSeconds) {
-        this.cacheTimeToLiveSeconds = cacheTimeToLiveSeconds;
-    }
-
-    public long getCacheTimeToIdleSeconds() {
-        return cacheTimeToIdleSeconds;
-    }
-
-    public void setCacheTimeToIdleSeconds(final long cacheTimeToIdleSeconds) {
-        this.cacheTimeToIdleSeconds = cacheTimeToIdleSeconds;
-    }
-
-    public String getCrlFetcher() {
-        return crlFetcher;
-    }
-
-    public void setCrlFetcher(final String crlFetcher) {
-        this.crlFetcher = crlFetcher;
-    }
-
-    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
-        this.principal = principal;
-    }
-
-    public String getRegExTrustedIssuerDnPattern() {
-        return regExTrustedIssuerDnPattern;
-    }
-
-    public void setRegExTrustedIssuerDnPattern(final String regExTrustedIssuerDnPattern) {
-        this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
-    }
-
-    public List<String> getCrlResources() {
-        return crlResources;
-    }
-
-    public void setCrlResources(final List<String> crlResources) {
-        this.crlResources = crlResources;
-    }
-
-    public int getMaxPathLength() {
-        return maxPathLength;
-    }
-
-    public void setMaxPathLength(final int maxPathLength) {
-        this.maxPathLength = maxPathLength;
-    }
-
-    public boolean isMaxPathLengthAllowUnspecified() {
-        return maxPathLengthAllowUnspecified;
-    }
-
-    public void setMaxPathLengthAllowUnspecified(final boolean maxPathLengthAllowUnspecified) {
-        this.maxPathLengthAllowUnspecified = maxPathLengthAllowUnspecified;
-    }
-
-    public boolean isCheckKeyUsage() {
-        return checkKeyUsage;
-    }
-
-    public void setCheckKeyUsage(final boolean checkKeyUsage) {
-        this.checkKeyUsage = checkKeyUsage;
-    }
-
-    public boolean isRequireKeyUsage() {
-        return requireKeyUsage;
-    }
-
-    public void setRequireKeyUsage(final boolean requireKeyUsage) {
-        this.requireKeyUsage = requireKeyUsage;
-    }
-
-    public String getRegExSubjectDnPattern() {
-        return regExSubjectDnPattern;
-    }
-
-    public void setRegExSubjectDnPattern(final String regExSubjectDnPattern) {
-        this.regExSubjectDnPattern = regExSubjectDnPattern;
-    }
-
-    public boolean isThrowOnFetchFailure() {
-        return throwOnFetchFailure;
-    }
-
-    public void setThrowOnFetchFailure(final boolean throwOnFetchFailure) {
-        this.throwOnFetchFailure = throwOnFetchFailure;
-    }
-
-    public String getPrincipalDescriptor() {
-        return principalDescriptor;
-    }
-
-    public void setPrincipalDescriptor(final String principalDescriptor) {
-        this.principalDescriptor = principalDescriptor;
-    }
-
-    public int getRefreshIntervalSeconds() {
-        return refreshIntervalSeconds;
-    }
-
-    public void setRefreshIntervalSeconds(final int refreshIntervalSeconds) {
-        this.refreshIntervalSeconds = refreshIntervalSeconds;
-    }
-
-    public boolean isCheckAll() {
-        return checkAll;
-    }
-
-    public void setCheckAll(final boolean checkAll) {
-        this.checkAll = checkAll;
-    }
-
-    public String getValueDelimiter() {
-        return valueDelimiter;
-    }
-
-    public void setValueDelimiter(final String valueDelimiter) {
-        this.valueDelimiter = valueDelimiter;
-    }
-
-    public String getRevocationChecker() {
-        return revocationChecker;
-    }
-
-    public void setRevocationChecker(final String revocationChecker) {
-        this.revocationChecker = revocationChecker;
-    }
-
-    public String getSerialNumberPrefix() {
-        return serialNumberPrefix;
-    }
-
-    public PrincipalTypes getPrincipalType() {
-        return principalType;
-    }
-
-    public void setPrincipalType(final PrincipalTypes principalType) {
-        this.principalType = principalType;
-    }
-
-    public void setSerialNumberPrefix(final String serialNumberPrefix) {
-        this.serialNumberPrefix = serialNumberPrefix;
-    }
-
-    public int getRevocationPolicyThreshold() {
-        return revocationPolicyThreshold;
-    }
-
-    public void setRevocationPolicyThreshold(final int revocationPolicyThreshold) {
-        this.revocationPolicyThreshold = revocationPolicyThreshold;
-    }
-
-    public String getCrlResourceUnavailablePolicy() {
-        return crlResourceUnavailablePolicy;
-    }
-
-    public void setCrlResourceUnavailablePolicy(final String crlResourceUnavailablePolicy) {
-        this.crlResourceUnavailablePolicy = crlResourceUnavailablePolicy;
-    }
-
-    public String getCrlResourceExpiredPolicy() {
-        return crlResourceExpiredPolicy;
-    }
-
-    public void setCrlResourceExpiredPolicy(final String crlResourceExpiredPolicy) {
-        this.crlResourceExpiredPolicy = crlResourceExpiredPolicy;
-    }
-
-    public String getCrlUnavailablePolicy() {
-        return crlUnavailablePolicy;
-    }
-
-    public void setCrlUnavailablePolicy(final String crlUnavailablePolicy) {
-        this.crlUnavailablePolicy = crlUnavailablePolicy;
-    }
-
-    public String getCrlExpiredPolicy() {
-        return crlExpiredPolicy;
-    }
-
-    public void setCrlExpiredPolicy(final String crlExpiredPolicy) {
-        this.crlExpiredPolicy = crlExpiredPolicy;
-    }
-
-    public int getPrincipalSNRadix() {
-        return principalSNRadix;
-    }
-
-    public void setPrincipalSNRadix(final int principalSNRadix) {
-        this.principalSNRadix = principalSNRadix;
-    }
-
-    public boolean isPrincipalHexSNZeroPadding() {
-        return principalHexSNZeroPadding;
-    }
-
-    public void setPrincipalHexSNZeroPadding(final boolean principalHexSNZeroPadding) {
-        this.principalHexSNZeroPadding = principalHexSNZeroPadding;
-    }
-
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
+
         private static final long serialVersionUID = -1655068554291000206L;
+
         /**
          * The LDAP attribute that holds the certificate revocation list.
          */
         private String certificateAttribute = "certificateRevocationList";
-
-        public String getCertificateAttribute() {
-            return certificateAttribute;
-        }
-
-        public void setCertificateAttribute(final String certificateAttribute) {
-            this.certificateAttribute = certificateAttribute;
-        }
-        
     }
 }

@@ -2,11 +2,12 @@ package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatBasicAuthenticationProperties}.
@@ -16,8 +17,12 @@ import java.util.stream.Stream;
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Slf4j
+@Getter
+@Setter
 public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Serializable {
+
     private static final long serialVersionUID = 1164446071136700282L;
+
     /**
      * Enable the SSL valve for apache tomcat.
      */
@@ -38,36 +43,4 @@ public class CasEmbeddedApacheTomcatBasicAuthenticationProperties implements Ser
      * Add a URL pattern to be part of this web resource collection.
      */
     private List<String> patterns = Stream.of("/*").collect(Collectors.toList());
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public List<String> getSecurityRoles() {
-        return securityRoles;
-    }
-
-    public void setSecurityRoles(final List<String> securityRoles) {
-        this.securityRoles = securityRoles;
-    }
-
-    public List<String> getAuthRoles() {
-        return authRoles;
-    }
-
-    public void setAuthRoles(final List<String> authRoles) {
-        this.authRoles = authRoles;
-    }
-
-    public List<String> getPatterns() {
-        return patterns;
-    }
-
-    public void setPatterns(final List<String> patterns) {
-        this.patterns = patterns;
-    }
 }

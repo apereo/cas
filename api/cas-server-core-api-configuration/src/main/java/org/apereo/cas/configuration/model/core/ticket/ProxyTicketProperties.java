@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.ticket;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ProxyTicketProperties}.
@@ -13,9 +14,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class ProxyTicketProperties implements Serializable {
 
     private static final long serialVersionUID = -3690545027059561010L;
+
     /**
      * Number of uses allowed.
      */
@@ -25,20 +29,4 @@ public class ProxyTicketProperties implements Serializable {
      * Number of seconds after which this ticket becomes invalid.
      */
     private int timeToKillInSeconds = 10;
-    
-    public int getNumberOfUses() {
-        return numberOfUses;
-    }
-
-    public void setNumberOfUses(final int numberOfUses) {
-        this.numberOfUses = numberOfUses;
-    }
-
-    public int getTimeToKillInSeconds() {
-        return timeToKillInSeconds;
-    }
-
-    public void setTimeToKillInSeconds(final int timeToKillInSeconds) {
-        this.timeToKillInSeconds = timeToKillInSeconds;
-    }
 }

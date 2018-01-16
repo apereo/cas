@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link MemcachedTicketRegistryProperties}.
@@ -13,10 +15,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-memcached-ticket-registry")
 @Slf4j
+@Getter
+@Setter
 public class MemcachedTicketRegistryProperties extends BaseMemcachedProperties {
 
     private static final long serialVersionUID = 509520518053691786L;
-    
+
     /**
      * Crypto settings for the registry.
      */
@@ -26,15 +30,4 @@ public class MemcachedTicketRegistryProperties extends BaseMemcachedProperties {
     public MemcachedTicketRegistryProperties() {
         this.crypto.setEnabled(false);
     }
-    
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
 }
-
-
-

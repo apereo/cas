@@ -2,10 +2,11 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for cas.authn.policy.
@@ -15,9 +16,12 @@ import java.util.List;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class AuthenticationPolicyProperties implements Serializable {
 
     private static final long serialVersionUID = 2039700004862120066L;
+
     /**
      * Global authentication policy that is applied when CAS attempts to vend and validate tickets.
      * Checks to make sure a particular authentication handler has successfully executed and validated credentials.
@@ -67,89 +71,37 @@ public class AuthenticationPolicyProperties implements Serializable {
      * the requesting username with existing tickets.
      */
     private UniquePrincipal uniquePrincipal = new UniquePrincipal();
-    
-    public All getAll() {
-        return all;
-    }
 
-    public void setAll(final All all) {
-        this.all = all;
-    }
-
-    public NotPrevented getNotPrevented() {
-        return notPrevented;
-    }
-
-    public void setNotPrevented(final NotPrevented notPrevented) {
-        this.notPrevented = notPrevented;
-    }
-
-    public UniquePrincipal getUniquePrincipal() {
-        return uniquePrincipal;
-    }
-
-    public void setUniquePrincipal(final UniquePrincipal uniquePrincipal) {
-        this.uniquePrincipal = uniquePrincipal;
-    }
-
-    public Any getAny() {
-        return any;
-    }
-
-    public void setAny(final Any any) {
-        this.any = any;
-    }
-
-    public Req getReq() {
-        return req;
-    }
-
-    public void setReq(final Req req) {
-        this.req = req;
-    }
-
-    public boolean isRequiredHandlerAuthenticationPolicyEnabled() {
-        return requiredHandlerAuthenticationPolicyEnabled;
-    }
-
-    public void setRequiredHandlerAuthenticationPolicyEnabled(final boolean v) {
-        this.requiredHandlerAuthenticationPolicyEnabled = v;
-    }
-
+    @Getter
+    @Setter
     public static class NotPrevented implements Serializable {
+
         private static final long serialVersionUID = -4930217018850738715L;
+
         /**
          * Enables the policy.
          */
         private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 
+    @Getter
+    @Setter
     public static class UniquePrincipal implements Serializable {
+
         private static final long serialVersionUID = -4930217087310738715L;
+
         /**
          * Enables the policy.
          */
         private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Any implements Serializable {
+
         private static final long serialVersionUID = 4600357071276768175L;
+
         /**
          * Enables the policy.
          */
@@ -160,43 +112,26 @@ public class AuthenticationPolicyProperties implements Serializable {
          * Ensure number of provided credentials does not match the sum of authentication successes and failures
          */
         private boolean tryAll;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-        
-        public boolean isTryAll() {
-            return tryAll;
-        }
-
-        public void setTryAll(final boolean tryAll) {
-            this.tryAll = tryAll;
-        }
     }
 
+    @Getter
+    @Setter
     public static class All implements Serializable {
 
         private static final long serialVersionUID = 928409456096460793L;
+
         /**
          * Enables the policy.
          */
         private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Req implements Serializable {
+
         private static final long serialVersionUID = -4206244023952305821L;
+
         /**
          * Enables the policy.
          */
@@ -211,45 +146,5 @@ public class AuthenticationPolicyProperties implements Serializable {
          * The handler name which must have successfully executed and validated credentials.
          */
         private String handlerName = "handlerName";
-
-        public boolean isTryAll() {
-            return tryAll;
-        }
-
-        public void setTryAll(final boolean tryAll) {
-            this.tryAll = tryAll;
-        }
-
-        public String getHandlerName() {
-            return handlerName;
-        }
-
-        public void setHandlerName(final String handlerName) {
-            this.handlerName = handlerName;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-    }
-
-    public List<GroovyAuthenticationPolicyProperties> getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final List<GroovyAuthenticationPolicyProperties> groovy) {
-        this.groovy = groovy;
-    }
-
-    public List<RestAuthenticationPolicyProperties> getRest() {
-        return rest;
-    }
-
-    public void setRest(final List<RestAuthenticationPolicyProperties> rest) {
-        this.rest = rest;
     }
 }
