@@ -233,7 +233,7 @@ public class X509CredentialsAuthenticationHandlerTests {
             if (this.expectedResult instanceof Exception) {
                 assertEquals(this.expectedResult.getClass(), e.getClass());
             } else {
-                throw new AssertionError(("Authentication failed when it should have succeeded: " + e.getMessage());
+                throw new AssertionError("Authentication failed when it should have succeeded: " + e.getMessage());
             }
         }
     }
