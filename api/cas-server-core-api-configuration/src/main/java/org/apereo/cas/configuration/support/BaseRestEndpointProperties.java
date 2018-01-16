@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
@@ -11,6 +13,8 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
 public class BaseRestEndpointProperties implements Serializable {
     private static final long serialVersionUID = 2687020856160473089L;
 
@@ -19,7 +23,7 @@ public class BaseRestEndpointProperties implements Serializable {
      */
     @RequiredProperty
     private String url;
-    
+
     /**
      * If REST endpoint is protected via basic authentication,
      * specify the username for authentication.
@@ -30,28 +34,4 @@ public class BaseRestEndpointProperties implements Serializable {
      * specify the password for authentication.
      */
     private String basicAuthPassword;
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    public String getBasicAuthUsername() {
-        return basicAuthUsername;
-    }
-
-    public void setBasicAuthUsername(final String basicAuthUsername) {
-        this.basicAuthUsername = basicAuthUsername;
-    }
-
-    public String getBasicAuthPassword() {
-        return basicAuthPassword;
-    }
-
-    public void setBasicAuthPassword(final String basicAuthPassword) {
-        this.basicAuthPassword = basicAuthPassword;
-    }
 }

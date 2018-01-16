@@ -24,7 +24,6 @@ import java.util.Properties;
 
 @Slf4j
 public final class JpaBeans {
-
     
     protected JpaBeans() {
     }

@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
