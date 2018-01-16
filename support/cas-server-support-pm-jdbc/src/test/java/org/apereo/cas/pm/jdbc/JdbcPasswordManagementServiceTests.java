@@ -101,6 +101,12 @@ public class JdbcPasswordManagementServiceTests {
     }
 
     @Test
+    public void verifyNullReturnedIfUserEmailCannotBeFound() {
+        final String email = passwordChangeService.findEmail("unknown");
+        assertNull(email);
+    }
+
+    @Test
     public void verifyUserQuestionsCanBeFound() {
         final Map questions = passwordChangeService.getSecurityQuestions("casuser");
         assertEquals(2, questions.size());
