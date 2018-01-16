@@ -157,7 +157,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
                     CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_CHECK_DO_CHANGE_PASSWORD, true);
 
             createDecisionState(flow,
-                    CasWebflowConstants.STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN,
+                    CasWebflowConstants.STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK,
                     "flowScope.pswdChangePostLogin == true",
                     getTransitionableState(flow, CasWebflowConstants.VIEW_ID_SHOW_AUTHN_WARNING_MSGS)
                             .getTransition(CasWebflowConstants.TRANSITION_ID_PROCEED).getTargetStateId(),
@@ -166,7 +166,7 @@ public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfi
             createTransitionForState(
                     getTransitionableState(flow, CasWebflowConstants.STATE_ID_PASSWORD_UPDATE_SUCCESS),
                     CasWebflowConstants.TRANSITION_ID_PROCEED,
-                    CasWebflowConstants.STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN);
+                    CasWebflowConstants.STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK);
 
         }
     }
