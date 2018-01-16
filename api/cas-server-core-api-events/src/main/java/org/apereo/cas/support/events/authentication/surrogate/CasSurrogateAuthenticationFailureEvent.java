@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.authentication.surrogate;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -12,10 +13,13 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @since 5.2.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {
+
     private static final long serialVersionUID = 8059647975948452375L;
 
     private final Principal principal;
+
     private final String surrogate;
 
     /**
@@ -37,14 +41,5 @@ public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {
 
     public String getSurrogate() {
         return surrogate;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("principal", principal)
-                .append("surrogate", surrogate)
-                .toString();
     }
 }
