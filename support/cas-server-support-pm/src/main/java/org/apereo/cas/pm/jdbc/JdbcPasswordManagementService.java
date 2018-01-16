@@ -1,5 +1,10 @@
 package org.apereo.cas.pm.jdbc;
 
+import java.io.Serializable;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import javax.sql.DataSource;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
@@ -17,12 +22,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.Assert;
 
-import javax.sql.DataSource;
-import java.io.Serializable;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 /**
  * This is {@link JdbcPasswordManagementService}.
  *
@@ -30,21 +29,22 @@ import java.util.Map;
  * @since 5.1.0
  */
 public class JdbcPasswordManagementService extends BasePasswordManagementService {
+
     private static final Logger LOGGER = LoggerFactory.getLogger(JdbcPasswordManagementService.class);
 
     private final JdbcTemplate jdbcTemplate;
 
-    public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor, 
-                                         final String issuer,
-                                         final PasswordManagementProperties passwordManagementProperties,
-                                         final DataSource dataSource) {
+    public JdbcPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
+        final String issuer,
+        final PasswordManagementProperties passwordManagementProperties,
+        final DataSource dataSource) {
         super(cipherExecutor, issuer, passwordManagementProperties);
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     @Audit(action = "CHANGE_PASSWORD",
-            actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
-            resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
+        actionResolverName = "CHANGE_PASSWORD_ACTION_RESOLVER",
+        resourceResolverName = "CHANGE_PASSWORD_RESOURCE_RESOLVER")
     @Override
     public boolean change(final Credential credential, final PasswordChangeBean bean) {
         Assert.notNull(credential, "Credential cannot be null");
@@ -58,17 +58,17 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
 
     @Override
     public String findEmail(final String username) {
-		try {
-			final String email = this.jdbcTemplate.queryForObject(passwordManagementProperties.getJdbc().getSqlFindEmail(), String.class, username);
-			if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
-				return email;
-			}
-			LOGGER.debug("Username {} not found when searching for email", username);
-			return null;
-		} catch (EmptyResultDataAccessException e) {
-			LOGGER.debug("Username {} not found when searching for email", username);
-			return null;
-		}
+        try {
+            final String email = this.jdbcTemplate.queryForObject(passwordManagementProperties.getJdbc().getSqlFindEmail(), String.class, username);
+            if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
+                return email;
+            }
+            LOGGER.debug("Username {} not found when searching for email", username);
+            return null;
+        } catch (EmptyResultDataAccessException e) {
+            LOGGER.debug("Username {} not found when searching for email", username);
+            return null;
+        }
     }
 
     @Override
