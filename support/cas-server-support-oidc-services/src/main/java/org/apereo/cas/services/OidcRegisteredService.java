@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

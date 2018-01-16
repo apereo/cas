@@ -1,7 +1,7 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 import java.io.InputStream;

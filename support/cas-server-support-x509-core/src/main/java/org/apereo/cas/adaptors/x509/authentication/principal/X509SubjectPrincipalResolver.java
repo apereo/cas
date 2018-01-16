@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.cryptacular.x509.dn.Attribute;
@@ -72,7 +72,9 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
      *                                 <li>ST</li><li>UID</li><li>UNIQUEIDENTIFIER</li></ul>
      *                                 For a complete list of supported attributes, see {@link org.cryptacular.x509.dn.StandardAttributeType}.
      */
-    public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName, final String descriptor) {
+    public X509SubjectPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                        final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                        final String principalAttributeName, final String descriptor) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
         this.descriptor = descriptor;
     }

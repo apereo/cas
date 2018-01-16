@@ -5,8 +5,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -100,7 +98,8 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
             return false;
         }
         final MultifactorAuthenticationTrustRecord rhs = (MultifactorAuthenticationTrustRecord) obj;
-        return new EqualsBuilder().append(this.principal, rhs.principal).append(this.geography, rhs.geography).append(this.recordDate, rhs.recordDate).append(this.recordKey, rhs.recordKey).append(this.name, rhs.name).isEquals();
+        return new EqualsBuilder().append(this.principal, rhs.principal).append(this.geography, rhs.geography)
+            .append(this.recordDate, rhs.recordDate).append(this.recordKey, rhs.recordKey).append(this.name, rhs.name).isEquals();
     }
 
     public String getName() {
@@ -113,7 +112,8 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(principal).append(geography).append(recordDate).append(recordKey).append(name).toHashCode();
+        return new HashCodeBuilder().append(principal).append(geography)
+            .append(recordDate).append(recordKey).append(name).toHashCode();
     }
 
     /**

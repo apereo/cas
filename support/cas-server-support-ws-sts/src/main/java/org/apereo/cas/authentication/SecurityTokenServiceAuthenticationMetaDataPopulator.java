@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CipherExecutor;
@@ -33,15 +33,22 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
 
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
-    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager, final AuthenticationServiceSelectionStrategy selectionStrategy, final CipherExecutor<String, String> credentialCipherExecutor, final SecurityTokenServiceClientBuilder clientBuilder) {
+    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager,
+                                                               final AuthenticationServiceSelectionStrategy selectionStrategy,
+                                                               final CipherExecutor<String, String> credentialCipherExecutor,
+                                                               final SecurityTokenServiceClientBuilder clientBuilder) {
         this.servicesManager = servicesManager;
         this.selectionStrategy = selectionStrategy;
         this.credentialCipherExecutor = credentialCipherExecutor;
         this.clientBuilder = clientBuilder;
     }
 
-    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder, final WSFederationRegisteredService rp, final SecurityTokenServiceClient sts) {
-        final UsernamePasswordCredential up = transaction.getCredentials().stream().filter(UsernamePasswordCredential.class::isInstance).map(UsernamePasswordCredential.class::cast).findFirst().orElse(null);
+    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction,
+                                                    final AuthenticationBuilder builder, final WSFederationRegisteredService rp,
+                                                    final SecurityTokenServiceClient sts) {
+        final UsernamePasswordCredential up = transaction.getCredentials()
+            .stream().filter(UsernamePasswordCredential.class::isInstance)
+            .map(UsernamePasswordCredential.class::cast).findFirst().orElse(null);
         if (up != null) {
             try {
                 sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());

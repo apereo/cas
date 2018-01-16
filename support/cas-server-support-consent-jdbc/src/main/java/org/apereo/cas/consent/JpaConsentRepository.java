@@ -35,7 +35,8 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
         try {
-            return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal"), ConsentDecision.class).setParameter("principal", principal).getResultList();
+            return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal"),
+                ConsentDecision.class).setParameter("principal", principal).getResultList();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
@@ -57,9 +58,13 @@ public class JpaConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {
+    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService,
+                                               final Authentication authentication) {
         try {
-            return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal and r.service = :service"), ConsentDecision.class).setParameter("principal", authentication.getPrincipal().getId()).setParameter("service", service.getId()).getSingleResult();
+            final String query = SELECT_QUERY.concat("where r.principal = :principal and r.service = :service");
+            return this.entityManager.createQuery(query, ConsentDecision.class)
+                .setParameter("principal", authentication.getPrincipal().getId())
+                .setParameter("service", service.getId()).getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
@@ -86,7 +91,8 @@ public class JpaConsentRepository implements ConsentRepository {
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         try {
-            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class).setParameter("id", decisionId).getSingleResult();
+            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class)
+                .setParameter("id", decisionId).getSingleResult();
             this.entityManager.remove(decision);
             return true;
         } catch (final Exception e) {

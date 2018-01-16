@@ -1,7 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
@@ -24,7 +24,9 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
     public SpnegoPrincipalResolver() {
     }
 
-    public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
+    public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
+                                   final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalNameTransformer, principalAttributeName);
     }
 

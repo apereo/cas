@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.CollectionUtils;
@@ -34,7 +34,11 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
     private Set<String> entityAttributeValues = new LinkedHashSet<>();
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes, final SamlRegisteredService service, final ApplicationContext applicationContext, final SamlRegisteredServiceCachingMetadataResolver resolver, final SamlRegisteredServiceServiceProviderMetadataFacade facade, final EntityDescriptor entityDescriptor) {
+    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
+                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
+                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                        final EntityDescriptor entityDescriptor) {
         final EntityAttributesPredicate.Candidate attr = new EntityAttributesPredicate.Candidate(this.entityAttribute, this.entityAttributeFormat);
         attr.setValues(this.entityAttributeValues);
         LOGGER.debug("Loading entity attribute predicate filter for candidate [{}] with values [{}]", attr.getName(), attr.getValues());
@@ -81,7 +85,9 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
             return false;
         }
         final MetadataEntityAttributesAttributeReleasePolicy rhs = (MetadataEntityAttributesAttributeReleasePolicy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.entityAttribute, rhs.entityAttribute).append(this.entityAttributeFormat, rhs.entityAttributeFormat).append(this.entityAttributeValues, rhs.entityAttributeValues).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.entityAttribute, rhs.entityAttribute)
+            .append(this.entityAttributeFormat, rhs.entityAttributeFormat)
+            .append(this.entityAttributeValues, rhs.entityAttributeValues).isEquals();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.apereo.cas.support.events.ticket;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;

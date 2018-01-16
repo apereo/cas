@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import java.util.Map;
 
