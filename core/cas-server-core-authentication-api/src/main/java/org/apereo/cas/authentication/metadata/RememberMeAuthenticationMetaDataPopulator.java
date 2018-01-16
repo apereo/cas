@@ -15,30 +15,20 @@ import org.apereo.cas.authentication.RememberMeCredential;
  * @since 3.2.1
  */
 @Slf4j
+@ToString(callSuper = true)
 public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-
-
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         final RememberMeCredential r = (RememberMeCredential) transaction.getCredential();
         if (r.isRememberMe()) {
-            LOGGER.debug("Credential is configured to be remembered. Captured this as [{}] attribute",
-                    RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
+            LOGGER.debug("Credential is configured to be remembered. Captured this as [{}] attribute", RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             builder.addAttribute(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, Boolean.TRUE);
         }
     }
 
-    
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof RememberMeCredential;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

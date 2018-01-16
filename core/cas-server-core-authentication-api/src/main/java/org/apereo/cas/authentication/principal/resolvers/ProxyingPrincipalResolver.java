@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import lombok.ToString;
 
 /**
  * Provides the most basic means of principal resolution by mapping
@@ -19,6 +20,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
 public class ProxyingPrincipalResolver implements PrincipalResolver {
 
     private final PrincipalFactory principalFactory;
@@ -39,11 +41,6 @@ public class ProxyingPrincipalResolver implements PrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return credential.getId() != null;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).toString();
     }
 
     @Override
