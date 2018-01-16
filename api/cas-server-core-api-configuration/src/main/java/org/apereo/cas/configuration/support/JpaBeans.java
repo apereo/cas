@@ -1,13 +1,12 @@
 package org.apereo.cas.configuration.support;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.hibernate.cfg.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,8 +21,10 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+
+@Slf4j
 public final class JpaBeans {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaBeans.class);
+
     
     protected JpaBeans() {
     }

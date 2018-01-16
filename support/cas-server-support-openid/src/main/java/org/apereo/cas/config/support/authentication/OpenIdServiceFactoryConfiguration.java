@@ -1,5 +1,6 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -22,6 +23,7 @@ import java.util.Collection;
  */
 @Configuration("openIdServiceFactoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OpenIdServiceFactoryConfiguration implements ServiceFactoryConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;

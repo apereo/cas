@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,6 +30,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableScheduling
+@Slf4j
 public class GoogleAuthenticatorMongoDbConfiguration {
 
     @Autowired

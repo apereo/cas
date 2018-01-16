@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -23,6 +24,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     
     /**

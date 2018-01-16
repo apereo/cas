@@ -1,6 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import jcifs.spnego.Authentication;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
@@ -10,8 +11,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.principal.SpnegoCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.concurrent.NotThreadSafe;
 import javax.security.auth.login.FailedLoginException;
@@ -29,8 +28,9 @@ import java.util.regex.Pattern;
  * @since 3.1
  */
 @NotThreadSafe
+@Slf4j
 public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JcifsSpnegoAuthenticationHandler.class);
+
     
     private Authentication authentication;
     private boolean principalWithDomainName;

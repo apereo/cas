@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import com.google.common.io.ByteSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.gua.api.UserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -17,6 +18,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DisplayUserGraphicsBeforeAuthenticationAction extends AbstractAction {
 
     private final UserGraphicalAuthenticationRepository repository;

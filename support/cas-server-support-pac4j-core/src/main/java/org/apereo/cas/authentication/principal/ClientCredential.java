@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
 public class ClientCredential implements Credential, Serializable {
 
     /***

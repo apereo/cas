@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -29,8 +28,9 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptUsersAuthenticationHandler.class);
+
 
     /**
      * The list of users we will accept.

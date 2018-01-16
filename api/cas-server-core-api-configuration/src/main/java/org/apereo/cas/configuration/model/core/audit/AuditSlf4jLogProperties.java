@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-audit")
+@Slf4j
 public class AuditSlf4jLogProperties implements Serializable {
     private static final long serialVersionUID = 4227475246873515918L;
 

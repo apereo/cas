@@ -1,5 +1,6 @@
 package org.apereo.cas.digest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
@@ -17,6 +18,7 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DigestAuthenticationHandler extends AbstractAuthenticationHandler {
 
     public DigestAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {

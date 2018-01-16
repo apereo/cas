@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
@@ -9,8 +10,6 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,8 +23,9 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class BasePasswordManagementService implements PasswordManagementService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasePasswordManagementService.class);
+
 
     /**
      * Password management settings.

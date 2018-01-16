@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
@@ -15,6 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class OneTimePasswordCredential extends AbstractCredential {
 
     /** Serialization version marker. */

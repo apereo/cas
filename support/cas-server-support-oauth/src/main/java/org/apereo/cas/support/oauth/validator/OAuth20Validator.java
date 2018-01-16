@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -10,8 +11,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Stream;
@@ -22,8 +21,9 @@ import java.util.stream.Stream;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@Slf4j
 public class OAuth20Validator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Validator.class);
+
 
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 

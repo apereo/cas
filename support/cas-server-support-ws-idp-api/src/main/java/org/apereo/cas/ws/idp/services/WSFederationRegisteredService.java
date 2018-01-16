@@ -1,6 +1,7 @@
 package org.apereo.cas.ws.idp.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -19,6 +20,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("wsfed")
+@Slf4j
 public class WSFederationRegisteredService extends RegexRegisteredService {
     private static final long serialVersionUID = -3700571300568534062L;
 

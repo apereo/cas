@@ -1,6 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
@@ -25,8 +26,6 @@ import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperti
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -45,8 +44,9 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("yubikeyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyAuthenticationEventExecutionPlanConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

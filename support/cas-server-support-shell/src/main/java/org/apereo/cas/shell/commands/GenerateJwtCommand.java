@@ -5,6 +5,7 @@ import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.crypto.AESDecrypter;
 import com.nimbusds.jose.crypto.DirectDecrypter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jooq.lambda.Unchecked;
@@ -12,8 +13,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.profile.JwtGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -29,8 +28,9 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class GenerateJwtCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateJwtCommand.class);
+
     private static final int SEP_LENGTH = 8;
     
     private static final int DEFAULT_SIGNING_SECRET_SIZE = 256;

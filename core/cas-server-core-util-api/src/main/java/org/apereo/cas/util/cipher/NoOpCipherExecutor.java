@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Serializable> {
 
     private static CipherExecutor<Serializable, Serializable> INSTANCE;

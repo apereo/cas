@@ -2,6 +2,7 @@ package org.apereo.cas.pm.impl;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
@@ -10,8 +11,6 @@ import org.apereo.cas.configuration.model.support.pm.PasswordManagementPropertie
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.hjson.JsonValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
 
@@ -28,8 +27,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JsonResourcePasswordManagementService extends BasePasswordManagementService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonResourcePasswordManagementService.class);
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final Resource jsonResource;

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.swivel.SwivelAuthenticationHandler;
 import org.apereo.cas.adaptors.swivel.SwivelMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -30,6 +31,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("swivelAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SwivelAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

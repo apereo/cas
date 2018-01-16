@@ -3,11 +3,10 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -22,6 +21,7 @@ import java.time.temporal.ChronoUnit;
  * @since 3.0.0
  */
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -31,7 +31,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
      * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
      * deserialization the field is null.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThrottledUseAndTimeoutExpirationPolicy.class);
+
 
     /** The time to kill in seconds. */
     private long timeToKillInSeconds;

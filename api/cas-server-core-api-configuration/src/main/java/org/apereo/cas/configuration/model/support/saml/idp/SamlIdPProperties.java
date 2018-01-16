@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp;
 
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -20,6 +21,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
+@Slf4j
 public class SamlIdPProperties implements Serializable {
 
     private static final long serialVersionUID = -5848075783676789852L;

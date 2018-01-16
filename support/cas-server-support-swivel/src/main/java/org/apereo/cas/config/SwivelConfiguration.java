@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.swivel.web.flow.SwivelAuthenticationWebflowEventResolver;
@@ -42,6 +43,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("swivelConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SwivelConfiguration {
 
     @Autowired
@@ -80,7 +82,7 @@ public class SwivelConfiguration {
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new RankedMultifactorAuthenticationProviderSelector();
+        new RankedMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -99,7 +101,7 @@ public class SwivelConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
         final CasWebflowConfigurer w = new SwivelMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
         w.initialize();
         return w;
     }
@@ -108,12 +110,12 @@ public class SwivelConfiguration {
     @RefreshScope
     public CasWebflowEventResolver swivelAuthenticationWebflowEventResolver() {
         return new SwivelAuthenticationWebflowEventResolver(authenticationSystemSupport,
-                centralAuthenticationService,
-                servicesManager,
-                ticketRegistrySupport,
-                warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                multifactorAuthenticationProviderSelector);
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector);
     }
 
     @Bean
@@ -141,8 +143,8 @@ public class SwivelConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
             final CasWebflowConfigurer w = new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), 
-                    swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
+                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
+                swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
             w.initialize();
             return w;
         }

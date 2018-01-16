@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Appender;
 import org.apache.logging.log4j.core.LogEvent;
@@ -21,6 +22,7 @@ import org.springframework.util.Assert;
  * @since 5.0.0
  */
 @Plugin(name = "CasAppender", category = "Core", elementType = "appender", printObject = true)
+@Slf4j
 public class CasAppender extends AbstractAppender {
     private static final long serialVersionUID = 3744758323628847477L;
 

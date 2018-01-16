@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -19,8 +18,9 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 4.1.0
  */
+@Slf4j
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPac4jAuthenticationHandler.class);
+
     
     private boolean isTypedIdUsed;
 

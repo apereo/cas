@@ -1,9 +1,8 @@
 package org.apereo.cas.aup;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,8 +19,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2
  */
+@Slf4j
 public class MongoDbAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbAcceptableUsagePolicyRepository.class);
+
 
     private static final long serialVersionUID = 1600024683199961892L;
 

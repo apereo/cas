@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -27,6 +28,7 @@ import static org.junit.Assert.*;
  */
 @Import(SamlGoogleAppsConfiguration.class)
 @TestPropertySource(locations = "classpath:/gapps.properties")
+@Slf4j
 public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("googleAccountsServiceFactory")

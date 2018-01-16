@@ -2,10 +2,9 @@ package org.apereo.cas.monitor;
 
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
+import lombok.extern.slf4j.Slf4j;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
 
@@ -15,8 +14,9 @@ import java.io.StringWriter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MongoDbCacheStatistics implements CacheStatistics {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbCacheStatistics.class);
+
 
     private final DBCollection collection;
     private final CommandResult statistics;

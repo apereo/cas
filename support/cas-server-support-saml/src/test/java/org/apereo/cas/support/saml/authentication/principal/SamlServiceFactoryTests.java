@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.junit.Test;
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class SamlServiceFactoryTests {
     @Test
     public void verifyObtainService() {

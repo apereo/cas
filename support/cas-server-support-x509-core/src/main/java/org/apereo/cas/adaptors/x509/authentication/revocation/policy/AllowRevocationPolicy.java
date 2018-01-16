@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -10,8 +9,9 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
+@Slf4j
 public class AllowRevocationPolicy implements RevocationPolicy<Void> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AllowRevocationPolicy.class);
+
     
     @Override
     public void apply(final Void data) {

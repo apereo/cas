@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.discovery;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcServerDiscoverySettings {
 
     @JsonProperty("scopes_supported")

@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.security.auth.login.AccountException;
 
 /**
@@ -9,6 +11,7 @@ import javax.security.auth.login.AccountException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class InvalidLoginLocationException extends AccountException {
 
     private static final long serialVersionUID = 5745711263227480194L;

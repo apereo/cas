@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
+@Slf4j
 public class TicketGrantingTicketCheckActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Test

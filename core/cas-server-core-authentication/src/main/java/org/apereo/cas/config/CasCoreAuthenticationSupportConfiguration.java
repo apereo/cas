@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Lazy;
  */
 @Configuration("casCoreAuthenticationSupportConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreAuthenticationSupportConfiguration {
 
     @Autowired

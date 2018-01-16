@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -19,6 +20,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbMonitoringConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class MongoDbMonitoringConfiguration {
 
     @Autowired

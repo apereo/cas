@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.syncope;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-syncope-authentication")
+@Slf4j
 public class SyncopeAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2446926316502297496L;
 

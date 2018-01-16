@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -14,6 +15,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, 

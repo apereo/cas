@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * We utilize the {@link AuthenticationMetaDataPopulator} to retrieve and store
@@ -18,8 +17,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CacheCredentialsMetaDataPopulator.class);
+
     private final CipherExecutor<String, String> cipherExecutor;
 
     public CacheCredentialsMetaDataPopulator() {

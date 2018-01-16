@@ -1,5 +1,6 @@
 package org.apereo.cas.logging.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -26,6 +27,7 @@ import java.util.Enumeration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class ThreadContextMDCServletFilter implements Filter {
 
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;

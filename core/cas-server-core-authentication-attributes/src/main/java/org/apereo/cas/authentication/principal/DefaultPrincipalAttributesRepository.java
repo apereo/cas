@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -16,10 +15,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
     private static final long serialVersionUID = -4535358847021241725L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalAttributesRepository.class);
+
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {

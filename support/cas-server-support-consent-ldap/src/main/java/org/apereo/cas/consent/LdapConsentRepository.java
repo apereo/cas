@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties.Ldap;
@@ -14,8 +15,6 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -33,11 +32,12 @@ import java.util.stream.Collectors;
  * @author Arnold Bergner
  * @since 5.2.0
  */
+@Slf4j
 public class LdapConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 8561763114482490L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapConsentRepository.class);
+
 
     private final ConnectionFactory connectionFactory;
     private final Ldap ldap;

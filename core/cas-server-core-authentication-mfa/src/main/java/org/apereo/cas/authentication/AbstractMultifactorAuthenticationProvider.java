@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
@@ -22,11 +21,12 @@ import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.Failure
  * @author Misagh Moayyed
  * @since 4.3
  */
+@Slf4j
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorAuthenticationProvider.class);
+
 
     private MultifactorAuthenticationProviderBypass bypassEvaluator;
 

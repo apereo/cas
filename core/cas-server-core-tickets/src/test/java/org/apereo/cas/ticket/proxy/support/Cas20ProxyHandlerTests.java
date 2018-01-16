@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
 
  * @since 3.0.0
  */
+@Slf4j
 public class Cas20ProxyHandlerTests {
 
     private Cas20ProxyHandler handler;

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -14,8 +15,6 @@ import org.apereo.services.persondir.support.merger.IAttributeMerger;
 import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.io.Closeable;
@@ -33,6 +32,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
     /**
      * Default cache expiration time unit.
@@ -46,7 +46,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     private static final long serialVersionUID = 6350245643948535906L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPrincipalAttributesRepository.class);
+
 
     /**
      * The expiration time.

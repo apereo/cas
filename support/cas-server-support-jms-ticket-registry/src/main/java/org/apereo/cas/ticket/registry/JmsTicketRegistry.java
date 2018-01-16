@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.Ticket;
@@ -9,8 +10,6 @@ import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -19,13 +18,14 @@ import org.springframework.jms.core.JmsTemplate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JmsTicketRegistry extends DefaultTicketRegistry {
     /**
      * Queue destination name.
      */
     public static final String QUEUE_DESTINATION = "CasJmsTicketRegistry";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JmsTicketRegistry.class);
+
 
     private final JmsTemplate jmsTemplate;
     private final StringBean id;

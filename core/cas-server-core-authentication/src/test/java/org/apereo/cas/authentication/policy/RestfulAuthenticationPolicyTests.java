@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -55,6 +56,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
         CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
+@Slf4j
 public class RestfulAuthenticationPolicyTests {
     private static final String URI = "http://rest.endpoint.com";
 

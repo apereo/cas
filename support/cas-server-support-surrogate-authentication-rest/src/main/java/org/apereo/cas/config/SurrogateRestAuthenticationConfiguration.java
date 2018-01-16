@@ -1,12 +1,11 @@
 package cas.config;
 
 import cas.authentication.surrogate.SurrogateRestAuthenticationService;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -22,8 +21,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("surrogateRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SurrogateRestAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateRestAuthenticationConfiguration.class);
+
 
     @Autowired
     @Qualifier("servicesManager")

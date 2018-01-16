@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -12,8 +13,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
@@ -30,9 +29,10 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver
     extends PrincipalAttributeMultifactorAuthenticationPolicyEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
+
     private static final Class[] PREDICATE_CTOR_PARAMETERS = {Object.class, Object.class, Object.class, Object.class};
 
     private final Resource predicateResource;

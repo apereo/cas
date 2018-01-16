@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -14,6 +15,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public final class CoreValidationTestUtils {
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];

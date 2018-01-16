@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public abstract class AbstractCachingPrincipalAttributesRepositoryTests {
 
     private static final String MAIL = "mail";

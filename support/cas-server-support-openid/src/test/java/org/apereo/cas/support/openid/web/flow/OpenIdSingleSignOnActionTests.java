@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.web.flow;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
@@ -29,6 +30,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Autowired

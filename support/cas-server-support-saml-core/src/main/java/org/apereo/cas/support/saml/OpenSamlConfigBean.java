@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml;
 
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
 import org.opensaml.core.config.InitializationException;
@@ -9,8 +10,6 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistry;
 import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.annotation.PostConstruct;
@@ -21,8 +20,9 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class OpenSamlConfigBean {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenSamlConfigBean.class);
+
 
     private final ParserPool parserPool;
 

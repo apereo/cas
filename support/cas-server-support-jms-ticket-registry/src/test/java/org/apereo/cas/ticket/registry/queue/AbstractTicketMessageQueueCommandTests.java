@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -55,6 +56,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class})
+@Slf4j
 public abstract class AbstractTicketMessageQueueCommandTests {
     @Autowired
     @Qualifier("ticketRegistry")

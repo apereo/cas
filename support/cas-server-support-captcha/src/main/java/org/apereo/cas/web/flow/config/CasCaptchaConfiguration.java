@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.ValidateCaptchaAction;
@@ -27,6 +28,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casCaptchaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.googleRecaptcha", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Slf4j
 public class CasCaptchaConfiguration {
 
     @Autowired

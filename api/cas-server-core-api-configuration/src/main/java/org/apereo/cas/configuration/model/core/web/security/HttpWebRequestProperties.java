@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
+@Slf4j
 public class HttpWebRequestProperties implements Serializable {
     private static final long serialVersionUID = -4711604991237695091L;
     /**

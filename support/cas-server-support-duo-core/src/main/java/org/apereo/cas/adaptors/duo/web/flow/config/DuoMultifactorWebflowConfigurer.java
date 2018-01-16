@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.web.flow.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
@@ -8,8 +9,6 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.configurer.DynamicFlowModelBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.config.FlowDefinitionRegistryBuilder;
@@ -41,8 +40,9 @@ import java.util.List;
  * @since 5.0.0
  */
 @SuppressWarnings("JdkObsolete")
+@Slf4j
 public class DuoMultifactorWebflowConfigurer extends AbstractMultifactorTrustedDeviceWebflowConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DuoMultifactorWebflowConfigurer.class);
+
     private static final String STATE_ID_VIEW_LOGIN_FORM_DUO = "viewLoginFormDuo";
 
     private final VariegatedMultifactorAuthenticationProvider provider;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SmsProperties implements Serializable {
 
     private static final long serialVersionUID = -3713886839517507306L;

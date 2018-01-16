@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();

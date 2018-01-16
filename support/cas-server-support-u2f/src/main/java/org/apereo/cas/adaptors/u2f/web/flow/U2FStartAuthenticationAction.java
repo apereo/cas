@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.u2f.web.flow;
 import com.yubico.u2f.U2F;
 import com.yubico.u2f.data.messages.SignRequest;
 import com.yubico.u2f.data.messages.SignRequestData;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.U2FAuthentication;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.principal.Principal;
@@ -17,6 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class U2FStartAuthenticationAction extends AbstractAction {
 
     private final U2F u2f = new U2F();

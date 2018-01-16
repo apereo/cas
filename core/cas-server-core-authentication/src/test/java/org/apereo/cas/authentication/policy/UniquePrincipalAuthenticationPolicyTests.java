@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -43,6 +44,7 @@ import static org.junit.Assert.*;
         CasCoreTicketCatalogConfiguration.class
 })
 @DirtiesContext
+@Slf4j
 public class UniquePrincipalAuthenticationPolicyTests {
 
     @Rule

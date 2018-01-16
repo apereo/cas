@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
@@ -34,6 +35,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casMetricsRepositoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasMetricsRepositoryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

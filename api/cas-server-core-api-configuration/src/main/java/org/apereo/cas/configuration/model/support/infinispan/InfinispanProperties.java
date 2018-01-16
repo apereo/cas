@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.infinispan;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * @since 4.2.0
  */
 @RequiresModule(name = "cas-server-support-infinispan-ticket-registry")
+@Slf4j
 public class InfinispanProperties implements Serializable {
 
     private static final long serialVersionUID = 1974626726565626634L;

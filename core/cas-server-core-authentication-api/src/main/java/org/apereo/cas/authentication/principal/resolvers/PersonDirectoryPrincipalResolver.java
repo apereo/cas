@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
@@ -13,8 +14,6 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -30,9 +29,8 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryPrincipalResolver.class);
 
     /**
      * Repository of principal attributes to be retrieved.

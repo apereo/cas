@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.persistence.Transient;
@@ -19,9 +18,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
     private static final long serialVersionUID = -2407494148882123062L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyRegisteredServiceAccessStrategy.class);
+
 
     /**
      * The sorting/execution order of this strategy.

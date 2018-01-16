@@ -11,10 +11,10 @@ import de.flapdoodle.embed.memcached.config.RuntimeConfigBuilder;
 import de.flapdoodle.embed.memcached.distribution.Version;
 import de.flapdoodle.embed.process.config.store.IDownloadConfig;
 import de.flapdoodle.embed.process.io.progress.StandardConsoleProgressListener;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.Socket;
 
-import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * This is {@link MemcachedTestUtils}.
@@ -22,6 +22,7 @@ import static org.slf4j.LoggerFactory.getLogger;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public final class MemcachedTestUtils {
 
     private static final int PORT = 14938;
@@ -39,7 +40,7 @@ public final class MemcachedTestUtils {
             MEMCACHED_EXECUTABLE = runtime.prepare(new MemcachedConfig(Version.V1_4_22, PORT));
             MEMCACHED = MEMCACHED_EXECUTABLE.start();
         } catch (final Exception e) {
-            getLogger(MemcachedTestUtils.class).warn("Aborting since no memcached server could be started.", e);
+            LOGGER.warn("Aborting since no memcached server could be started.", e);
         }
     }
 

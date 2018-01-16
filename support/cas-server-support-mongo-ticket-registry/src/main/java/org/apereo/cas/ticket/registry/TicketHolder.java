@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.index.Indexed;
 
 /**
@@ -11,6 +12,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class TicketHolder implements Serializable {
     /** Field name to hold ticket json data. */
     public static final String FIELD_NAME_JSON = "json";

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -12,8 +13,6 @@ import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Before;
 import org.junit.Test;
 import org.openid4java.association.Association;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -27,9 +26,10 @@ import static org.mockito.Mockito.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdServiceTests extends AbstractOpenIdTests {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdServiceTests.class);
+
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "openIdService.json");
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

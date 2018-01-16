@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
 import org.ldaptive.ConnectionFactory;
@@ -12,8 +13,6 @@ import org.ldaptive.SearchOperation;
 import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.Operation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Peek into an LDAP server and check for the existence of an attribute
@@ -23,8 +22,9 @@ import org.slf4j.LoggerFactory;
  * @author Sean Baker
  * @since 4.1
  */
+@Slf4j
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapSpnegoKnownClientSystemsFilterAction.class);
+
     
     /**
      * The must-have attribute name.

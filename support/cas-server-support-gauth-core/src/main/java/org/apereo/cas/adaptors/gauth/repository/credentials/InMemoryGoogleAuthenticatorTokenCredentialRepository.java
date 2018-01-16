@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.otp.repository.credentials.BaseInMemoryOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 
@@ -11,6 +12,7 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseInMemoryOneTimeTokenCredentialRepository {
 
     private final IGoogleAuthenticator googleAuthenticator;

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class GeoLocationRequest {
     private String latitude;
     private String longitude;

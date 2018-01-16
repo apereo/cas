@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.fortress;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
@@ -9,8 +10,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
@@ -27,13 +26,14 @@ import java.util.Map;
  * @author yudhi.k.surtan
  * @since 5.2.0.
  */
+@Slf4j
 public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     /**
      * Fortress key to look up session as an attribute.
      */
     public static final String FORTRESS_SESSION_KEY = "fortressSession";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationHandler.class);
+
 
     private AccessMgr accessManager;
     private Marshaller marshaller;

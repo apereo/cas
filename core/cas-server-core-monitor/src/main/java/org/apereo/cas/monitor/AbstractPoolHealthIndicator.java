@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -15,6 +16,7 @@ import java.util.concurrent.TimeoutException;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Slf4j
 public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicator {
 
     /**

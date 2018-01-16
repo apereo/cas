@@ -1,12 +1,11 @@
 package org.apereo.cas.util;
 
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -24,13 +23,15 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+
+@Slf4j
 public final class HttpRequestUtils {
     /**
      * Constant representing the request header for user agent.
      */
     public static final String USER_AGENT_HEADER = "user-agent";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestUtils.class);
+
 
     private HttpRequestUtils() {
     }

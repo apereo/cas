@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -9,6 +10,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class Cas20ProtocolValidationSpecificationTests {
 
     @Test

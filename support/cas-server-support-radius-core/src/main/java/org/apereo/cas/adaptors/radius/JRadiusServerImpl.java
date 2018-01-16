@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
 
+import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 import net.jradius.dictionary.Attr_NASIPAddress;
 import net.jradius.dictionary.Attr_NASIPv6Address;
@@ -20,8 +21,6 @@ import net.jradius.packet.attribute.RadiusAttribute;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.Security;
 import java.util.List;
@@ -35,6 +34,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 3.1
  */
+@Slf4j
 public class JRadiusServerImpl implements RadiusServer {
 
     /**
@@ -43,7 +43,7 @@ public class JRadiusServerImpl implements RadiusServer {
     public static final int DEFAULT_RETRY_COUNT = 3;
 
     /** Logger instance. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(JRadiusServerImpl.class);
+
 
     /** RADIUS protocol. */
     

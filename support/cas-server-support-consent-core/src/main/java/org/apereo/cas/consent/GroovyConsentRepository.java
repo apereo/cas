@@ -1,8 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.util.Set;
@@ -13,9 +12,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class GroovyConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = 3482998768083902246L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyConsentRepository.class);
+
     
     private final Resource groovyResource;
 

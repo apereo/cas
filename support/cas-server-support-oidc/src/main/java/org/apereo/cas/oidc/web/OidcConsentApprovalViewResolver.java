@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
@@ -19,6 +20,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcConsentApprovalViewResolver extends OAuth20ConsentApprovalViewResolver {
 
     public OidcConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {

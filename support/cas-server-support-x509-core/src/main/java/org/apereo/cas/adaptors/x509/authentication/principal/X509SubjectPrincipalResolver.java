@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -9,8 +10,6 @@ import org.cryptacular.x509.dn.NameReader;
 import org.cryptacular.x509.dn.RDN;
 import org.cryptacular.x509.dn.RDNSequence;
 import org.cryptacular.x509.dn.StandardAttributeType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
@@ -28,8 +27,9 @@ import java.util.regex.Pattern;
  * @author Marvin S. Addison
  * @since 3.4.4
  */
+@Slf4j
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509SubjectPrincipalResolver.class);
+
 
     /**
      * Pattern used to extract attribute names from descriptor.

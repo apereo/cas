@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.JsonResourceAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -12,8 +13,6 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguratio
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.JsonResourceAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,8 +31,9 @@ import org.springframework.core.io.Resource;
  */
 @Configuration("jsonResourceAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class JsonResourceAuthenticationEventExecutionPlanConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonResourceAuthenticationEventExecutionPlanConfiguration.class);
+
 
     @Autowired
     @Qualifier("servicesManager")

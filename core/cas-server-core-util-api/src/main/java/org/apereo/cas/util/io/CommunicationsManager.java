@@ -1,10 +1,9 @@
 package org.apereo.cas.util.io;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -18,8 +17,9 @@ import javax.mail.internet.MimeMessage;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CommunicationsManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommunicationsManager.class);
+
 
     @Autowired(required = false)
     @Qualifier("smsSender")

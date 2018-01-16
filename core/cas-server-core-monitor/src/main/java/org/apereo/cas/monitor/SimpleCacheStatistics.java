@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Formatter;
 
 /**
@@ -8,6 +10,7 @@ import java.util.Formatter;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@Slf4j
 public class SimpleCacheStatistics implements CacheStatistics {
 
     private static final double BYTES_PER_MB = 1048510.0;

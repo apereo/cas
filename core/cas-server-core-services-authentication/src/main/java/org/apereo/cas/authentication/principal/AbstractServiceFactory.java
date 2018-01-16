@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.2
  */
 @SuppressWarnings("TypeParameterShadowing")
+@Slf4j
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
     @Override

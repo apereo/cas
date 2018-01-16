@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -95,6 +96,7 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class JpaSamlRegisteredServiceMetadataResolverTests {
     @Autowired
     @Qualifier("jpaSamlRegisteredServiceMetadataResolver")

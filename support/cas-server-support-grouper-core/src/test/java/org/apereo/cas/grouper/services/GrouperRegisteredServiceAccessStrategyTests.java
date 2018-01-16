@@ -1,9 +1,8 @@
 package org.apereo.cas.grouper.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import java.util.Collections;
@@ -18,8 +17,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class GrouperRegisteredServiceAccessStrategyTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategyTests.class);
+
     
     @Test
     public void checkGrouperAttributes() {

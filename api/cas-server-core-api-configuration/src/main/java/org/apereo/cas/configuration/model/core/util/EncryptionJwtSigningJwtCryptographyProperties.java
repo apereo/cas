@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 
 import java.io.Serializable;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
 public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
 
     private static final long serialVersionUID = -3015641631298039059L;

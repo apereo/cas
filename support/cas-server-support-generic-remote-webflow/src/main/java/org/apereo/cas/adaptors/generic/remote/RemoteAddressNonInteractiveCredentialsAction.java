@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -19,8 +18,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Slf4j
 public class RemoteAddressNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteAddressNonInteractiveCredentialsAction.class);
+
     
     public RemoteAddressNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                         final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,

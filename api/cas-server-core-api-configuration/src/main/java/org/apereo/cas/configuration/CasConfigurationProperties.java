@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.CasServerProperties;
 import org.apereo.cas.configuration.model.core.HostProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditProperties;
@@ -54,6 +55,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
+@Slf4j
 public class CasConfigurationProperties implements Serializable {
     /**
      * Prefix used for all CAS-specific settings.

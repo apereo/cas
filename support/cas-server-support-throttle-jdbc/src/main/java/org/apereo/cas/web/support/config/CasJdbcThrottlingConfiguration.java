@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
@@ -23,6 +24,7 @@ import javax.sql.DataSource;
  */
 @Configuration("casJdbcThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasJdbcThrottlingConfiguration {
 
     @Autowired

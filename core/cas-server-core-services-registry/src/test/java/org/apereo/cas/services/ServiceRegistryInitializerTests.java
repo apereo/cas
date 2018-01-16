@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import java.util.Arrays;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import static org.mockito.Mockito.*;
 import static org.assertj.core.api.Assertions.*;
@@ -9,6 +10,7 @@ import static org.assertj.core.api.Assertions.*;
 /**
  * @since 5.2.0
  */
+@Slf4j
 public class ServiceRegistryInitializerTests {
 
     @Test

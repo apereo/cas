@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -11,8 +12,6 @@ import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +41,9 @@ import java.util.Collection;
  * @since 4.1.0
  */
 @RestController("ticketResourceRestController")
+@Slf4j
 public class TicketGrantingTicketResource {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketResource.class);
+
 
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;

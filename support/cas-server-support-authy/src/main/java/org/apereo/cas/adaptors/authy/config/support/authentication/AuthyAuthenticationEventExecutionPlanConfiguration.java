@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.authy.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.authy.AuthyAuthenticationHandler;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
@@ -36,6 +37,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("authyAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class AuthyAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired

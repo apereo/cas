@@ -1,7 +1,6 @@
 package org.apereo.cas.services.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -22,8 +21,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Daniel Frett
  * @since 5.2.0
  */
+@Slf4j
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThemeBasedViewResolver.class);
+
 
     private final ThemeResolver themeResolver;
     private final ThemeViewResolverFactory viewResolverFactory;

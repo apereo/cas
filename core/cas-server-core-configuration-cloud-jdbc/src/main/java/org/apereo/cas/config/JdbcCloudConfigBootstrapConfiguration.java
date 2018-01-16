@@ -1,10 +1,9 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -24,8 +23,9 @@ import java.util.Properties;
  * @since 5.1.0
  */
 @Configuration("jdbcCloudConfigBootstrapConfiguration")
+@Slf4j
 public class JdbcCloudConfigBootstrapConfiguration implements PropertySourceLocator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcCloudConfigBootstrapConfiguration.class);
+
 
     @Override
     public PropertySource<?> locate(final Environment environment) {

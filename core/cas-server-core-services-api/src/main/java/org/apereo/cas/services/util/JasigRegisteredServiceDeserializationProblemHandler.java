@@ -7,10 +7,9 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.deser.DeserializationProblemHandler;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.type.SimpleType;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apereo.cas.authentication.principal.cache.CachingPrincipalAttributesRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -22,8 +21,9 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 class JasigRegisteredServiceDeserializationProblemHandler extends DeserializationProblemHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JasigRegisteredServiceDeserializationProblemHandler.class);
+
     private static final int TOKEN_COUNT_DURATION = 6;
     private static final int TOKEN_COUNT_EXPIRATION = 3;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.services.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,6 +14,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
     private static final long serialVersionUID = -2771506941879419063L;
     

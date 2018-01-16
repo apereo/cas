@@ -3,11 +3,10 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
@@ -32,8 +31,9 @@ import javax.persistence.Table;
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(ServiceTicket.PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTicketImpl.class);
+
     
     private static final long serialVersionUID = -4223319704861765405L;
 

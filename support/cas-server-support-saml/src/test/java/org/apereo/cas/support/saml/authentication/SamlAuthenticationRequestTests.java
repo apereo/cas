@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.util.CompressionUtils;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class SamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     @Test

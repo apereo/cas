@@ -6,12 +6,11 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
@@ -32,6 +31,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     
     /**
@@ -51,7 +51,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
      */
     public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_SERVICES_VIEW);
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
+
     
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;

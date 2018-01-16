@@ -1,11 +1,14 @@
 package org.apereo.cas.support.openid;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * OpenID constants.
  *
  * @author Jerome Leleu
  * @since 4.1.0
  */
+@Slf4j
 public final class OpenIdProtocolConstants {
     /**
      * The application callback url.

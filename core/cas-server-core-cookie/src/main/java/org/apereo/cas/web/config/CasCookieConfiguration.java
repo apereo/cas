@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -14,8 +15,6 @@ import org.apereo.cas.web.support.CookieValueManager;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,9 +31,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCookieConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCookieConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCookieConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

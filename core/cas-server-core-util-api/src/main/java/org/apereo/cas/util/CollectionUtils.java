@@ -1,10 +1,9 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -25,8 +24,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public final class CollectionUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CollectionUtils.class);
+
 
     private CollectionUtils() {
     }

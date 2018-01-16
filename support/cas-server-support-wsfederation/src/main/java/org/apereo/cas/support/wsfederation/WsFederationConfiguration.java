@@ -1,13 +1,12 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStream;
@@ -25,10 +24,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationConfiguration implements Serializable {
     private static final long serialVersionUID = 2310859477512242659L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationConfiguration.class);
+
 
     /**
      * Describes how the WS-FED principal resolution machinery

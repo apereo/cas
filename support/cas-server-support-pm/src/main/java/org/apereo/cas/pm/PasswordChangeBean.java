@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class PasswordChangeBean implements Serializable {
     private static final long serialVersionUID = 8885460875620586503L;
     

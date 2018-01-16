@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class EncryptionRandomizedCryptoProperties implements Serializable {
     private static final long serialVersionUID = -6945916782426505112L;
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
@@ -14,8 +15,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
 
 import java.time.ZonedDateTime;
@@ -33,8 +32,9 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public abstract class AbstractCasView extends AbstractView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasView.class);
+
 
     /**
      * Indicate whether this view will be generating the success response or not.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.RedisServiceRegistryConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
@@ -41,6 +42,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RedisServiceRegistryDaoTests {
     private static RedisServer REDIS_SERVER;
 

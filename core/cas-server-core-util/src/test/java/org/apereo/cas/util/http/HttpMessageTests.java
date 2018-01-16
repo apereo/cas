@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.net.URL;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 /**
@@ -11,6 +12,7 @@ import org.junit.Test;
  * @author Francesco Cina
  * @since 4.1
  */
+@Slf4j
 public class HttpMessageTests {
 
     @Test
