@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteState;
@@ -213,7 +213,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
         @Override
         public Duration getExpiryForAccess() {
-            final long idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0 ? ticket.getExpirationPolicy().getTimeToLive() : ticket.getExpirationPolicy().getTimeToIdle();
+            final long idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0
+                ? ticket.getExpirationPolicy().getTimeToLive() : ticket.getExpirationPolicy().getTimeToIdle();
             return new Duration(TimeUnit.SECONDS, idleTime);
         }
 

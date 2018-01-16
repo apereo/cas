@@ -1,13 +1,14 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.services.persondir.IPersonAttributeDao;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,7 +25,9 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
 
     private final WsFederationConfiguration configuration;
 
-    public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName, final WsFederationConfiguration configuration) {
+    public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                                      final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                                      final String principalAttributeName, final WsFederationConfiguration configuration) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
         this.configuration = configuration;
     }
@@ -51,7 +54,9 @@ public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryP
             LOGGER.debug("Principal Id extracted from credentials: [{}]", principalId);
             return principalId;
         }
-        LOGGER.warn("Credential attributes do not include an attribute for [{}]. " + "This will prohibit CAS to construct a meaningful authenticated principal. " + "Examine the released claims and ensure [{}] is allowed", idAttribute, idAttribute);
+        LOGGER.warn("Credential attributes do not include an attribute for [{}]. "
+            + "This will prohibit CAS to construct a meaningful authenticated principal. "
+            + "Examine the released claims and ensure [{}] is allowed", idAttribute, idAttribute);
         return null;
     }
 

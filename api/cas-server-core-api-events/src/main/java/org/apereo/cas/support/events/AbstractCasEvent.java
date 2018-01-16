@@ -1,11 +1,11 @@
 package org.apereo.cas.support.events;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.springframework.context.ApplicationEvent;
+
 import java.io.Serializable;
-import lombok.ToString;
 
 /**
  * Base Spring {@code ApplicationEvent} representing a abstract single sign on action executed within running CAS server.

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -23,7 +23,9 @@ public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalR
     public PrincipalBearingPrincipalResolver() {
     }
 
-    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                             final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

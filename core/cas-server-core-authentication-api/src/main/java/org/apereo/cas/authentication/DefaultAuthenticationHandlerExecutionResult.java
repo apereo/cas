@@ -67,7 +67,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param metaData the meta data
      * @param p        the p
      */
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+                                                       final Principal p) {
         this(source, metaData, p, null);
     }
 
@@ -78,7 +79,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param metaData the meta data
      * @param warnings the warnings
      */
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData, final List<MessageDescriptor> warnings) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+                                                       final List<MessageDescriptor> warnings) {
         this(source, metaData, null, warnings);
     }
 
@@ -90,7 +92,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param p        the p
      * @param warnings the warnings
      */
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p, final List<MessageDescriptor> warnings) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+                                                       final Principal p, final List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
     }
 

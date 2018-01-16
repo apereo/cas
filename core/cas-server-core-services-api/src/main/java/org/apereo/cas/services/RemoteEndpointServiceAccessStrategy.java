@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -77,7 +77,9 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
             return false;
         }
         final RemoteEndpointServiceAccessStrategy rhs = (RemoteEndpointServiceAccessStrategy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.endpointUrl, rhs.endpointUrl).append(this.acceptableResponseCodes, rhs.acceptableResponseCodes).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj))
+            .append(this.endpointUrl, rhs.endpointUrl)
+            .append(this.acceptableResponseCodes, rhs.acceptableResponseCodes).isEquals();
     }
 
     @Override
