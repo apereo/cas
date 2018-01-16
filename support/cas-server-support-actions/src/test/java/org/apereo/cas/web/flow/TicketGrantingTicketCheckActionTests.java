@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.mock.MockTicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.context.annotation.Import;
