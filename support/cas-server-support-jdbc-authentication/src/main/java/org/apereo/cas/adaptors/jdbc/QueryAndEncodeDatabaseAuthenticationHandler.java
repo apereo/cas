@@ -121,7 +121,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
                                                                                         final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+        throws GeneralSecurityException, PreventedException {
 
         if (StringUtils.isBlank(this.sql) || StringUtils.isBlank(this.algorithmName) || getJdbcTemplate() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
@@ -135,15 +135,15 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
             if (!values.get(this.passwordFieldName).equals(digestedPassword)) {
                 throw new FailedLoginException("Password does not match value on record.");
             }
-            if (StringUtils.isNotBlank(this.expiredFieldName)){
+            if (StringUtils.isNotBlank(this.expiredFieldName)) {
                 final Object dbExpired = values.get(this.expiredFieldName);
-                if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))){
+                if (dbExpired != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbExpired.toString())) || dbExpired.equals(Integer.valueOf(1)))) {
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            if (StringUtils.isNotBlank(this.disabledFieldName)){
+            if (StringUtils.isNotBlank(this.disabledFieldName)) {
                 final Object dbDisabled = values.get(this.disabledFieldName);
-                if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(1))){
+                if (dbDisabled != null && (Boolean.TRUE.equals(BooleanUtils.toBoolean(dbDisabled.toString())) || dbDisabled.equals(1))) {
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
@@ -152,7 +152,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
                 throw new AccountNotFoundException(username + " not found with SQL query");
-            } 
+            }
             throw new FailedLoginException("Multiple records found for " + username);
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
@@ -168,7 +168,6 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
      */
     protected String digestEncodedPassword(final String encodedPassword, final Map<String, Object> values) {
         final ConfigurableHashService hashService = new DefaultHashService();
-
         if (StringUtils.isNotBlank(this.staticSalt)) {
             hashService.setPrivateSalt(ByteSource.Util.bytes(this.staticSalt));
         }
@@ -187,9 +186,9 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
 
         final String dynaSalt = values.get(this.saltFieldName).toString();
         final HashRequest request = new HashRequest.Builder()
-                .setSalt(dynaSalt)
-                .setSource(encodedPassword)
-                .build();
+            .setSalt(dynaSalt)
+            .setSource(encodedPassword)
+            .build();
         return hashService.computeHash(request).toHex();
     }
 }

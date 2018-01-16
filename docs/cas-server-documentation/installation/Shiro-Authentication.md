@@ -15,7 +15,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 ```xml
 <dependency>
   <groupId>org.apereo.cas</groupId>
-  <artifactId>cas-server-support-generic</artifactId>
+  <artifactId>cas-server-support-shiro-authentication</artifactId>
   <version>${cas.version}</version>
 </dependency>
 ```
