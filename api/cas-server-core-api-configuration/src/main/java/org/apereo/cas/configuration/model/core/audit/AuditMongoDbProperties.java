@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 @Getter
 @Setter
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
+
     private static final long serialVersionUID = 4940497540189318943L;
 
     /**
@@ -24,9 +25,8 @@ public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
      * This setting must almost always be set to true.
      */
     private boolean asynchronous = true;
-    
+
     public AuditMongoDbProperties() {
         setCollection("MongoDbCasAuditRepository");
     }
-
 }

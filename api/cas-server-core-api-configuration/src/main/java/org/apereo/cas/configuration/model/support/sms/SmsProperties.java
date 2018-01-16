@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.sms;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SmsProperties}.
@@ -12,14 +13,18 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @Slf4j
+@Getter
+@Setter
 public class SmsProperties implements Serializable {
 
     private static final long serialVersionUID = -3713886839517507306L;
+
     /**
      * The body of the SMS message.
      */
     @RequiredProperty
     private String text;
+
     /**
      * The from address for the message.
      */
@@ -33,28 +38,4 @@ public class SmsProperties implements Serializable {
      */
     @RequiredProperty
     private String attributeName = "phone";
-
-    public String getAttributeName() {
-        return attributeName;
-    }
-
-    public void setAttributeName(final String attributeName) {
-        this.attributeName = attributeName;
-    }
-
-    public String getFrom() {
-        return from;
-    }
-
-    public void setFrom(final String from) {
-        this.from = from;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(final String text) {
-        this.text = text;
-    }
 }

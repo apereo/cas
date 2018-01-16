@@ -6,9 +6,10 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for shiro.authn.
@@ -18,13 +19,17 @@ import java.util.Set;
  */
 @RequiresModule(name = "cas-server-support-shiro")
 @Slf4j
+@Getter
+@Setter
 public class ShiroAuthenticationProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 8997401036330472417L;
+
     /**
      * Required roles that should be authorized by Shiro.
      */
     private Set<String> requiredRoles = new HashSet<>();
+
     /**
      * Required permissions that should be authorized by Shiro.
      */
@@ -48,45 +53,5 @@ public class ShiroAuthenticationProperties extends SpringResourceProperties {
     private String name;
 
     public ShiroAuthenticationProperties() {
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public Set<String> getRequiredRoles() {
-        return requiredRoles;
-    }
-
-    public void setRequiredRoles(final Set<String> requiredRoles) {
-        this.requiredRoles = requiredRoles;
-    }
-
-    public Set<String> getRequiredPermissions() {
-        return requiredPermissions;
-    }
-
-    public void setRequiredPermissions(final Set<String> requiredPermissions) {
-        this.requiredPermissions = requiredPermissions;
     }
 }

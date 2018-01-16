@@ -6,8 +6,9 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CouchbaseAuthenticationProperties}.
@@ -16,8 +17,12 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
 public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties implements Serializable {
+
     private static final long serialVersionUID = -7257332242368463818L;
+
     /**
      * Principal transformation settings.
      */
@@ -39,63 +44,16 @@ public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties i
      * Order of authentication handler in chain.
      */
     private int order = Integer.MAX_VALUE;
+
     /**
      * Username attribute to fetch and compare against credential.
      */
     @RequiredProperty
     private String usernameAttribute = "username";
+
     /**
      * Password attribute to fetch and compare against credential.
      */
     @RequiredProperty
     private String passwordAttribute = "psw";
-
-    public String getUsernameAttribute() {
-        return usernameAttribute;
-    }
-
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
-    }
-
-    public String getPasswordAttribute() {
-        return passwordAttribute;
-    }
-
-    public void setPasswordAttribute(final String passwordAttribute) {
-        this.passwordAttribute = passwordAttribute;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-    
 }

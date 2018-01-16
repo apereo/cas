@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CouchbaseTicketRegistryProperties}.
@@ -14,9 +16,12 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-couchbase-ticket-registry")
 @Slf4j
+@Getter
+@Setter
 public class CouchbaseTicketRegistryProperties extends BaseCouchbaseProperties {
+
     private static final long serialVersionUID = 2123040809519673836L;
-    
+
     /**
      * Crypto settings for the registry.
      */
@@ -25,13 +30,5 @@ public class CouchbaseTicketRegistryProperties extends BaseCouchbaseProperties {
 
     public CouchbaseTicketRegistryProperties() {
         this.crypto.setEnabled(false);
-    }
-    
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
     }
 }

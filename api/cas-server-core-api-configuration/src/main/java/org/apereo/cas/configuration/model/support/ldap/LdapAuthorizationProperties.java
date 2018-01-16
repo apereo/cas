@@ -2,22 +2,20 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
-
-/**
- * This is {@link LdapAuthorizationProperties}.
- *
- * @author Misagh Moayyed
- * @since 5.0.0
- */
+import lombok.Getter;
+import lombok.Setter;
 
 @Slf4j
+@Getter
+@Setter
 public class LdapAuthorizationProperties implements Serializable {
+
     /**
      * Default role prefix.
      */
     public static final String DEFAULT_ROLE_PREFIX = "ROLE_";
+
     private static final long serialVersionUID = -2680169790567609780L;
 
     /**
@@ -65,80 +63,9 @@ public class LdapAuthorizationProperties implements Serializable {
      * Base DN to start the search.
      */
     private String baseDn;
+
     /**
      * LDAP search filter to locate accounts.
      */
     private String searchFilter;
-
-    public String getGroupBaseDn() {
-        return StringUtils.defaultIfBlank(groupBaseDn, this.baseDn);
-    }
-
-    public void setGroupBaseDn(final String groupBaseDn) {
-        this.groupBaseDn = groupBaseDn;
-    }
-
-    public String getRoleAttribute() {
-        return roleAttribute;
-    }
-
-    public void setRoleAttribute(final String roleAttribute) {
-        this.roleAttribute = roleAttribute;
-    }
-
-    public String getRolePrefix() {
-        return rolePrefix;
-    }
-
-    public void setRolePrefix(final String rolePrefix) {
-        this.rolePrefix = rolePrefix;
-    }
-
-    public boolean isAllowMultipleResults() {
-        return allowMultipleResults;
-    }
-
-    public void setAllowMultipleResults(final boolean allowMultipleResults) {
-        this.allowMultipleResults = allowMultipleResults;
-    }
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
-    }
-
-    public String getSearchFilter() {
-        return searchFilter;
-    }
-
-    public void setSearchFilter(final String searchFilter) {
-        this.searchFilter = searchFilter;
-    }
-
-    public String getGroupAttribute() {
-        return groupAttribute;
-    }
-
-    public void setGroupAttribute(final String groupAttribute) {
-        this.groupAttribute = groupAttribute;
-    }
-
-    public String getGroupPrefix() {
-        return groupPrefix;
-    }
-
-    public void setGroupPrefix(final String groupPrefix) {
-        this.groupPrefix = groupPrefix;
-    }
-
-    public String getGroupFilter() {
-        return groupFilter;
-    }
-
-    public void setGroupFilter(final String groupFilter) {
-        this.groupFilter = groupFilter;
-    }
 }

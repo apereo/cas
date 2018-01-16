@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link LdapSearchEntryHandlersProperties}.
@@ -12,45 +13,42 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
 public class LdapSearchEntryHandlersProperties implements Serializable {
+
     private static final long serialVersionUID = -5198990160347131821L;
 
     /**
      * The enum Search entry handler types.
      */
     public enum SearchEntryHandlerTypes {
+
         /**
          * Object guid search entry handler.
          */
-        OBJECT_GUID,
-        /**
+        OBJECT_GUID, /**
          * Object sid search entry handler.
          */
-        OBJECT_SID,
-        /**
+        OBJECT_SID, /**
          * Case change search entry handler.
          */
-        CASE_CHANGE,
-        /**
+        CASE_CHANGE, /**
          * DN attribute entry handler.
          */
-        DN_ATTRIBUTE_ENTRY,
-        /**
+        DN_ATTRIBUTE_ENTRY, /**
          * Merge search entry handler.
          */
-        MERGE,
-        /**
+        MERGE, /**
          * Primary group search handler.
          */
-        PRIMARY_GROUP,
-        /**
+        PRIMARY_GROUP, /**
          * Range entry search handler.
          */
-        RANGE_ENTRY,
-        /**
+        RANGE_ENTRY, /**
          * Recursive entry search handler.
          */
-        RECURSIVE_ENTRY,
+        RECURSIVE_ENTRY
     }
 
     /**
@@ -58,7 +56,7 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      * Accepted values are {@code OBJECT_GUID,OBJECT_SID,CASE_CHANGE,DN_ATTRIBUTE_ENTRY,MERGE,PRIMARY_GROUP,RANGE_ENTRY,RECURSIVE_ENTRY}
      */
     private SearchEntryHandlerTypes type;
-    
+
     /**
      * Provides the ability to modify the case of search entry DNs, attribute names, and attribute values.
      */
@@ -93,52 +91,4 @@ public class LdapSearchEntryHandlersProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private RecursiveSearchEntryHandlersProperties recursive = new RecursiveSearchEntryHandlersProperties();
-
-    public CaseChangeSearchEntryHandlersProperties getCasChange() {
-        return casChange;
-    }
-
-    public void setCasChange(final CaseChangeSearchEntryHandlersProperties casChange) {
-        this.casChange = casChange;
-    }
-
-    public DnAttributeSearchEntryHandlersProperties getDnAttribute() {
-        return dnAttribute;
-    }
-
-    public void setDnAttribute(final DnAttributeSearchEntryHandlersProperties dnAttribute) {
-        this.dnAttribute = dnAttribute;
-    }
-
-    public MergeAttributesSearchEntryHandlersProperties getMergeAttribute() {
-        return mergeAttribute;
-    }
-
-    public void setMergeAttribute(final MergeAttributesSearchEntryHandlersProperties mergeAttribute) {
-        this.mergeAttribute = mergeAttribute;
-    }
-
-    public PrimaryGroupIdSearchEntryHandlersProperties getPrimaryGroupId() {
-        return primaryGroupId;
-    }
-
-    public void setPrimaryGroupId(final PrimaryGroupIdSearchEntryHandlersProperties primaryGroupId) {
-        this.primaryGroupId = primaryGroupId;
-    }
-
-    public RecursiveSearchEntryHandlersProperties getRecursive() {
-        return recursive;
-    }
-
-    public void setRecursive(final RecursiveSearchEntryHandlersProperties recursive) {
-        this.recursive = recursive;
-    }
-
-    public SearchEntryHandlerTypes getType() {
-        return type;
-    }
-
-    public void setType(final SearchEntryHandlerTypes type) {
-        this.type = type;
-    }
 }

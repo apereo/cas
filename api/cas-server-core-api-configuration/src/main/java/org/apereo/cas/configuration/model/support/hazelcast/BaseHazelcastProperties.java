@@ -3,8 +3,9 @@ package org.apereo.cas.configuration.model.support.hazelcast;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseHazelcastProperties}.
@@ -14,11 +15,15 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Slf4j
+@Getter
+@Setter
 public class BaseHazelcastProperties implements Serializable {
+
     /**
      * Logging type property name.
      */
     public static final String LOGGING_TYPE_PROP = "hazelcast.logging.type";
+
     /**
      * Enable discovery.
      */
@@ -28,6 +33,7 @@ public class BaseHazelcastProperties implements Serializable {
      * Max num of seconds for heartbeat property name.
      */
     public static final String MAX_HEARTBEAT_SECONDS_PROP = "hazelcast.max.no.heartbeat.seconds";
+
     /**
      * Ipv4 protocol stack.
      */
@@ -40,12 +46,4 @@ public class BaseHazelcastProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HazelcastClusterProperties cluster = new HazelcastClusterProperties();
-
-    public HazelcastClusterProperties getCluster() {
-        return cluster;
-    }
-
-    public void setCluster(final HazelcastClusterProperties cluster) {
-        this.cluster = cluster;
-    }
 }

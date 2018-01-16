@@ -7,6 +7,8 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link JsonResourceAuthenticationProperties}.
@@ -16,14 +18,18 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-generic")
 @Slf4j
+@Getter
+@Setter
 public class JsonResourceAuthenticationProperties extends SpringResourceProperties {
+
     private static final long serialVersionUID = 1079027841236526083L;
+
     /**
      * Password policy settings.
      */
     @NestedConfigurationProperty
     private PasswordPolicyProperties passwordPolicy = new PasswordPolicyProperties();
-    
+
     /**
      * Password encoder properties.
      */
@@ -40,36 +46,4 @@ public class JsonResourceAuthenticationProperties extends SpringResourceProperti
      * Authentication hanler name used to verify credentials in the file.
      */
     private String name;
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PasswordPolicyProperties getPasswordPolicy() {
-        return passwordPolicy;
-    }
-
-    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
-        this.passwordPolicy = passwordPolicy;
-    }
 }

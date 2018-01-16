@@ -3,8 +3,9 @@ package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link HazelcastAzureDiscoveryProperties}.
@@ -14,6 +15,8 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Slf4j
+@Getter
+@Setter
 public class HazelcastAzureDiscoveryProperties implements Serializable {
 
     /**
@@ -85,52 +88,4 @@ public class HazelcastAzureDiscoveryProperties implements Serializable {
      */
     @RequiredProperty
     private String groupName;
-
-    public String getSubscriptionId() {
-        return subscriptionId;
-    }
-
-    public void setSubscriptionId(final String subscriptionId) {
-        this.subscriptionId = subscriptionId;
-    }
-
-    public String getClientId() {
-        return clientId;
-    }
-
-    public void setClientId(final String clientId) {
-        this.clientId = clientId;
-    }
-
-    public String getClientSecret() {
-        return clientSecret;
-    }
-
-    public void setClientSecret(final String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(final String tenantId) {
-        this.tenantId = tenantId;
-    }
-
-    public String getClusterId() {
-        return clusterId;
-    }
-
-    public void setClusterId(final String clusterId) {
-        this.clusterId = clusterId;
-    }
-
-    public String getGroupName() {
-        return groupName;
-    }
-
-    public void setGroupName(final String groupName) {
-        this.groupName = groupName;
-    }
 }

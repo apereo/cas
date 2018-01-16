@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatRemoteAddressProperties}.
@@ -13,7 +14,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Slf4j
+@Getter
+@Setter
 public class CasEmbeddedApacheTomcatRemoteAddressProperties implements Serializable {
+
     private static final long serialVersionUID = -32143821503580896L;
 
     /**
@@ -34,28 +38,4 @@ public class CasEmbeddedApacheTomcatRemoteAddressProperties implements Serializa
      * If this attribute is not specified, request acceptance is governed solely by the accept attribute.
      */
     private String deniedClientIpAddressRegex = ".+";
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getAllowedClientIpAddressRegex() {
-        return allowedClientIpAddressRegex;
-    }
-
-    public void setAllowedClientIpAddressRegex(final String allowedClientIpAddressRegex) {
-        this.allowedClientIpAddressRegex = allowedClientIpAddressRegex;
-    }
-
-    public String getDeniedClientIpAddressRegex() {
-        return deniedClientIpAddressRegex;
-    }
-
-    public void setDeniedClientIpAddressRegex(final String deniedClientIpAddressRegex) {
-        this.deniedClientIpAddressRegex = deniedClientIpAddressRegex;
-    }
 }

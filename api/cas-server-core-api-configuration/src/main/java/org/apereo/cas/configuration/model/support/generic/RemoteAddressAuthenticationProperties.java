@@ -4,8 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for remote.authn.
@@ -15,9 +16,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-generic-remote-webflow")
 @Slf4j
+@Getter
+@Setter
 public class RemoteAddressAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 573409035023089696L;
+
     /**
      * The authorized network address to allow for authentication.
      */
@@ -28,20 +32,4 @@ public class RemoteAddressAuthenticationProperties implements Serializable {
      * The name of the authentication handler.
      */
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getIpAddressRange() {
-        return ipAddressRange;
-    }
-
-    public void setIpAddressRange(final String ipAddressRange) {
-        this.ipAddressRange = ipAddressRange;
-    }
 }
