@@ -109,7 +109,6 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             return response;
         }
         throw new AssertionError("Expected AbstractAuthenticationException");
-        return null;
     }
 
     private static UsernamePasswordCredential badCredentials(final String username) {

@@ -59,7 +59,7 @@ public class FileAuthenticationHandlerTests {
                 new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
-            throw new AssertionError(("MalformedURLException caught.");
+            throw new AssertionError("MalformedURLException caught.");
         }
     }
 
