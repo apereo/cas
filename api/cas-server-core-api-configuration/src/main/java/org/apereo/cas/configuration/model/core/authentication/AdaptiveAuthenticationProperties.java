@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -18,6 +20,8 @@ import java.util.Map;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class AdaptiveAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = -1840174229142982880L;
@@ -59,52 +63,4 @@ public class AdaptiveAuthenticationProperties implements Serializable {
      * after hours, etc and the ruleset provides a modest configuration set where time can also be treated as trigger.
      */
     private List<TimeBasedAuthenticationProperties> requireTimedMultifactor = new ArrayList<>();
-
-    public RiskBasedAuthenticationProperties getRisk() {
-        return risk;
-    }
-
-    public void setRisk(final RiskBasedAuthenticationProperties risk) {
-        this.risk = risk;
-    }
-
-    public String getRejectIpAddresses() {
-        return rejectIpAddresses;
-    }
-
-    public void setRejectIpAddresses(final String rejectIpAddresses) {
-        this.rejectIpAddresses = rejectIpAddresses;
-    }
-
-    public String getRejectCountries() {
-        return rejectCountries;
-    }
-
-    public void setRejectCountries(final String rejectCountries) {
-        this.rejectCountries = rejectCountries;
-    }
-
-    public String getRejectBrowsers() {
-        return rejectBrowsers;
-    }
-
-    public void setRejectBrowsers(final String rejectBrowsers) {
-        this.rejectBrowsers = rejectBrowsers;
-    }
-
-    public Map<String, String> getRequireMultifactor() {
-        return requireMultifactor;
-    }
-
-    public void setRequireMultifactor(final Map<String, String> requireMultifactor) {
-        this.requireMultifactor = requireMultifactor;
-    }
-
-    public List<TimeBasedAuthenticationProperties> getRequireTimedMultifactor() {
-        return requireTimedMultifactor;
-    }
-
-    public void setRequireTimedMultifactor(final List<TimeBasedAuthenticationProperties> requireTimedMultifactor) {
-        this.requireTimedMultifactor = requireTimedMultifactor;
-    }
 }
