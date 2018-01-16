@@ -40,7 +40,8 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private final String loadFilter;
 
-    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn, final LdapRegisteredServiceMapper ldapServiceMapper, final LdapServiceRegistryProperties ldapProperties) {
+    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn,
+                                  final LdapRegisteredServiceMapper ldapServiceMapper, final LdapServiceRegistryProperties ldapProperties) {
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         if (ldapServiceMapper == null) {
@@ -175,7 +176,8 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
      * @throws LdapException the ldap exception
      */
     private Response<SearchResult> searchForServiceById(final Long id) throws LdapException {
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter, LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(this.searchFilter,
+            LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME, CollectionUtils.wrap(id.toString()));
         return LdapUtils.executeSearchOperation(this.connectionFactory, this.baseDn, filter);
     }
 }

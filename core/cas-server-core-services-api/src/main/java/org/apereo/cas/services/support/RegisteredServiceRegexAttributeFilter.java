@@ -1,11 +1,9 @@
 package org.apereo.cas.services.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import java.util.Collection;
 import java.util.HashMap;
@@ -169,7 +167,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...", attributeValue, attributeName, this.pattern.pattern());
+        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
+            attributeValue, attributeName, this.pattern.pattern());
     }
 
     @Override

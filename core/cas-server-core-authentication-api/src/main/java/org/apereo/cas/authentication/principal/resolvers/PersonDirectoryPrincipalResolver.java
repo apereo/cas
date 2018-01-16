@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
@@ -14,10 +14,10 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
 
 /**
  * Resolves principals by querying a data source using the Jasig
@@ -78,7 +78,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
     }
 
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                            final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                            final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
         this.attributeRepository = attributeRepository;
         this.principalFactory = principalFactory;
         this.returnNullIfNoAttributes = returnNullIfNoAttributes;
@@ -125,8 +127,9 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
      * @param attributes           the attributes
      * @return the pair
      */
-    protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId, final Map<String, List<Object>> attributes) {
-        final String[] principalId = { extractedPrincipalId };
+    protected Pair<String, Map<String, Object>> convertPersonAttributesToPrincipal(final String extractedPrincipalId,
+                                                                                   final Map<String, List<Object>> attributes) {
+        final String[] principalId = {extractedPrincipalId};
         final Map<String, Object> convertedAttributes = new HashMap<>();
         attributes.entrySet().stream().forEach(entry -> {
             final String key = entry.getKey();

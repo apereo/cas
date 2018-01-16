@@ -2,7 +2,6 @@ package org.apereo.cas.support.events.authentication.surrogate;
 
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
 

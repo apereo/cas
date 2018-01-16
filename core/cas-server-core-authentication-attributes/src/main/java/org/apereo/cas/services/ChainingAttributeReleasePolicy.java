@@ -1,7 +1,6 @@
 package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import java.util.ArrayList;

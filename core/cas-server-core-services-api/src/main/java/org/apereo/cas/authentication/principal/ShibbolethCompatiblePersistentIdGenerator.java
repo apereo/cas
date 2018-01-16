@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import java.util.Map;
@@ -81,7 +80,8 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @Override
     public String generate(final Principal principal, final Service service) {
         final Map<String, Object> attributes = principal.getAttributes();
-        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
+        final String principalId = StringUtils.isNotBlank(this.attribute)
+            && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
         return generate(principalId, service.getId());
     }
 

@@ -3,8 +3,6 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
@@ -62,15 +60,23 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
         LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].", this.usernameAttribute, releasePolicyAttributes);
         if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
-            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]", registeredService.getServiceId(), this.usernameAttribute);
+            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
+                registeredService.getServiceId(), this.usernameAttribute);
             final Object value = releasePolicyAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
-            LOGGER.debug("The selected username attribute [{}] was retrieved as a direct " + "principal attribute and not through the attribute release policy for service [{}]. " + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute " + "is explicitly authorized for release via the service attribute release policy.", this.usernameAttribute, service, this.usernameAttribute);
+            LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
+                + "principal attribute and not through the attribute release policy for service [{}]. "
+                + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
+                + "is explicitly authorized for release via the service attribute release policy.", this.usernameAttribute, service, this.usernameAttribute);
             final Object value = originalPrincipalAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
-            LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot " + "provide the user attribute the service expects. " + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username " + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
+            LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
+                + "provide the user attribute the service expects. "
+                + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
+                + "is allowed to be released by the service attribute release policy.",
+                principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
         }
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();

@@ -6,10 +6,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
+
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.IntStream;
+
 import lombok.ToString;
 
 /**
@@ -32,8 +34,11 @@ public class SpnegoCredential implements Credential, Serializable {
 
     private static final Byte CHAR_S_BYTE = (byte) 'S';
 
-    /** The ntlmssp signature. */
-    private static final Byte[] NTLMSSP_SIGNATURE = { (byte) 'N', (byte) 'T', (byte) 'L', (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE, (byte) 'P', (byte) 0 };
+    /**
+     * The ntlmssp signature.
+     */
+    private static final Byte[] NTLMSSP_SIGNATURE = {(byte) 'N', (byte) 'T', (byte) 'L', (byte) 'M',
+        CHAR_S_BYTE, CHAR_S_BYTE, (byte) 'P', (byte) 0};
 
     /**
      * The SPNEGO Init Token.
@@ -119,7 +124,8 @@ public class SpnegoCredential implements Credential, Serializable {
             return false;
         }
         final SpnegoCredential c = (SpnegoCredential) obj;
-        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal()) && Arrays.equals(this.getNextToken(), c.getNextToken());
+        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal())
+            && Arrays.equals(this.getNextToken(), c.getNextToken());
     }
 
     @Override
@@ -133,7 +139,8 @@ public class SpnegoCredential implements Credential, Serializable {
 
     /**
      * Read the contents of the source into a byte array.
-     * @param source  the byte array source
+     *
+     * @param source the byte array source
      * @return the byte[] read from the source or null
      */
     private static byte[] consumeByteSourceOrNull(final ByteSource source) {

@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -54,7 +54,9 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
      * @param serialNumberPrefix       prefix for the certificate serialnumber (default: "SERIALNUMBER=").
      * @param valueDelimiter           delimiter to separate the two certificate properties in the string. (default: ", ")
      */
-    public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName, final String serialNumberPrefix, final String valueDelimiter) {
+    public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                                        final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                                        final String principalAttributeName, final String serialNumberPrefix, final String valueDelimiter) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
         this.serialNumberPrefix = StringUtils.defaultString(serialNumberPrefix, "SERIALNUMBER=");
         this.valueDelimiter = StringUtils.defaultIfBlank(valueDelimiter, ", ");
@@ -62,6 +64,8 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        return new StringBuilder(this.serialNumberPrefix).append(certificate.getSerialNumber()).append(this.valueDelimiter).append(certificate.getIssuerDN().getName()).toString();
+        return new StringBuilder(this.serialNumberPrefix)
+            .append(certificate.getSerialNumber()).append(this.valueDelimiter)
+            .append(certificate.getIssuerDN().getName()).toString();
     }
 }

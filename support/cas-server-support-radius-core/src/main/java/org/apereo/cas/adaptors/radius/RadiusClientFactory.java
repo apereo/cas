@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.radius;
 
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -56,7 +56,8 @@ public class RadiusClientFactory {
      * @param inetAddress        RADIUS server network address.
      * @param sharedSecret       RADIUS server authentication shared secret.
      */
-    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout, final String inetAddress, final String sharedSecret) {
+    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout,
+                               final String inetAddress, final String sharedSecret) {
         this.accountingPort = accountingPort;
         this.authenticationPort = authenticationPort;
         this.socketTimeout = socketTimeout;

@@ -2,8 +2,7 @@ package org.apereo.cas.support.wsfederation.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;

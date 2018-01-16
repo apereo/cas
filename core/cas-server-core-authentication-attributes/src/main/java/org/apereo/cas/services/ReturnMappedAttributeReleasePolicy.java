@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
@@ -90,7 +90,9 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return attributesToRelease;
     }
 
-    private static void mapSingleAttributeDefinition(final String attributeName, final String mappedAttributeName, final Object attributeValue, final Map<String, Object> resolvedAttributes, final Map<String, Object> attributesToRelease) {
+    private static void mapSingleAttributeDefinition(final String attributeName, final String mappedAttributeName,
+                                                     final Object attributeValue, final Map<String, Object> resolvedAttributes,
+                                                     final Map<String, Object> attributesToRelease) {
         final Matcher matcherInline = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
         final Matcher matcherFile = ScriptingUtils.getMatcherForInlineGroovyScript(mappedAttributeName);
         if (matcherInline.find()) {
@@ -104,7 +106,10 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
                 LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]", attributeName, mappedAttributeName);
                 attributesToRelease.put(mappedAttributeName, attributeValue);
             } else {
-                LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. " + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] " + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName, attributeName, mappedAttributeName);
+                LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "
+                    + "Ensure the original attribute [{}] is retrieved and contains at least a single value. Attribute [{}] "
+                    + "will and can not be released without the presence of a value.", mappedAttributeName, attributeName,
+                    attributeName, mappedAttributeName);
             }
         }
     }
@@ -125,7 +130,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         }
     }
 
-    private static void processInlineGroovyAttribute(final Map<String, Object> resolvedAttributes, final Map<String, Object> attributesToRelease, final Matcher matcherInline, final String attributeName) {
+    private static void processInlineGroovyAttribute(final Map<String, Object> resolvedAttributes,
+                                                     final Map<String, Object> attributesToRelease, final Matcher matcherInline, final String attributeName) {
         LOGGER.debug("Found inline groovy script to execute for attribute mapping [{}]", attributeName);
         final Object result = getGroovyAttributeValue(matcherInline.group(1), resolvedAttributes);
         if (result != null) {

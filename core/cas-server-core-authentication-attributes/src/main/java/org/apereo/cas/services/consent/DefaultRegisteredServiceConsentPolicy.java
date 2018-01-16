@@ -3,7 +3,6 @@ package org.apereo.cas.services.consent;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
 import java.util.Set;
 import lombok.ToString;

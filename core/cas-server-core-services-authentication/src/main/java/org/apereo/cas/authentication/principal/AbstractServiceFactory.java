@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.servlet.http.HttpServletRequest;
 import lombok.ToString;
 

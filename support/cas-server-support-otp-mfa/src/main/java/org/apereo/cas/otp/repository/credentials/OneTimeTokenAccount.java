@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -70,7 +70,10 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      * @param scratchCodes   the scratch codes
      */
     @JsonCreator
-    public OneTimeTokenAccount(@JsonProperty("username") final String username, @JsonProperty("secretKey") final String secretKey, @JsonProperty("validationCode") final int validationCode, @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
+    public OneTimeTokenAccount(@JsonProperty("username") final String username,
+                               @JsonProperty("secretKey") final String secretKey,
+                               @JsonProperty("validationCode") final int validationCode,
+                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
         this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;

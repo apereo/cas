@@ -1,9 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.ClassPathResource;
+
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.PublicKey;
@@ -12,7 +14,6 @@ import java.security.cert.CertificateExpiredException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
-import lombok.ToString;
 
 /**
  * @author Marvin S. Addison
@@ -23,8 +24,9 @@ import lombok.ToString;
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
-    
-    protected static class CasX509Certificate extends X509Certificate {
+
+    @ToString
+    public static class CasX509Certificate extends X509Certificate {
 
         private static final long serialVersionUID = -4449243195531417769L;
 
@@ -157,12 +159,10 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
 
         @Override
         public void verify(final PublicKey arg0, final String arg1) {
-        // nothing to do right now
         }
 
         @Override
         public void verify(final PublicKey arg0) {
-        // nothing to do right now
         }
     }
 }

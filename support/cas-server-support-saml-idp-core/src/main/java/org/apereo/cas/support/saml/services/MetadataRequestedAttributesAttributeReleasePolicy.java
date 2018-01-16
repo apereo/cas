@@ -1,9 +1,9 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -27,7 +27,11 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
     private boolean useFriendlyName;
 
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes, final SamlRegisteredService service, final ApplicationContext applicationContext, final SamlRegisteredServiceCachingMetadataResolver resolver, final SamlRegisteredServiceServiceProviderMetadataFacade facade, final EntityDescriptor entityDescriptor) {
+    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
+                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
+                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
+                                                                        final EntityDescriptor entityDescriptor) {
         final Map<String, Object> releaseAttributes = new LinkedHashMap<>();
         final SPSSODescriptor sso = facade.getSsoDescriptor();
         if (sso != null) {

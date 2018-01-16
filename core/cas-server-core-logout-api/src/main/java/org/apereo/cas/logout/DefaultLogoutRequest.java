@@ -2,7 +2,6 @@ package org.apereo.cas.logout;
 
 import java.net.URL;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import lombok.ToString;
 

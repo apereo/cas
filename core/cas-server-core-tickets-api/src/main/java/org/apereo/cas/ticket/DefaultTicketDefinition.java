@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.core.Ordered;
 import lombok.ToString;
 
@@ -69,7 +68,8 @@ public class DefaultTicketDefinition implements TicketDefinition {
             return false;
         }
         final TicketDefinition rhs = (TicketDefinition) obj;
-        return new EqualsBuilder().append(this.implementationClass, rhs.getImplementationClass()).append(this.prefix, rhs.getPrefix()).append(this.properties, rhs.getProperties()).isEquals();
+        return new EqualsBuilder().append(this.implementationClass, rhs.getImplementationClass())
+            .append(this.prefix, rhs.getPrefix()).append(this.properties, rhs.getProperties()).isEquals();
     }
 
     @Override

@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import java.security.cert.X509Certificate;
@@ -35,11 +35,15 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
         this.zeroPadding = zeroPadding;
     }
 
-    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                             final String principalAttributeName) {
         this(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, DEFAULT_RADIX, false);
     }
 
-    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName, final int radix, final boolean zeroPadding) {
+    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                             final String principalAttributeName, final int radix, final boolean zeroPadding) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
         this.radix = radix;
         this.zeroPadding = zeroPadding;

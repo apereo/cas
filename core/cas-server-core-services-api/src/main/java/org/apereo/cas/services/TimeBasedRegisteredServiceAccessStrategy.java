@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -69,7 +69,8 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
             return false;
         }
         final TimeBasedRegisteredServiceAccessStrategy rhs = (TimeBasedRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.startingDateTime, rhs.startingDateTime).append(this.endingDateTime, rhs.endingDateTime).isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.startingDateTime, rhs.startingDateTime)
+            .append(this.endingDateTime, rhs.endingDateTime).isEquals();
     }
 
     @Override

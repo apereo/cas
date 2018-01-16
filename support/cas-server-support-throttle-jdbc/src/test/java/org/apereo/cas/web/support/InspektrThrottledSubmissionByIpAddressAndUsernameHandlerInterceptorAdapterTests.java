@@ -45,8 +45,6 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.*;
-
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
  *

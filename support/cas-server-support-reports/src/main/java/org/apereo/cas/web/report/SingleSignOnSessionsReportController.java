@@ -70,7 +70,16 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     private enum SsoSessionAttributeKeys {
 
-        AUTHENTICATED_PRINCIPAL("authenticated_principal"), PRINCIPAL_ATTRIBUTES("principal_attributes"), AUTHENTICATION_DATE("authentication_date"), AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"), TICKET_GRANTING_TICKET("ticket_granting_ticket"), AUTHENTICATION_ATTRIBUTES("authentication_attributes"), PROXIED_BY("proxied_by"), AUTHENTICATED_SERVICES("authenticated_services"), IS_PROXIED("is_proxied"), NUMBER_OF_USES("number_of_uses");
+        AUTHENTICATED_PRINCIPAL("authenticated_principal"),
+        PRINCIPAL_ATTRIBUTES("principal_attributes"),
+        AUTHENTICATION_DATE("authentication_date"),
+        AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
+        TICKET_GRANTING_TICKET("ticket_granting_ticket"),
+        AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
+        PROXIED_BY("proxied_by"),
+        AUTHENTICATED_SERVICES("authenticated_services"),
+        IS_PROXIED("is_proxied"),
+        NUMBER_OF_USES("number_of_uses");
 
         private final String attributeKey;
 

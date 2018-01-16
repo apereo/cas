@@ -84,7 +84,9 @@ public class ImmutableAssertion implements Assertion, Serializable {
             return false;
         }
         final Assertion a = (Assertion) o;
-        return this.primaryAuthentication.equals(a.getPrimaryAuthentication()) && this.chainedAuthentications.equals(a.getChainedAuthentications()) && this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin();
+        return this.primaryAuthentication.equals(a.getPrimaryAuthentication())
+            && this.chainedAuthentications.equals(a.getChainedAuthentications())
+            && this.service.equals(a.getService()) && this.fromNewLogin == a.isFromNewLogin();
     }
 
     @Override

@@ -1,7 +1,6 @@
 package org.apereo.cas.support.events.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
 import lombok.ToString;
 

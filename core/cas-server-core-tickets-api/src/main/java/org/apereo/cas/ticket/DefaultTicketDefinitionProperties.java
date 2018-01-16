@@ -3,7 +3,6 @@ package org.apereo.cas.ticket;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import lombok.ToString;
 
 /**
@@ -88,11 +87,13 @@ public class DefaultTicketDefinitionProperties implements TicketDefinitionProper
             return false;
         }
         final DefaultTicketDefinitionProperties rhs = (DefaultTicketDefinitionProperties) obj;
-        return new EqualsBuilder().append(this.cascadeTicket, rhs.cascadeTicket).append(this.cacheName, rhs.cacheName).append(this.cacheTimeout, rhs.cacheTimeout).append(this.storagePassword, rhs.storagePassword).isEquals();
+        return new EqualsBuilder().append(this.cascadeTicket, rhs.cascadeTicket).
+            append(this.cacheName, rhs.cacheName).append(this.cacheTimeout, rhs.cacheTimeout).append(this.storagePassword, rhs.storagePassword).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(cascadeTicket).append(cacheName).append(cacheTimeout).append(storagePassword).toHashCode();
+        return new HashCodeBuilder().append(cascadeTicket)
+            .append(cacheName).append(cacheTimeout).append(storagePassword).toHashCode();
     }
 }
