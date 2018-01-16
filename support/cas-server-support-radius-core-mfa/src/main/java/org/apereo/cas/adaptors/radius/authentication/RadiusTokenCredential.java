@@ -6,8 +6,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * This is {@link RadiusTokenCredential}.
@@ -16,17 +16,12 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class RadiusTokenCredential implements Credential, Serializable {
+
     private static final long serialVersionUID = -7570675701132111037L;
 
     private String token;
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("token", this.token)
-                .toString();
-    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -54,7 +49,6 @@ public class RadiusTokenCredential implements Credential, Serializable {
         return this.token;
     }
 
-
     public String getToken() {
         return this.token;
     }
@@ -67,4 +61,3 @@ public class RadiusTokenCredential implements Credential, Serializable {
         return StringUtils.isNotBlank(this.token);
     }
 }
-

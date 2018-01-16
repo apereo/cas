@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -17,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.ToString;
 
 /**
  * Renders the model prepared by CAS in JSON format.
@@ -31,18 +31,11 @@ import java.util.stream.Collectors;
  * @since 4.2
  */
 @Slf4j
+@ToString
 public class Cas30JsonResponseView extends Cas30ResponseView {
 
-    public Cas30JsonResponseView(final boolean successResponse,
-                                 final ProtocolAttributeEncoder protocolAttributeEncoder,
-                                 final ServicesManager servicesManager,
-                                 final String authenticationContextAttribute,
-                                 final boolean releaseProtocolAttributes,
-                                 final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-                                 final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy,
-                serviceSelectionStrategy);
+    public Cas30JsonResponseView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder, final ServicesManager servicesManager, final String authenticationContextAttribute, final boolean releaseProtocolAttributes, final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy, final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy, serviceSelectionStrategy);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
@@ -53,13 +46,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
-
-    @Override
-    protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request,
-                                            final HttpServletResponse response) {
+    protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) {
         final CasServiceResponse casResponse = new CasServiceResponse();
         try {
             super.prepareMergedOutputModel(model, request, response);
@@ -91,22 +78,21 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     private CasServiceResponseAuthenticationSuccess createAuthenticationSuccess(final Map<String, Object> model) {
         final CasServiceResponseAuthenticationSuccess success = new CasServiceResponseAuthenticationSuccess();
         success.setAttributes(getModelAttributes(model));
-
         final Principal principal = getPrincipal(model);
         success.setUser(principal.getId());
-
         success.setProxyGrantingTicket(getProxyGrantingTicketIou(model));
         final Collection<Authentication> chainedAuthentications = getChainedAuthentications(model);
         if (chainedAuthentications != null && !chainedAuthentications.isEmpty()) {
-            final List<String> proxies = chainedAuthentications.stream()
-                    .map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
+            final List<String> proxies = chainedAuthentications.stream().map(authn -> authn.getPrincipal().getId()).collect(Collectors.toList());
             success.setProxies(proxies);
         }
         return success;
     }
 
     private static class CasServiceResponse {
+
         private CasServiceResponseAuthenticationFailure authenticationFailure;
+
         private CasServiceResponseAuthenticationSuccess authenticationSuccess;
 
         public CasServiceResponseAuthenticationFailure getAuthenticationFailure() {
@@ -127,9 +113,13 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     private static class CasServiceResponseAuthenticationSuccess {
+
         private String user;
+
         private String proxyGrantingTicket;
+
         private List proxies;
+
         private Map attributes;
 
         public String getUser() {
@@ -166,7 +156,9 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
     }
 
     private static class CasServiceResponseAuthenticationFailure {
+
         private String code;
+
         private String description;
 
         public String getCode() {

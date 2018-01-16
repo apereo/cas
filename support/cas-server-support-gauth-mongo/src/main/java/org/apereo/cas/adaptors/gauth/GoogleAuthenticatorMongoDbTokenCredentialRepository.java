@@ -9,9 +9,9 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import javax.persistence.NoResultException;
 import java.util.List;
+import lombok.ToString;
 
 /**
  * This is {@link GoogleAuthenticatorMongoDbTokenCredentialRepository}.
@@ -20,26 +20,19 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-
-
 
     private final IGoogleAuthenticator googleAuthenticator;
 
     private final String collectionName;
+
     private final MongoOperations mongoTemplate;
 
-    public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final MongoOperations mongoTemplate,
-                                                               final String collectionName) {
+    public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator, final MongoOperations mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.googleAuthenticator = googleAuthenticator;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 
     @Override

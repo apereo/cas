@@ -8,10 +8,10 @@ import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.ToString;
 
 /**
  * Abstract class for defining a simple binary filter to determine whether a
@@ -25,10 +25,9 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 @Slf4j
+@ToString
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
-
-    
     /** Pattern of ip addresses to check. **/
     private Pattern ipsToCheckPattern;
 
@@ -40,7 +39,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * fall-through authentication mechanisms.
      */
     private long timeout;
-    
+
     /**
      * Instantiates a new Base.
      *
@@ -111,12 +110,10 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     protected boolean ipPatternMatches(final String remoteIp) {
         final Matcher matcher = this.ipsToCheckPattern.matcher(remoteIp);
         if (matcher.find()) {
-            LOGGER.debug("Remote IP address [{}] should be checked based on the defined pattern [{}]",
-                    remoteIp, this.ipsToCheckPattern.pattern());
+            LOGGER.debug("Remote IP address [{}] should be checked based on the defined pattern [{}]", remoteIp, this.ipsToCheckPattern.pattern());
             return true;
         }
-        LOGGER.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]",
-                remoteIp);
+        LOGGER.debug("No pattern or remote IP defined, or pattern does not match remote IP [{}]", remoteIp);
         return false;
     }
 
@@ -132,16 +129,12 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         String userAddress = request.getRemoteAddr();
         LOGGER.debug("Remote Address = [{}]", userAddress);
-
         if (StringUtils.isNotBlank(this.alternativeRemoteHostAttribute)) {
-
             userAddress = request.getHeader(this.alternativeRemoteHostAttribute);
             LOGGER.debug("Header Attribute [{}] = [{}]", this.alternativeRemoteHostAttribute, userAddress);
-
             if (StringUtils.isBlank(userAddress)) {
                 userAddress = request.getRemoteAddr();
-                LOGGER.warn("No value could be retrieved from the header [{}]. Falling back to [{}].",
-                        this.alternativeRemoteHostAttribute, userAddress);
+                LOGGER.warn("No value could be retrieved from the header [{}]. Falling back to [{}].", this.alternativeRemoteHostAttribute, userAddress);
             }
         }
         return userAddress;
@@ -163,15 +156,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         this.ipsToCheckPattern = Pattern.compile(ipsToCheckPattern);
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("ipsToCheckPattern", this.ipsToCheckPattern)
-                .append("alternativeRemoteHostAttribute", this.alternativeRemoteHostAttribute)
-                .append("timeout", this.timeout)
-                .toString();
-    }
-
     /**
      * Convenience method to perform a reverse DNS lookup. Threads the request
      * through a custom Runnable class in order to prevent inordinately long
@@ -181,19 +165,15 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      */
     protected String getRemoteHostName(final String remoteIp) {
         final ReverseDNSRunnable revDNS = new ReverseDNSRunnable(remoteIp);
-
         final Thread t = new Thread(revDNS);
         t.start();
-
         try {
             t.join(this.timeout);
         } catch (final InterruptedException e) {
             LOGGER.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
         }
-
         final String remoteHostName = revDNS.get();
         LOGGER.debug("Found remote host name [{}].", remoteHostName);
-
         return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }
 }

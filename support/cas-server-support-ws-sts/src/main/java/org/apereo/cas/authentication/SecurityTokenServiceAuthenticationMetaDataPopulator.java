@@ -22,33 +22,26 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
-
     private final ServicesManager servicesManager;
+
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
+
     private final CipherExecutor<String, String> credentialCipherExecutor;
+
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
-    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager,
-                                                               final AuthenticationServiceSelectionStrategy selectionStrategy,
-                                                               final CipherExecutor<String, String> credentialCipherExecutor,
-                                                               final SecurityTokenServiceClientBuilder clientBuilder) {
+    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager, final AuthenticationServiceSelectionStrategy selectionStrategy, final CipherExecutor<String, String> credentialCipherExecutor, final SecurityTokenServiceClientBuilder clientBuilder) {
         this.servicesManager = servicesManager;
         this.selectionStrategy = selectionStrategy;
         this.credentialCipherExecutor = credentialCipherExecutor;
         this.clientBuilder = clientBuilder;
     }
 
-    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder,
-                                                    final WSFederationRegisteredService rp, final SecurityTokenServiceClient sts) {
-        final UsernamePasswordCredential up = transaction.getCredentials()
-                .stream()
-                .filter(UsernamePasswordCredential.class::isInstance)
-                .map(UsernamePasswordCredential.class::cast)
-                .findFirst()
-                .orElse(null);
-
+    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder, final WSFederationRegisteredService rp, final SecurityTokenServiceClient sts) {
+        final UsernamePasswordCredential up = transaction.getCredentials().stream().filter(UsernamePasswordCredential.class::isInstance).map(UsernamePasswordCredential.class::cast).findFirst().orElse(null);
         if (up != null) {
             try {
                 sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
@@ -80,7 +73,6 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-
             final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
@@ -89,13 +81,5 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
     @Override
     public boolean supports(final Credential credential) {
         return true;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

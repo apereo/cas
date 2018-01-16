@@ -16,26 +16,17 @@ import org.apereo.cas.authentication.principal.ClientCredential;
  * @since 3.5.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         final ClientCredential clientCredential = (ClientCredential) transaction.getCredential();
-        builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME,
-            clientCredential.getCredentials().getClientName());
+        builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, clientCredential.getCredentials().getClientName());
     }
 
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof ClientCredential;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .appendSuper(super.toString())
-            .toString();
     }
 }
