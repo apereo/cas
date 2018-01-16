@@ -207,7 +207,7 @@ public class JpaLockingStrategyTests {
             testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
             LOGGER.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
-            throw new AssertionError(("testConcurrentAcquireAndReleaseOnExistingLock failed.");
+            throw new AssertionError("testConcurrentAcquireAndReleaseOnExistingLock failed.");
         } finally {
             executor.shutdownNow();
         }
