@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -83,6 +84,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
         CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
         CasOAuthWebflowConfiguration.class})
+@Slf4j
 public class OAuth20RegisteredServiceUIActionTests {
     @Autowired
     @Qualifier("oauth20RegisteredServiceUIAction")

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -25,6 +26,7 @@ import static org.junit.Assert.*;
     CasPersonDirectoryConfiguration.class,
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/persondirectory.properties"})
+@Slf4j
 public class CachingAttributeRepositoryTests {
 
     @Autowired

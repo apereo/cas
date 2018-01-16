@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.principal.NullPrincipal;
@@ -12,8 +13,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -24,9 +23,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class GenericSuccessViewAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenericSuccessViewAction.class);
+
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;
     private final ServiceFactory serviceFactory;

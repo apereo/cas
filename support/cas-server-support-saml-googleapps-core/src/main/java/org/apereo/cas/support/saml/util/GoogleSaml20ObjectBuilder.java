@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -20,6 +21,7 @@ import java.lang.reflect.Field;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
 

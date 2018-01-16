@@ -1,5 +1,6 @@
 package org.apereo.cas.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.webflow.execution.Event;
@@ -10,6 +11,7 @@ import org.springframework.webflow.execution.Event;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AuthenticationRiskContingencyResponse {
     private final Event result;
 

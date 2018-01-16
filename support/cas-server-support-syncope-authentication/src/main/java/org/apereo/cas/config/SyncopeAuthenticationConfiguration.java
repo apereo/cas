@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("syncopeAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SyncopeAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

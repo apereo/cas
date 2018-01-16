@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class AuditProperties implements Serializable {
     private static final long serialVersionUID = 3946106584608417663L;
 

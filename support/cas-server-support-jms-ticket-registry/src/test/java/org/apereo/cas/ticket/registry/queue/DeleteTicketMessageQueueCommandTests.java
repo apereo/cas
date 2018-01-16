@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.queue;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -15,6 +16,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DeleteTicketMessageQueueCommandTests extends AbstractTicketMessageQueueCommandTests {
 
     @Test

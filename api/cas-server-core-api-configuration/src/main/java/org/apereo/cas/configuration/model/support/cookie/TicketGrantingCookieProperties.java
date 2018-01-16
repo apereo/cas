@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -12,6 +13,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-cookie", automated = true)
+@Slf4j
 public class TicketGrantingCookieProperties extends CookieProperties {
 
     private static final long serialVersionUID = 7392972818105536350L;

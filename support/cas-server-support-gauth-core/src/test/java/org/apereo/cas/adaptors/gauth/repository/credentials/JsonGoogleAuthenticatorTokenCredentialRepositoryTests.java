@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
@@ -29,6 +30,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {
         AopAutoConfiguration.class,
         CasCoreUtilConfiguration.class})
+@Slf4j
 public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
     private static final Resource JSON_FILE = new FileSystemResource(new File(FileUtils.getTempDirectoryPath(), "repository.json"));
 

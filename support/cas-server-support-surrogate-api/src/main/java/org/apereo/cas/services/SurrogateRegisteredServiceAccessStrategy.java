@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,9 +15,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
     private static final long serialVersionUID = -1688944419711632962L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateRegisteredServiceAccessStrategy.class);
+
 
     private boolean surrogateEnabled;
     

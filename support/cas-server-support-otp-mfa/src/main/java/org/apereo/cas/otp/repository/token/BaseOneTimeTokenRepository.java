@@ -1,7 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
 
 /**
@@ -10,8 +9,9 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public abstract class BaseOneTimeTokenRepository implements OneTimeTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOneTimeTokenRepository.class);
+
 
     @Override
     public final void clean() {

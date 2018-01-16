@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.binding.convert.converters.Converter;
 import org.springframework.webflow.execution.repository.support.CompositeFlowExecutionKey;
 
@@ -10,6 +11,7 @@ import org.springframework.webflow.execution.repository.support.CompositeFlowExe
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Slf4j
 public class CompositeFlowExecutionKeyConverter implements Converter {
 
     @Override

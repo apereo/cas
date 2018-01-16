@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.azure;
 
+import lombok.extern.slf4j.Slf4j;
 import net.phonefactor.pfsdk.PFAuthParams;
 import net.phonefactor.pfsdk.PlainTextPinInfo;
 import net.phonefactor.pfsdk.StandardPinInfo;
@@ -12,6 +13,7 @@ import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AzureAuthenticatorAuthenticationRequestBuilder {
     private final String phoneAttributeName;
     private final AzureMultifactorProperties.AuthenticationModes mode;

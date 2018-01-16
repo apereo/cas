@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
@@ -25,6 +26,7 @@ import java.util.stream.StreamSupport;
  * @author Daniel Frett
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
 
     private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();

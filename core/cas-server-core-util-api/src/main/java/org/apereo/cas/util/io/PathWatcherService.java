@@ -1,8 +1,7 @@
 package org.apereo.cas.util.io;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.io.File;
@@ -21,8 +20,9 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
  * @author David Rodriguez
  * @since 5.2.0
  */
+@Slf4j
 public class PathWatcherService implements Runnable, Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PathWatcherService.class);
+
 
     private static final int INTERVAL = 1_000;
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};

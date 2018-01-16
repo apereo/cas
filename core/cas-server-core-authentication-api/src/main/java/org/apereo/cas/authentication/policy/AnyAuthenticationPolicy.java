@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
@@ -11,8 +10,9 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AnyAuthenticationPolicy.class);
+
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.

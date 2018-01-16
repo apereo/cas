@@ -1,12 +1,11 @@
 package org.apereo.cas.oidc.jwks;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
@@ -19,8 +18,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<RsaJsonWebKey>> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcDefaultJsonWebKeystoreCacheLoader.class);
+
 
     private final Resource jwksFile;
 

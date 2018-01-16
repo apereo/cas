@@ -4,6 +4,7 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -42,6 +43,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Slf4j
 public class StatisticsController extends BaseCasMvcEndpoint implements ServletContextAware {
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
     private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";

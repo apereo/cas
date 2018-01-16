@@ -452,9 +452,8 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
             <property name="severity" value="error"/>
-            <property name="format" value="\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG)\b"/>
-            <property name="message"
-                      value="The Logger object must only be called &quot;logger&quot; or &quot;LOGGER&quot;"/>
+            <property name="format" value="(private|public|protected)\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG|LOGGER|logger)\b"/>
+            <property name="message"  value="Use the Lombok @Slf4j annotation to obtain a logger object instead." />
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="finalNonUtilClass"/>

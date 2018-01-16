@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -60,6 +61,7 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class,
     PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})
+@Slf4j
 public class JsonResourcePasswordManagementServiceTests {
 
     @Autowired

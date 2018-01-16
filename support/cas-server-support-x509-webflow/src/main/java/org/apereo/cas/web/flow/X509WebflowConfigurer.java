@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -34,6 +35,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String EVENT_ID_START_X509 = "startX509Authenticate";

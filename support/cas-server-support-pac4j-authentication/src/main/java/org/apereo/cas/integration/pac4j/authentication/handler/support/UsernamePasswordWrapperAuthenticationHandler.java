@@ -1,5 +1,6 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -8,8 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.http.credentials.authenticator.test.SimpleTestUsernamePasswordAuthenticator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -23,9 +22,10 @@ import java.security.GeneralSecurityException;
  * @author Jerome Leleu
  * @since 4.2.0
  */
+@Slf4j
 public class UsernamePasswordWrapperAuthenticationHandler
         extends AbstractWrapperAuthenticationHandler<UsernamePasswordCredential, UsernamePasswordCredentials> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UsernamePasswordWrapperAuthenticationHandler.class);
+
     
     /**
      * The underlying pac4j authenticator.

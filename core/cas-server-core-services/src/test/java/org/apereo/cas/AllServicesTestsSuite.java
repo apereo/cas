@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategyTests;
 import org.apereo.cas.authentication.HttpBasedServiceCredentialTests;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandlerTests;
@@ -75,5 +76,6 @@ import org.junit.runners.Suite;
         UnauthorizedServiceExceptionTests.class,
         UnauthorizedSsoServiceExceptionTests.class,
         DefaultRegisteredServiceJsonSerializerTests.class})
+@Slf4j
 public class AllServicesTestsSuite {
 }

@@ -3,9 +3,8 @@ package org.apereo.cas.util.http;
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.File;
@@ -17,8 +16,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class HttpClientMultithreadedDownloader {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpClientMultithreadedDownloader.class);
+
 
     private final Resource resourceToDownload;
     private final File targetDestination;

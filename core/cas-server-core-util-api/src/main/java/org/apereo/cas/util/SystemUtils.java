@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdurmont.semver4j.Semver;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,6 +22,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public final class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

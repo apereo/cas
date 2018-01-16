@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
 import org.springframework.core.io.ClassPathResource;
@@ -16,6 +17,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class AbstractU2FDeviceRepositoryTests {
 
     @Test

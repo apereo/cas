@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.Column;
@@ -23,9 +22,10 @@ import java.time.ZonedDateTime;
  * @since 3.0.0
  */
 @Transactional(transactionManager = "ticketTransactionManager")
+@Slf4j
 public class JpaLockingStrategy implements LockingStrategy {
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaLockingStrategy.class);
+
     
     /** Transactional entity manager from Spring context. */
     @PersistenceContext(unitName = "ticketEntityManagerFactory")

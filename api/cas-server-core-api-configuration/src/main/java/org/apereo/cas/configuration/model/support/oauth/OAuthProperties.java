@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.oauth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-oauth")
+@Slf4j
 public class OAuthProperties implements Serializable {
     private static final long serialVersionUID = 2677128037234123907L;
 

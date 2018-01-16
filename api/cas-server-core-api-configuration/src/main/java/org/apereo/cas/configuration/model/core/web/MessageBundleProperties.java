@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
+@Slf4j
 public class MessageBundleProperties implements Serializable {
 
     private static final long serialVersionUID = 3769733438559663237L;

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.principal.Principal;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class MixedPrincipalException extends PrincipalException {
 
     /** Serialization version marker. */

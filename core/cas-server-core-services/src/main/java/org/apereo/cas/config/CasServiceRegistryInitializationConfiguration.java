@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
@@ -11,8 +12,6 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -37,8 +36,9 @@ import java.util.List;
 @ConditionalOnMissingClass(value = {
     "org.apereo.cas.services.JsonServiceRegistryDao",
     "org.apereo.cas.services.YamlServiceRegistryDao"})
+@Slf4j
 public class CasServiceRegistryInitializationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasServiceRegistryInitializationConfiguration.class);
+
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;

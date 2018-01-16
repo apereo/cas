@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.action;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.cas.authentication.principal.Service;
@@ -17,6 +18,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SurrogateAuthorizationAction extends AbstractAction {
     private final ServicesManager servicesManager;
     

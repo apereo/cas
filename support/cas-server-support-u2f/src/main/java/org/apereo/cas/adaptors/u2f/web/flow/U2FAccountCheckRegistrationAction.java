@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.support.WebUtils;
@@ -14,6 +15,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class U2FAccountCheckRegistrationAction extends AbstractAction {
     private final U2FDeviceRepository u2FDeviceRepository;
     

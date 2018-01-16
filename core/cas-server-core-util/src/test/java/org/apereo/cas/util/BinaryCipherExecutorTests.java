@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.cipher.BaseBinaryCipherExecutor;
 import org.junit.Rule;
@@ -16,6 +17,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class BinaryCipherExecutorTests {
 
     @Rule

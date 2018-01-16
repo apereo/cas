@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
@@ -18,8 +19,6 @@ import org.opensaml.saml.metadata.resolver.filter.impl.PredicateFilter;
 import org.opensaml.saml.metadata.resolver.impl.AbstractBatchMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,8 +34,9 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public final class SamlSPUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlSPUtils.class);
+
 
     private SamlSPUtils() {
     }

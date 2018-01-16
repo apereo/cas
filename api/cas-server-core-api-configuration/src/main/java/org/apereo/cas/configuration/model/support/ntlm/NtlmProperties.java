@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ntlm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-spnego")
+@Slf4j
 public class NtlmProperties implements Serializable {
     private static final long serialVersionUID = 1479912148936123469L;
     /**

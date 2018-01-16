@@ -1,11 +1,10 @@
 package org.apereo.cas.services.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -19,11 +18,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RegisteredServiceChainingAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 903015750234610128L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceChainingAttributeFilter.class);
+
 
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>();
 

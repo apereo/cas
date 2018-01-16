@@ -1,13 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.crypto.CertUtils;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.GeneralSecurityException;
 import java.security.cert.X509CRL;
@@ -25,8 +23,9 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
+@Slf4j
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCRLRevocationChecker.class);
+
 
     /**
      * Flag to indicate whether all

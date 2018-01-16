@@ -1,12 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import java.time.Duration;
@@ -24,9 +23,10 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
 public final class Beans {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
+
 
     protected Beans() {
     }

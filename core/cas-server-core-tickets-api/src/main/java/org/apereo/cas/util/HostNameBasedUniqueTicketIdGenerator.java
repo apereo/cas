@@ -1,9 +1,8 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An implementation of {@link UniqueTicketIdGenerator} that is able auto-configure
@@ -22,8 +21,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class HostNameBasedUniqueTicketIdGenerator extends DefaultUniqueTicketIdGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HostNameBasedUniqueTicketIdGenerator.class);
+
 
     /**
      * Instantiates a new Host name based unique ticket id generator.

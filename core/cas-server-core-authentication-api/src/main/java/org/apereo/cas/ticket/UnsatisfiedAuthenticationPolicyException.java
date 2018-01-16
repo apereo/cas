@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.springframework.util.Assert;
 
@@ -10,6 +11,7 @@ import org.springframework.util.Assert;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 
     /** Serializable ID for unique id. */

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.core.Ordered;
 
@@ -10,6 +11,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
 
     private static final long serialVersionUID = -7458940344679793681L;

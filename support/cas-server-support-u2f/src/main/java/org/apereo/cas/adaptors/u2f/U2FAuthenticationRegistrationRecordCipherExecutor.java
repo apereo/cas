@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**
@@ -9,6 +10,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
+@Slf4j
 public class U2FAuthenticationRegistrationRecordCipherExecutor extends BaseStringCipherExecutor {
 
     public U2FAuthenticationRegistrationRecordCipherExecutor(final String secretKeyEncryption,

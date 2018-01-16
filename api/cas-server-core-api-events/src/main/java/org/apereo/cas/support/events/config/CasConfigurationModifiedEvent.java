@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasConfigurationModifiedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -5738763037210896455L;
     private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml)", Pattern.CASE_INSENSITIVE);

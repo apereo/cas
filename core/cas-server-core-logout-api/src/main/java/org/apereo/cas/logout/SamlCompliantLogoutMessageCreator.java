@@ -1,10 +1,9 @@
 package org.apereo.cas.logout;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A builder that uses the saml standard's {@code LogoutRequest} template in order
@@ -13,10 +12,11 @@ import org.slf4j.LoggerFactory;
  * @see DefaultLogoutRequest
  * @since 4.0.0
  */
+@Slf4j
 public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
     /** The LOGGER. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlCompliantLogoutMessageCreator.class);
+
     
     /** A ticket Id generator. */
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator(18);

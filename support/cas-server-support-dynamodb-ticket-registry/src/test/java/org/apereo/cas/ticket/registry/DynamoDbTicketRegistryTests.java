@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import java.util.Arrays;
 import java.util.Collection;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -59,6 +60,7 @@ import org.springframework.test.context.TestPropertySource;
         "cas.ticket.registry.dynamoDb.credentialAccessKey=AKIAIPPIGGUNIO74C63Q",
         "cas.ticket.registry.dynamoDb.dropTablesOnStartup=true",
         "cas.ticket.registry.dynamoDb.credentialSecretKey=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"})
+@Slf4j
 public class DynamoDbTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired

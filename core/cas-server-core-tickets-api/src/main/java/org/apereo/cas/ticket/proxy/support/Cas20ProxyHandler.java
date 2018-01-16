@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
@@ -9,8 +10,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.http.HttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -24,9 +23,10 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class Cas20ProxyHandler implements ProxyHandler {
   
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ProxyHandler.class);
+
 
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 

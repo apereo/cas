@@ -2,6 +2,7 @@ package org.apereo.cas.web.report.config;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -64,6 +65,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableWebSocketMessageBroker
+@Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Autowired
@@ -208,7 +210,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("trustedDevicesConfiguration")
-    public class TrustedDevicesConfiguration {
+public class TrustedDevicesConfiguration {
 
         @Autowired
         @Bean
@@ -222,7 +224,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = CasEventRepository.class)
     @Configuration("authenticationEventsConfiguration")
-    public class AuthenticationEventsConfiguration {
+public class AuthenticationEventsConfiguration {
 
         @Autowired
         @Bean
@@ -236,7 +238,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = CasServerProfileRegistrar.class)
     @Configuration("serverDiscoveryProfileConfiguration")
-    public class ServerDiscoveryProfileConfiguration {
+public class ServerDiscoveryProfileConfiguration {
 
         @Autowired
         @Bean

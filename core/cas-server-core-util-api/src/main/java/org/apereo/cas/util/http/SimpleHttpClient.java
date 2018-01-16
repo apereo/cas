@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -14,8 +15,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.impl.client.HttpRequestFutureTask;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Serializable;
@@ -36,6 +35,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 3.1
  */
+
+@Slf4j
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /**
@@ -43,7 +44,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
      */
     private static final long serialVersionUID = -4949380008568071855L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
+
 
     /**
      * the acceptable codes supported by this client.

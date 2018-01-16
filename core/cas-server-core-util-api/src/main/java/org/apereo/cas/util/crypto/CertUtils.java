@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -24,6 +25,7 @@ import java.time.ZonedDateTime;
  * @since 3.4.6
  *
  */
+@Slf4j
 public final class CertUtils {
 
     /** X509 certificate type. */

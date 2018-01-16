@@ -1,10 +1,9 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.IOException;
@@ -18,8 +17,9 @@ import java.util.TreeSet;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseJsonOneTimeTokenCredentialRepository.class);
+
 
     private final Resource location;
     private final StringSerializer<TreeSet<OneTimeTokenAccount>> serializer = new OneTimeAccountSerializer();

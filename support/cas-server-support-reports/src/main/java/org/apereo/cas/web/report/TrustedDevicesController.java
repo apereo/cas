@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -26,6 +27,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+@Slf4j
 public class TrustedDevicesController extends BaseCasMvcEndpoint {
 
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;

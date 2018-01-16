@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -66,6 +67,7 @@ import java.util.Collection;
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class})
+@Slf4j
 public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired

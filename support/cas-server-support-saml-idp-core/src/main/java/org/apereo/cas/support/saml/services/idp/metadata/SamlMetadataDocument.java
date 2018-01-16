@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -21,6 +22,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "SamlMetadataDocument")
 @Document
+@Slf4j
 public class SamlMetadataDocument {
     @javax.persistence.Id
     @Id

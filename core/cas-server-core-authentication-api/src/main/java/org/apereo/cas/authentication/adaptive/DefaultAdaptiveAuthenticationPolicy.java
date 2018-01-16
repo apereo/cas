@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.adaptive.geo.GeoLocationService;
 import org.apereo.cas.configuration.model.core.authentication.AdaptiveAuthenticationProperties;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.regex.Pattern;
 
@@ -18,8 +17,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+
+@Slf4j
 public class DefaultAdaptiveAuthenticationPolicy implements AdaptiveAuthenticationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAdaptiveAuthenticationPolicy.class);
+
     
     private GeoLocationService geoLocationService;
     

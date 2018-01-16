@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.boot.MetadataSources;
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
@@ -24,8 +25,6 @@ import org.hibernate.dialect.SQLServerDialect;
 import org.hibernate.tool.hbm2ddl.SchemaExport;
 import org.hibernate.tool.schema.TargetType;
 import org.reflections.Reflections;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -44,8 +43,9 @@ import java.util.TreeMap;
  * @since 5.3.0
  */
 @Service
+@Slf4j
 public class GenerateDdlCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateDdlCommand.class);
+
 
     private static final Map<String, String> DIALECTS_MAP = new TreeMap<>();
     private static final Reflections REFLECTIONS = new Reflections("org.apereo.cas");

@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.ActionState;
@@ -22,6 +21,7 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
     /**
      * Trusted authentication scope attribute.
@@ -33,7 +33,7 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
     private static final String MFA_VERIFY_TRUST_ACTION_BEAN_ID = "mfaVerifyTrustAction";
     private static final String MFA_SET_TRUST_ACTION_BEAN_ID = "mfaSetTrustAction";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorTrustedDeviceWebflowConfigurer.class);
+
 
     private final boolean enableDeviceRegistration;
 

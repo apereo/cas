@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.DefaultCasConfigurationPropertiesSourceLocator;
@@ -22,6 +23,7 @@ import org.springframework.core.env.Environment;
 @Profile("standalone")
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casCoreBootstrapStandaloneLocatorConfiguration")
+@Slf4j
 public class CasCoreBootstrapStandaloneLocatorConfiguration {
 
     @Autowired

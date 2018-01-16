@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.MongoDbAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("casSupportMongoDbAuditConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasSupportMongoDbAuditConfiguration {
 
     @Autowired

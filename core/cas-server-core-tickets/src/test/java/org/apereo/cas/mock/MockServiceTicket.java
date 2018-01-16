@@ -1,5 +1,6 @@
 package org.apereo.cas.mock;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -19,6 +20,7 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;

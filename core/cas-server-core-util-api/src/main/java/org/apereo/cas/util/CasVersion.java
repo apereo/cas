@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.VfsResource;
 
 import java.io.File;
@@ -15,9 +14,11 @@ import java.time.ZonedDateTime;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
+
+@Slf4j
 public class CasVersion {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasVersion.class);
+
     
     /**
      * Private constructor for CasVersion. You should not be able to instantiate

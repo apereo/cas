@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -20,9 +19,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoServiceRegistryDao.class);
+
 
     private final String collectionName;
     private final MongoOperations mongoTemplate;

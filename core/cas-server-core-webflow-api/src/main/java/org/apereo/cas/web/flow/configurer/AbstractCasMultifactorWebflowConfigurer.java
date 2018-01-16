@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
@@ -27,9 +26,10 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasMultifactorWebflowConfigurer.class);
+
 
     public AbstractCasMultifactorWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,

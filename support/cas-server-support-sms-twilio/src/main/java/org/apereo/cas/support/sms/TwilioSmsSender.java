@@ -3,9 +3,8 @@ package org.apereo.cas.support.sms;
 import com.twilio.Twilio;
 import com.twilio.rest.api.v2010.account.Message;
 import com.twilio.type.PhoneNumber;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.io.SmsSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link TwilioSmsSender}.
@@ -13,8 +12,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class TwilioSmsSender implements SmsSender {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TwilioSmsSender.class);
+
     
     public TwilioSmsSender(final String accountId, final String token) {
         Twilio.init(accountId, token);

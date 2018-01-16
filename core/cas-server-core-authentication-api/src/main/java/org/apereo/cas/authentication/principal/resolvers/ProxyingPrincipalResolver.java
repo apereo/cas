@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
@@ -17,6 +18,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class ProxyingPrincipalResolver implements PrincipalResolver {
 
     private final PrincipalFactory principalFactory;

@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class TicketGrantingCookieCipherExecutorTests {
 
     @Test

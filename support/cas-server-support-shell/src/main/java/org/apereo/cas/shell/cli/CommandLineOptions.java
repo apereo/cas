@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.cli;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.Option;
 
 /**
@@ -8,6 +9,7 @@ import org.apache.commons.cli.Option;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CommandLineOptions {
     /**
      * Command line option that indicates a shell should be launched.

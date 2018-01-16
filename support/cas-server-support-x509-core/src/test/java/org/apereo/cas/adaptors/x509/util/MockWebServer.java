@@ -8,8 +8,7 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 
@@ -21,9 +20,10 @@ import org.springframework.core.io.Resource;
  * @since 3.4.6
  *
  */
+@Slf4j
 public class MockWebServer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MockWebServer.class);
+
     
     /** Request handler. */
     private final Worker worker;
@@ -90,7 +90,7 @@ public class MockWebServer {
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(Worker.class);
+
         
         /** Run flag. */
         private boolean running;

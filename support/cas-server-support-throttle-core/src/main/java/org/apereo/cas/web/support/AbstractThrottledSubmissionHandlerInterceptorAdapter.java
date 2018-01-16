@@ -1,10 +1,9 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.http.HttpStatus;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -19,10 +18,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Slf4j
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapter.class);
+
     
     private final int failureThreshold;
     private final int failureRangeInSeconds;

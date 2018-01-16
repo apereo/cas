@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
@@ -38,6 +39,7 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class,
         CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/mongoaudit.properties"})
+@Slf4j
 public class MongoDbAuditTrailManagerTests {
 
     @Autowired

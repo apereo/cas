@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -15,6 +16,7 @@ import java.util.stream.Stream;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-ldap")
+@Slf4j
 public class LdapValidatorProperties implements Serializable {
     private static final long serialVersionUID = 1150417354213235193L;
     /**

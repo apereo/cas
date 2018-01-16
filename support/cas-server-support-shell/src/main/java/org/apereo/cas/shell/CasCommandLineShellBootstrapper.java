@@ -1,5 +1,6 @@
 package org.apereo.cas.shell;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.springframework.shell.Bootstrap;
 
@@ -9,6 +10,7 @@ import org.springframework.shell.Bootstrap;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasCommandLineShellBootstrapper {
 
     /**

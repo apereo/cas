@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -30,6 +31,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Import(CasSupportActionsConfiguration.class)
+@Slf4j
 public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String SERVICE_PARAM = "service";

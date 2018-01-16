@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -15,8 +16,6 @@ import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
@@ -28,8 +27,9 @@ import org.springframework.context.event.EventListener;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultCasEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasEventListener.class);
+
     
     private final CasEventRepository casEventRepository;
     

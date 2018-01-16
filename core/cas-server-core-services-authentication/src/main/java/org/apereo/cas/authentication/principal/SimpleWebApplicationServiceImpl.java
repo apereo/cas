@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -16,6 +17,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("simple")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 8334068957483758042L;

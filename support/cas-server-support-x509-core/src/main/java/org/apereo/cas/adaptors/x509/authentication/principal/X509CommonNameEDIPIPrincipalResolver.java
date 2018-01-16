@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
 import java.util.StringTokenizer;
@@ -23,8 +22,9 @@ import java.util.StringTokenizer;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
+@Slf4j
 public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509CommonNameEDIPIPrincipalResolver.class);
+
     private static final String COMMON_NAME_VAR = "CN";
     private static final int EDIPI_LENGTH = 10;
 

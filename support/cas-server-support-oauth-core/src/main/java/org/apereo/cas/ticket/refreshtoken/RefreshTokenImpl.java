@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -18,6 +19,7 @@ import java.util.Collection;
  */
 @Entity
 @DiscriminatorValue(RefreshToken.PREFIX)
+@Slf4j
 public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
 
     private static final long serialVersionUID = -3544459978950667758L;

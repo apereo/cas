@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.gua;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-gua")
+@Slf4j
 public class GraphicalUserAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7527953699378415460L;
     /**

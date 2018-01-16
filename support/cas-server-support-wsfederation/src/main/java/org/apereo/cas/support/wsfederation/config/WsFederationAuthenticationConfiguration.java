@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -26,6 +27,7 @@ import java.util.Collection;
  */
 @Configuration("wsFederationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class WsFederationAuthenticationConfiguration {
 
     @Autowired

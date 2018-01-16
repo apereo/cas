@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -15,6 +16,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @author Andrew Petro
  * @since 3.0.0
  */
+@Slf4j
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public PrincipalBearingPrincipalResolver() {

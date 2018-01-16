@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -7,8 +8,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -25,13 +24,14 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class TemplatedMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "/idp/metadata";
 
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TemplatedMetadataAndCertificatesGenerationService.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

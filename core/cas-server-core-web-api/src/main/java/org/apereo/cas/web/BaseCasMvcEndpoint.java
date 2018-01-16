@@ -1,10 +1,9 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.context.ApplicationContext;
@@ -20,9 +19,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+
+@Slf4j
 public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseCasMvcEndpoint.class);
+
     private static final Boolean DEFAULT_SENSITIVE_VALUE = Boolean.TRUE;
 
     /**

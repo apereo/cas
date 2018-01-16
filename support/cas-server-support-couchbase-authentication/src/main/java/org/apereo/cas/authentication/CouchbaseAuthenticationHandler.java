@@ -8,13 +8,12 @@ import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.SimpleN1qlQuery;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -29,8 +28,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseAuthenticationHandler.class);
+
 
     private final CouchbaseAuthenticationProperties couchbaseProperties;
     private final CouchbaseClientFactory couchbase;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class JaasAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 4643338626978471986L;
     /**

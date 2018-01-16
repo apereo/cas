@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.Authentication;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class ImmutableAssertionTests {
 
     @Test

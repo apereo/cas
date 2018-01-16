@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
 
     @Test

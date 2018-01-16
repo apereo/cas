@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.extern.slf4j.Slf4j;
 import net.jradius.dictionary.vsa_microsoft.Attr_MSCHAP2Success;
 import net.jradius.exception.TimeoutException;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JRadiusServerImplTests {
     private static final int ACCOUNTING_PORT = 6940;
     private static final int AUTHENTICATION_PORT = 6939;

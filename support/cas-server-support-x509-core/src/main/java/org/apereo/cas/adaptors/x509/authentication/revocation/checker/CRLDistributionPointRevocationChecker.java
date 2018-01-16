@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -13,8 +14,6 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.net.MalformedURLException;
@@ -41,8 +40,9 @@ import java.util.stream.IntStream;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
+@Slf4j
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRLDistributionPointRevocationChecker.class);
+
     
     private final Cache crlCache;
     private final CRLFetcher fetcher;

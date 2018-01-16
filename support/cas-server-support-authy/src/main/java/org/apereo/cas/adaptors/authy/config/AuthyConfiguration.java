@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.authy.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.authy.web.flow.AuthyAuthenticationWebflowEventResolver;
@@ -40,12 +41,13 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("authyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class AuthyConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -70,11 +72,11 @@ public class AuthyConfiguration {
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-    
+
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new RankedMultifactorAuthenticationProviderSelector();
+        new RankedMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -92,26 +94,26 @@ public class AuthyConfiguration {
         builder.addFlowLocationPattern("/mfa-authy/*-webflow.xml");
         return builder.build();
     }
-    
+
     @RefreshScope
     @Bean
     public CasWebflowEventResolver authyAuthenticationWebflowEventResolver() {
-        return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport, 
-                centralAuthenticationService, 
-                servicesManager, 
-                ticketRegistrySupport,
-                warnCookieGenerator, 
-                authenticationRequestServiceSelectionStrategies, 
-                multifactorAuthenticationProviderSelector);
+        return new AuthyAuthenticationWebflowEventResolver(authenticationSystemSupport,
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector);
     }
 
     @ConditionalOnMissingBean(name = "authyMultifactorWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        final CasWebflowConfigurer w = new AuthyMultifactorWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
-        
+        final CasWebflowConfigurer w = new AuthyMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+
         w.initialize();
         return w;
     }
@@ -121,7 +123,7 @@ public class AuthyConfiguration {
     public Action authyAuthenticationWebflowAction() {
         return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
     }
-    
+
 
     /**
      * The Authy multifactor trust configuration.
@@ -136,9 +138,9 @@ public class AuthyConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            final CasWebflowConfigurer w = new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices, 
-                    loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                    authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            final CasWebflowConfigurer w = new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+                authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
             w.initialize();
             return w;
         }

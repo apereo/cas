@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -7,8 +8,6 @@ import org.apereo.cas.web.flow.configurer.AbstractMultifactorTrustedDeviceWebflo
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -18,8 +17,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public final class MultifactorAuthenticationTrustUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustUtils.class);
+
 
     private MultifactorAuthenticationTrustUtils() {
     }

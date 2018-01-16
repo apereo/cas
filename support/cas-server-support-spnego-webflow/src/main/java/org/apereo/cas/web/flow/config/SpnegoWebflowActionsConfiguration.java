@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
@@ -37,6 +38,7 @@ import java.util.stream.Stream;
  */
 @Configuration("spnegoWebflowActionsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SpnegoWebflowActionsConfiguration {
 
     @Autowired

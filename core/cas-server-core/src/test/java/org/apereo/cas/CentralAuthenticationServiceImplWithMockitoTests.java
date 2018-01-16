@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -106,6 +107,7 @@ import static org.mockito.Mockito.*;
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class
 })
+@Slf4j
 public class CentralAuthenticationServiceImplWithMockitoTests {
 
     private static final String TGT_ID = "tgt-id";

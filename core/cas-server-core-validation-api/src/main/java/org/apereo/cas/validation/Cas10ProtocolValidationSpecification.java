@@ -1,7 +1,6 @@
 package org.apereo.cas.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Validation specification for the CAS 1.0 protocol. This specification checks
@@ -13,8 +12,9 @@ import org.slf4j.LoggerFactory;
  * @author Drew Mazurek
  * @since 3.0.0
  */
+@Slf4j
 public class Cas10ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas10ProtocolValidationSpecification.class);
+
     
     /**
      * Instantiates a new cas10 protocol validation specification.

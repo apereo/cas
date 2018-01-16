@@ -8,10 +8,9 @@ import com.microsoft.azure.spring.data.documentdb.common.GetHashMac;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDbConverter;
 import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbMappingContext;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.domain.EntityScanner;
 import org.springframework.context.ApplicationContext;
 import org.springframework.data.annotation.Persistent;
@@ -22,8 +21,9 @@ import org.springframework.data.annotation.Persistent;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CosmosDbObjectFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CosmosDbObjectFactory.class);
+
 
     private static final String USER_AGENT_SUFFIX = "spring-boot-starter/0.2.0";
 

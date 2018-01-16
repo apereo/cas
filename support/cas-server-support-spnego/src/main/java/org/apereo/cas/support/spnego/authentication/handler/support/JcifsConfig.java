@@ -1,9 +1,8 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import jcifs.Config;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,6 +18,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
+@Slf4j
 public class JcifsConfig {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
@@ -61,7 +61,7 @@ public class JcifsConfig {
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JcifsConfig.class);
+
 
     private String loginConf;
     

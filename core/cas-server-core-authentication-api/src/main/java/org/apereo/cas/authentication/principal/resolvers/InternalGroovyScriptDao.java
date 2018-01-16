@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.apereo.services.persondir.support.BaseGroovyScriptDaoImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.ArrayList;
@@ -19,8 +18,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InternalGroovyScriptDao.class);
+
 
     private final ApplicationContext applicationContext;
     private final CasConfigurationProperties casProperties;

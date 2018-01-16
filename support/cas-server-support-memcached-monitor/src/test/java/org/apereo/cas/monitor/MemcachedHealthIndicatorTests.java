@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.monitor.config.MemcachedMonitorConfiguration;
 import org.junit.Test;
@@ -25,6 +26,7 @@ import org.springframework.test.context.junit4.SpringRunner;
     CasCoreUtilSerializationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/monitor.properties"})
 @DirtiesContext
+@Slf4j
 public class MemcachedHealthIndicatorTests {
 
     @Autowired

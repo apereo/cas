@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -20,8 +21,6 @@ import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
@@ -53,8 +52,9 @@ import static org.junit.Assert.*;
  */
 @DirtiesContext
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
+@Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseViewTests.class);
+
 
     @Autowired
     @Qualifier("servicesManager")

@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class SamlCompliantLogoutMessageCreatorTests {
     public static final String CONST_TEST_URL = "https://google.com";
 

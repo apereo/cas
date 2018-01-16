@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
 
     /** Serialization version marker. */

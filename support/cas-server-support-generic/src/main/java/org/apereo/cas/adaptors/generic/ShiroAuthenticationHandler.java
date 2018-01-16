@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.DisabledAccountException;
@@ -22,8 +23,6 @@ import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAut
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.ResourceUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.security.auth.login.AccountLockedException;
@@ -39,8 +38,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShiroAuthenticationHandler.class);
+
     
     private final Set<String> requiredRoles;
     private final Set<String> requiredPermissions;

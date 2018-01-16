@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link OpenYubiKeyAccountRegistry}.
@@ -9,8 +8,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenYubiKeyAccountRegistry.class);
+
     
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {

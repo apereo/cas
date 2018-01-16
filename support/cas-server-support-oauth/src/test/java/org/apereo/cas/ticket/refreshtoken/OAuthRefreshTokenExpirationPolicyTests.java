@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.refreshtoken;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class OAuthRefreshTokenExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRefreshTokenExpirationPolicy.json");

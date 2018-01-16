@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -26,6 +27,7 @@ import java.util.HashMap;
  * @author Jan Van der Velpen
  * @since 3.1
  */
+@Slf4j
 public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**

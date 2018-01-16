@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
@@ -37,8 +38,6 @@ import org.apereo.cas.validation.UnauthorizedServiceTicketValidationException;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ValidationResponseType;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.servlet.ModelAndView;
@@ -67,8 +66,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceValidateController.class);
+
 
     private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
 

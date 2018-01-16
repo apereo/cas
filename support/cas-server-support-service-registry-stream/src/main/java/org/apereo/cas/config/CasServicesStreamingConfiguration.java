@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.CasServicesRegistryStreamingEventListener;
 import org.apereo.cas.services.publisher.CasRegisteredServiceNoOpStreamPublisher;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casServicesStreamingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(prefix = "cas.serviceRegistry.stream", name = "enabled", havingValue = "true", matchIfMissing = true)
+@Slf4j
 public class CasServicesStreamingConfiguration {
 
     @Bean

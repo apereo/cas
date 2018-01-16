@@ -1,6 +1,7 @@
 package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.AnonymousRegisteredServiceUsernameAttributeProvider;
@@ -10,8 +11,6 @@ import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.InputStream;
@@ -27,8 +26,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegisteredServiceJsonSerializer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasAddonsRegisteredServicesJsonSerializer.class);
+
     private static final long serialVersionUID = 1874802012930264278L;
 
     private static final String SERVICE_REGISTRY_FILENAME = "servicesRegistry";

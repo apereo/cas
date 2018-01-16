@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Slf4j
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     private final RememberMeAuthenticationMetaDataPopulator p = new RememberMeAuthenticationMetaDataPopulator();

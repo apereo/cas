@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.springframework.context.ApplicationEvent;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@Slf4j
 public abstract class AbstractCasEvent extends ApplicationEvent implements Serializable {
 
     private static final long serialVersionUID = 8059647975948452375L;

@@ -2,11 +2,10 @@ package org.apereo.cas.support.sms;
 
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.SmsSender;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -28,8 +27,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class ClickatellSmsSender implements SmsSender {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClickatellSmsSender.class);
+
 
     private final String token;
     private final String serverUrl;

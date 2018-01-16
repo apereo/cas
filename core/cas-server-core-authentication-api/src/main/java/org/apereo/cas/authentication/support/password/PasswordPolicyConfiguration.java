@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support.password;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 
 /**
@@ -9,6 +10,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class PasswordPolicyConfiguration {
 
     private boolean alwaysDisplayPasswordExpirationWarning;

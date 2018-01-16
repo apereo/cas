@@ -4,6 +4,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.mongodb.DBObject;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
@@ -18,6 +19,7 @@ import java.security.cert.CertPath;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public abstract class BaseConverters {
     /**
      * Instantiates a new BaseConverters.

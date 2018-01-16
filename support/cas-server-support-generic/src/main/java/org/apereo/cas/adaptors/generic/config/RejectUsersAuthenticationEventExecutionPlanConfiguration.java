@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -13,8 +14,6 @@ import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.RejectAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,8 +33,9 @@ import java.util.Set;
  */
 @Configuration("rejectUsersAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RejectUsersAuthenticationEventExecutionPlanConfiguration.class);
+
 
     @Autowired(required = false)
     @Qualifier("rejectPasswordPolicyConfiguration")

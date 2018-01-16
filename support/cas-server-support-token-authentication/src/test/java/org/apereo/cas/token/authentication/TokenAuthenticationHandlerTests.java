@@ -3,6 +3,7 @@ package org.apereo.cas.token.authentication;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -73,6 +74,7 @@ import static org.junit.Assert.*;
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         TokenAuthenticationConfiguration.class})
+@Slf4j
 public class TokenAuthenticationHandlerTests {
 
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();

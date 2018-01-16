@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@Slf4j
 public class PolicyBasedAuthenticationManagerTests {
 
     private static final String HANDLER_A = "HandlerA";

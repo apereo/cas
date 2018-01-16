@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.util.Set;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class GeoLocationResponse {
 
     private final Set<String> addresses = new ConcurrentSkipListSet<>();

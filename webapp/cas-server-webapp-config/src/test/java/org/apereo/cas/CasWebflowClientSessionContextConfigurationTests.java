@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.webflow.executor.FlowExecutor;
@@ -10,6 +11,7 @@ import org.springframework.webflow.executor.FlowExecutor;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class CasWebflowClientSessionContextConfigurationTests extends BaseCasWebflowSessionContextConfiguration {
 
     @Autowired

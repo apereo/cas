@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
@@ -19,8 +20,6 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.jasig.cas.client.authentication.AuthenticationRedirectStrategy;
 import org.jasig.cas.client.authentication.DefaultAuthenticationRedirectStrategy;
 import org.jasig.cas.client.util.CommonUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -33,8 +32,9 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WSFederationValidateRequestController extends BaseWSFederationRequestController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestController.class);
+
 
     public WSFederationValidateRequestController(
             final ServicesManager servicesManager,
