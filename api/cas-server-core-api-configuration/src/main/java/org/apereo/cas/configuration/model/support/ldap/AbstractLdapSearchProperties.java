@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.ldap;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AbstractLdapSearchProperties}.
@@ -10,7 +12,10 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
+@Setter
 public abstract class AbstractLdapSearchProperties extends AbstractLdapProperties {
+
     private static final long serialVersionUID = 3009946735155362639L;
 
     /**
@@ -30,28 +35,4 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
      */
     @RequiredProperty
     private String searchFilter;
-
-    public boolean isSubtreeSearch() {
-        return subtreeSearch;
-    }
-
-    public void setSubtreeSearch(final boolean subtreeSearch) {
-        this.subtreeSearch = subtreeSearch;
-    }
-
-    public String getBaseDn() {
-        return baseDn;
-    }
-
-    public void setBaseDn(final String baseDn) {
-        this.baseDn = baseDn;
-    }
-
-    public String getSearchFilter() {
-        return searchFilter;
-    }
-
-    public void setSearchFilter(final String searchFilter) {
-        this.searchFilter = searchFilter;
-    }
 }

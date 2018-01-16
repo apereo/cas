@@ -6,9 +6,10 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link LdapAuthenticationProperties}.
@@ -18,9 +19,12 @@ import java.util.List;
  */
 @RequiresModule(name = "cas-server-support-ldap")
 @Slf4j
+@Getter
+@Setter
 public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProperties {
 
     private static final long serialVersionUID = -5357843463521189892L;
+
     /**
      * Password policy settings.
      */
@@ -96,100 +100,4 @@ public class LdapAuthenticationProperties extends AbstractLdapAuthenticationProp
      * Order of the authentication handler in the chain.
      */
     private Integer order;
-
-    public boolean isCollectDnAttribute() {
-        return collectDnAttribute;
-    }
-
-    public void setCollectDnAttribute(final boolean collectDnAttribute) {
-        this.collectDnAttribute = collectDnAttribute;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(final Integer order) {
-        this.order = order;
-    }
-
-    public PasswordPolicyProperties getPasswordPolicy() {
-        return passwordPolicy;
-    }
-
-    public void setPasswordPolicy(final PasswordPolicyProperties passwordPolicy) {
-        this.passwordPolicy = passwordPolicy;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public String getPrincipalAttributeId() {
-        return principalAttributeId;
-    }
-
-    public void setPrincipalAttributeId(final String principalAttributeId) {
-        this.principalAttributeId = principalAttributeId;
-    }
-
-    public String getPrincipalDnAttributeName() {
-        return principalDnAttributeName;
-    }
-
-    public void setPrincipalDnAttributeName(final String principalDnAttributeName) {
-        this.principalDnAttributeName = principalDnAttributeName;
-    }
-
-    public List getPrincipalAttributeList() {
-        return principalAttributeList;
-    }
-
-    public void setPrincipalAttributeList(final List principalAttributeList) {
-        this.principalAttributeList = principalAttributeList;
-    }
-
-    public boolean isAllowMultiplePrincipalAttributeValues() {
-        return allowMultiplePrincipalAttributeValues;
-    }
-
-    public void setAllowMultiplePrincipalAttributeValues(final boolean allowMultiplePrincipalAttributeValues) {
-        this.allowMultiplePrincipalAttributeValues = allowMultiplePrincipalAttributeValues;
-    }
-
-    public List getAdditionalAttributes() {
-        return additionalAttributes;
-    }
-
-    public void setAdditionalAttributes(final List additionalAttributes) {
-        this.additionalAttributes = additionalAttributes;
-    }
-
-    public String getCredentialCriteria() {
-        return credentialCriteria;
-    }
-
-    public void setCredentialCriteria(final String credentialCriteria) {
-        this.credentialCriteria = credentialCriteria;
-    }
-
-    public boolean isAllowMissingPrincipalAttributeValue() {
-        return allowMissingPrincipalAttributeValue;
-    }
-
-    public void setAllowMissingPrincipalAttributeValue(final boolean allowMissingPrincipalAttributeValue) {
-        this.allowMissingPrincipalAttributeValue = allowMissingPrincipalAttributeValue;
-    }
 }

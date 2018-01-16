@@ -3,6 +3,8 @@ package org.apereo.cas.configuration.model.support.mfa;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AzureMultifactorProperties}.
@@ -12,6 +14,8 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  */
 @RequiresModule(name = "cas-server-support-azure")
 @Slf4j
+@Getter
+@Setter
 public class AzureMultifactorProperties extends BaseMultifactorProviderProperties {
 
     /**
@@ -20,16 +24,16 @@ public class AzureMultifactorProperties extends BaseMultifactorProviderPropertie
     public static final String DEFAULT_IDENTIFIER = "mfa-azure";
 
     private static final long serialVersionUID = 6726032660671158922L;
-    
+
     /**
      * The authentication modes supported by Azure.
      */
     public enum AuthenticationModes {
+
         /**
          * Ask the user to only press the pound sign.
          */
-        POUND,
-        /**
+        POUND, /**
          * Ask the user to enter pin code shown on the screen.
          */
         PIN
@@ -42,6 +46,7 @@ public class AzureMultifactorProperties extends BaseMultifactorProviderPropertie
      */
     @RequiredProperty
     private String phoneAttributeName = "phone";
+
     /**
      * Your Microsoft Azure subscription will provide you with a license and a client certificate.
      * The client certificate is a unique private certificate that was generated especially for you.
@@ -49,15 +54,18 @@ public class AzureMultifactorProperties extends BaseMultifactorProviderPropertie
      */
     @RequiredProperty
     private String configDir;
+
     /**
      * Password to the private key provided to you by Microsoft.
      */
     @RequiredProperty
     private String privateKeyPassword;
+
     /**
      * Available authentication modes supported by CAS and Azure.
      */
     private AuthenticationModes mode = AuthenticationModes.POUND;
+
     /**
      * Whether Azure should be allowed to make international calls.
      */
@@ -66,45 +74,4 @@ public class AzureMultifactorProperties extends BaseMultifactorProviderPropertie
     public AzureMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
     }
-
-    public String getPhoneAttributeName() {
-        return phoneAttributeName;
-    }
-
-    public void setPhoneAttributeName(final String phoneAttributeName) {
-        this.phoneAttributeName = phoneAttributeName;
-    }
-
-    public AuthenticationModes getMode() {
-        return mode;
-    }
-
-    public void setMode(final AuthenticationModes mode) {
-        this.mode = mode;
-    }
-
-    public boolean isAllowInternationalCalls() {
-        return allowInternationalCalls;
-    }
-
-    public void setAllowInternationalCalls(final boolean allowInternationalCalls) {
-        this.allowInternationalCalls = allowInternationalCalls;
-    }
-
-    public String getConfigDir() {
-        return configDir;
-    }
-
-    public void setConfigDir(final String configDir) {
-        this.configDir = configDir;
-    }
-
-    public String getPrivateKeyPassword() {
-        return privateKeyPassword;
-    }
-
-    public void setPrivateKeyPassword(final String privateKeyPassword) {
-        this.privateKeyPassword = privateKeyPassword;
-    }
 }
-

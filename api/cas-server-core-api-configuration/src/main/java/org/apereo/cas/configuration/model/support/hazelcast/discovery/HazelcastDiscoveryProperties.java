@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link HazelcastDiscoveryProperties}.
@@ -13,7 +14,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Slf4j
+@Getter
+@Setter
 public class HazelcastDiscoveryProperties implements Serializable {
+
     private static final long serialVersionUID = -8281223487171101795L;
 
     /**
@@ -45,36 +49,4 @@ public class HazelcastDiscoveryProperties implements Serializable {
      * Describe discovery strategy based on Azure.
      */
     private HazelcastAzureDiscoveryProperties azure = new HazelcastAzureDiscoveryProperties();
-    
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public HazelcastAwsDiscoveryProperties getAws() {
-        return aws;
-    }
-
-    public void setAws(final HazelcastAwsDiscoveryProperties aws) {
-        this.aws = aws;
-    }
-
-    public HazelcastJCloudsDiscoveryProperties getJclouds() {
-        return jclouds;
-    }
-
-    public void setJclouds(final HazelcastJCloudsDiscoveryProperties jclouds) {
-        this.jclouds = jclouds;
-    }
-
-    public HazelcastAzureDiscoveryProperties getAzure() {
-        return azure;
-    }
-
-    public void setAzure(final HazelcastAzureDiscoveryProperties azure) {
-        this.azure = azure;
-    }
 }

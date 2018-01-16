@@ -5,6 +5,8 @@ import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJ
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link MongoTicketRegistryProperties}.
@@ -14,8 +16,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-mongo-ticket-registry")
 @Slf4j
+@Getter
+@Setter
 public class MongoTicketRegistryProperties extends BaseMongoDbProperties {
-    
+
     private static final long serialVersionUID = 8243690796900311918L;
 
     /**
@@ -32,21 +36,4 @@ public class MongoTicketRegistryProperties extends BaseMongoDbProperties {
     public MongoTicketRegistryProperties() {
         this.crypto.setEnabled(false);
     }
-
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-    
-    public boolean isDropCollection() {
-        return dropCollection;
-    }
-
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
-    }
-
 }

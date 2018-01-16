@@ -1,16 +1,16 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link QueryJdbcAuthenticationProperties}.
@@ -20,13 +20,18 @@ import java.util.List;
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
 @Slf4j
+@Getter
+@Setter
 public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
+
     private static final long serialVersionUID = 7806132208223986680L;
+
     /**
      * SQL query to execute. Example: {@code SELECT * FROM table WHERE name=?}.
      */
     @RequiredProperty
     private String sql;
+
     /**
      * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
@@ -37,19 +42,23 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
      * </ul>
      */
     private String credentialCriteria;
+
     /**
      * Password field/column name to retrieve.
      */
     @RequiredProperty
     private String fieldPassword;
+
     /**
      * Boolean field that should indicate whether the account is expired.
      */
     private String fieldExpired;
+
     /**
      * Boolean field that should indicate whether the account is disabled.
      */
     private String fieldDisabled;
+
     /**
      * List of column names to fetch as user attributes.
      */
@@ -76,84 +85,4 @@ public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
      * Order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
-
-    public List getPrincipalAttributeList() {
-        return principalAttributeList;
-    }
-
-    public void setPrincipalAttributeList(final List principalAttributeList) {
-        this.principalAttributeList = principalAttributeList;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public String getSql() {
-        return sql;
-    }
-
-    public void setSql(final String sql) {
-        this.sql = StringUtils.replace(sql, "{user}", "?");
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public String getCredentialCriteria() {
-        return credentialCriteria;
-    }
-
-    public void setCredentialCriteria(final String credentialCriteria) {
-        this.credentialCriteria = credentialCriteria;
-    }
-
-    public String getFieldPassword() {
-        return fieldPassword;
-    }
-
-    public void setFieldPassword(final String fieldPassword) {
-        this.fieldPassword = fieldPassword;
-    }
-
-    public String getFieldExpired() {
-        return fieldExpired;
-    }
-
-    public void setFieldExpired(final String fieldExpired) {
-        this.fieldExpired = fieldExpired;
-    }
-
-    public String getFieldDisabled() {
-        return fieldDisabled;
-    }
-
-    public void setFieldDisabled(final String fieldDisabled) {
-        this.fieldDisabled = fieldDisabled;
-    }
 }
