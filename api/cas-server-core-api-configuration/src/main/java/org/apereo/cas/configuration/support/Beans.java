@@ -25,9 +25,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public final class Beans {
-
-
-
+    
     protected Beans() {
     }
 

@@ -136,7 +136,7 @@ public class JpaLockingStrategyTests {
             assertNull(getOwner(appId));
         } catch (final Exception e) {
             LOGGER.debug("testAcquireAndRelease produced an error", e);
-            fail("testAcquireAndRelease failed");
+            throw new AssertionError("testAcquireAndRelease failed");
         }
     }
 
@@ -154,7 +154,7 @@ public class JpaLockingStrategyTests {
             assertNull(getOwner(appId));
         } catch (final Exception e) {
             LOGGER.debug("testLockExpiration produced an error", e);
-            fail("testLockExpiration failed");
+            throw new AssertionError("testLockExpiration failed");
         }
     }
 
@@ -174,7 +174,7 @@ public class JpaLockingStrategyTests {
             assertNull(getOwner(appId));
         } catch (final Exception e) {
             LOGGER.debug("testNonReentrantBehavior produced an error", e);
-            fail("testNonReentrantBehavior failed.");
+            throw new AssertionError("testNonReentrantBehavior failed.");
         }
     }
 
@@ -188,7 +188,7 @@ public class JpaLockingStrategyTests {
             testConcurrency(executor, Arrays.asList(getConcurrentLocks("concurrent-new")));
         } catch (final Exception e) {
             LOGGER.debug("testConcurrentAcquireAndRelease produced an error", e);
-            fail("testConcurrentAcquireAndRelease failed.");
+            throw new AssertionError("testConcurrentAcquireAndRelease failed.");
         } finally {
             executor.shutdownNow();
         }
@@ -207,7 +207,7 @@ public class JpaLockingStrategyTests {
             testConcurrency(executor, Arrays.asList(locks));
         } catch (final Exception e) {
             LOGGER.debug("testConcurrentAcquireAndReleaseOnExistingLock produced an error", e);
-            fail("testConcurrentAcquireAndReleaseOnExistingLock failed.");
+            throw new AssertionError(("testConcurrentAcquireAndReleaseOnExistingLock failed.");
         } finally {
             executor.shutdownNow();
         }

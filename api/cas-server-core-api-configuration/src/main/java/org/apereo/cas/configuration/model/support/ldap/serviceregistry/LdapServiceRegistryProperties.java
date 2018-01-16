@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link LdapServiceRegistryProperties}.
@@ -38,14 +38,14 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
     private String serviceDefinitionAttribute = "description";
 
     /**
+     * The load filter used to load entries by the {@link #objectClass}.
+     * This is typically used to load all definitions that might be mapped to a service definition.
      * The search filter used to load entries by the {@link #idAttribute}.
      * This is typically used to load a specific service definition by its id during search operations.
      */
-    private String searchFilter = "(%s={0})";
-
-    /**
-     * The search filter used to load entries by the {@link #objectClass}.
-     * This is typically used to load all definitions that might be mapped to a service definition.
-     */
     private String loadFilter = "(objectClass=%s)";
+
+    public LdapServiceRegistryProperties() {
+        setSearchFilter("(%s={0})");
+    }
 }

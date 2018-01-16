@@ -43,7 +43,7 @@ public class SpnegoCredentialsTests {
         try {
             set.add(credential);
         } catch(final Exception e) {
-            fail(e.getMessage());
+            throw new AssertionError(e.getMessage());
         }
     }
 
