@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -28,25 +29,22 @@ import java.util.concurrent.Executors;
  */
 @Slf4j
 public class RestAuditTrailManager implements AuditTrailManager {
-
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    @Setter
     private boolean asynchronous = true;
+    
     private final AuditActionContextJsonSerializer serializer;
     private final AuditRestProperties properties;
 
     public RestAuditTrailManager(final AuditRestProperties properties) {
         this.serializer = new AuditActionContextJsonSerializer();
         this.properties = properties;
-        Assert.notNull(properties.getUrl());
+        Assert.notNull(properties.getUrl(), "REST endpoint url cannot be null");
     }
-
-    public void setAsynchronous(final boolean asynchronous) {
-        this.asynchronous = asynchronous;
-    }
-
+    
     @Override
     public void record(final AuditActionContext audit) {
         final Runnable task = () -> {

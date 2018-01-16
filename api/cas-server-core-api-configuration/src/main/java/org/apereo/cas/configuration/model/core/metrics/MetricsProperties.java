@@ -5,8 +5,8 @@ import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
 
@@ -48,7 +48,7 @@ public class MetricsProperties implements Serializable {
      * Export metrics to an influxdb database.
      */
     private InfluxDb influxDb = new InfluxDb();
-    
+
     /**
      * Export metrics to an open tsdb database.
      */
