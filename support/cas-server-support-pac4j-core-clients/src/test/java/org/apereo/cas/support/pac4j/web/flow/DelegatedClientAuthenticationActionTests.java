@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -44,6 +45,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Slf4j
 public class DelegatedClientAuthenticationActionTests {
 
     private static final String TGT_ID = "TGT-00-xxxxxxxxxxxxxxxxxxxxxxxxxx.cas0";

@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
@@ -21,6 +22,7 @@ import org.springframework.util.Assert;
  * @author Andrew Petro
  * @since 3.0.0
  */
+@Slf4j
 public class PrincipalBearingCredential extends AbstractCredential {
 
     /** Serialization version marker. */

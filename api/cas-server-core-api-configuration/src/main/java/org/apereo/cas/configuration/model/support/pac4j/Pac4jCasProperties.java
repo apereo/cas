@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-pac4j-webflow")
+@Slf4j
 public class Pac4jCasProperties implements Serializable {
     private static final long serialVersionUID = -2738631545437677447L;
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -14,6 +15,7 @@ import java.util.function.Predicate;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,8 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,10 +22,11 @@ import java.util.regex.Matcher;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
     private static final long serialVersionUID = 122972056984610198L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceMappedRegexAttributeFilter.class);
+
 
     private int order;
     private String script;

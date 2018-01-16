@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.metadata.CacheCredentialsMetaDataPopulator;
 import org.junit.Test;
 
@@ -10,6 +11,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class CacheCredentialsMetaDataPopulatorTests {
 
     @Test

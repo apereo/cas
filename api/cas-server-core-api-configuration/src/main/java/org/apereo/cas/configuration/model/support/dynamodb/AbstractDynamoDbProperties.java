@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.core.io.Resource;
 
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class AbstractDynamoDbProperties implements Serializable {
     private static final long serialVersionUID = -8349917272283787550L;
 

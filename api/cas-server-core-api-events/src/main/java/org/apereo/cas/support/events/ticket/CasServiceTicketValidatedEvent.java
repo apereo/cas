@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -11,6 +12,7 @@ import org.apereo.cas.validation.Assertion;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@Slf4j
 public class CasServiceTicketValidatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -1218257740549089556L;

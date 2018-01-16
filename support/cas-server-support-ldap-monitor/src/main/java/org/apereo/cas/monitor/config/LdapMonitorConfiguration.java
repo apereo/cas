@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -26,6 +27,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapMonitorConfiguration {
 
     @Autowired

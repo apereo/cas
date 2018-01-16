@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.RegexValidator;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.FactoryBean;
  * @author swoeste
  * @since 5.2.0
  */
+@Slf4j
 public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas.web.UrlValidator> {
 
     private static final UrlValidator URL_VALIDATOR_ALLOW_LOCAL_URLS = new UrlValidator(UrlValidator.ALLOW_LOCAL_URLS);

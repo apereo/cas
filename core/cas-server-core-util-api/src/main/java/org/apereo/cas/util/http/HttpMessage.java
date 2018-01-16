@@ -1,9 +1,8 @@
 package org.apereo.cas.util.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.EncodingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 
 import java.io.Serializable;
@@ -15,10 +14,10 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+
+@Slf4j
 public class HttpMessage implements Serializable {
     private static final long serialVersionUID = 2015460875654586133L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);
 
     /**
      * The default asynchronous callbacks enabled.

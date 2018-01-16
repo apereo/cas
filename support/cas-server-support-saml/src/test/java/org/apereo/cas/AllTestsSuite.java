@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.authentication.SamlAuthenticationRequestTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceTests;
 import org.apereo.cas.support.saml.web.view.Saml10FailureResponseViewTests;
@@ -25,5 +26,6 @@ import org.junit.runners.Suite;
         Saml10FailureResponseViewTests.class,
         Saml10SuccessResponseViewTests.class
 })
+@Slf4j
 public class AllTestsSuite {
 }

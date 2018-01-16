@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
 import org.ldaptive.Connection;
@@ -12,8 +13,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.ModifyOperation;
 import org.ldaptive.ModifyRequest;
 import org.ldaptive.io.LdifReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -31,8 +30,9 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public final class LdapTestUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapTestUtils.class);
+
 
     /**
      * Placeholder for base DN in LDIF files.

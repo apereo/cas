@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.generic.remote;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.junit.Test;
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RemoteAddressCredentialTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "remoteAddressCredential.json");

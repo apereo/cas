@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.AnnotationAwareOrderComparator;
 import org.thymeleaf.IEngineConfiguration;
 import org.thymeleaf.templateresolver.AbstractConfigurableTemplateResolver;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class ChainingTemplateViewResolver extends AbstractConfigurableTemplateResolver {
     private List<AbstractTemplateResolver> resolvers = new ArrayList<>();
 

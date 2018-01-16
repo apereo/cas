@@ -2,12 +2,11 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -30,11 +29,12 @@ import java.util.Map;
 @DiscriminatorColumn(name = "service_type", length = 50, discriminatorType = DiscriminatorType.STRING,
         columnDefinition = "VARCHAR(50) DEFAULT 'simple'")
 @Table(name = "WebApplicationServices")
+@Slf4j
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
     private static final long serialVersionUID = 610105280927740076L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWebApplicationService.class);
+
     
     /**
      * The id of the service.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.artifact;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -20,6 +21,7 @@ import java.io.StringWriter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
     
     /**

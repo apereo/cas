@@ -1,9 +1,8 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Scope;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +16,9 @@ import javax.servlet.http.HttpServletRequest;
  * @since 3.0.0
  */
 @Scope(value = "prototype")
+@Slf4j
 public abstract class AbstractCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasProtocolValidationSpecification.class);
+
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;

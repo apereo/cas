@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.4.12
  */
+@Slf4j
 public class AbstractRegisteredServiceTests {
 
     private static final long ID = 1000;

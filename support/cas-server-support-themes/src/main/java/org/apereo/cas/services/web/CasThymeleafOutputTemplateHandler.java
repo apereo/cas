@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.thymeleaf.engine.AbstractTemplateHandler;
 import org.thymeleaf.model.ICloseElementTag;
 import org.thymeleaf.model.IOpenElementTag;
@@ -11,6 +12,7 @@ import org.thymeleaf.model.IText;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasThymeleafOutputTemplateHandler extends AbstractTemplateHandler {
     private boolean writeWhitespace;
 

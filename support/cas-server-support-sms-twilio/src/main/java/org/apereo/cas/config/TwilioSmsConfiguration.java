@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.sms.TwilioSmsSender;
 import org.apereo.cas.util.io.SmsSender;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
  */
 @Configuration("twilioSmsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class TwilioSmsConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -14,6 +15,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-support-generic")
+@Slf4j
 public class JsonResourceAuthenticationProperties extends SpringResourceProperties {
     private static final long serialVersionUID = 1079027841236526083L;
     /**

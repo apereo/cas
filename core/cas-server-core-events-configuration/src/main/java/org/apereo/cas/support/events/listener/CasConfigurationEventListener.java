@@ -1,10 +1,9 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -21,8 +20,8 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasConfigurationEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationEventListener.class);
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;

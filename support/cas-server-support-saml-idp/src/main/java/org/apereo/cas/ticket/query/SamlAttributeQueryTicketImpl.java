@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.query;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.AbstractTicket;
@@ -27,6 +28,7 @@ import javax.persistence.Table;
 @Table(name = "SAML2_ATTRIBUTE_QUERY_TICKETS")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SamlAttributeQueryTicket.PREFIX)
+@Slf4j
 public class SamlAttributeQueryTicketImpl extends AbstractTicket implements SamlAttributeQueryTicket {
 
     private static final long serialVersionUID = 6276140828446447398L;

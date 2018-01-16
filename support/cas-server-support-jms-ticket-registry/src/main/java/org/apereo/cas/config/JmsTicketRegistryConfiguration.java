@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -34,6 +35,7 @@ import javax.jms.ConnectionFactory;
 @Configuration("jmsTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableJms
+@Slf4j
 public class JmsTicketRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

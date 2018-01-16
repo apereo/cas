@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -14,6 +15,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
+@Slf4j
 public class QueryEncodeJdbcAuthenticationProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = -6647373426301411768L;
     /**

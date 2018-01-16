@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -27,8 +26,9 @@ import java.io.File;
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class U2FJsonResourceDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(U2FJsonResourceDeviceRepositoryTests.class);
+
 
     static {
         try {

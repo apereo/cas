@@ -1,9 +1,8 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.util.List;
@@ -16,8 +15,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class U2FGroovyResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(U2FGroovyResourceDeviceRepository.class);
+
 
     private final Resource groovyScript;
 

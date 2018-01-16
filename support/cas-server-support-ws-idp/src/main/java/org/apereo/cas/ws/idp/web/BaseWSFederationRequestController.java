@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -27,8 +28,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -46,8 +45,9 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 @Controller
+@Slf4j
 public abstract class BaseWSFederationRequestController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseWSFederationRequestController.class);
+
 
     /**
      * The Services manager.

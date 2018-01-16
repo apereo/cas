@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class AcceptUsersAuthenticationHandlerTests {
 
     private static final String SCOTT = "scott";

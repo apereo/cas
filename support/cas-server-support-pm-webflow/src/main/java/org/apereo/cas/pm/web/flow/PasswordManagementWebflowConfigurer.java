@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.web.flow.actions.PasswordChangeAction;
@@ -26,6 +27,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class PasswordManagementWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * Flow id for password reset.

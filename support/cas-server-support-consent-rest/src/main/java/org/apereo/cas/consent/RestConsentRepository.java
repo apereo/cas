@@ -1,11 +1,10 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,9 +24,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RestConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 6583408864586270206L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestConsentRepository.class);
+
 
     private final RestTemplate restTemplate;
     private final String endpoint;

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import javax.validation.constraints.Size;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class UsernamePasswordCredential implements Credential, Serializable {
 
     /**

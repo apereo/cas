@@ -1,13 +1,12 @@
 package org.apereo.cas.grouper.services;
 
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,11 +23,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -3557247044344135788L;
     private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
-    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperRegisteredServiceAccessStrategy.class);
+
 
     private GrouperGroupField groupField = GrouperGroupField.NAME;
 

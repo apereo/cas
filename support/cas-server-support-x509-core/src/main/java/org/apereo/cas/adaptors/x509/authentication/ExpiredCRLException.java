@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZoneOffset;
@@ -13,6 +15,7 @@ import java.time.chrono.ChronoZonedDateTime;
  * @since 3.4.6
  *
  */
+@Slf4j
 public class ExpiredCRLException extends GeneralSecurityException {
     /** Serialization version marker. */
     private static final long serialVersionUID = 5157864033250359972L;

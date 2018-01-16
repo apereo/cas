@@ -1,5 +1,6 @@
 package org.apereo.cas.grouper.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.JsonServiceRegistryDao;
@@ -24,6 +25,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class GrouperRegisteredServiceAccessStrategyRegistryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");

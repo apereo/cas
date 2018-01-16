@@ -1,5 +1,6 @@
 package org.apereo.cas.config.pm.org.apereo.cas.pm.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.routines.EmailValidator;
 import org.apereo.cas.CipherExecutor;
@@ -17,8 +18,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.util.LinkedHashMap;
@@ -30,8 +29,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class LdapPasswordManagementService extends BasePasswordManagementService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapPasswordManagementService.class);
+
 
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,

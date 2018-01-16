@@ -1,5 +1,6 @@
 package org.apereo.cas.support.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Properties;
@@ -10,6 +11,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CryptoUtils {
     protected CryptoUtils() {
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,6 +11,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class TokenCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 2749515041385101770L;

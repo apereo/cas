@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -17,6 +18,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
+@Slf4j
 public class EhcacheProperties implements Serializable {
     private static final long serialVersionUID = 7772510035918976450L;
 

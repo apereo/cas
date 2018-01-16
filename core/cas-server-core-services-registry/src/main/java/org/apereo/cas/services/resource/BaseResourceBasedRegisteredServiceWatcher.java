@@ -1,8 +1,7 @@
 package org.apereo.cas.services.resource;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.util.function.Consumer;
@@ -13,8 +12,9 @@ import java.util.function.Consumer;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consumer<File> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseResourceBasedRegisteredServiceWatcher.class);
+
 
     /**
      * Consumer to log warnings for duplicate service defns.

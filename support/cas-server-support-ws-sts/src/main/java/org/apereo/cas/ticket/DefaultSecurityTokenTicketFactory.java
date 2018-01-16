@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.util.EncodingUtils;
@@ -10,6 +11,7 @@ import org.apereo.cas.util.EncodingUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
 
     private final ExpirationPolicy expirationPolicy;

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
 import org.apache.http.HttpHost;
@@ -28,8 +29,6 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.FactoryBean;
 
 import javax.annotation.PreDestroy;
@@ -52,6 +51,8 @@ import java.util.stream.IntStream;
  * @author Jerome Leleu
  * @since 4.1.0
  */
+
+@Slf4j
 public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient> {
 
     /**
@@ -59,7 +60,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      */
     public static final int MAX_CONNECTIONS_PER_ROUTE = 50;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClientFactoryBean.class);
+
 
     private static final int MAX_POOLED_CONNECTIONS = 100;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link EchoingPrincipalResolver}.
@@ -16,8 +15,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class EchoingPrincipalResolver implements PrincipalResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EchoingPrincipalResolver.class);
+
 
     @Override
     public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {

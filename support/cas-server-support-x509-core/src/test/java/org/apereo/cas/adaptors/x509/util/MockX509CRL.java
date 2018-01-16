@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.PublicKey;
@@ -20,6 +22,7 @@ import javax.security.auth.x500.X500Principal;
  * @since 3.4.6
  *
  */
+@Slf4j
 public class MockX509CRL extends X509CRL {
     /** Issuer name */
     private final X500Principal issuer;

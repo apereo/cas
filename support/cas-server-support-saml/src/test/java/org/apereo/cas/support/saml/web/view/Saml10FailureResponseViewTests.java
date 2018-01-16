@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
@@ -21,6 +22,7 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Slf4j
 public class Saml10FailureResponseViewTests extends AbstractOpenSamlTests {
 
     private Saml10FailureResponseView view;

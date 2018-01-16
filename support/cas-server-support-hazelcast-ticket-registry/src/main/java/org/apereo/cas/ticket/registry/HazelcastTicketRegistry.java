@@ -2,12 +2,11 @@ package org.apereo.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
@@ -27,8 +26,9 @@ import java.util.stream.Collectors;
  * @author Jonathan Johnson
  * @since 4.1.0
  */
+@Slf4j
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistry.class);
+
 
     private final HazelcastInstance hazelcastInstance;
     private final TicketCatalog ticketCatalog;

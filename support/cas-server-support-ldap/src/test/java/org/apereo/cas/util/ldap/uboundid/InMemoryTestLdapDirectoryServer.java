@@ -9,11 +9,10 @@ import com.unboundid.ldap.sdk.schema.Schema;
 import com.unboundid.util.ssl.KeyStoreKeyManager;
 import com.unboundid.util.ssl.SSLUtil;
 import com.unboundid.util.ssl.TrustStoreTrustManager;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import javax.annotation.PreDestroy;
@@ -29,8 +28,9 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class InMemoryTestLdapDirectoryServer implements Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InMemoryTestLdapDirectoryServer.class);
+
 
     private final InMemoryDirectoryServer directoryServer;
 

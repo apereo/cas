@@ -1,5 +1,7 @@
 package org.apereo.cas.util.io;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -12,6 +14,7 @@ import java.nio.channels.FileLock;
  * @author Marvin S. Addison
  * @since 4.1.0
  */
+@Slf4j
 public class LockedOutputStream extends BufferedOutputStream {
 
     /** Lock held on file underneath stream. */

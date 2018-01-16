@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.metrics;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
 public class MetricsProperties implements Serializable {
     private static final long serialVersionUID = 345002357523418414L;
 

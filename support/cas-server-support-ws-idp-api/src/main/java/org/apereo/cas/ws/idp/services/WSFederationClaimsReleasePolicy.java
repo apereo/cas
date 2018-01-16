@@ -1,11 +1,10 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.AbstractRegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.ws.idp.WSFederationClaims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -17,10 +16,11 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
     private static final long serialVersionUID = -2814928645221579489L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationClaimsReleasePolicy.class);
+
 
     private Map<String, String> allowedAttributes;
 

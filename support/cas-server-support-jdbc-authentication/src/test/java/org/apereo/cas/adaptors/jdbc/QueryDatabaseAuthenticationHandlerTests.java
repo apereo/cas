@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -47,6 +48,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
+@Slf4j
 public class QueryDatabaseAuthenticationHandlerTests {
 
     private static final String SQL = "SELECT * FROM casusers where username=?";

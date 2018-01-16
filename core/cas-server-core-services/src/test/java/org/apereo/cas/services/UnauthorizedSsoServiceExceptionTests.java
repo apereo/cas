@@ -2,12 +2,14 @@ package org.apereo.cas.services;
 
 import static org.junit.Assert.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 /**
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class UnauthorizedSsoServiceExceptionTests {
 
     private static final String CODE = "service.not.authorized.sso";

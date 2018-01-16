@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
 public class TimeBasedAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 3826749727400569308L;
 

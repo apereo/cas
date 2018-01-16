@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +20,9 @@ import javax.persistence.PersistenceContext;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerYubiKey", readOnly = false)
+@Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaYubiKeyAccountRegistry.class);
+
 
     private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
 

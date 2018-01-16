@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.util.ArrayList;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 3849857270054289852L;

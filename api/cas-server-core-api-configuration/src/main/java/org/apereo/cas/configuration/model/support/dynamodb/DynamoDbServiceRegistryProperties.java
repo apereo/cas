@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.dynamodb;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
@@ -9,6 +10,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-dynamodb-service-registry")
+@Slf4j
 public class DynamoDbServiceRegistryProperties extends AbstractDynamoDbProperties {
     private static final long serialVersionUID = 809653348774854955L;
 

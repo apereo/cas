@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
@@ -13,9 +12,10 @@ import org.springframework.context.ApplicationEventPublisher;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationTransactionManager.class);
+
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;

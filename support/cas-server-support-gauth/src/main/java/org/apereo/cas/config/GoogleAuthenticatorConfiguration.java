@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.gauth.web.flow.GoogleAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,6 +30,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("googleAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@Slf4j
 public class GoogleAuthenticatorConfiguration {
 
     @Autowired
@@ -36,14 +38,14 @@ public class GoogleAuthenticatorConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Bean
     public FlowDefinitionRegistry googleAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
@@ -51,17 +53,17 @@ public class GoogleAuthenticatorConfiguration {
         builder.addFlowLocationPattern("/mfa-gauth/*-webflow.xml");
         return builder.build();
     }
-    
+
     @ConditionalOnMissingBean(name = "googleAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer googleAuthenticatorMultifactorWebflowConfigurer() {
         final CasWebflowConfigurer w = new GoogleAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                googleAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            googleAuthenticatorFlowRegistry(), applicationContext, casProperties);
         w.initialize();
         return w;
     }
-    
+
     /**
      * The google authenticator multifactor trust configuration.
      */
@@ -75,12 +77,12 @@ public class GoogleAuthenticatorConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer gauthMultifactorTrustWebflowConfigurer() {
             final CasWebflowConfigurer w = new GoogleAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(), 
-                    applicationContext, casProperties);
-            
+                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), googleAuthenticatorFlowRegistry(),
+                applicationContext, casProperties);
+
             w.initialize();
             return w;
         }
     }
-    
+
 }

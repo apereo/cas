@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.NoOpRevocationChecker;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -37,6 +36,7 @@ import java.util.regex.Pattern;
  * @author Jan Van der Velpen
  * @since 3.0.4
  */
+@Slf4j
 public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     /**
@@ -44,7 +44,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static final String KEY_USAGE_OID = "2.5.29.15";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509CredentialsAuthenticationHandler.class);
+
 
     /**
      * The compiled pattern supplied by the deployer.

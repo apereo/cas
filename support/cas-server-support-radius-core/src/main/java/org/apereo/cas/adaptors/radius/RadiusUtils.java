@@ -1,8 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.util.HashMap;
@@ -16,9 +15,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public final class RadiusUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RadiusUtils.class);
+
 
     private RadiusUtils() {
     }

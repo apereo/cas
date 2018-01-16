@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.sps;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+@Slf4j
 public class SamlServiceProviderProperties implements Serializable {
     /**
      * {@code email} attribute to release.

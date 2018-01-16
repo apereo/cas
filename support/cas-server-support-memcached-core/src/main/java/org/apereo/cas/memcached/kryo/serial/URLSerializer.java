@@ -7,6 +7,7 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Kryo serializer for {@link URL}.
@@ -14,6 +15,7 @@ import com.esotericsoftware.kryo.io.Output;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Slf4j
 public class URLSerializer extends Serializer<URL> {
 
     @Override

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -22,6 +23,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "U2FDeviceRegistration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class U2FDeviceRegistration {
     @org.springframework.data.annotation.Id
     @Id

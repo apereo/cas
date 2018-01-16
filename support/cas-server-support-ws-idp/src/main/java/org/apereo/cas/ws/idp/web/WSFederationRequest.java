@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.ws.idp.WSFederationConstants;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WSFederationRequest {
     private final String wtrealm;
     private final String wreply;

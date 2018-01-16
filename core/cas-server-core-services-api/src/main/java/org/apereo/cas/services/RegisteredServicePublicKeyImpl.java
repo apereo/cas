@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.annotation.Transient;
@@ -20,10 +19,11 @@ import java.security.PublicKey;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
     private static final long serialVersionUID = -8497658523695695863L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServicePublicKeyImpl.class);
+
 
     private String location;
 

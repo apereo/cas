@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -88,6 +89,7 @@ import javax.annotation.PostConstruct;
 @EnableAspectJAutoProxy
 @DirtiesContext
 @TestPropertySource(locations = {"classpath:/core.properties"})
+@Slf4j
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -14,6 +15,7 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public final class TicketIdSanitizationUtils {
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile('(' + TicketGrantingTicket.PREFIX + '|'
             + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX

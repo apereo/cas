@@ -1,11 +1,10 @@
 package org.apereo.cas.logout;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CompressionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +20,10 @@ import java.util.stream.Stream;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Slf4j
 public class DefaultLogoutManager implements LogoutManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLogoutManager.class);
+
 
     private final boolean singleLogoutCallbacksDisabled;
     private final LogoutMessageCreator logoutMessageBuilder;

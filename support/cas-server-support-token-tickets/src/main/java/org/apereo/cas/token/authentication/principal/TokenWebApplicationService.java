@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 
 import javax.persistence.DiscriminatorValue;
@@ -13,6 +14,7 @@ import javax.persistence.Entity;
  */
 @Entity
 @DiscriminatorValue("token")
+@Slf4j
 public class TokenWebApplicationService extends AbstractWebApplicationService {
     private static final long serialVersionUID = -8844121291312069964L;
 

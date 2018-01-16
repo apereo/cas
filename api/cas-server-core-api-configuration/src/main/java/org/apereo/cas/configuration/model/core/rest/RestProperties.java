@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-rest", automated = true)
+@Slf4j
 public class RestProperties implements Serializable {
     private static final long serialVersionUID = -1833107478273171342L;
     /**

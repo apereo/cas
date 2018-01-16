@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.authentication.Authentication;
@@ -22,6 +23,7 @@ import javax.persistence.Table;
 @Table(name = "SECURITYTOKENTICKET")
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SecurityTokenTicket.PREFIX)
+@Slf4j
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
     private static final long serialVersionUID = 3940671352560102114L;

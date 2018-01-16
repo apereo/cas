@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Determines if the credential provided are for Remember Me Services and then sets the appropriate
@@ -15,9 +14,10 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Slf4j
 public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeAuthenticationMetaDataPopulator.class);
+
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.authy.web.flow;
 
 import com.authy.api.Hash;
 import com.authy.api.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.web.support.WebUtils;
@@ -15,6 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction {
 
     private final AuthyClientInstance instance;

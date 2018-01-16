@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.FileAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.RejectUsersAuthenticationHandlerTests;
 import org.apereo.cas.adaptors.generic.ShiroAuthenticationHandlerTests;
@@ -16,5 +17,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({FileAuthenticationHandlerTests.class, 
         RejectUsersAuthenticationHandlerTests.class,
         ShiroAuthenticationHandlerTests.class})
+@Slf4j
 public class AllTestsSuite {
 }

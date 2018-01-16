@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -28,9 +27,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreAuthenticationMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreAuthenticationMetadataConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuthenticationMetadataConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

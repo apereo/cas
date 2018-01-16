@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
@@ -11,6 +12,7 @@ import org.springframework.util.StringValueResolver;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public final class SchedulingUtils {
     private SchedulingUtils() {
     }

@@ -1,10 +1,9 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -17,13 +16,14 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ehcacheTicketRegistryTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class EhcacheTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
     /**
      * Service ticket cache name.
      */
     public static final String SERVICE_TICKETS_CACHE = "serviceTicketsCache";
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheTicketRegistryTicketCatalogConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

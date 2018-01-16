@@ -1,11 +1,14 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This is {@link EncryptionOptionalSigningJwtCryptographyProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class EncryptionOptionalSigningJwtCryptographyProperties extends EncryptionJwtSigningJwtCryptographyProperties {
 
     private static final long serialVersionUID = 7185404480671258520L;

@@ -1,5 +1,6 @@
 package org.apereo.cas.tokens;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -7,8 +8,6 @@ import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEn
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.TokenTicketBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,8 +21,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JWTTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JWTTicketGrantingTicketResourceEntityResponseFactory.class);
+
     
     private final ServicesManager servicesManager;
 

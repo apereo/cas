@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 import java.util.HashMap;
@@ -19,8 +18,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(U2FJsonResourceDeviceRepository.class);
+
 
     private final ObjectMapper mapper;
 

@@ -1,12 +1,11 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.persistence.Transient;
@@ -18,9 +17,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
     private static final long serialVersionUID = -3075860754996106437L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyRegisteredServiceMultifactorPolicy.class);
+
 
     private String groovyScript;
 

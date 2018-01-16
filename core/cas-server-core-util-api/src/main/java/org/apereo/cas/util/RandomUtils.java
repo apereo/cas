@@ -1,7 +1,6 @@
 package org.apereo.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
@@ -14,8 +13,9 @@ import java.security.SecureRandom;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.2.0
  */
+@Slf4j
 public final class RandomUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RandomUtils.class);
+
 
     private RandomUtils() {
     }

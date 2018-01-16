@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
@@ -41,6 +42,7 @@ import static org.junit.Assert.*;
  * @since 3.5.2
  */
 
+@Slf4j
 public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
 
     private static final ObjectMapper MAPPER = new ObjectMapper();

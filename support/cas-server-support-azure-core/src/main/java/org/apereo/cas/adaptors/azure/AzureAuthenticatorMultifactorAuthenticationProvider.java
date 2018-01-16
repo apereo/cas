@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.azure;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties;
@@ -10,6 +11,7 @@ import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AzureAuthenticatorMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
     private static final long serialVersionUID = 4789727148634156909L;
 

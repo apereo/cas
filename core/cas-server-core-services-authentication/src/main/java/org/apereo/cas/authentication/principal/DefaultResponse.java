@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
 import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -18,11 +17,12 @@ import java.util.stream.Collectors;
  * @author Arnaud Lesueur
  * @since 3.1
  */
+@Slf4j
 public class DefaultResponse implements Response {
     /**
      * Log instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultResponse.class);
+
 
     /**
      * Pattern to detect unprintable ASCII characters.

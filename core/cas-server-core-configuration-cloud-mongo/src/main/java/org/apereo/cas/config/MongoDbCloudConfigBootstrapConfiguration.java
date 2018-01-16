@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.MongoDbPropertySource;
 import org.apereo.cas.MongoDbPropertySourceLocator;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -18,6 +19,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbCloudConfigBootstrapConfiguration")
 @ConditionalOnProperty(name = "cas.spring.cloud.mongo.uri")
+@Slf4j
 public class MongoDbCloudConfigBootstrapConfiguration {
     
     

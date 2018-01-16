@@ -4,6 +4,7 @@ import static org.junit.Assert.*;
 
 import java.security.cert.X509Certificate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -14,6 +15,7 @@ import org.junit.Test;
  * @author Jan Van der Velpen
  * @since 3.0.0.6
  */
+@Slf4j
 public class X509SerialNumberAndIssuerDNPrincipalResolverTests extends AbstractX509CertificateTests {
 
     private final X509SerialNumberAndIssuerDNPrincipalResolver resolver =

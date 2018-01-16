@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
@@ -87,6 +88,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 @DirtiesContext
 @EnableScheduling
+@Slf4j
 public class IpAddressAuthenticationRequestRiskCalculatorTests {
 
     @Autowired

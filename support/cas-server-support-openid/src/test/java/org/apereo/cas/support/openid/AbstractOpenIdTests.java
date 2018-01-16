@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -79,6 +80,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasCoreWebflowConfiguration.class,
                 CasCoreUtilConfiguration.class})
 @ContextConfiguration(locations = "classpath:/openid-config.xml")
+@Slf4j
 public class AbstractOpenIdTests {
 
     @Autowired

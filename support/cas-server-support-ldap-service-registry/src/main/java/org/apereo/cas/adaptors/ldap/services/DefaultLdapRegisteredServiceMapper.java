@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -8,8 +9,6 @@ import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.io.StringWriter;
@@ -25,8 +24,9 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredServiceMapper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapRegisteredServiceMapper.class);
+
     private final LdapServiceRegistryProperties ldap;
 
     private StringSerializer<RegisteredService> jsonSerializer = new DefaultRegisteredServiceJsonSerializer();

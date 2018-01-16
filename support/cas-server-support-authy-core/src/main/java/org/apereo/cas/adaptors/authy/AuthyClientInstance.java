@@ -4,6 +4,7 @@ import com.authy.AuthyApiClient;
 import com.authy.api.Tokens;
 import com.authy.api.User;
 import com.authy.api.Users;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -15,6 +16,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class AuthyClientInstance {
 
     private final AuthyApiClient authyClient;

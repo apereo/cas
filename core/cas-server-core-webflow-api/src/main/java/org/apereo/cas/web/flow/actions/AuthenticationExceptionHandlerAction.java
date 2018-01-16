@@ -1,12 +1,11 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.webflow.action.AbstractAction;
@@ -35,12 +34,13 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class AuthenticationExceptionHandlerAction extends AbstractAction {
 
     private static final String DEFAULT_MESSAGE_BUNDLE_PREFIX = "authenticationFailure.";
     private static final String UNKNOWN = "UNKNOWN";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationExceptionHandlerAction.class);
+
 
     /**
      * Ordered list of error classes that this class knows how to handle.

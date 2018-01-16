@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
@@ -12,6 +13,7 @@ import org.springframework.scheduling.config.TaskManagementConfigUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplicationContext {
     /**
      * {@inheritDoc}

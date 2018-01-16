@@ -1,5 +1,6 @@
 package org.apereo.cas.support.claims;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.rt.security.claims.ClaimCollection;
 import org.apache.cxf.sts.claims.ClaimsHandler;
 import org.apache.cxf.sts.claims.ClaimsParameters;
@@ -8,8 +9,6 @@ import org.apache.cxf.sts.claims.ProcessedClaimCollection;
 import org.apache.cxf.sts.token.realm.RealmSupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
@@ -22,8 +21,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WrappingSecurityTokenServiceClaimsHandler implements ClaimsHandler, RealmSupport {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WrappingSecurityTokenServiceClaimsHandler.class);
+
     private final String realm;
     private final String issuer;
 
