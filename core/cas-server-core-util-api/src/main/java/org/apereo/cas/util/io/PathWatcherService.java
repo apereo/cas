@@ -23,8 +23,6 @@ import static java.nio.file.StandardWatchEventKinds.ENTRY_MODIFY;
 @Slf4j
 public class PathWatcherService implements Runnable, Closeable {
 
-
-    private static final int INTERVAL = 1_000;
     private static final WatchEvent.Kind[] KINDS = new WatchEvent.Kind[]{ENTRY_CREATE, ENTRY_DELETE, ENTRY_MODIFY};
 
     private Thread thread;
