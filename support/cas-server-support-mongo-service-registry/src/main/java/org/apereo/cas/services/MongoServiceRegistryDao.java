@@ -5,9 +5,9 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import java.util.List;
 import java.util.regex.Pattern;
+import lombok.ToString;
 
 /**
  * <p>Implementation of {@code ServiceRegistryDao} that uses a MongoDb repository as the backend
@@ -20,11 +20,11 @@ import java.util.regex.Pattern;
  * @since 4.1
  */
 @Slf4j
+@ToString
 public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
-
-
     private final String collectionName;
+
     private final MongoOperations mongoTemplate;
 
     /**
@@ -50,15 +50,13 @@ public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
     @Override
     public RegisteredService findServiceById(final long svcId) {
-        return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)),
-                RegisteredService.class, this.collectionName);
+        return this.mongoTemplate.findOne(new Query(Criteria.where("id").is(svcId)), RegisteredService.class, this.collectionName);
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
         final Pattern pattern = Pattern.compile(id, Pattern.CASE_INSENSITIVE);
-        return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)),
-                RegisteredService.class, this.collectionName);
+        return this.mongoTemplate.findOne(new Query(Criteria.where("serviceId").regex(pattern)), RegisteredService.class, this.collectionName);
     }
 
     @Override
@@ -76,11 +74,6 @@ public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
         this.mongoTemplate.save(svc, this.collectionName);
         LOGGER.debug("Saved registered service: [{}]", svc);
         return this.findServiceById(svc.getId());
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 
     @Override

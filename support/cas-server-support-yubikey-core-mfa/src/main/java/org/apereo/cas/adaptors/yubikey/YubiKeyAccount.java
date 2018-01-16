@@ -3,13 +3,13 @@ package org.apereo.cas.adaptors.yubikey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.ToString;
 
 /**
  * This is {@link YubiKeyAccount}.
@@ -20,6 +20,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "YubiKeyAccount")
 @Slf4j
+@ToString
 public class YubiKeyAccount {
 
     @Id
@@ -60,15 +61,5 @@ public class YubiKeyAccount {
 
     public void setUsername(final String username) {
         this.username = username;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("publicId", publicId)
-                .append("username", username)
-                .toString();
     }
 }

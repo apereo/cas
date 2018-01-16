@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.ToString;
 
 /**
  * This is {@link InterruptResponse}.
@@ -16,37 +16,41 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class InterruptResponse implements Serializable {
+
     private static final long serialVersionUID = 2558836528840508196L;
-    
+
     private String message;
+
     private Map<String, String> links = new LinkedHashMap<>();
+
     private boolean block;
+
     private boolean ssoEnabled;
+
     private boolean interrupt;
+
     private boolean autoRedirect;
+
     private long autoRedirectAfterSeconds = -1;
 
     public InterruptResponse() {
         this.interrupt = false;
     }
 
-    public InterruptResponse(final String message, final boolean block,
-                             final boolean ssoEnabled) {
+    public InterruptResponse(final String message, final boolean block, final boolean ssoEnabled) {
         this.message = message;
         this.block = block;
         this.ssoEnabled = ssoEnabled;
         this.interrupt = true;
     }
-    
+
     public InterruptResponse(final boolean interrupt) {
         this.interrupt = interrupt;
     }
 
-    public InterruptResponse(final String message, 
-                             final Map<String, String> links,
-                             final boolean block,
-                             final boolean ssoEnabled) {
+    public InterruptResponse(final String message, final Map<String, String> links, final boolean block, final boolean ssoEnabled) {
         this.message = message;
         this.links = links;
         this.block = block;
@@ -109,20 +113,6 @@ public class InterruptResponse implements Serializable {
     public void setSsoEnabled(final boolean ssoEnabled) {
         this.ssoEnabled = ssoEnabled;
     }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("message", message)
-                .append("links", links)
-                .append("block", block)
-                .append("ssoEnabled", ssoEnabled)
-                .append("interrupt", interrupt)
-                .append("autoRedirect", autoRedirect)
-                .append("autoRedirectAfterSeconds", autoRedirectAfterSeconds)
-                .toString();
-    }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -136,27 +126,11 @@ public class InterruptResponse implements Serializable {
             return false;
         }
         final InterruptResponse rhs = (InterruptResponse) obj;
-        return new EqualsBuilder()
-                .append(this.message, rhs.message)
-                .append(this.links, rhs.links)
-                .append(this.block, rhs.block)
-                .append(this.ssoEnabled, rhs.ssoEnabled)
-                .append(this.interrupt, rhs.interrupt)
-                .append(this.autoRedirect, rhs.autoRedirect)
-                .append(this.autoRedirectAfterSeconds, rhs.autoRedirectAfterSeconds)
-                .isEquals();
+        return new EqualsBuilder().append(this.message, rhs.message).append(this.links, rhs.links).append(this.block, rhs.block).append(this.ssoEnabled, rhs.ssoEnabled).append(this.interrupt, rhs.interrupt).append(this.autoRedirect, rhs.autoRedirect).append(this.autoRedirectAfterSeconds, rhs.autoRedirectAfterSeconds).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(message)
-                .append(links)
-                .append(block)
-                .append(ssoEnabled)
-                .append(interrupt)
-                .append(autoRedirect)
-                .append(autoRedirectAfterSeconds)
-                .toHashCode();
+        return new HashCodeBuilder().append(message).append(links).append(block).append(ssoEnabled).append(interrupt).append(autoRedirect).append(autoRedirectAfterSeconds).toHashCode();
     }
 }

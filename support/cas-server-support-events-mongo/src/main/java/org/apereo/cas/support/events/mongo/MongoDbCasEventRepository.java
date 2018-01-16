@@ -6,9 +6,9 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import java.time.ZonedDateTime;
 import java.util.Collection;
+import lombok.ToString;
 
 /**
  * This is {@link MongoDbCasEventRepository} that stores event data into a mongodb database.
@@ -17,21 +17,16 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-
-
     private final String collectionName;
+
     private final MongoOperations mongoTemplate;
 
     public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 
     @Override
@@ -64,7 +59,7 @@ public class MongoDbCasEventRepository extends AbstractCasEventRepository {
         query.addCriteria(Criteria.where(TYPE_PARAM).is(type).and(CREATION_TIME_PARAM).gte(dateTime.toString()));
         return this.mongoTemplate.find(query, CasEvent.class, this.collectionName);
     }
-    
+
     @Override
     public Collection<CasEvent> getEventsOfTypeForPrincipal(final String type, final String principal) {
         final Query query = new Query();

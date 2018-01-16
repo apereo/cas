@@ -13,6 +13,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @since 5.1.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class SurrogateUsernamePasswordCredential extends RememberMeUsernamePasswordCredential {
 
     private static final long serialVersionUID = 8760695298971444249L;
@@ -25,13 +26,5 @@ public class SurrogateUsernamePasswordCredential extends RememberMeUsernamePassw
 
     public void setSurrogateUsername(final String surrogateUsername) {
         this.surrogateUsername = surrogateUsername;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .appendSuper(super.toString())
-                .append("surrogateUsername", surrogateUsername)
-                .toString();
     }
 }
