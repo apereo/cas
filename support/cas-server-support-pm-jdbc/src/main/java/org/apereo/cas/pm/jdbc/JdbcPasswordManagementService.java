@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -52,7 +53,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
     @Override
     public String findEmail(final String username) {
         try {
-            final String email = this.jdbcTemplate.queryForObject(passwordManagementProperties.getJdbc().getSqlFindEmail(), String.class, username);
+            final String email = this.jdbcTemplate.queryForObject(properties.getJdbc().getSqlFindEmail(), String.class, username);
             if (StringUtils.isNotBlank(email) && EmailValidator.getInstance().isValid(email)) {
                 return email;
             }
