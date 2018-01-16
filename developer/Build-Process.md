@@ -96,7 +96,7 @@ The following IDEA settings for Gradle may also be useful:
 
 - Note how 'Use auto-import' is turned off. To resolve Gradle modules and dependencies, you are required to force refresh the project rather than have IDEA auto-refresh the project as you make changes to the build script. Disabling auto-import usually results in much better performance.
 - Note how 'Offline work' is enabled. This is equivalent to Gradle's own `--offline` flag, forcing the build to not contact Maven/Gradle repositories for resolving dependencies. Working offline usually results in much better performance.
-- You may also decide to use the `default gradle wrapper' option as opposed to your own local Gradle installation. 
+- You may also decide to use the 'default gradle wrapper' option as opposed to your own local Gradle installation. 
 
 You may also need to adjust the 'Compiler' settings so modules are built in parallel and automatically:
 
@@ -133,6 +133,7 @@ The following plugins may prove useful during development:
 
 - [Checkstyle](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
 - [FindBugs](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
+- [Lombok](https://github.com/mplushnikov/lombok-intellij-plugin)
 
 ### Eclipse
 
