@@ -29,8 +29,6 @@ import java.util.List;
 @Slf4j
 public class TerminateSessionAction extends AbstractAction {
 
-
-
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
     private final CentralAuthenticationService centralAuthenticationService;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;

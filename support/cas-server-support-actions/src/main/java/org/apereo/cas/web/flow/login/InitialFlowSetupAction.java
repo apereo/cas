@@ -35,8 +35,6 @@ import java.util.List;
 @Slf4j
 public class InitialFlowSetupAction extends AbstractAction {
 
-
-
     private final CasConfigurationProperties casProperties;
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -99,14 +97,15 @@ public class InitialFlowSetupAction extends AbstractAction {
     private void configureWebflowContext(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
-        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
+        
+        WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
+        WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().isEnabled());
+        WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
         WebUtils.putStaticAuthenticationIntoFlowScope(context,
                 StringUtils.isNotBlank(casProperties.getAuthn().getAccept().getUsers())
                         || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
-        WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().isEnabled());
-        WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
     }
 
     private void configureCookieGenerators(final RequestContext context) {
