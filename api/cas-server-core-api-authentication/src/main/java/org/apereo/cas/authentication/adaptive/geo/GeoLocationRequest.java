@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -13,6 +14,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class GeoLocationRequest {
     private String latitude;
     private String longitude;
@@ -68,17 +70,6 @@ public class GeoLocationRequest {
         return StringUtils.isNotBlank(this.latitude) && StringUtils.isNotBlank(this.longitude)
                 && StringUtils.isNotBlank(this.accuracy) && StringUtils.isNotBlank(this.timestamp);
     }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("latitude", latitude)
-                .append("longitude", longitude)
-                .append("accuracy", accuracy)
-                .append("timestamp", timestamp)
-                .toString();
-    }
-
 
     @Override
     public boolean equals(final Object obj) {
