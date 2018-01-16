@@ -226,14 +226,14 @@ public class X509CredentialsAuthenticationHandlerTests {
                 if (this.expectedResult instanceof DefaultAuthenticationHandlerExecutionResult) {
                     assertEquals(this.expectedResult, result);
                 } else {
-                    fail("Authentication succeeded when it should have failed with " + this.expectedResult);
+                    throw new AssertionError("Authentication succeeded when it should have failed with " + this.expectedResult);
                 }
             }
         } catch (final Exception e) {
             if (this.expectedResult instanceof Exception) {
                 assertEquals(this.expectedResult.getClass(), e.getClass());
             } else {
-                fail("Authentication failed when it should have succeeded: " + e.getMessage());
+                throw new AssertionError(("Authentication failed when it should have succeeded: " + e.getMessage());
             }
         }
     }

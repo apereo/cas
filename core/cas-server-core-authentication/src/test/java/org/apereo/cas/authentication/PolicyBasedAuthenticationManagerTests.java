@@ -91,7 +91,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -123,7 +123,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -151,7 +151,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         this.thrown.expect(AuthenticationException.class);
         manager.authenticate(transaction);
-        fail("Should have thrown AuthenticationException");
+        throw new AssertionError("Should have thrown AuthenticationException");
     }
 
     @Test
