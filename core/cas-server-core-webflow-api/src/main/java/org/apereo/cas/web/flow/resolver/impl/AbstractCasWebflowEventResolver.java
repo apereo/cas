@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -242,7 +243,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             if (authenticationFromTgt == null) {
                 LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            } else if (authentication.getPrincipal().equals(authenticationFromTgt.getPrincipal())) {
+            } else if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
                 LOGGER.debug("Resulting authentication matches the authentication from context");
                 issueTicketGrantingTicket = false;
             } else {
@@ -250,6 +251,18 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             }
         }
         return issueTicketGrantingTicket;
+    }
+
+    private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+        if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
+            return false;
+        }
+        final EqualsBuilder builder = new EqualsBuilder();
+        builder.append(auth1.getPrincipal(), auth2.getPrincipal());
+        builder.append(auth1.getCredentials(), auth2.getCredentials());
+        builder.append(auth1.getSuccesses(), auth2.getSuccesses());
+        builder.append(auth1.getAttributes(), auth2.getAttributes());
+        return builder.isEquals();
     }
 
     /**
