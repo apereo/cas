@@ -34,7 +34,8 @@ public class JpaConfigDataHolder implements Serializable {
         this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
     }
 
-    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter, final String persistenceUnitName, final List<String> packagesToScan, final DataSource dataSource) {
+    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter, final String persistenceUnitName,
+                               final List<String> packagesToScan, final DataSource dataSource) {
         this.jpaVendorAdapter = jpaVendorAdapter;
         this.persistenceUnitName = persistenceUnitName;
         this.packagesToScan = packagesToScan;

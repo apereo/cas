@@ -5,6 +5,12 @@ import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * This is {@link DatabaseProperties}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.0.0
+ */
 @Slf4j
 @Getter
 @Setter

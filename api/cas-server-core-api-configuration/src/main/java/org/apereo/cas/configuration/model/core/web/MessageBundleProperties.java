@@ -54,5 +54,6 @@ public class MessageBundleProperties implements Serializable {
      * <p>
      * Entries in last common names override first values (as opposed to baseNames used in message bundles).
      */
-    private List<String> commonNames = Stream.of("classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties").collect(Collectors.toList());
+    private List<String> commonNames = Stream.of("classpath:common_messages.properties",
+        "file:/etc/cas/config/common_messages.properties").collect(Collectors.toList());
 }
