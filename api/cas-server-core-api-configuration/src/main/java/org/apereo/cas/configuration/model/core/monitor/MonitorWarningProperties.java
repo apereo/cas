@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.monitor;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link MonitorWarningProperties}.
@@ -13,7 +14,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class MonitorWarningProperties implements Serializable {
+
     private static final long serialVersionUID = 2788617778375787703L;
 
     /**
@@ -32,21 +36,5 @@ public class MonitorWarningProperties implements Serializable {
 
     public MonitorWarningProperties(final int threshold) {
         this.threshold = threshold;
-    }
-
-    public int getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(final int threshold) {
-        this.threshold = threshold;
-    }
-
-    public long getEvictionThreshold() {
-        return evictionThreshold;
-    }
-
-    public void setEvictionThreshold(final long evictionThreshold) {
-        this.evictionThreshold = evictionThreshold;
     }
 }

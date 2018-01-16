@@ -2,12 +2,13 @@ package org.apereo.cas.configuration.model.core.web;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for message.bundle.
@@ -17,9 +18,12 @@ import java.util.stream.Stream;
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class MessageBundleProperties implements Serializable {
 
     private static final long serialVersionUID = 3769733438559663237L;
+
     /**
      * Message bundle character encoding.
      */
@@ -43,63 +47,12 @@ public class MessageBundleProperties implements Serializable {
     /**
      * A list of strings representing base names for this message bundle.
      */
-    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages")
-        .collect(Collectors.toList());
+    private List<String> baseNames = Stream.of("classpath:custom_messages", "classpath:messages").collect(Collectors.toList());
 
     /**
      * A list of strings representing common names for this message bundle.
      * <p>
      * Entries in last common names override first values (as opposed to baseNames used in message bundles).
      */
-    private List<String> commonNames = Stream.of("classpath:common_messages.properties",
-        "file:/etc/cas/config/common_messages.properties")
-        .collect(Collectors.toList());
-    
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(final String encoding) {
-        this.encoding = encoding;
-    }
-
-    public int getCacheSeconds() {
-        return cacheSeconds;
-    }
-
-    public void setCacheSeconds(final int cacheSeconds) {
-        this.cacheSeconds = cacheSeconds;
-    }
-
-    public boolean isFallbackSystemLocale() {
-        return fallbackSystemLocale;
-    }
-
-    public void setFallbackSystemLocale(final boolean fallbackSystemLocale) {
-        this.fallbackSystemLocale = fallbackSystemLocale;
-    }
-
-    public boolean isUseCodeMessage() {
-        return useCodeMessage;
-    }
-
-    public void setUseCodeMessage(final boolean useCodeMessage) {
-        this.useCodeMessage = useCodeMessage;
-    }
-
-    public List<String> getBaseNames() {
-        return baseNames;
-    }
-
-    public void setBaseNames(final List<String> baseNames) {
-        this.baseNames = baseNames;
-    }
-
-    public List<String> getCommonNames() {
-        return commonNames;
-    }
-
-    public void setCommonNames(final List<String> commonNames) {
-        this.commonNames = commonNames;
-    }
+    private List<String> commonNames = Stream.of("classpath:common_messages.properties", "file:/etc/cas/config/common_messages.properties").collect(Collectors.toList());
 }

@@ -10,10 +10,11 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SurrogateAuthenticationProperties}.
@@ -23,24 +24,32 @@ import java.util.Map;
  */
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
 @Slf4j
+@Getter
+@Setter
 public class SurrogateAuthenticationProperties implements Serializable {
+
     private static final long serialVersionUID = -2088813217398883623L;
+
     /**
      * The separator character used to distinguish between the surrogate account and the admin account.
      */
     private String separator = "+";
+
     /**
      * Locate surrogate accounts via CAS configuration, hardcoded as properties.
      */
     private Simple simple = new Simple();
+
     /**
      * Locate surrogate accounts via a JSON resource.
      */
     private Json json = new Json();
+
     /**
      * Locate surrogate accounts via an LDAP server.
      */
     private Ldap ldap = new Ldap();
+
     /**
      * Locate surrogate accounts via a JDBC resource.
      */
@@ -50,7 +59,7 @@ public class SurrogateAuthenticationProperties implements Serializable {
      * Locate surrogate accounts via a REST resource.
      */
     private Rest rest = new Rest();
-    
+
     /**
      * Settings related to tickets issued for surrogate session, their expiration policy, etc.
      */
@@ -68,81 +77,13 @@ public class SurrogateAuthenticationProperties implements Serializable {
     @NestedConfigurationProperty
     private SmsProperties sms = new SmsProperties();
 
-    public EmailProperties getMail() {
-        return mail;
-    }
-
-    public void setMail(final EmailProperties mail) {
-        this.mail = mail;
-    }
-
-    public SmsProperties getSms() {
-        return sms;
-    }
-
-    public void setSms(final SmsProperties sms) {
-        this.sms = sms;
-    }
-    
-    public Rest getRest() {
-        return rest;
-    }
-
-    public void setRest(final Rest rest) {
-        this.rest = rest;
-    }
-
-    public Tgt getTgt() {
-        return tgt;
-    }
-
-    public void setTgt(final Tgt tgt) {
-        this.tgt = tgt;
-    }
-
-    public Jdbc getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final Jdbc jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public Simple getSimple() {
-        return simple;
-    }
-
-    public void setSimple(final Simple simple) {
-        this.simple = simple;
-    }
-
-    public Json getJson() {
-        return json;
-    }
-
-    public void setJson(final Json json) {
-        this.json = json;
-    }
-
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
-    public String getSeparator() {
-        return separator;
-    }
-
-    public void setSeparator(final String separator) {
-        this.separator = separator;
-    }
-
     @RequiresModule(name = "cas-server-support-surrogate-webflow")
+    @Getter
+    @Setter
     public static class Simple implements Serializable {
+
         private static final long serialVersionUID = 16938920863432222L;
+
         /**
          * Define the list of accounts that are allowed to impersonate.
          * This is done in a key-value structure where the key is the admin user
@@ -150,39 +91,43 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * impersonated by the admin-user.
          */
         private Map<String, String> surrogates = new LinkedHashMap<>();
-
-        public Map<String, String> getSurrogates() {
-            return surrogates;
-        }
-
-        public void setSurrogates(final Map<String, String> surrogates) {
-            this.surrogates = surrogates;
-        }
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-webflow")
+    @Getter
+    @Setter
     public static class Json extends SpringResourceProperties {
+
         private static final long serialVersionUID = 3599367681439517829L;
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication-rest")
+    @Getter
+    @Setter
     public static class Rest extends RestEndpointProperties {
+
         private static final long serialVersionUID = 8152273816132989085L;
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication-ldap")
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
+
         private static final long serialVersionUID = -3848837302921751926L;
+
         /**
          * LDAP search filter used to locate the surrogate account.
          */
         private String surrogateSearchFilter;
+
         /**
          *  Attribute that must be found on the LDAP entry linked to the admin user
          *  that tags the account as authorized for impersonation.
          */
         @RequiredProperty
         private String memberAttributeName;
+
         /**
          * A pattern that is matched against the attribute value of the admin user,
          * that allows for further authorization of the admin user and accounts qualified for impersonation.
@@ -190,53 +135,26 @@ public class SurrogateAuthenticationProperties implements Serializable {
          * successful match indicates the qualified impersonated user by admin.
          */
         private String memberAttributeValueRegex;
-
-        public String getSurrogateSearchFilter() {
-            return surrogateSearchFilter;
-        }
-
-        public void setSurrogateSearchFilter(final String surrogateSearchFilter) {
-            this.surrogateSearchFilter = surrogateSearchFilter;
-        }
-
-        public String getMemberAttributeName() {
-            return memberAttributeName;
-        }
-
-        public void setMemberAttributeName(final String memberAttributeName) {
-            this.memberAttributeName = memberAttributeName;
-        }
-
-        public String getMemberAttributeValueRegex() {
-            return memberAttributeValueRegex;
-        }
-
-        public void setMemberAttributeValueRegex(final String memberAttributeValueRegex) {
-            this.memberAttributeValueRegex = memberAttributeValueRegex;
-        }
-
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication")
+    @Getter
+    @Setter
     public static class Tgt implements Serializable {
+
         private static final long serialVersionUID = 2077366413438267330L;
 
         /**
          * Timeout in seconds to kill the surrogate session and consider tickets expired.
          */
         private long timeToKillInSeconds = 1_800;
-
-        public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
-        }
-
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-            this.timeToKillInSeconds = timeToKillInSeconds;
-        }
     }
 
     @RequiresModule(name = "cas-server-support-surrogate-authentication-jdbc")
+    @Getter
+    @Setter
     public static class Jdbc extends AbstractJpaProperties {
+
         private static final long serialVersionUID = 8970195444880123796L;
 
         /**
@@ -245,26 +163,11 @@ public class SurrogateAuthenticationProperties implements Serializable {
          */
         @RequiredProperty
         private String surrogateSearchQuery = "SELECT COUNT(*) FROM surrogate WHERE username=?";
+
         /**
          * SQL query to use in order to retrieve the list of qualified accounts for impersonation for a given admin user.
          */
         @RequiredProperty
         private String surrogateAccountQuery = "SELECT surrogate_user AS surrogateAccount FROM surrogate WHERE username=?";
-
-        public String getSurrogateSearchQuery() {
-            return surrogateSearchQuery;
-        }
-
-        public void setSurrogateSearchQuery(final String surrogateSearchQuery) {
-            this.surrogateSearchQuery = surrogateSearchQuery;
-        }
-
-        public String getSurrogateAccountQuery() {
-            return surrogateAccountQuery;
-        }
-
-        public void setSurrogateAccountQuery(final String surrogateAccountQuery) {
-            this.surrogateAccountQuery = surrogateAccountQuery;
-        }
     }
 }

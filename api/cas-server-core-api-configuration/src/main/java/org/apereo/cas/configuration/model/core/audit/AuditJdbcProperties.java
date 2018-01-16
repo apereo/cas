@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
 @Getter
 @Setter
 public class AuditJdbcProperties extends AbstractJpaProperties {
+
     private static final long serialVersionUID = 4227475246873515918L;
 
     /**
@@ -24,7 +25,7 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * This setting must almost always be set to true.
      */
     private boolean asynchronous = true;
-    
+
     /**
      * Indicates how long audit records should be kept in the database.
      * This is used by the clean-up criteria to clean up after stale audit records.
@@ -45,4 +46,3 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      */
     private String propagationBehaviorName = "PROPAGATION_REQUIRED";
 }
-

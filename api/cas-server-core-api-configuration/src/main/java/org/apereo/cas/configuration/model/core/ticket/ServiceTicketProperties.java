@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.ticket;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ServiceTicketProperties}.
@@ -13,9 +14,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class ServiceTicketProperties implements Serializable {
 
     private static final long serialVersionUID = -7445209580598499921L;
+
     /**
      * Controls number of times a service ticket can be used within CAS server. Usage in CAS context means service ticket validation
      * transaction.
@@ -31,28 +35,4 @@ public class ServiceTicketProperties implements Serializable {
      * Maximum length of generated service tickets.
      */
     private int maxLength = 20;
-
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public void setMaxLength(final int maxLength) {
-        this.maxLength = maxLength;
-    }
-    
-    public int getNumberOfUses() {
-        return numberOfUses;
-    }
-
-    public void setNumberOfUses(final int numberOfUses) {
-        this.numberOfUses = numberOfUses;
-    }
-
-    public long getTimeToKillInSeconds() {
-        return timeToKillInSeconds;
-    }
-
-    public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-        this.timeToKillInSeconds = timeToKillInSeconds;
-    }
 }

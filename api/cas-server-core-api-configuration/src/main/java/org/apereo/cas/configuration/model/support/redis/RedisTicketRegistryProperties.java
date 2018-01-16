@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties for Redis.
@@ -13,7 +15,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  */
 @RequiresModule(name = "cas-server-support-redis-ticket-registry")
 @Slf4j
+@Getter
+@Setter
 public class RedisTicketRegistryProperties extends BaseRedisProperties {
+
     private static final long serialVersionUID = -2600996050439638782L;
 
     /**
@@ -25,13 +30,4 @@ public class RedisTicketRegistryProperties extends BaseRedisProperties {
     public RedisTicketRegistryProperties() {
         this.crypto.setEnabled(false);
     }
-
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
 }

@@ -3,9 +3,10 @@ package org.apereo.cas.configuration.model.core.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link LdapPrincipalAttributesProperties}.
@@ -15,7 +16,10 @@ import java.util.Map;
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class LdapPrincipalAttributesProperties extends AbstractLdapSearchProperties {
+
     private static final long serialVersionUID = 5760065368731012063L;
 
     /**
@@ -34,20 +38,4 @@ public class LdapPrincipalAttributesProperties extends AbstractLdapSearchPropert
      * use for virtual renames.
      */
     private Map<String, String> attributes = new HashMap();
-
-    public Map<String, String> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(final Map<String, String> attributes) {
-        this.attributes = attributes;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
 }

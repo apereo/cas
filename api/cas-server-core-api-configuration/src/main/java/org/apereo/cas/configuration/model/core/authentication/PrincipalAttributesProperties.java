@@ -2,13 +2,14 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link PrincipalAttributesProperties}.
@@ -31,9 +32,12 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class PrincipalAttributesProperties implements Serializable {
 
     private static final long serialVersionUID = -4515569588579072890L;
+
     /**
      * Indicates the global cache expiration period, once attributes
      * are fetched from the underlying attribute repository.
@@ -44,7 +48,7 @@ public class PrincipalAttributesProperties implements Serializable {
      * Expiration caching timeunit for attributes.
      */
     private String expirationTimeUnit = TimeUnit.MINUTES.name();
-    
+
     /**
      * Indicates the global cache size used to store attributes
      * retrieved from the attribute repository.
@@ -121,108 +125,4 @@ public class PrincipalAttributesProperties implements Serializable {
      * </pre>
      */
     private GrouperPrincipalAttributesProperties grouper = new GrouperPrincipalAttributesProperties();
-
-    public List<ScriptedPrincipalAttributesProperties> getScript() {
-        return script;
-    }
-
-    public void setScript(final List<ScriptedPrincipalAttributesProperties> script) {
-        this.script = script;
-    }
-
-    public List<RestPrincipalAttributesProperties> getRest() {
-        return rest;
-    }
-
-    public void setRest(final List<RestPrincipalAttributesProperties> rest) {
-        this.rest = rest;
-    }
-
-    public StubPrincipalAttributesProperties getStub() {
-        return stub;
-    }
-
-    public void setStub(final StubPrincipalAttributesProperties stub) {
-        this.stub = stub;
-    }
-
-    public GrouperPrincipalAttributesProperties getGrouper() {
-        return grouper;
-    }
-
-    public void setGrouper(final GrouperPrincipalAttributesProperties grouper) {
-        this.grouper = grouper;
-    }
-
-    public List<GroovyPrincipalAttributesProperties> getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final List<GroovyPrincipalAttributesProperties> groovy) {
-        this.groovy = groovy;
-    }
-
-    public List<JsonPrincipalAttributesProperties> getJson() {
-        return json;
-    }
-
-    public void setJson(final List<JsonPrincipalAttributesProperties> json) {
-        this.json = json;
-    }
-
-    public List<LdapPrincipalAttributesProperties> getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final List<LdapPrincipalAttributesProperties> ldap) {
-        this.ldap = ldap;
-    }
-
-    public String getMerger() {
-        return merger;
-    }
-
-    public void setMerger(final String merger) {
-        this.merger = merger;
-    }
-
-    public int getExpirationTime() {
-        return expirationTime;
-    }
-
-    public void setExpirationTime(final int expirationTime) {
-        this.expirationTime = expirationTime;
-    }
-
-    public int getMaximumCacheSize() {
-        return maximumCacheSize;
-    }
-
-    public void setMaximumCacheSize(final int maximumCacheSize) {
-        this.maximumCacheSize = maximumCacheSize;
-    }
-
-    public List<JdbcPrincipalAttributesProperties> getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final List<JdbcPrincipalAttributesProperties> jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public Set<String> getDefaultAttributesToRelease() {
-        return defaultAttributesToRelease;
-    }
-
-    public void setDefaultAttributesToRelease(final Set<String> defaultAttributesToRelease) {
-        this.defaultAttributesToRelease = defaultAttributesToRelease;
-    }
-
-    public String getExpirationTimeUnit() {
-        return expirationTimeUnit;
-    }
-
-    public void setExpirationTimeUnit(final String expirationTimeUnit) {
-        this.expirationTimeUnit = expirationTimeUnit;
-    }
 }

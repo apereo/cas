@@ -2,6 +2,8 @@ package org.apereo.cas.configuration.model.support.mongo;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SingleCollectionMongoDbProperties}.
@@ -10,7 +12,10 @@ import org.apereo.cas.configuration.support.RequiredProperty;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
 public class SingleCollectionMongoDbProperties extends BaseMongoDbProperties {
+
     private static final long serialVersionUID = 4869686250345657447L;
 
     /**
@@ -23,20 +28,4 @@ public class SingleCollectionMongoDbProperties extends BaseMongoDbProperties {
      * Whether collections should be dropped on startup and re-created.
      */
     private boolean dropCollection;
-
-    public boolean isDropCollection() {
-        return dropCollection;
-    }
-
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
-    }
-    
-    public String getCollection() {
-        return collection;
-    }
-
-    public void setCollection(final String collection) {
-        this.collection = collection;
-    }
 }

@@ -5,8 +5,9 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderPro
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link RadiusProperties}.
@@ -16,9 +17,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-radius")
 @Slf4j
+@Getter
+@Setter
 public class RadiusProperties implements Serializable {
 
     private static final long serialVersionUID = 5244307919878753714L;
+
     /**
      * Whether catastrophic errors should be skipped
      * and fail over to the next server.
@@ -59,60 +63,4 @@ public class RadiusProperties implements Serializable {
      * The name of the authentication handler.
      */
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public boolean isFailoverOnException() {
-        return failoverOnException;
-    }
-
-    public void setFailoverOnException(final boolean failoverOnException) {
-        this.failoverOnException = failoverOnException;
-    }
-
-    public boolean isFailoverOnAuthenticationFailure() {
-        return failoverOnAuthenticationFailure;
-    }
-
-    public void setFailoverOnAuthenticationFailure(final boolean failoverOnAuthenticationFailure) {
-        this.failoverOnAuthenticationFailure = failoverOnAuthenticationFailure;
-    }
-
-    public RadiusServerProperties getServer() {
-        return server;
-    }
-
-    public void setServer(final RadiusServerProperties server) {
-        this.server = server;
-    }
-
-    public RadiusClientProperties getClient() {
-        return client;
-    }
-
-    public void setClient(final RadiusClientProperties client) {
-        this.client = client;
-    }
 }

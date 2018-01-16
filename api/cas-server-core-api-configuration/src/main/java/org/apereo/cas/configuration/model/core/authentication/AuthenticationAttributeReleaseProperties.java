@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +18,7 @@ import java.util.List;
 @Getter
 @Setter
 public class AuthenticationAttributeReleaseProperties {
+
     /**
      * List of authentication attributes that should never be released.
      */

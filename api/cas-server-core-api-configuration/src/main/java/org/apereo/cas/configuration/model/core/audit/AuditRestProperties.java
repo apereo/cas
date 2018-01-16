@@ -15,5 +15,6 @@ import org.apereo.cas.configuration.support.RestEndpointProperties;
 @Getter
 @Setter
 public class AuditRestProperties extends RestEndpointProperties {
+
     private static final long serialVersionUID = 3893437775090452831L;
 }

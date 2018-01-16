@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.webapp;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for locale.
@@ -13,9 +14,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-web")
 @Slf4j
+@Getter
+@Setter
 public class LocaleProperties implements Serializable {
 
     private static final long serialVersionUID = -1644471820900213781L;
+
     /**
      * Parameter name to use when switching locales.
      */
@@ -25,20 +29,4 @@ public class LocaleProperties implements Serializable {
      * Default locale.
      */
     private String defaultValue = "en";
-
-    public String getParamName() {
-        return paramName;
-    }
-
-    public void setParamName(final String paramName) {
-        this.paramName = paramName;
-    }
-
-    public String getDefaultValue() {
-        return defaultValue;
-    }
-
-    public void setDefaultValue(final String defaultValue) {
-        this.defaultValue = defaultValue;
-    }
 }

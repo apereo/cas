@@ -1,10 +1,10 @@
 package org.apereo.cas.configuration.model.support.influxdb;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link InfluxDbProperties}.
@@ -13,7 +13,10 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
 public class InfluxDbProperties implements Serializable {
+
     private static final long serialVersionUID = -1945287308473842616L;
 
     /**
@@ -50,7 +53,7 @@ public class InfluxDbProperties implements Serializable {
      * and recreated.
      */
     private boolean dropDatabase;
-    
+
     /**
      * The number of point to flush and write to the database
      * as part of the batch.
@@ -62,7 +65,7 @@ public class InfluxDbProperties implements Serializable {
      * to flush points.
      */
     private String batchInterval = "PT5S";
-    
+
     /**
      * Database consistency level.
      * Acceptable values are {@code ALL, ANY, ONE, QUORUM}.
@@ -74,76 +77,4 @@ public class InfluxDbProperties implements Serializable {
      * </ul>
      */
     private String consistencyLevel = "ALL";
-
-    public int getPointsToFlush() {
-        return pointsToFlush;
-    }
-
-    public void setPointsToFlush(final int pointsToFlush) {
-        this.pointsToFlush = pointsToFlush;
-    }
-
-    public int getBatchInterval() {
-        return (int) Beans.newDuration(this.batchInterval).toMillis();
-    }
-
-    public void setBatchInterval(final String batchInterval) {
-        this.batchInterval = batchInterval;
-    }
-
-    public String getRetentionPolicy() {
-        return retentionPolicy;
-    }
-
-    public void setRetentionPolicy(final String retentionPolicy) {
-        this.retentionPolicy = retentionPolicy;
-    }
-
-    public String getConsistencyLevel() {
-        return consistencyLevel;
-    }
-
-    public void setConsistencyLevel(final String consistencyLevel) {
-        this.consistencyLevel = consistencyLevel;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(final String database) {
-        this.database = database;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public boolean isDropDatabase() {
-        return dropDatabase;
-    }
-
-    public void setDropDatabase(final boolean dropDatabase) {
-        this.dropDatabase = dropDatabase;
-    }
 }

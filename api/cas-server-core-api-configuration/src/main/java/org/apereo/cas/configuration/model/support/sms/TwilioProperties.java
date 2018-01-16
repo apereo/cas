@@ -3,8 +3,9 @@ package org.apereo.cas.configuration.model.support.sms;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link TwilioProperties}.
@@ -14,8 +15,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-sms-twilio")
 @Slf4j
+@Getter
+@Setter
 public class TwilioProperties implements Serializable {
+
     private static final long serialVersionUID = -7043132225482495229L;
+
     /**
      * Twilio account identifier used for authentication.
      */
@@ -27,20 +32,4 @@ public class TwilioProperties implements Serializable {
      */
     @RequiredProperty
     private String token;
-
-    public String getAccountId() {
-        return accountId;
-    }
-
-    public void setAccountId(final String accountId) {
-        this.accountId = accountId;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
-    }
 }

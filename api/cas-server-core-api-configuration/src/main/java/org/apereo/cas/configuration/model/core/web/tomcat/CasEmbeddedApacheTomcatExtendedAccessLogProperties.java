@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatExtendedAccessLogProperties}.
@@ -13,8 +14,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Slf4j
+@Getter
+@Setter
 public class CasEmbeddedApacheTomcatExtendedAccessLogProperties implements Serializable {
+
     private static final long serialVersionUID = 6738161402499196038L;
+
     /**
      * Flag to indicate whether extended log facility is enabled.
      */
@@ -39,44 +44,4 @@ public class CasEmbeddedApacheTomcatExtendedAccessLogProperties implements Seria
      * Directory name for extended log.
      */
     private String directory;
-
-    public String getDirectory() {
-        return directory;
-    }
-
-    public void setDirectory(final String directory) {
-        this.directory = directory;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(final String pattern) {
-        this.pattern = pattern;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(final String suffix) {
-        this.suffix = suffix;
-    }
-
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
 }

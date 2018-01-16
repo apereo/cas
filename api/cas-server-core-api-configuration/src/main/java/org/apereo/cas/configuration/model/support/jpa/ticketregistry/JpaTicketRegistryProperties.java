@@ -3,11 +3,11 @@ package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import javax.persistence.LockModeType;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Common properties for jpa ticket reg.
@@ -17,6 +17,8 @@ import javax.persistence.LockModeType;
  */
 @RequiresModule(name = "cas-server-support-jpa-ticket-registry")
 @Slf4j
+@Getter
+@Setter
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**
@@ -47,29 +49,5 @@ public class JpaTicketRegistryProperties extends AbstractJpaProperties {
     public JpaTicketRegistryProperties() {
         super.setUrl("jdbc:hsqldb:mem:cas-ticket-registry");
         this.crypto.setEnabled(false);
-    }
-
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
-    public long getJpaLockingTimeout() {
-        return Beans.newDuration(jpaLockingTimeout).getSeconds();
-    }
-
-    public void setJpaLockingTimeout(final String jpaLockingTimeout) {
-        this.jpaLockingTimeout = jpaLockingTimeout;
-    }
-
-    public LockModeType getTicketLockType() {
-        return ticketLockType;
-    }
-
-    public void setTicketLockType(final LockModeType ticketLockType) {
-        this.ticketLockType = ticketLockType;
     }
 }

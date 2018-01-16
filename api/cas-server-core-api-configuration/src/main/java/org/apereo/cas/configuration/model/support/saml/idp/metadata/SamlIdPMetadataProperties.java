@@ -12,6 +12,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SamlIdPMetadataProperties}.
@@ -21,7 +23,10 @@ import java.util.concurrent.TimeUnit;
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
 @Slf4j
+@Getter
+@Setter
 public class SamlIdPMetadataProperties implements Serializable {
+
     private static final long serialVersionUID = -1020542741768471305L;
 
     /**
@@ -58,7 +63,7 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private JpaSamlMetadataProperties jpa = new JpaSamlMetadataProperties();
-    
+
     /**
      * Algorithm name to use when generating private key.
      */
@@ -78,38 +83,6 @@ public class SamlIdPMetadataProperties implements Serializable {
      * Supported content types in case the metadata instance is connecting to an MDQ server.
      */
     private List<String> supportedContentTypes = new ArrayList<>();
-
-    public boolean isFailFast() {
-        return failFast;
-    }
-
-    public void setFailFast(final boolean failFast) {
-        this.failFast = failFast;
-    }
-
-    public boolean isRequireValidMetadata() {
-        return requireValidMetadata;
-    }
-
-    public void setRequireValidMetadata(final boolean requireValidMetadata) {
-        this.requireValidMetadata = requireValidMetadata;
-    }
-
-    public long getCacheExpirationMinutes() {
-        return cacheExpirationMinutes;
-    }
-
-    public void setCacheExpirationMinutes(final long cacheExpirationMinutes) {
-        this.cacheExpirationMinutes = cacheExpirationMinutes;
-    }
-
-    public Resource getLocation() {
-        return location;
-    }
-
-    public void setLocation(final Resource location) {
-        this.location = location;
-    }
 
     /**
      * Gets full location of signing cert file.
@@ -131,12 +104,14 @@ public class SamlIdPMetadataProperties implements Serializable {
         return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.key"));
     }
 
-    public String getPrivateKeyAlgName() {
-        return privateKeyAlgName;
-    }
-
-    public void setPrivateKeyAlgName(final String privateKeyAlgName) {
-        this.privateKeyAlgName = privateKeyAlgName;
+    /**
+     * Gets idp metadata file.
+     *
+     * @return the metadata file
+     * @throws Exception the exception
+     */
+    public File getMetadataFile() throws Exception {
+        return new File(this.location.getFile(), "idp-metadata.xml");
     }
 
     /**
@@ -157,55 +132,5 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     public Resource getEncryptionKeyFile() throws Exception {
         return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.key"));
-    }
-
-    /**
-     * Gets idp metadata file.
-     *
-     * @return the metadata file
-     * @throws Exception the exception
-     */
-    public File getMetadataFile() throws Exception {
-        return new File(this.location.getFile(), "idp-metadata.xml");
-    }
-
-    public String getBasicAuthnUsername() {
-        return basicAuthnUsername;
-    }
-
-    public void setBasicAuthnUsername(final String basicAuthnUsername) {
-        this.basicAuthnUsername = basicAuthnUsername;
-    }
-
-    public String getBasicAuthnPassword() {
-        return basicAuthnPassword;
-    }
-
-    public void setBasicAuthnPassword(final String basicAuthnPassword) {
-        this.basicAuthnPassword = basicAuthnPassword;
-    }
-
-    public List<String> getSupportedContentTypes() {
-        return supportedContentTypes;
-    }
-
-    public void setSupportedContentTypes(final List<String> supportedContentTypes) {
-        this.supportedContentTypes = supportedContentTypes;
-    }
-
-    public MongoDbSamlMetadataProperties getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final MongoDbSamlMetadataProperties mongo) {
-        this.mongo = mongo;
-    }
-
-    public JpaSamlMetadataProperties getJpa() {
-        return jpa;
-    }
-
-    public void setJpa(final JpaSamlMetadataProperties jpa) {
-        this.jpa = jpa;
     }
 }

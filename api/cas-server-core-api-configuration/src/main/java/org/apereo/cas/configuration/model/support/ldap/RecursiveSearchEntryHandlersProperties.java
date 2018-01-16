@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.Serializable;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link RecursiveSearchEntryHandlersProperties}.
@@ -12,30 +13,19 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
 public class RecursiveSearchEntryHandlersProperties implements Serializable {
+
     private static final long serialVersionUID = 7038108925310792763L;
+
     /**
      * The Search attribute.
      */
     private String searchAttribute;
+
     /**
      * The Merge attributes.
      */
     private List<String> mergeAttributes;
-
-    public String getSearchAttribute() {
-        return searchAttribute;
-    }
-
-    public void setSearchAttribute(final String searchAttribute) {
-        this.searchAttribute = searchAttribute;
-    }
-
-    public List<String> getMergeAttributes() {
-        return mergeAttributes;
-    }
-
-    public void setMergeAttributes(final List<String> mergeAttributes) {
-        this.mergeAttributes = mergeAttributes;
-    }
 }

@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.sso;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for {@code create.sso}.
@@ -13,9 +14,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class SsoProperties implements Serializable {
 
     private static final long serialVersionUID = -8777647966370741733L;
+
     /**
      * Flag that indicates whether to create SSO session on re-newed authentication event.
      */
@@ -25,20 +29,4 @@ public class SsoProperties implements Serializable {
      * Flag that indicates whether to allow SSO session with a missing target service.
      */
     private boolean missingService = true;
-
-    public boolean isRenewedAuthn() {
-        return renewedAuthn;
-    }
-
-    public void setRenewedAuthn(final boolean renewedAuthn) {
-        this.renewedAuthn = renewedAuthn;
-    }
-
-    public boolean isMissingService() {
-        return missingService;
-    }
-
-    public void setMissingService(final boolean missingService) {
-        this.missingService = missingService;
-    }
 }

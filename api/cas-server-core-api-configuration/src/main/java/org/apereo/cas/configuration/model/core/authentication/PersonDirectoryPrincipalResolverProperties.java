@@ -2,8 +2,9 @@ package org.apereo.cas.configuration.model.core.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for cas.principal.resolver.persondir.
@@ -13,7 +14,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class PersonDirectoryPrincipalResolverProperties implements Serializable {
+
     private static final long serialVersionUID = 8929912041234879300L;
 
     /**
@@ -36,28 +40,4 @@ public class PersonDirectoryPrincipalResolverProperties implements Serializable 
      * Otherwise, simply logs the condition as an error without raising a catastrophic error.
      */
     private boolean principalResolutionFailureFatal;
-
-    public boolean isPrincipalResolutionFailureFatal() {
-        return principalResolutionFailureFatal;
-    }
-
-    public void setPrincipalResolutionFailureFatal(final boolean principalResolutionFailureFatal) {
-        this.principalResolutionFailureFatal = principalResolutionFailureFatal;
-    }
-
-    public String getPrincipalAttribute() {
-        return principalAttribute;
-    }
-
-    public void setPrincipalAttribute(final String principalAttribute) {
-        this.principalAttribute = principalAttribute;
-    }
-
-    public boolean isReturnNull() {
-        return returnNull;
-    }
-
-    public void setReturnNull(final boolean returnNull) {
-        this.returnNull = returnNull;
-    }
 }

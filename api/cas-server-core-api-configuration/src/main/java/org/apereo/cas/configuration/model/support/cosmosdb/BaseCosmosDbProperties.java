@@ -3,8 +3,9 @@ package org.apereo.cas.configuration.model.support.cosmosdb;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseCosmosDbProperties}.
@@ -14,7 +15,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-cosmosdb-core")
 @Slf4j
+@Getter
+@Setter
 public abstract class BaseCosmosDbProperties implements Serializable {
+
     private static final long serialVersionUID = 2528153816791719898L;
 
     /**
@@ -69,60 +73,4 @@ public abstract class BaseCosmosDbProperties implements Serializable {
      * Whether collections should be dropped on startup and re-created.
      */
     private boolean dropCollection;
-
-    public boolean isDropCollection() {
-        return dropCollection;
-    }
-
-    public void setDropCollection(final boolean dropCollection) {
-        this.dropCollection = dropCollection;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(final String uri) {
-        this.uri = uri;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(final String key) {
-        this.key = key;
-    }
-
-    public String getConsistencyLevel() {
-        return consistencyLevel;
-    }
-
-    public void setConsistencyLevel(final String consistencyLevel) {
-        this.consistencyLevel = consistencyLevel;
-    }
-
-    public String getDatabase() {
-        return database;
-    }
-
-    public void setDatabase(final String database) {
-        this.database = database;
-    }
-
-    public boolean isAllowTelemetry() {
-        return allowTelemetry;
-    }
-
-    public void setAllowTelemetry(final boolean allowTelemetry) {
-        this.allowTelemetry = allowTelemetry;
-    }
-
-    public int getThroughput() {
-        return throughput;
-    }
-
-    public void setThroughput(final int throughput) {
-        this.throughput = throughput;
-    }
 }

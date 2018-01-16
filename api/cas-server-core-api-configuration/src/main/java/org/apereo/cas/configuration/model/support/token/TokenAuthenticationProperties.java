@@ -5,8 +5,9 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link TokenAuthenticationProperties}.
@@ -16,9 +17,12 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-token-webflow")
 @Slf4j
+@Getter
+@Setter
 public class TokenAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 6016124091895278265L;
+
     /**
      * Principal transformation settings.
      */
@@ -35,28 +39,4 @@ public class TokenAuthenticationProperties implements Serializable {
      * Name of the authentication handler.
      */
     private String name;
-
-    public EncryptionOptionalSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionOptionalSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
 }

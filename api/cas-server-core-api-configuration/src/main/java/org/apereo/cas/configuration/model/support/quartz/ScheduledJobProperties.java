@@ -3,8 +3,9 @@ package org.apereo.cas.configuration.model.support.quartz;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ScheduledJobProperties}.
@@ -14,7 +15,10 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-core-util", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class ScheduledJobProperties implements Serializable {
+
     private static final long serialVersionUID = 9059671958275130605L;
 
     /**
@@ -30,13 +34,5 @@ public class ScheduledJobProperties implements Serializable {
         schedule.setEnabled(true);
         schedule.setStartDelay(startDelay);
         schedule.setRepeatInterval(repeatInterval);
-    }
-
-    public SchedulingProperties getSchedule() {
-        return schedule;
-    }
-
-    public void setSchedule(final SchedulingProperties schedule) {
-        this.schedule = schedule;
     }
 }

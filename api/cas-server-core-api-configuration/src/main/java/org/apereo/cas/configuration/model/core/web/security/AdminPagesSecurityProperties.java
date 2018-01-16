@@ -8,11 +8,12 @@ import org.apereo.cas.configuration.model.support.ldap.LdapAuthorizationProperti
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AdminPagesSecurityProperties}.
@@ -22,8 +23,12 @@ import java.util.stream.Stream;
  */
 @RequiresModule(name = "cas-server-core-web", automated = true)
 @Slf4j
+@Getter
+@Setter
 public class AdminPagesSecurityProperties implements Serializable {
+
     private static final long serialVersionUID = 9129787932447507179L;
+
     /**
      * The IP address pattern that can control access to the admin status endpoints.
      */
@@ -36,25 +41,27 @@ public class AdminPagesSecurityProperties implements Serializable {
      * be set to {@code X-Forwarded-For}.
      */
     private String alternateIpHeaderName;
-    
+
     /**
      * Roles that are required for access to the admin status endpoint
      * in the event that access is controlled via external authentication
      * means such as Spring Security's authentication providers.
      */
-    private List<String> adminRoles = Stream.of("ROLE_ADMIN", "ROLE_ACTUATOR").collect(Collectors.toList());;
+    private List<String> adminRoles = Stream.of("ROLE_ADMIN", "ROLE_ACTUATOR").collect(Collectors.toList());
 
     /**
      * CAS server login URL to use. 
      * When defined, will begin to protect the access status endpoints via CAS itself.
      */
     private String loginUrl;
+
     /**
      * The service parameter for the admin status endpoint. 
      * This is typically set to the dashboard url as the initial starting point
      * for the redirect.
      */
     private String service;
+
     /**
      * List of users allowed access to the admin status endpoint
      * provided CAS is controlling access to the status endpoint.
@@ -73,6 +80,7 @@ public class AdminPagesSecurityProperties implements Serializable {
      * for admin status authorization and access control.
      */
     private Jdbc jdbc = new Jdbc();
+
     /**
      * Enable Spring Security's LDAP authentication provider
      * for admin status authorization and access control.
@@ -85,92 +93,17 @@ public class AdminPagesSecurityProperties implements Serializable {
      */
     private Jaas jaas = new Jaas();
 
-    public Jaas getJaas() {
-        return jaas;
-    }
-
-    public void setJaas(final Jaas jaas) {
-        this.jaas = jaas;
-    }
-
-    public Jdbc getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final Jdbc jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public boolean isActuatorEndpointsEnabled() {
-        return actuatorEndpointsEnabled;
-    }
-
-    public void setActuatorEndpointsEnabled(final boolean actuatorEndpointsEnabled) {
-        this.actuatorEndpointsEnabled = actuatorEndpointsEnabled;
-    }
-
-    public String getAlternateIpHeaderName() {
-        return alternateIpHeaderName;
-    }
-
-    public void setAlternateIpHeaderName(final String alternateIpHeaderName) {
-        this.alternateIpHeaderName = alternateIpHeaderName;
-    }
-
-    public String getIp() {
-        return ip;
-    }
-
-    public void setIp(final String ip) {
-        this.ip = ip;
-    }
-
-    public List<String> getAdminRoles() {
-        return adminRoles;
-    }
-
-    public void setAdminRoles(final List<String> adminRoles) {
-        this.adminRoles = adminRoles;
-    }
-
-    public String getLoginUrl() {
-        return loginUrl;
-    }
-
-    public void setLoginUrl(final String loginUrl) {
-        this.loginUrl = loginUrl;
-    }
-
-    public String getService() {
-        return service;
-    }
-
-    public void setService(final String service) {
-        this.service = service;
-    }
-
-    public Resource getUsers() {
-        return users;
-    }
-
-    public void setUsers(final Resource users) {
-        this.users = users;
-    }
-
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
+    @Getter
+    @Setter
     public static class Jaas implements Serializable {
+
         private static final long serialVersionUID = -3024678577827371641L;
+
         /**
          * JAAS login resource file.
          */
         private Resource loginConfig;
+
         /**
          * If set, a call to {@code Configuration#refresh()} 
          * will be made by {@code #configureJaas(Resource)} method.
@@ -189,33 +122,12 @@ JAASTest {
          In the above example, {@code JAASTest} should be set as the context name.
          */
         private String loginContextName;
-
-        public Resource getLoginConfig() {
-            return loginConfig;
-        }
-
-        public void setLoginConfig(final Resource loginConfig) {
-            this.loginConfig = loginConfig;
-        }
-
-        public boolean isRefreshConfigurationOnStartup() {
-            return refreshConfigurationOnStartup;
-        }
-
-        public void setRefreshConfigurationOnStartup(final boolean refreshConfigurationOnStartup) {
-            this.refreshConfigurationOnStartup = refreshConfigurationOnStartup;
-        }
-
-        public String getLoginContextName() {
-            return loginContextName;
-        }
-
-        public void setLoginContextName(final String loginContextName) {
-            this.loginContextName = loginContextName;
-        }
     }
-    
+
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapAuthenticationProperties {
+
         private static final long serialVersionUID = -7333244539096172557L;
 
         /**
@@ -224,24 +136,12 @@ JAASTest {
          */
         @NestedConfigurationProperty
         private LdapAuthorizationProperties ldapAuthz = new LdapAuthorizationProperties();
-
-        /**
-         * Gets ldap authz.
-         *
-         * @return the ldap authz
-         */
-        public LdapAuthorizationProperties getLdapAuthz() {
-            ldapAuthz.setBaseDn(getBaseDn());
-            ldapAuthz.setSearchFilter(getSearchFilter());
-            return ldapAuthz;
-        }
-
-        public void setLdapAuthz(final LdapAuthorizationProperties ldapAuthz) {
-            this.ldapAuthz = ldapAuthz;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Jdbc extends AbstractJpaProperties {
+
         private static final long serialVersionUID = 2625666117528467867L;
 
         /**
@@ -255,35 +155,11 @@ JAASTest {
          * {@code SELECT username,password,enabled FROM users WHERE username=?}
          */
         private String query;
-        
+
         /**
          * Password encoder properties.
          */
         @NestedConfigurationProperty
         private PasswordEncoderProperties passwordEncoder = new PasswordEncoderProperties();
-
-        public String getRolePrefix() {
-            return rolePrefix;
-        }
-
-        public void setRolePrefix(final String rolePrefix) {
-            this.rolePrefix = rolePrefix;
-        }
-
-        public String getQuery() {
-            return query;
-        }
-
-        public void setQuery(final String query) {
-            this.query = query;
-        }
-
-        public PasswordEncoderProperties getPasswordEncoder() {
-            return passwordEncoder;
-        }
-
-        public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-            this.passwordEncoder = passwordEncoder;
-        }
     }
 }

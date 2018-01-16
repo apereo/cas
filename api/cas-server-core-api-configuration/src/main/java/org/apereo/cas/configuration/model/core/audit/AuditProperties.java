@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 
 /**
@@ -17,6 +16,7 @@ import java.io.Serializable;
 @Getter
 @Setter
 public class AuditProperties implements Serializable {
+
     private static final long serialVersionUID = 3946106584608417663L;
 
     /**
@@ -65,7 +65,7 @@ public class AuditProperties implements Serializable {
      * this option allows one to query DNS to look up the server address of the CAS server processing requests.
      */
     private boolean useServerHostAddress;
-    
+
     /**
      * Family of sub-properties pertaining to Jdbc-based audit destinations.
      */

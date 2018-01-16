@@ -5,8 +5,9 @@ import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchPropert
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link GraphicalUserAuthenticationProperties}
@@ -18,48 +19,32 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-gua")
 @Slf4j
+@Getter
+@Setter
 public class GraphicalUserAuthenticationProperties implements Serializable {
+
     private static final long serialVersionUID = 7527953699378415460L;
+
     /**
      * Locate GUA settings and images from LDAP.
      */
     private Ldap ldap = new Ldap();
+
     /**
      * Locate GUA settings and images from a static image.
      */
     private SpringResourceProperties resource = new SpringResourceProperties();
 
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
-    public SpringResourceProperties getResource() {
-        return resource;
-    }
-
-    public void setResource(final SpringResourceProperties resource) {
-        this.resource = resource;
-    }
-    
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
+
         private static final long serialVersionUID = 4666838063728336692L;
+
         /**
          * Entry attribute that holds the user image.
          */
         @RequiredProperty
         private String imageAttribute;
-
-        public String getImageAttribute() {
-            return imageAttribute;
-        }
-
-        public void setImageAttribute(final String imageAttribute) {
-            this.imageAttribute = imageAttribute;
-        }
     }
-
 }

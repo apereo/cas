@@ -1,12 +1,12 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CasEmbeddedApacheTomcatAjpProperties}.
@@ -16,8 +16,12 @@ import java.util.Map;
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
 @Slf4j
+@Getter
+@Setter
 public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
+
     private static final long serialVersionUID = -32143821503580896L;
+
     /**
      * Sets the protocol to handle incoming traffic.
      */
@@ -54,33 +58,39 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
      * Enable AJP support in CAS for the embedded Apache Tomcat container.
      */
     private boolean enabled;
+
     /**
      * The default timeout for asynchronous requests in milliseconds. If not specified, this attribute is set to 10000 (10 seconds).
      */
     private String asyncTimeout = "PT5S";
+
     /**
      * Set to true if you want calls to request.getRemoteHost() to perform DNS lookups in order to return the actual host name of the remote client.
      * Set to false to skip the DNS lookup and return the IP address in String form instead (thereby improving performance).
      * By default, DNS lookups are disabled.
      */
     private boolean enableLookups;
+
     /**
      * The maximum size in bytes of the POST which will be handled by the container
      * FORM URL parameter parsing. The feature can be disabled by setting this attribute to a value
      * less than or equal to 0. If not specified, this attribute is set to 2097152 (2 megabytes).
      */
     private int maxPostSize = 20971520;
+
     /**
      * If this Connector is being used in a proxy configuration, configure this attribute
      * to specify the server port to be returned for calls to request.getServerPort().
      */
     private int proxyPort = -1;
+
     /**
      * If this Connector is supporting non-SSL requests, and a request is received
      * for which a matching &lt;security-constraint&gt; requires SSL transport,
      * Catalina will automatically redirect the request to the port number specified here.
      */
     private int redirectPort = -1;
+
     /**
      * Additional attributes to be set on the AJP connector in form of key-value pairs.
      * Examples include:
@@ -119,101 +129,4 @@ public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
      * See the Apache Tomcat documentation for a full list.
      */
     private Map<String, Object> attributes = new LinkedHashMap<>();
-
-    public Map<String, Object> getAttributes() {
-        return attributes;
-    }
-
-    public void setAttributes(final Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(final String protocol) {
-        this.protocol = protocol;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(final int port) {
-        this.port = port;
-    }
-
-    public boolean isSecure() {
-        return secure;
-    }
-
-    public void setSecure(final boolean secure) {
-        this.secure = secure;
-    }
-
-    public boolean isAllowTrace() {
-        return allowTrace;
-    }
-
-    public void setAllowTrace(final boolean allowTrace) {
-        this.allowTrace = allowTrace;
-    }
-
-    public String getScheme() {
-        return scheme;
-    }
-
-    public void setScheme(final String scheme) {
-        this.scheme = scheme;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public long getAsyncTimeout() {
-        return Beans.newDuration(asyncTimeout).toMillis();
-    }
-
-    public void setAsyncTimeout(final String asyncTimeout) {
-        this.asyncTimeout = asyncTimeout;
-    }
-
-    public boolean isEnableLookups() {
-
-        return enableLookups;
-    }
-
-    public void setEnableLookups(final boolean enableLookups) {
-        this.enableLookups = enableLookups;
-    }
-
-    public int getMaxPostSize() {
-        return maxPostSize;
-    }
-
-    public void setMaxPostSize(final int maxPostSize) {
-        this.maxPostSize = maxPostSize;
-    }
-
-    public int getProxyPort() {
-        return proxyPort;
-    }
-
-    public void setProxyPort(final int proxyPort) {
-        this.proxyPort = proxyPort;
-    }
-
-    public int getRedirectPort() {
-        return redirectPort;
-    }
-
-    public void setRedirectPort(final int redirectPort) {
-        this.redirectPort = redirectPort;
-    }
 }

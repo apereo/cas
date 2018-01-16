@@ -3,8 +3,9 @@ package org.apereo.cas.configuration.model.support.hazelcast.discovery;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link HazelcastJCloudsDiscoveryProperties}.
@@ -14,52 +15,65 @@ import java.io.Serializable;
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
 @Slf4j
+@Getter
+@Setter
 public class HazelcastJCloudsDiscoveryProperties implements Serializable {
 
     /**
      * JClouds provider property.
      */
     public static final String JCLOUDS_DISCOVERY_PROVIDER = "provider";
+
     /**
      * JClouds identity property.
      */
     public static final String JCLOUDS_DISCOVERY_IDENTITY = "identity";
+
     /**
      * JClouds credential property.
      */
     public static final String JCLOUDS_DISCOVERY_CREDENTIAL = "credential";
+
     /**
      * JClouds endpoint property.
      */
     public static final String JCLOUDS_DISCOVERY_ENDPOINT = "endpoint";
+
     /**
      * JClouds zones property.
      */
     public static final String JCLOUDS_DISCOVERY_ZONES = "zones";
+
     /**
      * JClouds regions property.
      */
     public static final String JCLOUDS_DISCOVERY_REGIONS = "regions";
+
     /**
      * JClouds tag-keys property.
      */
     public static final String JCLOUDS_DISCOVERY_TAG_KEYS = "tag-keys";
+
     /**
      * JClouds tag-values property.
      */
     public static final String JCLOUDS_DISCOVERY_TAG_VALUES = "tag-values";
+
     /**
      * JClouds group property.
      */
     public static final String JCLOUDS_DISCOVERY_GROUP = "group";
+
     /**
      * JClouds hz-port property.
      */
     public static final String JCLOUDS_DISCOVERY_HZ_PORT = "hz-port";
+
     /**
      * JClouds role-name property.
      */
     public static final String JCLOUDS_DISCOVERY_ROLE_NAME = "role-name";
+
     /**
      * JClouds credential path property.
      */
@@ -131,100 +145,4 @@ public class HazelcastJCloudsDiscoveryProperties implements Serializable {
      * (Required if Google Compute Engine is used.)
      */
     private String credentialPath;
-
-    public String getProvider() {
-        return provider;
-    }
-
-    public void setProvider(final String provider) {
-        this.provider = provider;
-    }
-
-    public String getIdentity() {
-        return identity;
-    }
-
-    public void setIdentity(final String identity) {
-        this.identity = identity;
-    }
-
-    public String getCredential() {
-        return credential;
-    }
-
-    public void setCredential(final String credential) {
-        this.credential = credential;
-    }
-
-    public String getEndpoint() {
-        return endpoint;
-    }
-
-    public void setEndpoint(final String endpoint) {
-        this.endpoint = endpoint;
-    }
-
-    public String getZones() {
-        return zones;
-    }
-
-    public void setZones(final String zones) {
-        this.zones = zones;
-    }
-
-    public String getRegions() {
-        return regions;
-    }
-
-    public void setRegions(final String regions) {
-        this.regions = regions;
-    }
-
-    public String getTagKeys() {
-        return tagKeys;
-    }
-
-    public void setTagKeys(final String tagKeys) {
-        this.tagKeys = tagKeys;
-    }
-
-    public String getTagValues() {
-        return tagValues;
-    }
-
-    public void setTagValues(final String tagValues) {
-        this.tagValues = tagValues;
-    }
-
-    public String getGroup() {
-        return group;
-    }
-
-    public void setGroup(final String group) {
-        this.group = group;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(final int port) {
-        this.port = port;
-    }
-
-    public String getRoleName() {
-        return roleName;
-    }
-
-    public void setRoleName(final String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getCredentialPath() {
-        return credentialPath;
-    }
-
-    public void setCredentialPath(final String credentialPath) {
-        this.credentialPath = credentialPath;
-    }
 }

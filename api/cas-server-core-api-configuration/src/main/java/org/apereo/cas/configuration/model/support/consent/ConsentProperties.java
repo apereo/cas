@@ -8,9 +8,10 @@ import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbP
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 import java.time.temporal.ChronoUnit;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ConsentProperties}.
@@ -20,13 +21,18 @@ import java.time.temporal.ChronoUnit;
  */
 @RequiresModule(name = "cas-server-support-consent-webflow")
 @Slf4j
+@Getter
+@Setter
 public class ConsentProperties implements Serializable {
+
     private static final long serialVersionUID = 5201308051524438384L;
+
     /**
      * Global reminder time unit, to reconfirm consent
      * in cases no changes are detected.
      */
     private int reminder = 30;
+
     /**
      * Global reminder time unit of measure, to reconfirm consent
      * in cases no changes are detected.
@@ -69,95 +75,35 @@ public class ConsentProperties implements Serializable {
     @NestedConfigurationProperty
     private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
-    public EncryptionJwtSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionJwtSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
-    public Json getJson() {
-        return json;
-    }
-
-    public Groovy getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final Groovy groovy) {
-        this.groovy = groovy;
-    }
-
-    public void setJson(final Json json) {
-        this.json = json;
-    }
-
-    public Jpa getJpa() {
-        return jpa;
-    }
-
-    public void setJpa(final Jpa jpa) {
-        this.jpa = jpa;
-    }
-
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
-    public int getReminder() {
-        return reminder;
-    }
-
-    public void setReminder(final int reminder) {
-        this.reminder = reminder;
-    }
-
-    public ChronoUnit getReminderTimeUnit() {
-        return reminderTimeUnit;
-    }
-
-    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
-        this.reminderTimeUnit = reminderTimeUnit;
-    }
-
-    public Rest getRest() {
-        return rest;
-    }
-
-    public void setRest(final Rest rest) {
-        this.rest = rest;
-    }
-
-    public MongoDb getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final MongoDb mongo) {
-        this.mongo = mongo;
-    }
-
     @RequiresModule(name = "cas-server-consent-webflow")
+    @Getter
+    @Setter
     public static class Json extends SpringResourceProperties {
+
         private static final long serialVersionUID = 7079027843747126083L;
     }
 
     @RequiresModule(name = "cas-server-consent-webflow")
+    @Getter
+    @Setter
     public static class Groovy extends SpringResourceProperties {
+
         private static final long serialVersionUID = 7079027843747126083L;
     }
 
     @RequiresModule(name = "cas-server-consent-jdbc")
+    @Getter
+    @Setter
     public static class Jpa extends AbstractJpaProperties {
+
         private static final long serialVersionUID = 1646689616653363554L;
     }
 
     @RequiresModule(name = "cas-server-consent-ldap")
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
+
         private static final long serialVersionUID = 1L;
 
         /**
@@ -169,26 +115,13 @@ public class ConsentProperties implements Serializable {
          * Name of LDAP attribute that holds consent decisions as JSON.
          */
         private String consentAttributeName = "casConsentDecision";
-        
-        public LdapType getType() {
-            return type;
-        }
-
-        public void setType(final LdapType type) {
-            this.type = type;
-        }
-
-        public String getConsentAttributeName() {
-            return consentAttributeName;
-        }
-
-        public void setConsentAttributeName(final String consentAttributeName) {
-            this.consentAttributeName = consentAttributeName;
-        }
     }
 
     @RequiresModule(name = "cas-server-consent-mongo")
+    @Getter
+    @Setter
     public static class MongoDb extends SingleCollectionMongoDbProperties {
+
         private static final long serialVersionUID = -1918436901491275547L;
 
         public MongoDb() {
@@ -197,20 +130,15 @@ public class ConsentProperties implements Serializable {
     }
 
     @RequiresModule(name = "cas-server-consent-rest")
+    @Getter
+    @Setter
     public static class Rest implements Serializable {
+
         private static final long serialVersionUID = -6909617495470495341L;
 
         /**
          * REST endpoint to use to which consent decision records will be submitted.
          */
         private String endpoint;
-
-        public String getEndpoint() {
-            return endpoint;
-        }
-
-        public void setEndpoint(final String endpoint) {
-            this.endpoint = endpoint;
-        }
     }
 }
