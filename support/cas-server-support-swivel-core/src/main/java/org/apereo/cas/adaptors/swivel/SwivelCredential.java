@@ -6,8 +6,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * This is {@link SwivelCredential}.
@@ -16,8 +16,11 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class SwivelCredential implements Credential, Serializable {
+
     private static final long serialVersionUID = 361318678073819595L;
+
     private String token;
 
     public SwivelCredential() {
@@ -25,13 +28,6 @@ public class SwivelCredential implements Credential, Serializable {
 
     public SwivelCredential(final String token) {
         this.token = token;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("token", this.token)
-                .toString();
     }
 
     @Override

@@ -7,7 +7,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -26,6 +25,7 @@ import java.util.Set;
 @Entity
 @DiscriminatorValue("oidc")
 @Slf4j
+@ToString(callSuper = true)
 public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
@@ -50,7 +50,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     @Column(length = 255, updatable = true, insertable = true)
     private String subjectType;
-    
+
     @Column(updatable = true, insertable = true)
     private boolean dynamicallyRegistered;
 
@@ -226,52 +226,12 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         }
         final OidcRegisteredService rhs = (OidcRegisteredService) obj;
         final EqualsBuilder builder = new EqualsBuilder();
-        return builder
-                .appendSuper(super.equals(obj))
-                .append(this.jwks, rhs.jwks)
-                .append(this.implicit, rhs.implicit)
-                .append(this.signIdToken, rhs.signIdToken)
-                .append(this.encryptIdToken, rhs.encryptIdToken)
-                .append(this.idTokenEncryptionAlg, rhs.idTokenEncryptionAlg)
-                .append(this.idTokenEncryptionEncoding, rhs.idTokenEncryptionEncoding)
-                .append(this.getScopes(), rhs.getScopes())
-                .append(this.sectorIdentifierUri, rhs.sectorIdentifierUri)
-                .append(this.getSubjectType(), rhs.getSubjectType())
-                .isEquals();
+        return builder.appendSuper(super.equals(obj)).append(this.jwks, rhs.jwks).append(this.implicit, rhs.implicit).append(this.signIdToken, rhs.signIdToken).append(this.encryptIdToken, rhs.encryptIdToken).append(this.idTokenEncryptionAlg, rhs.idTokenEncryptionAlg).append(this.idTokenEncryptionEncoding, rhs.idTokenEncryptionEncoding).append(this.getScopes(), rhs.getScopes()).append(this.sectorIdentifierUri, rhs.sectorIdentifierUri).append(this.getSubjectType(), rhs.getSubjectType()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(jwks)
-                .append(signIdToken)
-                .append(implicit)
-                .append(encryptIdToken)
-                .append(idTokenEncryptionAlg)
-                .append(idTokenEncryptionEncoding)
-                .append(dynamicallyRegistered)
-                .append(getScopes())
-                .append(sectorIdentifierUri)
-                .append(subjectType)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("jwks", jwks)
-                .append("implicit", implicit)
-                .append("signIdToken", signIdToken)
-                .append("idTokenEncryptionAlg", idTokenEncryptionAlg)
-                .append("idTokenEncryptionEncoding", idTokenEncryptionEncoding)
-                .append("encryptIdToken", encryptIdToken)
-                .append("dynamicallyRegistered", dynamicallyRegistered)
-                .append("scopes", getScopes())
-                .append("sectorIdentifierUri", sectorIdentifierUri)
-                .append("subjectType", subjectType)
-                .toString();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(jwks).append(signIdToken).append(implicit).append(encryptIdToken).append(idTokenEncryptionAlg).append(idTokenEncryptionEncoding).append(dynamicallyRegistered).append(getScopes()).append(sectorIdentifierUri).append(subjectType).toHashCode();
     }
 
     @Override

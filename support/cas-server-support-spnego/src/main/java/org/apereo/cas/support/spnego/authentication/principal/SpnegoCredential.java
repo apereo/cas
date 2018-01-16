@@ -6,11 +6,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.springframework.util.Assert;
-
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.IntStream;
+import lombok.ToString;
 
 /**
  * Credential that are a holder for SPNEGO init token.
@@ -20,6 +20,7 @@ import java.util.stream.IntStream;
  * @since 3.1
  */
 @Slf4j
+@ToString
 public class SpnegoCredential implements Credential, Serializable {
 
     /**
@@ -32,11 +33,7 @@ public class SpnegoCredential implements Credential, Serializable {
     private static final Byte CHAR_S_BYTE = (byte) 'S';
 
     /** The ntlmssp signature. */
-    private static final Byte[] NTLMSSP_SIGNATURE = {(byte) 'N',
-        (byte) 'T', (byte) 'L',
-        (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE,
-        (byte) 'P', (byte) 0};
-
+    private static final Byte[] NTLMSSP_SIGNATURE = { (byte) 'N', (byte) 'T', (byte) 'L', (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE, (byte) 'P', (byte) 0 };
 
     /**
      * The SPNEGO Init Token.
@@ -103,11 +100,6 @@ public class SpnegoCredential implements Credential, Serializable {
         return this.principal != null ? this.principal.getId() : UNKNOWN_ID;
     }
 
-    @Override
-    public String toString() {
-        return getId();
-    }
-
     /**
      * Checks if is token ntlm.
      *
@@ -126,12 +118,8 @@ public class SpnegoCredential implements Credential, Serializable {
         if (obj == null || !obj.getClass().equals(this.getClass())) {
             return false;
         }
-
         final SpnegoCredential c = (SpnegoCredential) obj;
-
-        return Arrays.equals(this.getInitToken(), c.getInitToken())
-                && this.principal.equals(c.getPrincipal())
-                && Arrays.equals(this.getNextToken(), c.getNextToken());
+        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal()) && Arrays.equals(this.getNextToken(), c.getNextToken());
     }
 
     @Override
@@ -140,9 +128,7 @@ public class SpnegoCredential implements Credential, Serializable {
         if (this.principal != null) {
             hash = this.principal.hashCode();
         }
-        return new HashCodeBuilder().append(this.getInitToken())
-            .append(this.getNextToken())
-            .append(hash).toHashCode();
+        return new HashCodeBuilder().append(this.getInitToken()).append(this.getNextToken()).append(hash).toHashCode();
     }
 
     /**

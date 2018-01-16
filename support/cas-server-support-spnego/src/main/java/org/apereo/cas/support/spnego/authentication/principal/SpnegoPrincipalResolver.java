@@ -18,14 +18,13 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 3.1
  */
 @Slf4j
+@ToString(callSuper = true)
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public SpnegoPrincipalResolver() {
     }
 
-    public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
-                                   final String principalAttributeName) {
+    public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalNameTransformer, principalAttributeName);
     }
 
@@ -38,15 +37,6 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null
-                && SpnegoCredential.class.equals(credential.getClass());
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
+        return credential != null && SpnegoCredential.class.equals(credential.getClass());
     }
 }

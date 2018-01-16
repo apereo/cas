@@ -7,10 +7,10 @@ import org.apache.http.HttpStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.ToString;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -19,13 +19,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 3.3.5
  */
 @Slf4j
-public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
-        extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
+@ToString
+public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
-
-    
     private final int failureThreshold;
+
     private final int failureRangeInSeconds;
+
     private final String usernameParameter;
 
     private double thresholdRate;
@@ -51,30 +51,21 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return true;
         }
-
         if (exceedsThreshold(request)) {
             recordThrottle(request);
             request.setAttribute(WebUtils.CAS_ACCESS_DENIED_REASON, "screen.blocked.message");
-            response.sendError(HttpStatus.SC_LOCKED,
-                    "Access Denied for user [" + StringEscapeUtils.escapeHtml4(request.getParameter(this.usernameParameter))
-                    + "] from IP Address [" + request.getRemoteAddr() + ']');
+            response.sendError(HttpStatus.SC_LOCKED, "Access Denied for user [" + StringEscapeUtils.escapeHtml4(request.getParameter(this.usernameParameter)) + "] from IP Address [" + request.getRemoteAddr() + ']');
             return false;
         }
-
         return true;
     }
 
     @Override
-    public void postHandle(final HttpServletRequest request, final HttpServletResponse response,
-                                 final Object o, final ModelAndView modelAndView) {
+    public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o, final ModelAndView modelAndView) {
         if (!HttpMethod.POST.name().equals(request.getMethod())) {
             return;
         }
-
-        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
-                                 && response.getStatus() != HttpStatus.SC_OK
-                                 && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
-
+        final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED && response.getStatus() != HttpStatus.SC_OK && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
@@ -103,20 +94,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter
      * @param request the request
      */
     protected void recordThrottle(final HttpServletRequest request) {
-        LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. "
-                + "Authentication attempt exceeds the failure threshold [{}]",
-                request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds,
-                this.failureThreshold);
-    }
-        
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("failureThreshold", this.failureThreshold)
-                .append("failureRangeInSeconds", this.failureRangeInSeconds)
-                .append("usernameParameter", this.usernameParameter)
-                .append("thresholdRate", this.thresholdRate)
-                .toString();
+        LOGGER.warn("Throttling submission from [{}]. More than [{}] failed login attempts within [{}] seconds. " + "Authentication attempt exceeds the failure threshold [{}]", request.getRemoteAddr(), this.failureThreshold, this.failureRangeInSeconds, this.failureThreshold);
     }
 
     @Override

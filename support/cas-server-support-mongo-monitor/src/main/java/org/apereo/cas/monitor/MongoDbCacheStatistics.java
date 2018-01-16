@@ -5,8 +5,8 @@ import com.mongodb.DBCollection;
 import lombok.extern.slf4j.Slf4j;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-
 import java.io.StringWriter;
+import lombok.ToString;
 
 /**
  * This is {@link MongoDbCacheStatistics}.
@@ -15,12 +15,12 @@ import java.io.StringWriter;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class MongoDbCacheStatistics implements CacheStatistics {
 
-
     private final DBCollection collection;
-    private final CommandResult statistics;
 
+    private final CommandResult statistics;
 
     public MongoDbCacheStatistics(final DBCollection collection) {
         this.collection = collection;
@@ -52,12 +52,5 @@ public class MongoDbCacheStatistics implements CacheStatistics {
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String toString() {
-        final StringBuilder builder = new StringBuilder();
-        this.toString(builder);
-        return builder.toString();
     }
 }

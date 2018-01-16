@@ -5,7 +5,6 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +14,7 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import lombok.ToString;
 
 /**
  * This is {@link OneTimeToken}.
@@ -25,7 +25,9 @@ import java.time.LocalDateTime;
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @Slf4j
+@ToString
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
+
     private static final long serialVersionUID = -1329938047176583075L;
 
     @org.springframework.data.annotation.Id
@@ -85,16 +87,6 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("token", token)
-                .append("userId", userId)
-                .append("id", id)
-                .append("issuedDateTime", issuedDateTime)
-                .toString();
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -106,31 +98,16 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
             return false;
         }
         final OneTimeToken rhs = (OneTimeToken) obj;
-        return new EqualsBuilder()
-                .append(this.token, rhs.token)
-                .append(this.userId, rhs.userId)
-                .append(this.id, rhs.id)
-                .append(this.issuedDateTime, rhs.issuedDateTime)
-                .isEquals();
+        return new EqualsBuilder().append(this.token, rhs.token).append(this.userId, rhs.userId).append(this.id, rhs.id).append(this.issuedDateTime, rhs.issuedDateTime).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(token)
-                .append(userId)
-                .append(issuedDateTime)
-                .append(id)
-                .toHashCode();
+        return new HashCodeBuilder().append(token).append(userId).append(issuedDateTime).append(id).toHashCode();
     }
 
     @Override
     public int compareTo(final OneTimeToken o) {
-        return new CompareToBuilder()
-                .append(token, o.getToken())
-                .append(userId, o.getUserId())
-                .append(issuedDateTime, o.getIssuedDateTime())
-                .append(id, o.id)
-                .build();
+        return new CompareToBuilder().append(token, o.getToken()).append(userId, o.getUserId()).append(issuedDateTime, o.getIssuedDateTime()).append(id, o.id).build();
     }
 }

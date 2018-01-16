@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.x509.util;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.math.BigInteger;
 import java.security.Principal;
 import java.security.PublicKey;
@@ -11,9 +10,8 @@ import java.security.cert.X509CRLEntry;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
-
 import javax.security.auth.x500.X500Principal;
-
+import lombok.ToString;
 
 /**
  * Mock implementation of X.509 CRL.
@@ -23,7 +21,9 @@ import javax.security.auth.x500.X500Principal;
  *
  */
 @Slf4j
+@ToString
 public class MockX509CRL extends X509CRL {
+
     /** Issuer name */
     private final X500Principal issuer;
 
@@ -140,12 +140,12 @@ public class MockX509CRL extends X509CRL {
 
     @Override
     public void verify(final PublicKey key) {
-        // Do nothing to indicate valid signature
+    // Do nothing to indicate valid signature
     }
 
     @Override
     public void verify(final PublicKey key, final String sigProvider) {
-        // Do nothing to indicate valid signature
+    // Do nothing to indicate valid signature
     }
 
     /**
@@ -159,13 +159,4 @@ public class MockX509CRL extends X509CRL {
         }
         return false;
     }
-
-    /**
-     * @see java.security.cert.CRL#toString()
-     */
-    @Override
-    public String toString() {
-        return "MockX509CRL for " + this.issuer;
-    }
-
 }

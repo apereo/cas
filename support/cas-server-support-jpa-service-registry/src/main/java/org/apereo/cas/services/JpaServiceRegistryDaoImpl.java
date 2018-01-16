@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import lombok.ToString;
 
 /**
  * Implementation of the ServiceRegistryDao based on JPA.
@@ -19,6 +19,7 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
 @Slf4j
+@ToString
 public class JpaServiceRegistryDaoImpl extends AbstractServiceRegistryDao {
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
@@ -36,8 +37,7 @@ public class JpaServiceRegistryDaoImpl extends AbstractServiceRegistryDao {
 
     @Override
     public List<RegisteredService> load() {
-        final List<RegisteredService> list = this.entityManager
-                .createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
+        final List<RegisteredService> list = this.entityManager.createQuery("select r from AbstractRegisteredService r", RegisteredService.class).getResultList();
         list.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }
@@ -62,14 +62,8 @@ public class JpaServiceRegistryDaoImpl extends AbstractServiceRegistryDao {
         return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
     }
 
-
     @Override
     public long size() {
         return this.entityManager.createQuery("select count(r) from AbstractRegisteredService r", Long.class).getSingleResult();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 }

@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
-
 import java.security.cert.X509Certificate;
 
 /**
@@ -14,7 +13,9 @@ import java.security.cert.X509Certificate;
  * @since 3.0.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalResolver {
+
     private static final int DEFAULT_RADIX = 10;
 
     /**
@@ -34,15 +35,11 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
         this.zeroPadding = zeroPadding;
     }
 
-    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                             final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         this(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName, DEFAULT_RADIX, false);
     }
 
-    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                             final boolean returnNullIfNoAttributes,
-                                             final String principalAttributeName,
-                                             final int radix, final boolean zeroPadding) {
+    public X509SerialNumberPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName, final int radix, final boolean zeroPadding) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
         this.radix = radix;
         this.zeroPadding = zeroPadding;
@@ -55,14 +52,5 @@ public class X509SerialNumberPrincipalResolver extends AbstractX509PrincipalReso
             return "0" + principal;
         }
         return principal;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("radix", radix)
-                .append("zeroPadding", zeroPadding)
-                .toString();
     }
 }

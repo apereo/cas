@@ -2,9 +2,9 @@ package org.apereo.cas.support.spnego.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import lombok.ToString;
 
 /**
  *  Utility class to perform DNS work in a threaded, timeout-able way
@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
  *  @since 4.1
  */
 @Slf4j
+@ToString
 public class ReverseDNSRunnable implements Runnable {
 
     /** Remote user IP address. **/
@@ -63,13 +64,5 @@ public class ReverseDNSRunnable implements Runnable {
      */
     public synchronized String get() {
         return this.hostName;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("ipAddress", this.ipAddress)
-                .append("hostName", this.hostName)
-                .toString();
     }
 }

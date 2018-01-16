@@ -2,6 +2,7 @@ package org.apereo.cas.otp.repository.token;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import lombok.ToString;
 
 /**
  * This is {@link BaseOneTimeTokenRepository}.
@@ -10,8 +11,8 @@ import org.springframework.web.context.support.SpringBeanAutowiringSupport;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public abstract class BaseOneTimeTokenRepository implements OneTimeTokenRepository {
-
 
     @Override
     public final void clean() {
@@ -25,9 +26,4 @@ public abstract class BaseOneTimeTokenRepository implements OneTimeTokenReposito
      * Clean internal.
      */
     protected abstract void cleanInternal();
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
 }

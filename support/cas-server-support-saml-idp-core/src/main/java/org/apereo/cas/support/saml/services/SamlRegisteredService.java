@@ -9,7 +9,6 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -28,7 +27,9 @@ import java.util.TreeMap;
 @Entity
 @DiscriminatorValue("saml")
 @Slf4j
+@ToString(callSuper = true)
 public class SamlRegisteredService extends RegexRegisteredService {
+
     private static final long serialVersionUID = 1218757374062931021L;
 
     @Column(length = 255, updatable = true, insertable = true)
@@ -306,7 +307,6 @@ public class SamlRegisteredService extends RegexRegisteredService {
         this.metadataExpirationDuration = metadataExpirationDuration;
     }
 
-
     public String getSigningCredentialType() {
         return signingCredentialType;
     }
@@ -314,7 +314,6 @@ public class SamlRegisteredService extends RegexRegisteredService {
     public void setSigningCredentialType(final String signingCredentialType) {
         this.signingCredentialType = signingCredentialType;
     }
-
 
     @Override
     protected AbstractRegisteredService newInstance() {
@@ -334,27 +333,22 @@ public class SamlRegisteredService extends RegexRegisteredService {
             setMetadataSignatureLocation(service.getMetadataSignatureLocation());
             setEncryptAssertions(service.isEncryptAssertions());
             setRequiredNameIdFormat(service.getRequiredNameIdFormat());
-
             setMetadataCriteriaDirection(service.getMetadataCriteriaDirection());
             setMetadataCriteriaPattern(service.getMetadataCriteriaPattern());
             setMetadataExpirationDuration(service.metadataExpirationDuration);
-
             setMetadataCriteriaRemoveEmptyEntitiesDescriptors(service.isMetadataCriteriaRemoveEmptyEntitiesDescriptors());
             setMetadataCriteriaRemoveRolelessEntityDescriptors(service.isMetadataCriteriaRemoveRolelessEntityDescriptors());
             setMetadataCriteriaRoles(service.getMetadataCriteriaRoles());
             setAttributeNameFormats(service.getAttributeNameFormats());
             setAttributeFriendlyNames(service.getAttributeFriendlyNames());
-
             setNameIdQualifier(service.getNameIdQualifier());
             setServiceProviderNameIdQualifier(service.serviceProviderNameIdQualifier);
-
             setSkipGeneratingAssertionNameId(service.isSkipGeneratingAssertionNameId());
             setSkipGeneratingSubjectConfirmationInResponseTo(service.skipGeneratingSubjectConfirmationInResponseTo);
             setSkipGeneratingSubjectConfirmationNotBefore(service.skipGeneratingSubjectConfirmationNotBefore);
             setSkipGeneratingSubjectConfirmationNotOnOrAfter(service.skipGeneratingSubjectConfirmationNotOnOrAfter);
             setSkipGeneratingSubjectConfirmationRecipient(service.skipGeneratingSubjectConfirmationRecipient);
             setSigningCredentialType(service.getSigningCredentialType());
-
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -372,95 +366,12 @@ public class SamlRegisteredService extends RegexRegisteredService {
             return false;
         }
         final SamlRegisteredService rhs = (SamlRegisteredService) obj;
-        return new EqualsBuilder()
-            .appendSuper(super.equals(obj))
-            .append(this.metadataLocation, rhs.metadataLocation)
-            .append(this.metadataMaxValidity, rhs.metadataMaxValidity)
-            .append(this.requiredAuthenticationContextClass, rhs.requiredAuthenticationContextClass)
-            .append(this.metadataSignatureLocation, rhs.metadataSignatureLocation)
-            .append(this.metadataExpirationDuration, rhs.metadataExpirationDuration)
-            .append(this.signAssertions, rhs.signAssertions)
-            .append(this.signResponses, rhs.signResponses)
-            .append(this.signingCredentialType, rhs.signingCredentialType)
-            .append(this.encryptAssertions, rhs.encryptAssertions)
-            .append(this.requiredNameIdFormat, rhs.requiredNameIdFormat)
-            .append(this.metadataCriteriaDirection, rhs.metadataCriteriaDirection)
-            .append(this.metadataCriteriaPattern, rhs.metadataCriteriaPattern)
-            .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors, rhs.metadataCriteriaRemoveEmptyEntitiesDescriptors)
-            .append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors)
-            .append(this.metadataCriteriaRoles, rhs.metadataCriteriaRoles)
-            .append(this.attributeNameFormats, rhs.attributeNameFormats)
-            .append(this.attributeFriendlyNames, rhs.attributeFriendlyNames)
-            .append(this.serviceProviderNameIdQualifier, rhs.serviceProviderNameIdQualifier)
-            .append(this.nameIdQualifier, rhs.nameIdQualifier)
-            .append(this.skipGeneratingAssertionNameId, rhs.skipGeneratingAssertionNameId)
-            .append(this.skipGeneratingSubjectConfirmationInResponseTo, rhs.skipGeneratingSubjectConfirmationInResponseTo)
-            .append(this.skipGeneratingSubjectConfirmationNotBefore, rhs.skipGeneratingSubjectConfirmationNotBefore)
-            .append(this.skipGeneratingSubjectConfirmationNotOnOrAfter, rhs.skipGeneratingSubjectConfirmationNotOnOrAfter)
-            .append(this.skipGeneratingSubjectConfirmationRecipient, rhs.skipGeneratingSubjectConfirmationRecipient)
-            .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.metadataLocation, rhs.metadataLocation).append(this.metadataMaxValidity, rhs.metadataMaxValidity).append(this.requiredAuthenticationContextClass, rhs.requiredAuthenticationContextClass).append(this.metadataSignatureLocation, rhs.metadataSignatureLocation).append(this.metadataExpirationDuration, rhs.metadataExpirationDuration).append(this.signAssertions, rhs.signAssertions).append(this.signResponses, rhs.signResponses).append(this.signingCredentialType, rhs.signingCredentialType).append(this.encryptAssertions, rhs.encryptAssertions).append(this.requiredNameIdFormat, rhs.requiredNameIdFormat).append(this.metadataCriteriaDirection, rhs.metadataCriteriaDirection).append(this.metadataCriteriaPattern, rhs.metadataCriteriaPattern).append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors, rhs.metadataCriteriaRemoveEmptyEntitiesDescriptors).append(this.metadataCriteriaRemoveRolelessEntityDescriptors, rhs.metadataCriteriaRemoveRolelessEntityDescriptors).append(this.metadataCriteriaRoles, rhs.metadataCriteriaRoles).append(this.attributeNameFormats, rhs.attributeNameFormats).append(this.attributeFriendlyNames, rhs.attributeFriendlyNames).append(this.serviceProviderNameIdQualifier, rhs.serviceProviderNameIdQualifier).append(this.nameIdQualifier, rhs.nameIdQualifier).append(this.skipGeneratingAssertionNameId, rhs.skipGeneratingAssertionNameId).append(this.skipGeneratingSubjectConfirmationInResponseTo, rhs.skipGeneratingSubjectConfirmationInResponseTo).append(this.skipGeneratingSubjectConfirmationNotBefore, rhs.skipGeneratingSubjectConfirmationNotBefore).append(this.skipGeneratingSubjectConfirmationNotOnOrAfter, rhs.skipGeneratingSubjectConfirmationNotOnOrAfter).append(this.skipGeneratingSubjectConfirmationRecipient, rhs.skipGeneratingSubjectConfirmationRecipient).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .appendSuper(super.hashCode())
-            .append(this.metadataLocation)
-            .append(this.metadataMaxValidity)
-            .append(this.requiredAuthenticationContextClass)
-            .append(this.metadataSignatureLocation)
-            .append(this.signAssertions)
-            .append(this.signResponses)
-            .append(this.signingCredentialType)
-            .append(this.encryptAssertions)
-            .append(this.requiredNameIdFormat)
-            .append(this.metadataCriteriaDirection)
-            .append(this.metadataCriteriaPattern)
-            .append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
-            .append(this.metadataCriteriaRemoveRolelessEntityDescriptors)
-            .append(this.metadataCriteriaRoles)
-            .append(this.attributeNameFormats)
-            .append(this.attributeFriendlyNames)
-            .append(this.serviceProviderNameIdQualifier)
-            .append(this.nameIdQualifier)
-            .append(this.metadataExpirationDuration)
-            .append(this.skipGeneratingAssertionNameId)
-            .append(this.skipGeneratingSubjectConfirmationInResponseTo)
-            .append(this.skipGeneratingSubjectConfirmationNotBefore)
-            .append(this.skipGeneratingSubjectConfirmationNotOnOrAfter)
-            .append(this.skipGeneratingSubjectConfirmationRecipient)
-            .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .appendSuper(super.toString())
-            .append("metadataLocation", this.metadataLocation)
-            .append("metadataMaxValidity", this.metadataMaxValidity)
-            .append("requiredAuthenticationContextClass", this.requiredAuthenticationContextClass)
-            .append("metadataSignatureLocation", this.metadataSignatureLocation)
-            .append("signAssertions", this.signAssertions)
-            .append("signResponses", this.signResponses)
-            .append("signingCredentialType", this.signingCredentialType)
-            .append("encryptAssertions", this.encryptAssertions)
-            .append("requiredNameIdFormat", this.requiredNameIdFormat)
-            .append("metadataCriteriaDirection", this.metadataCriteriaDirection)
-            .append("metadataCriteriaPattern", this.metadataCriteriaPattern)
-            .append("metadataCriteriaRemoveEmptyEntitiesDescriptors", this.metadataCriteriaRemoveEmptyEntitiesDescriptors)
-            .append("metadataCriteriaRemoveRolelessEntityDescriptors", this.metadataCriteriaRemoveRolelessEntityDescriptors)
-            .append("metadataCriteriaRoles", this.metadataCriteriaRoles)
-            .append("attributeNameFormats", this.attributeNameFormats)
-            .append("attributeFriendlyNames", this.attributeFriendlyNames)
-            .append("serviceProviderNameIdQualifier", this.serviceProviderNameIdQualifier)
-            .append("nameIdQualifier", this.nameIdQualifier)
-            .append("skipGeneratingAssertionNameId", this.skipGeneratingAssertionNameId)
-            .append("metadataExpirationDuration", this.metadataExpirationDuration)
-            .append("skipGeneratingSubjectConfirmationInResponseTo", this.skipGeneratingSubjectConfirmationInResponseTo)
-            .append("skipGeneratingSubjectConfirmationNotBefore", this.skipGeneratingSubjectConfirmationNotBefore)
-            .append("skipGeneratingSubjectConfirmationNotOnOrAfter", this.skipGeneratingSubjectConfirmationNotOnOrAfter)
-            .append("skipGeneratingSubjectConfirmationRecipient", this.skipGeneratingSubjectConfirmationRecipient)
-            .toString();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.metadataLocation).append(this.metadataMaxValidity).append(this.requiredAuthenticationContextClass).append(this.metadataSignatureLocation).append(this.signAssertions).append(this.signResponses).append(this.signingCredentialType).append(this.encryptAssertions).append(this.requiredNameIdFormat).append(this.metadataCriteriaDirection).append(this.metadataCriteriaPattern).append(this.metadataCriteriaRemoveEmptyEntitiesDescriptors).append(this.metadataCriteriaRemoveRolelessEntityDescriptors).append(this.metadataCriteriaRoles).append(this.attributeNameFormats).append(this.attributeFriendlyNames).append(this.serviceProviderNameIdQualifier).append(this.nameIdQualifier).append(this.metadataExpirationDuration).append(this.skipGeneratingAssertionNameId).append(this.skipGeneratingSubjectConfirmationInResponseTo).append(this.skipGeneratingSubjectConfirmationNotBefore).append(this.skipGeneratingSubjectConfirmationNotOnOrAfter).append(this.skipGeneratingSubjectConfirmationRecipient).toHashCode();
     }
 
     @JsonIgnore

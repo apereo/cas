@@ -5,8 +5,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * This class represents client credentials and (after authentication) a user profile.
@@ -15,6 +15,7 @@ import java.io.Serializable;
  * @since 3.5.0
  */
 @Slf4j
+@ToString
 public class ClientCredential implements Credential, Serializable {
 
     /***
@@ -88,12 +89,5 @@ public class ClientCredential implements Credential, Serializable {
 
     public void setTypedIdUsed(final boolean typedIdUsed) {
         this.typedIdUsed = typedIdUsed;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("id", getId())
-                .toString();
     }
 }

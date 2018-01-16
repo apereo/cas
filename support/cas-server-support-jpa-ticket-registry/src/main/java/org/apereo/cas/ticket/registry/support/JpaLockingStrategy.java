@@ -2,7 +2,6 @@ package org.apereo.cas.ticket.registry.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
@@ -14,6 +13,7 @@ import javax.persistence.Version;
 import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import lombok.ToString;
 
 /**
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.
@@ -23,14 +23,13 @@ import java.time.ZonedDateTime;
  */
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
+@ToString
 public class JpaLockingStrategy implements LockingStrategy {
-    
 
-    
     /** Transactional entity manager from Spring context. */
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     protected EntityManager entityManager;
-    
+
     /**
      * Application identifier that identifies rows in the locking table,
      * each one of which may be for a different application or usage within
@@ -66,11 +65,10 @@ public class JpaLockingStrategy implements LockingStrategy {
         }
         this.lockTimeout = lockTimeout;
     }
-    
+
     @Override
     public void release() {
         final Lock lock = this.entityManager.find(Lock.class, this.applicationId, LockModeType.OPTIMISTIC);
-
         if (lock == null) {
             return;
         }
@@ -83,11 +81,6 @@ public class JpaLockingStrategy implements LockingStrategy {
         lock.setExpirationDate(null);
         LOGGER.debug("Releasing [{}] lock held by [{}].", this.applicationId, this.uniqueId);
         this.entityManager.persist(lock);
-    }
-    
-    @Override
-    public String toString() {
-        return this.uniqueId;
     }
 
     /**
@@ -132,7 +125,6 @@ public class JpaLockingStrategy implements LockingStrategy {
             LOGGER.debug("[{}] failed querying for [{}] lock.", this.uniqueId, this.applicationId, e);
             return false;
         }
-
         boolean result = false;
         if (lock != null) {
             final ZonedDateTime expDate = lock.getExpirationDate();
@@ -153,7 +145,6 @@ public class JpaLockingStrategy implements LockingStrategy {
         return result;
     }
 
-
     /**
      * Describes a database lock.
      *
@@ -165,25 +156,25 @@ public class JpaLockingStrategy implements LockingStrategy {
     private static class Lock implements Serializable {
 
         private static final long serialVersionUID = -5750740484289616656L;
-        
+
         /** column name that holds application identifier. */
         @org.springframework.data.annotation.Id
         @Id
-        @Column(name="application_id")
+        @Column(name = "application_id")
         private String applicationId;
 
         /** Database column name that holds unique identifier. */
-        @Column(name="unique_id")
+        @Column(name = "unique_id")
         private String uniqueId;
 
         /** Database column name that holds expiration date. */
-        @Column(name="expiration_date")
+        @Column(name = "expiration_date")
         private ZonedDateTime expirationDate;
 
         @Version
         @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
         private final Long version = 0L;
-        
+
         /**
          * @return the applicationId
          */

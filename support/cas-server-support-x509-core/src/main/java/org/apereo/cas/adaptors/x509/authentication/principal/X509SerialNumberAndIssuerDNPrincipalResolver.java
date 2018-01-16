@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
-
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 
@@ -28,6 +27,7 @@ import java.util.HashMap;
  * @since 3.1
  */
 @Slf4j
+@ToString(callSuper = true)
 public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
@@ -41,8 +41,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
     private final String valueDelimiter;
 
     public X509SerialNumberAndIssuerDNPrincipalResolver(final String serialNumberPrefix, final String valueDelimiter) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), 
-                false, null, serialNumberPrefix, valueDelimiter);
+        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), false, null, serialNumberPrefix, valueDelimiter);
     }
 
     /**
@@ -55,12 +54,7 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
      * @param serialNumberPrefix       prefix for the certificate serialnumber (default: "SERIALNUMBER=").
      * @param valueDelimiter           delimiter to separate the two certificate properties in the string. (default: ", ")
      */
-    public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                        final PrincipalFactory principalFactory,
-                                                        final boolean returnNullIfNoAttributes,
-                                                        final String principalAttributeName,
-                                                        final String serialNumberPrefix,
-                                                        final String valueDelimiter) {
+    public X509SerialNumberAndIssuerDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName, final String serialNumberPrefix, final String valueDelimiter) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
         this.serialNumberPrefix = StringUtils.defaultString(serialNumberPrefix, "SERIALNUMBER=");
         this.valueDelimiter = StringUtils.defaultIfBlank(valueDelimiter, ", ");
@@ -68,20 +62,6 @@ public class X509SerialNumberAndIssuerDNPrincipalResolver extends AbstractX509Pr
 
     @Override
     protected String resolvePrincipalInternal(final X509Certificate certificate) {
-        return new StringBuilder(this.serialNumberPrefix)
-                .append(certificate.getSerialNumber())
-                .append(this.valueDelimiter)
-                .append(certificate.getIssuerDN().getName())
-                .toString();
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("serialNumberPrefix", serialNumberPrefix)
-                .append("valueDelimiter", valueDelimiter)
-                .toString();
+        return new StringBuilder(this.serialNumberPrefix).append(certificate.getSerialNumber()).append(this.valueDelimiter).append(certificate.getIssuerDN().getName()).toString();
     }
 }

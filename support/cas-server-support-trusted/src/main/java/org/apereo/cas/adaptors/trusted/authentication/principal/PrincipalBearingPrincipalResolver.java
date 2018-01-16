@@ -17,15 +17,13 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 3.0.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public PrincipalBearingPrincipalResolver() {
     }
 
-    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                             final PrincipalFactory principalFactory,
-                                             final boolean returnNullIfNoAttributes,
-                                             final String principalAttributeName) {
+    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 
@@ -37,13 +35,5 @@ public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalR
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof PrincipalBearingCredential;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }
