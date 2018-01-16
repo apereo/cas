@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.entity.AuditTrailEntity;
@@ -37,6 +38,7 @@ import javax.sql.DataSource;
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class CasSupportJdbcAuditConfiguration {
 
     @Autowired

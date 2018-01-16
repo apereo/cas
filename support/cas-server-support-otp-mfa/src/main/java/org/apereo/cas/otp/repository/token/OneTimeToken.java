@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Slf4j
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
     private static final long serialVersionUID = -1329938047176583075L;
 

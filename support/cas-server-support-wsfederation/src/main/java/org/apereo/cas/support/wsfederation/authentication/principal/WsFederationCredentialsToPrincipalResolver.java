@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipa
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,9 +19,10 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationCredentialsToPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationCredentialsToPrincipalResolver.class);
+
     private final WsFederationConfiguration configuration;
 
     public WsFederationCredentialsToPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,

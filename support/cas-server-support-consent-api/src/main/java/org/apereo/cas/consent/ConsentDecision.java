@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
@@ -22,6 +23,7 @@ import java.time.temporal.ChronoUnit;
  */
 @Entity
 @Table(name = "ConsentDecision")
+@Slf4j
 public class ConsentDecision {
 
     @Id

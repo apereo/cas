@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -30,6 +31,7 @@ import java.util.Map;
  */
 @Entity
 @Table(name = "CasEvent")
+@Slf4j
 public class CasEvent {
 
     @org.springframework.data.annotation.Id

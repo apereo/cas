@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,11 +19,12 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnAllowedAttributeReleasePolicy.class);
+
 
     private List<String> allowedAttributes;
 

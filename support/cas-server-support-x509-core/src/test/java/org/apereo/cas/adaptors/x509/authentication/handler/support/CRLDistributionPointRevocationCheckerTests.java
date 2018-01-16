@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apache.commons.io.IOUtils;
@@ -16,8 +17,6 @@ import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 
@@ -39,8 +38,9 @@ import java.util.Collection;
  * @since 3.4.76
  */
 @RunWith(Parameterized.class)
+@Slf4j
 public class CRLDistributionPointRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRLDistributionPointRevocationCheckerTests.class);
+
 
     /**
      * Instance under test.

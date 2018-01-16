@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -27,6 +28,7 @@ import java.nio.charset.StandardCharsets;
  * @author Marvin S. Addison
  * @since 3.5
  */
+@Slf4j
 public class StatusController extends BaseCasMvcEndpoint {
     private final HealthEndpoint healthEndpoint;
 

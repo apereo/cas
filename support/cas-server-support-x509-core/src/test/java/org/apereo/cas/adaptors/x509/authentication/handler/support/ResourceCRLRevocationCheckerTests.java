@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.ResourceCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
@@ -25,6 +26,7 @@ import java.util.Collection;
  * @since 3.4.6
  */
 @RunWith(Parameterized.class)
+@Slf4j
 public class ResourceCRLRevocationCheckerTests extends AbstractCRLRevocationCheckerTests {
     /**
      * Instance under test.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
 /**
@@ -8,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class InvalidProxyGrantingTicketForServiceTicketException extends AbstractTicketValidationException {
     private static final long serialVersionUID = 2120177571513373134L;
 

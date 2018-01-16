@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.shibboleth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class ShibbolethAttributeResolverProperties implements Serializable {
 
     private static final long serialVersionUID = 6315982182145371022L;

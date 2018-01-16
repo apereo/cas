@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 /**
@@ -17,8 +16,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleSignOnParticipationStrategy.class);
+
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
     private final ServicesManager servicesManager;
 

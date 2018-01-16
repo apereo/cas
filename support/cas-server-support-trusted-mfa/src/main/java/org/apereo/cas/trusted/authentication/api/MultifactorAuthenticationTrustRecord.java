@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "MultifactorAuthenticationTrustRecord")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
     @Id
     @org.springframework.data.annotation.Id

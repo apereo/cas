@@ -1,10 +1,9 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,8 +20,9 @@ import java.time.LocalDateTime;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
+@Slf4j
 public class GoogleAuthenticatorJpaTokenRepository extends BaseOneTimeTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorJpaTokenRepository.class);
+
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;

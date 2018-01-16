@@ -3,6 +3,7 @@ package org.apereo.cas.support.saml.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 
 import javax.persistence.Column;
@@ -20,6 +21,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("saml")
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class SamlService extends AbstractWebApplicationService {
 
     /**

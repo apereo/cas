@@ -1,11 +1,10 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -23,6 +22,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class TicketGrantingTicketCheckAction extends AbstractAction {
     /**
      * TGT does not exist event ID={@value}.
@@ -39,7 +39,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      **/
     public static final String VALID = "valid";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketGrantingTicketCheckAction.class);
+
 
     private CentralAuthenticationService centralAuthenticationService;
 

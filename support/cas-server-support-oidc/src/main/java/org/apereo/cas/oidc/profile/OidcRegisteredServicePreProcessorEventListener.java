@@ -1,10 +1,9 @@
 package org.apereo.cas.oidc.profile;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -15,8 +14,9 @@ import org.springframework.context.event.EventListener;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcRegisteredServicePreProcessorEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcRegisteredServicePreProcessorEventListener.class);
+
 
     private final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 

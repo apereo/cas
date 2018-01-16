@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
@@ -23,6 +24,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbYubiKeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class MongoDbYubiKeyConfiguration {
 
     @Autowired

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
 
@@ -10,6 +11,7 @@ import org.apereo.cas.services.RegisteredService;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasRegisteredServiceExpiredEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 291168299766263298L;

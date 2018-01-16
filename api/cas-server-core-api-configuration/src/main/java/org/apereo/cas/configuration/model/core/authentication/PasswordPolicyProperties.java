@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
 public class PasswordPolicyProperties implements Serializable {
     private static final long serialVersionUID = -3878237508646993100L;
 

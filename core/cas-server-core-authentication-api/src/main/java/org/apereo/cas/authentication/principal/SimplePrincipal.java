@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
@@ -22,6 +23,7 @@ import java.util.TreeMap;
  * @since 3.1
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class SimplePrincipal implements Principal {
     /**
      * Serialization support.

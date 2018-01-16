@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -17,8 +18,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,8 +34,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthenticationContextWebflowEventEventResolver.class);
+
     
     public OidcAuthenticationContextWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,

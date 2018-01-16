@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.util.HashMap;
@@ -17,8 +16,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptAttributeReleasePolicy.class);
+
     private static final long serialVersionUID = 1703080077563402223L;
 
     private String groovyScript;

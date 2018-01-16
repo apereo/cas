@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RestServiceRegistryDao extends AbstractServiceRegistryDao {
     private final RestTemplate restTemplate;
     private final String url;

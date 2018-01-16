@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
@@ -72,6 +73,7 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})
 @EnableScheduling
+@Slf4j
 public class DefaultCasAttributeEncoderTests {
 
     private Map<String, Object> attributes;

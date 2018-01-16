@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,8 +30,6 @@ import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.Response;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,8 +42,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SSOSamlProfileCallbackHandlerController.class);
+
 
     private final AbstractUrlBasedTicketValidator ticketValidator;
 

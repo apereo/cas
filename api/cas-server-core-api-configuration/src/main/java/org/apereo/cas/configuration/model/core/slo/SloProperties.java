@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.slo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
 public class SloProperties implements Serializable {
 
     private static final long serialVersionUID = 3676710533477055700L;

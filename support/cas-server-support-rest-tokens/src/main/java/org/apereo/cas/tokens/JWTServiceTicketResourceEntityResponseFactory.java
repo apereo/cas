@@ -1,5 +1,6 @@
 package org.apereo.cas.tokens;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,8 +11,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.rest.factory.DefaultServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link JWTServiceTicketResourceEntityResponseFactory}.
@@ -19,8 +18,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServiceTicketResourceEntityResponseFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JWTServiceTicketResourceEntityResponseFactory.class);
+
 
     /**
      * The ticket builder that produces tokens.

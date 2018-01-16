@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.cxf.rt.security.SecurityConstants;
@@ -12,8 +13,6 @@ import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 /**
@@ -22,8 +21,9 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTokenServiceAuthenticationMetaDataPopulator.class);
+
 
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionStrategy selectionStrategy;

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.slo;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -24,8 +25,6 @@ import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SignableSAMLObject;
 import org.opensaml.saml.common.binding.SAMLBindingSupport;
 import org.opensaml.saml.saml2.core.LogoutRequest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,8 +35,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlSLOProfileHandlerController.class);
+
 
     /**
      * Instantiates a new Abstract saml profile handler controller.

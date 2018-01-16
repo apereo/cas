@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -28,6 +29,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("pac4jWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class Pac4jWebflowConfiguration {
 
     @Autowired

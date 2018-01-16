@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
@@ -10,8 +11,6 @@ import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;
@@ -24,6 +23,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
@@ -36,7 +36,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseDuoSecurityAuthenticationService.class);
+
 
     /**
      * Duo Properties.

@@ -3,11 +3,10 @@ package org.apereo.cas.web.flow;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectReader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.captcha.GoogleRecaptchaProperties;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.binding.message.MessageContext;
 import org.springframework.http.HttpStatus;
@@ -30,9 +29,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class ValidateCaptchaAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ValidateCaptchaAction.class);
+
     private static final ObjectReader READER = new ObjectMapper().findAndRegisterModules().reader();
     private static final String CODE = "captchaError";
 

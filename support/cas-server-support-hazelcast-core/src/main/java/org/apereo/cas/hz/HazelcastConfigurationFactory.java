@@ -11,12 +11,11 @@ import com.hazelcast.config.MulticastConfig;
 import com.hazelcast.config.NetworkConfig;
 import com.hazelcast.config.PartitionGroupConfig;
 import com.hazelcast.config.TcpIpConfig;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.util.HashMap;
@@ -31,9 +30,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class HazelcastConfigurationFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastConfigurationFactory.class);
-
+    
     /**
      * Build map config map config.
      *

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Map<String, String> credentialMap;

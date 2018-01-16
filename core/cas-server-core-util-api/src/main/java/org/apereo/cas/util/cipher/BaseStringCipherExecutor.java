@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
@@ -7,8 +8,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.keys.RsaKeyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -23,8 +22,9 @@ import java.security.Key;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Serializable, String> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseStringCipherExecutor.class);
+
 
     private static final int ENCRYPTION_KEY_SIZE = 256;
 

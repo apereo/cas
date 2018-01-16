@@ -1,11 +1,10 @@
 package org.apereo.cas.services.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,10 +22,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
     private static final long serialVersionUID = 543145306984660628L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceMappedRegexAttributeFilter.class);
+
 
     public RegisteredServiceMutantRegexAttributeFilter() {
     }

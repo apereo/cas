@@ -2,6 +2,7 @@ package org.apereo.cas.digest;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.AbstractCredential;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DigestCredential extends AbstractCredential {
     private static final long serialVersionUID = 1523693794392289803L;
     private String realm;

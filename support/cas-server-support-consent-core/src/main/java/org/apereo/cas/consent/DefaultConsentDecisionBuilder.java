@@ -2,6 +2,7 @@ package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
@@ -9,8 +10,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
@@ -24,8 +23,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConsentDecisionBuilder.class);
+
     
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

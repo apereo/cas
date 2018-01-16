@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
@@ -12,8 +13,6 @@ import org.apereo.cas.pm.web.flow.actions.VerifyPasswordResetRequestAction;
 import org.apereo.cas.pm.web.flow.actions.VerifySecurityQuestionsAction;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -39,9 +38,10 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
  */
 @Configuration("passwordManagementWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class PasswordManagementWebflowConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
+
 
     @Autowired
     private ApplicationContext applicationContext;

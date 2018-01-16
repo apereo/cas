@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.surrogate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-surrogate-webflow")
+@Slf4j
 public class SurrogateAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -2088813217398883623L;
     /**

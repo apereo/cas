@@ -1,11 +1,10 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.util.serialization.DefaultComponentSerializationPlan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,8 +23,9 @@ import java.util.List;
  */
 @Configuration("casCoreUtilSerializationConfiguration")
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class CasCoreUtilSerializationConfiguration implements ComponentSerializationPlanConfigurator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreUtilSerializationConfiguration.class);
+
 
     @ConditionalOnMissingBean(name = "componentSerializationPlan")
     @Autowired

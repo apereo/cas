@@ -1,5 +1,6 @@
 package org.apereo.cas.digest.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class DigestAuthenticationUtilsTests {
     
     @Test

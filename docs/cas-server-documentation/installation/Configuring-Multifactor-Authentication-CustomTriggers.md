@@ -38,7 +38,7 @@ The below example demonstrates a reasonable outline of a custom event resolver:
 package org.apereo.cas.custom.mfa;
 
 public class CustomWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CustomWebflowEventResolver.class);
+    
 
     @Autowired
     private CasConfigurationProperties casProperties;

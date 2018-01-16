@@ -1,13 +1,12 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.Principal;
@@ -23,8 +22,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class PrincipalFromRequestHeaderNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalFromRequestHeaderNonInteractiveCredentialsAction.class);
+
     private final String remotePrincipalHeader;
 
     public PrincipalFromRequestHeaderNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,

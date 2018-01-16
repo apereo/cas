@@ -1,13 +1,12 @@
 package org.apereo.cas.support.saml.metadata.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlMetadataDocument;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.BaseSamlRegisteredServiceMetadataResolver;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.Collection;
@@ -21,8 +20,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbSamlRegisteredServiceMetadataResolver.class);
+
 
     private final MongoTemplate mongoTemplate;
     private final String collectionName;

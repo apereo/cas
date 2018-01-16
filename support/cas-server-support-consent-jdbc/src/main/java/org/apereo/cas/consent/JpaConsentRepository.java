@@ -1,10 +1,9 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +21,13 @@ import java.util.Collection;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerConsent")
+@Slf4j
 public class JpaConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaConsentRepository.class);
+
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
     private EntityManager entityManager;

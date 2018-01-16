@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.cryptacular.bean.CipherBean;
 
@@ -13,6 +14,7 @@ import java.io.OutputStream;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class WebflowCipherBean implements CipherBean {
     private final CipherExecutor webflowCipherExecutor;
 

@@ -1,9 +1,8 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.RememberMeCredential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -20,8 +19,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 3.1
  */
+@Slf4j
 public class CookieRetrievingCookieGenerator extends CookieGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CookieRetrievingCookieGenerator.class);
+
 
     private static final int DEFAULT_REMEMBER_ME_MAX_AGE = 7889231;
 

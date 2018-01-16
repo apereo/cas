@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
@@ -18,6 +19,7 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /**

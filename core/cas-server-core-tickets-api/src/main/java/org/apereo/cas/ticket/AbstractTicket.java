@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
@@ -34,6 +35,7 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;

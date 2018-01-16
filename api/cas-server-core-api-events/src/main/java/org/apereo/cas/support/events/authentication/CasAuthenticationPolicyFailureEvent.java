@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 
@@ -11,6 +12,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasAuthenticationPolicyFailureEvent extends CasAuthenticationTransactionFailureEvent {
     private static final long serialVersionUID = 2208076621158767073L;
     private final Authentication authentication;

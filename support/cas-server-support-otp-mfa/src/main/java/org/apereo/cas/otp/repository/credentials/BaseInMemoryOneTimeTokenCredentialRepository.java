@@ -1,5 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final Map<String, OneTimeTokenAccount> accounts;

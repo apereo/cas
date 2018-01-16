@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class AllSpnegoKnownClientSystemsFilterActionTests {
 
     private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.RootCasException;
 
 /**
@@ -7,6 +8,7 @@ import org.apereo.cas.authentication.RootCasException;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class SamlException extends RootCasException {
     /** Code description. */
     public static final String CODE = "UNSATISFIED_SAML_REQUEST";

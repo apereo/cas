@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.mock;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -23,6 +24,7 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class MockTicketGrantingTicketCreatedEventProducer {
 
     private static final List<String> ALL_USER_AGENTS = CollectionUtils.wrapList(

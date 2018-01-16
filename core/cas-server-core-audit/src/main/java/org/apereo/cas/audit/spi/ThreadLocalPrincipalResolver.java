@@ -1,10 +1,9 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 /**
@@ -13,10 +12,10 @@ import org.slf4j.LoggerFactory;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+
+@Slf4j
 public class ThreadLocalPrincipalResolver implements PrincipalResolver {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThreadLocalPrincipalResolver.class);
-
+    
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
 
     public ThreadLocalPrincipalResolver(final AuditPrincipalIdProvider auditPrincipalIdProvider) {

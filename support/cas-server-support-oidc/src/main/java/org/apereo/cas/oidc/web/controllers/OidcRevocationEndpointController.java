@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -21,8 +22,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.extractor.BasicAuthExtractor;
 import org.pac4j.core.credentials.extractor.CredentialsExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,8 +35,9 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class OidcRevocationEndpointController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcRevocationEndpointController.class);
+
 
     public OidcRevocationEndpointController(final ServicesManager servicesManager,
                                             final TicketRegistry ticketRegistry,

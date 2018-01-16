@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.web.tomcat;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -14,6 +15,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-webapp-tomcat")
+@Slf4j
 public class CasEmbeddedApacheTomcatAjpProperties implements Serializable {
     private static final long serialVersionUID = -32143821503580896L;
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -21,6 +22,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 
+@Slf4j
 public class RadiusAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     public RadiusAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,

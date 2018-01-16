@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -10,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DuoUserAccount {
     private DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.AUTH;
     private String enrollPortalUrl;

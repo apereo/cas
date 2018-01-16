@@ -3,11 +3,10 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -19,8 +18,9 @@ import java.util.Map;
  * @since 3.2.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class RememberMeDelegatingExpirationPolicy extends BaseDelegatingExpirationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RememberMeDelegatingExpirationPolicy.class);
+
 
     private static final long serialVersionUID = -2735975347698196127L;
 

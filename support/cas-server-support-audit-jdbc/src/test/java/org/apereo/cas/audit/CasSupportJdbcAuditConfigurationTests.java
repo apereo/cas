@@ -1,5 +1,6 @@
 package org.apereo.cas.audit;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -39,6 +40,7 @@ import static org.junit.Assert.*;
     })
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @TestPropertySource(properties = "cas.audit.jdbc.asynchronous=false")
+@Slf4j
 public class CasSupportJdbcAuditConfigurationTests {
 
     @Autowired

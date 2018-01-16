@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
@@ -28,6 +29,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private final Action saml2ClientLogoutAction;

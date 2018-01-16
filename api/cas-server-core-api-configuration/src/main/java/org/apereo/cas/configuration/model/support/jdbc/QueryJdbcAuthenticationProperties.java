@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -18,6 +19,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
+@Slf4j
 public class QueryJdbcAuthenticationProperties extends AbstractJpaProperties {
     private static final long serialVersionUID = 7806132208223986680L;
     /**

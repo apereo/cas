@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.Serializable;
 
 /**
@@ -8,6 +10,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class U2FRegistration implements Serializable {
     private static final long serialVersionUID = 8478965906212939618L;
     private final String challenge;

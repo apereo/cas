@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 
 import javax.sql.DataSource;
@@ -13,6 +14,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
 public class JpaConfigDataHolder implements Serializable {
 
     private static final long serialVersionUID = -3940423575751579622L;

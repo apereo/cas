@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
@@ -20,6 +21,7 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = CasEventRepository.class)
+@Slf4j
 public class AuthenticationEventsController extends BaseCasMvcEndpoint {
 
     private final CasEventRepository eventRepository;

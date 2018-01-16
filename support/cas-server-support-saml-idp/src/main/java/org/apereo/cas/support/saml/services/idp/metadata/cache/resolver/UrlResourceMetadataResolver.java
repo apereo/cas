@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.SamlIdPMetadataProperties;
@@ -11,8 +12,6 @@ import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FileBackedHTTPMetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.UrlResource;
 
@@ -28,8 +27,9 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UrlResourceMetadataResolver.class);
+
 
     private final HttpClient httpClient;
 

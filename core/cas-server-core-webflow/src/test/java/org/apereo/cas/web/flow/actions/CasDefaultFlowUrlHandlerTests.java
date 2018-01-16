@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -9,6 +10,7 @@ import static org.junit.Assert.*;
  * @author Auke van Leeuwen
  * @since 4.2.0
  */
+@Slf4j
 public class CasDefaultFlowUrlHandlerTests {
 
     private final CasDefaultFlowUrlHandler urlHandler = new CasDefaultFlowUrlHandler();

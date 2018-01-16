@@ -1,13 +1,12 @@
 package org.apereo.cas.aup;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.Map;
@@ -19,10 +18,11 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractPrincipalAttributeAcceptableUsagePolicyRepository.class);
+
 
     /**
      * Single-valued attribute in LDAP that describes whether the policy

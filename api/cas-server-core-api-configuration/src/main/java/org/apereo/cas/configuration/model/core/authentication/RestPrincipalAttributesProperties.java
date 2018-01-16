@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
 
@@ -10,6 +11,7 @@ import org.apereo.cas.configuration.support.RestEndpointProperties;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
+@Slf4j
 public class RestPrincipalAttributesProperties extends RestEndpointProperties {
     private static final long serialVersionUID = -30055974448426360L;
     /**

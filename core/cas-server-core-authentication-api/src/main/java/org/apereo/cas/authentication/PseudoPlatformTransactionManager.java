@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionException;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
@@ -11,6 +12,7 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class PseudoPlatformTransactionManager extends AbstractPlatformTransactionManager {
     private static final long serialVersionUID = -3501861804821200893L;
 

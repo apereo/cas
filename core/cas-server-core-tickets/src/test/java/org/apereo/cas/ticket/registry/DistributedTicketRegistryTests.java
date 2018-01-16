@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class DistributedTicketRegistryTests {
     private static final String TGT_NAME = "TGT";
     private static final String TGT_ID = "test";

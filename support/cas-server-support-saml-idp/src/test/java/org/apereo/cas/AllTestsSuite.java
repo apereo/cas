@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.SamlAttributeEncoderTests;
 import org.apereo.cas.support.saml.SamlIdPConfigurationTests;
 import org.apereo.cas.support.saml.SamlRegisteredServiceTests;
@@ -17,6 +18,7 @@ import org.junit.runners.Suite;
         SamlRegisteredServiceTests.class, SamlIdPConfigurationTests.class,
         SamlAttributeEncoderTests.class
 })
+@Slf4j
 public class AllTestsSuite {
 }
 

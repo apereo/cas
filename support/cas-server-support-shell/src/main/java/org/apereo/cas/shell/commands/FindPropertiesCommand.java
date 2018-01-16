@@ -1,12 +1,11 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.CommandMarker;
@@ -26,8 +25,9 @@ import java.util.stream.StreamSupport;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class FindPropertiesCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FindPropertiesCommand.class);
+
     private static final int SEP_LINE_LENGTH = 70;
 
     /**

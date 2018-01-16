@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
@@ -15,6 +16,7 @@ import java.util.HashMap;
  * @since 5.1.0
  */
 @TestConfiguration("CasMultifactorTestAuthenticationEventExecutionPlanConfiguration")
+@Slf4j
 public class CasMultifactorTestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Override
     public void configureAuthenticationExecutionPlan(final AuthenticationEventExecutionPlan plan) {

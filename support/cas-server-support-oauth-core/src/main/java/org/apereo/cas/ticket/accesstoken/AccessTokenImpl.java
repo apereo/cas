@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -18,6 +19,7 @@ import java.util.Collection;
  */
 @Entity
 @DiscriminatorValue(AccessToken.PREFIX)
+@Slf4j
 public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 
     private static final long serialVersionUID = 2339545346159721563L;

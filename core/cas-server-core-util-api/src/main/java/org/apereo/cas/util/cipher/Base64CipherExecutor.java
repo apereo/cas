@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -12,6 +13,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1
  */
+@Slf4j
 public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, String> {
 
     private static CipherExecutor<Serializable, String> INSTANCE;

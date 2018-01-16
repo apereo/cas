@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.Serializable;
 import java.util.List;
 
@@ -9,6 +11,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CaseChangeSearchEntryHandlersProperties implements Serializable {
     private static final long serialVersionUID = 2420895955116725666L;
     /**

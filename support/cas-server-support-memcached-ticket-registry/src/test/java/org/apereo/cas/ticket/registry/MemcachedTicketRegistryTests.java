@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreUtilSerializationConfiguration;
 import org.apereo.cas.config.MemcachedTicketRegistryConfiguration;
 import org.junit.runner.RunWith;
@@ -24,6 +25,7 @@ import java.util.Collection;
         RefreshAutoConfiguration.class,
         CasCoreUtilSerializationConfiguration.class})
 @TestPropertySource(locations = {"classpath:/memcached.properties"})
+@Slf4j
 public class MemcachedTicketRegistryTests extends AbstractTicketRegistryTests {
   
     @Autowired

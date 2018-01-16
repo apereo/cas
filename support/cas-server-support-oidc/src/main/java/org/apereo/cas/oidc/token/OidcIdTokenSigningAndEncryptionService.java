@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.token;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwa.AlgorithmConstraints;
@@ -9,8 +10,6 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
 import org.jose4j.jwt.JwtClaims;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -20,8 +19,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcIdTokenSigningAndEncryptionService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcIdTokenSigningAndEncryptionService.class);
+
 
     private final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache;
     private final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;

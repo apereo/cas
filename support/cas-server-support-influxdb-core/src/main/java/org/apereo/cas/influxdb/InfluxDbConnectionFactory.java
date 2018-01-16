@@ -1,5 +1,6 @@
 package org.apereo.cas.influxdb;
 
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
@@ -8,8 +9,6 @@ import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
@@ -20,8 +19,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class InfluxDbConnectionFactory implements Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfluxDbConnectionFactory.class);
+
 
     /**
      * The Influx db.

@@ -4,13 +4,12 @@ import com.microsoft.azure.documentdb.ConsistencyLevel;
 import com.microsoft.azure.documentdb.RequestOptions;
 import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,8 +25,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cosmosDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CosmosDbServiceRegistryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CosmosDbServiceRegistryConfiguration.class);
+
 
     /**
      * Partition key field name.

@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class U2FInMemoryDeviceRepository extends BaseU2FDeviceRepository {
 
     private final LoadingCache<String, Map<String, String>> userStorage;

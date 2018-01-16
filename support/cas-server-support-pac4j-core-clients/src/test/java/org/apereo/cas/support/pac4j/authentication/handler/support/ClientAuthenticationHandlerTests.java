@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
  *
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@Slf4j
 public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";

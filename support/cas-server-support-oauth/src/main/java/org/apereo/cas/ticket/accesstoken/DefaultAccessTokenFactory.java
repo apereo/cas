@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -17,6 +18,7 @@ import java.util.Collection;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     /** Default instance for the ticket id generator. */

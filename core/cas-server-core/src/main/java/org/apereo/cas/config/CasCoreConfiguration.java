@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
@@ -17,8 +18,6 @@ import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,8 +37,9 @@ import java.util.List;
 @Configuration("casCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class CasCoreConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

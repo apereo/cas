@@ -6,12 +6,11 @@ import com.unboundid.scim.sdk.OAuthToken;
 import com.unboundid.scim.sdk.Resources;
 import com.unboundid.scim.sdk.SCIMEndpoint;
 import com.unboundid.scim.sdk.SCIMService;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.scim.api.ScimProvisioner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.core.MediaType;
 import java.net.URI;
@@ -22,8 +21,9 @@ import java.net.URI;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class Scim1Provisioner implements ScimProvisioner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Scim1Provisioner.class);
+
     private final SCIMEndpoint<UserResource> endpoint;
     private final Scim1PrincipalAttributeMapper mapper;
 

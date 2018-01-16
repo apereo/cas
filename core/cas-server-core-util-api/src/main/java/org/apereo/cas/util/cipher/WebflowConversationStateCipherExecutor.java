@@ -1,5 +1,7 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This is {@link WebflowConversationStateCipherExecutor}, that reads webflow keys
  * from CAS configuration and presents a cipher.
@@ -7,6 +9,7 @@ package org.apereo.cas.util.cipher;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class WebflowConversationStateCipherExecutor extends BaseBinaryCipherExecutor {
 
     /**

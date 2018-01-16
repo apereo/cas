@@ -10,6 +10,7 @@ import com.microsoft.azure.documentdb.SqlQuerySpec;
 import com.microsoft.azure.documentdb.internal.HttpConstants;
 import com.microsoft.azure.spring.data.documentdb.DocumentDbFactory;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.cosmosdb.CosmosDbDocument;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
@@ -26,6 +27,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CosmosDbServiceRegistryDao extends AbstractServiceRegistryDao {
     private static final String PARTITION_KEY_FIELD_VALUE = "CasServices";
 

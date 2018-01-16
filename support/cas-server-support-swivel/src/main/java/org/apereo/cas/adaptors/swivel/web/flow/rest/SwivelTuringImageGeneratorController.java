@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.swivel.web.flow.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
@@ -20,6 +21,7 @@ import java.net.URL;
  * @since 5.2.0
  */
 @RestController
+@Slf4j
 public class SwivelTuringImageGeneratorController {
     private final SwivelMultifactorProperties swivel;
 

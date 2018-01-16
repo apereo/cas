@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.spnego;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-spnego-webflow")
+@Slf4j
 public class SpnegoProperties implements Serializable {
 
     private static final long serialVersionUID = 8084143496524446970L;

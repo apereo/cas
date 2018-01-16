@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
@@ -34,6 +35,7 @@ import java.util.List;
 @Configuration("jpaYubiKeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class JpaYubiKeyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

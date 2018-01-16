@@ -1,12 +1,11 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
@@ -32,8 +31,9 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationMetadataServerController.class);
+
 
     private final CasConfigurationMetadataRepository repository;
 

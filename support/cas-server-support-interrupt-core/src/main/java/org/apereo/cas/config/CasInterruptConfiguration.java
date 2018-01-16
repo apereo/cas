@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.interrupt.InterruptProperties;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casInterruptConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasInterruptConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

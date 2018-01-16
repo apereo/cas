@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.engine;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMitigator {
     private final AuthenticationRiskContingencyPlan contingencyPlan;
 

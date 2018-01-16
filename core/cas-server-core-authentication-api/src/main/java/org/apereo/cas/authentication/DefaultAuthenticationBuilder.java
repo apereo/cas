@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
@@ -20,9 +19,10 @@ import java.util.function.Predicate;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     private static final long serialVersionUID = -8504842011648432398L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationBuilder.class);
+
     
     /** Authenticated principal. */
     private Principal principal;

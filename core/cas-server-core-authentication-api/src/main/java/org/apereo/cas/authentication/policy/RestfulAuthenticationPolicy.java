@@ -1,13 +1,12 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,8 +28,9 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestfulAuthenticationPolicy.class);
+
 
     private final RestTemplate restTemplate;
     private final String endpoint;

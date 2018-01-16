@@ -1,11 +1,13 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 
 /**
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdCredential implements Credential {
 
     private static final long serialVersionUID = -6535869729412406133L;

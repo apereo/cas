@@ -4,9 +4,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link ThrowableSerializer}.
@@ -14,8 +13,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class ThrowableSerializer extends Serializer<Throwable> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThrowableSerializer.class);
+
 
     @Override
     public void write(final Kryo kryo, final Output output, final Throwable object) {

@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -16,8 +15,9 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapAccountStateHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OptionalWarningLdapLdapAccountStateHandler.class);
+
     
     private String warnAttributeName;
     private String warningAttributeValue;

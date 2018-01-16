@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -19,8 +20,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jooq.lambda.Unchecked;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.JsonWebKeySet;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -41,8 +40,9 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcJwksEndpointController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcJwksEndpointController.class);
+
 
     @Autowired
     private ResourceLoader resourceLoader;

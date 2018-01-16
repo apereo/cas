@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,6 +12,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SurrogateUsernamePasswordCredential extends RememberMeUsernamePasswordCredential {
 
     private static final long serialVersionUID = 8760695298971444249L;

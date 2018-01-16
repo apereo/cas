@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
@@ -16,8 +17,6 @@ import org.pac4j.http.client.direct.IpClient;
 import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.http.credentials.extractor.IpExtractor;
 import org.pac4j.springframework.web.SecurityInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -46,8 +45,9 @@ import java.util.regex.Pattern;
  */
 @Configuration("casSecurityContextConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasSecurityContextConfiguration.class);
+
 
     private static final String CAS_CLIENT_NAME = "CasClient";
 

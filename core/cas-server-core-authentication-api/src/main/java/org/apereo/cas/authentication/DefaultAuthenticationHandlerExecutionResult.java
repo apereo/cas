@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -18,6 +19,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     /**

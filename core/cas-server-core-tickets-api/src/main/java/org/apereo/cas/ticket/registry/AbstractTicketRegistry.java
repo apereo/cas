@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import com.google.common.io.ByteSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
@@ -10,8 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.util.Collection;
@@ -29,11 +28,12 @@ import java.util.stream.Stream;
  * This is a published and supported CAS Server API.
  * </p>
  */
+@Slf4j
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTicketRegistry.class);
+
 
     /**
      * The cipher executor for ticket objects.

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
 import org.opensaml.saml.saml1.binding.encoding.impl.HTTPSOAP11Encoder;
@@ -8,8 +9,6 @@ import org.opensaml.soap.soap11.Body;
 import org.opensaml.soap.soap11.Envelope;
 import org.opensaml.soap.util.SOAPConstants;
 import org.opensaml.core.xml.XMLObjectBuilderFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Override OpenSAML {@link HTTPSOAP11Encoder} such that SOAP-ENV XML namespace prefix is used for SOAP envelope
@@ -18,10 +17,11 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 4.2.0
  */
+@Slf4j
 public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasHttpSoap11Encoder.class);
+
 
     /**
      * Instantiates a new encoder.

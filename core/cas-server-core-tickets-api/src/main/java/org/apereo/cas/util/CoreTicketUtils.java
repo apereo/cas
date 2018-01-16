@@ -1,12 +1,11 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link CoreTicketUtils}.
@@ -14,8 +13,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public final class CoreTicketUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoreTicketUtils.class);
+
 
     private CoreTicketUtils() {}
     

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
@@ -20,8 +21,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.soap.wsfed.RequestedSecurityToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -42,6 +41,7 @@ import java.util.UUID;
  * @author John Gasper
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationAction extends AbstractAction {
 
     private static final String LOCALE = "locale";
@@ -54,7 +54,7 @@ public class WsFederationAction extends AbstractAction {
     private static final String WSIGNIN = "wsignin1.0";
     private static final String WCTX = "wctx";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationAction.class);
+
 
     private final WsFederationHelper wsFederationHelper;
     private final Collection<WsFederationConfiguration> configuration;

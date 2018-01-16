@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -34,6 +35,7 @@ import java.util.HashSet;
  */
 @Configuration("wsfedAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired

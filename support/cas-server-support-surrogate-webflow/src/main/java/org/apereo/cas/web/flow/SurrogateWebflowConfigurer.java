@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * The view id 'surrogateListView'.

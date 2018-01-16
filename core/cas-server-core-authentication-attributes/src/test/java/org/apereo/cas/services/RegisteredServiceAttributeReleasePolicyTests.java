@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -33,6 +34,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class RegisteredServiceAttributeReleasePolicyTests {
 
     private static final String ATTR_1 = "attr1";

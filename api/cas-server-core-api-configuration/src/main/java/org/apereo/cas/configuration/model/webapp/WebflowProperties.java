@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-webflow")
+@Slf4j
 public class WebflowProperties implements Serializable {
 
     private static final long serialVersionUID = 4949978905279568311L;

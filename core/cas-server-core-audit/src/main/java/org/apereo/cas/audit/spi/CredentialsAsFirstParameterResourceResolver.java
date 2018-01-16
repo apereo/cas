@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.util.CollectionUtils;
 import org.aspectj.lang.JoinPoint;
@@ -15,6 +16,7 @@ import org.apereo.cas.util.AopUtils;
  * @since 3.1.2
  *
  */
+@Slf4j
 public class CredentialsAsFirstParameterResourceResolver implements AuditResourceResolver {
 
     private static final String SUPPLIED_CREDENTIALS = "Supplied credentials: ";

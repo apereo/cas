@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -20,6 +21,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcCallbackAuthorizeViewResolver implements OAuth20CallbackAuthorizeViewResolver {
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
 

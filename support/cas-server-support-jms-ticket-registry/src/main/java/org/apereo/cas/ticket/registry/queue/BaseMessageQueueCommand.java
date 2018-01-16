@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.queue;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public abstract class BaseMessageQueueCommand {
     private final StringBean id;
 

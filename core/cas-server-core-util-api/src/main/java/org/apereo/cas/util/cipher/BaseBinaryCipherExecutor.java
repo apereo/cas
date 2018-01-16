@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.AesCipherService;
 import org.apache.shiro.crypto.CipherService;
@@ -8,8 +9,6 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -26,8 +25,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseBinaryCipherExecutor.class);
+
 
     /**
      * Name of the cipher/component whose keys are generated here.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @author Daniel Frett
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultMultifactorTriggerSelectionStrategyTests {
 
     private static final String MFA_INVALID = "mfaInvalid";

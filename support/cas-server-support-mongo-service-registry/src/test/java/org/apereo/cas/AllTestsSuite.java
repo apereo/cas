@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MongoServiceRegistryDaoCloudTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -13,5 +14,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses(MongoServiceRegistryDaoCloudTests.class)
+@Slf4j
 public class AllTestsSuite {
 }

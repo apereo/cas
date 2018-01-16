@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.impl.calcs.DateTimeAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.GeoLocationAuthenticationRequestRiskCalculatorTests;
 import org.apereo.cas.impl.calcs.IpAddressAuthenticationRequestRiskCalculatorTests;
@@ -17,5 +18,6 @@ import org.junit.runners.Suite;
         GeoLocationAuthenticationRequestRiskCalculatorTests.class,
         IpAddressAuthenticationRequestRiskCalculatorTests.class,
         UserAgentAuthenticationRequestRiskCalculatorTests.class})
+@Slf4j
 public class AllTestsSuite {
 }

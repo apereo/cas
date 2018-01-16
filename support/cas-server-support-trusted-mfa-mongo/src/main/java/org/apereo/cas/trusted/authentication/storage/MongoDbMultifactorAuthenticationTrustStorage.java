@@ -1,9 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import com.mongodb.WriteResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -19,8 +18,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbMultifactorAuthenticationTrustStorage.class);
+
     
     private final String collectionName;
     private final MongoOperations mongoTemplate;

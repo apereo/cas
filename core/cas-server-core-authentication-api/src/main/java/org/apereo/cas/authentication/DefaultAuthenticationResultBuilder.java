@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -24,8 +23,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
+
     private static final long serialVersionUID = 6180465589526463843L;
 
     private List<Credential> providedCredentials = new ArrayList<>();

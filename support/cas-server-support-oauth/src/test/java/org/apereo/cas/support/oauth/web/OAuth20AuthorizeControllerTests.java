@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
@@ -38,6 +39,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Slf4j
 public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     private static final String ID = "id";

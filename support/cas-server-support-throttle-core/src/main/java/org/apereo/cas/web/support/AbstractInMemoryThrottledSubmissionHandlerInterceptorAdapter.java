@@ -1,7 +1,6 @@
 package org.apereo.cas.web.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
@@ -19,10 +18,11 @@ import java.util.concurrent.ConcurrentMap;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
         implements InMemoryThrottledSubmissionHandlerInterceptor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter.class);
+
     
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 

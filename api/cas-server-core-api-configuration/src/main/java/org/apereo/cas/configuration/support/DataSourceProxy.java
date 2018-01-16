@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.AbstractDataSource;
 
 /**
@@ -23,6 +24,7 @@ import org.springframework.jdbc.datasource.AbstractDataSource;
  * @author Hal Deadman
  * @since 5.1
  */
+@Slf4j
 public class DataSourceProxy extends AbstractDataSource {
 
     private final DataSource dataSource;

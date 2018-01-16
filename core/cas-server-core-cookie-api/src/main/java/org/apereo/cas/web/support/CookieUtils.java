@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CookieUtils {
     protected CookieUtils() {
     }

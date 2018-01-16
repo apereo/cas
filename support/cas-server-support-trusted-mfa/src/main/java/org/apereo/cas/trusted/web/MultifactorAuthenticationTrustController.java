@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -22,6 +23,7 @@ import java.util.Set;
  */
 @RestController("mfaTrustController")
 @RequestMapping(value="/status/trustedDevices")
+@Slf4j
 public class MultifactorAuthenticationTrustController {
 
     private final MultifactorAuthenticationTrustStorage storage;

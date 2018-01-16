@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
@@ -22,6 +23,7 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class Cas10ResponseViewTests {
 
     private Map<String, Object> model;

@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasConsentApiConfiguration;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -31,6 +32,7 @@ import static org.junit.Assert.*;
         RefreshAutoConfiguration.class,
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})
+@Slf4j
 public class DefaultConsentDecisionBuilderTests {
 
     @Autowired

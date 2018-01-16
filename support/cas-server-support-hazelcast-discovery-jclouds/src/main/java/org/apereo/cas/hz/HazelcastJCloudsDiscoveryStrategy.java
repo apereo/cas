@@ -2,6 +2,7 @@ package org.apereo.cas.hz;
 
 import com.hazelcast.config.DiscoveryStrategyConfig;
 import com.hazelcast.jclouds.JCloudsDiscoveryStrategyFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastClusterProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastJCloudsDiscoveryProperties;
 import org.springframework.util.StringUtils;
@@ -15,6 +16,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class HazelcastJCloudsDiscoveryStrategy implements HazelcastDiscoveryStrategy {
 
     @Override

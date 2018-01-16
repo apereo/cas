@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
@@ -21,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.configurers
  */
 @Configuration("casWebApplicationSpringSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasWebApplicationSpringSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Autowired

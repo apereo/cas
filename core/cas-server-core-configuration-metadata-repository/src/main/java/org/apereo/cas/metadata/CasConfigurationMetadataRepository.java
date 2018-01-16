@@ -1,10 +1,9 @@
 package org.apereo.cas.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepositoryJsonBuilder;
@@ -21,8 +20,9 @@ import java.util.Arrays;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
+@Slf4j
 public class CasConfigurationMetadataRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationMetadataRepository.class);
+
 
     private final ConfigurationMetadataRepository configMetadataRepo;
 

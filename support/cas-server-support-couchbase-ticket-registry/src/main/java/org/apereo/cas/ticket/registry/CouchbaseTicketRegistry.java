@@ -6,14 +6,13 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -32,6 +31,7 @@ import java.util.function.Consumer;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
      * The all tickets view name.
@@ -56,7 +56,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     public static final String UTIL_DOCUMENT = "statistics";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseTicketRegistry.class);
+
 
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
     private static final String END_TOKEN = "\u02ad";

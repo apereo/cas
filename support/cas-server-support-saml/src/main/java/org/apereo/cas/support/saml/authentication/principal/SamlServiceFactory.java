@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,8 +16,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class SamlServiceFactory extends AbstractServiceFactory<SamlService> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlServiceFactory.class);
+
     
     private static final int CONST_REQUEST_ID_LENGTH = 11;
 

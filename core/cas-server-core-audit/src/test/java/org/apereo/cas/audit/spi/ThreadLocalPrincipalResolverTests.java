@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
 public class ThreadLocalPrincipalResolverTests {
 
     private final ThreadLocalPrincipalResolver theResolver =

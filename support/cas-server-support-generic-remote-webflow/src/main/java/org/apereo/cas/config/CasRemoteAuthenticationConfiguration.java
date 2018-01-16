@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressAuthenticationHandler;
 import org.apereo.cas.adaptors.generic.remote.RemoteAddressNonInteractiveCredentialsAction;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -37,6 +38,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casRemoteAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasRemoteAuthenticationConfiguration {
 
     @Autowired

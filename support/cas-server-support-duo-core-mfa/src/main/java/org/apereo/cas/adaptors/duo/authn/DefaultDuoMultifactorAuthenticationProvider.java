@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -10,8 +11,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 
@@ -21,9 +20,10 @@ import org.springframework.webflow.execution.Event;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultDuoMultifactorAuthenticationProvider.class);
+
     private static final long serialVersionUID = 4789727148634156909L;
 
     private String registrationUrl;

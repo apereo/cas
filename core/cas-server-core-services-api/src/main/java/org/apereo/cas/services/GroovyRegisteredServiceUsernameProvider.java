@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -8,8 +9,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 
 import java.io.IOException;
@@ -23,11 +22,12 @@ import java.util.regex.Matcher;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 5823989148794052951L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyRegisteredServiceUsernameProvider.class);
+
 
     private String groovyScript;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Service;
@@ -26,8 +27,6 @@ import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.saml.saml2.core.ArtifactResolve;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +39,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSamlProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Saml1ArtifactResolutionProfileHandlerController.class);
+
     private final TicketRegistry ticketRegistry;
     private final SamlArtifactTicketFactory artifactTicketFactory;
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;

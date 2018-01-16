@@ -2,6 +2,7 @@ package org.apereo.cas.authentication.config;
 
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.MongoAuthenticationHandler;
@@ -15,8 +16,6 @@ import org.apereo.cas.configuration.model.support.mongo.MongoAuthenticationPrope
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.password.SpringSecurityPasswordEncoder;
 import org.pac4j.mongo.profile.service.MongoProfileService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,8 +33,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casMongoAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasMongoAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasMongoAuthenticationConfiguration.class);
+
     
     @Autowired
     private CasConfigurationProperties casProperties;

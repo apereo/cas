@@ -3,6 +3,7 @@ package org.apereo.cas.redis.core;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,6 +20,7 @@ import redis.clients.jedis.JedisPoolConfig;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RedisObjectFactory {
 
     /**

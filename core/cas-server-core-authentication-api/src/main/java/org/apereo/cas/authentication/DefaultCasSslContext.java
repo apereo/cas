@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.net.ssl.KeyManager;
@@ -34,9 +33,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class DefaultCasSslContext {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasSslContext.class);
+@Slf4j
+public class DefaultCasSslContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
@@ -179,7 +178,7 @@ public class DefaultCasSslContext {
      */
     private static class CompositeX509TrustManager implements X509TrustManager {
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(CompositeX509TrustManager.class);
+
 
         private final List<X509TrustManager> trustManagers;
 

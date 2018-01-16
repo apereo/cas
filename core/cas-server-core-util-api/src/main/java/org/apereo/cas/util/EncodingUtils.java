@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -11,8 +12,6 @@ import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import java.io.Serializable;
@@ -32,6 +31,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+
+@Slf4j
 public final class EncodingUtils {
 
     /**
@@ -39,7 +40,7 @@ public final class EncodingUtils {
      */
     public static final String JSON_WEB_KEY = "k";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EncodingUtils.class);
+
 
     private EncodingUtils() {
     }

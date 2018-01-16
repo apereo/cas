@@ -4,10 +4,9 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -16,8 +15,9 @@ import java.time.ZonedDateTime;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
+@Slf4j
 public class ZonedDateTimeSerializer extends Serializer<ZonedDateTime> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ZonedDateTimeSerializer.class);
+
 
     @Override
     public void write(final Kryo kryo, final Output output, final ZonedDateTime dateTime) {

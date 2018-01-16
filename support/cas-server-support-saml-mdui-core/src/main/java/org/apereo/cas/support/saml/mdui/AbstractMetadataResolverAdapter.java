@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.opensaml.core.criterion.EntityIdCriterion;
@@ -9,8 +10,6 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilter;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.metadata.resolver.impl.DOMMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -31,8 +30,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public abstract class AbstractMetadataResolverAdapter implements MetadataResolverAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMetadataResolverAdapter.class);
+
 
     /**
      * Metadata resources along with filters to perform validation.

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -19,6 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-saml-idp")
+@Slf4j
 public class SamlIdPMetadataProperties implements Serializable {
     private static final long serialVersionUID = -1020542741768471305L;
 

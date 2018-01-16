@@ -1,12 +1,11 @@
 package org.apereo.cas.services.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -19,9 +18,10 @@ import java.security.Security;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceCipherExecutor.class);
+
 
     static {
         Security.addProvider(new BouncyCastleProvider());

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -12,8 +13,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -28,9 +27,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseSamlRegisteredServiceAttributeReleasePolicy extends ReturnAllowedAttributeReleasePolicy {
     private static final long serialVersionUID = -3301632236702329694L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSamlRegisteredServiceAttributeReleasePolicy.class);
+
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal,

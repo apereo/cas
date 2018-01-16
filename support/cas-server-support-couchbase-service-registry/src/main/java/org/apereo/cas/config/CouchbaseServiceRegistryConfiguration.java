@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
@@ -23,6 +24,7 @@ import java.util.Set;
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CouchbaseServiceRegistryConfiguration {
     
     @Autowired

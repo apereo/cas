@@ -1,8 +1,7 @@
 package org.apereo.cas.support.events.dao;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.CasEventRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -14,12 +13,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public abstract class AbstractCasEventRepository implements CasEventRepository {
 
-    /**
-     * The constant LOGGER.
-     */
-    protected static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasEventRepository.class);
     /**
      * The constant TYPE_PARAM.
      */

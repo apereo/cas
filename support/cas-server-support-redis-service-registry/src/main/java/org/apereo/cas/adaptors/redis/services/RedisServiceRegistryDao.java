@@ -1,9 +1,8 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.ArrayList;
@@ -17,9 +16,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RedisServiceRegistryDao.class);
+
     private static final String CAS_SERVICE_PREFIX = RegisteredService.class.getSimpleName() + ':';
 
     private final RedisTemplate<String, RegisteredService> template;

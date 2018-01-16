@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.fediz.core.util.CertsUtils;
 import org.apache.cxf.fediz.core.util.SignatureUtils;
@@ -15,8 +16,6 @@ import org.apereo.cas.support.util.CryptoUtils;
 import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 import javax.xml.stream.XMLStreamWriter;
@@ -36,8 +35,9 @@ import static org.apache.cxf.fediz.core.FedizConstants.WS_FEDERATION_NS;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WSFederationMetadataWriter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationMetadataWriter.class);
+
 
     protected WSFederationMetadataWriter() {
     }

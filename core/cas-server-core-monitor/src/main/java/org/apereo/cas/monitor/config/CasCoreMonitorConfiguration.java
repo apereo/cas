@@ -1,12 +1,11 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorWarningProperties;
 import org.apereo.cas.monitor.MemoryMonitor;
 import org.apereo.cas.monitor.SessionMonitor;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.health.Health;
@@ -24,8 +23,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreMonitorConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreMonitorConfiguration.class);
+
 
     @Autowired
     @Qualifier("ticketRegistry")

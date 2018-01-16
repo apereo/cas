@@ -1,5 +1,6 @@
 package org.apereo.cas.mock;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -32,6 +33,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 

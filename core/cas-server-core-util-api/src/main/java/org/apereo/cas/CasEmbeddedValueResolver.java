@@ -1,7 +1,6 @@
 package org.apereo.cas;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -16,8 +15,9 @@ import java.time.Duration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasEmbeddedValueResolver extends EmbeddedValueResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedValueResolver.class);
+
     private final ConfigurableApplicationContext applicationContext;
 
     public CasEmbeddedValueResolver(final ApplicationContext applicationContext) {

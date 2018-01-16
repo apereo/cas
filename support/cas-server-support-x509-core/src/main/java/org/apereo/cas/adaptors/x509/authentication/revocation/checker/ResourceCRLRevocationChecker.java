@@ -1,12 +1,11 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
@@ -32,10 +31,11 @@ import java.util.concurrent.TimeUnit;
  * @author Marvin S. Addison
  * @since 3.4.7
  */
+@Slf4j
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCRLRevocationChecker.class);
+
 
     /**
      * Executor responsible for refreshing CRL data.

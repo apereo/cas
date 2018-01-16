@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
@@ -34,6 +35,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Slf4j
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";

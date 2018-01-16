@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -24,6 +25,7 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SamlIdPMetadataUIAction extends AbstractAction {
     private final ServicesManager servicesManager;
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,6 +38,7 @@ import java.util.HashSet;
  */
 @Controller("loggingConfigController")
 @RequestMapping("/status/loggingsocket")
+@Slf4j
 public class LoggingOutputSocketMessagingController {
 
     private static StringBuilder LOG_OUTPUT = new StringBuilder();

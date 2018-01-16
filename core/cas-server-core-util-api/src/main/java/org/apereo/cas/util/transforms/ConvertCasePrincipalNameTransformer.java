@@ -1,5 +1,6 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
 
@@ -12,6 +13,7 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
     private boolean toUpperCase;
 

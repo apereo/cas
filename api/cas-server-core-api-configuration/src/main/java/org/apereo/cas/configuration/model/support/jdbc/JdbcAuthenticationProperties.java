@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
+@Slf4j
 public class JdbcAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7199786191466526110L;
     /**

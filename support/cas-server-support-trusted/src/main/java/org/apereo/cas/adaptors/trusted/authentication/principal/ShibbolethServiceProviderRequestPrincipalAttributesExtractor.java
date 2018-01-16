@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implements RemoteRequestPrincipalAttributesExtractor {
     private static final String PREFIX = "AJP_";
 

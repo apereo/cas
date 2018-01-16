@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
@@ -42,6 +43,7 @@ import java.util.stream.Stream;
  */
 @Configuration("casCoreAuthenticationHandlersConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreAuthenticationHandlersConfiguration {
 
     @Autowired
@@ -72,8 +74,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager,
-                proxyPrincipalFactory(), Integer.MIN_VALUE,
-                supportsTrustStoreSslSocketFactoryHttpClient);
+            proxyPrincipalFactory(), Integer.MIN_VALUE,
+            supportsTrustStoreSslSocketFactoryHttpClient);
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -93,7 +95,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
         final AcceptAuthenticationProperties props = casProperties.getAuthn().getAccept();
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
-                acceptUsersPrincipalFactory(), null, getParsedUsers());
+            acceptUsersPrincipalFactory(), null, getParsedUsers());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
@@ -115,8 +117,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
         if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
             return Stream.of(usersProperty.split(","))
-                    .map(pattern::split)
-                    .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
+                .map(pattern::split)
+                .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
         }
         return new HashMap<>(0);
     }
@@ -142,25 +144,25 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         public List<AuthenticationHandler> jaasAuthenticationHandlers() {
             return casProperties.getAuthn().getJaas()
-                    .stream()
-                    .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
-                    .map(jaas -> {
-                        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),
-                                servicesManager, jaasPrincipalFactory(), null);
+                .stream()
+                .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
+                .map(jaas -> {
+                    final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),
+                        servicesManager, jaasPrincipalFactory(), null);
 
-                        h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
-                        h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
-                        h.setRealm(jaas.getRealm());
-                        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
+                    h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
+                    h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
+                    h.setRealm(jaas.getRealm());
+                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
 
-                        if (jaasPasswordPolicyConfiguration != null) {
-                            h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
-                        }
-                        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
-                        h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
-                        return h;
-                    })
-                    .collect(Collectors.toList());
+                    if (jaasPasswordPolicyConfiguration != null) {
+                        h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
+                    }
+                    h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
+                    h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
+                    return h;
+                })
+                .collect(Collectors.toList());
         }
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationEventExecutionPlanConfigurer")

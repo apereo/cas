@@ -1,9 +1,8 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
@@ -15,8 +14,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public final class MultifactorAuthenticationUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationUtils.class);
+
     
     private MultifactorAuthenticationUtils() {}
     

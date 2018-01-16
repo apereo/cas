@@ -15,6 +15,7 @@ import com.amazonaws.services.logs.model.InvalidSequenceTokenException;
 import com.amazonaws.services.logs.model.LogStream;
 import com.amazonaws.services.logs.model.PutLogEventsRequest;
 import com.amazonaws.services.logs.model.PutLogEventsResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Layout;
 import org.apache.logging.log4j.core.LogEvent;
@@ -41,6 +42,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @since 5.1.0
  */
 @Plugin(name = "CloudWatchAppender", category = "Core", elementType = "appender", printObject = true)
+@Slf4j
 public class CloudWatchAppender extends AbstractAppender {
     private static final long serialVersionUID = 1044758913028847477L;
 

@@ -2,8 +2,7 @@ package org.apereo.cas.otp.repository.token;
 
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,8 +13,9 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CachingOneTimeTokenRepository.class);
+
 
     private final LoadingCache<String, Collection<OneTimeToken>> storage;
 

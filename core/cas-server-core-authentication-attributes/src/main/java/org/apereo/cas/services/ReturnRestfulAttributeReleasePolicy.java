@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -11,8 +12,6 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
 import java.util.HashMap;
@@ -24,13 +23,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReturnRestfulAttributeReleasePolicy.class);
+
 
     private String endpoint;
 

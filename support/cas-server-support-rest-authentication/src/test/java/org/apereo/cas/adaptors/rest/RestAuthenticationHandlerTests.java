@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -83,6 +84,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @EnableScheduling
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@Slf4j
 public class RestAuthenticationHandlerTests {
 
     @Rule

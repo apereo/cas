@@ -8,12 +8,11 @@ import com.amazonaws.services.clouddirectory.model.ListObjectAttributesRequest;
 import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
 import com.amazonaws.services.clouddirectory.model.ObjectReference;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -25,8 +24,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCloudDirectoryRepository.class);
+
     
     private final AmazonCloudDirectory amazonCloudDirectory;
     private final CloudDirectoryProperties cloudDirectoryProperties;

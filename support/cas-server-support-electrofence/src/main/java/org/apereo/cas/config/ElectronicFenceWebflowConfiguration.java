@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
@@ -16,8 +17,6 @@ import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,9 +40,10 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("electronicFenceWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@Slf4j
 public class ElectronicFenceWebflowConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElectronicFenceWebflowConfiguration.class);
+
 
     @Autowired
     @Qualifier("communicationsManager")

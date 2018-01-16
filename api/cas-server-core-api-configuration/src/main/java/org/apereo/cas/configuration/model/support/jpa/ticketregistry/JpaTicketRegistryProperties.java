@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa.ticketregistry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -15,6 +16,7 @@ import javax.persistence.LockModeType;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-jpa-ticket-registry")
+@Slf4j
 public class JpaTicketRegistryProperties extends AbstractJpaProperties {
 
     /**

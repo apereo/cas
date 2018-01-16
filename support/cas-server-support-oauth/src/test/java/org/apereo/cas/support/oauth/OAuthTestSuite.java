@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.services.OAuthWebApplicationServiceTests;
 import org.apereo.cas.support.oauth.web.OAuth20AccessTokenControllerMemcachedTests;
 import org.apereo.cas.support.oauth.web.OAuth20ProfileControllerTests;
@@ -21,5 +22,6 @@ import org.junit.runners.Suite;
         OAuthAccessTokenExpirationPolicyTests.class, OAuthRefreshTokenExpirationPolicyTests.class,
         OAuth20AccessTokenControllerMemcachedTests.class,
         OAuth20ProfileControllerTests.class, OAuthWebApplicationServiceTests.class})
+@Slf4j
 public class OAuthTestSuite {
 }

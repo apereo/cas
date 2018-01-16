@@ -2,6 +2,7 @@ package org.apereo.cas.oidc.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -114,6 +115,7 @@ import java.util.stream.Stream;
  */
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
 
     @Autowired

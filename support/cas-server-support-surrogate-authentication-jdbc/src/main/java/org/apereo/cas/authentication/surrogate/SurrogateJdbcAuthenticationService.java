@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -22,8 +21,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SurrogateJdbcAuthenticationService extends BaseSurrogateAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateJdbcAuthenticationService.class);
+
 
     private final JdbcTemplate jdbcTemplate;
     private final String surrogateSearchQuery;

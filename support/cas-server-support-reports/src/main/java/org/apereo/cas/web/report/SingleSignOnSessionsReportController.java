@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
@@ -9,8 +10,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -35,12 +34,13 @@ import java.util.concurrent.Callable;
  * @author Dmitriy Kopylenko
  * @since 4.1
  */
+@Slf4j
 public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
     private static final String STATUS = "status";
     private static final String TICKET_GRANTING_TICKET = "ticketGrantingTicket";
-    private static final Logger LOGGER = LoggerFactory.getLogger(SingleSignOnSessionsReportController.class);
+
 
 
     private enum SsoSessionReportOptions {

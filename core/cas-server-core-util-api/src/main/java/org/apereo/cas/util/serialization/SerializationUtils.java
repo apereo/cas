@@ -1,8 +1,7 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,8 +20,9 @@ import java.io.Serializable;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
+@Slf4j
 public final class SerializationUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SerializationUtils.class);
+
 
     private SerializationUtils() {
     }

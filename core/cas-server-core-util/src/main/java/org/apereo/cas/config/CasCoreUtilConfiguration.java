@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
@@ -39,6 +40,7 @@ import java.time.ZonedDateTime;
 @Configuration("casCoreUtilConfiguration")
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
+@Slf4j
 public class CasCoreUtilConfiguration {
 
     @Autowired

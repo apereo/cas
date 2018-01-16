@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
@@ -25,6 +26,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class PersonDirectoryPrincipalResolverTests {
 
     private static final String ATTR_1 = "attr1";

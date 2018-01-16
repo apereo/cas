@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import com.google.common.collect.Sets;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -38,8 +39,6 @@ import org.opensaml.xmlsec.signature.Signature;
 import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.SignatureValidator;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -53,8 +52,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SamlObjectSignatureValidator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlObjectSignatureValidator.class);
+
 
     /**
      * The Override signature reference digest methods.

@@ -1,12 +1,11 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.env.Environment;
 
 import java.security.Security;
@@ -17,13 +16,14 @@ import java.security.Security;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+
+@Slf4j
 public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
     public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationJasyptCipherExecutor.class);
+    
 
     /**
      * The Jasypt encryption parameters.

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ProxyGrantingTicketImpl;
@@ -12,8 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -26,8 +25,9 @@ import org.springframework.core.Ordered;
  */
 @Configuration("casCoreTicketCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketCatalogConfiguration.class);
+
 
     @Override
     public final void configureTicketCatalog(final TicketCatalog plan) {

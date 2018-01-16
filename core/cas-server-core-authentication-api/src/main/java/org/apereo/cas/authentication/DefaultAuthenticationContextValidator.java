@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.OrderComparator;
@@ -26,9 +25,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 4.3
  */
+@Slf4j
 public class DefaultAuthenticationContextValidator implements AuthenticationContextValidator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationContextValidator.class);
+
 
     private final String authenticationContextAttribute;
     private final String globalFailureMode;

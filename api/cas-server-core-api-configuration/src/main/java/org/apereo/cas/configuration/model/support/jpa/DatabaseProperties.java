@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.Serializable;
 
 /**
@@ -9,6 +11,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 
+@Slf4j
 public class DatabaseProperties implements Serializable {
 
     private static final long serialVersionUID = 7740236971148591965L;

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa.request;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -7,8 +8,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 
 import javax.servlet.http.HttpServletRequest;
@@ -23,8 +22,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RequestHeaderMultifactorAuthenticationPolicyEventResolver extends BaseRequestMultifactorAuthenticationPolicyEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequestHeaderMultifactorAuthenticationPolicyEventResolver.class);
+
 
     private final String mfaRequestHeader;
 

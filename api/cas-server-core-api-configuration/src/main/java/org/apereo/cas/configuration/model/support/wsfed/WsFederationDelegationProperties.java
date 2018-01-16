@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-wsfederation-webflow")
+@Slf4j
 public class WsFederationDelegationProperties implements Serializable {
 
     private static final long serialVersionUID = 5743971334977239938L;

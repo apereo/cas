@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -63,6 +64,7 @@ import java.util.Collection;
     CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
+@Slf4j
 public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired

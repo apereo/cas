@@ -2,10 +2,9 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An adaptation of metadata resolver which handles the resolution of metadata resources
@@ -15,8 +14,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SamlRegisteredServiceDefaultCachingMetadataResolver implements SamlRegisteredServiceCachingMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceDefaultCachingMetadataResolver.class);
+
     private static final int MAX_CACHE_SIZE = 10_000;
 
     private final SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader;

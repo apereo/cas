@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -8,8 +9,6 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.util.CollectionUtils;
 import org.opensaml.saml.common.profile.logic.EntityAttributesPredicate;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
@@ -23,8 +22,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InCommonRSAttributeReleasePolicy.class);
+
     private static final long serialVersionUID = -3483733307124962357L;
 
     private String entityAttribute;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.sms;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-sms-textmagic")
+@Slf4j
 public class TextMagicProperties implements Serializable {
 
     private static final long serialVersionUID = 5645993472155203013L;

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.swivel;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SwivelCredential implements Credential, Serializable {
     private static final long serialVersionUID = 361318678073819595L;
     private String token;

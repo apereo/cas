@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class DefaultPrincipalFactory implements PrincipalFactory {
     private static final long serialVersionUID = -3999695695604948495L;
 

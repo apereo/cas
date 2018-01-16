@@ -1,11 +1,14 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Exception that is thrown when an Unauthorized Service attempts to use CAS.
  *
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class UnauthorizedServiceException extends RuntimeException {
 
     /** Error code that indicates the service is unauthorized for use. **/

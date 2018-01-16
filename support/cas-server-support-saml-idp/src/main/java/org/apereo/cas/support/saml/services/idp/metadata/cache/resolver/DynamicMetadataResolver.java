@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
 import com.google.common.base.Function;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -12,8 +13,6 @@ import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
@@ -26,8 +25,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolver.class);
+
 
     /**
      * The Http client.

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -9,8 +10,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
 
@@ -21,8 +20,9 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DefaultTicketGrantingTicketFactory implements TicketGrantingTicketFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketGrantingTicketFactory.class);
+
 
     /**
      * UniqueTicketIdGenerator to generate ids for {@link TicketGrantingTicket}s created.

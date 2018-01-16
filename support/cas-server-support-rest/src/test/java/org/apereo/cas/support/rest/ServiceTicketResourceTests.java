@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -39,6 +40,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
+@Slf4j
 public class ServiceTicketResourceTests {
 
     private static final String TICKETS_RESOURCE_URL = "/cas/v1/tickets";

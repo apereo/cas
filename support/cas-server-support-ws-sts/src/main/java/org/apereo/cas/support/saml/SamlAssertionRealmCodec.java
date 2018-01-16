@@ -1,10 +1,9 @@
 package org.apereo.cas.support.saml;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.sts.token.realm.SAMLRealmCodec;
 import org.apache.wss4j.common.saml.SAMLKeyInfo;
 import org.apache.wss4j.common.saml.SamlAssertionWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.cert.X509Certificate;
 
@@ -14,9 +13,10 @@ import java.security.cert.X509Certificate;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SamlAssertionRealmCodec implements SAMLRealmCodec {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlAssertionRealmCodec.class);
+
 
     private final String realm;
     private final boolean uppercase = true;

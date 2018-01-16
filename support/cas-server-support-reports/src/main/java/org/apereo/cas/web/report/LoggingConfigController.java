@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
@@ -49,6 +50,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class LoggingConfigController extends BaseCasMvcEndpoint {
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";

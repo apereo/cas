@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.authy;
 
 import com.authy.api.Token;
 import com.authy.api.User;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class AuthyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private final boolean forceVerification;

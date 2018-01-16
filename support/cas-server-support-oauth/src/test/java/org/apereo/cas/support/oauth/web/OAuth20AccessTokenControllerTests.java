@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.CasProtocolConstants;
@@ -41,6 +42,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Slf4j
 public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
 
     @Before

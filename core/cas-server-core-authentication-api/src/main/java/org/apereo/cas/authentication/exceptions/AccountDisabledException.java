@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.security.auth.login.AccountException;
 
 /**
@@ -8,6 +10,7 @@ import javax.security.auth.login.AccountException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class AccountDisabledException extends AccountException {
 
     /** Serialization metadata. */

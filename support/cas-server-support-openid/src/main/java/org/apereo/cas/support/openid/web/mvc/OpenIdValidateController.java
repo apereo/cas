@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -15,8 +16,6 @@ import org.apereo.cas.web.support.ArgumentExtractor;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.VerifyResponse;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -32,9 +31,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class OpenIdValidateController extends AbstractServiceValidateController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdValidateController.class);
+
 
     private final ServerManager serverManager;
 

@@ -1,11 +1,10 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,9 +17,10 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationCredential implements Credential {
     private static final long serialVersionUID = -824605020472810939L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationCredential.class);
+
 
     private String audience;
     private String authenticationMethod;

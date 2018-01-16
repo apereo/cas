@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apache.commons.pool2.ObjectPool;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class MemcachedMonitorConfiguration {
 
     @Autowired

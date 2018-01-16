@@ -4,6 +4,7 @@ import com.unboundid.scim2.common.types.Email;
 import com.unboundid.scim2.common.types.Name;
 import com.unboundid.scim2.common.types.PhoneNumber;
 import com.unboundid.scim2.common.types.UserResource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -15,6 +16,7 @@ import org.apereo.cas.util.CollectionUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class Scim2PrincipalAttributeMapper {
 
     /**

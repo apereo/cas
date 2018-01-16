@@ -1,5 +1,7 @@
 package org.apereo.cas.util.io;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
@@ -9,6 +11,7 @@ import java.io.StringWriter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CopyPrintWriter extends PrintWriter {
 
     private StringBuilder copy = new StringBuilder();

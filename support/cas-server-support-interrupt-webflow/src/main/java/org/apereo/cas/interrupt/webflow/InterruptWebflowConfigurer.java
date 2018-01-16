@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -22,6 +23,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class InterruptWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private static final String INTERRUPT_VIEW_ID = "casInterruptView";
     

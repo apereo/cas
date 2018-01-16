@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -52,6 +53,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
 @EnableScheduling
 @DirtiesContext
+@Slf4j
 public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
 
     @Autowired

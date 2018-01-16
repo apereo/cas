@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 
@@ -9,6 +10,7 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class OAuth20IdTokenResponseTypeRequestValidator extends OAuth20TokenResponseTypeRequestValidator {
     public OAuth20IdTokenResponseTypeRequestValidator(final ServicesManager servicesManager,
                                                       final OAuth20Validator validator) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.Bus;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apache.cxf.ws.security.trust.STSClient;
@@ -11,6 +12,7 @@ import org.w3c.dom.Element;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SecurityTokenServiceClient extends STSClient {
     public SecurityTokenServiceClient(final Bus b) {
         super(b);

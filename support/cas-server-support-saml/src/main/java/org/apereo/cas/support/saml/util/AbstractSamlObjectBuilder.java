@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,8 +19,6 @@ import org.opensaml.saml.common.SAMLObjectBuilder;
 import org.opensaml.saml.common.xml.SAMLConstants;
 import org.opensaml.soap.common.SOAPObject;
 import org.opensaml.soap.common.SOAPObjectBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,6 +59,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -78,7 +78,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final long serialVersionUID = -6833230731146922780L;
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlObjectBuilder.class);
+
 
     /**
      * The Config bean.

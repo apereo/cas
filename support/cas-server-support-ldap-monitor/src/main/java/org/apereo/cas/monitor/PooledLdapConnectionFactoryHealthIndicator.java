@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.Connection;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.Validator;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutorService;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHealthIndicator {
 
     /**

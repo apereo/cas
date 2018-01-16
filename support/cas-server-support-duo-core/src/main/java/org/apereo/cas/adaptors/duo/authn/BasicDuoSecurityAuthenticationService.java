@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWeb;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * An abstraction that encapsulates interaction with Duo 2fa authentication service via its public API.
@@ -23,8 +22,9 @@ import org.slf4j.LoggerFactory;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@Slf4j
 public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasicDuoSecurityAuthenticationService.class);
+
     private static final long serialVersionUID = -6690808348975271382L;
 
     /**

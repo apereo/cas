@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowAction;
 import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAuthenticationWebflowEventResolver;
@@ -40,8 +41,9 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("yubikeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class YubiKeyConfiguration {
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -58,7 +60,7 @@ public class YubiKeyConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -78,7 +80,7 @@ public class YubiKeyConfiguration {
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new RankedMultifactorAuthenticationProviderSelector();
+        new RankedMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -91,7 +93,7 @@ public class YubiKeyConfiguration {
         builder.addFlowLocationPattern("/mfa-yubikey/*-webflow.xml");
         return builder.build();
     }
-    
+
     @RefreshScope
     @Bean
     public Action yubikeyAuthenticationWebflowAction() {
@@ -102,8 +104,8 @@ public class YubiKeyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        final CasWebflowConfigurer w = new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry, yubikeyFlowRegistry(), applicationContext, casProperties);
+        final CasWebflowConfigurer w = new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, yubikeyFlowRegistry(), applicationContext, casProperties);
         w.initialize();
         return w;
     }
@@ -111,9 +113,9 @@ public class YubiKeyConfiguration {
     @Bean
     public CasWebflowEventResolver yubikeyAuthenticationWebflowEventResolver() {
         return new YubiKeyAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
-                warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
+            warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
-    
+
     /**
      * The Authy multifactor trust configuration.
      */
@@ -127,8 +129,8 @@ public class YubiKeyConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            final CasWebflowConfigurer w = new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices, 
-                    deviceRegistrationEnabled, loginFlowDefinitionRegistry, applicationContext, casProperties);
+            final CasWebflowConfigurer w = new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices,
+                deviceRegistrationEnabled, loginFlowDefinitionRegistry, applicationContext, casProperties);
             w.initialize();
             return w;
         }

@@ -1,5 +1,6 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
@@ -39,6 +40,7 @@ import java.util.List;
  */
 @Configuration("radiusTokenAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired

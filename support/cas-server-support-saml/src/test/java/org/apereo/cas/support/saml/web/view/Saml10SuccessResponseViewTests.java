@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -45,6 +46,7 @@ import static org.mockito.Mockito.*;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Slf4j
 public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
 
     private static final String TEST_VALUE = "testValue";

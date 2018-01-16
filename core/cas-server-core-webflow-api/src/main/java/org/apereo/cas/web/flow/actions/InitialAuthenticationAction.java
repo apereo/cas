@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -12,10 +13,10 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class InitialAuthenticationAction extends AbstractAuthenticationAction {
-
     public InitialAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
-                                       final CasWebflowEventResolver webflowEventResolver, 
+                                       final CasWebflowEventResolver webflowEventResolver,
                                        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
         super(delegatingWebflowEventResolver, webflowEventResolver, adaptiveAuthenticationPolicy);
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -16,6 +17,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-mdui")
+@Slf4j
 public class SamlMetadataUIProperties implements Serializable {
 
     private static final long serialVersionUID = 2113479681245996975L;

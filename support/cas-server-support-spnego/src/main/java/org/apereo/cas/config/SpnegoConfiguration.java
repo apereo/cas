@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import jcifs.spnego.Authentication;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("spnegoConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SpnegoConfiguration {
 
     @Autowired

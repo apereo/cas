@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.jpa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -18,6 +19,7 @@ import java.util.Collection;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerEvents")
+@Slf4j
 public class JpaCasEventRepository extends AbstractCasEventRepository {
 
     private static final String SELECT_QUERY = "SELECT r from CasEvent r ";

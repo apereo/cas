@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.MongoDbAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,6 +23,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("casAcceptableUsagePolicyMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasAcceptableUsagePolicyMongoDbConfiguration {
 
     @Autowired

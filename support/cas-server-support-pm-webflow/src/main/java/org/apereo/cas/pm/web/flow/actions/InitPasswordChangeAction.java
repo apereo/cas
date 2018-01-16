@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
@@ -12,6 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class InitPasswordChangeAction extends AbstractAction {
     @Autowired
     private CasConfigurationProperties casProperties;

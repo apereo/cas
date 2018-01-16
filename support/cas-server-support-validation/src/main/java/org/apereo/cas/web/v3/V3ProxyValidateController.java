@@ -1,5 +1,6 @@
 package org.apereo.cas.web.v3;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class V3ProxyValidateController extends V3ServiceValidateController {
 
     public V3ProxyValidateController(final CasProtocolValidationSpecification validationSpecification,

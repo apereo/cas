@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.RegisteredService;
 
@@ -18,6 +19,7 @@ import java.net.URL;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class HttpBasedServiceCredential extends AbstractCredential {
 
     /** Unique Serializable ID. */

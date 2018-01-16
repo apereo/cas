@@ -1,13 +1,12 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.nio.charset.StandardCharsets;
@@ -19,8 +18,9 @@ import java.security.Key;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCipherExecutor.class);
+
 
     private Key signingKey;
 

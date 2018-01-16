@@ -1,5 +1,7 @@
 package org.apereo.cas.pm;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Raised by {@link PasswordManagementService} if it is also responsible for validating
  * passwords and a new password fails validation.
@@ -8,6 +10,7 @@ package org.apereo.cas.pm;
  * @since 5.2.0
  */
 
+@Slf4j
 public class InvalidPasswordException extends RuntimeException {
 
     private static final long serialVersionUID = 458954862481279L;

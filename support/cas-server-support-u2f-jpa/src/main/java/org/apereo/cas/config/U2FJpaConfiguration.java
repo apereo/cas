@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRegistration;
@@ -38,6 +39,7 @@ import java.util.List;
 @Configuration("u2fJpaConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class U2FJpaConfiguration {
 
     @Autowired

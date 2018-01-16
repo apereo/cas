@@ -1,5 +1,6 @@
 package org.apereo.cas.web.pac4j;
 
+import lombok.extern.slf4j.Slf4j;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.engine.DefaultSecurityLogic;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Arnold Bergner
  * @since 5.2.0
  */
+@Slf4j
 public class CasSecurityInterceptor extends SecurityInterceptor {
 
     public CasSecurityInterceptor(final Config config, final String clients) {

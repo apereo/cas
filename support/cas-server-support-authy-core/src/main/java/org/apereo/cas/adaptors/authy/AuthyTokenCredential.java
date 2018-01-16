@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.authy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class AuthyTokenCredential implements Credential, Serializable {
     private static final long serialVersionUID = -7970600701132111037L;
 

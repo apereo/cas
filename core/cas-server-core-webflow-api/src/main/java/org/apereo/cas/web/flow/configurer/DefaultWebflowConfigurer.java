@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
@@ -39,6 +40,7 @@ import javax.security.auth.login.FailedLoginException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     /**

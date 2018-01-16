@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class BaseConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 1736846688546785564L;
     

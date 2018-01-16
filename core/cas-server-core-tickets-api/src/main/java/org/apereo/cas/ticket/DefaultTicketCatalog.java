@@ -1,7 +1,6 @@
 package org.apereo.cas.ticket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -17,8 +16,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultTicketCatalog implements TicketCatalog {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketCatalog.class);
+
 
     private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
 

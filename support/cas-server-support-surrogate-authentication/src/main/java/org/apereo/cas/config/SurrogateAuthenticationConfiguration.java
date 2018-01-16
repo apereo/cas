@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
@@ -21,8 +22,6 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -48,8 +47,9 @@ import java.util.Set;
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SurrogateAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
+
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;

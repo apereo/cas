@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -7,8 +8,6 @@ import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.http.HttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import java.net.URL;
@@ -23,11 +22,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1108201604115278440L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RemoteEndpointServiceAccessStrategy.class);
+
 
     private String endpointUrl;
 

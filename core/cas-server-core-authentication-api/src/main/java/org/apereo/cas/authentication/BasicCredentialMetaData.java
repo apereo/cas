@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import java.io.Serializable;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
@@ -12,6 +13,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class BasicCredentialMetaData implements CredentialMetaData, Serializable {
 
     /** Serialization version marker. */

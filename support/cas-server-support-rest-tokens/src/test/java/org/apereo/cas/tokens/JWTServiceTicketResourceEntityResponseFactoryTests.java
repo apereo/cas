@@ -1,6 +1,7 @@
 package org.apereo.cas.tokens;
 
 import com.nimbusds.jwt.JWTClaimsSet;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -87,6 +88,7 @@ import static org.junit.Assert.*;
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasRestTokensConfiguration.class})
+@Slf4j
 public class JWTServiceTicketResourceEntityResponseFactoryTests {
 
     @Autowired

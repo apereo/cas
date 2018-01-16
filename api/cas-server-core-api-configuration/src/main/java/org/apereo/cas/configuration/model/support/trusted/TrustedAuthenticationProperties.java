@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.trusted;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,6 +11,7 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-trusted-webflow")
+@Slf4j
 public class TrustedAuthenticationProperties extends PersonDirectoryPrincipalResolverProperties {
     private static final long serialVersionUID = 279410895614233349L;
     

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.xml.SAMLConstants;
@@ -7,8 +8,6 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -20,8 +19,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class MetadataUIUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MetadataUIUtils.class);
+
 
 
     protected MetadataUIUtils() {

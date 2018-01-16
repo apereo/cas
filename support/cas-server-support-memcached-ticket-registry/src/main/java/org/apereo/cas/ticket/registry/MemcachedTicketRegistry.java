@@ -1,10 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.apereo.cas.ticket.Ticket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -18,8 +17,9 @@ import java.util.Collection;
  * @since 3.3
  */
 @SuppressWarnings("FutureReturnValueIgnored")
+@Slf4j
 public class MemcachedTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedTicketRegistry.class);
+
     /**
      * Memcached client.
      */

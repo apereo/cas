@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -95,6 +96,7 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
+@Slf4j
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

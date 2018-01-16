@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.jdbc.config.CasJdbcAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -48,6 +49,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasJdbcAuthenticationConfiguration.class, 
         CasCoreServicesConfiguration.class})
 @EnableScheduling
+@Slf4j
 public class JdbcConfigurationTests {
 
     @Test

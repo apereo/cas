@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.swivel;
 
 import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -27,8 +26,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwivelAuthenticationHandler.class);
+
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";
     private static final Map<String, String> ERROR_MAP = createErrorCodeMap();
 

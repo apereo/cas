@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -30,6 +31,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcAccessTokenEndpointController extends OAuth20AccessTokenEndpointController {
 
     public OidcAccessTokenEndpointController(final ServicesManager servicesManager,

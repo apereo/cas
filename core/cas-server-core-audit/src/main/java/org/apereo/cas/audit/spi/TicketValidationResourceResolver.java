@@ -2,12 +2,11 @@ package org.apereo.cas.audit.spi;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.cas.validation.Assertion;
 import org.aspectj.lang.JoinPoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -22,9 +21,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketValidationResourceResolver.class);
 
+@Slf4j
+public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
+    
     private final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
 
     @Override

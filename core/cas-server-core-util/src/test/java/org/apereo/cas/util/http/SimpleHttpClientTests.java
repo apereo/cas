@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.junit.Test;
@@ -16,6 +17,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class SimpleHttpClientTests {
 
     private static SimpleHttpClient getHttpClient() throws Exception {

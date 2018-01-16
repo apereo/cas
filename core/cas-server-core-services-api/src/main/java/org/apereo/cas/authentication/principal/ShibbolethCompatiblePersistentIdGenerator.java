@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -20,6 +19,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
@@ -27,7 +27,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     /**
      * Log instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
+
 
     private static final String CONST_SEPARATOR = "!";
 

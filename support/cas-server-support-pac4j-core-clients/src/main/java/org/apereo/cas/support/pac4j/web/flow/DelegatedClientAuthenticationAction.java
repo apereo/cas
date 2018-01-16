@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -23,8 +24,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -55,6 +54,7 @@ import java.util.regex.Pattern;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
 public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     /**
@@ -82,7 +82,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      */
     public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DelegatedClientAuthenticationAction.class);
+
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");

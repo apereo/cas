@@ -3,6 +3,7 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
@@ -48,8 +49,6 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -69,8 +68,9 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Transactional(transactionManager = "ticketTransactionManager")
+@Slf4j
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCentralAuthenticationService.class);
+
 
     private static final long serialVersionUID = -8943828074939533986L;
 

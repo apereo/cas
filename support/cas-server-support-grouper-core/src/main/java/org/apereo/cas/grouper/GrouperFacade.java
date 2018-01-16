@@ -3,9 +3,8 @@ package org.apereo.cas.grouper;
 import edu.internet2.middleware.grouperClient.api.GcGetGroups;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
 import edu.internet2.middleware.grouperClient.ws.beans.WsGroup;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,9 +16,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class GrouperFacade {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(GrouperFacade.class);
+
 
     protected GrouperFacade() {}
 

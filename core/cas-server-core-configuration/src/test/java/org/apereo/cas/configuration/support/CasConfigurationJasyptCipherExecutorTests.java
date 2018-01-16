@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,6 +17,7 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
+@Slf4j
 public class CasConfigurationJasyptCipherExecutorTests {
     @Autowired
     private Environment environment;

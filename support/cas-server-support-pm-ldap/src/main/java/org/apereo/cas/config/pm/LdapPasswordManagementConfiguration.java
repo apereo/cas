@@ -1,5 +1,6 @@
 package org.apereo.cas.config.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.config.pm.org.apereo.cas.pm.ldap.LdapPasswordManagementService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

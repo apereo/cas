@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -11,6 +12,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class DefaultPrincipalFactoryTests {
 
     private static final String UID = "uid";

@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.dynareg;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.util.List;
@@ -11,6 +12,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcClientRegistrationResponse implements Serializable {
     private static final long serialVersionUID = 1436206039117219598L;
 

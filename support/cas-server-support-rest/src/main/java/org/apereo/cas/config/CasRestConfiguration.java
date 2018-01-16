@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -44,6 +45,7 @@ import java.util.List;
  */
 @Configuration("casRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasRestConfiguration extends WebMvcConfigurerAdapter implements RestHttpRequestCredentialFactoryConfigurer {
 
     @Autowired

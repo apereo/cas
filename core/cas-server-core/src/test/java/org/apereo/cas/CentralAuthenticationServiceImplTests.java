@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -43,6 +44,7 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @DirtiesContext
+@Slf4j
 public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthenticationServiceTests {
 
     @Rule

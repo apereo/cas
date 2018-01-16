@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -19,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Slf4j
 public abstract class BaseAccessTokenGrantRequestExtractor {
     /**
      * The Services manager.

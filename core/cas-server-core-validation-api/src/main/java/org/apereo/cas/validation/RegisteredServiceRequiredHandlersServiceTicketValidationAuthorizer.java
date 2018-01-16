@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
@@ -8,8 +9,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -21,8 +20,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceRequiredHandlersServiceTicketValidationAuthorizer.class);
+
 
     private final ServicesManager servicesManager;
 

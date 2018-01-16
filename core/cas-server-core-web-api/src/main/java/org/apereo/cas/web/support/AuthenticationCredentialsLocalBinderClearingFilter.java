@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 
 import javax.servlet.Filter;
@@ -17,6 +18,7 @@ import java.io.IOException;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
 public class AuthenticationCredentialsLocalBinderClearingFilter implements Filter {
 
     @Override

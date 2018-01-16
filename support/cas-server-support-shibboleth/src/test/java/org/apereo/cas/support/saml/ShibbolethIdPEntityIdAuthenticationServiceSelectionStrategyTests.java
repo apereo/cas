@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.config.ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration;
@@ -28,6 +29,7 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class,
     ExternalShibbolethIdPAuthenticationServiceSelectionStrategyConfiguration.class})
 @TestPropertySource(properties = "cas.authn.shibIdp.serverUrl=https://idp.example.com")
+@Slf4j
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategyTests {
 
     @Autowired

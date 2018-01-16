@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.services.DefaultServicesManager;
@@ -21,6 +22,7 @@ import static org.mockito.Mockito.*;
  * @author Arnaud Lesueur
  * @since 3.1
  */
+@Slf4j
 public class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 

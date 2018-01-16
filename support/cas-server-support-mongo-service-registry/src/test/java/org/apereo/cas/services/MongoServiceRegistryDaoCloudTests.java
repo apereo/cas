@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.junit.After;
 import org.junit.Before;
@@ -33,6 +34,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {MongoDbServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/mongoservices.properties"})
+@Slf4j
 public class MongoServiceRegistryDaoCloudTests {
 
     @Autowired

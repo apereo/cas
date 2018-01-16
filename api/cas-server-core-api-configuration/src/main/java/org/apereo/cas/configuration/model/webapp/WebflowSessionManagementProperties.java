@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.Beans;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class WebflowSessionManagementProperties implements Serializable {
     private static final long serialVersionUID = 7479028707118198914L;
     /**

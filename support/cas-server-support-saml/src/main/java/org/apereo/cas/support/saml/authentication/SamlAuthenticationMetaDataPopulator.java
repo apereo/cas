@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
@@ -23,6 +24,7 @@ import java.util.Map;
  * @since 3.1
  */
 
+@Slf4j
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */

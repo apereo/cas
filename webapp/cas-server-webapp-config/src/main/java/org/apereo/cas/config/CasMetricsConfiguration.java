@@ -10,6 +10,7 @@ import com.codahale.metrics.jvm.MemoryUsageGaugeSet;
 import com.codahale.metrics.jvm.ThreadStatesGaugeSet;
 import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration("casMetricsConfiguration")
 @EnableMetrics
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
 
     @Autowired

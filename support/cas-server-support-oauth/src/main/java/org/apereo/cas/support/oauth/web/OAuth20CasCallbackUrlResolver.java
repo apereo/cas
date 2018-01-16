@@ -1,11 +1,10 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.http.UrlResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
 
@@ -15,8 +14,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20CasCallbackUrlResolver.class);
+
 
     private final String callbackUrl;
 

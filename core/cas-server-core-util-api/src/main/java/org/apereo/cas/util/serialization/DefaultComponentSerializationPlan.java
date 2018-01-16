@@ -1,9 +1,8 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.ComponentSerializationPlan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -17,9 +16,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class DefaultComponentSerializationPlan implements ComponentSerializationPlan {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultComponentSerializationPlan.class);
 
+@Slf4j
+public class DefaultComponentSerializationPlan implements ComponentSerializationPlan {
+    
     private final List<Pair<Class, Integer>> registeredClasses = new ArrayList<>();
 
     @Override

@@ -1,8 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 import java.util.Locale;
@@ -25,9 +24,10 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasReloadableMessageBundle.class);
+
 
     private String[] basenames;
 

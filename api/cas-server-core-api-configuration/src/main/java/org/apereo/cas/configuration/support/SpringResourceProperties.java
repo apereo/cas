@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SpringResourceProperties implements Serializable {
     private static final long serialVersionUID = 4142130961445546358L;
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,6 +11,7 @@ import static org.junit.Assert.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
+@Slf4j
 public class RegexUtilsTests {
 
     @Test

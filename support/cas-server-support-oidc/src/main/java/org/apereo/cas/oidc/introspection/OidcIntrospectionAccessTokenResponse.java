@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.introspection;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * This is {@link OidcIntrospectionAccessTokenResponse}.
@@ -8,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class OidcIntrospectionAccessTokenResponse {
 
     private boolean active;

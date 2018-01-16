@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -31,6 +32,7 @@ import static org.junit.Assert.*;
 @Import({ProxyControllerTests.ProxyTestConfiguration.class,
     CasProtocolViewsConfiguration.class,
     CasValidationConfiguration.class})
+@Slf4j
 public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired

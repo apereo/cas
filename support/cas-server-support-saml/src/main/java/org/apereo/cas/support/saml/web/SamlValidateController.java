@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -25,6 +26,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class SamlValidateController extends AbstractServiceValidateController {
 
     public SamlValidateController(final CasProtocolValidationSpecification validationSpecification,

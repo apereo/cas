@@ -1,15 +1,14 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.springframework.beans.factory.config.AbstractFactoryBean;
+import org.springframework.core.io.Resource;
+
 import java.io.InputStream;
 import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
-
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.config.AbstractFactoryBean;
-import org.springframework.core.io.Resource;
 
 /**
  * FactoryBean for creating a public key from a file.
@@ -18,18 +17,19 @@ import org.springframework.core.io.Resource;
  * @author Misagh Moayyed
  * @since 3.1
  */
+@Slf4j
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PublicKeyFactoryBean.class);
-    
+
+
     private Resource resource;
     private String algorithm;
 
     @Override
     protected PublicKey createInstance() throws Exception {
         LOGGER.debug("Creating public key instance from [{}] using [{}]",
-                this.resource.getFilename(), this.algorithm);
+            this.resource.getFilename(), this.algorithm);
 
-        try(InputStream pubKey = this.resource.getInputStream()) {
+        try (InputStream pubKey = this.resource.getInputStream()) {
             final byte[] bytes = new byte[pubKey.available()];
             pubKey.read(bytes);
             final X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(bytes);
@@ -63,9 +63,9 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
     @Override
     public String toString() {
         return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("resource", this.resource)
-                .append("algorithm", this.algorithm)
-                .toString();
+            .appendSuper(super.toString())
+            .append("resource", this.resource)
+            .append("algorithm", this.algorithm)
+            .toString();
     }
 }

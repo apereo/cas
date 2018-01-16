@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import javax.security.auth.callback.Callback;
@@ -56,8 +55,9 @@ import java.util.Set;
  * @see javax.security.auth.callback.NameCallback
  * @since 3.0.0
  */
+@Slf4j
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JaasAuthenticationHandler.class);
+
 
     /**
      * System property key to specify kerb5 realm.

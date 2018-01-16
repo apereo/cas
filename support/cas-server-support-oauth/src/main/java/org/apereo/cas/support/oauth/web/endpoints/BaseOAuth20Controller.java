@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -10,8 +11,6 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.ticket.accesstoken.AccessTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 
 /**
@@ -21,8 +20,9 @@ import org.springframework.stereotype.Controller;
  * @since 3.5.0
  */
 @Controller
+@Slf4j
 public abstract class BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseOAuth20Controller.class);
+
 
     /**
      * Collection of CAS settings.

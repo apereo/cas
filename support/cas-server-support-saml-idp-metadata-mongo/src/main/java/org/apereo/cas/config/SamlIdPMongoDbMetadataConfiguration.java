@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.metadata.MongoDbSamlMetadataProperties;
@@ -25,6 +26,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("samlIdPMongoDbMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlIdPMongoDbMetadataConfiguration implements SamlRegisteredServiceMetadataResolutionPlanConfigurator {
 
     @Autowired

@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
@@ -62,6 +63,7 @@ import static org.junit.Assert.*;
         CasDefaultServiceTicketIdGeneratorsConfiguration.class,
         CasCoreAuthenticationPrincipalConfiguration.class
 })
+@Slf4j
 public class DefaultPrincipalAttributesRepositoryTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultPrincipalAttributesRepository.json");

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -17,6 +18,7 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseCasSamlSPConfiguration {
     /**
      * CAS properties.

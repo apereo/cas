@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.authentication.surrogate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -10,6 +11,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {
     private static final long serialVersionUID = 8059647975948452375L;
 

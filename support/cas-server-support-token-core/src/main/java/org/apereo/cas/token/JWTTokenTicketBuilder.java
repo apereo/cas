@@ -2,6 +2,7 @@ package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
@@ -14,8 +15,6 @@ import org.hjson.Stringify;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.Date;
@@ -28,8 +27,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JWTTokenTicketBuilder implements TokenTicketBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JWTTokenTicketBuilder.class);
+
 
     private final TicketValidator ticketValidator;
     private final String casSeverPrefix;

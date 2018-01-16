@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.util.EncodingUtils;
@@ -15,6 +16,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public abstract class AbstractX509LdapTests extends AbstractLdapTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";

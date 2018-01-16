@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
@@ -20,6 +21,7 @@ import java.util.Locale;
  * @author Daniel Frett
  * @since 5.2.0
  */
+@Slf4j
 public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final ViewResolver delegate;

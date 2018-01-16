@@ -1,9 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
 import org.infinispan.Cache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.concurrent.TimeUnit;
@@ -17,8 +16,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfinispanTicketRegistry.class);
+
 
     private final Cache<String, Ticket> cache;
 

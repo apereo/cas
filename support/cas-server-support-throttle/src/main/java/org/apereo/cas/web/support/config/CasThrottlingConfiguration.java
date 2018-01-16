@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,8 +9,6 @@ import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressAndUsern
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter;
 import org.apereo.cas.web.support.InMemoryThrottledSubmissionCleaner;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -29,9 +28,10 @@ import org.springframework.context.annotation.Lazy;
 @Configuration("casThrottlingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
+@Slf4j
 public class CasThrottlingConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasThrottlingConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

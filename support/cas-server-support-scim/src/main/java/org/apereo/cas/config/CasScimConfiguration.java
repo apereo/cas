@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.scim.ScimProperties;
 import org.apereo.cas.scim.api.ScimProvisioner;
@@ -32,6 +33,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casScimConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@Slf4j
 public class CasScimConfiguration {
     @Autowired
     @Qualifier("loginFlowRegistry")

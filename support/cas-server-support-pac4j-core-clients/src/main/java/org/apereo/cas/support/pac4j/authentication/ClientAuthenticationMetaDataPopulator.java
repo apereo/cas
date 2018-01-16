@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
@@ -14,6 +15,7 @@ import org.apereo.cas.authentication.principal.ClientCredential;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
 public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
 

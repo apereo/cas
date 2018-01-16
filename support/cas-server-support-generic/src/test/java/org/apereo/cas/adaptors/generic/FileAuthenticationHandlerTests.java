@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.PreventedException;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class FileAuthenticationHandlerTests {
 
     @Rule

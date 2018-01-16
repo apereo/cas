@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -15,6 +16,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class FinalizeInterruptFlowAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {

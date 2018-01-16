@@ -1,5 +1,6 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -10,8 +11,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -31,8 +30,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class Cas30ResponseView extends Cas20ResponseView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseView.class);
+
     
     private final boolean releaseProtocolAttributes;
 

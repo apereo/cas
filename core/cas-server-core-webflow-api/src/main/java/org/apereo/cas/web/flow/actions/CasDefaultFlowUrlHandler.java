@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
@@ -17,6 +18,7 @@ import java.util.stream.Stream;
  * @author Scott Battaglia
  * @since 3.4
  */
+@Slf4j
 public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
     /**

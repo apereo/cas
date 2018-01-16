@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -10,8 +11,6 @@ import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -31,8 +30,9 @@ import org.springframework.core.Ordered;
 @Configuration("tokenCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class TokenCoreConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenCoreConfiguration.class);
+
     
     @Autowired
     private CasConfigurationProperties casProperties;

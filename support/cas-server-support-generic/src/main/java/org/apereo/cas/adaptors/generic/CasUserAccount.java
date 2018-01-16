@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -14,6 +15,7 @@ import java.util.Map;
  * @since 5.3.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class CasUserAccount implements Serializable {
     private static final long serialVersionUID = 7579594722197541062L;
 

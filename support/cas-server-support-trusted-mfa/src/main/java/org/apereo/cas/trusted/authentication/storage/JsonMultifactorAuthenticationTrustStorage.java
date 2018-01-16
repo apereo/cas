@@ -2,11 +2,10 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
@@ -24,8 +23,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonMultifactorAuthenticationTrustStorage.class);
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     
     private final Resource location;

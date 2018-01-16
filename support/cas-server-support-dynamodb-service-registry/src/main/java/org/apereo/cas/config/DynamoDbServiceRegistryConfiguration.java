@@ -6,6 +6,7 @@ import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -29,6 +30,7 @@ import java.net.InetAddress;
  */
 @Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class DynamoDbServiceRegistryConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

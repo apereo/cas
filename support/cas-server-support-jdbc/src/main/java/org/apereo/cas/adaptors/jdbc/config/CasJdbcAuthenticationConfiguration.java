@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.jdbc.config;
 
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.jdbc.BindModeSearchDatabaseAuthenticationHandler;
 import org.apereo.cas.adaptors.jdbc.QueryAndEncodeDatabaseAuthenticationHandler;
@@ -24,8 +25,6 @@ import org.apereo.cas.configuration.model.support.jdbc.SearchJdbcAuthenticationP
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,8 +45,9 @@ import java.util.HashSet;
  */
 @Configuration("CasJdbcAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasJdbcAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasJdbcAuthenticationConfiguration.class);
+
 
     @Autowired(required = false)
     @Qualifier("queryAndEncodePasswordPolicyConfiguration")

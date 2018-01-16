@@ -1,12 +1,11 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import javax.servlet.http.HttpServletRequest;
@@ -29,8 +28,9 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Slf4j
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter.class);
+
 
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 

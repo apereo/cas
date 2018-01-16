@@ -1,10 +1,9 @@
 package org.apereo.cas.impl.notify;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link AuthenticationRiskEmailNotifier}.
@@ -12,8 +11,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotifier {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationRiskEmailNotifier.class);
+
 
     private final CommunicationsManager communicationsManager;
 

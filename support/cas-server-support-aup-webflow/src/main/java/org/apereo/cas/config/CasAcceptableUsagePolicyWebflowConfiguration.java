@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.AcceptableUsagePolicyFormAction;
@@ -27,6 +28,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casAcceptableUsagePolicyWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasAcceptableUsagePolicyWebflowConfiguration {
 
     @Autowired

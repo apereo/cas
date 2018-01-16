@@ -1,11 +1,10 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -25,9 +24,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseSpnegoKnownClientSystemsFilterAction.class);
+
     
     /** Pattern of ip addresses to check. **/
     private Pattern ipsToCheckPattern;

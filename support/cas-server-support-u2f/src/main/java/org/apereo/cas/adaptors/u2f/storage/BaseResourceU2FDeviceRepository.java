@@ -2,9 +2,8 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.mail.AuthenticationFailedException;
 import java.time.LocalDate;
@@ -21,13 +20,14 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepository {
     /**
      * Key in the map that indicates list of services.
      */
     public static final String MAP_KEY_SERVICES = "services";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseResourceU2FDeviceRepository.class);
+
     
     private final long expirationTime;
     private final TimeUnit expirationTimeUnit;

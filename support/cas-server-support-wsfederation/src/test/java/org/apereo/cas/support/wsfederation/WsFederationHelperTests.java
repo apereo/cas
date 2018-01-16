@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
 import org.junit.Test;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  * @author John Gasper
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationHelperTests extends AbstractWsFederationTests {
 
     private static final String GOOD_TOKEN = "goodToken";

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -29,6 +30,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casBasicAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasBasicAuthenticationConfiguration {
 
     @Autowired

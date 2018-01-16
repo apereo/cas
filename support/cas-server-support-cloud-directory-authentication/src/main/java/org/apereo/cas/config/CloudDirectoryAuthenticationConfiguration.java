@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectory;
 import com.amazonaws.services.clouddirectory.AmazonCloudDirectoryClientBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CloudDirectoryAuthenticationHandler;
@@ -33,6 +34,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cloudDirectoryAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CloudDirectoryAuthenticationConfiguration {
 
     @Autowired

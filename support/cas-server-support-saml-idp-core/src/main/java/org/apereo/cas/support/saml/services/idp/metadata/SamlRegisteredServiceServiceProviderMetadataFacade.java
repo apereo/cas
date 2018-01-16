@@ -1,6 +1,7 @@
 
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -22,8 +23,6 @@ import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.xmlsec.signature.Signature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -41,8 +40,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public final class SamlRegisteredServiceServiceProviderMetadataFacade {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+
 
     private final SPSSODescriptor ssoDescriptor;
     private final EntityDescriptor entityDescriptor;

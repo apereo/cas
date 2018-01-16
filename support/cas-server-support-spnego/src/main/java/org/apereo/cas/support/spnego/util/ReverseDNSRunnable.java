@@ -1,8 +1,7 @@
 package org.apereo.cas.support.spnego.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -15,10 +14,8 @@ import java.net.UnknownHostException;
  *  @author Misagh Moayyed
  *  @since 4.1
  */
+@Slf4j
 public class ReverseDNSRunnable implements Runnable {
-
-    /** Logger instance. **/
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReverseDNSRunnable.class);
 
     /** Remote user IP address. **/
     private final String ipAddress;

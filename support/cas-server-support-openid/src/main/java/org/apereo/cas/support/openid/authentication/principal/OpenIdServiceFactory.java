@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.springframework.util.StringUtils;
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
     private final String openIdPrefixUrl;

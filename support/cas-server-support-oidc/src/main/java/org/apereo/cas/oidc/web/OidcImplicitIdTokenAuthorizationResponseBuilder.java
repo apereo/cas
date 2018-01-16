@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.message.BasicNameValuePair;
 import org.apereo.cas.oidc.OidcConstants;
@@ -14,8 +15,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.pac4j.core.context.J2EContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import java.util.List;
@@ -26,8 +25,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20TokenAuthorizationResponseBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcImplicitIdTokenAuthorizationResponseBuilder.class);
+
     private final OidcIdTokenGeneratorService idTokenGenerator;
     private final ExpirationPolicy idTokenExpirationPolicy;
 

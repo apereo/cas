@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
+@Slf4j
 public class TicketGrantingTicketProperties implements Serializable {
 
     private static final long serialVersionUID = 2349079252583399336L;

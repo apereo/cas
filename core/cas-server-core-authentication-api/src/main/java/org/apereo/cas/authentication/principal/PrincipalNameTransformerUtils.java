@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
@@ -16,6 +17,7 @@ import org.apereo.cas.util.transforms.RegexPrincipalNameTransformer;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public final class PrincipalNameTransformerUtils {
 
     private PrincipalNameTransformerUtils() {

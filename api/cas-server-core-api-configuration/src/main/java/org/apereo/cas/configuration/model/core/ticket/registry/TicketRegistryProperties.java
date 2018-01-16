@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
@@ -25,6 +26,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
+@Slf4j
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;

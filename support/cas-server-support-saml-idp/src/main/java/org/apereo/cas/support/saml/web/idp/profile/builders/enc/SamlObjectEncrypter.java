@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
@@ -32,8 +33,6 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.KeyInfoReferenceProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,8 +46,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SamlObjectEncrypter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlObjectEncrypter.class);
+
     /**
      * The Override data encryption algorithms.
      */

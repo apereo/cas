@@ -1,7 +1,6 @@
 package org.apereo.cas.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,8 +12,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultServiceTicketValidationAuthorizersExecutionPlan implements ServiceTicketValidationAuthorizersExecutionPlan {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceTicketValidationAuthorizersExecutionPlan.class);
+
 
     private final List<ServiceTicketValidationAuthorizer> serviceTicketValidationAuthorizers = new ArrayList<>();
 

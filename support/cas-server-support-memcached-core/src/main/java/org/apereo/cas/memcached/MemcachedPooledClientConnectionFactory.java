@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached;
 
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
 import net.spy.memcached.FailureMode;
@@ -13,8 +14,6 @@ import org.apache.commons.pool2.PooledObject;
 import org.apache.commons.pool2.impl.DefaultPooledObject;
 import org.apache.commons.pool2.impl.GenericObjectPool;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link MemcachedPooledClientConnectionFactory}.
@@ -22,8 +21,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedPooledClientConnectionFactory.class);
+
     private final BaseMemcachedProperties memcachedProperties;
     private final Transcoder transcoder;
 

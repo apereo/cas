@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RegisteredServicesEventListener {
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;

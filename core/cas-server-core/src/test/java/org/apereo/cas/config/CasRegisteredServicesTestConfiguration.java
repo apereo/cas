@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -32,6 +33,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 @TestConfiguration("casRegisteredServicesTestConfiguration")
+@Slf4j
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean

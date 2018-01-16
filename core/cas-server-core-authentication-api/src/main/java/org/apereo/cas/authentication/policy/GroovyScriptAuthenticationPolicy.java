@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -18,8 +17,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyScriptAuthenticationPolicy.class);
+
 
     private final ResourceLoader resourceLoader;
     private final String script;

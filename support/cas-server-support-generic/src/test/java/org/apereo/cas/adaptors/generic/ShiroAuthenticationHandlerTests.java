@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class ShiroAuthenticationHandlerTests {
 
     @Rule

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
@@ -33,8 +34,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -52,8 +51,9 @@ import java.util.Set;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
 public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizeEndpointController.class);
+
 
     /**
      * The code factory instance.

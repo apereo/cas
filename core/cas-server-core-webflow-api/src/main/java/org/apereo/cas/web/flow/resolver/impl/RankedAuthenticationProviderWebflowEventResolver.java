@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
@@ -19,8 +20,6 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -35,8 +34,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RankedAuthenticationProviderWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RankedAuthenticationProviderWebflowEventResolver.class);
+
     
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
     private final AuthenticationContextValidator authenticationContextValidator;

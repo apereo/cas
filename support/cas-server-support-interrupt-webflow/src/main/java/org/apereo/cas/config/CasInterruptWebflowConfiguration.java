@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.interrupt.InterruptInquirer;
 import org.apereo.cas.interrupt.webflow.InterruptSingleSignOnParticipationStrategy;
@@ -31,6 +32,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("casInterruptWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasInterruptWebflowConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

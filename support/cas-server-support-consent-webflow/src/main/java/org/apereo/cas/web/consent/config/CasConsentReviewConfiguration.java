@@ -1,5 +1,6 @@
 package org.apereo.cas.web.consent.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
@@ -24,8 +25,6 @@ import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.engine.DefaultCallbackLogic;
 import org.pac4j.core.engine.DefaultLogoutLogic;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -46,8 +45,9 @@ import javax.annotation.PostConstruct;
  */
 @Configuration("casConsentReviewConfiguration")
 @ConditionalOnBean(name = "casSecurityContextConfiguration")
+@Slf4j
 public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewConfiguration.class);
+
     
     private static final String CAS_CONSENT_CLIENT = "CasConsentClient";
     

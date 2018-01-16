@@ -4,14 +4,13 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -29,8 +28,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+
+@Slf4j
 public final class CoreAuthenticationUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CoreAuthenticationUtils.class);
+
 
     private CoreAuthenticationUtils() {
     }

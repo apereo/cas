@@ -1,12 +1,11 @@
 package org.apereo.cas.impl.notify;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -15,8 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseAuthenticationRiskNotifier implements AuthenticationRiskNotifier {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseAuthenticationRiskNotifier.class);
+
     
     /**
      * Cas properties.

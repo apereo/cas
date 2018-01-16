@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -9,8 +10,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.exception.CredentialsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Authenticator for client credentials authentication.
@@ -18,8 +17,9 @@ import org.slf4j.LoggerFactory;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@Slf4j
 public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthClientAuthenticator.class);
+
     
     private final OAuth20Validator validator;
 

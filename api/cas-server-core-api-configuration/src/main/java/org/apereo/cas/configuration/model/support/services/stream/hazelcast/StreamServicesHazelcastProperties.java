@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.services.stream.hazelcast;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream-hazelcast")
+@Slf4j
 public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
     private static final long serialVersionUID = -1583614089051161614L;
 

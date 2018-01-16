@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FMongoDbConfiguration;
 import org.junit.runner.RunWith;
@@ -23,6 +24,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/mongou2f.properties")
+@Slf4j
 public class U2FMongoDbDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
     @Autowired
     @Qualifier("u2fDeviceRepository")

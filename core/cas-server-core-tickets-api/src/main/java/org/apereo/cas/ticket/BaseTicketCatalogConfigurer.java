@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 
 /**
@@ -8,6 +9,7 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseTicketCatalogConfigurer implements TicketCatalogConfigurer {
     /**
      * Build ticket ticket definition.

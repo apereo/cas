@@ -1,10 +1,9 @@
 package org.apereo.cas.audit;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -22,8 +21,9 @@ import java.util.concurrent.Executors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MongoDbAuditTrailManager implements AuditTrailManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbAuditTrailManager.class);
+
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
     private boolean asynchronous = true;

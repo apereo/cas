@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -13,6 +14,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cassandra-authentication")
+@Slf4j
 public class CassandraAuthenticationProperties extends BaseCassandraProperties {
     private static final long serialVersionUID = 1369405266376125234L;
     /**

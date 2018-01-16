@@ -1,11 +1,10 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
 import org.springframework.shell.core.annotation.CliOption;
@@ -21,8 +20,9 @@ import java.io.StringWriter;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class GenerateYamlRegisteredServiceCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateYamlRegisteredServiceCommand.class);
+
     private static final int SEP_LINE_LENGTH = 70;
 
     /**

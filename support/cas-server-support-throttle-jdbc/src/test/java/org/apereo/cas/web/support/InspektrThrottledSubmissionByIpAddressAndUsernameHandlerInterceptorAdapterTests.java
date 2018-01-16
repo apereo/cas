@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
@@ -77,6 +78,7 @@ import static org.junit.Assert.*;
         CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
 @TestPropertySource(locations = {"classpath:/casthrottle.properties"})
+@Slf4j
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 

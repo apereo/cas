@@ -1,9 +1,8 @@
 package org.apereo.cas.support.rest.factory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -18,8 +17,9 @@ import java.net.URI;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements TicketGrantingTicketResourceEntityResponseFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketGrantingTicketResourceEntityResponseFactory.class);
+
 
     private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
     private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";

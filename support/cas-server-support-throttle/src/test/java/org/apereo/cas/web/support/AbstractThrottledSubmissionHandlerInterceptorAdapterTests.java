@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
@@ -9,8 +10,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -39,9 +38,10 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling
+@Slf4j
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
     protected static final String IP_ADDRESS = "1.2.3.4";
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractThrottledSubmissionHandlerInterceptorAdapterTests.class);
+
     
     @Autowired
     @Qualifier("authenticationThrottle")

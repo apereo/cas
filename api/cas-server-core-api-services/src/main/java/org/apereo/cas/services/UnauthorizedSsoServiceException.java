@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Exception thrown when a service attempts to use SSO when it should not be
  * allowed to.
@@ -7,6 +9,7 @@ package org.apereo.cas.services;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class UnauthorizedSsoServiceException extends UnauthorizedServiceException {
 
     /**

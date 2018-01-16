@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -34,6 +35,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {CasPersonDirectoryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldappersondir.properties"})
 @DirtiesContext
+@Slf4j
 public class PersonDirectoryPrincipalResolverLdaptiveTests {
     @Autowired
     @Qualifier("attributeRepository")

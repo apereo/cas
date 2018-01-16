@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
@@ -24,6 +25,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  */
 @Configuration("redisTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RedisTicketRegistryConfiguration {
 
     @Autowired

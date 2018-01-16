@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.shell.CasCommandLineShellBootstrapper;
 import org.apereo.cas.shell.cli.CasCommandLineEngine;
@@ -47,6 +48,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
                 RedisRepositoriesAutoConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
+@Slf4j
 public class CasCommandLineShellApplication {
     protected CasCommandLineShellApplication() {
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.opensaml.core.xml.XMLObject;
@@ -22,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  */
 @Controller("saml2ClientMetadataController")
 @RequestMapping
+@Slf4j
 public class Saml2ClientMetadataController {
 
     private final Clients builtClients;

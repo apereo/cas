@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import java.io.Serializable;
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class BaseRedisProperties implements Serializable {
     private static final long serialVersionUID = -2600996981339638782L;
 

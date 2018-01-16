@@ -1,8 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -13,11 +12,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DenyAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6215588543966639050L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DenyAllAttributeReleasePolicy.class);
+
 
     public DenyAllAttributeReleasePolicy() {
         setExcludeDefaultAttributes(true);

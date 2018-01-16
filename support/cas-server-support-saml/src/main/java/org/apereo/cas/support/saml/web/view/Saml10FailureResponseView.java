@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.view;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Slf4j
 public class Saml10FailureResponseView extends AbstractSaml10ResponseView {
 
     public Saml10FailureResponseView(

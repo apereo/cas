@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -32,6 +33,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcUserProfileEndpointController extends OAuth20UserProfileEndpointController {
 
     public OidcUserProfileEndpointController(final ServicesManager servicesManager,

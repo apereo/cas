@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInfo;
@@ -13,9 +14,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import org.opensaml.saml.saml2.metadata.LocalizedName;
 
 import java.util.regex.Pattern;
@@ -26,10 +24,11 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInfo {
 
     private static final long serialVersionUID = -1434801982864628179L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataUIInfo.class);
+
 
     private transient UIInfo uiInfo;
     private String locale;

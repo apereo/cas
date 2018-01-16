@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
@@ -7,8 +8,6 @@ import org.apereo.cas.services.RestServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -28,8 +27,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RestServiceRegistryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestServiceRegistryConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

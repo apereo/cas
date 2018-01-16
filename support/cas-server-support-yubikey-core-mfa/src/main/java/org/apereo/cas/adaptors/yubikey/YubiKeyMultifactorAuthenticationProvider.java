@@ -1,14 +1,13 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.YubiKeyMultifactorProperties;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -18,8 +17,9 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YubiKeyMultifactorAuthenticationProvider.class);
+
 
     private static final long serialVersionUID = 4789727148634156909L;
 

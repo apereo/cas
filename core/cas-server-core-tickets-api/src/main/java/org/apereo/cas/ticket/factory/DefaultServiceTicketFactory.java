@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -10,8 +11,6 @@ import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -22,9 +21,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceTicketFactory.class);
+
 
     /**
      * The Cipher executor.

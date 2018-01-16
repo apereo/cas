@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
@@ -33,6 +34,7 @@ import java.util.List;
 @Configuration("jdbcMultifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class JdbcMultifactorAuthnTrustConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;

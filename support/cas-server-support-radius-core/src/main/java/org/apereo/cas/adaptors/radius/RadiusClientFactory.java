@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
@@ -13,6 +14,7 @@ import java.net.UnknownHostException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class RadiusClientFactory {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;

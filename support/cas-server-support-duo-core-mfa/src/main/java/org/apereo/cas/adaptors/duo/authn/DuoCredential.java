@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DuoCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -7570600733132111037L;

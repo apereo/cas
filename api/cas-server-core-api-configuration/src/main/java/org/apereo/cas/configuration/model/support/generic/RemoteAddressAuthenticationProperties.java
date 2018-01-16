@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-generic-remote-webflow")
+@Slf4j
 public class RemoteAddressAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 573409035023089696L;

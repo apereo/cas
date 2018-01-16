@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.core.env.CompositePropertySource;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -13,6 +14,7 @@ import org.springframework.data.mongodb.core.MongoOperations;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class MongoDbPropertySourceLocator implements PropertySourceLocator {
 
     private final MongoOperations mongo;

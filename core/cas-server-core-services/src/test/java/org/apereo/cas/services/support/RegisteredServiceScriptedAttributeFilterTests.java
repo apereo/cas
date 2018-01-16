@@ -1,5 +1,6 @@
 package org.apereo.cas.services.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class RegisteredServiceScriptedAttributeFilterTests {
 
     private Map<String, Object> givenAttributesMap;

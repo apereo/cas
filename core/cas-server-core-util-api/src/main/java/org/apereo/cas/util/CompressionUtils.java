@@ -1,9 +1,8 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,9 +24,10 @@ import java.util.zip.InflaterInputStream;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public final class CompressionUtils {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CompressionUtils.class);
+
 
     private static final int INFLATED_ARRAY_LENGTH = 10000;
 

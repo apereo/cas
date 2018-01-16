@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CosmosDbServiceRegistryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ import static org.junit.Assert.*;
         classes = {RefreshAutoConfiguration.class, CosmosDbServiceRegistryConfiguration.class})
 @IfProfileValue(name = "cosmosDbEnabled", value = "true")
 @TestPropertySource(locations = {"classpath:/cosmosdb.properties"})
+@Slf4j
 public class CosmosDbServiceRegistryDaoTests {
 
     @Autowired

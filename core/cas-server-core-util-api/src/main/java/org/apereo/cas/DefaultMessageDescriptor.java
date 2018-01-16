@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.springframework.util.Assert;
@@ -14,6 +15,7 @@ import java.util.Arrays;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
     /** Serialization support. */

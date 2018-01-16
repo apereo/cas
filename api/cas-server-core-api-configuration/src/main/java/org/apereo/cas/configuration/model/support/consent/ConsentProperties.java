@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
@@ -18,6 +19,7 @@ import java.time.temporal.ChronoUnit;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-consent-webflow")
+@Slf4j
 public class ConsentProperties implements Serializable {
     private static final long serialVersionUID = 5201308051524438384L;
     /**

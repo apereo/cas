@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
@@ -28,6 +29,7 @@ import java.util.Collection;
  *
  */
 @RunWith(Parameterized.class)
+@Slf4j
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
     private final ThresholdExpiredCRLRevocationPolicy policy;

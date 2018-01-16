@@ -1,5 +1,6 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
@@ -13,6 +14,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private static final long serialVersionUID = 7586914936775326709L;

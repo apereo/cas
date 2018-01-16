@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.generic.remote;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractCredential;
 
 /**
@@ -11,6 +12,7 @@ import org.apereo.cas.authentication.AbstractCredential;
  * @since 3.2.1
  *
  */
+@Slf4j
 public class RemoteAddressCredential extends AbstractCredential {
 
     /** Serialization version marker. */

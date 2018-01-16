@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.ignite.Ignite;
@@ -13,8 +14,6 @@ import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
@@ -41,8 +40,9 @@ import java.util.stream.Collectors;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0`
  */
+@Slf4j
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IgniteTicketRegistry.class);
+
 
     private final IgniteConfiguration igniteConfiguration;
     private final IgniteProperties properties;

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-generic")
+@Slf4j
 public class FileAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 4031366217090049241L;

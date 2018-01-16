@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
@@ -25,6 +26,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
     private final RestTemplate restTemplate;

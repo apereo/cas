@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.configuration.CommaSeparatedStringToThrowablesConverter;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
@@ -30,6 +31,7 @@ import java.util.List;
 @ConditionalOnProperty(value = "spring.cloud.config.enabled", havingValue = "false")
 @Configuration("casStandaloneBootstrapConfiguration")
 @AutoConfigureAfter(CasCoreBootstrapStandaloneLocatorConfiguration.class)
+@Slf4j
 public class CasCoreBootstrapStandaloneConfiguration implements PropertySourceLocator, PriorityOrdered {
 
     @Autowired

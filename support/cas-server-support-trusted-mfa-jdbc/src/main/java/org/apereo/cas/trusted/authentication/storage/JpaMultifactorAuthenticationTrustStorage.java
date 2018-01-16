@@ -1,8 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,8 +21,9 @@ import java.util.Set;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
+@Slf4j
 public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaMultifactorAuthenticationTrustStorage.class);
+
     
     private static final String TABLE_NAME = "MultifactorAuthenticationTrustRecord";
 

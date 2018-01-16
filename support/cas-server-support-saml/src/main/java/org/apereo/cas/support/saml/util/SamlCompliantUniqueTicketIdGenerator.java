@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.RandomUtils;
@@ -18,6 +19,7 @@ import java.security.SecureRandom;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class SamlCompliantUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /**

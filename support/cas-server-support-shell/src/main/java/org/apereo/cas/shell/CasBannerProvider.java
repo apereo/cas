@@ -1,11 +1,10 @@
 package org.apereo.cas.shell;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -25,8 +24,9 @@ import java.nio.charset.StandardCharsets;
  */
 @Service("casBannerProvider")
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class CasBannerProvider extends DefaultBannerProvider {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasBannerProvider.class);
+
     
     @Autowired
     private Environment environment;

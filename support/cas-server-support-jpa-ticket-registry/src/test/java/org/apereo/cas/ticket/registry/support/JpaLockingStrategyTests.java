@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPolicyConfiguration;
@@ -23,8 +24,6 @@ import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -90,13 +89,14 @@ import static org.junit.Assert.*;
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @DirtiesContext
+@Slf4j
 public class JpaLockingStrategyTests {
     /**
      * Number of clients contending for lock in concurrent test.
      */
     private static final int CONCURRENT_SIZE = 13;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaLockingStrategyTests.class);
+
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -267,7 +267,7 @@ public class JpaLockingStrategyTests {
     }
 
     private static class TransactionalLockInvocationHandler implements InvocationHandler {
-        private static final Logger LOGGER = LoggerFactory.getLogger(TransactionalLockInvocationHandler.class);
+
 
         private final JpaLockingStrategy jpaLock;
         private final PlatformTransactionManager txManager;
@@ -300,7 +300,7 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Locker implements Callable<Boolean> {
-        private static final Logger LOGGER = LoggerFactory.getLogger(Locker.class);
+
 
         private final LockingStrategy lock;
 
@@ -320,7 +320,7 @@ public class JpaLockingStrategyTests {
     }
 
     private static class Releaser implements Callable<Boolean> {
-        private static final Logger LOGGER = LoggerFactory.getLogger(Releaser.class);
+
 
         private final LockingStrategy lock;
 

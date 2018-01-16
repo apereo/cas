@@ -1,5 +1,6 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 
 /**
@@ -9,6 +10,7 @@ import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
  * @author Scott Battaglia
  * @since 3.3.6
  */
+@Slf4j
 public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;

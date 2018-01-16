@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.ConnectionFactory;
@@ -10,8 +11,6 @@ import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.profile.CommonProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Provides a simple {@link AuthorizationGenerator} implementation that obtains user roles from an LDAP search.
@@ -28,9 +27,10 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class LdapUserGroupsToRolesAuthorizationGenerator extends BaseUseAttributesAuthorizationGenerator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUserGroupsToRolesAuthorizationGenerator.class);
+
 
     private final String groupAttributeName;
     private final String groupPrefix;

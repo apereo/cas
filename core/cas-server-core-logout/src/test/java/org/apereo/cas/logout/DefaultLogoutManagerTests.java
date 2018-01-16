@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
@@ -38,6 +39,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class DefaultLogoutManagerTests {
 
     private static final String ID = "id";

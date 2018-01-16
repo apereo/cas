@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasViewConstants;
@@ -9,8 +10,6 @@ import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
@@ -28,8 +27,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttributeEncoder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasProtocolAttributeEncoder.class);
+
 
     private final CipherExecutor<String, String> cacheCredentialCipherExecutor;
 

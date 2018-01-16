@@ -1,11 +1,10 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.ClosedInputStream;
 import org.apereo.cas.util.EncodingUtils;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 
@@ -23,8 +22,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamicMetadataResolverAdapter.class);
+
 
     /**
      * Instantiates a new static metadata resolver adapter.

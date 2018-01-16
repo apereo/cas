@@ -1,12 +1,11 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.RegexUtils;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.HashMap;
@@ -20,9 +19,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
     private static final long serialVersionUID = 2633701342213724854L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PatternMatchingEntityIdAttributeReleasePolicy.class);
+
 
     private String entityIds = RegexUtils.MATCH_NOTHING_PATTERN.pattern();
     private boolean fullMatch = true;

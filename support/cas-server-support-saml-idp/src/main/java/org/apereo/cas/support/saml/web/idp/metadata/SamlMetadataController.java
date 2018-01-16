@@ -1,9 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -22,11 +21,12 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 @Controller("samlMetadataController")
+@Slf4j
 public class SamlMetadataController {
 
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataController.class);
+
     private final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
 
     /**

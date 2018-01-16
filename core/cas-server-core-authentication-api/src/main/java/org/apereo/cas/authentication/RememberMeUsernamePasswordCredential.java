@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 /**
@@ -9,6 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 3.2.1
  *
  */
+@Slf4j
 public class RememberMeUsernamePasswordCredential extends UsernamePasswordCredential implements RememberMeCredential {
 
     /** Unique Id for serialization. */

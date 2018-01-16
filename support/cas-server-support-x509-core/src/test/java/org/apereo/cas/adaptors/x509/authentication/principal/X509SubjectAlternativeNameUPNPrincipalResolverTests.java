@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,6 +20,7 @@ import java.util.Collection;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
+@Slf4j
 public class X509SubjectAlternativeNameUPNPrincipalResolverTests {
 
     private X509Certificate certificate;

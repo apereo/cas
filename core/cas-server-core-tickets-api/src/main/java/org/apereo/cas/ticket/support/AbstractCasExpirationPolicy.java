@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -15,6 +16,7 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private static final long serialVersionUID = 8042104336580063690L;

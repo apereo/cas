@@ -2,6 +2,7 @@ package org.apereo.cas.services.util;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import java.io.File;
@@ -13,6 +14,7 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RegisteredServiceYamlSerializer extends DefaultRegisteredServiceJsonSerializer {
     private static final long serialVersionUID = -6026921045861422473L;
 

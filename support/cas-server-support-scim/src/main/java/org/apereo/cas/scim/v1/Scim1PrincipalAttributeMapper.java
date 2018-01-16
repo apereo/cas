@@ -3,6 +3,7 @@ package org.apereo.cas.scim.v1;
 import com.unboundid.scim.data.Entry;
 import com.unboundid.scim.data.Name;
 import com.unboundid.scim.data.UserResource;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
@@ -13,6 +14,7 @@ import org.apereo.cas.util.CollectionUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class Scim1PrincipalAttributeMapper {
 
     /**

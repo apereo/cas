@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
@@ -14,6 +15,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-rest-authentication")
+@Slf4j
 public class RestAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = -6122859176355467060L;
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -11,6 +12,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OneTimeTokenAuthenticationWebflowAction extends AbstractAction {
 
     private final CasWebflowEventResolver casWebflowEventResolver;

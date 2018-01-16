@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -58,6 +59,7 @@ import static org.mockito.Mockito.*;
         ThymeleafAutoConfiguration.class,
         RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/castheme.properties"})
+@Slf4j
 public class ServiceThemeResolverTests {
 
     private static final String MOZILLA = "Mozilla";

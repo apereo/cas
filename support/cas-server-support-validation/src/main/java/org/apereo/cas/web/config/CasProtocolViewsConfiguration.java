@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.view.CasProtocolView;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import org.thymeleaf.spring4.SpringTemplateEngine;
  */
 @Configuration("casProtocolViewsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasProtocolViewsConfiguration {
 
     @Autowired
@@ -40,7 +42,7 @@ public class CasProtocolViewsConfiguration {
      * The Cas protocol views.
      */
     @Configuration("CasProtocolViews")
-    public class CasProtocolViews {
+public class CasProtocolViews {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public CasProtocolView cas2SuccessView() {
@@ -101,7 +103,7 @@ public class CasProtocolViewsConfiguration {
      * The Oauth protocol views.
      */
     @Configuration("OAuthProtocolViews")
-    public class OAuthProtocolViews {
+public class OAuthProtocolViews {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public CasProtocolView oauthConfirmView() {
@@ -114,7 +116,7 @@ public class CasProtocolViewsConfiguration {
      * The Oidc protocol views.
      */
     @Configuration("OidcProtocolViews")
-    public class OidcProtocolViews {
+public class OidcProtocolViews {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public CasProtocolView oidcConfirmView() {
@@ -127,7 +129,7 @@ public class CasProtocolViewsConfiguration {
      * The openid protocol views.
      */
     @Configuration("OpenIdProtocolViews")
-    public class OpenIdProtocolViews {
+public class OpenIdProtocolViews {
         @Bean
         @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
         public CasProtocolView casOpenIdServiceFailureView() {

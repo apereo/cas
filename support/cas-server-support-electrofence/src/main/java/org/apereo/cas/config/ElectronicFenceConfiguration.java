@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
@@ -23,8 +24,6 @@ import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,9 +45,10 @@ import java.util.Set;
 @Configuration("electronicFenceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@Slf4j
 public class ElectronicFenceConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElectronicFenceConfiguration.class);
+
 
     @Autowired
     @Qualifier("communicationsManager")

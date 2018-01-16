@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 
+@Slf4j
 public class LdapAuthorizationProperties implements Serializable {
     /**
      * Default role prefix.

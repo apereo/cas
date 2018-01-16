@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurers
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasJdbcUserDetailsManagerConfigurer extends JdbcUserDetailsManagerConfigurer<AuthenticationManagerBuilder> {
     private final AdminPagesSecurityProperties adminPagesSecurityProperties;
 

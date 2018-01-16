@@ -3,12 +3,11 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -18,8 +17,9 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegexMatchingRegisteredServiceProxyPolicy.class);
+
     
     private static final long serialVersionUID = -211069319543047324L;
     

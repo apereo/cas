@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.sms.ClickatellSmsSender;
 import org.apereo.cas.util.io.SmsSender;
@@ -16,6 +17,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("clickatellSmsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class ClickatellSmsConfiguration {
 
     @Autowired

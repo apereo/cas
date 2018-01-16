@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
 import org.springframework.core.io.ClassPathResource;
 
@@ -14,6 +15,7 @@ import org.springframework.core.io.ClassPathResource;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public abstract class AbstractLdapTests {
 
     private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();

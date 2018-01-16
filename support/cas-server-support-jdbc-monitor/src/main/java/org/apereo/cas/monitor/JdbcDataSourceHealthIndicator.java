@@ -1,7 +1,6 @@
 package org.apereo.cas.monitor;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.jdbc.core.JdbcTemplate;
 
@@ -14,8 +13,9 @@ import java.util.concurrent.ExecutorService;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@Slf4j
 public class JdbcDataSourceHealthIndicator extends AbstractPoolHealthIndicator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JdbcDataSourceHealthIndicator.class);
+
 
     private final JdbcTemplate jdbcTemplate;
     private final String validationQuery;

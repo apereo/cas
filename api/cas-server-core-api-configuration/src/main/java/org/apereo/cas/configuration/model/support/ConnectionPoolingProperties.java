@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.Beans;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class ConnectionPoolingProperties implements Serializable {
     private static final long serialVersionUID = -5307463292890944799L;
 

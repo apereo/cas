@@ -3,8 +3,7 @@ package org.apereo.cas.memcached.kryo;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.pool.KryoCallback;
 import com.esotericsoftware.kryo.pool.KryoPool;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,8 +14,9 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasKryoPool implements KryoPool {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasKryoPool.class);
+
     
     private final KryoPool kryoPoolRef;
 

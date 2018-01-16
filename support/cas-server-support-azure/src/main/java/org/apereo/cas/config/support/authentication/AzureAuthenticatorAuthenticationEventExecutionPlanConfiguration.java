@@ -1,5 +1,6 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import net.phonefactor.pfsdk.PFAuth;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
@@ -40,6 +41,7 @@ import java.io.FileNotFoundException;
  */
 @Configuration("azureAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired

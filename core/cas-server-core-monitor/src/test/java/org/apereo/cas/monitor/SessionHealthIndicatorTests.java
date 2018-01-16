@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.Service;
@@ -27,6 +28,7 @@ import static org.junit.Assert.*;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Slf4j
 public class SessionHealthIndicatorTests {
 
     private static final ExpirationPolicy TEST_EXP_POLICY = new HardTimeoutExpirationPolicy(10000);

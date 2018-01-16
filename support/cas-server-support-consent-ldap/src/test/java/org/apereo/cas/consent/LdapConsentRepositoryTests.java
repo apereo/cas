@@ -10,6 +10,8 @@ import com.unboundid.ldap.sdk.SearchScope;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -41,6 +43,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasConsentLdapConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = "classpath:/ldapconsent.properties")
+@Slf4j
 public class LdapConsentRepositoryTests extends AbstractLdapTests {
     private static final int LDAP_PORT = 1387;
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

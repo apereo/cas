@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -7,8 +8,6 @@ import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -33,10 +32,11 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
     private static final long serialVersionUID = 469929103943101717L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class);
+
 
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
 

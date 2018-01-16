@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -21,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SingleSignOnSessionStatusController extends BaseCasMvcEndpoint {
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;

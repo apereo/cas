@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
@@ -26,6 +27,7 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-services", automated = true)
+@Slf4j
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;

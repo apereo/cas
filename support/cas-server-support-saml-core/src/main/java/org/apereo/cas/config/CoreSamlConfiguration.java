@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -34,6 +35,7 @@ import java.util.Properties;
  */
 @Configuration("coreSamlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 100;

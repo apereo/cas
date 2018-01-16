@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.shiro.crypto.hash.ConfigurableHashService;
@@ -40,6 +41,7 @@ import java.util.Map;
  * @author Charles Hasegawa
  * @since 4.1.0
  */
+@Slf4j
 public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     /**

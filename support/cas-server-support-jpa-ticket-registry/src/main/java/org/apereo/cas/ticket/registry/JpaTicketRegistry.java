@@ -1,13 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.hibernate.LockOptions;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,9 +30,10 @@ import java.util.stream.Stream;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Slf4j
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistry.class);
+
 
     private static final int STREAM_BATCH_SIZE = 100;
 

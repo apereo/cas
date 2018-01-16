@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 4.2.0
  */
 @Controller
+@Slf4j
 public abstract class AbstractDelegateController implements ApplicationContextAware {
 
     /** Application context. */

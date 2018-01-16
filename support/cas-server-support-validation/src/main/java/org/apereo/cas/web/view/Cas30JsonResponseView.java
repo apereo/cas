@@ -1,6 +1,7 @@
 package org.apereo.cas.web.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -29,6 +30,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class Cas30JsonResponseView extends Cas30ResponseView {
 
     public Cas30JsonResponseView(final boolean successResponse,

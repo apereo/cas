@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -85,6 +86,7 @@ import static org.junit.Assert.*;
         CasOAuthAuthenticationServiceSelectionStrategyConfiguration.class,
         OidcConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class})
+@Slf4j
 public class OidcRegisteredServiceUIActionTests {
     @Autowired
     @Qualifier("oidcRegisteredServiceUIAction")

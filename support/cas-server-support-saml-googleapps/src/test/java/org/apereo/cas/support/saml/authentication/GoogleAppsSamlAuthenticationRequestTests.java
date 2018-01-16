@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.config.SamlGoogleAppsConfiguration;
 import org.apereo.cas.support.saml.util.GoogleSaml20ObjectBuilder;
@@ -24,6 +25,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @Import(SamlGoogleAppsConfiguration.class)
 @TestPropertySource(locations = "classpath:/gapps.properties")
+@Slf4j
 public class GoogleAppsSamlAuthenticationRequestTests extends AbstractOpenSamlTests {
 
     @Autowired

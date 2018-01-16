@@ -2,6 +2,7 @@ package org.apereo.cas.audit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -10,8 +11,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.nio.charset.StandardCharsets;
@@ -27,8 +26,9 @@ import java.util.concurrent.Executors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class RestAuditTrailManager implements AuditTrailManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestAuditTrailManager.class);
+
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

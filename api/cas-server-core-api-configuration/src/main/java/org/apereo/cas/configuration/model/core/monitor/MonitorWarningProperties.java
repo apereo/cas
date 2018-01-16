@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @since 5.3.0
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
+@Slf4j
 public class MonitorWarningProperties implements Serializable {
     private static final long serialVersionUID = 2788617778375787703L;
 

@@ -1,8 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -21,8 +20,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationEventExecutionPlan.class);
+
 
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();

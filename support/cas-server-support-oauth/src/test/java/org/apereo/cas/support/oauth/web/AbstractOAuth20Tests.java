@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -143,6 +144,7 @@ import static org.junit.Assert.*;
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@Slf4j
 public abstract class AbstractOAuth20Tests {
 
     public static final String CONTEXT = "/oauth2.0/";

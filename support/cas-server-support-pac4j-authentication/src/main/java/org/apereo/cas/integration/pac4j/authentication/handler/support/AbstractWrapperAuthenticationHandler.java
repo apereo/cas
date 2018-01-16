@@ -1,5 +1,6 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PreventedException;
@@ -18,8 +19,6 @@ import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.CommonHelper;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.core.util.InitializableWebObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -32,10 +31,11 @@ import java.security.GeneralSecurityException;
  * @param <C> the type parameter
  * @since 4.2.0
  */
+@Slf4j
 public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials>
         extends AbstractPac4jAuthenticationHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractWrapperAuthenticationHandler.class);
+
     
     /**
      * The pac4j profile creator used for authentication.

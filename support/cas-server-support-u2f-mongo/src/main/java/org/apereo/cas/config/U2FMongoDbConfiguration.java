@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.u2f.storage.U2FMongoDbDeviceRepository;
 import com.github.benmanes.caffeine.cache.Caffeine;
@@ -24,6 +25,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("u2fMongoDbConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class U2FMongoDbConfiguration {
 
     @Autowired

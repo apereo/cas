@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
@@ -38,6 +39,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public abstract class AbstractResourceBasedServiceRegistryDaoTests {
 
 

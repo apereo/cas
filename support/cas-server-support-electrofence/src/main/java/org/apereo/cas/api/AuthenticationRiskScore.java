@@ -1,5 +1,6 @@
 package org.apereo.cas.api;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
@@ -11,6 +12,7 @@ import java.math.BigDecimal;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AuthenticationRiskScore {
     private final BigDecimal score;
 

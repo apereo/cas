@@ -1,9 +1,8 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.engine.Flow;
 import org.springframework.webflow.engine.FlowVariable;
@@ -16,8 +15,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+
+@Slf4j
 public class ClearWebflowCredentialAction extends AbstractAction {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClearWebflowCredentialAction.class);
+
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

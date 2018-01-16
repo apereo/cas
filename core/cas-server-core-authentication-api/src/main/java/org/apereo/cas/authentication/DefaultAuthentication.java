@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -23,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class DefaultAuthentication implements Authentication {
 
     private static final long serialVersionUID = 3206127526058061391L;

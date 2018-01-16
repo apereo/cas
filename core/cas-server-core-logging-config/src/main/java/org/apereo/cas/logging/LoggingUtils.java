@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.logging.log4j.core.LogEvent;
 import org.apache.logging.log4j.core.impl.Log4jLogEvent;
 import org.apache.logging.log4j.message.Message;
@@ -13,6 +14,7 @@ import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public final class LoggingUtils {
     private LoggingUtils() {
     }

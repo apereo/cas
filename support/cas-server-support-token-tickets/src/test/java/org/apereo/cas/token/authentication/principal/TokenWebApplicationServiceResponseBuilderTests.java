@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -70,6 +71,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
+@Slf4j
 public class TokenWebApplicationServiceResponseBuilderTests {
 
     @Autowired

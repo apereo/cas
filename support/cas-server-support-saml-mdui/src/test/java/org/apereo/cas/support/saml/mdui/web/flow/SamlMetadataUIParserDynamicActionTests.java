@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
@@ -34,6 +35,7 @@ import static org.junit.Assert.*;
 @Import({SamlMetadataUIConfiguration.class, SamlMetadataUIWebflowConfiguration.class})
 @TestPropertySource(properties = "cas.samlMetadataUi.resources=http://mdq-beta.incommon.org/global/entities/::")
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class SamlMetadataUIParserDynamicActionTests extends AbstractOpenSamlTests {
 
     @Autowired

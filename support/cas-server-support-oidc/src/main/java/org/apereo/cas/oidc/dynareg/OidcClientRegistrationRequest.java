@@ -3,6 +3,7 @@ package org.apereo.cas.oidc.dynareg;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.util.CollectionUtils;
@@ -18,6 +19,7 @@ import java.util.List;
  * @since 5.1.0
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
 public class OidcClientRegistrationRequest implements Serializable {
     private static final long serialVersionUID = 1832102135613155844L;
 

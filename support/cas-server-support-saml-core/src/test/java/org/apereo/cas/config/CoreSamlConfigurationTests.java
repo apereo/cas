@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,6 +35,7 @@ import org.springframework.test.context.junit4.SpringRunner;
                 CasPersonDirectoryConfiguration.class,
                 CasCoreServicesConfiguration.class})
 @EnableScheduling
+@Slf4j
 public class CoreSamlConfigurationTests {
 
     @Test

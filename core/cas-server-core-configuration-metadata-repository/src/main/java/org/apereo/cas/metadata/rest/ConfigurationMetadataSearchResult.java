@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,8 +10,6 @@ import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.core.Ordered;
@@ -26,9 +25,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
     private static final long serialVersionUID = 7767348341760984539L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataSearchResult.class);
+
 
     private static final Pattern PATTERN_DESCRIPTION_CODE = RegexUtils.createPattern("\\{@code (.+)\\}");
     private static final Pattern PATTERN_DESCRIPTION_SEE = RegexUtils.createPattern("@see (.+)");

@@ -5,12 +5,11 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -20,8 +19,8 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CachingTicketRegistry.class);
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 100_000_000;
@@ -33,14 +32,14 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
     public CachingTicketRegistry(final CipherExecutor cipherExecutor, final LogoutManager logoutManager) {
         super(cipherExecutor);
         this.storage = Caffeine.newBuilder()
-                .initialCapacity(INITIAL_CACHE_SIZE)
-                .maximumSize(MAX_CACHE_SIZE)
-                .expireAfter(new CachedTicketExpirationPolicy())
-                .removalListener(new CachedTicketRemovalListener())
-                .build(s -> {
-                    LOGGER.error("Load operation of the cache is not supported.");
-                    return null;
-                });
+            .initialCapacity(INITIAL_CACHE_SIZE)
+            .maximumSize(MAX_CACHE_SIZE)
+            .expireAfter(new CachedTicketExpirationPolicy())
+            .removalListener(new CachedTicketRemovalListener())
+            .build(s -> {
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
 
         this.cache = this.storage.asMap();
         this.logoutManager = logoutManager;

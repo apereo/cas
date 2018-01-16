@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
@@ -10,8 +11,6 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +23,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("oauthProtocolTicketMetadataRegistrationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthProtocolTicketCatalogConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

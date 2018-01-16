@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
@@ -11,8 +12,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -33,9 +32,10 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class InitialFlowSetupAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InitialFlowSetupAction.class);
+
 
     private final CasConfigurationProperties casProperties;
     private final ServicesManager servicesManager;

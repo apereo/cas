@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
 import org.apereo.cas.adaptors.trusted.authentication.principal.RemoteRequestPrincipalAttributesExtractor;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -20,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction extends BasePrincipalFromNonInteractiveCredentialsAction {
     public PrincipalFromRequestRemoteUserNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialWebflowEventResolver,
                                                                          final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,

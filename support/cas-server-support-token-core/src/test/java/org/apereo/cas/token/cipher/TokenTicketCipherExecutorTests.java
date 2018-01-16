@@ -1,5 +1,6 @@
 package org.apereo.cas.token.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -10,6 +11,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class TokenTicketCipherExecutorTests {
 
     public static final String ST = "ST-1234567890";

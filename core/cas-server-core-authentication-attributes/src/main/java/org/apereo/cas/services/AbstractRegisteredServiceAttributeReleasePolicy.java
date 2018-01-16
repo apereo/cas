@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.PostLoad;
@@ -29,10 +28,11 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy, Serializable {
     private static final long serialVersionUID = 5325460875620586503L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractRegisteredServiceAttributeReleasePolicy.class);
+
 
     private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();

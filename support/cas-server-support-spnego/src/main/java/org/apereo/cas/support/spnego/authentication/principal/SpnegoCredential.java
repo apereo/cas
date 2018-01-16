@@ -1,11 +1,10 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
 import com.google.common.io.ByteSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.io.IOException;
@@ -20,6 +19,7 @@ import java.util.stream.IntStream;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
+@Slf4j
 public class SpnegoCredential implements Credential, Serializable {
 
     /**
@@ -37,7 +37,7 @@ public class SpnegoCredential implements Credential, Serializable {
         (byte) 'M', CHAR_S_BYTE, CHAR_S_BYTE,
         (byte) 'P', (byte) 0};
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoCredential.class);
+
     /**
      * The SPNEGO Init Token.
      */

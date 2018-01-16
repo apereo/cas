@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import de.codecentric.boot.admin.config.EnableAdminServer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -38,6 +39,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
                 MetricsDropwizardAutoConfiguration.class,
                 RedisRepositoriesAutoConfiguration.class})
 @EnableAdminServer
+@Slf4j
 public class CasSpringBootAdminServerWebApplication {
     protected CasSpringBootAdminServerWebApplication() {
     }

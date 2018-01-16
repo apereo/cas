@@ -1,5 +1,6 @@
 package org.apereo.cas.config.authentication.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
@@ -22,6 +23,7 @@ import java.util.Collection;
  */
 @Configuration("samlUniqueTicketIdGeneratorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdGeneratorConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;

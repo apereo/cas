@@ -1,11 +1,10 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
 
@@ -26,8 +25,9 @@ import java.security.spec.PKCS8EncodedKeySpec;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrivateKeyFactoryBean.class);
+
 
     static {
         Security.addProvider(new BouncyCastleProvider());

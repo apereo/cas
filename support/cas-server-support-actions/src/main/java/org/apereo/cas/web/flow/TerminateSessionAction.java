@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
 import org.apereo.cas.logout.LogoutRequest;
@@ -8,8 +9,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.ProfileManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -26,9 +25,10 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class TerminateSessionAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TerminateSessionAction.class);
+
 
     private final EventFactorySupport eventFactorySupport = new EventFactorySupport();
     private final CentralAuthenticationService centralAuthenticationService;

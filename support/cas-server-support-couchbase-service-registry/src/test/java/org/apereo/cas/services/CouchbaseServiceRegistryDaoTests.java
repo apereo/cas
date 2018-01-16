@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
 import org.junit.Before;
 import org.junit.Test;
@@ -33,6 +34,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(
         classes = {RefreshAutoConfiguration.class, CouchbaseServiceRegistryConfiguration.class})
 @IfProfileValue(name = "couchbaseEnabled", value = "true")
+@Slf4j
 public class CouchbaseServiceRegistryDaoTests {
 
     private static final int LOAD_SIZE = 1;

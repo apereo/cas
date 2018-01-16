@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @since 4.2
  */
 
+@Slf4j
 public class TokenWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public TokenWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
 import org.apereo.cas.services.AbstractServiceRegistryDao;
@@ -13,8 +14,6 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,9 +26,10 @@ import java.util.Objects;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapServiceRegistryDao.class);
+
 
     private final ConnectionFactory connectionFactory;
     private final LdapRegisteredServiceMapper ldapServiceMapper;

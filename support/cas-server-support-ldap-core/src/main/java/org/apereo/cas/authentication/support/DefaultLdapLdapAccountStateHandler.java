@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.util.ClassUtils;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -17,8 +18,6 @@ import org.ldaptive.auth.ext.EDirectoryAccountState;
 import org.ldaptive.auth.ext.FreeIPAAccountState;
 import org.ldaptive.auth.ext.PasswordExpirationAccountState;
 import org.ldaptive.control.PasswordPolicyControl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.LinkedCaseInsensitiveMap;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -42,8 +41,9 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLdapLdapAccountStateHandler.class);
+
     /**
      * Map of account state error to CAS authentication exception.
      */

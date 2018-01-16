@@ -21,10 +21,9 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.cloud.bootstrap.config.PropertySourceLocator;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
@@ -42,8 +41,9 @@ import java.util.Properties;
  * @since 5.1.0
  */
 @Configuration("dynamoDbCloudConfigBootstrapConfiguration")
+@Slf4j
 public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySourceLocator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DynamoDbCloudConfigBootstrapConfiguration.class);
+
     private static final String TABLE_NAME = "DynamoDbCasProperties";
     private static final long PROVISIONED_THROUGHPUT = 10;
 

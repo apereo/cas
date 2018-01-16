@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 
 import java.io.Serializable;
@@ -11,6 +12,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
     private final LoadingCache<String, String> requestStorage;
     private CipherExecutor<Serializable, String> cipherExecutor;

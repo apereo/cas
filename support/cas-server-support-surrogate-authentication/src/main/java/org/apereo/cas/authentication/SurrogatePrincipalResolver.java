@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
@@ -11,6 +12,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SurrogatePrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public SurrogatePrincipalResolver(final IPersonAttributeDao attributeRepository) {

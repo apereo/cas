@@ -1,13 +1,12 @@
 package org.apereo.cas.support.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.ext.WSSecurityException;
 import org.apache.wss4j.dom.handler.RequestData;
 import org.apache.wss4j.dom.message.token.UsernameToken;
 import org.apache.wss4j.dom.validate.Credential;
 import org.apache.wss4j.dom.validate.Validator;
 import org.apereo.cas.CipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link CipheredCredentialsValidator}.
@@ -15,8 +14,9 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CipheredCredentialsValidator implements Validator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CipheredCredentialsValidator.class);
+
     
     private final CipherExecutor cipherExecutor;
 

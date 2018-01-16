@@ -1,13 +1,12 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.util.HashMap;
@@ -31,10 +30,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class DefaultRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
     private static final long serialVersionUID = 1245279151345635245L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceAccessStrategy.class);
+
 
     /**
      * The sorting/execution order of this strategy.

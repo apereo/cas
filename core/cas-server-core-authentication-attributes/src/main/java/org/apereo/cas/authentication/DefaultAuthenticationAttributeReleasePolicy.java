@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
+
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
@@ -13,6 +15,7 @@ import java.util.Set;
  * @author Daniel Frett
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultAuthenticationAttributeReleasePolicy implements AuthenticationAttributeReleasePolicy {
     private Collection<String> attributesToRelease;
 

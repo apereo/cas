@@ -1,6 +1,7 @@
 package org.apereo.cas.discovery;
 
 import com.google.common.base.Predicates;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
@@ -14,8 +15,6 @@ import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -35,8 +34,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasServerProfileRegistrar implements ApplicationContextAware {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasServerProfileRegistrar.class);
+
 
     private ApplicationContext applicationContext;
 

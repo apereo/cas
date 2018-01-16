@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -12,6 +13,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private static final long serialVersionUID = 8454900425245262824L;

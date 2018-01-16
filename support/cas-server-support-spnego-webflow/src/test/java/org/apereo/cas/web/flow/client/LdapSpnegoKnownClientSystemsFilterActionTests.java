@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -84,6 +85,7 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class})
 @TestPropertySource(locations = {"classpath:/spnego.properties"})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class LdapSpnegoKnownClientSystemsFilterActionTests extends AbstractLdapTests {
 
     @Autowired

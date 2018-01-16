@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -85,6 +86,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = {"classpath:/wsfed.properties"})
 @ContextConfiguration(locations = {"classpath:/applicationContext.xml"}, initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class AbstractWsFederationTests extends AbstractOpenSamlTests {
 
     @Autowired

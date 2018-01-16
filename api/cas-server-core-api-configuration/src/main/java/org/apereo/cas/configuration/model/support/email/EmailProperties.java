@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.email;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 
 import java.io.Serializable;
@@ -10,6 +11,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class EmailProperties implements Serializable {
 
     private static final long serialVersionUID = 7367120636536230761L;

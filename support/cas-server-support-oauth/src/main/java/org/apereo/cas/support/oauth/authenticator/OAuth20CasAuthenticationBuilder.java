@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -25,8 +26,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -41,8 +40,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OAuth20CasAuthenticationBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20CasAuthenticationBuilder.class);
+
 
     /**
      * Collection of CAS settings.

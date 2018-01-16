@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.RestAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -20,6 +21,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casAcceptableUsagePolicyRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasAcceptableUsagePolicyRestConfiguration {
 
     @Autowired

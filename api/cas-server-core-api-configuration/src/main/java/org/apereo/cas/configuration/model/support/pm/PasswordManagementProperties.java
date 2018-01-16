@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-pm-webflow")
+@Slf4j
 public class PasswordManagementProperties implements Serializable {
 
     private static final long serialVersionUID = -260644582798411176L;

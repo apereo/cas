@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
@@ -7,8 +8,6 @@ import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
@@ -35,8 +34,9 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class ConfigurationStateController extends BaseCasMvcEndpoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationStateController.class);
+
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 

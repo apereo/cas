@@ -2,12 +2,11 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -25,8 +24,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+
+@Slf4j
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestGoogleAuthenticatorTokenCredentialRepository.class);
+
     private final IGoogleAuthenticator googleAuthenticator;
 
     private final RestTemplate restTemplate;

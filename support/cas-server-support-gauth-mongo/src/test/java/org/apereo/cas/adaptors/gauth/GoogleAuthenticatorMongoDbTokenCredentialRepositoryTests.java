@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -82,6 +83,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/mongogauth.properties"})
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests {
 
     @Autowired

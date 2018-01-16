@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.springframework.web.servlet.ModelAndView;
@@ -17,6 +18,7 @@ import java.util.List;
  * @author Frederic Esnault
  * @since 3.5
  */
+@Slf4j
 public class DelegatingController extends AbstractController {
 
     /**

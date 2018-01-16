@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
 import org.apereo.cas.authorization.LdapUserGroupsToRolesAuthorizationGenerator;
@@ -12,8 +13,6 @@ import org.ldaptive.ConnectionFactory;
 import org.ldaptive.SearchExecutor;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.profile.CommonProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
@@ -27,9 +26,10 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilder<B>>
         extends SecurityConfigurerAdapter<AuthenticationManager, B> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasLdapUserDetailsManagerConfigurer.class);
+
 
     private final AdminPagesSecurityProperties adminPagesSecurityProperties;
 

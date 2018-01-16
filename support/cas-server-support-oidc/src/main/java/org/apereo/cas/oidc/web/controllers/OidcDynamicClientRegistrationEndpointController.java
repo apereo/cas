@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -23,8 +24,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -46,8 +45,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcDynamicClientRegistrationEndpointController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcDynamicClientRegistrationEndpointController.class);
+
 
     private final StringSerializer<OidcClientRegistrationRequest> clientRegistrationRequestSerializer;
     private final RandomStringGenerator clientIdGenerator;

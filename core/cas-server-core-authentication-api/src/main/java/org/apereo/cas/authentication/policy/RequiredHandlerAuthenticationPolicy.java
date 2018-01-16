@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Authentication security policy that is satisfied iff a specified authentication handler successfully authenticates
@@ -13,8 +12,9 @@ import org.slf4j.LoggerFactory;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RequiredHandlerAuthenticationPolicy.class);
+
 
     /**
      * Authentication handler name that is required to satisfy policy.

@@ -1,11 +1,10 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.convert.ConversionExecutor;
 import org.springframework.binding.convert.service.RuntimeBindingConversionExecutor;
 import org.springframework.binding.expression.Expression;
@@ -77,9 +76,10 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasWebflowConfigurer.class);
+
 
     /**
      * The logout flow definition registry.

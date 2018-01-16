@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.core.OrderComparator;
 
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultAuthenticationServiceSelectionPlan implements AuthenticationServiceSelectionPlan {
     private final List<AuthenticationServiceSelectionStrategy> strategies;
 

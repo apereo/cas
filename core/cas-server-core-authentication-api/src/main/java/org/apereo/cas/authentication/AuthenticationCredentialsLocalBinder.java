@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
+
 import java.util.Arrays;
 import java.util.Collection;
 
@@ -19,6 +21,7 @@ import static java.util.stream.Collectors.joining;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
 public class AuthenticationCredentialsLocalBinder {
 
     private static final ThreadLocal<Authentication> CURRENT_AUTHENTICATION = new ThreadLocal<>();

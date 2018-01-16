@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.azure;
 
+import lombok.extern.slf4j.Slf4j;
 import net.phonefactor.pfsdk.PFAuth;
 import net.phonefactor.pfsdk.PFAuthParams;
 import net.phonefactor.pfsdk.PFAuthResult;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -24,9 +23,10 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AzureAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AzureAuthenticatorAuthenticationHandler.class);
+
     
     private final PFAuth azureAuthenticatorInstance;
     private final AzureAuthenticatorAuthenticationRequestBuilder authenticationRequestBuilder;

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
@@ -49,8 +50,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Cas30ServiceTicketValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -87,9 +86,10 @@ import java.util.Map;
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @AutoConfigureAfter(value = {CasCoreUtilConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class})
+@Slf4j
 public class CasCoreTicketsConfiguration implements TransactionManagementConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsConfiguration.class);
+
 
     @Autowired
     private ApplicationContext applicationContext;

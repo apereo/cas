@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.webflow.engine.model.AbstractActionModel;
@@ -20,6 +21,7 @@ import java.util.List;
  * @since 5.1.0
  */
 @SuppressWarnings("JdkObsolete")
+@Slf4j
 public class DynamicFlowModelBuilder implements FlowModelBuilder {
     /**
      * The Flow model.

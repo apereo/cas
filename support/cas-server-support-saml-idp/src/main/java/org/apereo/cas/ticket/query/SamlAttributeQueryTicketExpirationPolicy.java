@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.query;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 
 /**
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class SamlAttributeQueryTicketExpirationPolicy extends HardTimeoutExpirationPolicy {
     private static final long serialVersionUID = -6574724814970233926L;
 

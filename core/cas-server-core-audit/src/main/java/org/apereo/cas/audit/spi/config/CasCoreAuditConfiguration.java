@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
@@ -24,8 +25,6 @@ import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.apereo.inspektr.audit.support.Slf4jLoggingAuditTrailManager;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.apereo.inspektr.common.web.ClientInfoThreadLocalFilter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,9 +48,10 @@ import java.util.Map;
 @Configuration("casCoreAuditConfiguration")
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreAuditConfiguration.class);
 
+@Slf4j
+public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigurer {
+    
     private static final String AUDIT_ACTION_SUFFIX_FAILED = "_FAILED";
 
     @Autowired

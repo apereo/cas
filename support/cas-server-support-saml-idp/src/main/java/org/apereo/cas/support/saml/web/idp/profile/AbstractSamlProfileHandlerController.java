@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
@@ -50,8 +51,6 @@ import org.opensaml.saml.saml2.binding.decoding.impl.HTTPSOAP11Decoder;
 import org.opensaml.saml.saml2.core.AuthnContextClassRef;
 import org.opensaml.saml.saml2.core.AuthnRequest;
 import org.opensaml.saml.saml2.core.RequestAbstractType;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -79,8 +78,9 @@ import java.util.TreeMap;
  * @since 5.0.0
  */
 @Controller
+@Slf4j
 public abstract class AbstractSamlProfileHandlerController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractSamlProfileHandlerController.class);
+
 
     /**
      * Authentication support to handle credentials and authn subsystem calls.

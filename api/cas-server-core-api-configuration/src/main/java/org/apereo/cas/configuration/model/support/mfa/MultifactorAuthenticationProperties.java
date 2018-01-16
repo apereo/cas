@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.Resource;
@@ -15,6 +16,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
 public class MultifactorAuthenticationProperties implements Serializable {
     private static final long serialVersionUID = 7416521468929733907L;
 

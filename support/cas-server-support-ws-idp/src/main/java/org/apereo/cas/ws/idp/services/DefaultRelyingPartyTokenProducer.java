@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.fediz.core.exception.ProcessingException;
@@ -15,8 +16,6 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 import org.jasig.cas.client.validation.Assertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
@@ -35,8 +34,9 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRelyingPartyTokenProducer.class);
+
 
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;

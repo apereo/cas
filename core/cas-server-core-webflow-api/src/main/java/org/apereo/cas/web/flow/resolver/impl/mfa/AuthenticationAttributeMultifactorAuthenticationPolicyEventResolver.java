@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -15,8 +16,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -37,8 +36,9 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationAttributeMultifactorAuthenticationPolicyEventResolver.class);
+
 
     private final String globalAuthenticationAttributeValueRegex;
     private final Set<String> attributeNames;

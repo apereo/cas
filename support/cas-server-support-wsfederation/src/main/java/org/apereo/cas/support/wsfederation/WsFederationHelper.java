@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -49,8 +50,6 @@ import org.opensaml.xmlsec.signature.support.SignatureException;
 import org.opensaml.xmlsec.signature.support.SignaturePrevalidator;
 import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -76,8 +75,9 @@ import java.util.stream.IntStream;
  * @author John Gasper
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationHelper {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationHelper.class);
+
 
     private OpenSamlConfigBean configBean;
 

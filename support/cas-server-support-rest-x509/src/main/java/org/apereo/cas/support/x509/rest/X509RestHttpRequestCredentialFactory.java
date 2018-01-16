@@ -1,13 +1,12 @@
 package org.apereo.cas.support.x509.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.crypto.CertUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.InputStreamSource;
 import org.springframework.util.MultiValueMap;
@@ -28,8 +27,9 @@ import java.util.List;
  * @author Dmytro Fedonin
  * @since 5.1.0
  */
+@Slf4j
 public class X509RestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509RestHttpRequestCredentialFactory.class);
+
     private static final String CERTIFICATE = "cert";
 
     @Override

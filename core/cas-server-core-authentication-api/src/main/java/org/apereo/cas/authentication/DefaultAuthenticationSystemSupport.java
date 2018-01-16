@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ import java.util.stream.Stream;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@Slf4j
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     private final AuthenticationTransactionManager authenticationTransactionManager;

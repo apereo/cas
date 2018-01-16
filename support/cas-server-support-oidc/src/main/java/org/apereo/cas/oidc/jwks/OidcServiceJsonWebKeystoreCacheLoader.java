@@ -1,13 +1,12 @@
 package org.apereo.cas.oidc.jwks;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
 import org.jose4j.jwk.JsonWebKeySet;
 import org.jose4j.jwk.RsaJsonWebKey;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -21,8 +20,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcServiceJsonWebKeystoreCacheLoader implements CacheLoader<OidcRegisteredService, Optional<RsaJsonWebKey>> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcServiceJsonWebKeystoreCacheLoader.class);
+
 
     @Autowired
     private ResourceLoader resourceLoader;

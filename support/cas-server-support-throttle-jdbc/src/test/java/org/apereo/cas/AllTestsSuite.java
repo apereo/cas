@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.support.InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
@@ -14,5 +15,6 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(
         InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests.class
 )
+@Slf4j
 public class AllTestsSuite {
 }

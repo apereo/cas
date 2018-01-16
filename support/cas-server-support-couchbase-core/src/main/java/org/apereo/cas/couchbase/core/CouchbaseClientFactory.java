@@ -5,9 +5,8 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,10 +24,11 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class CouchbaseClientFactory {
 
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseClientFactory.class);
+
     private static final int DEFAULT_TIMEOUT = 5;
 
     private Cluster cluster;

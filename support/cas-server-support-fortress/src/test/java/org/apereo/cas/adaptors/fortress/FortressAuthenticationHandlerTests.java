@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.fortress;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.GlobalErrIds;
 import org.apache.directory.fortress.core.PasswordException;
@@ -16,8 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
@@ -31,8 +30,9 @@ import java.util.UUID;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
+@Slf4j
 public class FortressAuthenticationHandlerTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationHandlerTests.class);
+
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -15,6 +16,7 @@ import java.security.cert.X509Certificate;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public AbstractX509PrincipalResolver() {

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -9,8 +10,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
 import org.apereo.cas.support.rest.factory.UserAuthenticationResourceEntityResponseFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,8 +37,9 @@ import java.util.Collection;
  * @since 4.1.0
  */
 @RestController("userAuthenticationResource")
+@Slf4j
 public class UserAuthenticationResource {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserAuthenticationResource.class);
+
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory serviceFactory;

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -23,6 +24,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, MetadataResolver> {
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,8 +23,6 @@ import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertific
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -47,8 +46,9 @@ import java.util.Map;
  */
 @Configuration("samlIdPMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlIdPMetadataConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPMetadataConfiguration.class);
+
     
     @Autowired
     @Qualifier("noRedirectHttpClient")

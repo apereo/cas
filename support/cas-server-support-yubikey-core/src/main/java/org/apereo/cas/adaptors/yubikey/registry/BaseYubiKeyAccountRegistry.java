@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
@@ -9,6 +10,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegistry {
 
     /** Account validator. */

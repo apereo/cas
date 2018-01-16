@@ -1,9 +1,8 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -17,8 +16,9 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DefaultArgumentExtractor extends AbstractArgumentExtractor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultArgumentExtractor.class);
+
     
     /**
      * Instantiates a new argument extractor.

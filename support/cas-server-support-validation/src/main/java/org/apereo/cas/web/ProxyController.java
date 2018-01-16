@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -36,6 +37,7 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class ProxyController extends AbstractDelegateController {
     /** The view to redirect to on a successful validation. */
     private final View successView;

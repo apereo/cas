@@ -1,9 +1,8 @@
 package org.apereo.cas.support.events.mongo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -17,9 +16,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbCasEventRepository.class);
+
 
     private final String collectionName;
     private final MongoOperations mongoTemplate;

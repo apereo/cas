@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
@@ -8,8 +9,6 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -24,8 +23,9 @@ import java.util.Optional;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RadiusAuthenticationHandler.class);
+
 
     /**
      * Array of RADIUS servers to authenticate against.

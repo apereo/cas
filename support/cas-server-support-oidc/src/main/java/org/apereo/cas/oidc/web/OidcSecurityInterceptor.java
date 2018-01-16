@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.util.Pac4jUtils;
@@ -21,6 +22,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;

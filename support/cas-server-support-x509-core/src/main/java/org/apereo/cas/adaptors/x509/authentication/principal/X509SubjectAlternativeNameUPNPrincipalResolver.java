@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -10,8 +11,6 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -28,13 +27,14 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
+@Slf4j
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
     /**
      * ObjectID for upn altName for windows smart card logon.
      */
     public static final String UPN_OBJECTID = "1.3.6.1.4.1.311.20.2.3";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509SubjectAlternativeNameUPNPrincipalResolver.class);
+
 
     public X509SubjectAlternativeNameUPNPrincipalResolver() {
         super();

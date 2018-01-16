@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.adaptors.u2f.web.flow.U2FAccountCheckRegistrationAction;
@@ -19,8 +20,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -43,8 +42,9 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("u2FWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class U2FWebflowConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(U2FWebflowConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

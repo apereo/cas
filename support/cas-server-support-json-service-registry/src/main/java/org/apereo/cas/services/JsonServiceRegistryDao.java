@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
@@ -23,6 +24,7 @@ import java.nio.file.Path;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
 
     /**

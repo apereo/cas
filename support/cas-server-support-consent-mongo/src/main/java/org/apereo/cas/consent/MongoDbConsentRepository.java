@@ -1,10 +1,9 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -17,9 +16,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MongoDbConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 7734163279139907616L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbConsentRepository.class);
+
 
     private final String collectionName;
     private final MongoTemplate mongoTemplate;

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -61,6 +62,7 @@ import static org.junit.Assert.*;
                 RefreshAutoConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations={"classpath:/mongo.properties"})
+@Slf4j
 public class MongoAuthenticationHandlerTests {
 
     @Autowired

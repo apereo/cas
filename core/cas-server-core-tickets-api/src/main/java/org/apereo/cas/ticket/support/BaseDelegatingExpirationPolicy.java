@@ -2,13 +2,12 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -25,10 +24,11 @@ import java.util.Optional;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
     private static final long serialVersionUID = 5927936344949518688L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseDelegatingExpirationPolicy.class);
+
 
     private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>();
 

@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.clouddirectory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -16,6 +17,7 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-cloud-directory-authentication")
+@Slf4j
 public class CloudDirectoryProperties implements Serializable {
     private static final long serialVersionUID = 6725526133973304269L;
     /**

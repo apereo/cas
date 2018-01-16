@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.pm.InvalidPasswordException;
@@ -8,8 +9,6 @@ import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.binding.message.MessageBuilder;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
@@ -22,6 +21,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class PasswordChangeAction extends AbstractAction {
 
     /**
@@ -32,7 +32,7 @@ public class PasswordChangeAction extends AbstractAction {
     private static final String PASSWORD_VALIDATION_FAILURE_CODE = "pm.validationFailure";
     private static final String DEFAULT_MESSAGE = "Could not update the account password";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordChangeAction.class);
+
     private static final MessageBuilder ERROR_MSG_BUILDER = new MessageBuilder().error();
 
     private final PasswordManagementService passwordManagementService;

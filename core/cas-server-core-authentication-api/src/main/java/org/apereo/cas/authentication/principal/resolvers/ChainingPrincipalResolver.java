@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
@@ -11,8 +12,6 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,8 +31,9 @@ import java.util.stream.Collectors;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class ChainingPrincipalResolver implements PrincipalResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ChainingPrincipalResolver.class);
+
 
     /**
      * Factory to create the principal type.
