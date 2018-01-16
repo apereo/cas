@@ -108,7 +108,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             throttle.postHandle(request, response, null, null);
             return response;
         }
-        fail("Expected AbstractAuthenticationException");
+        throw new AssertionError("Expected AbstractAuthenticationException");
         return null;
     }
 

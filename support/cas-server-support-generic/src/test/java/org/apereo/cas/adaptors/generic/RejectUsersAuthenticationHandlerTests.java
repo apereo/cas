@@ -54,7 +54,7 @@ public class RejectUsersAuthenticationHandlerTests {
                 .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
-            fail("Could not resolve URL.");
+            throw new AssertionError("Could not resolve URL.");
         }
     }
 

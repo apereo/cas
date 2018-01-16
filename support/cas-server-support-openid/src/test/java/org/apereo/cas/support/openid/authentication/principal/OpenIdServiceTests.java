@@ -107,7 +107,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
                 try {
                     this.wait(3000);
                 } catch (final InterruptedException e) {
-                    fail("Could not wait long enough to check association expiry date");
+                    throw new AssertionError("Could not wait long enough to check association expiry date");
                 }
             }
             final Response response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,

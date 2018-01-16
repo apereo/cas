@@ -168,7 +168,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
                 "expired", null, new HashMap<>(0));
         this.thrown.expect(AccountPasswordMustChangeException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"));
-        fail("Shouldn't get here");
+        throw new AssertionError("Shouldn't get here");
     }
 
     @Test
@@ -177,7 +177,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
                 null, "disabled", new HashMap<>(0));
         this.thrown.expect(AccountDisabledException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"));
-        fail("Shouldn't get here");
+        throw new AssertionError("Shouldn't get here");
     }
 
     /**

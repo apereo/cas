@@ -23,7 +23,7 @@ public class CasConfigurationJasyptCipherExecutorTests {
     private Environment environment;
 
     static {
-        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getName(), "P@$$w0rd");
+        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
 
     private CasConfigurationJasyptCipherExecutor jasypt;

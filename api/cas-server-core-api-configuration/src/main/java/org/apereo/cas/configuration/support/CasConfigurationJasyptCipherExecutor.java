@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -24,7 +25,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
     
-
     /**
      * The Jasypt encryption parameters.
      */
@@ -50,10 +50,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * The Name.
          */
-        private final String name;
+        @Getter
+        private final String propertyName;
         /**
          * The Default value.
          */
+        @Getter
         private final String defaultValue;
 
         /**
@@ -63,26 +65,8 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          * @param defaultValue the default value
          */
         JasyptEncryptionParameters(final String name, final String defaultValue) {
-            this.name = name;
+            this.propertyName = name;
             this.defaultValue = defaultValue;
-        }
-
-        /**
-         * Gets name.
-         *
-         * @return the name
-         */
-        public String getName() {
-            return name;
-        }
-
-        /**
-         * Gets default value.
-         *
-         * @return the default value
-         */
-        public String getDefaultValue() {
-            return defaultValue;
         }
     }
 
@@ -192,7 +176,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         return null;
     }
 
-
     /**
      * Decrypt value string.
      *
@@ -232,16 +215,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     }
 
     /**
-     * Retrieves the {@link String} of an {@link Object}.
-     *
-     * @param propertyValue The property value to cast
-     * @return A {@link String} representing the property value or {@code null} if it is not a {@link String}
-     */
-    private static String getStringPropertyValue(final Object propertyValue) {
-        return propertyValue instanceof String ? propertyValue.toString() : null;
-    }
-
-    /**
      * Gets jasypt param from env.
      *
      * @param environment the environment
@@ -249,6 +222,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @return the jasypt param from env
      */
     private static String getJasyptParamFromEnv(final Environment environment, final JasyptEncryptionParameters param) {
-        return environment.getProperty(param.getName(), param.getDefaultValue());
+        return environment.getProperty(param.getPropertyName(), param.getDefaultValue());
     }
 }
