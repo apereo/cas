@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.login;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -59,7 +59,7 @@ public class InitialFlowSetupAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext context) {
+    public Event doExecute(final RequestContext context) {
         configureCookieGenerators(context);
         configureWebflowContext(context);
         configureWebflowContextForService(context);
