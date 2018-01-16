@@ -2,17 +2,15 @@ package org.apereo.cas.util.cipher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.shiro.crypto.AesCipherService;
-import org.apache.shiro.crypto.CipherService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 
+import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Map;
 
 /**
@@ -28,7 +26,6 @@ import java.util.Map;
 @Slf4j
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
 
-
     /**
      * Name of the cipher/component whose keys are generated here.
      */
@@ -41,6 +38,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
 
     private byte[] encryptionSecretKey;
 
+    private final SecretKeySpec encryptionKey;
+    private final Cipher aesCipher;
 
     /**
      * Instantiates a new cryptic ticket cipher executor.
@@ -54,9 +53,15 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize,
                                     final String cipherName) {
-        this.cipherName = cipherName;
-        ensureSigningKeyExists(signingSecretKey, signingKeySize);
-        ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
+        try {
+            this.cipherName = cipherName;
+            ensureSigningKeyExists(signingSecretKey, signingKeySize);
+            ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
+            this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
+            this.aesCipher = Cipher.getInstance("AES");
+        } catch (final Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public void setSecretKeyAlgorithm(final String secretKeyAlgorithm) {
@@ -66,9 +71,8 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     @Override
     public byte[] encode(final byte[] value) {
         try {
-            final Key key = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-            final CipherService cipher = new AesCipherService();
-            final byte[] result = cipher.encrypt(value, key.getEncoded()).getBytes();
+            this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
+            final byte[] result = this.aesCipher.doFinal(value);
             return sign(result);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -80,9 +84,9 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     public byte[] decode(final byte[] value) {
         try {
             final byte[] verifiedValue = verifySignature(value);
-            final Key key = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-            final CipherService cipher = new AesCipherService();
-            return cipher.decrypt(verifiedValue, key.getEncoded()).getBytes();
+            this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
+            final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);
+            return bytePlainText;
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }
@@ -117,15 +121,15 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @return the signing key setting
      */
     protected abstract String getSigningKeySetting();
-    
+
     private void ensureEncryptionKeyExists(final String encryptionSecretKey, final int encryptionKeySize) {
         final byte[] encryptionKey;
         if (StringUtils.isBlank(encryptionSecretKey)) {
             LOGGER.warn("Secret key for encryption is not defined under [{}]. CAS will attempt to auto-generate the encryption key",
-                    getEncryptionKeySetting());
+                getEncryptionKeySetting());
             final String key = new Base64RandomStringGenerator(encryptionKeySize).getNewString();
             LOGGER.warn("Generated encryption key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                    key, encryptionKeySize, getEncryptionKeySetting());
+                key, encryptionKeySize, getEncryptionKeySetting());
             encryptionKey = EncodingUtils.decodeBase64(key);
         } else {
             final boolean base64 = EncodingUtils.isBase64(encryptionSecretKey);
@@ -138,11 +142,11 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
                 encryptionKey = key;
             } else if (encryptionSecretKey.length() != encryptionKeySize) {
                 LOGGER.warn("Secret key for encryption defined under [{}] is Base64 encoded but the size does not match the key size [{}].",
-                        getEncryptionKeySetting(), encryptionKeySize);
+                    getEncryptionKeySetting(), encryptionKeySize);
                 encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
             } else {
                 LOGGER.warn("Secret key for encryption defined under [{}] is not Base64 encoded. Clear the setting to regenerate (Recommended) or replace with"
-                        + " [{}].", getEncryptionKeySetting(), EncodingUtils.encodeBase64(encryptionSecretKey));
+                    + " [{}].", getEncryptionKeySetting(), EncodingUtils.encodeBase64(encryptionSecretKey));
                 encryptionKey = encryptionSecretKey.getBytes(StandardCharsets.UTF_8);
             }
         }
@@ -155,7 +159,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             LOGGER.warn("Secret key for signing is not defined under [{}]. CAS will attempt to auto-generate the signing key", getSigningKeySetting());
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
             LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
-                    signingKeyToUse, signingKeySize, getSigningKeySetting());
+                signingKeyToUse, signingKeySize, getSigningKeySetting());
         }
         setSigningKey(signingKeyToUse);
     }

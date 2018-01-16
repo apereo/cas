@@ -14,8 +14,8 @@ import org.apache.shiro.config.IniSecurityManagerFactory;
 import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.util.Factory;
-import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -35,13 +35,13 @@ import java.util.Set;
 /**
  * An authentication handler that routes requests to Apache Shiro.
  * Credentials are assumed to be username and password.
+ *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @Slf4j
 public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
-    
     private final Set<String> requiredRoles;
     private final Set<String> requiredPermissions;
 
@@ -55,10 +55,10 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
                                                                                         final String originalPassword)
-            throws GeneralSecurityException {
+        throws GeneralSecurityException {
         try {
             final UsernamePasswordToken token = new UsernamePasswordToken(transformedCredential.getUsername(),
-                    transformedCredential.getPassword());
+                transformedCredential.getPassword());
 
             if (transformedCredential instanceof RememberMeUsernamePasswordCredential) {
                 token.setRememberMe(RememberMeUsernamePasswordCredential.class.cast(transformedCredential).isRememberMe());
@@ -74,13 +74,13 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             throw new AccountNotFoundException(uae.getMessage());
         } catch (final IncorrectCredentialsException ice) {
             throw new FailedLoginException(ice.getMessage());
-        } catch (final LockedAccountException|ExcessiveAttemptsException lae) {
+        } catch (final LockedAccountException | ExcessiveAttemptsException lae) {
             throw new AccountLockedException(lae.getMessage());
         } catch (final ExpiredCredentialsException eae) {
             throw new CredentialExpiredException(eae.getMessage());
         } catch (final DisabledAccountException eae) {
             throw new AccountDisabledException(eae.getMessage());
-        } catch (final AuthenticationException e){
+        } catch (final AuthenticationException e) {
             throw new FailedLoginException(e.getMessage());
         }
     }
@@ -112,7 +112,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     /**
      * Create authenticated subject result.
      *
-     * @param credential the credential
+     * @param credential  the credential
      * @param currentUser the current user
      * @return the handler result
      */
@@ -129,7 +129,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
     protected Subject getCurrentExecutingSubject() {
         return SecurityUtils.getSubject();
     }
-    
+
     /**
      * Sets shiro configuration to the path of the resource
      * that points to the {@code shiro.ini} file.
@@ -142,7 +142,6 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
             if (shiroResource != null && shiroResource.exists()) {
                 final String location = shiroResource.getURI().toString();
                 LOGGER.debug("Loading Shiro configuration from [{}]", location);
-
                 final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
                 final SecurityManager securityManager = factory.getInstance();
                 SecurityUtils.setSecurityManager(securityManager);
