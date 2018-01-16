@@ -4,9 +4,23 @@ title: CAS - Code Conventions
 ---
 
 # Code Conventions
+
 Following the lead of well established projects such as Apache and Eclipse, all code in CAS will comply with the [Code Conventions for the Java](http://java.sun.com/docs/codeconv/html/CodeConvTOC.doc.html) and additionally with the CAS specific conventions listed below. Javadoc should exist on all publicly exported class members and follow the [standard guidelines](http://java.sun.com/j2se/javadoc/writingdoccomments/index.html).
 
 The following document describes the set of coding conventions that are specific to the CAS project:
+
+## Tooling
+
+- The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Apereo/cas/blob/master/style/checkstyle-rules.xml) as much as possible.
+- Where appropriate, the codebase takes advantage of [Project Lombok](https://projectlombok.org/) for auto-generation of code constructs such as getters and setters, etc.
+ 
+## Consistency
+
+Try to keep consistent with the existing naming patterns when introducing new components, fields, and files. As an example if a CAS component is named as `SimpleCipherExecutor`, its natural alternative might be designed as `FancyCipherExecutor`. 
+
+## Documentation
+
+Generally all public APIs are expected to be adequately documented to a reasonable extent and just as well, all CAS configuration settings and properties are to be fully explained with examples, default values, etc as part of the field's Javadocs.
 
 ## Brackets
 
@@ -37,6 +51,9 @@ public class FooClass {
 }
 ```
 
+## Getter/Setter Methods
+
+Generating Getter/Setter methods for fields is typically done using Project Lombok's `@Getter` and `@Setter` annotations.
 
 ## Indentations
 
@@ -61,24 +78,7 @@ private static final String SOME_OBJECT = "TheObject";
 
 ## Logging
 
-We use [SLF4J](http://www.slf4j.org/index.html) for logging. In abstract classes, the provided logger should be mark as `protected` so that it can be reused in subclasses. In the case where we create our own Log instance, we will use the [recommended practice](http://www.slf4j.org/faq.html#declaration_pattern) of declaring logger objects by SLF4j:
-
-```java
-package some.package;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-       
-public final class MyClass {
-  private final [static] Logger LOGGER = LoggerFactory.getLogger(MyClass.class);
-  ... etc
-}
-...
-public class MyClass {
-  private final Logger logger = LoggerFactory.getLogger(this.getClass());
-  ... etc
-}
-```
+We use [SLF4J](http://www.slf4j.org/index.html) for logging. Unless noted otherwise, `LOGGER` objects are to be generated using Project Lombok's `@Slf4j` annotation.
 
 [Parameterized log messages](http://www.slf4j.org/faq.html#logging_performance) are preferred:
 
@@ -92,7 +92,7 @@ This is the preferred method over checking for a particular logging level and co
 
 ## Qualifying instance variables with `this`
 
-We qualify all instance variables with `this` with the exception of the Logging instances. We don't qualify that variable with "this" because it is well-known to be threadsafe. `logger.warn("Message")` becomes more of an idiom than invocation of instance variable.
+Try to qualify all instance variables with `this` with the exception of the Logging instances. 
 
 ## Use of the final keyword
 
@@ -111,7 +111,6 @@ For required dependencies, the constructor injection must be used whereas setter
 ## equals() and hashCode() methods
 
 The recommend way to build the `hashCode()` and `equals()` methods is to use the `EqualsBuilder` and `HashCodeBuilder `classes form the `commons-lang(3)` library.
-
 
 ## Template for commit messages
 
@@ -134,7 +133,4 @@ When creating a pull request, make sure that the pull references the Github issu
 
 This allows the pull request to be linked to the issue. When the pull is merged, the issue will automatically be closed as well.
 
-## Checkstyle
-The current codebase takes advantage of the [Checkstyle engine](http://checkstyle.sourceforge.net) to [enforce conventions](https://github.com/Jasig/cas/blob/master/checkstyle-rules.xml) as much as possible.
- 
 
