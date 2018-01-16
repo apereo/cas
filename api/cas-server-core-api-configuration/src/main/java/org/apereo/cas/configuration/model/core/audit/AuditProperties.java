@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -12,6 +14,8 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
+@Setter
 public class AuditProperties implements Serializable {
     private static final long serialVersionUID = 3946106584608417663L;
 
@@ -85,98 +89,10 @@ public class AuditProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private AuditSlf4jLogProperties slf4j = new AuditSlf4jLogProperties();
-    
+
     /**
      * Indicates whether catastrophic audit failures should simply be logged
      * or whether errors should bubble up and thrown back.
      */
     private boolean ignoreAuditFailures;
-
-    public AuditMongoDbProperties getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final AuditMongoDbProperties mongo) {
-        this.mongo = mongo;
-    }
-
-    public AuditJdbcProperties getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final AuditJdbcProperties jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public String getAppCode() {
-        return appCode;
-    }
-
-    public void setAppCode(final String appCode) {
-        this.appCode = appCode;
-    }
-
-    public boolean isIgnoreAuditFailures() {
-        return ignoreAuditFailures;
-    }
-
-    public void setIgnoreAuditFailures(final boolean ignoreAuditFailures) {
-        this.ignoreAuditFailures = ignoreAuditFailures;
-    }
-
-    public String getAlternateServerAddrHeaderName() {
-        return alternateServerAddrHeaderName;
-    }
-
-    public void setAlternateServerAddrHeaderName(final String alternateServerAddrHeaderName) {
-        this.alternateServerAddrHeaderName = alternateServerAddrHeaderName;
-    }
-
-    public String getAlternateClientAddrHeaderName() {
-        return alternateClientAddrHeaderName;
-    }
-
-    public void setAlternateClientAddrHeaderName(final String alternateClientAddrHeaderName) {
-        this.alternateClientAddrHeaderName = alternateClientAddrHeaderName;
-    }
-
-    public boolean isUseServerHostAddress() {
-        return useServerHostAddress;
-    }
-
-    public void setUseServerHostAddress(final boolean useServerHostAddress) {
-        this.useServerHostAddress = useServerHostAddress;
-    }
-
-    public boolean isIncludeValidationAssertion() {
-        return includeValidationAssertion;
-    }
-
-    public void setIncludeValidationAssertion(final boolean includeValidationAssertion) {
-        this.includeValidationAssertion = includeValidationAssertion;
-    }
-
-    public AuditRestProperties getRest() {
-        return rest;
-    }
-
-    public void setRest(final AuditRestProperties rest) {
-        this.rest = rest;
-    }
-
-    public int getNumberOfDaysInHistory() {
-        return numberOfDaysInHistory;
-    }
-
-    public void setNumberOfDaysInHistory(final int numberOfDaysInHistory) {
-        this.numberOfDaysInHistory = numberOfDaysInHistory;
-    }
-
-    public AuditSlf4jLogProperties getSlf4j() {
-        return slf4j;
-    }
-
-    public void setSlf4j(final AuditSlf4jLogProperties slf4j) {
-        this.slf4j = slf4j;
-    }
 }

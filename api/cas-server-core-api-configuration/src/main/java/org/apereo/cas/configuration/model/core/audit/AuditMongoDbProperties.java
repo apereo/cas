@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -12,6 +14,8 @@ import org.apereo.cas.configuration.support.RequiresModule;
  */
 @RequiresModule(name = "cas-server-support-audit-mongo")
 @Slf4j
+@Getter
+@Setter
 public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
     private static final long serialVersionUID = 4940497540189318943L;
 
@@ -25,11 +29,4 @@ public class AuditMongoDbProperties extends SingleCollectionMongoDbProperties {
         setCollection("MongoDbCasAuditRepository");
     }
 
-    public boolean isAsynchronous() {
-        return asynchronous;
-    }
-
-    public void setAsynchronous(final boolean asynchronous) {
-        this.asynchronous = asynchronous;
-    }
 }
