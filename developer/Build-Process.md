@@ -46,17 +46,18 @@ The following commandline boolean flags are supported by the build:
 
 | Flag                              | Description
 |-----------------------------------+------------------------------------------------------------------+
-| `skipCheckstyle`                  | Skip running checkstyle checks.
 | `enableRemoteDebugging`           | Allows for remote debugging via a pre-defined port (i.e. `5000`).
+| `enableIncremental`               | Enable Gradle's incremental compilation feature.
+| `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
+| `skipCheckstyle`                  | Skip running checkstyle checks.
 | `skipFindbugs`                    | Skip running findbugs checks.
 | `skipVersionConflict`             | If a dependency conflict is found, use the latest version rather than failing the build.
-| `showStandardStreams`             | Let the build output logs that are sent to the standard streams. (i.e. console, etc)
-| `enableIncremental`               | Enable Gradle's incremental compilation feature.
 | `skipSass`                        | Skip compilation of `.sass` files into `.css`, etc. Mostly useful when running tests.
 | `skipNestedConfigMetadataGen`     | Skip generating configuration metadata for nested properties and generic collections.
 | `skipNodeModulesCleanUp`          | Skip cleaning and removing the `node_modules` directory. Mostly useful when running tests.
 | `skipErrorProneCompiler`          | Skip running the `error-prone` static-analysis compiler.
 | `skipNpmCache`                    | Skip cleaning the NPM cache.
+| `skipNpmLint`                     | Skip running the linter for resources managed by NPM, such as Javascript files.
 
 - You can use `-x <task>` to entirely skip/ignore a phase in the build. (i.e. `-x test`, `-x check`).
 - If you have no need to let Gradle resolve/update dependencies and new module versions for you, you can take advantage of the `--offline` flag when you build which tends to make the build go a lot faster.
