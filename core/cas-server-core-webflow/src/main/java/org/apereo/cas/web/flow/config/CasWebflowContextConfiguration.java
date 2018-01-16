@@ -230,7 +230,7 @@ public class CasWebflowContextConfiguration {
     @ConditionalOnMissingBean(name = "defaultLogoutWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer defaultLogoutWebflowConfigurer() {
-        final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), logoutFlowRegistry(),
+        final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
             applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
         c.initialize();
