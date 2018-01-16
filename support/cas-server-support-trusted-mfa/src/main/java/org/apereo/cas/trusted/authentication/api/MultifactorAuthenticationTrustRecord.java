@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +15,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import lombok.ToString;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -27,7 +27,9 @@ import java.time.LocalDate;
 @Table(name = "MultifactorAuthenticationTrustRecord")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
+@ToString
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
+
     @Id
     @org.springframework.data.annotation.Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -98,13 +100,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
             return false;
         }
         final MultifactorAuthenticationTrustRecord rhs = (MultifactorAuthenticationTrustRecord) obj;
-        return new EqualsBuilder()
-                .append(this.principal, rhs.principal)
-                .append(this.geography, rhs.geography)
-                .append(this.recordDate, rhs.recordDate)
-                .append(this.recordKey, rhs.recordKey)
-                .append(this.name, rhs.name)
-                .isEquals();
+        return new EqualsBuilder().append(this.principal, rhs.principal).append(this.geography, rhs.geography).append(this.recordDate, rhs.recordDate).append(this.recordKey, rhs.recordKey).append(this.name, rhs.name).isEquals();
     }
 
     public String getName() {
@@ -117,23 +113,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(principal)
-                .append(geography)
-                .append(recordDate)
-                .append(recordKey)
-                .append(name)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("principal", principal)
-                .append("geography", geography)
-                .append("recordDate", recordDate)
-                .append("name", name)
-                .toString();
+        return new HashCodeBuilder().append(principal).append(geography).append(recordDate).append(recordKey).append(name).toHashCode();
     }
 
     /**

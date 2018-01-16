@@ -6,6 +6,7 @@ import org.springframework.beans.factory.config.BeanPostProcessor;
 import org.springframework.boot.context.embedded.AnnotationConfigEmbeddedWebApplicationContext;
 import org.springframework.scheduling.annotation.ScheduledAnnotationBeanPostProcessor;
 import org.springframework.scheduling.config.TaskManagementConfigUtils;
+import lombok.ToString;
 
 /**
  * This is {@link CasWebApplicationContext}.
@@ -14,7 +15,9 @@ import org.springframework.scheduling.config.TaskManagementConfigUtils;
  * @since 5.1.0
  */
 @Slf4j
+@ToString
 public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplicationContext {
+
     /**
      * {@inheritDoc}
      * Reset the value resolver on the inner {@link ScheduledAnnotationBeanPostProcessor}
@@ -23,15 +26,8 @@ public class CasWebApplicationContext extends AnnotationConfigEmbeddedWebApplica
      */
     @Override
     protected void onRefresh() {
-        final ScheduledAnnotationBeanPostProcessor sch = (ScheduledAnnotationBeanPostProcessor)
-                getBeanFactory().getBean(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME, BeanPostProcessor.class);
+        final ScheduledAnnotationBeanPostProcessor sch = (ScheduledAnnotationBeanPostProcessor) getBeanFactory().getBean(TaskManagementConfigUtils.SCHEDULED_ANNOTATION_PROCESSOR_BEAN_NAME, BeanPostProcessor.class);
         sch.setEmbeddedValueResolver(new CasEmbeddedValueResolver(this));
         super.onRefresh();
-    }
-
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 }

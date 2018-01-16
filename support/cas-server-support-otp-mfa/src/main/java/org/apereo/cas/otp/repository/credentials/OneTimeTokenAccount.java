@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.CompareToBuilder;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -22,6 +21,7 @@ import javax.persistence.JoinColumn;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.ToString;
 
 /**
  * This is {@link OneTimeTokenAccount}.
@@ -33,6 +33,7 @@ import java.util.List;
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@ToString
 public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeTokenAccount> {
 
     private static final long serialVersionUID = -8289105320642735252L;
@@ -69,10 +70,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
      * @param scratchCodes   the scratch codes
      */
     @JsonCreator
-    public OneTimeTokenAccount(@JsonProperty("username") final String username,
-                               @JsonProperty("secretKey") final String secretKey,
-                               @JsonProperty("validationCode") final int validationCode,
-                               @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
+    public OneTimeTokenAccount(@JsonProperty("username") final String username, @JsonProperty("secretKey") final String secretKey, @JsonProperty("validationCode") final int validationCode, @JsonProperty("scratchCodes") final List<Integer> scratchCodes) {
         this();
         this.secretKey = secretKey;
         this.validationCode = validationCode;
@@ -122,12 +120,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
-        return new CompareToBuilder()
-                .append(this.scratchCodes, o.getScratchCodes())
-                .append(this.validationCode, o.getValidationCode())
-                .append(this.secretKey, o.getSecretKey())
-                .append(this.username, o.getUsername())
-                .build();
+        return new CompareToBuilder().append(this.scratchCodes, o.getScratchCodes()).append(this.validationCode, o.getValidationCode()).append(this.secretKey, o.getSecretKey()).append(this.username, o.getUsername()).build();
     }
 
     @Override
@@ -142,30 +135,11 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             return false;
         }
         final OneTimeTokenAccount rhs = (OneTimeTokenAccount) obj;
-        return new EqualsBuilder()
-                .append(this.secretKey, rhs.secretKey)
-                .append(this.validationCode, rhs.validationCode)
-                .append(this.scratchCodes, rhs.scratchCodes)
-                .append(this.username, rhs.username)
-                .isEquals();
+        return new EqualsBuilder().append(this.secretKey, rhs.secretKey).append(this.validationCode, rhs.validationCode).append(this.scratchCodes, rhs.scratchCodes).append(this.username, rhs.username).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(secretKey)
-                .append(validationCode)
-                .append(scratchCodes)
-                .append(username)
-                .toHashCode();
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("username", username)
-                .toString();
+        return new HashCodeBuilder().append(secretKey).append(validationCode).append(scratchCodes).append(username).toHashCode();
     }
 }
