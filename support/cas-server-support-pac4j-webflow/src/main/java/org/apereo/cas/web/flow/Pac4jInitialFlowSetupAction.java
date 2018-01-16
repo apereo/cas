@@ -9,7 +9,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,18 +24,18 @@ import java.util.List;
  * Class to set up variables at webflow action initialisation
  *
  * @author Francis Le Coq
- * @since 3.1
+ * @since 5.2
  */
-public class initialFlowSetupP4jAction extends AbstractAction {
+public class Pac4jInitialFlowSetupAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(initialFlowSetupP4jAction.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jInitialFlowSetupAction.class);
 
     private final CasConfigurationProperties casProperties;
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final List<ArgumentExtractor> argumentExtractors;
 
-    public initialFlowSetupP4jAction(final List<ArgumentExtractor> argumentExtractors,
+    public Pac4jInitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
                                   final ServicesManager servicesManager,
                                   final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionPlan,
                                   final CasConfigurationProperties casProperties) {
