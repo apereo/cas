@@ -22,7 +22,6 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -244,7 +243,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             if (authenticationFromTgt == null) {
                 LOGGER.debug("Authentication session associated with [{}] is no longer valid", ticketGrantingTicket);
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
-            } else if (areAuthorizationsEssentiallyEqual(authentication, authenticationFromTgt)) {
+            } else if (areAuthenticationsEssentiallyEqual(authentication, authenticationFromTgt)) {
                 LOGGER.debug("Resulting authentication matches the authentication from context");
                 issueTicketGrantingTicket = false;
             } else {
@@ -254,7 +253,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return issueTicketGrantingTicket;
     }
 
-    private boolean areAuthorizationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
+    private boolean areAuthenticationsEssentiallyEqual(final Authentication auth1, final Authentication auth2) {
         if ((auth1 == null && auth2 != null) || (auth1 != null && auth2 == null)) {
             return false;
         }
@@ -262,7 +261,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         builder.append(auth1.getPrincipal(), auth2.getPrincipal());
         builder.append(auth1.getCredentials(), auth2.getCredentials());
         builder.append(auth1.getSuccesses(), auth2.getSuccesses());
-        builder.append(CollectionUtils.wrap(auth1.getAttributes()), auth2.getAttributes());
+        builder.append(auth1.getAttributes(), auth2.getAttributes());
         return builder.isEquals();
     }
 
