@@ -4,19 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.http.MediaType;
-
 import java.io.Serializable;
 import java.net.URL;
-
-/**
- * Abstraction for a message that is sent to an http endpoint.
- *
- * @author Misagh Moayyed
- * @since 4.1.0
- */
+import lombok.ToString;
 
 @Slf4j
+@ToString
 public class HttpMessage implements Serializable {
+
     private static final long serialVersionUID = 2015460875654586133L;
 
     /**
@@ -25,7 +20,9 @@ public class HttpMessage implements Serializable {
     private static final boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
 
     private final URL url;
+
     private final String message;
+
     private int responseCode;
 
     /**
@@ -100,17 +97,6 @@ public class HttpMessage implements Serializable {
             LOGGER.warn("Unable to encode URL", e);
         }
         return message;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("url", this.url)
-                .append("message", this.message)
-                .append("asynchronous", this.asynchronous)
-                .append("contentType", this.contentType)
-                .append("responseCode", this.responseCode)
-                .toString();
     }
 
     public void setResponseCode(final int responseCode) {

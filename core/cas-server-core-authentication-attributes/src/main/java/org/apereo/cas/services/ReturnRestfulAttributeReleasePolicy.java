@@ -12,7 +12,6 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,13 +23,12 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-
 
     private String endpoint;
 
@@ -41,17 +39,13 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                        final Map<String, Object> attributes,
-                                                        final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
         try (StringWriter writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
-            final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(),
-                    CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
+            final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(), CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
-                return MAPPER.readValue(response.getEntity().getContent(),
-                        new TypeReference<Map<String, Object>>() {
-                        });
+                return MAPPER.readValue(response.getEntity().getContent(), new TypeReference<Map<String, Object>>() {
+                });
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
@@ -71,26 +65,12 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
             return false;
         }
         final ReturnRestfulAttributeReleasePolicy rhs = (ReturnRestfulAttributeReleasePolicy) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.endpoint, rhs.endpoint)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.endpoint, rhs.endpoint).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(this.endpoint)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("endpoint", this.endpoint)
-                .toString();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.endpoint).toHashCode();
     }
 
     public String getEndpoint() {

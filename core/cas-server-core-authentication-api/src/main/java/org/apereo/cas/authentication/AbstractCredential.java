@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.
@@ -14,18 +14,11 @@ import java.io.Serializable;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
 public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
 
     /** Serialization version marker. */
     private static final long serialVersionUID = 8196868021183513898L;
-
-    /**
-     * @return The credential identifier.
-     */
-    @Override
-    public String toString() {
-        return getId();
-    }
 
     @Override
     public boolean equals(final Object other) {

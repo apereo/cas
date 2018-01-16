@@ -14,9 +14,9 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
-
 import java.io.IOException;
 import java.time.ZonedDateTime;
+import lombok.ToString;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -26,10 +26,11 @@ import java.time.ZonedDateTime;
  * @since 4.2
  */
 @Slf4j
+@ToString
 public class EncodedTicket implements Ticket {
 
-    
     private static final long serialVersionUID = -7078771807487764116L;
+
     private String id;
 
     private byte[] encodedTicket;
@@ -129,16 +130,10 @@ public class EncodedTicket implements Ticket {
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append(this.id).build();
-    }
-
-    @Override
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -151,15 +146,11 @@ public class EncodedTicket implements Ticket {
             return false;
         }
         final EncodedTicket rhs = (EncodedTicket) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .isEquals();
+        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(17, 133)
-                .append(id)
-                .toHashCode();
+        return new HashCodeBuilder(17, 133).append(id).toHashCode();
     }
 }
