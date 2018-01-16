@@ -1,4 +1,4 @@
-package org.apereo.cas.web.flow;
+package org.apereo.cas.web.flow.login;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.AbstractTicketException;
@@ -63,7 +63,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      * @return {@link #NOT_EXISTS}, {@link #INVALID}, or {@link #VALID}.
      */
     @Override
-    protected Event doExecute(final RequestContext requestContext) {
+    public Event doExecute(final RequestContext requestContext) {
         final String tgtId = WebUtils.getTicketGrantingTicketId(requestContext);
         if (!StringUtils.hasText(tgtId)) {
             return new Event(this, NOT_EXISTS);
