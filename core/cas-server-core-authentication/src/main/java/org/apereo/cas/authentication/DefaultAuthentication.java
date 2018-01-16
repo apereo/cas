@@ -197,22 +197,4 @@ public class DefaultAuthentication implements Authentication {
         this.attributes.clear();
         update(authn);
     }
-
-    @Override
-    public boolean equalsIgnoreDate(final Object obj) {
-        if (!(obj instanceof Authentication)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        final Authentication other = (Authentication) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.principal, other.getPrincipal());
-        builder.append(this.credentials, other.getCredentials());
-        builder.append(this.successes, other.getSuccesses());
-        builder.append(CollectionUtils.wrap(this.attributes), other.getAttributes());
-        builder.append(CollectionUtils.wrap(this.failures), other.getFailures());
-        return builder.isEquals();
-    }
 }
