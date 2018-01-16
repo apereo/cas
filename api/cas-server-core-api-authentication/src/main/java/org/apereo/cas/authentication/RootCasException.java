@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -12,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
 public abstract class RootCasException extends RuntimeException {
 
     private static final long serialVersionUID = -2384466176716541689L;
@@ -67,10 +69,5 @@ public abstract class RootCasException extends RuntimeException {
             return ((RootCasException) cause).getCode();
         }
         return this.code;
-    }
-
-    @Override
-    public String toString() {
-        return this.getCode();
     }
 }
