@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -41,13 +42,15 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthAccessTokensCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds());
+        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).toMillis();
+        metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthRefreshTokensCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
+        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).toMillis();
+        metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }
 

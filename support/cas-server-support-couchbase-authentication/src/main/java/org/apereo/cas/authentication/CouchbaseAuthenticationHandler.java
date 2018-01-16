@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
 
@@ -55,7 +56,8 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
                         .eq('\'' + transformedCredential.getUsername() + '\''));
 
         final SimpleN1qlQuery query = N1qlQuery.simple(statement);
-        final N1qlQueryResult result = couchbase.getBucket().query(query, couchbaseProperties.getTimeout(), TimeUnit.MILLISECONDS);
+        final N1qlQueryResult result = couchbase.getBucket()
+            .query(query, Beans.newDuration(couchbaseProperties.getTimeout()).toMillis(), TimeUnit.MILLISECONDS);
         if (result.finalSuccess()) {
             if (result.allRows().size() > 1) {
                 throw new FailedLoginException("More then one row found for user " + transformedCredential.getId());
