@@ -50,7 +50,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
         try {
             authenticationHandler.authenticate(credentials);
-            fail("An AbstractAuthenticationException should have been thrown");
+            throw new AssertionError("An AbstractAuthenticationException should have been thrown");
         } catch (final GeneralSecurityException e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());
@@ -65,7 +65,7 @@ public class JcifsSpnegoAuthenticationHandlerTests {
 
         try {
             authenticationHandler.authenticate(credentials);
-            fail("An AbstractAuthenticationException should have been thrown");
+            throw new AssertionError("An AbstractAuthenticationException should have been thrown");
         } catch (final GeneralSecurityException e) {
             assertNull(credentials.getNextToken());
             assertNull(credentials.getPrincipal());

@@ -99,6 +99,6 @@ public class ServiceAuthorizationCheckTests {
         this.thrown.expectMessage("Service Management: missing service. Service [null] is not found in service registry.");
 
         this.serviceAuthorizationCheck.doExecute(mockRequestContext);
-        fail("Should have thrown UnauthorizedServiceException");
+        throw new AssertionError("Should have thrown UnauthorizedServiceException");
     }
 }

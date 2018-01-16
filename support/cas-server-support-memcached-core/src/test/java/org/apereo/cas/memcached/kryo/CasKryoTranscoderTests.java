@@ -261,10 +261,10 @@ public class CasKryoTranscoderTests {
         expectedST.setExpiration(step);
         try {
             transcoder.encode(expectedST);
-            fail("Unregistered class is not allowed by Kryo");
+            throw new AssertionError("Unregistered class is not allowed by Kryo");
         } catch (final KryoException e) {
         } catch (final Exception e) {
-            fail("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
+            throw new AssertionError("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
         }
     }
 }

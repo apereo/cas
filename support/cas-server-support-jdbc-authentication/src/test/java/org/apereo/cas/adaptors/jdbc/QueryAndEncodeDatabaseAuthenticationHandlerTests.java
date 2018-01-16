@@ -153,7 +153,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         this.thrown.expectMessage("Password has expired");
 
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user20"));
-        fail("Shouldn't get here");
+        throw new AssertionError("Shouldn't get here");
     }
 
     @Test
@@ -165,7 +165,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         this.thrown.expectMessage("Account has been disabled");
 
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user21"));
-        fail("Shouldn't get here");
+        throw new AssertionError("Shouldn't get here");
     }
 
     @Test
