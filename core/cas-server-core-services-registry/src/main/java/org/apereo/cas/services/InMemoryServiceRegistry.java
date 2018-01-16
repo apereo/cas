@@ -3,10 +3,10 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import lombok.ToString;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -15,6 +15,7 @@ import java.util.List;
  * @since 3.1
  */
 @Slf4j
+@ToString
 public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
@@ -60,13 +61,11 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
             ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
         }
-
         final RegisteredService svc = findServiceById(registeredService.getId());
         if (svc != null) {
             this.registeredServices.remove(svc);
         }
         this.registeredServices.add(registeredService);
-
         return registeredService;
     }
 
@@ -80,16 +79,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
      * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
-        return this.registeredServices
-                .stream()
-                .map(RegisteredService::getId)
-                .max(Comparator.naturalOrder())
-                .orElse(0L);
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
+        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
     }
 
     @Override

@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import lombok.ToString;
 
 /**
  * This is {@link DefaultRegisteredServiceDelegatedAuthenticationPolicy}.
@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
 
     private static final long serialVersionUID = -784106970642770923L;
@@ -47,32 +48,19 @@ public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements Re
             return false;
         }
         final DefaultRegisteredServiceDelegatedAuthenticationPolicy rhs = (DefaultRegisteredServiceDelegatedAuthenticationPolicy) obj;
-        return new EqualsBuilder()
-            .append(this.allowedProviders, rhs.allowedProviders)
-            .isEquals();
+        return new EqualsBuilder().append(this.allowedProviders, rhs.allowedProviders).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(allowedProviders)
-            .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append("allowedProviders", allowedProviders)
-            .toString();
+        return new HashCodeBuilder().append(allowedProviders).toHashCode();
     }
 
     @Override
     @JsonIgnore
     public boolean isProviderAllowed(final String provider, final RegisteredService registeredService) {
         if (this.allowedProviders.isEmpty()) {
-            LOGGER.warn("Registered service [{}] does not define any authorized/supported delegated authentication providers. "
-                + "It is STRONGLY recommended that you authorize and assign providers to the service definition. "
-                + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
+            LOGGER.warn("Registered service [{}] does not define any authorized/supported delegated authentication providers. " + "It is STRONGLY recommended that you authorize and assign providers to the service definition. " + "While just a warning for now, this behavior will be enforced by CAS in future versions.", registeredService.getName());
             return true;
         }
         return this.allowedProviders.contains(provider);

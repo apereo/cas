@@ -5,8 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredServiceConsentPolicy;
-
 import java.util.Set;
+import lombok.ToString;
 
 /**
  * This is {@link DefaultRegisteredServiceConsentPolicy}.
@@ -15,11 +15,15 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceConsentPolicy {
+
     private static final long serialVersionUID = -2771506941879419063L;
-    
+
     private boolean enabled = true;
+
     private Set<String> excludedAttributes;
+
     private Set<String> includeOnlyAttributes;
 
     public DefaultRegisteredServiceConsentPolicy() {
@@ -58,15 +62,6 @@ public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceC
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("excludedAttributes", excludedAttributes)
-                .append("includeOnlyAttributes", includeOnlyAttributes)
-                .append("enabled", enabled)
-                .toString();
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -78,19 +73,11 @@ public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceC
             return false;
         }
         final DefaultRegisteredServiceConsentPolicy rhs = (DefaultRegisteredServiceConsentPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.excludedAttributes, rhs.excludedAttributes)
-                .append(this.includeOnlyAttributes, rhs.includeOnlyAttributes)
-                .append(this.enabled, rhs.enabled)
-                .isEquals();
+        return new EqualsBuilder().append(this.excludedAttributes, rhs.excludedAttributes).append(this.includeOnlyAttributes, rhs.includeOnlyAttributes).append(this.enabled, rhs.enabled).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(excludedAttributes)
-                .append(includeOnlyAttributes)
-                .append(enabled)
-                .toHashCode();
+        return new HashCodeBuilder().append(excludedAttributes).append(includeOnlyAttributes).append(enabled).toHashCode();
     }
 }

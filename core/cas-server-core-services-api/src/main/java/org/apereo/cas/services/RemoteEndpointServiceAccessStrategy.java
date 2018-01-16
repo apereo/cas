@@ -9,7 +9,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.util.StringUtils;
-
 import java.net.URL;
 import java.util.Map;
 
@@ -23,36 +22,30 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1108201604115278440L;
-
-
 
     private String endpointUrl;
 
     private String acceptableResponseCodes;
 
     @Override
-    public boolean doPrincipalAttributesAllowServiceAccess(final String principal,
-                                                           final Map<String, Object> principalAttributes) {
+    public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         try {
             if (super.doPrincipalAttributesAllowServiceAccess(principal, principalAttributes)) {
-                final HttpClient client = ApplicationContextProvider.getApplicationContext()
-                        .getBean("noRedirectHttpClient", HttpClient.class);
-
+                final HttpClient client = ApplicationContextProvider.getApplicationContext().getBean("noRedirectHttpClient", HttpClient.class);
                 final URIBuilder builder = new URIBuilder(this.endpointUrl);
                 builder.addParameter("username", principal);
                 final URL url = builder.build().toURL();
                 final HttpMessage message = client.sendMessageToEndPoint(url);
                 LOGGER.debug("Message received from [{}] is [{}]", url, message);
-                return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes)
-                        .contains(String.valueOf(message.getResponseCode()));
+                return message != null && StringUtils.commaDelimitedListToSet(this.acceptableResponseCodes).contains(String.valueOf(message.getResponseCode()));
             }
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-
         return false;
     }
 
@@ -84,28 +77,11 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
             return false;
         }
         final RemoteEndpointServiceAccessStrategy rhs = (RemoteEndpointServiceAccessStrategy) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.endpointUrl, rhs.endpointUrl)
-                .append(this.acceptableResponseCodes, rhs.acceptableResponseCodes)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.endpointUrl, rhs.endpointUrl).append(this.acceptableResponseCodes, rhs.acceptableResponseCodes).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(endpointUrl)
-                .append(acceptableResponseCodes)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("endpointUrl", endpointUrl)
-                .append("acceptableResponseCodes", acceptableResponseCodes)
-                .toString();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(endpointUrl).append(acceptableResponseCodes).toHashCode();
     }
 }
