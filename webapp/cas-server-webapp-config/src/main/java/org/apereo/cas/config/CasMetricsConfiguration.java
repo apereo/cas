@@ -12,6 +12,7 @@ import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import com.ryantenney.metrics.spring.config.annotation.MetricsConfigurerAdapter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +79,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
                 .convertRatesTo(TimeUnit.MILLISECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build())
-                .start(casProperties.getMetrics().getRefreshInterval(), TimeUnit.SECONDS);
+                .start(Beans.newDuration(casProperties.getMetrics().getRefreshInterval()).toMillis(), TimeUnit.SECONDS);
 
         registerReporter(JmxReporter.forRegistry(metricRegistry).build());
     }

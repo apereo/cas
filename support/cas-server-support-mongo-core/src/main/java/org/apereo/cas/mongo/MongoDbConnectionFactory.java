@@ -10,6 +10,7 @@ import com.mongodb.WriteConcern;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -218,14 +219,14 @@ public class MongoDbConnectionFactory {
         try {
             final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
             bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
-            bean.setHeartbeatConnectTimeout((int) mongo.getTimeout());
-            bean.setHeartbeatSocketTimeout((int) mongo.getTimeout());
+            bean.setHeartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
+            bean.setHeartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
             bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
             bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime((int) mongo.getIdleTimeout());
+            bean.setMaxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis());
             bean.setConnectionsPerHost(mongo.getConns().getPerHost());
-            bean.setSocketTimeout((int) mongo.getTimeout());
-            bean.setConnectTimeout((int) mongo.getTimeout());
+            bean.setSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
+            bean.setConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
             if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
                 bean.setRequiredReplicaSetName(mongo.getReplicaSet());
             }

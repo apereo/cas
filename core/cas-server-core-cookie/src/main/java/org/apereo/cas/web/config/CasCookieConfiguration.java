@@ -7,6 +7,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.web.WarningCookieRetrievingCookieGenerator;
@@ -35,7 +36,6 @@ import org.springframework.context.annotation.Configuration;
 public class CasCookieConfiguration {
 
 
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -44,7 +44,7 @@ public class CasCookieConfiguration {
     public CookieRetrievingCookieGenerator warnCookieGenerator() {
         final WarningCookieProperties props = casProperties.getWarningCookie();
         return new WarningCookieRetrievingCookieGenerator(props.getName(), props.getPath(),
-                props.getMaxAge(), props.isSecure(), props.isHttpOnly());
+            props.getMaxAge(), props.isSecure(), props.isHttpOnly());
     }
 
     @ConditionalOnMissingBean(name = "cookieValueManager")
@@ -65,18 +65,18 @@ public class CasCookieConfiguration {
         boolean enabled = crypto.isEnabled();
         if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
             LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
-                    + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
+                + "are defined for operations. CAS will proceed to enable the cookie encryption/signing functionality.");
             enabled = true;
         }
 
         if (enabled) {
             return new TicketGrantingCookieCipherExecutor(crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(), crypto.getAlg());
+                crypto.getSigning().getKey(), crypto.getAlg());
         }
 
         LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "
-                + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
-                + "signing and verification of ticket-granting cookies.");
+            + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+            + "signing and verification of ticket-granting cookies.");
         return NoOpCipherExecutor.getInstance();
     }
 
@@ -85,12 +85,14 @@ public class CasCookieConfiguration {
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
         final TicketGrantingCookieProperties tgc = casProperties.getTgc();
-        final int rememberMeMaxAge = (int) tgc.getRememberMeMaxAge();
+        final int rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).toMillis();
         return new TGCCookieRetrievingCookieGenerator(cookieValueManager(cipherExecutor),
-                tgc.getName(),
-                tgc.getPath(), tgc.getDomain(),
-                rememberMeMaxAge, tgc.isSecure(),
-                tgc.getMaxAge(),
-                tgc.isHttpOnly());
+            tgc.getName(),
+            tgc.getPath(),
+            tgc.getDomain(),
+            rememberMeMaxAge,
+            tgc.isSecure(),
+            tgc.getMaxAge(),
+            tgc.isHttpOnly());
     }
 }

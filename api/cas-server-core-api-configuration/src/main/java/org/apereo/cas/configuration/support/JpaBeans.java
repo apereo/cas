@@ -24,7 +24,7 @@ import java.util.Properties;
 
 @Slf4j
 public final class JpaBeans {
-    
+
     protected JpaBeans() {
     }
 
@@ -64,7 +64,7 @@ public final class JpaBeans {
                 return new DataSourceProxy(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
                 LOGGER.warn("Lookup of datasource [{}] failed due to {} "
-                        + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
+                    + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
             }
         }
 
@@ -76,10 +76,10 @@ public final class JpaBeans {
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
-            bean.setLoginTimeout((int) jpaProperties.getPool().getMaxWait());
+            bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).toMillis());
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
-            bean.setIdleTimeout(jpaProperties.getIdleTimeout());
+            bean.setIdleTimeout((int) Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
             bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
             bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
@@ -123,7 +123,7 @@ public final class JpaBeans {
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
-        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[] {}));
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[]{}));
 
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());

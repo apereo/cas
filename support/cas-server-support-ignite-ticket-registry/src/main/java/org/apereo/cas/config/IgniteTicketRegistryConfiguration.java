@@ -10,6 +10,7 @@ import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
@@ -63,10 +64,10 @@ public class IgniteTicketRegistryConfiguration {
         if (ignite.getLocalPort() != -1) {
             spi.setLocalPort(ignite.getLocalPort());
         }
-        spi.setJoinTimeout(ignite.getJoinTimeout());
-        spi.setAckTimeout(ignite.getAckTimeout());
-        spi.setNetworkTimeout(ignite.getNetworkTimeout());
-        spi.setSocketTimeout(ignite.getSocketTimeout());
+        spi.setJoinTimeout(Beans.newDuration(ignite.getJoinTimeout()).toMillis());
+        spi.setAckTimeout(Beans.newDuration(ignite.getAckTimeout()).toMillis());
+        spi.setNetworkTimeout(Beans.newDuration(ignite.getNetworkTimeout()).toMillis());
+        spi.setSocketTimeout(Beans.newDuration(ignite.getSocketTimeout()).toMillis());
         spi.setThreadPriority(ignite.getThreadPriority());
         spi.setForceServerMode(ignite.isForceServerMode());
 

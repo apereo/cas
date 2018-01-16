@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.influxdb.InfluxDbProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.influxdb.InfluxDB;
 import org.influxdb.InfluxDBFactory;
 import org.influxdb.dto.Point;
@@ -88,8 +89,9 @@ public class InfluxDbConnectionFactory implements Closeable {
 
         influxDb.setConsistency(InfluxDB.ConsistencyLevel.valueOf(props.getConsistencyLevel().toUpperCase()));
 
-        if (props.getPointsToFlush() > 0 && props.getBatchInterval() > 0) {
-            this.influxDb.enableBatch(props.getPointsToFlush(), props.getBatchInterval(), TimeUnit.MILLISECONDS);
+        if (props.getPointsToFlush() > 0 && StringUtils.isNotBlank(props.getBatchInterval())) {
+            final int interval = (int) Beans.newDuration(props.getBatchInterval()).toMillis();
+            this.influxDb.enableBatch(props.getPointsToFlush(), interval, TimeUnit.MILLISECONDS);
         }
 
         this.influxDbProperties = props;

@@ -5,6 +5,7 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -211,7 +212,8 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
             sessionsMap.put("totalUsageCount", totalUsageCount);
             return sessionsMap;
         };
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        return new WebAsyncTask<>(timeout, asyncTask);
     }
 
     /**

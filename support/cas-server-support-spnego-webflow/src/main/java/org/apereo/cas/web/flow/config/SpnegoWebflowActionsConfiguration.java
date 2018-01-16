@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
-
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
@@ -52,19 +52,19 @@ public class SpnegoWebflowActionsConfiguration {
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Bean
     @RefreshScope
     public Action spnego() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new SpnegoCredentialsAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
-                spnegoProperties.isNtlm(),
-                spnegoProperties.isSend401OnAuthenticationFailure());
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            spnegoProperties.isNtlm(),
+            spnegoProperties.isSend401OnAuthenticationFailure());
     }
 
     @Bean
@@ -80,8 +80,8 @@ public class SpnegoWebflowActionsConfiguration {
     public Action baseSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new BaseSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(),
-                spnegoProperties.getAlternativeRemoteHostAttribute(),
-                spnegoProperties.getDnsTimeout());
+            spnegoProperties.getAlternativeRemoteHostAttribute(),
+            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis());
     }
 
     @Bean
@@ -89,8 +89,9 @@ public class SpnegoWebflowActionsConfiguration {
     public Action hostnameSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         return new HostNameSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(),
-                spnegoProperties.getAlternativeRemoteHostAttribute(),
-                spnegoProperties.getDnsTimeout(), spnegoProperties.getHostNamePatternString());
+            spnegoProperties.getAlternativeRemoteHostAttribute(),
+            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
+            spnegoProperties.getHostNamePatternString());
     }
 
     @Lazy
@@ -100,14 +101,14 @@ public class SpnegoWebflowActionsConfiguration {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(spnegoProperties.getLdap());
         final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(spnegoProperties.getLdap().getSearchFilter(),
-                "host", new ArrayList<>(0));
+            "host", new ArrayList<>(0));
 
         final SearchRequest searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
-        return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(), 
-                spnegoProperties.getAlternativeRemoteHostAttribute(),
-                spnegoProperties.getDnsTimeout(), 
-                connectionFactory, 
-                searchRequest, 
-                spnegoProperties.getSpnegoAttributeName());
+        return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(),
+            spnegoProperties.getAlternativeRemoteHostAttribute(),
+            Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
+            connectionFactory,
+            searchRequest,
+            spnegoProperties.getSpnegoAttributeName());
     }
 }

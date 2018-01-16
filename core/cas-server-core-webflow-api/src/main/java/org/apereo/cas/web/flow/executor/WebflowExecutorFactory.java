@@ -3,6 +3,8 @@ package org.apereo.cas.web.flow.executor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.apereo.cas.configuration.model.webapp.WebflowSessionManagementProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.spring.webflow.plugin.ClientFlowExecutionRepository;
 import org.apereo.spring.webflow.plugin.EncryptedTranscoder;
 import org.apereo.spring.webflow.plugin.Transcoder;
@@ -49,13 +51,14 @@ public class WebflowExecutorFactory {
 
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
         final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
-        conversationManager.setLockTimeoutSeconds((int) webflowProperties.getSession().getLockTimeout());
-        conversationManager.setMaxConversations(webflowProperties.getSession().getMaxConversations());
+        final WebflowSessionManagementProperties session = webflowProperties.getSession();
+        conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).toMillis());
+        conversationManager.setMaxConversations(session.getMaxConversations());
 
         final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
         final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
             new SerializedFlowExecutionSnapshotFactory(executionFactory, this.flowDefinitionRegistry);
-        flowExecutionSnapshotFactory.setCompress(webflowProperties.getSession().isCompress());
+        flowExecutionSnapshotFactory.setCompress(session.isCompress());
 
         final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
             flowExecutionSnapshotFactory);

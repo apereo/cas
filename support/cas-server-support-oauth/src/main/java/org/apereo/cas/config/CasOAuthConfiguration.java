@@ -8,7 +8,9 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oauth.OAuthAccessTokenProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
@@ -165,7 +167,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
-    
+
     @Bean
     public UrlResolver casCallbackUrlResolver() {
         return new OAuth20CasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
@@ -313,10 +315,10 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean(name = "accessTokenExpirationPolicy")
     public ExpirationPolicy accessTokenExpirationPolicy() {
-        final OAuthProperties oauth = casProperties.getAuthn().getOauth();
+        final OAuthAccessTokenProperties oauth = casProperties.getAuthn().getOauth().getAccessToken();
         return new OAuthAccessTokenExpirationPolicy(
-            oauth.getAccessToken().getMaxTimeToLiveInSeconds(),
-            oauth.getAccessToken().getTimeToKillInSeconds()
+            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toMillis(),
+            Beans.newDuration(oauth.getTimeToKillInSeconds()).toMillis()
         );
     }
 
@@ -552,7 +554,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
-        return new OAuthRefreshTokenExpirationPolicy(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
+        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).toMillis();
+        return new OAuthRefreshTokenExpirationPolicy(timeout);
     }
 
     @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")

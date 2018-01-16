@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPResponseProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -61,7 +62,7 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
 
-        final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
+        final SamlIdPResponseProperties resp = casProperties.getAuthn().getSamlIdp().getResponse();
         final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
         return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),

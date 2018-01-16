@@ -13,6 +13,7 @@ import net.sf.ehcache.distribution.RMISynchronousCacheReplicator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.ehcache.EhcacheProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
@@ -71,7 +72,7 @@ public class EhcacheTicketRegistryConfiguration {
                 cache.isReplicateUpdates(),
                 cache.isReplicateUpdatesViaCopy(),
                 cache.isReplicateRemovals(),
-                (int) cache.getReplicationInterval(),
+                (int) Beans.newDuration(cache.getReplicationInterval()).toMillis(),
                 cache.getMaximumBatchSize());
     }
 

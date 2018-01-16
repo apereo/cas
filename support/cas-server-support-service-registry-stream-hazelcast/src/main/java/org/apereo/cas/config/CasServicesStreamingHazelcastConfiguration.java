@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastProperties;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.services.RegisteredServiceHazelcastDistributedCacheManager;
 import org.apereo.cas.services.publisher.CasRegisteredServiceHazelcastStreamPublisher;
@@ -70,7 +71,9 @@ public class CasServicesStreamingHazelcastConfiguration {
         final HazelcastConfigurationFactory factory = new HazelcastConfigurationFactory();
         final StreamServicesHazelcastProperties stream = casProperties.getServiceRegistry().getStream().getHazelcast();
         final BaseHazelcastProperties hz = stream.getConfig();
-        final MapConfig mapConfig = factory.buildMapConfig(hz, name, TimeUnit.MILLISECONDS.toSeconds(stream.getDuration()));
+        final long duration = Beans.newDuration(stream.getDuration()).toMillis();
+        final MapConfig mapConfig = factory.buildMapConfig(hz, name,
+            TimeUnit.MILLISECONDS.toSeconds(duration));
         final Config cfg = factory.build(hz, mapConfig);
         LOGGER.debug("Created hazelcast instance [{}] with publisher id [{}] to publish service definitions",
                 name, casRegisteredServiceStreamPublisherIdentifier);

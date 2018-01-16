@@ -21,6 +21,7 @@ import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomca
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatSslValveProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -213,7 +214,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
             ajpConnector.setScheme(ajp.getScheme());
-            ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
+            ajpConnector.setAsyncTimeout(Beans.newDuration(ajp.getAsyncTimeout()).toMillis());
             ajpConnector.setEnableLookups(ajp.isEnableLookups());
             ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
             ajpConnector.addUpgradeProtocol(new Http2Protocol());

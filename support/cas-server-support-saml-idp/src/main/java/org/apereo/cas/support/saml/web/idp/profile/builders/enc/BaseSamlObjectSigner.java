@@ -6,6 +6,7 @@ import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPResponseProperties;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -322,7 +323,7 @@ public class BaseSamlObjectSigner {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         try {
-            final SamlIdPProperties.Response.SignatureCredentialTypes credType = SamlIdPProperties.Response.SignatureCredentialTypes.valueOf(
+            final SamlIdPResponseProperties.SignatureCredentialTypes credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
                     StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
             LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service);
 
