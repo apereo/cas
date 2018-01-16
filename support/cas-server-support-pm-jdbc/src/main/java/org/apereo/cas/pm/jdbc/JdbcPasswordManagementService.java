@@ -58,7 +58,7 @@ public class JdbcPasswordManagementService extends BasePasswordManagementService
             }
             LOGGER.debug("Username {} not found when searching for email", username);
             return null;
-        } catch (EmptyResultDataAccessException e) {
+        } catch (final EmptyResultDataAccessException e) {
             LOGGER.debug("Username {} not found when searching for email", username);
             return null;
         }
