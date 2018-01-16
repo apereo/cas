@@ -83,6 +83,11 @@ public interface CasWebflowConstants {
     String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
 
     /**
+     * The decision state 'finishLogout'.
+     */
+    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
+
+    /**
      * The transition state 'yes'.
      */
     String TRANSITION_ID_YES = "yes";
@@ -332,6 +337,16 @@ public interface CasWebflowConstants {
      * State id 'doLogout'.
      */
     String STATE_ID_DO_LOGOUT = "doLogout";
+
+    /**
+     * State id 'propagateLogoutRequests'.
+     */
+    String STATE_ID_PROPAGATE_LOGOUT_REQUESTS = "propagateLogoutRequests";
+
+    /**
+     * State id 'logoutView'.
+     */
+    String STATE_ID_LOGOUT_VIEW = "logoutView";
 
     /**
      * State id 'finishLogout'.
