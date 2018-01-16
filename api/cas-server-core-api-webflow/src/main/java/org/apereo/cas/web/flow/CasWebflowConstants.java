@@ -394,6 +394,11 @@ public interface CasWebflowConstants {
     String ACTION_ID_TERMINATE_SESSION = "terminateSessionAction";
 
     /**
+     * Action id 'logoutViewSetupAction'.
+     */
+    String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
+    
+    /**
      * Action id 'authenticationExceptionHandler'.
      */
     String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
@@ -402,12 +407,7 @@ public interface CasWebflowConstants {
      * Action id 'sendTicketGrantingTicketAction'.
      */
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
-
-    /**
-     * Transition id 'changePassword'.
-     */
-    String TRANSITION_ID_CHANGE_PASSWORD = "changePassword";
-
+    
     /**
      * State id 'proceedFromAuthenticationWarningView'.
      */
@@ -436,7 +436,7 @@ public interface CasWebflowConstants {
     /**
      * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
      */
-    String STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN = "postLoginPswdChangeCheck";
+    String STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK = "postLoginPswdChangeCheck";
 
     /**
      * State id to check for do change password manual flag "checkDoChangePassword".

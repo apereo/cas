@@ -25,6 +25,7 @@ import org.apereo.cas.web.flow.logout.LogoutAction;
 import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
 import org.apereo.cas.web.flow.login.ServiceWarningAction;
+import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
 import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -221,6 +222,11 @@ public class CasSupportActionsConfiguration {
                 warnCookieGenerator, casProperties.getLogout());
     }
 
+    @Bean
+    public Action logoutViewSetupAction() {
+        return new LogoutViewSetupAction(casProperties);
+    }
+    
     @Bean
     @ConditionalOnMissingBean(name = "serviceWarningAction")
     @RefreshScope
