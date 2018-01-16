@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.springframework.core.Ordered;
+import lombok.ToString;
 
 /**
  * This is {@link DefaultTicketDefinition}.
@@ -13,10 +14,15 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @Slf4j
+@ToString
 public class DefaultTicketDefinition implements TicketDefinition {
+
     private final Class<? extends Ticket> implementationClass;
+
     private final String prefix;
+
     private final TicketDefinitionProperties properties = new DefaultTicketDefinitionProperties();
+
     private int order = Ordered.LOWEST_PRECEDENCE;
 
     /**
@@ -26,8 +32,7 @@ public class DefaultTicketDefinition implements TicketDefinition {
      * @param prefix              the prefix
      * @param order               the order
      */
-    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix,
-                                   final int order) {
+    public DefaultTicketDefinition(final Class<? extends Ticket> implementationClass, final String prefix, final int order) {
         this.implementationClass = implementationClass;
         this.prefix = prefix;
         this.order = order;
@@ -48,14 +53,6 @@ public class DefaultTicketDefinition implements TicketDefinition {
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("implementationClass", implementationClass)
-                .append("prefix", prefix)
-                .toString();
-    }
-
-    @Override
     public TicketDefinitionProperties getProperties() {
         return properties;
     }
@@ -72,20 +69,12 @@ public class DefaultTicketDefinition implements TicketDefinition {
             return false;
         }
         final TicketDefinition rhs = (TicketDefinition) obj;
-        return new EqualsBuilder()
-                .append(this.implementationClass, rhs.getImplementationClass())
-                .append(this.prefix, rhs.getPrefix())
-                .append(this.properties, rhs.getProperties())
-                .isEquals();
+        return new EqualsBuilder().append(this.implementationClass, rhs.getImplementationClass()).append(this.prefix, rhs.getPrefix()).append(this.properties, rhs.getProperties()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(implementationClass)
-                .append(prefix)
-                .append(properties)
-                .toHashCode();
+        return new HashCodeBuilder().append(implementationClass).append(prefix).append(properties).toHashCode();
     }
 
     @Override

@@ -11,8 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.ResourceUtils;
-
 import java.security.PublicKey;
+import lombok.ToString;
 
 /**
  * Represents a public key for a CAS registered service.
@@ -20,10 +20,10 @@ import java.security.PublicKey;
  * @since 4.1
  */
 @Slf4j
+@ToString
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
+
     private static final long serialVersionUID = -8497658523695695863L;
-
-
 
     private String location;
 
@@ -37,7 +37,8 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
      * Instantiates a new Registered service public key impl.
      * Required for proper serialization.
      */
-    public RegisteredServicePublicKeyImpl() {}
+    public RegisteredServicePublicKeyImpl() {
+    }
 
     /**
      * Instantiates a new Registered service public key impl.
@@ -87,14 +88,6 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("location", this.location)
-                .append("algorithm", this.algorithm)
-                .toString();
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -106,17 +99,11 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
             return false;
         }
         final RegisteredServicePublicKeyImpl rhs = (RegisteredServicePublicKeyImpl) obj;
-        return new EqualsBuilder()
-                .append(this.location, rhs.location)
-                .append(this.algorithm, rhs.algorithm)
-                .isEquals();
+        return new EqualsBuilder().append(this.location, rhs.location).append(this.algorithm, rhs.algorithm).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.location)
-                .append(this.algorithm)
-                .toHashCode();
+        return new HashCodeBuilder().append(this.location).append(this.algorithm).toHashCode();
     }
 }

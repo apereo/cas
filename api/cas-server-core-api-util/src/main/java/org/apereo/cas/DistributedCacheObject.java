@@ -2,11 +2,11 @@ package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.ToString;
 
 /**
  * This is {@link DistributedCacheObject}.
@@ -15,11 +15,15 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class DistributedCacheObject<V extends Serializable> implements Serializable {
+
     private static final long serialVersionUID = -6776499291439952013L;
 
     private Map<String, Object> properties = new LinkedHashMap<>();
+
     private final long timestamp;
+
     private final V value;
 
     public DistributedCacheObject(final V value) {
@@ -37,15 +41,6 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
 
     public V getValue() {
         return value;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append("timestamp", timestamp)
-            .append("value", value)
-            .append("properties", properties)
-            .toString();
     }
 
     public Map<String, Object> getProperties() {
@@ -66,7 +61,6 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
             if (item == null) {
                 return null;
             }
-
             if (!clazz.isAssignableFrom(item.getClass())) {
                 throw new ClassCastException("Object [" + item + " is of type " + item.getClass() + " when we were expecting " + clazz);
             }

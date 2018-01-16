@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.springframework.webflow.execution.Event;
+import lombok.ToString;
 
 /**
  * This is {@link AuthenticationRiskContingencyResponse}.
@@ -12,7 +13,9 @@ import org.springframework.webflow.execution.Event;
  * @since 5.1.0
  */
 @Slf4j
+@ToString
 public class AuthenticationRiskContingencyResponse {
+
     private final Event result;
 
     public AuthenticationRiskContingencyResponse(final Event result) {
@@ -21,13 +24,5 @@ public class AuthenticationRiskContingencyResponse {
 
     public Event getResult() {
         return result;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("result", result.getId())
-                .toString();
     }
 }

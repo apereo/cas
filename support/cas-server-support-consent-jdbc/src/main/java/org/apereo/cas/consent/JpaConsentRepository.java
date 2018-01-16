@@ -6,12 +6,12 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
+import lombok.ToString;
 
 /**
  * This is {@link JpaConsentRepository}.
@@ -22,28 +22,20 @@ import java.util.Collection;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerConsent")
 @Slf4j
+@ToString
 public class JpaConsentRepository implements ConsentRepository {
+
     private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
-
-
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
     private EntityManager entityManager;
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
-
-    @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {
         try {
-            return this.entityManager.createQuery(
-                    SELECT_QUERY.concat("where r.principal = :principal"), ConsentDecision.class)
-                    .setParameter("principal", principal)
-                    .getResultList();
+            return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal"), ConsentDecision.class).setParameter("principal", principal).getResultList();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
@@ -65,15 +57,9 @@ public class JpaConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public ConsentDecision findConsentDecision(final Service service,
-                                               final RegisteredService registeredService,
-                                               final Authentication authentication) {
+    public ConsentDecision findConsentDecision(final Service service, final RegisteredService registeredService, final Authentication authentication) {
         try {
-            return this.entityManager.createQuery(
-                    SELECT_QUERY.concat("where r.principal = :principal and r.service = :service"), ConsentDecision.class)
-                    .setParameter("principal", authentication.getPrincipal().getId())
-                    .setParameter("service", service.getId())
-                    .getSingleResult();
+            return this.entityManager.createQuery(SELECT_QUERY.concat("where r.principal = :principal and r.service = :service"), ConsentDecision.class).setParameter("principal", authentication.getPrincipal().getId()).setParameter("service", service.getId()).getSingleResult();
         } catch (final NoResultException e) {
             LOGGER.debug(e.getMessage());
         } catch (final Exception e) {
@@ -96,14 +82,11 @@ public class JpaConsentRepository implements ConsentRepository {
         }
         return false;
     }
-    
+
     @Override
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         try {
-            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY
-                    .concat("where r.id = :id"), ConsentDecision.class)
-                    .setParameter("id", decisionId)
-                    .getSingleResult();
+            final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class).setParameter("id", decisionId).getSingleResult();
             this.entityManager.remove(decision);
             return true;
         } catch (final Exception e) {

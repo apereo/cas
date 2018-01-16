@@ -6,8 +6,8 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * This is {@link DuoDirectCredential}.
@@ -16,10 +16,11 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class DuoDirectCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -7570699733132111037L;
-    
+
     private final Authentication authentication;
 
     public DuoDirectCredential(final Authentication authentication) {
@@ -47,22 +48,11 @@ public class DuoDirectCredential implements Credential, Serializable {
             return false;
         }
         final DuoDirectCredential rhs = (DuoDirectCredential) obj;
-        return new EqualsBuilder()
-                .append(this.authentication, rhs.authentication)
-                .isEquals();
+        return new EqualsBuilder().append(this.authentication, rhs.authentication).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(authentication)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", authentication)
-                .toString();
+        return new HashCodeBuilder().append(authentication).toHashCode();
     }
 }

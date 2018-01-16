@@ -18,6 +18,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
  * @since 4.1
  */
 @Slf4j
+@ToString(callSuper = true)
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     private final CipherExecutor<String, String> cipherExecutor;
@@ -38,19 +39,11 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());
         builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
-        LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
-                UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+        LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication", UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
     }
 
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof UsernamePasswordCredential;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

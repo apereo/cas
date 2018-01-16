@@ -15,8 +15,11 @@ import org.apereo.cas.authentication.AbstractCredential;
  * @since 5.0.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class DigestCredential extends AbstractCredential {
+
     private static final long serialVersionUID = 1523693794392289803L;
+
     private String realm;
 
     private String hash;
@@ -31,9 +34,7 @@ public class DigestCredential extends AbstractCredential {
      * @param hash  the hash
      */
     @JsonCreator
-    public DigestCredential(@JsonProperty("id") final String id,
-                            @JsonProperty("realm") final String realm,
-                            @JsonProperty("hash") final String hash) {
+    public DigestCredential(@JsonProperty("id") final String id, @JsonProperty("realm") final String realm, @JsonProperty("hash") final String hash) {
         this.realm = realm;
         this.hash = hash;
         this.id = id;
@@ -67,32 +68,12 @@ public class DigestCredential extends AbstractCredential {
             return false;
         }
         final DigestCredential rhs = (DigestCredential) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.realm, rhs.realm)
-                .append(this.hash, rhs.hash)
-                .append(this.id, rhs.id)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.realm, rhs.realm).append(this.hash, rhs.hash).append(this.id, rhs.id).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(realm)
-                .append(hash)
-                .append(id)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("realm", realm)
-                .append("hash", "[PROTECTED]")
-                .append("id", this.id)
-                .toString();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(realm).append(hash).append(id).toHashCode();
     }
 
     @Override

@@ -6,11 +6,11 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.springframework.core.OrderComparator;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.ToString;
 
 /**
  * The filter that chains other filters inside it.
@@ -19,11 +19,10 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
+@ToString
 public class RegisteredServiceChainingAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 903015750234610128L;
-
-
 
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>();
 
@@ -58,22 +57,11 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
             return false;
         }
         final RegisteredServiceChainingAttributeFilter rhs = (RegisteredServiceChainingAttributeFilter) obj;
-        return new EqualsBuilder()
-                .append(this.filters, rhs.filters)
-                .isEquals();
+        return new EqualsBuilder().append(this.filters, rhs.filters).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(filters)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("filters", filters)
-                .toString();
+        return new HashCodeBuilder().append(filters).toHashCode();
     }
 }

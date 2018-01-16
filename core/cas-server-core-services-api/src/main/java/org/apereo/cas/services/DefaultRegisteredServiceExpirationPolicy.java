@@ -5,9 +5,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import lombok.ToString;
 
 /**
  * This is {@link DefaultRegisteredServiceExpirationPolicy}.
@@ -17,36 +17,35 @@ import java.time.LocalDateTime;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@ToString
 public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServiceExpirationPolicy {
+
     private static final long serialVersionUID = 5106652807554743500L;
 
     private boolean deleteWhenExpired;
+
     private boolean notifyWhenDeleted;
+
     private String expirationDate;
 
     public DefaultRegisteredServiceExpirationPolicy() {
     }
 
-    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
-                                                    final boolean notifyWhenDeleted,
-                                                    final String expirationDate) {
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final boolean notifyWhenDeleted, final String expirationDate) {
         this.deleteWhenExpired = deleteWhenExpired;
         this.notifyWhenDeleted = notifyWhenDeleted;
         this.expirationDate = expirationDate;
     }
 
-    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
-                                                    final String expirationDate) {
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final String expirationDate) {
         this(deleteWhenExpired, false, expirationDate);
     }
 
-    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
-                                                    final LocalDate expirationDate) {
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final LocalDate expirationDate) {
         this(deleteWhenExpired, false, expirationDate.toString());
     }
 
-    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired,
-                                                    final LocalDateTime expirationDate) {
+    public DefaultRegisteredServiceExpirationPolicy(final boolean deleteWhenExpired, final LocalDateTime expirationDate) {
         this(deleteWhenExpired, false, expirationDate.toString());
     }
 
@@ -86,15 +85,6 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
     }
 
     @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("deleteWhenExpired", deleteWhenExpired)
-                .append("notifyWhenDeleted", notifyWhenDeleted)
-                .append("expirationDate", expirationDate)
-                .toString();
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -106,19 +96,11 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
             return false;
         }
         final DefaultRegisteredServiceExpirationPolicy rhs = (DefaultRegisteredServiceExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.deleteWhenExpired, rhs.deleteWhenExpired)
-                .append(this.notifyWhenDeleted, rhs.notifyWhenDeleted)
-                .append(this.expirationDate, rhs.expirationDate)
-                .isEquals();
+        return new EqualsBuilder().append(this.deleteWhenExpired, rhs.deleteWhenExpired).append(this.notifyWhenDeleted, rhs.notifyWhenDeleted).append(this.expirationDate, rhs.expirationDate).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(7, 137)
-                .append(deleteWhenExpired)
-                .append(notifyWhenDeleted)
-                .append(expirationDate)
-                .toHashCode();
+        return new HashCodeBuilder(7, 137).append(deleteWhenExpired).append(notifyWhenDeleted).append(expirationDate).toHashCode();
     }
 }

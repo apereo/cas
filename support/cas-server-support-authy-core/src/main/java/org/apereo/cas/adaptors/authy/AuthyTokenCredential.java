@@ -5,8 +5,8 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * This is {@link AuthyTokenCredential}.
@@ -15,7 +15,9 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class AuthyTokenCredential implements Credential, Serializable {
+
     private static final long serialVersionUID = -7970600701132111037L;
 
     private String token;
@@ -33,13 +35,6 @@ public class AuthyTokenCredential implements Credential, Serializable {
      */
     public AuthyTokenCredential(final String token) {
         this.token = token;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("token", this.token)
-                .toString();
     }
 
     @Override
@@ -67,7 +62,7 @@ public class AuthyTokenCredential implements Credential, Serializable {
     public String getId() {
         return this.token;
     }
-    
+
     public String getToken() {
         return this.token;
     }

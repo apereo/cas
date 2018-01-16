@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.LinkedHashSet;
 import java.util.Set;
+import lombok.ToString;
 
 /**
  * This is {@link DefaultRegisteredServiceMultifactorPolicy}.
@@ -15,6 +15,7 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
 public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
 
     private static final long serialVersionUID = -3068390754996358337L;
@@ -87,13 +88,7 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
             return false;
         }
         final DefaultRegisteredServiceMultifactorPolicy rhs = (DefaultRegisteredServiceMultifactorPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.multifactorAuthenticationProviders, rhs.multifactorAuthenticationProviders)
-                .append(this.failureMode, rhs.failureMode)
-                .append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger)
-                .append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch)
-                .append(this.bypassEnabled, rhs.bypassEnabled)
-                .isEquals();
+        return new EqualsBuilder().append(this.multifactorAuthenticationProviders, rhs.multifactorAuthenticationProviders).append(this.failureMode, rhs.failureMode).append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger).append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch).append(this.bypassEnabled, rhs.bypassEnabled).isEquals();
     }
 
     @Override
@@ -103,23 +98,6 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.multifactorAuthenticationProviders)
-                .append(this.failureMode)
-                .append(this.principalAttributeNameTrigger)
-                .append(this.principalAttributeValueToMatch)
-                .append(this.bypassEnabled)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("multifactorAuthenticationProviders", this.multifactorAuthenticationProviders)
-                .append("failureMode", this.failureMode)
-                .append("principalAttributeNameTrigger", this.principalAttributeNameTrigger)
-                .append("principalAttributeValueToMatch", this.principalAttributeValueToMatch)
-                .append("bypassEnabled", this.bypassEnabled)
-                .toString();
+        return new HashCodeBuilder().append(this.multifactorAuthenticationProviders).append(this.failureMode).append(this.principalAttributeNameTrigger).append(this.principalAttributeValueToMatch).append(this.bypassEnabled).toHashCode();
     }
 }
