@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.util.ResourceUtils;
 import java.security.PublicKey;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Represents a public key for a CAS registered service.
@@ -20,6 +21,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;
@@ -56,16 +58,6 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     public void setAlgorithm(final String algorithm) {
         this.algorithm = algorithm;
-    }
-
-    @Override
-    public String getLocation() {
-        return this.location;
-    }
-
-    @Override
-    public String getAlgorithm() {
-        return this.algorithm;
     }
 
     @Override

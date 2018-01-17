@@ -379,7 +379,7 @@ public abstract class AbstractTicketRegistryTests {
         this.ticketRegistry.addTicket(pgt);
         this.ticketRegistry.updateTicket(tgt);
         this.ticketRegistry.updateTicket(st1);
-        assertEquals(pgt.getGrantingTicket(), tgt);
+        assertEquals(pgt.getTicketGrantingTicket(), tgt);
         assertNotNull(this.ticketRegistry.getTicket(PGT_1_ID, ProxyGrantingTicket.class));
         assertEquals(a, pgt.getAuthentication());
         assertNotNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));

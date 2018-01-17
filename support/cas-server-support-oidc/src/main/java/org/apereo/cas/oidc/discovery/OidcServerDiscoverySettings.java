@@ -5,8 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
-
 import java.util.List;
+import lombok.Getter;
 
 /**
  * This is {@link OidcServerDiscoverySettings}.
@@ -15,6 +15,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class OidcServerDiscoverySettings {
 
     @JsonProperty("scopes_supported")
@@ -42,26 +43,19 @@ public class OidcServerDiscoverySettings {
     private List<String> introspectionSupportedAuthenticationMethods;
 
     private final CasConfigurationProperties casProperties;
+
     private final String issuer;
+
     private final String serverPrefix;
 
-    public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties,
-                                       final String issuer) {
+    public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
         this.issuer = issuer;
         this.serverPrefix = casProperties.getServer().getPrefix();
         this.casProperties = casProperties;
     }
 
-    public List<String> getIntrospectionSupportedAuthenticationMethods() {
-        return introspectionSupportedAuthenticationMethods;
-    }
-
     public void setIntrospectionSupportedAuthenticationMethods(final List<String> introspectionSupportedAuthenticationMethods) {
         this.introspectionSupportedAuthenticationMethods = introspectionSupportedAuthenticationMethods;
-    }
-
-    public String getIssuer() {
-        return issuer;
     }
 
     @JsonProperty("authorization_endpoint")
@@ -99,26 +93,6 @@ public class OidcServerDiscoverySettings {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
     }
 
-    public List<String> getScopesSupported() {
-        return scopesSupported;
-    }
-
-    public List<String> getResponseTypesSupported() {
-        return responseTypesSupported;
-    }
-
-    public List<String> getSubjectTypesSupported() {
-        return subjectTypesSupported;
-    }
-
-    public List<String> getClaimTypesSupported() {
-        return claimTypesSupported;
-    }
-
-    public List<String> getClaimsSupported() {
-        return claimsSupported;
-    }
-
     public void setScopesSupported(final List<String> scopesSupported) {
         this.scopesSupported = scopesSupported;
     }
@@ -139,16 +113,8 @@ public class OidcServerDiscoverySettings {
         this.claimsSupported = claimsSupported;
     }
 
-    public List<String> getGrantTypesSupported() {
-        return grantTypesSupported;
-    }
-
     public void setGrantTypesSupported(final List<String> grantTypesSupported) {
         this.grantTypesSupported = grantTypesSupported;
-    }
-
-    public List<String> getIdTokenSigningAlgValuesSupported() {
-        return idTokenSigningAlgValuesSupported;
     }
 
     public void setIdTokenSigningAlgValuesSupported(final List<String> idTokenSigningAlgValuesSupported) {

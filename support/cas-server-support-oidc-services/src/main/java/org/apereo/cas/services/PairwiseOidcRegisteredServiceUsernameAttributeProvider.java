@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -33,10 +35,10 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
+
     private static final long serialVersionUID = 469929103943101717L;
-
-
 
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
 
@@ -49,21 +51,16 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
             LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
         }
-
         final OidcRegisteredService oidcSvc = OidcRegisteredService.class.cast(registeredService);
-        if (StringUtils.isBlank(oidcSvc.getSubjectType())
-                || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
+        if (StringUtils.isBlank(oidcSvc.getSubjectType()) || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
             return principal.getId();
         }
-
-
         final String sectorIdentifier = getSectorIdentifier(oidcSvc);
         if (StringUtils.isBlank(sectorIdentifier)) {
             LOGGER.debug("Service definition [{}] does not provide a sector identifier", oidcSvc);
             return principal.getId();
         }
-
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No pairwise persistent id generator is defined");
         }
@@ -71,7 +68,6 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         LOGGER.debug("Resolved username [{}] for pairwise access", id);
         return id;
     }
-
 
     private String getSectorIdentifier(final OidcRegisteredService client) {
         if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
@@ -95,31 +91,18 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         }
         final PairwiseOidcRegisteredServiceUsernameAttributeProvider rhs = (PairwiseOidcRegisteredServiceUsernameAttributeProvider) obj;
         final EqualsBuilder builder = new EqualsBuilder();
-        return builder
-                .appendSuper(super.equals(obj))
-                .append(this.persistentIdGenerator, rhs.persistentIdGenerator)
-                .isEquals();
+        return builder.appendSuper(super.equals(obj)).append(this.persistentIdGenerator, rhs.persistentIdGenerator).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(persistentIdGenerator)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(persistentIdGenerator).toHashCode();
     }
 
+    @Getter
+    @AllArgsConstructor
     private static class PairwiseService implements Service {
         private static final long serialVersionUID = -6154643329901712381L;
         private final String id;
-
-        PairwiseService(final String id) {
-            this.id = id;
-        }
-
-        @Override
-        public String getId() {
-            return this.id;
-        }
     }
 }

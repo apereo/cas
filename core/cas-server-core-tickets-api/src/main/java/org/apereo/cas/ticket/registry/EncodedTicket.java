@@ -15,6 +15,7 @@ import org.apereo.cas.util.EncodingUtils;
 import java.io.IOException;
 import java.time.ZonedDateTime;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -25,6 +26,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
@@ -101,19 +103,9 @@ public class EncodedTicket implements Ticket {
     }
 
     @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         LOGGER.trace(getOpNotSupportedMessage("[Retrieving parent ticket-granting ticket]"));
         return null;
-    }
-
-    /**
-     * Gets an encoded version of ID of the source ticket.
-     *
-     * @return Encoded ticket ID.
-     */
-    @Override
-    public String getId() {
-        return this.id;
     }
 
     protected byte[] getEncoded() {

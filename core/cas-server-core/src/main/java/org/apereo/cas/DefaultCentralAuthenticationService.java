@@ -302,7 +302,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-            final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
+            final TicketGrantingTicket root = serviceTicket.getTicketGrantingTicket().getRoot();
             final Authentication authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(),
                 new ServiceContext(selectedService, registeredService));
             final Principal principal = authentication.getPrincipal();
@@ -330,7 +330,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             final Assertion assertion = new DefaultAssertionBuilder(finalAuthentication)
                 .with(selectedService)
-                .with(serviceTicket.getGrantingTicket().getChainedAuthentications())
+                .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .with(serviceTicket.isFromNewLogin())
                 .build();
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));

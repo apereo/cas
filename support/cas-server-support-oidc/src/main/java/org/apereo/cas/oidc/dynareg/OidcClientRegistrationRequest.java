@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link OidcClientRegistrationRequest}.
@@ -19,6 +20,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
 @ToString
+@Getter
 public class OidcClientRegistrationRequest implements Serializable {
 
     private static final long serialVersionUID = 1832102135613155844L;
@@ -54,46 +56,6 @@ public class OidcClientRegistrationRequest implements Serializable {
     private String requestObjectSigningAlg;
 
     public OidcClientRegistrationRequest() {
-    }
-
-    public String getScope() {
-        return scope;
-    }
-
-    public List<String> getRedirectUris() {
-        return redirectUris;
-    }
-
-    public String getClientName() {
-        return clientName;
-    }
-
-    public String getTokenEndpointAuthMethod() {
-        return tokenEndpointAuthMethod;
-    }
-
-    public List<String> getGrantTypes() {
-        return grantTypes;
-    }
-
-    public List<String> getResponseTypes() {
-        return responseTypes;
-    }
-
-    public String getJwksUri() {
-        return jwksUri;
-    }
-
-    public String getRequestObjectSigningAlg() {
-        return requestObjectSigningAlg;
-    }
-
-    public String getSectorIdentifierUri() {
-        return sectorIdentifierUri;
-    }
-
-    public String getSubjectType() {
-        return subjectType;
     }
 
     @JsonIgnore

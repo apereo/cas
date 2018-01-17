@@ -1,9 +1,12 @@
 package org.apereo.cas.services;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.DefaultPrincipalAttributesRepository;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -12,13 +15,13 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.springframework.context.ApplicationContext;
+
 import javax.persistence.PostLoad;
 import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
-import lombok.ToString;
 
 /**
  * Abstract release policy for attributes, provides common shared settings such as loggers and attribute filter config.
@@ -29,11 +32,15 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy, Serializable {
 
     private static final long serialVersionUID = 5325460875620586503L;
 
-    private RegisteredServiceAttributeFilter registeredServiceAttributeFilter;
+    private RegisteredServiceAttributeFilter attributeFilter;
 
     private PrincipalAttributesRepository principalAttributesRepository = new DefaultPrincipalAttributesRepository();
 
@@ -60,74 +67,6 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         if (consentPolicy == null) {
             this.consentPolicy = new DefaultRegisteredServiceConsentPolicy();
         }
-    }
-
-    @Override
-    public void setAttributeFilter(final RegisteredServiceAttributeFilter filter) {
-        this.registeredServiceAttributeFilter = filter;
-    }
-
-    public void setPrincipalAttributesRepository(final PrincipalAttributesRepository repository) {
-        this.principalAttributesRepository = repository;
-    }
-
-    public PrincipalAttributesRepository getPrincipalAttributesRepository() {
-        return this.principalAttributesRepository;
-    }
-
-    public RegisteredServiceAttributeFilter getAttributeFilter() {
-        return this.registeredServiceAttributeFilter;
-    }
-
-    public String getPrincipalIdAttribute() {
-        return principalIdAttribute;
-    }
-
-    public void setPrincipalIdAttribute(final String principalIdAttribute) {
-        this.principalIdAttribute = principalIdAttribute;
-    }
-
-    public RegisteredServiceConsentPolicy getConsentPolicy() {
-        return consentPolicy;
-    }
-
-    public void setConsentPolicy(final RegisteredServiceConsentPolicy consentPolicy) {
-        this.consentPolicy = consentPolicy;
-    }
-
-    @Override
-    public boolean isAuthorizedToReleaseCredentialPassword() {
-        return this.authorizedToReleaseCredentialPassword;
-    }
-
-    @Override
-    public boolean isAuthorizedToReleaseProxyGrantingTicket() {
-        return this.authorizedToReleaseProxyGrantingTicket;
-    }
-
-    public void setAuthorizedToReleaseCredentialPassword(final boolean authorizedToReleaseCredentialPassword) {
-        this.authorizedToReleaseCredentialPassword = authorizedToReleaseCredentialPassword;
-    }
-
-    public void setAuthorizedToReleaseProxyGrantingTicket(final boolean authorizedToReleaseProxyGrantingTicket) {
-        this.authorizedToReleaseProxyGrantingTicket = authorizedToReleaseProxyGrantingTicket;
-    }
-
-    public boolean isExcludeDefaultAttributes() {
-        return excludeDefaultAttributes;
-    }
-
-    public void setExcludeDefaultAttributes(final boolean excludeDefaultAttributes) {
-        this.excludeDefaultAttributes = excludeDefaultAttributes;
-    }
-
-    @Override
-    public boolean isAuthorizedToReleaseAuthenticationAttributes() {
-        return authorizedToReleaseAuthenticationAttributes;
-    }
-
-    public void setAuthorizedToReleaseAuthenticationAttributes(final boolean authorizedToReleaseAuthenticationAttributes) {
-        this.authorizedToReleaseAuthenticationAttributes = authorizedToReleaseAuthenticationAttributes;
     }
 
     @Override
@@ -287,34 +226,4 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      */
     public abstract Map<String, Object> getAttributesInternal(Principal principal, Map<String, Object> attributes, RegisteredService service);
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).append(getAttributeFilter())
-            .append(isAuthorizedToReleaseCredentialPassword()).append(isAuthorizedToReleaseProxyGrantingTicket())
-            .append(getPrincipalAttributesRepository()).append(isExcludeDefaultAttributes())
-            .append(getPrincipalIdAttribute()).append(getConsentPolicy())
-            .append(isAuthorizedToReleaseAuthenticationAttributes()).toHashCode();
-    }
-
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AbstractRegisteredServiceAttributeReleasePolicy)) {
-            return false;
-        }
-        final AbstractRegisteredServiceAttributeReleasePolicy that = (AbstractRegisteredServiceAttributeReleasePolicy) o;
-        final EqualsBuilder builder = new EqualsBuilder();
-        return builder.append(getAttributeFilter(), that.getAttributeFilter()).append(isAuthorizedToReleaseCredentialPassword(),
-            that.isAuthorizedToReleaseCredentialPassword()).append(isAuthorizedToReleaseProxyGrantingTicket(),
-            that.isAuthorizedToReleaseProxyGrantingTicket()).append(getPrincipalAttributesRepository(),
-            that.getPrincipalAttributesRepository()).append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
-            .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute()).append(getConsentPolicy(),
-                that.getConsentPolicy()).append(isAuthorizedToReleaseAuthenticationAttributes(),
-                that.isAuthorizedToReleaseAuthenticationAttributes()).isEquals();
-    }
 }

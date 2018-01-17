@@ -2,10 +2,14 @@ package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.validation.ValidationResponseType;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
@@ -15,7 +19,6 @@ import javax.persistence.Inheritance;
 import javax.persistence.Table;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.ToString;
 
 /**
  * Abstract implementation of a WebApplicationService.
@@ -29,6 +32,10 @@ import lombok.ToString;
 @Table(name = "WebApplicationServices")
 @Slf4j
 @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public abstract class AbstractWebApplicationService implements WebApplicationService {
 
     private static final long serialVersionUID = 610105280927740076L;
@@ -59,9 +66,6 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Column(updatable = true, insertable = true, nullable = false)
     private ValidationResponseType format = ValidationResponseType.XML;
 
-    protected AbstractWebApplicationService() {
-    }
-
     /**
      * Instantiates a new abstract web application service.
      *
@@ -75,93 +79,10 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         this.artifactId = artifactId;
     }
 
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public String getArtifactId() {
-        return this.artifactId;
-    }
-
     @JsonIgnore
     @Override
     public Map<String, Object> getAttributes() {
         return new HashMap<>(0);
     }
 
-    /**
-     * Return the original url provided (as {@code service} or {@code targetService} request parameter).
-     * Used to reconstruct the redirect url.
-     *
-     * @return the original url provided.
-     */
-    @Override
-    public String getOriginalUrl() {
-        return this.originalUrl;
-    }
-
-    public String getPrincipal() {
-        return this.principal;
-    }
-
-    @Override
-    public void setPrincipal(final String principal) {
-        this.principal = principal;
-    }
-
-    /**
-     * Return if the service is already logged out.
-     *
-     * @return if the service is already logged out.
-     */
-    @Override
-    public boolean isLoggedOutAlready() {
-        return this.loggedOutAlready;
-    }
-
-    /**
-     * Set if the service is already logged out.
-     *
-     * @param loggedOutAlready if the service is already logged out.
-     */
-    @Override
-    public void setLoggedOutAlready(final boolean loggedOutAlready) {
-        this.loggedOutAlready = loggedOutAlready;
-    }
-
-    @JsonIgnore
-    @Override
-    public ValidationResponseType getFormat() {
-        return this.format;
-    }
-
-    public void setFormat(final ValidationResponseType format) {
-        this.format = format;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final AbstractWebApplicationService rhs = (AbstractWebApplicationService) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.id, rhs.id).append(this.originalUrl, rhs.originalUrl).append(this.artifactId, rhs.artifactId)
-            .append(this.principal, rhs.principal).append(this.loggedOutAlready, rhs.loggedOutAlready).append(this.format, rhs.format);
-        return builder.isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(id).append(originalUrl).append(artifactId)
-            .append(principal).append(loggedOutAlready).append(format).toHashCode();
-    }
 }

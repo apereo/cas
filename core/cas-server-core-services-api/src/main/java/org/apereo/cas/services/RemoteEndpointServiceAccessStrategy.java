@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
@@ -11,6 +12,7 @@ import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.util.StringUtils;
 import java.net.URL;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * This is {@link RemoteEndpointServiceAccessStrategy} that reaches out
@@ -23,6 +25,10 @@ import java.util.Map;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1108201604115278440L;
@@ -49,41 +55,4 @@ public class RemoteEndpointServiceAccessStrategy extends DefaultRegisteredServic
         return false;
     }
 
-    public String getEndpointUrl() {
-        return endpointUrl;
-    }
-
-    public void setEndpointUrl(final String endpointUrl) {
-        this.endpointUrl = endpointUrl;
-    }
-
-    public String getAcceptableResponseCodes() {
-        return acceptableResponseCodes;
-    }
-
-    public void setAcceptableResponseCodes(final String acceptableResponseCodes) {
-        this.acceptableResponseCodes = acceptableResponseCodes;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final RemoteEndpointServiceAccessStrategy rhs = (RemoteEndpointServiceAccessStrategy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj))
-            .append(this.endpointUrl, rhs.endpointUrl)
-            .append(this.acceptableResponseCodes, rhs.acceptableResponseCodes).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(endpointUrl).append(acceptableResponseCodes).toHashCode();
-    }
 }

@@ -15,6 +15,7 @@ import org.apereo.cas.util.HttpUtils;
 import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * Return a collection of allowed attributes for the principal based on an external REST endpoint.
@@ -24,6 +25,7 @@ import java.util.Map;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
@@ -72,10 +74,6 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.endpoint).toHashCode();
-    }
-
-    public String getEndpoint() {
-        return endpoint;
     }
 
     public void setEndpoint(final String endpoint) {

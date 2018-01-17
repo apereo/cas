@@ -54,7 +54,9 @@ public class DynamoDbTicketRegistryConfiguration {
     @Bean
     public DynamoDbTicketRegistryFacilitator dynamoDbTicketRegistryFacilitator(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final DynamoDbTicketRegistryProperties db = casProperties.getTicket().getRegistry().getDynamoDb();
-        return new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
+        final DynamoDbTicketRegistryFacilitator f = new DynamoDbTicketRegistryFacilitator(ticketCatalog, db, amazonDynamoDbClient());
+        f.createTicketTables(db.isDropTablesOnStartup());
+        return f;
     }
 
     @RefreshScope

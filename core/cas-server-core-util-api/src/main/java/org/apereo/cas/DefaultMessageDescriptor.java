@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.springframework.util.Assert;
-
 import java.io.Serializable;
 import java.util.Arrays;
+import lombok.Getter;
 
 /**
  * Simple parameterized message descriptor with a code that refers to a message bundle key and a default
@@ -16,6 +16,7 @@ import java.util.Arrays;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class DefaultMessageDescriptor implements MessageDescriptor {
 
     /** Serialization support. */
@@ -51,16 +52,6 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
         this.params = params;
     }
 
-    @Override
-    public String getCode() {
-        return this.code;
-    }
-
-    @Override
-    public String getDefaultMessage() {
-        return this.defaultMessage;
-    }
-
     /**
      * Get parameters for the message.
      *
@@ -92,8 +83,6 @@ public class DefaultMessageDescriptor implements MessageDescriptor {
             return true;
         }
         final DefaultMessageDescriptor m = (DefaultMessageDescriptor) other;
-        return this.code.equals(m.getCode())
-                && this.defaultMessage.equals(m.getDefaultMessage())
-                && Arrays.equals(this.params, m.getParams());
+        return this.code.equals(m.getCode()) && this.defaultMessage.equals(m.getDefaultMessage()) && Arrays.equals(this.params, m.getParams());
     }
 }

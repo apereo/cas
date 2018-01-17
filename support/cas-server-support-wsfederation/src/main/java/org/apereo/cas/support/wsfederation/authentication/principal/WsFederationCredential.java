@@ -1,13 +1,16 @@
 package org.apereo.cas.support.wsfederation.authentication.principal;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
-
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This class represents the basic elements of the WsFederation token.
@@ -17,6 +20,10 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class WsFederationCredential implements Credential {
 
     private static final long serialVersionUID = -824605020472810939L;
@@ -38,80 +45,7 @@ public class WsFederationCredential implements Credential {
     private ZonedDateTime retrievedOn;
 
     private Map<String, List<Object>> attributes;
-
-    public String getAuthenticationMethod() {
-        return this.authenticationMethod;
-    }
-
-    public void setAuthenticationMethod(final String authenticationMethod) {
-        this.authenticationMethod = authenticationMethod;
-    }
-
-    public String getAudience() {
-        return this.audience;
-    }
-
-    public void setAudience(final String audience) {
-        this.audience = audience;
-    }
-
-    public Map<String, List<Object>> getAttributes() {
-        return this.attributes;
-    }
-
-    public void setAttributes(final Map<String, List<Object>> attributes) {
-        this.attributes = attributes;
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public ZonedDateTime getIssuedOn() {
-        return this.issuedOn;
-    }
-
-    public void setIssuedOn(final ZonedDateTime issuedOn) {
-        this.issuedOn = issuedOn;
-    }
-
-    public String getIssuer() {
-        return this.issuer;
-    }
-
-    public void setIssuer(final String issuer) {
-        this.issuer = issuer;
-    }
-
-    public ZonedDateTime getNotBefore() {
-        return this.notBefore;
-    }
-
-    public void setNotBefore(final ZonedDateTime notBefore) {
-        this.notBefore = notBefore;
-    }
-
-    public ZonedDateTime getNotOnOrAfter() {
-        return this.notOnOrAfter;
-    }
-
-    public void setNotOnOrAfter(final ZonedDateTime notOnOrAfter) {
-        this.notOnOrAfter = notOnOrAfter;
-    }
-
-    public ZonedDateTime getRetrievedOn() {
-        return this.retrievedOn;
-    }
-
-    public void setRetrievedOn(final ZonedDateTime retrievedOn) {
-        this.retrievedOn = retrievedOn;
-    }
-
+    
     /**
      * isValid validates the credential.
      *

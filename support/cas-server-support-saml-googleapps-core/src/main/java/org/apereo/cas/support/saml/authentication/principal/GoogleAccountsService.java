@@ -1,16 +1,15 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
-
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import lombok.Getter;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -22,6 +21,7 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("google")
 @Slf4j
+@Getter
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
@@ -32,8 +32,9 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     @Column(length = 255, updatable = true, insertable = true)
     private String requestId;
 
-    private GoogleAccountsService() {}
-    
+    private GoogleAccountsService() {
+    }
+
     /**
      * Instantiates a new google accounts service.
      *
@@ -48,24 +49,13 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
     }
 
     @JsonCreator
-    public GoogleAccountsService(@JsonProperty("id") final String id,
-                                 @JsonProperty("originalUrl") final String originalUrl,
-                                 @JsonProperty("artifactId") final String artifactId,
-                                 @JsonProperty("relayState") final String relayState,
+    public GoogleAccountsService(@JsonProperty("id") final String id, @JsonProperty("originalUrl") final String originalUrl,
+                                 @JsonProperty("artifactId") final String artifactId, @JsonProperty("relayState") final String relayState,
                                  @JsonProperty("requestId") final String requestId) {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.requestId = requestId;
     }
-
-    public String getRelayState() {
-        return this.relayState;
-    }
-
-    public String getRequestId() {
-        return this.requestId;
-    }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -79,19 +69,11 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
             return false;
         }
         final GoogleAccountsService rhs = (GoogleAccountsService) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.relayState, rhs.relayState)
-                .append(this.requestId, rhs.requestId)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.relayState, rhs.relayState).append(this.requestId, rhs.requestId).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(relayState)
-                .append(requestId)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(relayState).append(requestId).toHashCode();
     }
 }
