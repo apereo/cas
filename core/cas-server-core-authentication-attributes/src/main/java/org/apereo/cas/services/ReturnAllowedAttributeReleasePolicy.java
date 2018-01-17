@@ -1,9 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.util.ArrayList;
@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import lombok.Getter;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved
@@ -20,11 +22,11 @@ import java.util.TreeMap;
  * @since 4.1.0
  */
 @Slf4j
+@ToString(callSuper = true)
+@Getter
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
-
-
 
     private List<String> allowedAttributes;
 
@@ -48,13 +50,8 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         this.allowedAttributes = allowed;
     }
 
-    public List<String> getAllowedAttributes() {
-        return this.allowedAttributes;
-    }
-
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                        final Map<String, Object> attrs, final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
         return authorizeReleaseOfAllowedAttributes(attrs);
     }
 
@@ -68,17 +65,12 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
-
-        getAllowedAttributes()
-                .stream()
-                .map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
-                .forEach(attribute -> {
-                    LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
-                    attributesToRelease.put((String) attribute[0], attribute[1]);
-                });
+        getAllowedAttributes().stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null).forEach(attribute -> {
+            LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
+            attributesToRelease.put((String) attribute[0], attribute[1]);
+        });
         return attributesToRelease;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -92,26 +84,11 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
             return false;
         }
         final ReturnAllowedAttributeReleasePolicy rhs = (ReturnAllowedAttributeReleasePolicy) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(getAllowedAttributes(), rhs.getAllowedAttributes())
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(getAllowedAttributes(), rhs.getAllowedAttributes()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 133)
-                .appendSuper(super.hashCode())
-                .append(getAllowedAttributes())
-                .toHashCode();
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("allowedAttributes", getAllowedAttributes())
-                .toString();
+        return new HashCodeBuilder(13, 133).appendSuper(super.hashCode()).append(getAllowedAttributes()).toHashCode();
     }
 }

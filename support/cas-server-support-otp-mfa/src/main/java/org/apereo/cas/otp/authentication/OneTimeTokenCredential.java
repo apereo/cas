@@ -1,13 +1,15 @@
 package org.apereo.cas.otp.authentication;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
-
 import java.io.Serializable;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link OneTimeTokenCredential}.
@@ -16,32 +18,16 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
+@ToString
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OneTimeTokenCredential implements Credential, Serializable {
+
     private static final long serialVersionUID = -7570600701132111037L;
 
     private String token;
-
-    /**
-     * Instantiates a new Google authenticator token credential.
-     */
-    public OneTimeTokenCredential() {
-    }
-
-    /**
-     * Instantiates a new google auth credential.
-     *
-     * @param token the token
-     */
-    public OneTimeTokenCredential(final String token) {
-        this.token = token;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("token", this.token)
-                .toString();
-    }
 
     @Override
     public boolean equals(final Object obj) {
@@ -67,13 +53,5 @@ public class OneTimeTokenCredential implements Credential, Serializable {
     @Override
     public String getId() {
         return this.token;
-    }
-    
-    public String getToken() {
-        return this.token;
-    }
-
-    public void setToken(final String token) {
-        this.token = token;
     }
 }

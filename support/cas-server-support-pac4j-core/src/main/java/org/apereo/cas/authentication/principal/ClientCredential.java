@@ -1,12 +1,15 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
-
 import java.io.Serializable;
+import lombok.ToString;
 
 /**
  * This class represents client credentials and (after authentication) a user profile.
@@ -15,6 +18,12 @@ import java.io.Serializable;
  * @since 3.5.0
  */
 @Slf4j
+@ToString
+@Setter
+@Getter
+@NoArgsConstructor(force = true)
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class ClientCredential implements Credential, Serializable {
 
     /***
@@ -37,43 +46,7 @@ public class ClientCredential implements Credential, Serializable {
     /**
      * The internal credentials provided by the authentication at the provider.
      */
-    private org.pac4j.core.credentials.Credentials credentials;
-
-    /**
-     * Define the credentials.
-     *
-     * @param theCredentials The authentication credentials
-     */
-    public ClientCredential(final org.pac4j.core.credentials.Credentials theCredentials) {
-        this.credentials = theCredentials;
-    }
-
-    /**
-     * Return the credentials.
-     *
-     * @return the credentials
-     */
-    public org.pac4j.core.credentials.Credentials getCredentials() {
-        return this.credentials;
-    }
-
-    /**
-     * Return the profile of the authenticated user.
-     *
-     * @return the profile of the authenticated user
-     */
-    public UserProfile getUserProfile() {
-        return this.userProfile;
-    }
-
-    /**
-     * Define the user profile.
-     *
-     * @param theUserProfile The user profile
-     */
-    public void setUserProfile(final UserProfile theUserProfile) {
-        this.userProfile = theUserProfile;
-    }
+    private final org.pac4j.core.credentials.Credentials credentials;
 
     @Override
     public String getId() {
@@ -84,16 +57,5 @@ public class ClientCredential implements Credential, Serializable {
             return this.userProfile.getId();
         }
         return null;
-    }
-
-    public void setTypedIdUsed(final boolean typedIdUsed) {
-        this.typedIdUsed = typedIdUsed;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("id", getId())
-                .toString();
     }
 }

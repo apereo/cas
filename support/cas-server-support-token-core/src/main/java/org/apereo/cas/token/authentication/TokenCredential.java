@@ -1,7 +1,7 @@
 package org.apereo.cas.token.authentication;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -12,11 +12,11 @@ import org.apereo.cas.authentication.principal.Service;
  * @since 4.2.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class TokenCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 2749515041385101770L;
 
-    
     private Service service;
 
     /**
@@ -31,13 +31,5 @@ public class TokenCredential extends BasicIdentifiableCredential {
 
     public Service getService() {
         return this.service;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("service", this.service)
-                .toString();
     }
 }

@@ -163,8 +163,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private void deleteProxyGrantingTicketFromParent(final ProxyGrantingTicket ticket) {
         final ProxyGrantingTicket thePgt = ticket;
-        thePgt.getGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
-        updateTicket(thePgt.getGrantingTicket());
+        thePgt.getTicketGrantingTicket().getProxyGrantingTickets().remove(thePgt.getId());
+        updateTicket(thePgt.getTicketGrantingTicket());
     }
 
     /**

@@ -2,9 +2,11 @@ package org.apereo.cas.logout;
 
 import java.net.URL;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.WebApplicationService;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Define a logout request for a service accessed by a user.
@@ -13,6 +15,9 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
+@Getter
+@Setter
 public class DefaultLogoutRequest implements LogoutRequest {
 
     /** Generated serialVersionUID. */
@@ -41,39 +46,5 @@ public class DefaultLogoutRequest implements LogoutRequest {
         this.ticketId = ticketId;
         this.service = service;
         this.logoutUrl = logoutUrl;
-    }
-
-    @Override
-    public LogoutRequestStatus getStatus() {
-        return this.status;
-    }
-
-    @Override
-    public void setStatus(final LogoutRequestStatus status) {
-        this.status = status;
-    }
-
-    @Override
-    public String getTicketId() {
-        return this.ticketId;
-    }
-
-    @Override
-    public WebApplicationService getService() {
-        return this.service;
-    }
-
-    @Override
-    public URL getLogoutUrl() {
-        return this.logoutUrl;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("ticketId", this.ticketId)
-                .append("service", this.service)
-                .append("status", this.status)
-                .toString();
     }
 }

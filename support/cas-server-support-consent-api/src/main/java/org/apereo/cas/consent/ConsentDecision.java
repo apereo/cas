@@ -1,10 +1,7 @@
 package org.apereo.cas.consent;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +11,8 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link ConsentDecision}.
@@ -24,6 +23,8 @@ import java.time.temporal.ChronoUnit;
 @Entity
 @Table(name = "ConsentDecision")
 @Slf4j
+@ToString
+@Getter
 public class ConsentDecision {
 
     @Id
@@ -52,7 +53,7 @@ public class ConsentDecision {
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
     private String attributes;
-    
+
     public LocalDateTime getCreatedDate() {
         return createdDate;
     }
@@ -77,16 +78,8 @@ public class ConsentDecision {
         this.id = id;
     }
 
-    public String getPrincipal() {
-        return principal;
-    }
-
     public void setPrincipal(final String principal) {
         this.principal = principal;
-    }
-
-    public String getService() {
-        return service;
     }
 
     public void setService(final String service) {
@@ -109,23 +102,7 @@ public class ConsentDecision {
         return reminder;
     }
 
-    public String getAttributes() {
-        return attributes;
-    }
-
     public void setAttributes(final String attributes) {
         this.attributes = attributes;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.JSON_STYLE)
-                .append("principal", principal)
-                .append("service", service)
-                .append("date", createdDate)
-                .append("options", options)
-                .append("reminder", reminder)
-                .append("reminderTimeUnit", reminderTimeUnit)
-                .toString();
     }
 }

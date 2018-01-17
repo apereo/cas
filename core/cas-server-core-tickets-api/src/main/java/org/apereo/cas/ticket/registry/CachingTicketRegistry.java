@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.logout.LogoutManager;
@@ -20,27 +21,26 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private static final int INITIAL_CACHE_SIZE = 50;
+
     private static final long MAX_CACHE_SIZE = 100_000_000;
 
     private final Map<String, Ticket> cache;
+
     private final LoadingCache<String, Ticket> storage;
+
     private final LogoutManager logoutManager;
 
     public CachingTicketRegistry(final CipherExecutor cipherExecutor, final LogoutManager logoutManager) {
         super(cipherExecutor);
-        this.storage = Caffeine.newBuilder()
-            .initialCapacity(INITIAL_CACHE_SIZE)
-            .maximumSize(MAX_CACHE_SIZE)
-            .expireAfter(new CachedTicketExpirationPolicy())
-            .removalListener(new CachedTicketRemovalListener())
-            .build(s -> {
+        this.storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE).maximumSize(MAX_CACHE_SIZE)
+            .expireAfter(new CachedTicketExpirationPolicy()).removalListener(new CachedTicketRemovalListener()).build(s -> {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;
             });
-
         this.cache = this.storage.asMap();
         this.logoutManager = logoutManager;
     }
@@ -54,6 +54,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
      * The cached ticket removal listener.
      */
     public class CachedTicketRemovalListener implements RemovalListener<String, Ticket> {
+
         @Override
         public void onRemoval(final String key, final Ticket value, final RemovalCause cause) {
             if (cause == RemovalCause.EXPIRED) {
@@ -69,6 +70,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
      * The cached ticket expiration policy.
      */
     public static class CachedTicketExpirationPolicy implements Expiry<String, Ticket> {
+
         private long getExpiration(final Ticket value, final long currentTime) {
             if (value.isExpired()) {
                 LOGGER.debug("Ticket [{}] has expired and shall be evicted from the cache", value.getId());

@@ -3,8 +3,9 @@ package org.apereo.cas.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serializable;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation
@@ -15,6 +16,8 @@ import java.io.Serializable;
  * @since 4.2.0
  */
 @Slf4j
+@ToString
+@Getter
 public class BasicIdentifiableCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -700605020472810939L;
@@ -35,16 +38,6 @@ public class BasicIdentifiableCredential implements Credential, Serializable {
     }
 
     @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
-    public String toString() {
-        return this.id;
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -56,16 +49,11 @@ public class BasicIdentifiableCredential implements Credential, Serializable {
             return false;
         }
         final BasicIdentifiableCredential rhs = (BasicIdentifiableCredential) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .isEquals();
+        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.id)
-                .toHashCode();
+        return new HashCodeBuilder().append(this.id).toHashCode();
     }
 }
-

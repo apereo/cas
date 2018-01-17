@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link DefaultRegisteredServiceDelegatedAuthenticationPolicy}.
@@ -16,6 +16,8 @@ import java.util.LinkedHashSet;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
+@Getter
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
 
     private static final long serialVersionUID = -784106970642770923L;
@@ -31,11 +33,6 @@ public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements Re
     }
 
     @Override
-    public Collection<String> getAllowedProviders() {
-        return this.allowedProviders;
-    }
-
-    @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
@@ -47,23 +44,12 @@ public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements Re
             return false;
         }
         final DefaultRegisteredServiceDelegatedAuthenticationPolicy rhs = (DefaultRegisteredServiceDelegatedAuthenticationPolicy) obj;
-        return new EqualsBuilder()
-            .append(this.allowedProviders, rhs.allowedProviders)
-            .isEquals();
+        return new EqualsBuilder().append(this.allowedProviders, rhs.allowedProviders).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(allowedProviders)
-            .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .append("allowedProviders", allowedProviders)
-            .toString();
+        return new HashCodeBuilder().append(allowedProviders).toHashCode();
     }
 
     @Override

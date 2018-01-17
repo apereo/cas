@@ -3,10 +3,9 @@ package org.apereo.cas.authentication.principal;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-
 import java.util.Map;
+import lombok.ToString;
 
 /**
  * Default implementation of {@link PrincipalAttributesRepository}
@@ -16,10 +15,10 @@ import java.util.Map;
  * @since 4.1
  */
 @Slf4j
+@ToString
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
+
     private static final long serialVersionUID = -4535358847021241725L;
-
-
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
@@ -29,14 +28,8 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
-                this.getClass().getSimpleName(), p.getAttributes());
+            this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).toString();
     }
 
     @Override
@@ -50,9 +43,7 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
         if (obj.getClass() != getClass()) {
             return false;
         }
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
     @Override

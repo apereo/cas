@@ -1,7 +1,7 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -16,11 +16,11 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 3.1
  */
 @Slf4j
+@ToString(callSuper = true)
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, 
-                                   final boolean returnNullIfNoAttributes,
-                                   final String principalAttributeName) {
+    public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                   final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 
@@ -32,13 +32,5 @@ public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof OpenIdCredential;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

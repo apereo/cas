@@ -1,10 +1,10 @@
 package org.apereo.cas.support.events.ticket;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import lombok.ToString;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing granting of a
@@ -14,11 +14,13 @@ import org.apereo.cas.ticket.proxy.ProxyTicket;
  * @since 4.2
  */
 @Slf4j
+@ToString
 public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 128616377249711105L;
 
     private final ProxyGrantingTicket proxyGrantingTicket;
+
     private final ProxyTicket proxyTicket;
 
     /**
@@ -28,8 +30,7 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
      * @param proxyGrantingTicket the ticket granting ticket
      * @param proxyTicket        the service ticket
      */
-    public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket,
-                                      final ProxyTicket proxyTicket) {
+    public CasProxyTicketGrantedEvent(final Object source, final ProxyGrantingTicket proxyGrantingTicket, final ProxyTicket proxyTicket) {
         super(source);
         this.proxyGrantingTicket = proxyGrantingTicket;
         this.proxyTicket = proxyTicket;
@@ -41,14 +42,5 @@ public class CasProxyTicketGrantedEvent extends AbstractCasEvent {
 
     public ProxyTicket getProxyTicket() {
         return this.proxyTicket;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("proxyGrantingTicket", this.proxyGrantingTicket)
-                .append("proxyTicket", this.proxyTicket)
-                .toString();
     }
 }

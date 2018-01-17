@@ -1,7 +1,7 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationManager;
@@ -16,9 +16,13 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
  * @since 5.1.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
+
     private final String authenticationContextAttribute;
+
     private final AuthenticationHandler authenticationHandler;
+
     private final MultifactorAuthenticationProvider provider;
 
     public AuthenticationContextAttributeMetaDataPopulator(final String authenticationContextAttribute,
@@ -31,25 +35,13 @@ public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthent
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE,
-            obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
+        if (builder.hasAttribute(AuthenticationManager.AUTHENTICATION_METHOD_ATTRIBUTE, obj -> obj.toString().equals(this.authenticationHandler.getName()))) {
             builder.mergeAttribute(this.authenticationContextAttribute, this.provider.getId());
         }
     }
 
-
     @Override
     public boolean supports(final Credential credential) {
         return this.authenticationHandler.supports(credential);
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("authenticationContextAttribute", authenticationContextAttribute)
-                .append("authenticationHandler", authenticationHandler)
-                .append("provider", provider)
-                .toString();
     }
 }

@@ -1,12 +1,10 @@
 package org.apereo.cas.util.transforms;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
-
 import java.util.ArrayList;
 import java.util.List;
-
+import lombok.ToString;
 
 /**
  * A transformer that chains a number of inner transformers together.
@@ -15,6 +13,7 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private static final long serialVersionUID = 7586914936775326709L;
@@ -42,12 +41,4 @@ public class ChainingPrincipalNameTransformer implements PrincipalNameTransforme
     public void addTransformer(final PrincipalNameTransformer transformer) {
         this.transformers.add(transformer);
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("transformers", this.transformers)
-                .toString();
-    }
-
 }

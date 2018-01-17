@@ -1,7 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.PrincipalException;
@@ -12,13 +11,13 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.ToString;
 
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
@@ -32,8 +31,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
 public class ChainingPrincipalResolver implements PrincipalResolver {
-
 
     /**
      * Factory to create the principal type.
@@ -59,7 +58,7 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     public void setChain(final PrincipalResolver... chain) {
         this.chain = Arrays.stream(chain).collect(Collectors.toList());
     }
-    
+
     /**
      * {@inheritDoc}
      * Resolves a credential by delegating to each of the configured resolvers in sequence. Note that the
@@ -72,21 +71,17 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     @Override
     public Principal resolve(final Credential credential, final Principal principal, final AuthenticationHandler handler) {
         final List<Principal> principals = new ArrayList<>();
-        chain.stream()
-                .filter(resolver -> resolver.supports(credential))
-                .forEach(resolver -> {
-                    LOGGER.debug("Invoking principal resolver [{}]", resolver);
-                    final Principal p = resolver.resolve(credential, principal, handler);
-                    if (p != null) {
-                        principals.add(p);
-                    }
-                });
-
+        chain.stream().filter(resolver -> resolver.supports(credential)).forEach(resolver -> {
+            LOGGER.debug("Invoking principal resolver [{}]", resolver);
+            final Principal p = resolver.resolve(credential, principal, handler);
+            if (p != null) {
+                principals.add(p);
+            }
+        });
         if (principals.isEmpty()) {
             LOGGER.warn("None of the principal resolvers in the chain were able to produce a principal");
             return NullPrincipal.getInstance();
         }
-
         final Map<String, Object> attributes = new HashMap<>();
         principals.forEach(p -> {
             if (p != null) {
@@ -97,17 +92,11 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
                 }
             }
         });
-
-        final long count = principals.stream()
-                .map(p -> p.getId().trim().toLowerCase())
-                .distinct()
-                .collect(Collectors.toSet()).size();
-
+        final long count = principals.stream().map(p -> p.getId().trim().toLowerCase()).distinct().collect(Collectors.toSet()).size();
         if (count > 1) {
             throw new PrincipalException("Resolved principals by the chain are not unique because principal resolvers have produced CAS principals "
-                    + "with different identifiers which typically is the result of a configuration issue.",
-                    new HashMap<>(0),
-                    new HashMap<>(0));
+                + "with different identifiers which typically is the result of a configuration issue.",
+                new HashMap<>(0), new HashMap<>(0));
         }
         final String principalId = principal != null ? principal.getId() : principals.get(0).getId();
         final Principal finalPrincipal = this.principalFactory.createPrincipal(principalId, attributes);
@@ -125,13 +114,6 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
     @Override
     public boolean supports(final Credential credential) {
         return this.chain.get(0).supports(credential);
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("chain", chain)
-                .toString();
     }
 
     @Override

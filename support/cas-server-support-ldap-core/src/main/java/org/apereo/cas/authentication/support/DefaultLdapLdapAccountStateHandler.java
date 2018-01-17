@@ -1,7 +1,8 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.shiro.util.ClassUtils;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
@@ -26,6 +27,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
+import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -48,6 +50,8 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      * Map of account state error to CAS authentication exception.
      */
     protected Map<AccountState.Error, LoginException> errorMap;
+
+    @Setter
     private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
 
     /**
@@ -116,11 +120,11 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      * @throws LoginException On errors that should be communicated as login exceptions.
      */
     protected void handleError(
-            final AccountState.Error error,
-            final AuthenticationResponse response,
-            final LdapPasswordPolicyConfiguration configuration,
-            final List<MessageDescriptor> messages)
-            throws LoginException {
+        final AccountState.Error error,
+        final AuthenticationResponse response,
+        final LdapPasswordPolicyConfiguration configuration,
+        final List<MessageDescriptor> messages)
+        throws LoginException {
 
         LOGGER.debug("Handling LDAP account state error [{}]", error);
         final LoginException ex = this.errorMap.get(error);
@@ -142,10 +146,10 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      * @param messages      Container for messages produced by account state warning handling.
      */
     protected void handleWarning(
-            final AccountState.Warning warning,
-            final AuthenticationResponse response,
-            final LdapPasswordPolicyConfiguration configuration,
-            final List<MessageDescriptor> messages) {
+        final AccountState.Warning warning,
+        final AuthenticationResponse response,
+        final LdapPasswordPolicyConfiguration configuration,
+        final List<MessageDescriptor> messages) {
 
 
         LOGGER.debug("Handling account state warning [{}]", warning);
@@ -158,27 +162,23 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
             final ZonedDateTime expDate = DateTimeUtils.zonedDateTimeOf(warning.getExpiration());
             final long ttl = ZonedDateTime.now(ZoneOffset.UTC).until(expDate, ChronoUnit.DAYS);
             LOGGER.debug(
-                    "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
-                    ttl,
-                    configuration.getPasswordWarningNumberOfDays());
+                "Password expires in [{}] days. Expiration warning threshold is [{}] days.",
+                ttl,
+                configuration.getPasswordWarningNumberOfDays());
             if (configuration.isAlwaysDisplayPasswordExpirationWarning() || ttl < configuration.getPasswordWarningNumberOfDays()) {
                 messages.add(new PasswordExpiringWarningMessageDescriptor("Password expires in {0} days.", ttl));
             }
         } else {
             LOGGER.debug("No account expiration warning was provided as part of the account state");
         }
-        
+
         if (warning.getLoginsRemaining() > 0) {
             messages.add(new DefaultMessageDescriptor(
-                    "password.expiration.loginsRemaining",
-                    "You have {0} logins remaining before you MUST change your password.",
-                    warning.getLoginsRemaining()));
+                "password.expiration.loginsRemaining",
+                "You have {0} logins remaining before you MUST change your password.",
+                new Serializable[]{warning.getLoginsRemaining()}));
 
         }
-    }
-
-    public void setAttributesToErrorMap(final Map<String, Class<LoginException>> attributesToErrorMap) {
-        this.attributesToErrorMap = attributesToErrorMap;
     }
 
     /**
@@ -187,16 +187,13 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      *
      * @param response the authentication response.
      */
+    @SneakyThrows
     protected void handlePolicyAttributes(final AuthenticationResponse response) {
-        final Collection<LdapAttribute> attrs = response.getLdapEntry().getAttributes();
-        for (final LdapAttribute attr : attrs) {
-            if (this.attributesToErrorMap.containsKey(attr.getName())
-                    && Boolean.parseBoolean(attr.getStringValue())) {
+        final Collection<LdapAttribute> attributes = response.getLdapEntry().getAttributes();
+        for (final LdapAttribute attr : attributes) {
+            if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
                 final Class<LoginException> clazz = this.attributesToErrorMap.get(attr.getName());
-                final LoginException ex = (LoginException) ClassUtils.newInstance(clazz);
-                if (ex != null) {
-                    throw new RuntimeException(ex.getMessage(), ex);
-                }
+                throw clazz.getDeclaredConstructor().newInstance();
             }
         }
     }

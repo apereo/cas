@@ -103,7 +103,7 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                 final String id = this.samlAttributeQueryTicketFactory.createTicketIdFor(query.getSubject().getNameID().getValue());
                 final SamlAttributeQueryTicket ticket = this.ticketRegistry.getTicket(id, SamlAttributeQueryTicket.class);
 
-                final Authentication authentication = ticket.getGrantingTicket().getAuthentication();
+                final Authentication authentication = ticket.getTicketGrantingTicket().getAuthentication();
                 final Principal principal = authentication.getPrincipal();
 
                 final Map<String, Object> authnAttrs = authentication.getAttributes();

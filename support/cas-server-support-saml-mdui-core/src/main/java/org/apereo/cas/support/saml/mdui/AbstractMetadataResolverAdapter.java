@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -116,6 +117,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      *
      * @param entityId the entity id
      */
+    @Synchronized
     public void buildMetadataResolverAggregate(final String entityId) {
         try {
             LOGGER.debug("Building metadata resolver aggregate");
@@ -130,13 +132,13 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
                 resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
             });
 
-            synchronized (this.lock) {
-                this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-                this.metadataResolver.setResolvers(resolvers);
-                LOGGER.info("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
-                this.metadataResolver.initialize();
-                LOGGER.info("Metadata aggregate initialized successfully.");
-            }
+
+            this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+            this.metadataResolver.setResolvers(resolvers);
+            LOGGER.info("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
+            this.metadataResolver.initialize();
+            LOGGER.info("Metadata aggregate initialized successfully.");
+
         } catch (final Exception ex) {
             throw new RuntimeException(ex.getMessage(), ex);
         }

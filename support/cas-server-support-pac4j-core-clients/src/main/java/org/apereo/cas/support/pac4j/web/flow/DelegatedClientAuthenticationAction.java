@@ -1,5 +1,9 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
@@ -55,6 +59,8 @@ import java.util.regex.Pattern;
  * @since 3.5.0
  */
 @Slf4j
+@Getter
+@AllArgsConstructor
 public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     /**
@@ -82,50 +88,38 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      */
     public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
 
-
-
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
+
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
     private final Clients clients;
-    private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final String themeParamName;
-    private final String localParamName;
-    private final boolean autoRedirect;
-    private final ServicesManager servicesManager;
 
-    public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
-                                               final String localParamName, final boolean autoRedirect, final ServicesManager servicesManager) {
-        this.clients = clients;
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.themeParamName = themeParamName;
-        this.localParamName = localParamName;
-        this.autoRedirect = autoRedirect;
-        this.servicesManager = servicesManager;
-    }
+    private final AuthenticationSystemSupport authenticationSystemSupport;
+
+    private final CentralAuthenticationService centralAuthenticationService;
+
+    private final String themeParamName;
+
+    private final String localParamName;
+
+    private final boolean autoRedirect;
+
+    private final ServicesManager servicesManager;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
-
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
-
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             return stopWebflow();
         }
-
         if (StringUtils.isNotBlank(clientName)) {
             final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             LOGGER.debug("Delegated authentication client is [{}]", client);
-
             final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
             LOGGER.debug("Retrieve service: [{}]", service);
@@ -136,7 +130,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                     throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
                 }
             }
-
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
@@ -145,11 +138,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 LOGGER.debug("The request requires http action.", e);
                 return stopWebflow();
             }
-
             restoreRequestAttribute(request, session, this.themeParamName);
             restoreRequestAttribute(request, session, this.localParamName);
             restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
-
             if (credentials != null) {
                 final ClientCredential clientCredential = new ClientCredential(credentials);
                 final AuthenticationResult authenticationResult =
@@ -159,13 +150,11 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 return success();
             }
         }
-
         // no or aborted authentication : go to login page
         prepareForLoginPage(context);
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
         }
-
         if (this.autoRedirect) {
             final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
             if (urls != null && urls.size() == 1) {
@@ -189,21 +178,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final HttpSession session = request.getSession();
-
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-
         final Service service = WebUtils.getService(context);
         LOGGER.debug("Save service: [{}]", service);
         session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         saveRequestParameter(request, session, this.themeParamName);
         saveRequestParameter(request, session, this.localParamName);
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
-
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
-
-        this.clients.findAllClients()
-            .stream()
-            .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
+        this.clients.findAllClients().stream().filter(client -> client instanceof IndirectClient
+            && isDelegatedClientAuthorizedForService(client, service))
             .forEach(client -> {
                 try {
                     final IndirectClient indirectClient = (IndirectClient) client;
@@ -284,8 +268,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      */
     public static Optional<ModelAndView> hasDelegationRequestFailed(final HttpServletRequest request, final int status) {
         final Map<String, String[]> params = request.getParameterMap();
-        if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description")
-            || params.containsKey("error_message")) {
+        if (params.containsKey("error") || params.containsKey("error_code") || params.containsKey("error_description") || params.containsKey("error_message")) {
             final Map<String, Object> model = new HashMap<>();
             if (params.containsKey("error_code")) {
                 model.put("code", StringEscapeUtils.escapeHtml4(request.getParameter("error_code")));
@@ -294,7 +277,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             }
             model.put("error", StringEscapeUtils.escapeHtml4(request.getParameter("error")));
             model.put("reason", StringEscapeUtils.escapeHtml4(request.getParameter("error_reason")));
-
             if (params.containsKey("error_description")) {
                 model.put("description", StringEscapeUtils.escapeHtml4(request.getParameter("error_description")));
             } else if (params.containsKey("error_message")) {
@@ -302,7 +284,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             }
             model.put(CasProtocolConstants.PARAMETER_SERVICE, request.getAttribute(CasProtocolConstants.PARAMETER_SERVICE));
             model.put("client", StringEscapeUtils.escapeHtml4(request.getParameter("client_name")));
-
             LOGGER.debug("Delegation request has failed. Details are [{}]", model);
             return Optional.of(new ModelAndView("casPac4jStopWebflow", model));
         }
@@ -334,42 +315,20 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     /**
      * The Provider login page configuration.
      */
+    @AllArgsConstructor
+    @Getter
+    @Setter
+    @ToString
     public static class ProviderLoginPageConfiguration implements Serializable {
+
         private static final long serialVersionUID = 6216882278086699364L;
+
         private final String name;
+
         private final String redirectUrl;
+
         private final String type;
+
         private final String cssClass;
-
-        /**
-         * Instantiates a new Provider ui configuration.
-         *
-         * @param name        the name
-         * @param redirectUrl the redirect url
-         * @param type        the type
-         * @param cssClass    for SAML2 clients, the class name used for custom styling of the redirect link
-         */
-        ProviderLoginPageConfiguration(final String name, final String redirectUrl, final String type, final String cssClass) {
-            this.name = name;
-            this.redirectUrl = redirectUrl;
-            this.type = type;
-            this.cssClass = cssClass;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public String getRedirectUrl() {
-            return redirectUrl;
-        }
-
-        public String getType() {
-            return type;
-        }
-
-        public String getCssClass() {
-            return cssClass;
-        }
     }
 }

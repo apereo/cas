@@ -87,7 +87,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
-            final String requestId = samlService.getRequestID();
+            final String requestId = samlService.getRequestId();
             if (StringUtils.isNotBlank(requestId)) {
                 samlResponse.setInResponseTo(requestId);
             }

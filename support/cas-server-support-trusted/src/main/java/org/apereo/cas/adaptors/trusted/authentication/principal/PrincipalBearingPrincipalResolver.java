@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -17,14 +17,14 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 3.0.0
  */
 @Slf4j
+@ToString(callSuper = true)
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public PrincipalBearingPrincipalResolver() {
     }
 
     public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                             final PrincipalFactory principalFactory,
-                                             final boolean returnNullIfNoAttributes,
+                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                              final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
@@ -37,13 +37,5 @@ public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalR
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof PrincipalBearingCredential;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

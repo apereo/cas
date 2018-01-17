@@ -2,11 +2,11 @@ package org.apereo.cas.adaptors.radius;
 
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import lombok.ToString;
 
 /**
  * Factory for creating RADIUS client instances.
@@ -15,6 +15,7 @@ import java.net.UnknownHostException;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
 public class RadiusClientFactory {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
@@ -55,10 +56,8 @@ public class RadiusClientFactory {
      * @param inetAddress        RADIUS server network address.
      * @param sharedSecret       RADIUS server authentication shared secret.
      */
-    public RadiusClientFactory(final int accountingPort, final int authenticationPort,
-                               final int socketTimeout,
-                               final String inetAddress,
-                               final String sharedSecret) {
+    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout,
+                               final String inetAddress, final String sharedSecret) {
         this.accountingPort = accountingPort;
         this.authenticationPort = authenticationPort;
         this.socketTimeout = socketTimeout;
@@ -79,15 +78,4 @@ public class RadiusClientFactory {
     public RadiusClient newInstance() throws IOException {
         return new RadiusClient(this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("accountingPort", this.accountingPort)
-                .append("authenticationPort", this.authenticationPort)
-                .append("socketTimeout", this.socketTimeout)
-                .append("inetAddress", this.inetAddress)
-                .toString();
-    }
 }
-

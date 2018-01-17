@@ -8,11 +8,11 @@ import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepos
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
+import lombok.ToString;
 
 /**
  * This is {@link JpaGoogleAuthenticatorTokenCredentialRepository} that stores gauth data into a RDBMS database.
@@ -23,8 +23,8 @@ import java.util.List;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerGoogleAuthenticator")
 @Slf4j
+@ToString
 public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-
 
     private final IGoogleAuthenticator googleAuthenticator;
 
@@ -36,17 +36,11 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     }
 
     @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
-
-    @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            final GoogleAuthenticatorAccount r =
-                this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorAccount.class.getSimpleName()
-                        + " r where r.username = :username",
-                    GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
+            final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM "
+                + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username",
+                GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
             return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
@@ -55,9 +49,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     }
 
     @Override
-    public void save(final String userName, final String secretKey,
-                     final int validationCode,
-                     final List<Integer> scratchCodes) {
+    public void save(final String userName, final String secretKey, final int validationCode, final List<Integer> scratchCodes) {
         final GoogleAuthenticatorAccount r = new GoogleAuthenticatorAccount(userName, secretKey, validationCode, scratchCodes);
         update(r);
     }

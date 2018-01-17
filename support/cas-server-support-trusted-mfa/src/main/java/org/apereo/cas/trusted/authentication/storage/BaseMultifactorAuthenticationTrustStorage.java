@@ -9,10 +9,10 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
+import lombok.ToString;
 
 /**
  * This is {@link BaseMultifactorAuthenticationTrustStorage}.
@@ -23,13 +23,14 @@ import java.util.Set;
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
+@ToString
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
 
-    
     private CipherExecutor<Serializable, String> cipherExecutor;
 
-    @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
-            resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
+    @Audit(action = "TRUSTED_AUTHENTICATION",
+        actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
+        resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
         LOGGER.debug("Stored authentication trust record for [{}]", record);
@@ -66,11 +67,6 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
 
     public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
         this.cipherExecutor = cipherExecutor;
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 
     /**

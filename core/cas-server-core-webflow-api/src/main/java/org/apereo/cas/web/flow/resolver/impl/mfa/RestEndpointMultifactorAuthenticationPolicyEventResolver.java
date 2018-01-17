@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -38,8 +39,8 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-
 
     private final String restEndpoint;
 
@@ -51,9 +52,8 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
                                                                     final AuthenticationServiceSelectionPlan authSelectionStrategies,
                                                                     final MultifactorAuthenticationProviderSelector selector,
                                                                     final CasConfigurationProperties casProperties) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies,
-                selector);
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+            warnCookieGenerator, authSelectionStrategies, selector);
         this.restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
     }
 
@@ -61,30 +61,24 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
-
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
-
         final Principal principal = authentication.getPrincipal();
         if (StringUtils.isBlank(restEndpoint)) {
             LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return null;
         }
-
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
         }
-
         final Collection<MultifactorAuthenticationProvider> flattenedProviders = flattenProviders(providerMap.values());
-
         LOGGER.debug("Contacting [{}] to inquire about [{}]", restEndpoint, principal.getId());
         final String results = callRestEndpointForMultifactor(principal, context);
-
         if (StringUtils.isNotBlank(results)) {
             return resolveMultifactorEventViaRestResult(results, flattenedProviders);
         }
@@ -93,8 +87,8 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",
-            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
@@ -107,14 +101,9 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
      * @param providers the flattened providers
      * @return the events
      */
-    protected Set<Event> resolveMultifactorEventViaRestResult(final String results,
-                                                              final Collection<MultifactorAuthenticationProvider> providers) {
+    protected Set<Event> resolveMultifactorEventViaRestResult(final String results, final Collection<MultifactorAuthenticationProvider> providers) {
         LOGGER.debug("Result returned from the rest endpoint is [{}]", results);
-        final MultifactorAuthenticationProvider restProvider = providers.stream()
-                .filter(p -> p.matches(results))
-                .findFirst()
-                .orElse(null);
-
+        final MultifactorAuthenticationProvider restProvider = providers.stream().filter(p -> p.matches(results)).findFirst().orElse(null);
         if (restProvider != null) {
             LOGGER.debug("Found multifactor authentication provider [{}]", restProvider.getId());
             return CollectionUtils.wrapSet(new Event(this, restProvider.getId()));
@@ -145,7 +134,9 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
      * The Rest endpoint entity passed along to the API.
      */
     public static class RestEndpointEntity {
+
         private String principalId;
+
         private String serviceId;
 
         public RestEndpointEntity(final String principalId, final String serviceId) {
@@ -153,16 +144,8 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
             this.serviceId = serviceId;
         }
 
-        public String getPrincipalId() {
-            return principalId;
-        }
-
         public void setPrincipalId(final String principalId) {
             this.principalId = principalId;
-        }
-
-        public String getServiceId() {
-            return serviceId;
         }
 
         public void setServiceId(final String serviceId) {

@@ -47,13 +47,13 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
     }
 
     @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
     @Override
     public Authentication getAuthentication() {
-        return getGrantingTicket().getAuthentication();
+        return getTicketGrantingTicket().getAuthentication();
     }
 
     @Override

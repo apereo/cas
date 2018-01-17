@@ -1,7 +1,7 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
@@ -18,6 +18,7 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @since 3.1
  */
 @Slf4j
+@ToString(callSuper = true)
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     public SpnegoPrincipalResolver() {
@@ -38,15 +39,6 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null
-                && SpnegoCredential.class.equals(credential.getClass());
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
+        return credential != null && SpnegoCredential.class.equals(credential.getClass());
     }
 }

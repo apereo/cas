@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -7,9 +8,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -20,6 +22,9 @@ import java.util.List;
  * @since 4.0.0
  */
 @Slf4j
+@ToString
+@NoArgsConstructor
+@Getter
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     /**
@@ -48,12 +53,6 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     private List<MessageDescriptor> warnings;
 
     /**
-     * No-arg constructor for serialization support.
-     */
-    private DefaultAuthenticationHandlerExecutionResult() {
-    }
-
-    /**
      * Instantiates a new handler result.
      *
      * @param source   the source
@@ -70,7 +69,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param metaData the meta data
      * @param p        the p
      */
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+                                                       final Principal p) {
         this(source, metaData, p, null);
     }
 
@@ -94,13 +94,9 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param p        the p
      * @param warnings the warnings
      */
-    public DefaultAuthenticationHandlerExecutionResult(
-            final AuthenticationHandler source,
-            final CredentialMetaData metaData,
-            final Principal p,
-            final List<MessageDescriptor> warnings) {
-        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(),
-                metaData, p, warnings);
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
+                                                       final Principal p, final List<MessageDescriptor> warnings) {
+        this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
     }
 
     /**
@@ -111,20 +107,13 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param p           the p
      * @param warnings    the warnings
      */
-    public DefaultAuthenticationHandlerExecutionResult(
-            final String handlerName,
-            final CredentialMetaData metaData,
-            final Principal p, final List<MessageDescriptor> warnings) {
+    public DefaultAuthenticationHandlerExecutionResult(final String handlerName, final CredentialMetaData metaData,
+                                                       final Principal p, final List<MessageDescriptor> warnings) {
         Assert.notNull(metaData, "Credential metadata cannot be null.");
         this.handlerName = handlerName;
         this.credentialMetaData = metaData;
         this.principal = p;
         this.warnings = warnings;
-    }
-
-    @Override
-    public String getHandlerName() {
-        return this.handlerName;
     }
 
     @Override
@@ -139,9 +128,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
 
     @Override
     public List<MessageDescriptor> getWarnings() {
-        return this.warnings == null
-                ? new ArrayList<>(0)
-                : new ArrayList<>(this.warnings);
+        return this.warnings == null ? new ArrayList<>(0) : new ArrayList<>(this.warnings);
     }
 
     @Override
@@ -169,10 +156,5 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
         builder.append(this.principal, other.principal);
         builder.append(CollectionUtils.wrap(this.warnings), CollectionUtils.wrap(other.warnings));
         return builder.isEquals();
-    }
-
-    @Override
-    public String toString() {
-        return this.handlerName + ':' + this.credentialMetaData;
     }
 }

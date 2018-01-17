@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.data.redis.core.RedisTemplate;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import lombok.ToString;
 
 /**
  * Implementation of the service registry interface which stores the services in a redis instance.
@@ -17,8 +17,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
+@ToString
 public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
-
 
     private static final String CAS_SERVICE_PREFIX = RegisteredService.class.getSimpleName() + ':';
 
@@ -65,10 +65,9 @@ public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
     public List<RegisteredService> load() {
         try {
             return this.template.keys(getPatternRegisteredServiceRedisKey())
-                    .stream()
-                    .map(redisKey -> this.template.boundValueOps(redisKey).get())
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
+                .stream()
+                .map(redisKey -> this.template.boundValueOps(redisKey).get())
+                .filter(Objects::nonNull).collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -91,11 +90,6 @@ public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
         return load().stream().filter(r -> r.matches(id)).findFirst().orElse(null);
     }
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
-    }
-
     private static String getRegisteredServiceRedisKey(final RegisteredService registeredService) {
         return getRegisteredServiceRedisKey(registeredService.getId());
     }
@@ -107,5 +101,4 @@ public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
     private static String getPatternRegisteredServiceRedisKey() {
         return CAS_SERVICE_PREFIX + "*";
     }
-
 }

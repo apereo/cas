@@ -2,11 +2,9 @@ package org.apereo.cas.support.events.dao;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.util.DateTimeUtils;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.CollectionTable;
 import javax.persistence.Column;
 import javax.persistence.ElementCollection;
@@ -22,6 +20,8 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link CasEvent}, which represents a single event stored in the events repository.
@@ -32,6 +32,8 @@ import java.util.Map;
 @Entity
 @Table(name = "CasEvent")
 @Slf4j
+@ToString
+@Getter
 public class CasEvent {
 
     @org.springframework.data.annotation.Id
@@ -48,7 +50,7 @@ public class CasEvent {
 
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String creationTime;
-    
+
     @ElementCollection
     @MapKeyColumn(name = "name")
     @Column(name = "value")
@@ -61,7 +63,7 @@ public class CasEvent {
     public CasEvent() {
         this.id = System.currentTimeMillis();
     }
-    
+
     public void setType(final String type) {
         this.type = type;
     }
@@ -70,10 +72,6 @@ public class CasEvent {
         this.properties = properties;
     }
 
-    public String getType() {
-        return this.type;
-    }
-    
     /**
      * Gets creation time. Attempts to parse the value
      * as a {@link ZonedDateTime}. Otherwise, assumes a
@@ -89,10 +87,6 @@ public class CasEvent {
         }
         final LocalDateTime lt = DateTimeUtils.localDateTimeOf(this.creationTime);
         return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
-    }
-
-    public Map<String, String> getProperties() {
-        return this.properties;
     }
 
     /**
@@ -197,20 +191,8 @@ public class CasEvent {
         return this.properties.get(key);
     }
 
-    public String getPrincipalId() {
-        return this.principalId;
-    }
-
     public void setPrincipalId(final String principalId) {
         this.principalId = principalId;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("type", this.type)
-                .append("principalId", this.principalId)
-                .toString();
     }
 
     /**

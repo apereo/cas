@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 
+import lombok.Getter;
+
 /**
  * This is {@link ScriptedRegisteredServiceAttributeReleasePolicy}.
  *
@@ -18,9 +20,10 @@ import java.util.regex.Matcher;
  * @since 5.1.0
  */
 @Slf4j
+@Getter
 public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
-    private static final long serialVersionUID = -979532578142774128L;
 
+    private static final long serialVersionUID = -979532578142774128L;
 
     private String scriptFile;
 
@@ -31,18 +34,12 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
         this.scriptFile = scriptFile;
     }
 
-    public String getScriptFile() {
-        return scriptFile;
-    }
-
     public void setScriptFile(final String scriptFile) {
         this.scriptFile = scriptFile;
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                     final Map<String, Object> attributes,
-                                                     final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
         try {
             if (StringUtils.isBlank(this.scriptFile)) {
                 return new HashMap<>(0);
@@ -58,8 +55,7 @@ public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractReg
         return new HashMap<>(0);
     }
 
-    private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes,
-                                                                           final Matcher matcherInline) {
+    private static Map<String, Object> getAttributesFromInlineGroovyScript(final Map<String, Object> attributes, final Matcher matcherInline) {
         final String script = matcherInline.group(1).trim();
         final Map<String, Object> args = CollectionUtils.wrap("attributes", attributes, "logger", LOGGER);
         final Map<String, Object> map = ScriptingUtils.executeGroovyScriptEngine(script, args, Map.class);

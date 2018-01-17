@@ -1,8 +1,8 @@
 package org.apereo.cas.support.events.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.services.RegisteredService;
+import lombok.ToString;
 
 /**
  * This is {@link CasRegisteredServiceSavedEvent} that is signaled
@@ -12,9 +12,11 @@ import org.apereo.cas.services.RegisteredService;
  * @since 4.2.0
  */
 @Slf4j
+@ToString
 public class CasRegisteredServiceSavedEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = 291168299766263298L;
+
     private final RegisteredService registeredService;
 
     /**
@@ -30,13 +32,5 @@ public class CasRegisteredServiceSavedEvent extends BaseCasRegisteredServiceEven
 
     public RegisteredService getRegisteredService() {
         return this.registeredService;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("registeredService", this.registeredService)
-                .toString();
     }
 }
