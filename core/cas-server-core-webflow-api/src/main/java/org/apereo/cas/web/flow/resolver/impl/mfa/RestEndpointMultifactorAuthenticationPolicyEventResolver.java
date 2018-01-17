@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -25,11 +26,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import lombok.Getter;
 
 /**
  * This is {@link RestEndpointMultifactorAuthenticationPolicyEventResolver}.
@@ -44,10 +45,13 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
     private final String restEndpoint;
 
     public RestEndpointMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                                    final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
-                                                                    final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
+                                                                    final CentralAuthenticationService centralAuthenticationService,
+                                                                    final ServicesManager servicesManager,
+                                                                    final TicketRegistrySupport ticketRegistrySupport,
+                                                                    final CookieGenerator warnCookieGenerator,
                                                                     final AuthenticationServiceSelectionPlan authSelectionStrategies,
-                                                                    final MultifactorAuthenticationProviderSelector selector, final CasConfigurationProperties casProperties) {
+                                                                    final MultifactorAuthenticationProviderSelector selector,
+                                                                    final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
             warnCookieGenerator, authSelectionStrategies, selector);
         this.restEndpoint = casProperties.getAuthn().getMfa().getRestEndpoint();
@@ -66,7 +70,8 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
             LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return null;
         }
-        final Map<String, MultifactorAuthenticationProvider> providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap =
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;

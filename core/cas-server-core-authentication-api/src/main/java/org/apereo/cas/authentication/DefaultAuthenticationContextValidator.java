@@ -104,7 +104,8 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
                 return provider.equals(p) || provider.getOrder() >= p.getOrder();
             }).findFirst();
             if (result.isPresent()) {
-                LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.", result.get(), requestedProvider);
+                LOGGER.debug("Current provider [{}] already satisfies the authentication requirements of [{}]; proceed with flow normally.",
+                    result.get(), requestedProvider);
                 return Pair.of(Boolean.TRUE, requestedProvider);
             }
         }
@@ -129,7 +130,8 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         return Pair.of(Boolean.FALSE, requestedProvider);
     }
 
-    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication, final Collection<MultifactorAuthenticationProvider> providers) {
+    private Collection<MultifactorAuthenticationProvider> getSatisfiedAuthenticationProviders(final Authentication authentication,
+                                                                                              final Collection<MultifactorAuthenticationProvider> providers) {
         final Collection<Object> contexts = CollectionUtils.toCollection(authentication.getAttributes().get(this.authenticationContextAttribute));
         if (contexts == null || contexts.isEmpty()) {
             LOGGER.debug("No authentication context could be determined based on authentication attribute [{}]", this.authenticationContextAttribute);
@@ -140,7 +142,8 @@ public class DefaultAuthenticationContextValidator implements AuthenticationCont
         return providers;
     }
 
-    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
+    private static Optional<MultifactorAuthenticationProvider> locateRequestedProvider(
+        final Collection<MultifactorAuthenticationProvider> providersArray, final String requestedProvider) {
         return providersArray.stream().filter(provider -> provider.getId().equals(requestedProvider)).findFirst();
     }
 

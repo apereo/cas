@@ -114,7 +114,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @param attributeName       the attribute name
      * @param filteredValues      the filtered values
      */
-    protected void collectAttributeWithFilteredValues(final Map<String, Object> attributesToRelease, final String attributeName, final List<Object> filteredValues) {
+    protected void collectAttributeWithFilteredValues(final Map<String, Object> attributesToRelease, final String attributeName,
+                                                      final List<Object> filteredValues) {
         attributesToRelease.put(attributeName, filteredValues);
     }
 

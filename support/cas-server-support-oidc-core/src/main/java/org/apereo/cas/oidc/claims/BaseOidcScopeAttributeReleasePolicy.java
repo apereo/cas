@@ -61,14 +61,18 @@ public abstract class BaseOidcScopeAttributeReleasePolicy extends AbstractRegist
         final List<String> supportedClaims = properties.getAuthn().getOidc().getClaims();
         final Set<String> allowedClaims = new HashSet<>(getAllowedAttributes());
         allowedClaims.retainAll(supportedClaims);
-        LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with " + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(), getAllowedAttributes(), getScopeName(), supportedClaims, allowedClaims);
-        allowedClaims.stream().map(claim -> mapClaimToAttribute(claim, resolvedAttributes)).filter(p -> p.getValue() != null).forEach(p -> attributesToRelease.put(p.getKey(), p.getValue()));
+        LOGGER.debug("[{}] is designed to allow claims [{}] for scope [{}]. After cross-checking with "
+            + "supported claims [{}], the final collection of allowed attributes is [{}]", getClass().getSimpleName(),
+            getAllowedAttributes(), getScopeName(), supportedClaims, allowedClaims);
+        allowedClaims.stream().map(claim -> mapClaimToAttribute(claim, resolvedAttributes))
+            .filter(p -> p.getValue() != null).forEach(p -> attributesToRelease.put(p.getKey(), p.getValue()));
         return attributesToRelease;
     }
 
     private Pair<String, Object> mapClaimToAttribute(final String claim, final Map<String, Object> resolvedAttributes) {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper = applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);
+        final OidcAttributeToScopeClaimMapper attributeToScopeClaimMapper =
+            applicationContext.getBean("oidcAttributeToScopeClaimMapper", OidcAttributeToScopeClaimMapper.class);
         LOGGER.debug("Attempting to process claim [{}]", claim);
         if (attributeToScopeClaimMapper.containsMappedAttribute(claim)) {
             final String mappedAttr = attributeToScopeClaimMapper.getMappedAttribute(claim);
