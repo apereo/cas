@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DefaultMessageDescriptor;
 import org.apereo.cas.authentication.MessageDescriptor;
@@ -25,6 +27,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import javax.security.auth.login.LoginException;
+import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
@@ -47,6 +50,8 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      * Map of account state error to CAS authentication exception.
      */
     protected Map<AccountState.Error, LoginException> errorMap;
+
+    @Setter
     private Map<String, Class<LoginException>> attributesToErrorMap = new LinkedCaseInsensitiveMap<>();
 
     /**
@@ -171,13 +176,9 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
             messages.add(new DefaultMessageDescriptor(
                 "password.expiration.loginsRemaining",
                 "You have {0} logins remaining before you MUST change your password.",
-                warning.getLoginsRemaining()));
+                new Serializable[]{warning.getLoginsRemaining()}));
 
         }
-    }
-
-    public void setAttributesToErrorMap(final Map<String, Class<LoginException>> attributesToErrorMap) {
-        this.attributesToErrorMap = attributesToErrorMap;
     }
 
     /**
@@ -186,17 +187,13 @@ public class DefaultLdapLdapAccountStateHandler implements LdapAccountStateHandl
      *
      * @param response the authentication response.
      */
+    @SneakyThrows
     protected void handlePolicyAttributes(final AuthenticationResponse response) {
         final Collection<LdapAttribute> attributes = response.getLdapEntry().getAttributes();
         for (final LdapAttribute attr : attributes) {
             if (this.attributesToErrorMap.containsKey(attr.getName()) && Boolean.parseBoolean(attr.getStringValue())) {
                 final Class<LoginException> clazz = this.attributesToErrorMap.get(attr.getName());
-                try {
-                    final LoginException ex = clazz.getDeclaredConstructor().newInstance();
-                    throw ex;
-                } catch (final Exception e) {
-                    throw new RuntimeException(e.getMessage(), e);
-                }
+                throw clazz.getDeclaredConstructor().newInstance();
             }
         }
     }

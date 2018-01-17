@@ -36,8 +36,7 @@ import java.util.stream.Stream;
  */
 @Slf4j
 public abstract class AbstractServicesManager implements ServicesManager {
-
-
+    
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final ServiceRegistryDao serviceRegistryDao;
@@ -198,7 +197,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
-        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
+        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao.getName());
     }
 
     private void evaluateExpiredServiceDefinitions() {

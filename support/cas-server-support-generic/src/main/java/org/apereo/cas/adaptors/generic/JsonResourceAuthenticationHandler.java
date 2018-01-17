@@ -21,6 +21,7 @@ import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.io.Serializable;
 import java.security.GeneralSecurityException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
@@ -100,7 +101,8 @@ public class JsonResourceAuthenticationHandler extends AbstractUsernamePasswordA
                         final long daysRemaining = ChronoUnit.DAYS.between(now, account.getExpirationDate());
                         warnings.add(new DefaultMessageDescriptor(
                             "password.expiration.loginsRemaining",
-                            "You have {0} logins remaining before you MUST change your password.", daysRemaining));
+                            "You have {0} logins remaining before you MUST change your password.",
+                            new Serializable[] {daysRemaining}));
                     }
                 }
             }
