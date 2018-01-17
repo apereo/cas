@@ -72,16 +72,16 @@ public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
         actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId()));
         actionState.getTransitionSet().add(createTransition(DelegatedClientAuthenticationAction.STOP,
                 DelegatedClientAuthenticationAction.STOP_WEBFLOW));
-        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, "P4jFailure");
+        createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, "Pac4jFailure");
 
         setStartState(flow, actionState);
     }
 
     private void createAuthnFailureAction(final Flow flow){
-        final ActionState actionState = createActionState(flow, "P4jFailure",
+        final ActionState actionState = createActionState(flow, "Pac4jFailure",
                 createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER));
 
-        actionState.getEntryActionList().add(createEvaluateAction("initialFlowSetupP4jAction"));
+        actionState.getEntryActionList().add(createEvaluateAction("Pac4jInitialFlowSetupAction"));
 
         createTransitionForState(actionState, UnauthorizedAuthenticationException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_AUTHENTICATION_BLOCKED);
         createTransitionForState(actionState, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK);
