@@ -8,11 +8,12 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.web.flow.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.repository.NoSuchFlowExecutionException;
@@ -26,22 +27,31 @@ import java.util.List;
  * @author Francis Le Coq
  * @since 5.2
  */
-public class Pac4jInitialFlowSetupAction extends AbstractAction {
+public class Pac4jInitialFlowSetupAction extends InitialFlowSetupAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jInitialFlowSetupAction.class);
 
     private final CasConfigurationProperties casProperties;
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final List<ArgumentExtractor> argumentExtractors;
 
     public Pac4jInitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
                                   final ServicesManager servicesManager,
                                   final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionPlan,
+                                  final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+                                  final CookieRetrievingCookieGenerator warnCookieGenerator,
                                   final CasConfigurationProperties casProperties) {
+
+        super(argumentExtractors, servicesManager, authenticationRequestServiceSelectionPlan, ticketGrantingTicketCookieGenerator, warnCookieGenerator, casProperties);
+
         this.argumentExtractors = argumentExtractors;
         this.servicesManager = servicesManager;
         this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionPlan;
+        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
+        this.warnCookieGenerator = warnCookieGenerator;
         this.casProperties = casProperties;
     }
 
@@ -79,9 +89,5 @@ public class Pac4jInitialFlowSetupAction extends AbstractAction {
                     new UnauthorizedServiceException("screen.service.required.message", "Service is required"));
         }
         WebUtils.putService(context, service);
-    }
-
-    public ServicesManager getServicesManager() {
-        return servicesManager;
     }
 }

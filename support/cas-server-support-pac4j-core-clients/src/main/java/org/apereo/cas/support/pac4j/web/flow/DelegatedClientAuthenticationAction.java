@@ -154,7 +154,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                     final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                     WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 } catch (final PrincipalException e) {
-                    LOGGER.warn("Could not grant service ticket [{}]. Routing to [{}]", e.getMessage(), CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE);
+                    LOGGER.warn("PrincipalException caught on service [{}]", e.getMessage());
                     return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, e);
                 }
                 return success();
