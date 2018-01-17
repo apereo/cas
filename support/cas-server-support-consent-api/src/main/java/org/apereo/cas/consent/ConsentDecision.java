@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link ConsentDecision}.
@@ -23,6 +24,7 @@ import lombok.ToString;
 @Table(name = "ConsentDecision")
 @Slf4j
 @ToString
+@Getter
 public class ConsentDecision {
 
     @Id
@@ -76,16 +78,8 @@ public class ConsentDecision {
         this.id = id;
     }
 
-    public String getPrincipal() {
-        return principal;
-    }
-
     public void setPrincipal(final String principal) {
         this.principal = principal;
-    }
-
-    public String getService() {
-        return service;
     }
 
     public void setService(final String service) {
@@ -106,10 +100,6 @@ public class ConsentDecision {
 
     public Long getReminder() {
         return reminder;
-    }
-
-    public String getAttributes() {
-        return attributes;
     }
 
     public void setAttributes(final String attributes) {

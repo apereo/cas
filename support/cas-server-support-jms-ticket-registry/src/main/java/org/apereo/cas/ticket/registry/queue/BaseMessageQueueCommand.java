@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link BaseMessageQueueCommand}.
@@ -15,16 +16,13 @@ import lombok.ToString;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @ToString
+@Getter
 public abstract class BaseMessageQueueCommand {
 
     private final StringBean id;
 
     public BaseMessageQueueCommand(final StringBean id) {
         this.id = id;
-    }
-
-    public StringBean getId() {
-        return id;
     }
 
     /**

@@ -1,5 +1,8 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -7,6 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Credential;
 import java.io.Serializable;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Represents the duo credential.
@@ -15,6 +19,10 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class DuoCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -7570600733132111037L;
@@ -47,22 +55,6 @@ public class DuoCredential implements Credential, Serializable {
     @Override
     public String getId() {
         return this.username;
-    }
-
-    public String getSignedDuoResponse() {
-        return this.signedDuoResponse;
-    }
-
-    public String getUsername() {
-        return this.username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public void setSignedDuoResponse(final String signedDuoResponse) {
-        this.signedDuoResponse = signedDuoResponse;
     }
 
     public boolean isValid() {

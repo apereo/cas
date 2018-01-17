@@ -3,9 +3,9 @@ package org.apereo.cas.util.cipher;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
-
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
+import lombok.Getter;
 
 /**
  * A cipher executor that does compression/base64.
@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1
  */
 @Slf4j
+@Getter
 public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, String> {
 
     private static CipherExecutor<Serializable, String> INSTANCE;
@@ -42,10 +43,5 @@ public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, S
     public String decode(final Serializable value) {
         final byte[] decoded = EncodingUtils.decodeBase64(value.toString());
         return new String(decoded, StandardCharsets.UTF_8);
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 }

@@ -82,7 +82,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
 
         final SamlService impl = new SamlServiceFactory().createService(request);
         assertEquals("artifact", impl.getArtifactId());
-        assertEquals("_192.168.16.51.1024506224022", impl.getRequestID());
+        assertEquals("_192.168.16.51.1024506224022", impl.getRequestId());
     }
 
     @Test

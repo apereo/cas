@@ -21,6 +21,7 @@ import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link CasEvent}, which represents a single event stored in the events repository.
@@ -32,6 +33,7 @@ import lombok.ToString;
 @Table(name = "CasEvent")
 @Slf4j
 @ToString
+@Getter
 public class CasEvent {
 
     @org.springframework.data.annotation.Id
@@ -70,10 +72,6 @@ public class CasEvent {
         this.properties = properties;
     }
 
-    public String getType() {
-        return this.type;
-    }
-
     /**
      * Gets creation time. Attempts to parse the value
      * as a {@link ZonedDateTime}. Otherwise, assumes a
@@ -89,10 +87,6 @@ public class CasEvent {
         }
         final LocalDateTime lt = DateTimeUtils.localDateTimeOf(this.creationTime);
         return DateTimeUtils.zonedDateTimeOf(lt.atZone(ZoneId.systemDefault()));
-    }
-
-    public Map<String, String> getProperties() {
-        return this.properties;
     }
 
     /**
@@ -195,10 +189,6 @@ public class CasEvent {
      */
     public String get(final String key) {
         return this.properties.get(key);
-    }
-
-    public String getPrincipalId() {
-        return this.principalId;
     }
 
     public void setPrincipalId(final String principalId) {

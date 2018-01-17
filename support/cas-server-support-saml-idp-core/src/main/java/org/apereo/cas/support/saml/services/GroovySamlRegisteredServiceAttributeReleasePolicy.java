@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -19,9 +20,10 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
-    private static final long serialVersionUID = 3020434998499030162L;
 
+    private static final long serialVersionUID = 3020434998499030162L;
 
     private String groovyScript;
 
@@ -32,20 +34,15 @@ public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlR
         this.groovyScript = groovyScript;
     }
 
-    public String getGroovyScript() {
-        return groovyScript;
-    }
-
     public void setGroovyScript(final String groovyScript) {
         this.groovyScript = groovyScript;
     }
-    
+
     @Override
-    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes, 
-                                                                        final SamlRegisteredService service, 
-                                                                        final ApplicationContext applicationContext, 
-                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver, 
-                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade, 
+    protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,
+                                                                        final SamlRegisteredService service, final ApplicationContext applicationContext,
+                                                                        final SamlRegisteredServiceCachingMetadataResolver resolver,
+                                                                        final SamlRegisteredServiceServiceProviderMetadataFacade facade,
                                                                         final EntityDescriptor entityDescriptor) {
         try {
             final Object[] args = {attributes, service, resolver, facade, entityDescriptor, applicationContext, LOGGER};

@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.AbstractCredential;
+import lombok.Getter;
 
 /**
  * This is {@link DigestCredential}.
@@ -16,6 +17,7 @@ import org.apereo.cas.authentication.AbstractCredential;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class DigestCredential extends AbstractCredential {
 
     private static final long serialVersionUID = 1523693794392289803L;
@@ -40,16 +42,8 @@ public class DigestCredential extends AbstractCredential {
         this.id = id;
     }
 
-    public String getRealm() {
-        return realm;
-    }
-
     public void setRealm(final String realm) {
         this.realm = realm;
-    }
-
-    public String getHash() {
-        return hash;
     }
 
     public void setHash(final String hash) {
@@ -74,10 +68,5 @@ public class DigestCredential extends AbstractCredential {
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(realm).append(hash).append(id).toHashCode();
-    }
-
-    @Override
-    public String getId() {
-        return this.id;
     }
 }

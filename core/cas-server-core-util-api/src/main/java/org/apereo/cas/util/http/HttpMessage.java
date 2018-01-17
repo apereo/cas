@@ -6,6 +6,7 @@ import org.springframework.http.MediaType;
 import java.io.Serializable;
 import java.net.URL;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link HttpMessage}.
@@ -15,6 +16,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class HttpMessage implements Serializable {
 
     private static final long serialVersionUID = 2015460875654586133L;
@@ -75,10 +77,6 @@ public class HttpMessage implements Serializable {
 
     public String getMessage() {
         return this.formatOutputMessageInternal(this.message);
-    }
-
-    public String getContentType() {
-        return this.contentType;
     }
 
     public void setContentType(final String type) {

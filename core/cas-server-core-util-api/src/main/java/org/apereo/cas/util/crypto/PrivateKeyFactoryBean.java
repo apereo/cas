@@ -7,7 +7,6 @@ import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import org.springframework.beans.factory.config.AbstractFactoryBean;
 import org.springframework.core.io.Resource;
-
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -18,6 +17,7 @@ import java.security.KeyPair;
 import java.security.PrivateKey;
 import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
+import lombok.Getter;
 
 /**
  * Factory Bean for creating a private key from a file.
@@ -26,14 +26,15 @@ import java.security.spec.PKCS8EncodedKeySpec;
  * @since 3.1
  */
 @Slf4j
+@Getter
 public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
-
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
 
     private Resource location;
+
     private String algorithm;
 
     @Override
@@ -49,8 +50,8 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private PrivateKey readPemPrivateKey() {
         LOGGER.debug("Attempting to read as PEM [{}]", this.location);
         try (Reader in = new InputStreamReader(this.location.getInputStream(), StandardCharsets.UTF_8);
-             BufferedReader br = new BufferedReader(in);
-             PEMParser pp = new PEMParser(br)) {
+            BufferedReader br = new BufferedReader(in);
+            PEMParser pp = new PEMParser(br)) {
             final PEMKeyPair pemKeyPair = (PEMKeyPair) pp.readObject();
             final KeyPair kp = new JcaPEMKeyConverter().getKeyPair(pemKeyPair);
             return kp.getPrivate();
@@ -90,9 +91,4 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     public Resource getLocation() {
         return this.location;
     }
-
-    public String getAlgorithm() {
-        return this.algorithm;
-    }
-
 }

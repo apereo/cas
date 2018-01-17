@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.RegexUtils;
 import java.net.URL;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
@@ -18,6 +19,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -211069319543047324L;
@@ -46,10 +48,6 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
             LOGGER.warn("Pattern specified [{}] is not a valid regular expression", pgtUrlPattern);
             this.pattern = RegexUtils.MATCH_NOTHING_PATTERN.pattern();
         }
-    }
-
-    public String getPattern() {
-        return this.pattern;
     }
 
     @JsonIgnore

@@ -7,11 +7,11 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
-
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * This is {@link BaseBinaryCipherExecutor}.
@@ -24,6 +24,7 @@ import java.util.Map;
  * @since 4.2
  */
 @Slf4j
+@Getter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
 
     /**
@@ -39,6 +40,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     private byte[] encryptionSecretKey;
 
     private final SecretKeySpec encryptionKey;
+
     private final Cipher aesCipher;
 
     /**
@@ -51,8 +53,7 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @param cipherName          the cipher name
      */
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
-                                    final int signingKeySize, final int encryptionKeySize,
-                                    final String cipherName) {
+                                    final int signingKeySize, final int encryptionKeySize, final String cipherName) {
         try {
             this.cipherName = cipherName;
             ensureSigningKeyExists(signingSecretKey, signingKeySize);
@@ -101,11 +102,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
             LOGGER.error(e.getMessage(), e);
             throw new RuntimeException(e.getMessage(), e);
         }
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 
     /**

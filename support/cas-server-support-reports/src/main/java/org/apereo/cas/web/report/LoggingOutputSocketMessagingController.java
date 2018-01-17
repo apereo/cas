@@ -107,7 +107,7 @@ public class LoggingOutputSocketMessagingController {
      */
 
     @SendTo("/logs/logoutput")
-    @Synchronized("lock")
+    @Synchronized
     public String logoutput() {
         final String log = LOG_OUTPUT.toString();
         LOG_OUTPUT = new StringBuilder();

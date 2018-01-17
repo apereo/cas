@@ -2,8 +2,8 @@ package org.apereo.cas.util.cipher;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-
 import java.io.Serializable;
+import lombok.Getter;
 
 /**
  * No-Op cipher executor that does nothing for encryption/decryption.
@@ -12,6 +12,7 @@ import java.io.Serializable;
  * @since 4.1
  */
 @Slf4j
+@Getter
 public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Serializable> {
 
     private static CipherExecutor<Serializable, Serializable> INSTANCE;
@@ -39,10 +40,5 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Ser
     @Override
     public Serializable decode(final Serializable value) {
         return value;
-    }
-
-    @Override
-    public String getName() {
-        return null;
     }
 }

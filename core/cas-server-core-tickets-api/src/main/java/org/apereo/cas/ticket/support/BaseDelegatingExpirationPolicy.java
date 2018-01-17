@@ -2,16 +2,19 @@ package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
-
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
+import lombok.Getter;
 
 /**
  * This is {@link BaseDelegatingExpirationPolicy} that activates a number of inner expiration policies
@@ -25,18 +28,17 @@ import java.util.Optional;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@Getter
+@Setter
+@NoArgsConstructor(force = true)
+@EqualsAndHashCode (callSuper = true)
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
+
     private static final long serialVersionUID = 5927936344949518688L;
-
-
 
     private final Map<String, ExpirationPolicy> policies = new LinkedHashMap<>();
 
     private final ExpirationPolicy defaultExpirationPolicy;
-
-    public BaseDelegatingExpirationPolicy() {
-        this(null);
-    }
 
     public BaseDelegatingExpirationPolicy(final ExpirationPolicy defaultExpirationPolicy) {
         this.defaultExpirationPolicy = defaultExpirationPolicy;
@@ -73,13 +75,13 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         LOGGER.debug("Adding expiration policy [{}] with name [{}]", policy, name);
         addPolicy(name.name(), policy);
     }
-    
+
     @Override
     public boolean isExpired(final TicketState ticketState) {
         final Optional<ExpirationPolicy> match = getExpirationPolicyFor(ticketState);
         if (!match.isPresent()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
-                    + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
+                + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
             return false;
         }
         final ExpirationPolicy policy = match.get();
@@ -104,14 +106,6 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         }
         return this.defaultExpirationPolicy.getTimeToIdle();
     }
-
-    public Map<String, ExpirationPolicy> getPolicies() {
-        return policies;
-    }
-
-    public ExpirationPolicy getDefaultExpirationPolicy() {
-        return defaultExpirationPolicy;
-    }
     
     /**
      * Gets expiration policy by its name.
@@ -127,7 +121,6 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
             LOGGER.debug("Located expiration policy [{}] by name [{}]", policy, name);
             return Optional.of(policy);
         }
-        
         LOGGER.warn("No expiration policy could be found by the name [{}] for ticket state [{}]", name, ticketState);
         return Optional.empty();
     }
@@ -139,32 +132,5 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
      * @return the expiration policy name for
      */
     protected abstract String getExpirationPolicyNameFor(TicketState ticketState);
-    
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final BaseDelegatingExpirationPolicy rhs = (BaseDelegatingExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.policies, rhs.policies)
-                .append(this.defaultExpirationPolicy, rhs.defaultExpirationPolicy)
-                .isEquals();
-    }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(policies)
-                .append(defaultExpirationPolicy)
-                .toHashCode();
-    }
 }
