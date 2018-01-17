@@ -75,7 +75,8 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                 + "provide the user attribute the service expects. "
                 + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
-                + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
+                + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute,
+                releasePolicyAttributes, principalId);
         }
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();

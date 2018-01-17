@@ -3,18 +3,17 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketState;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
-import lombok.Getter;
 
 /**
  * This is {@link BaseDelegatingExpirationPolicy} that activates a number of inner expiration policies
@@ -31,7 +30,7 @@ import lombok.Getter;
 @Getter
 @Setter
 @NoArgsConstructor(force = true)
-@EqualsAndHashCode (callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = 5927936344949518688L;
@@ -47,7 +46,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
     /**
      * Add policy.
      *
-     * @param policy    the policy
+     * @param policy the policy
      */
     public void addPolicy(final ExpirationPolicy policy) {
         LOGGER.debug("Adding expiration policy [{}] with name [{}]", policy, policy.getName());
@@ -106,7 +105,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         }
         return this.defaultExpirationPolicy.getTimeToIdle();
     }
-    
+
     /**
      * Gets expiration policy by its name.
      *

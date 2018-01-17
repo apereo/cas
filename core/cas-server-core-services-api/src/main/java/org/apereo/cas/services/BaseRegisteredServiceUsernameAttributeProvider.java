@@ -64,7 +64,8 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      * @param username          the username
      * @return the encrypted username or null
      */
-    protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
+    protected String encryptResolvedUsername(final Principal principal, final Service service,
+                                             final RegisteredService registeredService, final String username) {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
         final RegisteredServiceCipherExecutor cipher = applicationContext.getBean("registeredServiceCipherExecutor",
             RegisteredServiceCipherExecutor.class);
