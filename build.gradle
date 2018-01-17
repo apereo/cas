@@ -143,12 +143,12 @@ subprojects {
         maven { url "https://jitpack.io" }
         jcenter()
     }
-    
+
     tasks.withType(JavaCompile) {
         // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-        options.compilerArgs += [ '-XepAllErrorsAsWarnings', '-Xep:ParameterName:OFF' ]
+        options.compilerArgs += ['-XepAllErrorsAsWarnings', '-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
     }
-    
+
     test {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()
@@ -244,7 +244,7 @@ subprojects {
     lombok {
         version = "$lombokVersion"
     }
-    
+
     jar {
         manifest {
             attributes("Implementation-Title": project.name,
@@ -295,7 +295,7 @@ subprojects {
 
     dependencies {
         //optional libraries.springcomponentindexer
-        
+
         implementation libraries.aspectj
         implementation libraries.validationapi
 
