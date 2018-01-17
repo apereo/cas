@@ -5,13 +5,14 @@ import com.github.benmanes.caffeine.cache.Expiry;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.github.benmanes.caffeine.cache.RemovalCause;
 import com.github.benmanes.caffeine.cache.RemovalListener;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+
 import java.util.Map;
-import lombok.Getter;
 
 /**
  * This is {@link CachingTicketRegistry}.
@@ -37,9 +38,9 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
         super(cipherExecutor);
         this.storage = Caffeine.newBuilder().initialCapacity(INITIAL_CACHE_SIZE).maximumSize(MAX_CACHE_SIZE)
             .expireAfter(new CachedTicketExpirationPolicy()).removalListener(new CachedTicketRemovalListener()).build(s -> {
-            LOGGER.error("Load operation of the cache is not supported.");
-            return null;
-        });
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
         this.cache = this.storage.asMap();
         this.logoutManager = logoutManager;
     }
@@ -48,7 +49,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
     public Map<String, Ticket> getMapInstance() {
         return this.cache;
     }
-    
+
     /**
      * The cached ticket removal listener.
      */

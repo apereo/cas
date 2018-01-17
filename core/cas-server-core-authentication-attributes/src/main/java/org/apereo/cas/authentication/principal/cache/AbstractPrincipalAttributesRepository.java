@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -15,6 +17,7 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.springframework.context.ApplicationContext;
+
 import java.io.Closeable;
 import java.util.HashMap;
 import java.util.List;
@@ -22,8 +25,6 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Parent class for retrieval principals attributes, provides operations
@@ -92,7 +93,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
          */
         public IAttributeMerger getAttributeMerger() {
             final String name = this.name().toUpperCase();
-            switch(name.toUpperCase()) {
+            switch (name.toUpperCase()) {
                 case "REPLACE":
                     return new ReplacingAttributeAdder();
                 case "ADD":
@@ -222,8 +223,9 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
                 builder.append(e.getMessage());
             }
             LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
-                + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
-                + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(), builder.toString(), principalAttributes);
+                    + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
+                    + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(),
+                builder.toString(), principalAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, principalAttributes);
         }
     }
