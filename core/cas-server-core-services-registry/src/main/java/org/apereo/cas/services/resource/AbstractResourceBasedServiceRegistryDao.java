@@ -1,5 +1,6 @@
 package org.apereo.cas.services.resource;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ObjectUtils;
@@ -23,6 +24,7 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+
 import javax.annotation.PreDestroy;
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -44,7 +46,6 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import lombok.ToString;
 
 /**
  * This is {@link AbstractResourceBasedServiceRegistryDao}.
@@ -84,7 +85,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
-    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory, final Collection<StringSerializer<RegisteredService>> serializers, final ApplicationEventPublisher eventPublisher) throws Exception {
+    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
+                                                   final Collection<StringSerializer<RegisteredService>> serializers,
+                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
         this(configDirectory, serializers, false, eventPublisher, new NoOpRegisteredServiceReplicationStrategy());
     }
 
@@ -97,7 +100,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory, final StringSerializer<RegisteredService> serializer, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher, final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
+                                                   final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+                                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
         this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
@@ -110,7 +115,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher, final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
+                                                   final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher,
+                                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
         initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
@@ -124,7 +132,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @throws Exception the exception
      */
-    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory, final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher, final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
+    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
+                                                   final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                   final ApplicationEventPublisher eventPublisher,
+                                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);
@@ -133,9 +144,12 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         initializeRegistry(Paths.get(file.getCanonicalPath()), serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
-    private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher, final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+    private void initializeRegistry(final Path configDirectory, final Collection<StringSerializer<RegisteredService>> serializers,
+                                    final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+                                    final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
         setEventPublisher(eventPublisher);
-        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy, new NoOpRegisteredServiceReplicationStrategy());
+        this.registeredServiceReplicationStrategy = ObjectUtils.defaultIfNull(registeredServiceReplicationStrategy,
+            new NoOpRegisteredServiceReplicationStrategy());
         this.registeredServiceSerializers = serializers;
         this.serviceFileNamePattern = RegexUtils.createPattern(PATTERN_REGISTERED_SERVICE_FILE_NAME + getExtension());
         this.serviceRegistryDirectory = configDirectory;
@@ -213,10 +227,13 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     @Override
     public synchronized List<RegisteredService> load() {
-        final Collection<File> files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[] { getExtension() }, true);
-        this.serviceMap = files.stream().map(this::load).filter(Objects::nonNull).flatMap(Collection::stream).sorted().collect(Collectors.toMap(RegisteredService::getId, Function.identity(), LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
+        final Collection<File> files = FileUtils.listFiles(this.serviceRegistryDirectory.toFile(), new String[]{getExtension()}, true);
+        this.serviceMap = files.stream().map(this::load).filter(Objects::nonNull).flatMap(Collection::stream)
+            .sorted().collect(Collectors.toMap(RegisteredService::getId, Function.identity(),
+                LOG_DUPLICATE_AND_RETURN_FIRST_ONE, LinkedHashMap::new));
         final List<RegisteredService> services = new ArrayList<>(this.serviceMap.values());
-        final List<RegisteredService> results = this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
+        final List<RegisteredService> results =
+            this.registeredServiceReplicationStrategy.updateLoadedRegisteredServicesFromCache(services, this);
         results.forEach(service -> publishEvent(new CasRegisteredServiceLoadedEvent(this, service)));
         return results;
     }
@@ -242,10 +259,15 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
             return new ArrayList<>(0);
         }
         if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
-            LOGGER.warn("[{}] does not match the recommended pattern [{}]. " + "While CAS tries to be forgiving as much as possible, it's recommended " + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. " + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.", file.getName(), this.serviceFileNamePattern.pattern());
+            LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
+                + "While CAS tries to be forgiving as much as possible, it's recommended "
+                + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
+                + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
+                file.getName(), this.serviceFileNamePattern.pattern());
         }
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
-            return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in)).filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
+            return this.registeredServiceSerializers.stream().filter(s -> s.supports(file)).map(s -> s.load(in))
+                .filter(Objects::nonNull).flatMap(Collection::stream).collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error("Error reading configuration file [{}]", file.getName(), e);
         }

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -36,7 +37,6 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
      * The Http client.
      */
     protected HttpClient httpClient;
-    private final transient Object lock = new Object();
     private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
 
     public SamlRegisteredServiceMetadataResolverCacheLoader(final OpenSamlConfigBean configBean,
@@ -48,27 +48,28 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     }
 
     @Override
+    @Synchronized("lock")
     public ChainingMetadataResolver load(final SamlRegisteredService service) {
         try {
             final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
             final List<MetadataResolver> metadataResolvers = new ArrayList<>();
-            
+
             final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
             availableResolvers.stream()
-                    .filter(r -> r.supports(service))
-                    .map(r -> r.resolve(service))
-                    .forEach(metadataResolvers::addAll);
+                .filter(r -> r.supports(service))
+                .map(r -> r.resolve(service))
+                .forEach(metadataResolvers::addAll);
 
             if (metadataResolvers.isEmpty()) {
                 throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
-                        + " with metadata location " + service.getMetadataLocation());
+                    + " with metadata location " + service.getMetadataLocation());
             }
 
-            synchronized (this.lock) {
-                metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-                metadataResolver.setResolvers(metadataResolvers);
-                metadataResolver.initialize();
-            }
+
+            metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+            metadataResolver.setResolvers(metadataResolvers);
+            metadataResolver.initialize();
+
             return metadataResolver;
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);

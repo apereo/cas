@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -38,7 +39,8 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());
         builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
-        LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication", UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+        LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
+            UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
     }
 
     @Override

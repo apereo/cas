@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -140,13 +141,20 @@ public class OAuthRegisteredService extends RegexRegisteredService {
             return false;
         }
         final OAuthRegisteredService rhs = (OAuthRegisteredService) obj;
-        final EqualsBuilder builder = new EqualsBuilder().appendSuper(super.equals(obj)).append(this.clientSecret, rhs.clientSecret).append(this.clientId, rhs.clientId).append(this.bypassApprovalPrompt, rhs.bypassApprovalPrompt).append(this.generateRefreshToken, rhs.generateRefreshToken).append(this.jsonFormat, rhs.jsonFormat).append(this.supportedResponseTypes, rhs.supportedResponseTypes).append(this.supportedGrantTypes, rhs.supportedGrantTypes);
+        final EqualsBuilder builder = new EqualsBuilder().appendSuper(super.equals(obj))
+            .append(this.clientSecret, rhs.clientSecret).append(this.clientId, rhs.clientId)
+            .append(this.bypassApprovalPrompt, rhs.bypassApprovalPrompt)
+            .append(this.generateRefreshToken, rhs.generateRefreshToken)
+            .append(this.jsonFormat, rhs.jsonFormat).append(this.supportedResponseTypes, rhs.supportedResponseTypes)
+            .append(this.supportedGrantTypes, rhs.supportedGrantTypes);
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.clientSecret).append(this.clientId).append(this.bypassApprovalPrompt).append(this.generateRefreshToken).append(this.jsonFormat).append(this.supportedResponseTypes).append(this.supportedGrantTypes).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.clientSecret)
+            .append(this.clientId).append(this.bypassApprovalPrompt).append(this.generateRefreshToken)
+            .append(this.jsonFormat).append(this.supportedResponseTypes).append(this.supportedGrantTypes).toHashCode();
     }
 
     /**

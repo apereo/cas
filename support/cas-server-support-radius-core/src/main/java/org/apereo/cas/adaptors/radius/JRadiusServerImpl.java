@@ -94,7 +94,10 @@ public class JRadiusServerImpl implements RadiusServer {
      * @param nasIdentifier the new nas identifier
      * @param nasRealPort the new nas real port
      */
-    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries, final String nasIpAddress, final String nasIpv6Address, final long nasPort, final long nasPortId, final String nasIdentifier, final long nasRealPort) {
+    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory,
+                             final int retries, final String nasIpAddress, final String nasIpv6Address,
+                             final long nasPort, final long nasPortId, final String nasIdentifier,
+                             final long nasRealPort) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
         this.retries = retries;
@@ -140,7 +143,8 @@ public class JRadiusServerImpl implements RadiusServer {
             LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
             if (response instanceof AccessAccept) {
                 final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
-                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
+                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]",
+                    response.getCode(), attributes, response.getIdentifier());
                 return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
             }
             LOGGER.debug("Response is not recognized");

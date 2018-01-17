@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
@@ -42,7 +43,6 @@ import java.util.HashSet;
 public class LoggingOutputSocketMessagingController {
 
     private static StringBuilder LOG_OUTPUT = new StringBuilder();
-    private static final Object LOCK = new Object();
 
     private LoggerContext loggerContext;
 
@@ -107,12 +107,11 @@ public class LoggingOutputSocketMessagingController {
      */
 
     @SendTo("/logs/logoutput")
+    @Synchronized("lock")
     public String logoutput() {
-        synchronized (LOCK) {
-            final String log = LOG_OUTPUT.toString();
-            LOG_OUTPUT = new StringBuilder();
-            return log;
-        }
+        final String log = LOG_OUTPUT.toString();
+        LOG_OUTPUT = new StringBuilder();
+        return log;
     }
 
     /**

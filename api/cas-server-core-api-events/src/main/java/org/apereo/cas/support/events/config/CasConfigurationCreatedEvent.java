@@ -1,8 +1,10 @@
 package org.apereo.cas.support.events.config;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
+
 import java.nio.file.Path;
 
 /**
@@ -13,6 +15,7 @@ import java.nio.file.Path;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class CasConfigurationCreatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -9038763901650896455L;
@@ -28,9 +31,5 @@ public class CasConfigurationCreatedEvent extends AbstractCasEvent {
     public CasConfigurationCreatedEvent(final Object source, final Path file) {
         super(source);
         this.file = file;
-    }
-
-    public Path getFile() {
-        return file;
     }
 }
