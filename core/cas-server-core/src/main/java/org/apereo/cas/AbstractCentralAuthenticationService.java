@@ -3,6 +3,7 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -49,7 +50,6 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     private static final long serialVersionUID = -7572316677901391166L;
 
 
-
     /**
      * Application event publisher.
      */
@@ -65,7 +65,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * Implementation of Service Manager.
      */
     protected final ServicesManager servicesManager;
-                                    
+
     /**
      * The logout manager.
      **/
@@ -141,7 +141,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     @Transactional(transactionManager = "ticketTransactionManager",
-            noRollbackFor = InvalidTicketException.class)
+        noRollbackFor = InvalidTicketException.class)
     @Timed(name = "GET_TICKET_TIMER")
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
@@ -180,8 +180,8 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         return this.ticketRegistry.getTickets().stream()
-                .filter(predicate)
-                .collect(Collectors.toSet());
+            .filter(predicate)
+            .collect(Collectors.toSet());
     }
 
     @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
@@ -202,7 +202,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @throws AbstractTicketException the ticket exception
      */
     protected Authentication getAuthenticationSatisfiedByPolicy(final Authentication authentication, final ServiceContext context)
-            throws AbstractTicketException {
+        throws AbstractTicketException {
 
         final ContextualAuthenticationPolicy<ServiceContext> policy = this.serviceContextAuthenticationPolicyFactory.createPolicy(context);
         try {
@@ -233,15 +233,15 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
                 LOGGER.debug("Located proxying service [{}] in the service registry", proxyingService);
                 if (!proxyingService.getProxyPolicy().isAllowedToProxy()) {
                     LOGGER.warn("Found proxying service [{}], but it is not authorized to fulfill the proxy attempt made by [{}]",
-                            proxyingService.getId(), service.getId());
+                        proxyingService.getId(), service.getId());
                     throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
-                            + registeredService.getId());
+                        + registeredService.getId());
                 }
             } else {
                 LOGGER.warn("No proxying service found. Proxy attempt by service [{}] (registered service [{}]) is not allowed.",
-                        service.getId(), registeredService.getId());
+                    service.getId(), registeredService.getId());
                 throw new UnauthorizedProxyingException(UnauthorizedProxyingException.MESSAGE
-                        + registeredService.getId());
+                    + registeredService.getId());
             }
         } else {
             LOGGER.trace("TGT is not proxied by another service");
@@ -256,18 +256,18 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * @param id     the original id
      * @param clazz  the clazz
      */
+    @Synchronized
     protected void verifyTicketState(final Ticket ticket, final String id, final Class clazz) {
         if (ticket == null) {
             LOGGER.debug("Ticket [{}] by type [{}] cannot be found in the ticket registry.", id,
-                    clazz != null ? clazz.getSimpleName() : "unspecified");
+                clazz != null ? clazz.getSimpleName() : "unspecified");
             throw new InvalidTicketException(id);
         }
-        synchronized (ticket) {
-            if (ticket.isExpired()) {
-                deleteTicket(id);
-                LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
-                throw new InvalidTicketException(id);
-            }
+
+        if (ticket.isExpired()) {
+            deleteTicket(id);
+            LOGGER.debug("Ticket [{}] has expired and is now deleted from the ticket registry.", ticket);
+            throw new InvalidTicketException(id);
         }
     }
 

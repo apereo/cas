@@ -29,7 +29,8 @@ public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOne
 
     private final MongoOperations mongoTemplate;
 
-    public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator, final MongoOperations mongoTemplate, final String collectionName) {
+    public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
+                                                               final MongoOperations mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
         this.googleAuthenticator = googleAuthenticator;

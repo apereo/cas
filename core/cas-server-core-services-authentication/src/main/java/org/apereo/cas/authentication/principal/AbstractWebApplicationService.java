@@ -154,12 +154,14 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
         }
         final AbstractWebApplicationService rhs = (AbstractWebApplicationService) obj;
         final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.id, rhs.id).append(this.originalUrl, rhs.originalUrl).append(this.artifactId, rhs.artifactId).append(this.principal, rhs.principal).append(this.loggedOutAlready, rhs.loggedOutAlready).append(this.format, rhs.format);
+        builder.append(this.id, rhs.id).append(this.originalUrl, rhs.originalUrl).append(this.artifactId, rhs.artifactId)
+            .append(this.principal, rhs.principal).append(this.loggedOutAlready, rhs.loggedOutAlready).append(this.format, rhs.format);
         return builder.isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(id).append(originalUrl).append(artifactId).append(principal).append(loggedOutAlready).append(format).toHashCode();
+        return new HashCodeBuilder().append(id).append(originalUrl).append(artifactId)
+            .append(principal).append(loggedOutAlready).append(format).toHashCode();
     }
 }

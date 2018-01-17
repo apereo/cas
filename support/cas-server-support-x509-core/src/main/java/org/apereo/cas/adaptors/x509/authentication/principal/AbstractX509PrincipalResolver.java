@@ -23,7 +23,9 @@ public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrinc
         super();
     }
 
-    public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                         final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 
