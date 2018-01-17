@@ -60,7 +60,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     }
 
     @Override
-    public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService, final HttpServletRequest request) {
+    public final boolean supports(final Event event, final Authentication authentication,
+                                  final RegisteredService registeredService, final HttpServletRequest request) {
         if (event == null || !event.getId().matches(getId())) {
             LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", event, getId());
             return false;
@@ -114,7 +115,9 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                 LOGGER.warn("[{}] could not be reached. Authentication shall fail for [{}]", providerName, service);
                 throw new AuthenticationException();
             }
-            LOGGER.warn("[{}] could not be reached. Since the authentication provider is configured for the " + "failure mode of [{}] authentication will proceed without [{}] for service [{}]", providerName, failureMode, providerName, service);
+            LOGGER.warn("[{}] could not be reached. Since the authentication provider is configured for the "
+                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]",
+                providerName, failureMode, providerName, service);
             return false;
         }
         LOGGER.debug("Failure mode is set to [{}]. Assuming the provider is available.", failureMode);

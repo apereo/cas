@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.config;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -15,6 +16,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class CasConfigurationModifiedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -5738763037210896455L;
@@ -57,15 +59,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         this.file = file;
         this.override = override;
     }
-
-    private Path getFile() {
-        return file;
-    }
-
-    public boolean isOverride() {
-        return override;
-    }
-
+    
     /**
      * Is eligible for context refresh ?
      *

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.config;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class CasConfigurationDeletedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = -5738769364210896455L;
@@ -28,9 +30,5 @@ public class CasConfigurationDeletedEvent extends AbstractCasEvent {
     public CasConfigurationDeletedEvent(final Object source, final Path file) {
         super(source);
         this.file = file;
-    }
-
-    public Path getFile() {
-        return file;
     }
 }

@@ -25,7 +25,9 @@ public class AuthenticationContextAttributeMetaDataPopulator extends BaseAuthent
 
     private final MultifactorAuthenticationProvider provider;
 
-    public AuthenticationContextAttributeMetaDataPopulator(final String authenticationContextAttribute, final AuthenticationHandler authenticationHandler, final MultifactorAuthenticationProvider provider) {
+    public AuthenticationContextAttributeMetaDataPopulator(final String authenticationContextAttribute,
+                                                           final AuthenticationHandler authenticationHandler,
+                                                           final MultifactorAuthenticationProvider provider) {
         this.authenticationContextAttribute = authenticationContextAttribute;
         this.authenticationHandler = authenticationHandler;
         this.provider = provider;

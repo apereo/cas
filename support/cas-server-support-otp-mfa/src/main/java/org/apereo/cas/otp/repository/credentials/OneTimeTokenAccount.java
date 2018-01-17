@@ -123,7 +123,9 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
 
     @Override
     public int compareTo(final OneTimeTokenAccount o) {
-        return new CompareToBuilder().append(this.scratchCodes, o.getScratchCodes()).append(this.validationCode, o.getValidationCode()).append(this.secretKey, o.getSecretKey()).append(this.username, o.getUsername()).build();
+        return new CompareToBuilder().append(this.scratchCodes, o.getScratchCodes())
+            .append(this.validationCode, o.getValidationCode()).append(this.secretKey, o.getSecretKey())
+            .append(this.username, o.getUsername()).build();
     }
 
     @Override
@@ -138,11 +140,14 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
             return false;
         }
         final OneTimeTokenAccount rhs = (OneTimeTokenAccount) obj;
-        return new EqualsBuilder().append(this.secretKey, rhs.secretKey).append(this.validationCode, rhs.validationCode).append(this.scratchCodes, rhs.scratchCodes).append(this.username, rhs.username).isEquals();
+        return new EqualsBuilder().append(this.secretKey, rhs.secretKey)
+            .append(this.validationCode, rhs.validationCode).append(this.scratchCodes, rhs.scratchCodes)
+            .append(this.username, rhs.username).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(secretKey).append(validationCode).append(scratchCodes).append(username).toHashCode();
+        return new HashCodeBuilder().append(secretKey).append(validationCode)
+            .append(scratchCodes).append(username).toHashCode();
     }
 }

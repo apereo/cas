@@ -19,7 +19,8 @@ import org.apereo.services.persondir.IPersonAttributeDao;
 @ToString(callSuper = true)
 public class OpenIdPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public OpenIdPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                   final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

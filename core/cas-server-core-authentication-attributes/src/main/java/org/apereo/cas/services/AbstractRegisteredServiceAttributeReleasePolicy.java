@@ -161,7 +161,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     @Override
     public Map<String, Object> getAttributes(final Principal principal, final Service selectedService, final RegisteredService registeredService) {
-        LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...", principal.getId(), selectedService.getId(), registeredService.getServiceId());
+        LOGGER.debug("Initiating attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
+            principal.getId(), selectedService.getId(), registeredService.getServiceId());
         LOGGER.debug("Locating principal attributes for [{}]", principal.getId());
         final Map<String, Object> principalAttributes = resolveAttributesFromPrincipalAttributeRepository(principal);
         LOGGER.debug("Found principal attributes [{}] for [{}]", principalAttributes, principal.getId());
@@ -186,7 +187,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
             LOGGER.debug("Invoking attribute filter [{}] on the final set of attributes", getAttributeFilter());
             return getAttributeFilter().filter(attributesToRelease);
         }
-        LOGGER.debug("Finalizing attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...", principal.getId(), selectedService.getId(), registeredService.getServiceId());
+        LOGGER.debug("Finalizing attributes release phase for principal [{}] accessing service [{}] defined by registered service [{}]...",
+            principal.getId(), selectedService.getId(), registeredService.getServiceId());
         return returnFinalAttributesCollection(attributesToRelease, registeredService);
     }
 
@@ -225,7 +227,8 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
      * @param service             the service
      * @param registeredService   the registered service
      */
-    protected void insertPrincipalIdAsAttributeIfNeeded(final Principal principal, final Map<String, Object> attributesToRelease, final Service service, final RegisteredService registeredService) {
+    protected void insertPrincipalIdAsAttributeIfNeeded(final Principal principal, final Map<String, Object> attributesToRelease,
+                                                        final Service service, final RegisteredService registeredService) {
         if (StringUtils.isNotBlank(getPrincipalIdAttribute())) {
             LOGGER.debug("Attempting to resolve the principal id for service [{}]", registeredService.getServiceId());
             final String id = registeredService.getUsernameAttributeProvider().resolveUsername(principal, service, registeredService);
@@ -286,7 +289,11 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(13, 133).append(getAttributeFilter()).append(isAuthorizedToReleaseCredentialPassword()).append(isAuthorizedToReleaseProxyGrantingTicket()).append(getPrincipalAttributesRepository()).append(isExcludeDefaultAttributes()).append(getPrincipalIdAttribute()).append(getConsentPolicy()).append(isAuthorizedToReleaseAuthenticationAttributes()).toHashCode();
+        return new HashCodeBuilder(13, 133).append(getAttributeFilter())
+            .append(isAuthorizedToReleaseCredentialPassword()).append(isAuthorizedToReleaseProxyGrantingTicket())
+            .append(getPrincipalAttributesRepository()).append(isExcludeDefaultAttributes())
+            .append(getPrincipalIdAttribute()).append(getConsentPolicy())
+            .append(isAuthorizedToReleaseAuthenticationAttributes()).toHashCode();
     }
 
     @Override
@@ -302,6 +309,12 @@ public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements
         }
         final AbstractRegisteredServiceAttributeReleasePolicy that = (AbstractRegisteredServiceAttributeReleasePolicy) o;
         final EqualsBuilder builder = new EqualsBuilder();
-        return builder.append(getAttributeFilter(), that.getAttributeFilter()).append(isAuthorizedToReleaseCredentialPassword(), that.isAuthorizedToReleaseCredentialPassword()).append(isAuthorizedToReleaseProxyGrantingTicket(), that.isAuthorizedToReleaseProxyGrantingTicket()).append(getPrincipalAttributesRepository(), that.getPrincipalAttributesRepository()).append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes()).append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute()).append(getConsentPolicy(), that.getConsentPolicy()).append(isAuthorizedToReleaseAuthenticationAttributes(), that.isAuthorizedToReleaseAuthenticationAttributes()).isEquals();
+        return builder.append(getAttributeFilter(), that.getAttributeFilter()).append(isAuthorizedToReleaseCredentialPassword(),
+            that.isAuthorizedToReleaseCredentialPassword()).append(isAuthorizedToReleaseProxyGrantingTicket(),
+            that.isAuthorizedToReleaseProxyGrantingTicket()).append(getPrincipalAttributesRepository(),
+            that.getPrincipalAttributesRepository()).append(isExcludeDefaultAttributes(), that.isExcludeDefaultAttributes())
+            .append(getPrincipalIdAttribute(), that.getPrincipalIdAttribute()).append(getConsentPolicy(),
+                that.getConsentPolicy()).append(isAuthorizedToReleaseAuthenticationAttributes(),
+                that.isAuthorizedToReleaseAuthenticationAttributes()).isEquals();
     }
 }

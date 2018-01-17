@@ -38,7 +38,9 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     @Override
     public OneTimeTokenAccount get(final String username) {
         try {
-            final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM " + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username", GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
+            final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM "
+                + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username",
+                GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
             return r;
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);

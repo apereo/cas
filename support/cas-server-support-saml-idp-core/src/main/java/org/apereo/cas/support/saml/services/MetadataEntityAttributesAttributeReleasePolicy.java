@@ -92,6 +92,7 @@ public class MetadataEntityAttributesAttributeReleasePolicy extends BaseSamlRegi
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(entityAttribute).append(entityAttributeFormat).append(entityAttributeValues).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(entityAttribute)
+            .append(entityAttributeFormat).append(entityAttributeValues).toHashCode();
     }
 }

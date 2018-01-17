@@ -37,19 +37,28 @@ public class AccessTokenRequestDataHolder {
 
     private final Set<String> scopes;
 
-    public AccessTokenRequestDataHolder(final OAuthToken token, final OAuthRegisteredService registeredService, final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
+    public AccessTokenRequestDataHolder(final OAuthToken token, final OAuthRegisteredService registeredService,
+                                        final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken,
+                                        final Set<String> scopes) {
         this(token.getService(), token.getAuthentication(), token, registeredService, grantType, isAllowedToGenerateRefreshToken, scopes);
     }
 
-    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthToken token, final OAuthRegisteredService registeredService, final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                        final OAuthToken token, final OAuthRegisteredService registeredService,
+                                        final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
         this(service, authentication, registeredService, token, null, grantType, isAllowedToGenerateRefreshToken, scopes);
     }
 
-    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthRegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket, final OAuth20GrantTypes grantType, final Set<String> scopes) {
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                        final OAuthRegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket,
+                                        final OAuth20GrantTypes grantType, final Set<String> scopes) {
         this(service, authentication, registeredService, null, ticketGrantingTicket, grantType, true, scopes);
     }
 
-    private AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthRegisteredService registeredService, final OAuthToken token, final TicketGrantingTicket ticketGrantingTicket, final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
+    private AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
+                                         final OAuthRegisteredService registeredService, final OAuthToken token,
+                                         final TicketGrantingTicket ticketGrantingTicket, final OAuth20GrantTypes grantType,
+                                         final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
         this.service = service;
         this.authentication = authentication;
         this.registeredService = registeredService;

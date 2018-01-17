@@ -55,10 +55,12 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         String principalId = principal.getId();
         final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
-        LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, originalPrincipalAttributes);
+        LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].",
+            this.usernameAttribute, originalPrincipalAttributes);
         final Map<String, Object> releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
-        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].", this.usernameAttribute, releasePolicyAttributes);
+        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
+            this.usernameAttribute, releasePolicyAttributes);
         if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
                 registeredService.getServiceId(), this.usernameAttribute);

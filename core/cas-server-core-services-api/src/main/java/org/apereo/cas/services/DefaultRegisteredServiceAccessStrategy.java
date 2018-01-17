@@ -364,7 +364,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         if (principalAttributes.size() < this.rejectedAttributes.size()) {
-            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, " + "which means the principal is not carrying enough data to grant authorization", principalAttributes);
+            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined rejected attributes, "
+                + "which means the principal is not carrying enough data to grant authorization", principalAttributes);
             return false;
         }
         return true;
@@ -378,13 +379,15 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes  the required attributes
      * @return true /false
      */
-    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes,
+                                                                 final Map<String, Set<String>> requiredAttributes) {
         if (principalAttributes.isEmpty() && !requiredAttributes.isEmpty()) {
             LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
             return false;
         }
         if (principalAttributes.size() < requiredAttributes.size()) {
-            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, " + "which indicates the principal is not carrying enough data to grant authorization", principalAttributes);
+            LOGGER.debug("The size of the principal attributes that are [{}] does not match defined required attributes, "
+                + "which indicates the principal is not carrying enough data to grant authorization", principalAttributes);
             return false;
         }
         return true;
@@ -402,12 +405,19 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             return false;
         }
         final DefaultRegisteredServiceAccessStrategy rhs = (DefaultRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder().append(this.enabled, rhs.enabled).append(this.ssoEnabled, rhs.ssoEnabled).append(this.requireAllAttributes, rhs.requireAllAttributes).append(this.requiredAttributes, rhs.requiredAttributes).append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl).append(this.caseInsensitive, rhs.caseInsensitive).append(this.rejectedAttributes, rhs.rejectedAttributes).append(this.delegatedAuthenticationPolicy, rhs.delegatedAuthenticationPolicy).isEquals();
+        return new EqualsBuilder().append(this.enabled, rhs.enabled)
+            .append(this.ssoEnabled, rhs.ssoEnabled).append(this.requireAllAttributes, rhs.requireAllAttributes)
+            .append(this.requiredAttributes, rhs.requiredAttributes).append(this.unauthorizedRedirectUrl, rhs.unauthorizedRedirectUrl)
+            .append(this.caseInsensitive, rhs.caseInsensitive).append(this.rejectedAttributes, rhs.rejectedAttributes)
+            .append(this.delegatedAuthenticationPolicy, rhs.delegatedAuthenticationPolicy).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.enabled).append(this.ssoEnabled).append(this.requireAllAttributes).append(this.requiredAttributes).append(this.unauthorizedRedirectUrl).append(this.caseInsensitive).append(this.rejectedAttributes).append(this.delegatedAuthenticationPolicy).toHashCode();
+        return new HashCodeBuilder().append(this.enabled).append(this.ssoEnabled)
+            .append(this.requireAllAttributes).append(this.requiredAttributes)
+            .append(this.unauthorizedRedirectUrl).append(this.caseInsensitive)
+            .append(this.rejectedAttributes).append(this.delegatedAuthenticationPolicy).toHashCode();
     }
 
     /**

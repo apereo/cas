@@ -105,7 +105,8 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param p           the p
      * @param warnings    the warnings
      */
-    public DefaultAuthenticationHandlerExecutionResult(final String handlerName, final CredentialMetaData metaData, final Principal p, final List<MessageDescriptor> warnings) {
+    public DefaultAuthenticationHandlerExecutionResult(final String handlerName, final CredentialMetaData metaData,
+                                                       final Principal p, final List<MessageDescriptor> warnings) {
         Assert.notNull(metaData, "Credential metadata cannot be null.");
         this.handlerName = handlerName;
         this.credentialMetaData = metaData;

@@ -88,7 +88,10 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
             return false;
         }
         final DefaultRegisteredServiceMultifactorPolicy rhs = (DefaultRegisteredServiceMultifactorPolicy) obj;
-        return new EqualsBuilder().append(this.multifactorAuthenticationProviders, rhs.multifactorAuthenticationProviders).append(this.failureMode, rhs.failureMode).append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger).append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch).append(this.bypassEnabled, rhs.bypassEnabled).isEquals();
+        return new EqualsBuilder().append(this.multifactorAuthenticationProviders, rhs.multifactorAuthenticationProviders)
+            .append(this.failureMode, rhs.failureMode).append(this.principalAttributeNameTrigger, rhs.principalAttributeNameTrigger)
+            .append(this.principalAttributeValueToMatch, rhs.principalAttributeValueToMatch)
+            .append(this.bypassEnabled, rhs.bypassEnabled).isEquals();
     }
 
     @Override
@@ -98,6 +101,8 @@ public class DefaultRegisteredServiceMultifactorPolicy implements RegisteredServ
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(this.multifactorAuthenticationProviders).append(this.failureMode).append(this.principalAttributeNameTrigger).append(this.principalAttributeValueToMatch).append(this.bypassEnabled).toHashCode();
+        return new HashCodeBuilder().append(this.multifactorAuthenticationProviders)
+            .append(this.failureMode).append(this.principalAttributeNameTrigger)
+            .append(this.principalAttributeValueToMatch).append(this.bypassEnabled).toHashCode();
     }
 }

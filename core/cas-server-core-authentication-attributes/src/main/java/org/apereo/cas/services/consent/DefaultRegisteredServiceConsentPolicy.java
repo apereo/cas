@@ -72,11 +72,13 @@ public class DefaultRegisteredServiceConsentPolicy implements RegisteredServiceC
             return false;
         }
         final DefaultRegisteredServiceConsentPolicy rhs = (DefaultRegisteredServiceConsentPolicy) obj;
-        return new EqualsBuilder().append(this.excludedAttributes, rhs.excludedAttributes).append(this.includeOnlyAttributes, rhs.includeOnlyAttributes).append(this.enabled, rhs.enabled).isEquals();
+        return new EqualsBuilder().append(this.excludedAttributes, rhs.excludedAttributes)
+            .append(this.includeOnlyAttributes, rhs.includeOnlyAttributes).append(this.enabled, rhs.enabled).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(excludedAttributes).append(includeOnlyAttributes).append(enabled).toHashCode();
+        return new HashCodeBuilder().append(excludedAttributes)
+            .append(includeOnlyAttributes).append(enabled).toHashCode();
     }
 }

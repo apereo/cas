@@ -210,7 +210,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
      */
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @Configuration("trustedDevicesConfiguration")
-public class TrustedDevicesConfiguration {
+    public class TrustedDevicesConfiguration {
 
         @Autowired
         @Bean
@@ -224,7 +224,7 @@ public class TrustedDevicesConfiguration {
      */
     @ConditionalOnClass(value = CasEventRepository.class)
     @Configuration("authenticationEventsConfiguration")
-public class AuthenticationEventsConfiguration {
+    public class AuthenticationEventsConfiguration {
 
         @Autowired
         @Bean
@@ -238,7 +238,7 @@ public class AuthenticationEventsConfiguration {
      */
     @ConditionalOnClass(value = CasServerProfileRegistrar.class)
     @Configuration("serverDiscoveryProfileConfiguration")
-public class ServerDiscoveryProfileConfiguration {
+    public class ServerDiscoveryProfileConfiguration {
 
         @Autowired
         @Bean

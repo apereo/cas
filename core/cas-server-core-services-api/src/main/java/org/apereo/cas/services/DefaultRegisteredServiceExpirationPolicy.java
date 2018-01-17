@@ -96,11 +96,13 @@ public class DefaultRegisteredServiceExpirationPolicy implements RegisteredServi
             return false;
         }
         final DefaultRegisteredServiceExpirationPolicy rhs = (DefaultRegisteredServiceExpirationPolicy) obj;
-        return new EqualsBuilder().append(this.deleteWhenExpired, rhs.deleteWhenExpired).append(this.notifyWhenDeleted, rhs.notifyWhenDeleted).append(this.expirationDate, rhs.expirationDate).isEquals();
+        return new EqualsBuilder().append(this.deleteWhenExpired, rhs.deleteWhenExpired)
+            .append(this.notifyWhenDeleted, rhs.notifyWhenDeleted).append(this.expirationDate, rhs.expirationDate).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(7, 137).append(deleteWhenExpired).append(notifyWhenDeleted).append(expirationDate).toHashCode();
+        return new HashCodeBuilder(7, 137)
+            .append(deleteWhenExpired).append(notifyWhenDeleted).append(expirationDate).toHashCode();
     }
 }

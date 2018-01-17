@@ -226,12 +226,20 @@ public class OidcRegisteredService extends OAuthRegisteredService {
         }
         final OidcRegisteredService rhs = (OidcRegisteredService) obj;
         final EqualsBuilder builder = new EqualsBuilder();
-        return builder.appendSuper(super.equals(obj)).append(this.jwks, rhs.jwks).append(this.implicit, rhs.implicit).append(this.signIdToken, rhs.signIdToken).append(this.encryptIdToken, rhs.encryptIdToken).append(this.idTokenEncryptionAlg, rhs.idTokenEncryptionAlg).append(this.idTokenEncryptionEncoding, rhs.idTokenEncryptionEncoding).append(this.getScopes(), rhs.getScopes()).append(this.sectorIdentifierUri, rhs.sectorIdentifierUri).append(this.getSubjectType(), rhs.getSubjectType()).isEquals();
+        return builder.appendSuper(super.equals(obj)).append(this.jwks, rhs.jwks)
+            .append(this.implicit, rhs.implicit).append(this.signIdToken, rhs.signIdToken)
+            .append(this.encryptIdToken, rhs.encryptIdToken).append(this.idTokenEncryptionAlg, rhs.idTokenEncryptionAlg)
+            .append(this.idTokenEncryptionEncoding, rhs.idTokenEncryptionEncoding)
+            .append(this.getScopes(), rhs.getScopes()).append(this.sectorIdentifierUri, rhs.sectorIdentifierUri)
+            .append(this.getSubjectType(), rhs.getSubjectType()).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(jwks).append(signIdToken).append(implicit).append(encryptIdToken).append(idTokenEncryptionAlg).append(idTokenEncryptionEncoding).append(dynamicallyRegistered).append(getScopes()).append(sectorIdentifierUri).append(subjectType).toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(jwks)
+            .append(signIdToken).append(implicit).append(encryptIdToken).append(idTokenEncryptionAlg)
+            .append(idTokenEncryptionEncoding).append(dynamicallyRegistered).append(getScopes())
+            .append(sectorIdentifierUri).append(subjectType).toHashCode();
     }
 
     @Override

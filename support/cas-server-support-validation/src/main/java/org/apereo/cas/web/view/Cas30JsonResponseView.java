@@ -34,8 +34,12 @@ import lombok.ToString;
 @ToString
 public class Cas30JsonResponseView extends Cas30ResponseView {
 
-    public Cas30JsonResponseView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder, final ServicesManager servicesManager, final String authenticationContextAttribute, final boolean releaseProtocolAttributes, final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy, final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy, serviceSelectionStrategy);
+    public Cas30JsonResponseView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder,
+                                 final ServicesManager servicesManager, final String authenticationContextAttribute,
+                                 final boolean releaseProtocolAttributes, final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                                 final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+            createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy, serviceSelectionStrategy);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
