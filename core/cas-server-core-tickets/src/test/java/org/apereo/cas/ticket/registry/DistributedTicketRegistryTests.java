@@ -57,7 +57,7 @@ public class DistributedTicketRegistryTests {
         assertEquals(t.getCreationTime(), returned.getCreationTime());
         assertEquals(t.getAuthentication(), returned.getAuthentication());
         assertEquals(t.getCountOfUses(), returned.getCountOfUses());
-        assertEquals(t.getGrantingTicket(), returned.getGrantingTicket());
+        assertEquals(t.getTicketGrantingTicket(), returned.getTicketGrantingTicket());
         assertEquals(t.getId(), returned.getId());
         assertEquals(t.getChainedAuthentications(), returned.getChainedAuthentications());
         assertEquals(t.isExpired(), returned.isExpired());
@@ -73,7 +73,7 @@ public class DistributedTicketRegistryTests {
 
         assertEquals(s.getCreationTime(), sreturned.getCreationTime());
         assertEquals(s.getCountOfUses(), sreturned.getCountOfUses());
-        assertEquals(s.getGrantingTicket(), sreturned.getGrantingTicket());
+        assertEquals(s.getTicketGrantingTicket(), sreturned.getTicketGrantingTicket());
         assertEquals(s.getId(), sreturned.getId());
         assertEquals(s.isExpired(), sreturned.isExpired());
         assertEquals(s.getService(), sreturned.getService());

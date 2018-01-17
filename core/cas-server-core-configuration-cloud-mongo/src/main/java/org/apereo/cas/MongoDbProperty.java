@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import lombok.Getter;
 
 /**
  * This is {@link MongoDbProperty}.
@@ -13,25 +14,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
  */
 @Document
 @Slf4j
+@Getter
 public class MongoDbProperty {
+
     @Id
     private String id;
-    
+
     @Indexed
     private String name;
-    
-    private Object value;
 
-    public String getId() {
-        return id;
-    }
+    private Object value;
 
     public void setId(final String id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public void setName(final String name) {
@@ -46,4 +41,3 @@ public class MongoDbProperty {
         this.value = value;
     }
 }
-

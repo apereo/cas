@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.support;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.Column;
@@ -14,6 +15,7 @@ import java.io.Serializable;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * JPA 2.0 implementation of an exclusive, non-reentrant lock.
@@ -24,6 +26,7 @@ import lombok.ToString;
 @Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @ToString
+@Getter
 public class JpaLockingStrategy implements LockingStrategy {
 
     /** Transactional entity manager from Spring context. */
@@ -153,6 +156,8 @@ public class JpaLockingStrategy implements LockingStrategy {
      */
     @Entity
     @Table(name = "locks")
+    @Getter
+    @Setter
     private static class Lock implements Serializable {
 
         private static final long serialVersionUID = -5750740484289616656L;
@@ -174,47 +179,5 @@ public class JpaLockingStrategy implements LockingStrategy {
         @Version
         @Column(name = "lockVer", columnDefinition = "integer DEFAULT 0", nullable = false)
         private final Long version = 0L;
-
-        /**
-         * @return the applicationId
-         */
-        public String getApplicationId() {
-            return this.applicationId;
-        }
-
-        /**
-         * @param applicationId the applicationId to set
-         */
-        public void setApplicationId(final String applicationId) {
-            this.applicationId = applicationId;
-        }
-
-        /**
-         * @return the uniqueId
-         */
-        public String getUniqueId() {
-            return this.uniqueId;
-        }
-
-        /**
-         * @param uniqueId the uniqueId to set
-         */
-        public void setUniqueId(final String uniqueId) {
-            this.uniqueId = uniqueId;
-        }
-
-        /**
-         * @return the expirationDate
-         */
-        public ZonedDateTime getExpirationDate() {
-            return this.expirationDate == null ? null : ZonedDateTime.from(this.expirationDate);
-        }
-
-        /**
-         * @param expirationDate the expirationDate to set
-         */
-        public void setExpirationDate(final ZonedDateTime expirationDate) {
-            this.expirationDate = expirationDate;
-        }
     }
 }

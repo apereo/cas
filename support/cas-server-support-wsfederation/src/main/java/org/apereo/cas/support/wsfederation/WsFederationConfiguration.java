@@ -8,7 +8,6 @@ import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.core.io.Resource;
-
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
@@ -16,6 +15,7 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
 
 /**
  * This class gathers configuration information for the WS Federation Identity Provider.
@@ -25,25 +25,24 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 @Slf4j
+@Getter
 public class WsFederationConfiguration implements Serializable {
+
     private static final long serialVersionUID = 2310859477512242659L;
-
-
 
     /**
      * Describes how the WS-FED principal resolution machinery
      * should process attributes from WS-FED.
      */
     public enum WsFedPrincipalResolutionAttributesType {
+
         /**
          * Cas ws fed principal resolution attributes type.
          */
-        CAS,
-        /**
+        CAS, /**
          * Wsfed ws fed principal resolution attributes type.
          */
-        WSFED,
-        /**
+        WSFED, /**
          * Both ws fed principal resolution attributes type.
          */
         BOTH
@@ -86,27 +85,15 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     public void initialize() {
-        this.signingCertificateResources
-                .stream()
-                .forEach(Unchecked.consumer(r -> {
-                    try {
-                        final FileWatcherService watcher = new FileWatcherService(r.getFile(),
-                            file -> createSigningWallet(this.signingCertificateResources));
-                        watcher.start(getClass().getSimpleName());
-                    } catch (final Exception e) {
-                        LOGGER.trace(e.getMessage(), e);
-                    }
-                }));
+        this.signingCertificateResources.stream().forEach(Unchecked.consumer(r -> {
+            try {
+                final FileWatcherService watcher = new FileWatcherService(r.getFile(), file -> createSigningWallet(this.signingCertificateResources));
+                watcher.start(getClass().getSimpleName());
+            } catch (final Exception e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+        }));
         createSigningWallet(this.signingCertificateResources);
-    }
-
-    /**
-     * gets the identity of the IdP.
-     *
-     * @return the identity
-     */
-    public String getIdentityAttribute() {
-        return this.identityAttribute;
     }
 
     /**
@@ -119,15 +106,6 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     /**
-     * gets the identity provider identifier.
-     *
-     * @return the identifier
-     */
-    public String getIdentityProviderIdentifier() {
-        return this.identityProviderIdentifier;
-    }
-
-    /**
      * sets the identity provider identifier.
      *
      * @param identityProviderIdentifier the identifier.
@@ -137,30 +115,12 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     /**
-     * gets the identity provider url.
-     *
-     * @return the url
-     */
-    public String getIdentityProviderUrl() {
-        return this.identityProviderUrl;
-    }
-
-    /**
      * sets the identity provider url.
      *
      * @param identityProviderUrl the url
      */
     public void setIdentityProviderUrl(final String identityProviderUrl) {
         this.identityProviderUrl = identityProviderUrl;
-    }
-
-    /**
-     * gets the relying part identifier.
-     *
-     * @return the identifier
-     */
-    public String getRelyingPartyIdentifier() {
-        return this.relyingPartyIdentifier;
     }
 
     /**
@@ -277,10 +237,6 @@ public class WsFederationConfiguration implements Serializable {
 
     public void setEncryptionCertificate(final Resource encryptionCertificate) {
         this.encryptionCertificate = encryptionCertificate;
-    }
-
-    public String getEncryptionPrivateKeyPassword() {
-        return encryptionPrivateKeyPassword;
     }
 
     public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {

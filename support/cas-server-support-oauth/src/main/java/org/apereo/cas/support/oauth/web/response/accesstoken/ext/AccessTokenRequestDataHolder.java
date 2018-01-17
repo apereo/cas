@@ -10,6 +10,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link AccessTokenRequestDataHolder}.
@@ -19,6 +20,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class AccessTokenRequestDataHolder {
 
     private final Service service;
@@ -37,32 +39,29 @@ public class AccessTokenRequestDataHolder {
 
     private final Set<String> scopes;
 
-    public AccessTokenRequestDataHolder(final OAuthToken token, final OAuthRegisteredService registeredService,
-                                        final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken,
-                                        final Set<String> scopes) {
+    public AccessTokenRequestDataHolder(final OAuthToken token, final OAuthRegisteredService registeredService, final OAuth20GrantTypes grantType,
+                                        final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
         this(token.getService(), token.getAuthentication(), token, registeredService, grantType, isAllowedToGenerateRefreshToken, scopes);
     }
 
-    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
-                                        final OAuthToken token, final OAuthRegisteredService registeredService,
-                                        final OAuth20GrantTypes grantType, final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthToken token,
+                                        final OAuthRegisteredService registeredService, final OAuth20GrantTypes grantType,
+                                        final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
         this(service, authentication, registeredService, token, null, grantType, isAllowedToGenerateRefreshToken, scopes);
     }
 
-    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
-                                        final OAuthRegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket,
-                                        final OAuth20GrantTypes grantType, final Set<String> scopes) {
+    public AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthRegisteredService registeredService,
+                                        final TicketGrantingTicket ticketGrantingTicket, final OAuth20GrantTypes grantType, final Set<String> scopes) {
         this(service, authentication, registeredService, null, ticketGrantingTicket, grantType, true, scopes);
     }
 
-    private AccessTokenRequestDataHolder(final Service service, final Authentication authentication,
-                                         final OAuthRegisteredService registeredService, final OAuthToken token,
-                                         final TicketGrantingTicket ticketGrantingTicket, final OAuth20GrantTypes grantType,
+    private AccessTokenRequestDataHolder(final Service service, final Authentication authentication, final OAuthRegisteredService registeredService,
+                                         final OAuthToken token, final TicketGrantingTicket ticketGrantingTicket, final OAuth20GrantTypes grantType,
                                          final boolean isAllowedToGenerateRefreshToken, final Set<String> scopes) {
         this.service = service;
         this.authentication = authentication;
         this.registeredService = registeredService;
-        this.ticketGrantingTicket = token != null ? token.getGrantingTicket() : ticketGrantingTicket;
+        this.ticketGrantingTicket = token != null ? token.getTicketGrantingTicket() : ticketGrantingTicket;
         this.token = token;
         this.generateRefreshToken = isAllowedToGenerateRefreshToken ? (registeredService != null && registeredService.isGenerateRefreshToken()) : false;
         this.grantType = grantType;
@@ -95,9 +94,5 @@ public class AccessTokenRequestDataHolder {
 
     public TicketGrantingTicket getTicketGrantingTicket() {
         return this.ticketGrantingTicket;
-    }
-
-    public Set<String> getScopes() {
-        return scopes;
     }
 }

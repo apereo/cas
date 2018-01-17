@@ -2,11 +2,11 @@ package org.apereo.cas.adaptors.generic;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.extern.slf4j.Slf4j;
-
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * This is {@link CasUserAccount}.
@@ -16,50 +16,44 @@ import java.util.Map;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@Getter
 public class CasUserAccount implements Serializable {
+
     private static final long serialVersionUID = 7579594722197541062L;
 
     /**
      * Indicates user account status.
      */
     public enum AccountStatus {
+
         /**
          * Ok account status.
          */
-        OK,
-        /**
+        OK, /**
          * Locked account status.
          */
-        LOCKED,
-        /**
+        LOCKED, /**
          * Disabled account status.
          */
-        DISABLED,
-        /**
+        DISABLED, /**
          * Expired account status.
          */
-        EXPIRED,
-        /**
+        EXPIRED, /**
          * Must change password account status.
          */
         MUST_CHANGE_PASSWORD
     }
 
     private String password;
-    private Map<String, Object> attributes = new LinkedHashMap<>();
-    private AccountStatus status = AccountStatus.OK;
-    private LocalDate expirationDate;
 
-    public String getPassword() {
-        return password;
-    }
+    private Map<String, Object> attributes = new LinkedHashMap<>();
+
+    private AccountStatus status = AccountStatus.OK;
+
+    private LocalDate expirationDate;
 
     public void setPassword(final String password) {
         this.password = password;
-    }
-
-    public Map<String, Object> getAttributes() {
-        return attributes;
     }
 
     public void setAttributes(final Map<String, Object> attributes) {

@@ -1,12 +1,14 @@
 package org.apereo.cas.services;
 
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.DateTimeUtils;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import lombok.Getter;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategy} is responsible for
@@ -17,6 +19,10 @@ import java.time.ZonedDateTime;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@Setter
+@NoArgsConstructor
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;
@@ -27,12 +33,6 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
 
     /**
      * Initiates the time-based access strategy.
-     */
-    public TimeBasedRegisteredServiceAccessStrategy() {
-    }
-
-    /**
-     * Initiates the time-based access strategy.
      *
      * @param enabled    is service access allowed?
      * @param ssoEnabled is service allowed to take part in SSO?
@@ -40,44 +40,7 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     public TimeBasedRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
         super(enabled, ssoEnabled);
     }
-
-    public String getStartingDateTime() {
-        return this.startingDateTime;
-    }
-
-    public String getEndingDateTime() {
-        return this.endingDateTime;
-    }
-
-    public void setStartingDateTime(final String startingDateTime) {
-        this.startingDateTime = startingDateTime;
-    }
-
-    public void setEndingDateTime(final String endingDateTime) {
-        this.endingDateTime = endingDateTime;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final TimeBasedRegisteredServiceAccessStrategy rhs = (TimeBasedRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.startingDateTime, rhs.startingDateTime)
-            .append(this.endingDateTime, rhs.endingDateTime).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.startingDateTime).append(this.endingDateTime).toHashCode();
-    }
-
+    
     @Override
     public boolean isServiceAccessAllowed() {
         if (!doesStartingTimeAllowServiceAccess()) {

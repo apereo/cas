@@ -3,9 +3,9 @@ package org.apereo.cas;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.io.Serializable;
 import java.util.UUID;
+import lombok.Getter;
 
 /**
  * This is {@link StringBean}. Allows one to declare strings as Spring beans.
@@ -14,8 +14,11 @@ import java.util.UUID;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class StringBean implements Serializable {
+
     private static final long serialVersionUID = -2216572507148074902L;
+
     private String id;
 
     public StringBean(final String id) {
@@ -26,10 +29,6 @@ public class StringBean implements Serializable {
         this(UUID.randomUUID().toString());
     }
 
-    public String getId() {
-        return id;
-    }
-    
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -42,15 +41,11 @@ public class StringBean implements Serializable {
             return false;
         }
         final StringBean rhs = (StringBean) obj;
-        return new EqualsBuilder()
-                .append(this.id, rhs.id)
-                .isEquals();
+        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(id)
-                .toHashCode();
+        return new HashCodeBuilder().append(id).toHashCode();
     }
 }

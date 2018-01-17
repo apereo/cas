@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Matcher;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link RegisteredServiceScriptedAttributeFilter}.
@@ -23,6 +24,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 122972056984610198L;
@@ -36,10 +38,6 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
 
     public void setOrder(final int order) {
         this.order = order;
-    }
-
-    public String getScript() {
-        return script;
     }
 
     public void setScript(final String script) {

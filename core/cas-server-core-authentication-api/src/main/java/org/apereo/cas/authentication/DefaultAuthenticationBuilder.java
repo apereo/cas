@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
-
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+import lombok.Getter;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -20,10 +20,11 @@ import java.util.function.Predicate;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
+
     private static final long serialVersionUID = -8504842011648432398L;
 
-    
     /** Authenticated principal. */
     private Principal principal;
 
@@ -148,15 +149,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     /**
-     * Gets the authentication attribute map.
-     *
-     * @return Non-null authentication attribute map.
-     */
-    public Map<String, Object> getAttributes() {
-        return this.attributes;
-    }
-
-    /**
      * Sets the authentication metadata attributes.
      *
      * @param attributes Non-null map of authentication metadata attributes.
@@ -206,16 +198,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     /**
-     * Gets the authentication success map.
-     *
-     * @return Non-null map of handler names to successful handler authentication results.
-     */
-    @Override
-    public Map<String, AuthenticationHandlerExecutionResult> getSuccesses() {
-        return this.successes;
-    }
-
-    /**
      * Sets the authentication handler success map.
      *
      * @param successes Non-null map of handler names to successful handler authentication results.
@@ -251,16 +233,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         }
         this.successes.put(key, value);
         return this;
-    }
-
-    /**
-     * Gets the authentication failure map.
-     *
-     * @return Non-null authentication failure map.
-     */
-    @Override
-    public Map<String, Throwable> getFailures() {
-        return this.failures;
     }
 
     /**
@@ -308,13 +280,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      */
     @Override
     public Authentication build() {
-        return new DefaultAuthentication(
-                this.authenticationDate,
-                this.credentials,
-                this.principal,
-                this.attributes,
-                this.successes,
-                this.failures);
+        return new DefaultAuthentication(this.authenticationDate, this.credentials, this.principal, this.attributes, this.successes, this.failures);
     }
 
     /**

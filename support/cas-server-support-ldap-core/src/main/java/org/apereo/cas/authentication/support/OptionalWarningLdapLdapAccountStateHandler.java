@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.MessageDescriptor;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
-
 import java.util.List;
+import lombok.Getter;
 
 /**
  * The component supports both opt-in and opt-out warnings on a per-user basis.
@@ -16,23 +16,17 @@ import java.util.List;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapAccountStateHandler {
 
-    
     private String warnAttributeName;
-    private String warningAttributeValue;
-    private boolean displayWarningOnMatch;
 
-    public String getWarnAttributeName() {
-        return warnAttributeName;
-    }
+    private String warningAttributeValue;
+
+    private boolean displayWarningOnMatch;
 
     public void setWarnAttributeName(final String warnAttributeName) {
         this.warnAttributeName = warnAttributeName;
-    }
-
-    public String getWarningAttributeValue() {
-        return warningAttributeValue;
     }
 
     public void setWarningAttributeValue(final String warningAttributeValue) {
@@ -48,22 +42,16 @@ public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapA
     }
 
     @Override
-    protected void handleWarning(
-            final AccountState.Warning warning,
-            final AuthenticationResponse response,
-            final LdapPasswordPolicyConfiguration configuration,
-            final List<MessageDescriptor> messages) {
-
+    protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
+                                 final LdapPasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {
         if (StringUtils.isBlank(this.warnAttributeName)) {
             LOGGER.debug("No warning attribute name is defined");
             return;
         }
-
         if (StringUtils.isBlank(this.warningAttributeValue)) {
             LOGGER.debug("No warning attribute value to match is defined");
             return;
         }
-        
         final LdapAttribute attribute = response.getLdapEntry().getAttribute(this.warnAttributeName);
         boolean matches = false;
         if (attribute != null) {

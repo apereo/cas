@@ -171,7 +171,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
         } catch (final InterruptedException e) {
             LOGGER.debug("Threaded lookup failed.  Defaulting to IP [{}].", remoteIp, e);
         }
-        final String remoteHostName = revDNS.get();
+        final String remoteHostName = revDNS.getHostName();
         LOGGER.debug("Found remote host name [{}].", remoteHostName);
         return StringUtils.isNotBlank(remoteHostName) ? remoteHostName : remoteIp;
     }

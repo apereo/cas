@@ -22,7 +22,7 @@ public class OneTimeTokenRepositoryCleaner {
     /**
      * Clean the repository.
      */
-    @Synchronized("lock")
+    @Synchronized
     public void clean() {
         LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", this.tokenRepository, ZonedDateTime.now());
         tokenRepository.clean();

@@ -20,8 +20,7 @@ import java.security.Key;
  */
 @Slf4j
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-
-
+    
     private Key signingKey;
 
     /**

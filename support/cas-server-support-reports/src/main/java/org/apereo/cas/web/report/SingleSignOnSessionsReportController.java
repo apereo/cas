@@ -29,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
+import lombok.Getter;
+
 /**
  * SSO Report web controller that produces JSON data for the view.
  *
@@ -38,6 +40,7 @@ import java.util.concurrent.Callable;
  */
 @Slf4j
 @ToString
+@Getter
 public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
 
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
@@ -60,25 +63,18 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
         SsoSessionReportOptions(final String type) {
             this.type = type;
         }
-
-        public String getType() {
-            return this.type;
-        }
     }
 
     /**
      * The enum Sso session attribute keys.
      */
+    @Getter
     private enum SsoSessionAttributeKeys {
 
-        AUTHENTICATED_PRINCIPAL("authenticated_principal"),
-        PRINCIPAL_ATTRIBUTES("principal_attributes"),
-        AUTHENTICATION_DATE("authentication_date"),
-        AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
-        TICKET_GRANTING_TICKET("ticket_granting_ticket"),
-        AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
-        PROXIED_BY("proxied_by"),
-        AUTHENTICATED_SERVICES("authenticated_services"),
+        AUTHENTICATED_PRINCIPAL("authenticated_principal"), PRINCIPAL_ATTRIBUTES("principal_attributes"),
+        AUTHENTICATION_DATE("authentication_date"), AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
+        TICKET_GRANTING_TICKET("ticket_granting_ticket"), AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
+        PROXIED_BY("proxied_by"), AUTHENTICATED_SERVICES("authenticated_services"),
         IS_PROXIED("is_proxied"),
         NUMBER_OF_USES("number_of_uses");
 
@@ -111,8 +107,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
     private Collection<Map<String, Object>> getActiveSsoSessions(final SsoSessionReportOptions option) {
         final Collection<Map<String, Object>> activeSessions = new ArrayList<>();
         final ISOStandardDateFormat dateFormat = new ISOStandardDateFormat();
-        getNonExpiredTicketGrantingTickets().stream()
-            .map(TicketGrantingTicket.class::cast)
+        getNonExpiredTicketGrantingTickets().stream().map(TicketGrantingTicket.class::cast)
             .filter(tgt -> !(option == SsoSessionReportOptions.DIRECT && tgt.getProxiedBy() != null))
             .forEach(tgt -> {
                 final Authentication authentication = tgt.getAuthentication();
@@ -159,8 +154,8 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getSsoSessions")
     @ResponseBody
-    public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL")
-                                                                final String type, final HttpServletRequest request, final HttpServletResponse response) {
+    public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type,
+                                                            final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Callable<Map<String, Object>> asyncTask = () -> {
             final Map<String, Object> sessionsMap = new HashMap<>(1);
@@ -236,8 +231,8 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     @PostMapping(value = "/destroySsoSessions")
     @ResponseBody
-    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL")
-                                                      final String type, final HttpServletRequest request, final HttpServletResponse response) {
+    public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type,
+                                                  final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();

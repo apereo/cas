@@ -117,7 +117,7 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      *
      * @param entityId the entity id
      */
-    @Synchronized("lock")
+    @Synchronized
     public void buildMetadataResolverAggregate(final String entityId) {
         try {
             LOGGER.debug("Building metadata resolver aggregate");

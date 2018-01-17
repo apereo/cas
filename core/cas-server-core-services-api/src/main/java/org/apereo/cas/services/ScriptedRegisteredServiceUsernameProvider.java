@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.ScriptingUtils;
+import lombok.Getter;
 
 /**
  * This is {@link ScriptedRegisteredServiceUsernameProvider}.
@@ -14,9 +15,10 @@ import org.apereo.cas.util.ScriptingUtils;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
-    private static final long serialVersionUID = -678554831202936052L;
 
+    private static final long serialVersionUID = -678554831202936052L;
 
     private String script;
 
@@ -44,14 +46,9 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
         return principal.getId();
     }
 
-    public String getScript() {
-        return script;
-    }
-
     public void setScript(final String script) {
         this.script = script;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -65,17 +62,11 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
             return false;
         }
         final ScriptedRegisteredServiceUsernameProvider rhs = (ScriptedRegisteredServiceUsernameProvider) obj;
-        return new EqualsBuilder()
-            .appendSuper(super.equals(obj))
-            .append(this.script, rhs.script)
-            .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.script, rhs.script).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .appendSuper(super.hashCode())
-            .append(script)
-            .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(script).toHashCode();
     }
 }

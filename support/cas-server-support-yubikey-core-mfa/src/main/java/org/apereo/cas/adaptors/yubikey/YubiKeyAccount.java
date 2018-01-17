@@ -9,6 +9,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link YubiKeyAccount}.
@@ -20,6 +21,7 @@ import lombok.ToString;
 @Table(name = "YubiKeyAccount")
 @Slf4j
 @ToString
+@Getter
 public class YubiKeyAccount {
 
     @Id
@@ -46,16 +48,8 @@ public class YubiKeyAccount {
         this.id = id;
     }
 
-    public String getPublicId() {
-        return publicId;
-    }
-
     public void setPublicId(final String publicId) {
         this.publicId = publicId;
-    }
-
-    public String getUsername() {
-        return username;
     }
 
     public void setUsername(final String username) {

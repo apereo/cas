@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link DuoUserAccount}.
@@ -13,6 +14,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class DuoUserAccount {
 
     private DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.AUTH;
@@ -27,20 +29,8 @@ public class DuoUserAccount {
         this.username = username;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
     public void setMessage(final String message) {
         this.message = message;
-    }
-
-    public String getEnrollPortalUrl() {
-        return enrollPortalUrl;
     }
 
     public void setEnrollPortalUrl(final String enrollPortalUrl) {

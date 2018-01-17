@@ -7,10 +7,10 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
-
 import javax.persistence.Transient;
 import java.net.URI;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategy}.
@@ -19,9 +19,10 @@ import java.util.Map;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
-    private static final long serialVersionUID = -2407494148882123062L;
 
+    private static final long serialVersionUID = -2407494148882123062L;
 
     /**
      * The sorting/execution order of this strategy.
@@ -88,10 +89,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
         this.order = order;
     }
 
-    public String getGroovyScript() {
-        return groovyScript;
-    }
-
     public void setGroovyScript(final String groovyScript) {
         this.groovyScript = groovyScript;
     }
@@ -120,17 +117,11 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
             return false;
         }
         final GroovyRegisteredServiceAccessStrategy rhs = (GroovyRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder()
-            .append(this.order, rhs.order)
-            .append(this.groovyScript, rhs.groovyScript)
-            .isEquals();
+        return new EqualsBuilder().append(this.order, rhs.order).append(this.groovyScript, rhs.groovyScript).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(order)
-            .append(groovyScript)
-            .toHashCode();
+        return new HashCodeBuilder().append(order).append(groovyScript).toHashCode();
     }
 }
