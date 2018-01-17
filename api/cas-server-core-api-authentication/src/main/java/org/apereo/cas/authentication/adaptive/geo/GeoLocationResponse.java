@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location
@@ -16,6 +16,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class GeoLocationResponse {
 
     private final Set<String> addresses = new ConcurrentSkipListSet<>();
@@ -40,10 +41,6 @@ public class GeoLocationResponse {
      */
     public String build() {
         return this.addresses.stream().collect(Collectors.joining(","));
-    }
-
-    public Set<String> getAddresses() {
-        return addresses;
     }
 
     public double getLatitude() {

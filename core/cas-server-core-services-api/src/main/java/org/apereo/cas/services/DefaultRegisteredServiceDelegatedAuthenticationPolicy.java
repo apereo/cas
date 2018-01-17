@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * This is {@link DefaultRegisteredServiceDelegatedAuthenticationPolicy}.
@@ -17,6 +17,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
 
     private static final long serialVersionUID = -784106970642770923L;
@@ -29,11 +30,6 @@ public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements Re
 
     public DefaultRegisteredServiceDelegatedAuthenticationPolicy(final Collection<String> allowedProviders) {
         this.allowedProviders = allowedProviders;
-    }
-
-    @Override
-    public Collection<String> getAllowedProviders() {
-        return this.allowedProviders;
     }
 
     @Override

@@ -131,19 +131,19 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         this.grantedTicketAlready = Boolean.TRUE;
 
         final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service,
-            this.getGrantingTicket(), authentication, expirationPolicy);
-        getGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
+            this.getTicketGrantingTicket(), authentication, expirationPolicy);
+        getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }
 
     @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
     @Override
     public Authentication getAuthentication() {
-        return getGrantingTicket().getAuthentication();
+        return getTicketGrantingTicket().getAuthentication();
     }
 
     public void setTicketGrantingTicket(final TicketGrantingTicket ticketGrantingTicket) {

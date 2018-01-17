@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -44,11 +45,13 @@ import lombok.ToString;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
+@DiscriminatorColumn(name = "expression_type", length = 50,
+    discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @ToString
+@Getter
 public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
@@ -142,36 +145,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     }
 
     @Override
-    public String getInformationUrl() {
-        return this.informationUrl;
-    }
-
-    @Override
-    public String getPrivacyUrl() {
-        return this.privacyUrl;
-    }
-
-    @Override
-    public String getDescription() {
-        return this.description;
-    }
-
-    @Override
-    public String getServiceId() {
-        return this.serviceId;
-    }
-
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    @Override
-    public String getTheme() {
-        return this.theme;
-    }
-
-    @Override
     public RegisteredServiceProxyPolicy getProxyPolicy() {
         return this.proxyPolicy;
     }
@@ -224,23 +197,21 @@ public abstract class AbstractRegisteredService implements RegisteredService {
             .append(this.theme, that.theme).append(this.usernameAttributeProvider, that.usernameAttributeProvider)
             .append(this.logoutType, that.logoutType).append(this.attributeReleasePolicy, that.attributeReleasePolicy)
             .append(this.accessStrategy, that.accessStrategy).append(this.logo, that.logo).append(this.publicKey, that.publicKey)
-            .append(this.logoutUrl, that.logoutUrl).append(this.requiredHandlers, that.requiredHandlers)
-            .append(this.proxyPolicy, that.proxyPolicy).append(this.properties, that.properties)
-            .append(this.multifactorPolicy, that.multifactorPolicy).append(this.informationUrl, that.informationUrl)
-            .append(this.privacyUrl, that.privacyUrl).append(this.contacts, that.contacts)
-            .append(this.expirationPolicy, that.expirationPolicy).append(this.responseType, that.responseType).isEquals();
+            .append(this.logoutUrl, that.logoutUrl).append(this.requiredHandlers, that.requiredHandlers).append(this.proxyPolicy, that.proxyPolicy)
+            .append(this.properties, that.properties).append(this.multifactorPolicy, that.multifactorPolicy).append(this.informationUrl, that.informationUrl)
+            .append(this.privacyUrl, that.privacyUrl).append(this.contacts, that.contacts).append(this.expirationPolicy, that.expirationPolicy)
+            .append(this.responseType, that.responseType).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(7, 31)
-            .append(this.description).append(this.serviceId).append(this.name).append(this.theme)
-            .append(this.evaluationOrder).append(this.usernameAttributeProvider).append(this.accessStrategy)
-            .append(this.logoutType).append(this.attributeReleasePolicy).append(this.accessStrategy)
-            .append(this.logo).append(this.publicKey).append(this.logoutUrl).append(this.requiredHandlers)
-            .append(this.proxyPolicy).append(this.properties).append(this.multifactorPolicy)
-            .append(this.informationUrl).append(this.privacyUrl).append(this.contacts)
-            .append(this.expirationPolicy).append(this.responseType).toHashCode();
+        return new HashCodeBuilder(7, 31).append(this.description)
+            .append(this.serviceId).append(this.name).append(this.theme).append(this.evaluationOrder)
+            .append(this.usernameAttributeProvider)
+            .append(this.accessStrategy).append(this.logoutType).append(this.attributeReleasePolicy).append(this.accessStrategy)
+            .append(this.logo).append(this.publicKey).append(this.logoutUrl).append(this.requiredHandlers).append(this.proxyPolicy)
+            .append(this.properties).append(this.multifactorPolicy).append(this.informationUrl).append(this.privacyUrl)
+            .append(this.contacts).append(this.expirationPolicy).append(this.responseType).toHashCode();
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
@@ -323,11 +294,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     public void setLogoutType(final LogoutType logoutType) {
         this.logoutType = logoutType;
-    }
-
-    @Override
-    public String getResponseType() {
-        return responseType;
     }
 
     public void setResponseType(final String responseType) {
@@ -426,11 +392,6 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Override
     public RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
         return this.attributeReleasePolicy;
-    }
-
-    @Override
-    public String getLogo() {
-        return this.logo;
     }
 
     public void setLogo(final String logo) {

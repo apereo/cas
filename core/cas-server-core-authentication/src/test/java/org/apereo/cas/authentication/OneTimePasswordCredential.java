@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
 
 /**
  * Describes a one-time-password credential that contains an optional unique identifier and required password.
@@ -17,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class OneTimePasswordCredential extends AbstractCredential {
 
     /** Serialization version marker. */
@@ -40,7 +42,6 @@ public class OneTimePasswordCredential extends AbstractCredential {
         this.password = password;
     }
 
-
     /**
      * Creates a one-time-password with unique ID and password.
      *
@@ -51,24 +52,5 @@ public class OneTimePasswordCredential extends AbstractCredential {
     public OneTimePasswordCredential(@JsonProperty("id") final String id, @JsonProperty("password") final String password) {
         this(password);
         this.id = id;
-    }
-
-    /**
-     * Gets the cleartext one-time password value.
-     *
-     * @return Non-null one-time password.
-     */
-    public String getPassword() {
-        return this.password;
-    }
-
-    /**
-     * Gets the unique ID commonly used to look up a one-time password in a system of record.
-     *
-     * @return Possibly null unique ID.
-     */
-    @Override
-    public String getId() {
-        return this.id;
     }
 }

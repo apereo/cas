@@ -15,6 +15,7 @@ import javax.persistence.MappedSuperclass;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -37,6 +38,7 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
 @ToString
+@Getter
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
@@ -104,17 +106,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
     public void update() {
         this.previousLastTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
-        if (getGrantingTicket() != null && !getGrantingTicket().isExpired()) {
-            final TicketState state = TicketState.class.cast(getGrantingTicket());
+        if (getTicketGrantingTicket() != null && !getTicketGrantingTicket().isExpired()) {
+            final TicketState state = TicketState.class.cast(getTicketGrantingTicket());
             state.update();
         }
     }
@@ -141,7 +138,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public boolean isExpired() {
-        final TicketGrantingTicket tgt = getGrantingTicket();
+        final TicketGrantingTicket tgt = getTicketGrantingTicket();
         return this.expirationPolicy.isExpired(this) || (tgt != null && tgt.isExpired()) || isExpiredInternal();
     }
 

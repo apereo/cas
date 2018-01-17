@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * @author Travis Schmidt
@@ -22,6 +23,7 @@ import lombok.ToString;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @ToString
+@Getter
 public class DefaultRegisteredServiceContact implements RegisteredServiceContact {
 
     private static final long serialVersionUID = 1324660891900737066L;
@@ -45,26 +47,6 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
     private String department;
 
     public DefaultRegisteredServiceContact() {
-    }
-
-    @Override
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public String getPhone() {
-        return phone;
-    }
-
-    @Override
-    public String getDepartment() {
-        return department;
     }
 
     public void setName(final String name) {

@@ -13,11 +13,11 @@ import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.core.Ordered;
-
 import java.util.List;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.Getter;
 
 /**
  * This is {@link ConfigurationMetadataSearchResult}.
@@ -26,18 +26,25 @@ import java.util.regex.Pattern;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
+
     private static final long serialVersionUID = 7767348341760984539L;
 
-
     private static final Pattern PATTERN_DESCRIPTION_CODE = RegexUtils.createPattern("\\{@code (.+)\\}");
+
     private static final Pattern PATTERN_DESCRIPTION_SEE = RegexUtils.createPattern("@see (.+)");
+
     private static final Pattern PATTERN_DESCRIPTION_LINK = RegexUtils.createPattern("\\{@link (.+)\\}");
 
     private int order;
+
     private String group;
+
     private boolean requiredProperty;
+
     private String requiredModule;
+
     private boolean requiredModuleAutomated;
 
     public ConfigurationMetadataSearchResult(final ConfigurationMetadataProperty prop, final CasConfigurationMetadataRepository repository) {
@@ -51,9 +58,7 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             setType(prop.getType());
             setGroup(CasConfigurationMetadataRepository.getPropertyGroupId(prop));
             setOrder(CasConfigurationMetadataRepository.isCasProperty(prop) ? Ordered.HIGHEST_PRECEDENCE : Ordered.LOWEST_PRECEDENCE);
-
             final List<ValueHint> valueHints = prop.getHints().getValueHints();
-
             valueHints.forEach(hint -> {
                 final Set values = CollectionUtils.toCollection(hint.getValue());
                 if (values.contains(RequiresModule.class.getName())) {
@@ -64,14 +69,9 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
                     setRequiredProperty(true);
                 }
             });
-
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-    }
-
-    public String getRequiredModule() {
-        return requiredModule;
     }
 
     public void setRequiredModule(final String requiredModule) {
@@ -84,10 +84,6 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
 
     public void setRequiredProperty(final boolean requiredProperty) {
         this.requiredProperty = requiredProperty;
-    }
-
-    public String getGroup() {
-        return group;
     }
 
     public void setGroup(final String group) {
@@ -115,7 +111,6 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
                 final String replacement = "See ".concat(String.format(format, matcher.group(1)));
                 description = StringUtils.replacePattern(description, PATTERN_DESCRIPTION_LINK.pattern(), replacement);
             }
-
             matcher = PATTERN_DESCRIPTION_SEE.matcher(description);
             if (matcher.find()) {
                 final String replacement = "See ".concat(String.format(format, matcher.group(1)));
@@ -147,28 +142,16 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             return false;
         }
         final ConfigurationMetadataSearchResult rhs = (ConfigurationMetadataSearchResult) obj;
-        return new EqualsBuilder()
-                .append(this.order, rhs.order)
-                .append(getName(), rhs.getName())
-                .append(this.group, rhs.group)
-                .isEquals();
+        return new EqualsBuilder().append(this.order, rhs.order).append(getName(), rhs.getName()).append(this.group, rhs.group).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(order)
-                .append(getName())
-                .append(group)
-                .toHashCode();
+        return new HashCodeBuilder().append(order).append(getName()).append(group).toHashCode();
     }
 
     @Override
     public int compareTo(final ConfigurationMetadataSearchResult o) {
-        return new CompareToBuilder()
-                .append(this.order, o.getOrder())
-                .append(getName(), o.getName())
-                .append(this.group, o.getGroup())
-                .build();
+        return new CompareToBuilder().append(this.order, o.getOrder()).append(getName(), o.getName()).append(this.group, o.getGroup()).build();
     }
 }

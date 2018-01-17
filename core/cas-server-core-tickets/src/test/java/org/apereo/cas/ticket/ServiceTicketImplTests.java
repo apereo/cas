@@ -104,7 +104,7 @@ public class ServiceTicketImplTests {
     public void verifyGetTicket() {
         final Service simpleService = CoreAuthenticationTestUtils.getService();
         final ServiceTicket s = new ServiceTicketImpl(ST_ID, tgt, simpleService, false, new NeverExpiresExpirationPolicy());
-        assertEquals(tgt, s.getGrantingTicket());
+        assertEquals(tgt, s.getTicketGrantingTicket());
     }
 
     @Test

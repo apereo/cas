@@ -4,6 +4,7 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.support.events.AbstractCasEvent;
+import lombok.Getter;
 
 /**
  * This is {@link CasSurrogateAuthenticationFailureEvent}.
@@ -13,6 +14,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 8059647975948452375L;
@@ -36,9 +38,5 @@ public class CasSurrogateAuthenticationFailureEvent extends AbstractCasEvent {
 
     public Principal getPrincipal() {
         return principal;
-    }
-
-    public String getSurrogate() {
-        return surrogate;
     }
 }

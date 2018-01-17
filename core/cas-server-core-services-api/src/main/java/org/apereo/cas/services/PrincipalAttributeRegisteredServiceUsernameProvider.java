@@ -9,6 +9,7 @@ import org.apereo.cas.util.CollectionUtils;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Determines the username for this registered service based on a principal attribute.
@@ -19,6 +20,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -3546719400741715137L;
@@ -44,10 +46,6 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
     public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute, final String canonicalizationMode) {
         super(canonicalizationMode);
         this.usernameAttribute = usernameAttribute;
-    }
-
-    public String getUsernameAttribute() {
-        return this.usernameAttribute;
     }
 
     @Override
@@ -77,8 +75,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
                 + "provide the user attribute the service expects. "
                 + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
-                + "is allowed to be released by the service attribute release policy.",
-                principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
+                + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
         }
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();

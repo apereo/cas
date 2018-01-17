@@ -10,6 +10,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -19,6 +20,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
     private final int failureThreshold;
@@ -67,8 +69,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             return;
         }
         final boolean recordEvent = response.getStatus() != HttpStatus.SC_CREATED
-            && response.getStatus() != HttpStatus.SC_OK
-            && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
+            && response.getStatus() != HttpStatus.SC_OK && response.getStatus() != HttpStatus.SC_MOVED_TEMPORARILY;
         if (recordEvent) {
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
@@ -85,10 +86,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     protected int getFailureRangeInSeconds() {
         return this.failureRangeInSeconds;
-    }
-
-    protected String getUsernameParameter() {
-        return this.usernameParameter;
     }
 
     /**

@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.security.GeneralSecurityException;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.chrono.ChronoZonedDateTime;
+import lombok.Getter;
 
 /**
  * Exception describing an expired CRL condition.
@@ -16,7 +16,9 @@ import java.time.chrono.ChronoZonedDateTime;
  *
  */
 @Slf4j
+@Getter
 public class ExpiredCRLException extends GeneralSecurityException {
+
     /** Serialization version marker. */
     private static final long serialVersionUID = 5157864033250359972L;
 
@@ -94,13 +96,6 @@ public class ExpiredCRLException extends GeneralSecurityException {
     }
 
     /**
-     * @return Returns the id.
-     */
-    public String getId() {
-        return this.id;
-    }
-
-    /**
      * @return Returns the expirationDate.
      */
     public ZonedDateTime getExpirationDate() {
@@ -117,8 +112,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     @Override
     public String getMessage() {
         if (this.leniency > 0) {
-            return String.format("CRL %s expired on %s and is beyond the leniency period of %s seconds.",
-                    this.id, this.expirationDate, this.leniency);
+            return String.format("CRL %s expired on %s and is beyond the leniency period of %s seconds.", this.id, this.expirationDate, this.leniency);
         }
         return String.format("CRL %s expired on %s", this.id, this.expirationDate);
     }

@@ -7,9 +7,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
-
 import javax.persistence.Transient;
 import java.util.Set;
+import lombok.Getter;
 
 /**
  * This is {@link GroovyRegisteredServiceMultifactorPolicy}.
@@ -18,9 +18,10 @@ import java.util.Set;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
-    private static final long serialVersionUID = -3075860754996106437L;
 
+    private static final long serialVersionUID = -3075860754996106437L;
 
     private String groovyScript;
 
@@ -66,10 +67,6 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         return this.groovyPolicyInstance.isBypassEnabled();
     }
 
-    public String getGroovyScript() {
-        return groovyScript;
-    }
-
     public void setGroovyScript(final String groovyScript) {
         this.groovyScript = groovyScript;
     }
@@ -86,7 +83,6 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         }
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -99,15 +95,11 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
             return false;
         }
         final GroovyRegisteredServiceMultifactorPolicy rhs = (GroovyRegisteredServiceMultifactorPolicy) obj;
-        return new EqualsBuilder()
-            .append(this.groovyScript, rhs.groovyScript)
-            .isEquals();
+        return new EqualsBuilder().append(this.groovyScript, rhs.groovyScript).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-            .append(groovyScript)
-            .toHashCode();
+        return new HashCodeBuilder().append(groovyScript).toHashCode();
     }
 }

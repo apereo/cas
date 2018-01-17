@@ -1,6 +1,10 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
 import com.google.common.io.ByteSource;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Credential;
@@ -23,6 +27,10 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class SpnegoCredential implements Credential, Serializable {
 
     /**
@@ -70,15 +78,7 @@ public class SpnegoCredential implements Credential, Serializable {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }
-
-    public byte[] getInitToken() {
-        return this.initToken;
-    }
-
-    public byte[] getNextToken() {
-        return this.nextToken;
-    }
-
+    
     /**
      * Sets next token.
      *
@@ -86,18 +86,6 @@ public class SpnegoCredential implements Credential, Serializable {
      */
     public void setNextToken(final byte[] nextToken) {
         this.nextToken = consumeByteSourceOrNull(ByteSource.wrap(nextToken));
-    }
-
-    public Principal getPrincipal() {
-        return this.principal;
-    }
-
-    public void setPrincipal(final Principal principal) {
-        this.principal = principal;
-    }
-
-    public boolean isNtlm() {
-        return this.isNtlm;
     }
 
     @Override

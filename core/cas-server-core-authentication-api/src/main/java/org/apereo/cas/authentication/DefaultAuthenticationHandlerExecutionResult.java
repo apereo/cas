@@ -11,6 +11,7 @@ import org.springframework.util.Assert;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Contains information about a successful authentication produced by an {@link AuthenticationHandler}.
@@ -23,6 +24,7 @@ import lombok.ToString;
 @Slf4j
 @ToString
 @NoArgsConstructor
+@Getter
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     /**
@@ -112,11 +114,6 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
         this.credentialMetaData = metaData;
         this.principal = p;
         this.warnings = warnings;
-    }
-
-    @Override
-    public String getHandlerName() {
-        return this.handlerName;
     }
 
     @Override

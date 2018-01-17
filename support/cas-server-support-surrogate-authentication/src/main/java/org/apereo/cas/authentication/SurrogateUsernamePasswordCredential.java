@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
 
 /**
  * This is {@link SurrogateUsernamePasswordCredential},
@@ -13,17 +15,9 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Setter
+@Getter
 public class SurrogateUsernamePasswordCredential extends RememberMeUsernamePasswordCredential {
-
     private static final long serialVersionUID = 8760695298971444249L;
-
     private String surrogateUsername;
-
-    public String getSurrogateUsername() {
-        return surrogateUsername;
-    }
-
-    public void setSurrogateUsername(final String surrogateUsername) {
-        this.surrogateUsername = surrogateUsername;
-    }
 }

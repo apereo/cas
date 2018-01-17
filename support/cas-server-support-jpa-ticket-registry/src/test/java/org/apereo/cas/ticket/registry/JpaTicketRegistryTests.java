@@ -170,7 +170,7 @@ public class JpaTicketRegistryTests {
 
         // PGT
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
-        updateTicketInTransaction(stFromDb.getGrantingTicket());
+        updateTicketInTransaction(stFromDb.getTicketGrantingTicket());
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         assertNotNull(pgtFromDb);
         assertEquals(newPgt.getId(), pgtFromDb.getId());
@@ -193,7 +193,7 @@ public class JpaTicketRegistryTests {
 
         // PGT 2
         final ProxyGrantingTicket newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
-        updateTicketInTransaction(st2FromDb.getGrantingTicket());
+        updateTicketInTransaction(st2FromDb.getTicketGrantingTicket());
         final ProxyGrantingTicket pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
         assertNotNull(pgt2FromDb);
         assertEquals(newPgt2.getId(), pgt2FromDb.getId());

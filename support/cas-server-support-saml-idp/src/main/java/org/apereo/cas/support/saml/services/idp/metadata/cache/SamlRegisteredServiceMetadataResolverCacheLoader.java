@@ -48,7 +48,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
     }
 
     @Override
-    @Synchronized("lock")
+    @Synchronized
     public ChainingMetadataResolver load(final SamlRegisteredService service) {
         try {
             final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();

@@ -44,7 +44,7 @@ public class JcifsSpnegoAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @Override
-    @Synchronized("lock")
+    @Synchronized
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final SpnegoCredential spnegoCredential = (SpnegoCredential) credential;
         final java.security.Principal principal;

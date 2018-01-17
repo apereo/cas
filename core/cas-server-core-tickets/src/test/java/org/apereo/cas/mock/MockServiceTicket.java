@@ -10,9 +10,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import lombok.Getter;
 
 /**
  * Mock service ticket.
@@ -21,6 +21,7 @@ import java.time.ZonedDateTime;
  * @since 3.0.0
  */
 @Slf4j
+@Getter
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;
@@ -30,9 +31,9 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     private final ZonedDateTime created;
 
     private final Service service;
-    
+
     private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
-    
+
     private final TicketGrantingTicket parent;
 
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
@@ -58,10 +59,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     }
 
     @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(
-            final String id,
-            final Authentication authentication,
-            final ExpirationPolicy expirationPolicy) {
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         return null;
     }
 
@@ -76,17 +74,12 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
     public boolean isExpired() {
         return this.expiration.isExpired(this);
     }
 
     @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         return parent;
     }
 
@@ -118,7 +111,6 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     public ZonedDateTime getPreviousTimeUsed() {
         return ZonedDateTime.now();
     }
-
 
     @Override
     public int compareTo(final Ticket o) {

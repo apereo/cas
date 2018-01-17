@@ -93,7 +93,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
             final SamlArtifactTicket ticket = this.ticketRegistry.getTicket(ticketId, SamlArtifactTicket.class);
 
             final Service issuerService = webApplicationServiceFactory.createService(issuer);
-            final Assertion casAssertion = buildCasAssertion(ticket.getGrantingTicket().getAuthentication(),
+            final Assertion casAssertion = buildCasAssertion(ticket.getTicketGrantingTicket().getAuthentication(),
                     issuerService, service,
                     CollectionUtils.wrap("artifact", ticket));
             this.responseBuilder.build(artifactMsg, request, response, casAssertion,

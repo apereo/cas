@@ -13,6 +13,7 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
+import lombok.Getter;
 
 /**
  * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
@@ -21,13 +22,13 @@ import org.springframework.webflow.execution.Event;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
-
 
     private static final long serialVersionUID = 4789727148634156909L;
 
     private String registrationUrl;
-    
+
     private DuoSecurityAuthenticationService duoAuthenticationService;
 
     /**
@@ -68,32 +69,23 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
             return false;
         }
         final DefaultDuoMultifactorAuthenticationProvider rhs = (DefaultDuoMultifactorAuthenticationProvider) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(duoAuthenticationService, rhs.duoAuthenticationService)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(duoAuthenticationService, rhs.duoAuthenticationService).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(duoAuthenticationService)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(duoAuthenticationService).toHashCode();
     }
 
     @Override
     protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
         Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
-        
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }
-
         final Principal principal = authentication.getPrincipal();
         final DuoUserAccount acct = this.duoAuthenticationService.getDuoUserAccount(principal.getId());
         LOGGER.debug("Found duo user account status [{}] for [{}]", acct, principal);
-
         if (acct.getStatus() == DuoUserAccountAuthStatus.ALLOW) {
             LOGGER.debug("Account status is set for allow/bypass for [{}]", principal);
             return false;
@@ -101,7 +93,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         if (acct.getStatus() == DuoUserAccountAuthStatus.DENY) {
             LOGGER.warn("Account status is set to deny access to [{}]", principal);
         }
-
         return true;
     }
 
@@ -110,14 +101,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
         return "Duo Security";
     }
 
-    @Override
-    public String getRegistrationUrl() {
-        return registrationUrl;
-    }
-
     public void setRegistrationUrl(final String registrationUrl) {
         this.registrationUrl = registrationUrl;
     }
 }
-
-

@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
@@ -8,8 +7,8 @@ import org.apereo.cas.services.util.RegisteredServiceYamlSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
-
 import java.nio.file.Path;
+import lombok.Getter;
 
 /**
  * Implementation of {@code ServiceRegistryDao} that reads services definition from YAML
@@ -34,6 +33,7 @@ import java.nio.file.Path;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
 
     /**
@@ -51,11 +51,9 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher,
-                                  final ApplicationEventPublisher eventPublisher,
+    public YamlServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
-        super(configDirectory, new RegisteredServiceYamlSerializer(),
-            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+        super(configDirectory, new RegisteredServiceYamlSerializer(), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     /**
@@ -69,14 +67,11 @@ public class YamlServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @throws Exception the IO exception
      */
-    public YamlServiceRegistryDao(final Resource configDirectory,
-                                  final boolean enableWatcher,
-                                  final ApplicationEventPublisher eventPublisher,
+    public YamlServiceRegistryDao(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
-        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()),
-            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+        super(configDirectory, CollectionUtils.wrapList(new RegisteredServiceYamlSerializer()), enableWatcher,
+            eventPublisher, registeredServiceReplicationStrategy);
     }
-
 
     @Override
     protected String getExtension() {

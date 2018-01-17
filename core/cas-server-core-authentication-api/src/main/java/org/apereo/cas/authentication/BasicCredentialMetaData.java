@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
 import java.io.Serializable;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.Getter;
 
 /**
  * Basic credential metadata implementation that stores the original credential ID and the original credential type.
@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class BasicCredentialMetaData implements CredentialMetaData, Serializable {
 
     /** Serialization version marker. */
@@ -39,12 +40,6 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
         this.id = credential.getId();
         this.credentialClass = credential.getClass();
     }
-
-    @Override
-    public String getId() {
-        return this.id;
-    }
-
 
     @Override
     public Class<? extends Credential> getCredentialClass() {

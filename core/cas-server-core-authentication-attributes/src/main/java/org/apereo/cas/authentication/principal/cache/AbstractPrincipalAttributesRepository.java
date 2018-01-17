@@ -23,6 +23,7 @@ import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * Parent class for retrieval principals attributes, provides operations
@@ -33,6 +34,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
 
     /**
@@ -146,9 +148,8 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
      * @return principal attributes
      */
     protected Map<String, Object> convertPersonAttributesToPrincipalAttributes(final Map<String, List<Object>> attributes) {
-        return attributes.entrySet().stream()
-            .collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size() == 1
-                ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
+        return attributes.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().size() == 1
+            ? entry.getValue().get(0) : entry.getValue(), (e, f) -> f == null ? e : f));
     }
 
     /***
@@ -222,8 +223,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             }
             LOGGER.error("The merging strategy [{}] for [{}] has failed to produce principal attributes because: [{}]. "
                 + "This usually is indicative of a bug and/or configuration mismatch. CAS will skip the merging process "
-                + "and will return the original collection of principal attributes [{}]",
-                this.mergingStrategy, p.getId(), builder.toString(), principalAttributes);
+                + "and will return the original collection of principal attributes [{}]", this.mergingStrategy, p.getId(), builder.toString(), principalAttributes);
             return convertAttributesToPrincipalAttributesAndCache(p, principalAttributes);
         }
     }
@@ -279,10 +279,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
 
     public long getExpiration() {
         return this.expiration;
-    }
-
-    public String getTimeUnit() {
-        return this.timeUnit;
     }
 
     public void setTimeUnit(final String unit) {

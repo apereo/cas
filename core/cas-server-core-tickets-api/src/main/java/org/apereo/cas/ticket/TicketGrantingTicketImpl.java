@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -24,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -42,6 +42,7 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@Getter
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /**
@@ -113,14 +114,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * @param policy                     the expiration policy for this ticket.
      */
     @JsonCreator
-    public TicketGrantingTicketImpl(@JsonProperty("id") final String id,
-                                    @JsonProperty("proxiedBy") final Service proxiedBy,
+    public TicketGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
                                     @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
                                     @JsonProperty("authentication") final Authentication authentication,
                                     @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
-
         super(id, policy);
-
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
         }
@@ -143,7 +141,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         return this.ticketGrantingTicket;
     }
 
@@ -162,11 +160,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public synchronized ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
                                                          final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
-
-        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this,
-                service, credentialProvided,
-                expirationPolicy);
-
+        final ServiceTicket serviceTicket = new ServiceTicketImpl(id, this, service, credentialProvided, expirationPolicy);
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
         return serviceTicket;
     }
@@ -180,15 +174,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     protected void trackServiceSession(final String id, final Service service, final boolean onlyTrackMostRecentSession) {
         update();
-
         service.setPrincipal(getRoot().getAuthentication().getPrincipal().getId());
         if (onlyTrackMostRecentSession) {
             final String path = normalizePath(service);
             final Collection<Service> existingServices = this.services.values();
             // loop on existing services
-            existingServices.stream()
-                    .filter(existingService -> path.equals(normalizePath(existingService)))
-                    .findFirst().ifPresent(existingServices::remove);
+            existingServices.stream().filter(existingService -> path.equals(normalizePath(existingService))).findFirst().ifPresent(existingServices::remove);
         }
         this.services.put(id, service);
     }
@@ -216,11 +207,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public synchronized Map<String, Service> getServices() {
         return new HashMap<>(this.services);
     }
-    
-    @Override
-    public Map<String, Service> getProxyGrantingTickets() {
-        return this.proxyGrantingTickets;
-    }
 
     /**
      * Remove all services of the TGT (at logout).
@@ -237,7 +223,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     @Override
     public boolean isRoot() {
-        return this.getGrantingTicket() == null;
+        return this.getTicketGrantingTicket() == null;
     }
 
     @Override
@@ -248,7 +234,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonIgnore
     @Override
     public TicketGrantingTicket getRoot() {
-        final TicketGrantingTicket parent = getGrantingTicket();
+        final TicketGrantingTicket parent = this.getTicketGrantingTicket();
         if (parent == null) {
             return this;
         }
@@ -270,14 +256,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Override
     public List<Authentication> getChainedAuthentications() {
         final List<Authentication> list = new ArrayList<>();
-
         list.add(getAuthentication());
-
-        if (getGrantingTicket() == null) {
+        if (this.getTicketGrantingTicket() == null) {
             return new ArrayList<>(list);
         }
-
-        list.addAll(getGrantingTicket().getChainedAuthentications());
+        list.addAll(this.getTicketGrantingTicket().getChainedAuthentications());
         return new ArrayList<>(list);
     }
 

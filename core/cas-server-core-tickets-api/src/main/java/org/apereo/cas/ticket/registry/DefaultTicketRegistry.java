@@ -4,9 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Getter;
 
 /**
  * Implementation of the TicketRegistry that is backed by a ConcurrentHashMap.
@@ -15,6 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @Slf4j
+@Getter
 public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     /**
@@ -31,9 +32,7 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
         this.cache = new ConcurrentHashMap<>();
     }
 
-    public DefaultTicketRegistry(final int initialCapacity, final int loadFactor,
-                                 final int concurrencyLevel,
-                                 final CipherExecutor cipherExecutor) {
+    public DefaultTicketRegistry(final int initialCapacity, final int loadFactor, final int concurrencyLevel, final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
         this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }

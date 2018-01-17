@@ -1,14 +1,17 @@
 package org.apereo.cas.web.view;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -16,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.ToString;
 
 /**
  * Renders the model prepared by CAS in JSON format.
@@ -32,14 +34,15 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class Cas30JsonResponseView extends Cas30ResponseView {
 
     public Cas30JsonResponseView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder,
-                                 final ServicesManager servicesManager, final String authenticationContextAttribute,
-                                 final boolean releaseProtocolAttributes, final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                                 final ServicesManager servicesManager, final String authenticationContextAttribute, final boolean releaseProtocolAttributes,
+                                 final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-            createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy, serviceSelectionStrategy);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, createDelegatedView(),
+            releaseProtocolAttributes, authenticationAttributeReleasePolicy, serviceSelectionStrategy);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {
@@ -126,16 +129,8 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
         private Map attributes;
 
-        public String getUser() {
-            return this.user;
-        }
-
         public void setUser(final String user) {
             this.user = user;
-        }
-
-        public String getProxyGrantingTicket() {
-            return this.proxyGrantingTicket;
         }
 
         public void setProxyGrantingTicket(final String proxyGrantingTicket) {
@@ -165,16 +160,8 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
         private String description;
 
-        public String getCode() {
-            return this.code;
-        }
-
         public void setCode(final String code) {
             this.code = code;
-        }
-
-        public String getDescription() {
-            return this.description;
         }
 
         public void setDescription(final String description) {

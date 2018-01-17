@@ -2,10 +2,13 @@ package org.apereo.cas.trusted.authentication.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -13,7 +16,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.time.LocalDate;
-import lombok.ToString;
 
 /**
  * This is {@link MultifactorAuthenticationTrustRecord}.
@@ -26,6 +28,9 @@ import lombok.ToString;
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
 @ToString
+@Getter
+@Setter
+@EqualsAndHashCode
 public class MultifactorAuthenticationTrustRecord implements Comparable<MultifactorAuthenticationTrustRecord> {
 
     @Id
@@ -52,68 +57,6 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
 
     public MultifactorAuthenticationTrustRecord() {
         this.id = System.currentTimeMillis();
-    }
-
-    public String getRecordKey() {
-        return recordKey;
-    }
-
-    public void setRecordKey(final String id) {
-        this.recordKey = id;
-    }
-
-    public String getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(final String principal) {
-        this.principal = principal;
-    }
-
-    public String getGeography() {
-        return geography;
-    }
-
-    public void setGeography(final String geography) {
-        this.geography = geography;
-    }
-
-    public LocalDate getRecordDate() {
-        return recordDate;
-    }
-
-    public void setRecordDate(final LocalDate date) {
-        this.recordDate = date;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final MultifactorAuthenticationTrustRecord rhs = (MultifactorAuthenticationTrustRecord) obj;
-        return new EqualsBuilder().append(this.principal, rhs.principal).append(this.geography, rhs.geography)
-            .append(this.recordDate, rhs.recordDate).append(this.recordKey, rhs.recordKey).append(this.name, rhs.name).isEquals();
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(principal).append(geography)
-            .append(recordDate).append(recordKey).append(name).toHashCode();
     }
 
     /**

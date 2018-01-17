@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 
 /**
  * This is {@link SurrogateRegisteredServiceAccessStrategy}.
@@ -16,29 +18,16 @@ import java.util.Set;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true)
 public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+
     private static final long serialVersionUID = -1688944419711632962L;
 
-
     private boolean surrogateEnabled;
-    
+
     private Map<String, Set<String>> surrogateRequiredAttributes = new HashMap<>();
-
-    public boolean isSurrogateEnabled() {
-        return surrogateEnabled;
-    }
-
-    public void setSurrogateEnabled(final boolean surrogateEnabled) {
-        this.surrogateEnabled = surrogateEnabled;
-    }
-
-    public Map<String, Set<String>> getSurrogateRequiredAttributes() {
-        return surrogateRequiredAttributes;
-    }
-
-    public void setSurrogateRequiredAttributes(final Map<String, Set<String>> surrogateRequiredAttributes) {
-        this.surrogateRequiredAttributes = surrogateRequiredAttributes;
-    }
 
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
@@ -62,7 +51,6 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
             LOGGER.debug("Surrogate access is denied. There are not enough attributes available to satisfy requirements");
             return false;
         }
-
         if (!doRequiredAttributesAllowPrincipalAccess(principalAttributes, this.surrogateRequiredAttributes)) {
             LOGGER.debug("Surrogate access is denied. The principal does not have the required attributes specified by this strategy");
             return false;
@@ -80,32 +68,4 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
         return attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
     }
 
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final SurrogateRegisteredServiceAccessStrategy rhs = (SurrogateRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.surrogateEnabled, rhs.surrogateEnabled)
-                .append(this.surrogateRequiredAttributes, rhs.surrogateRequiredAttributes)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(surrogateEnabled)
-                .append(surrogateRequiredAttributes)
-                .toHashCode();
-    }
 }

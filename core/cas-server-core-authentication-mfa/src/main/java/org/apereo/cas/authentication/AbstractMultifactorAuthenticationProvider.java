@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.*;
 import lombok.ToString;
+import lombok.Getter;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -22,6 +23,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
@@ -35,11 +37,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     private int order;
 
     public AbstractMultifactorAuthenticationProvider() {
-    }
-
-    @Override
-    public String getId() {
-        return id;
     }
 
     @Override
@@ -60,8 +57,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     }
 
     @Override
-    public final boolean supports(final Event event, final Authentication authentication,
-                                  final RegisteredService registeredService, final HttpServletRequest request) {
+    public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService,
+                                  final HttpServletRequest request) {
         if (event == null || !event.getId().matches(getId())) {
             LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", event, getId());
             return false;

@@ -168,7 +168,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
-        when(stMock.getGrantingTicket()).thenReturn(tgtMock);
+        when(stMock.getTicketGrantingTicket()).thenReturn(tgtMock);
 
         final Service service2 = getService(SVC2_ID);
         final ServiceTicket stMock2 = createMockServiceTicket(ST2_ID, service2);
@@ -293,7 +293,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
         when(tgtMock.getAuthentication()).thenReturn(this.authentication);
-        when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);
+        when(svcTicket.getTicketGrantingTicket()).thenReturn(tgtMock);
 
         return tgtMock;
     }

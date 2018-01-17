@@ -1,10 +1,12 @@
 package org.apereo.cas.authentication.adaptive.geo;
 
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.Getter;
 
 /**
  * This is {@link GeoLocationRequest}.
@@ -14,50 +16,23 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
  */
 @Slf4j
 @ToString
+@Getter
+@NoArgsConstructor
+@Setter
+@EqualsAndHashCode(exclude = {"accuracy", "timestamp"})
 public class GeoLocationRequest {
-    private String latitude;
-    private String longitude;
-    private String accuracy;
-    private String timestamp;
 
-    public GeoLocationRequest() {
-    }
+    private String latitude;
+
+    private String longitude;
+
+    private String accuracy;
+
+    private String timestamp;
 
     public GeoLocationRequest(final double latitude, final double longitude) {
         this.latitude = String.valueOf(latitude);
         this.longitude = String.valueOf(longitude);
-    }
-
-    public String getLatitude() {
-        return this.latitude;
-    }
-
-    public void setLatitude(final String latitude) {
-        this.latitude = latitude;
-    }
-
-    public String getLongitude() {
-        return this.longitude;
-    }
-
-    public void setLongitude(final String longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getAccuracy() {
-        return this.accuracy;
-    }
-
-    public void setAccuracy(final String accuracy) {
-        this.accuracy = accuracy;
-    }
-
-    public String getTimestamp() {
-        return this.timestamp;
-    }
-
-    public void setTimestamp(final String timestamp) {
-        this.timestamp = timestamp;
     }
 
     /**
@@ -67,32 +42,6 @@ public class GeoLocationRequest {
      */
     public boolean isValid() {
         return StringUtils.isNotBlank(this.latitude) && StringUtils.isNotBlank(this.longitude)
-                && StringUtils.isNotBlank(this.accuracy) && StringUtils.isNotBlank(this.timestamp);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GeoLocationRequest rhs = (GeoLocationRequest) obj;
-        return new EqualsBuilder()
-                .append(this.latitude, rhs.latitude)
-                .append(this.longitude, rhs.longitude)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(latitude)
-                .append(longitude)
-                .toHashCode();
+            && StringUtils.isNotBlank(this.accuracy) && StringUtils.isNotBlank(this.timestamp);
     }
 }

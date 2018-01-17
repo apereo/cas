@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.ResourceUtils;
@@ -17,6 +18,7 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 1703080077563402223L;
@@ -24,15 +26,10 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     private String groovyScript;
 
     public GroovyScriptAttributeReleasePolicy() {
-        
     }
 
     public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
         this.groovyScript = groovyScript;
-    }
-
-    public String getGroovyScript() {
-        return groovyScript;
     }
 
     public void setGroovyScript(final String groovyScript) {
@@ -40,9 +37,7 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     @Override
-    public Map<String, Object> getAttributesInternal(final Principal principal,
-                                                        final Map<String, Object> attributes,
-                                                        final RegisteredService service) {
+    public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
         try {
             final Object[] args = {attributes, LOGGER, principal, service};
             final Resource resource = ResourceUtils.getResourceFrom(this.groovyScript);

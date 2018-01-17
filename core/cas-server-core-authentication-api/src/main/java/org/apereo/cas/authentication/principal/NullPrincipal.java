@@ -1,13 +1,14 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Authentication;
 
-import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * Null principal implementation that allows us to construct {@link Authentication}s in the event that no
@@ -17,6 +18,10 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Slf4j
+@Getter
+@NoArgsConstructor
+@EqualsAndHashCode
+@ToString
 public class NullPrincipal implements Principal {
 
     private static final long serialVersionUID = 2309300426720915104L;
@@ -27,14 +32,7 @@ public class NullPrincipal implements Principal {
     /** The singleton instance. **/
     private static NullPrincipal INSTANCE;
 
-    private final Map<String, Object> attributes;
-
-    /**
-     * Instantiates a new Null principal.
-     */
-    protected NullPrincipal() {
-        this.attributes = new HashMap<>(0);
-    }
+    private Map<String, Object> attributes;
 
     /**
      * Returns the single instance of this class. Will create
@@ -53,37 +51,5 @@ public class NullPrincipal implements Principal {
     @Override
     public String getId() {
         return NOBODY;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return this.attributes;
-    }
-
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final NullPrincipal rhs = (NullPrincipal) obj;
-        return new EqualsBuilder()
-                .append(getId(), rhs.getId())
-                .append(this.attributes, rhs.attributes)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getId())
-                .append(attributes)
-                .toHashCode();
     }
 }

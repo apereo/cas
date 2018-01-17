@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.artifact;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -9,7 +10,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -17,6 +17,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Getter;
 
 /**
  * This is {@link SamlArtifactTicketImpl}.
@@ -29,6 +30,8 @@ import javax.persistence.Table;
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(SamlArtifactTicket.PREFIX)
 @Slf4j
+@Getter
+@NoArgsConstructor
 public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifactTicket {
 
     private static final long serialVersionUID = 6276140828446447398L;
@@ -37,10 +40,10 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     private String issuer;
 
     @Column(length = 500, updatable = true, insertable = true)
-    private String relyingParty;
+    private String relyingPartyId;
 
     @Column(length = 5000, updatable = true, insertable = true)
-    private String samlObject;
+    private String object;
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
@@ -62,13 +65,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     @Lob
     @Column(name = "AUTHENTICATION", nullable = false, length = 1000000)
     private Authentication authentication;
-
-    /**
-     * Instantiates a new OAuth code impl.
-     */
-    public SamlArtifactTicketImpl() {
-        // exists for JPA purposes
-    }
+    
 
     /**
      * Constructs a new OAuth code with unique id for a service and authentication.
@@ -83,44 +80,22 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
      * @param samlObject           the saml object
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public SamlArtifactTicketImpl(final String id, final Service service, final Authentication authentication,
-                                  final ExpirationPolicy expirationPolicy, final TicketGrantingTicket ticketGrantingTicket,
-                                  final String issuer, final String relyingParty,
-                                  final String samlObject) {
+    public SamlArtifactTicketImpl(final String id, final Service service, final Authentication authentication, final ExpirationPolicy expirationPolicy,
+                                  final TicketGrantingTicket ticketGrantingTicket, final String issuer, final String relyingParty, final String samlObject) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;
         this.ticketGrantingTicket = ticketGrantingTicket;
-        this.relyingParty = relyingParty;
+        this.relyingPartyId = relyingParty;
         this.issuer = issuer;
-        this.samlObject = samlObject;
-    }
-
-    @Override
-    public String getIssuer() {
-        return this.issuer;
-    }
-
-    @Override
-    public String getRelyingPartyId() {
-        return this.relyingParty;
-    }
-
-    @Override
-    public String getObject() {
-        return this.samlObject;
+        this.object = samlObject;
     }
 
     @Override
     public boolean isFromNewLogin() {
         return true;
     }
-
-    @Override
-    public Service getService() {
-        return this.service;
-    }
-
+    
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
         update();
@@ -128,20 +103,8 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
     }
 
     @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(
-            final String id, final Authentication authentication,
-            final ExpirationPolicy expirationPolicy) {
-        throw new UnsupportedOperationException("No PGT grant is available");
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return this.authentication;
-    }
-
-    @Override
-    public TicketGrantingTicket getGrantingTicket() {
-        return this.ticketGrantingTicket;
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
+        throw new UnsupportedOperationException("No proxy-granting ticket is available");
     }
 
     @Override

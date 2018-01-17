@@ -1,10 +1,14 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
+
 import javax.servlet.http.HttpServletRequest;
-import lombok.ToString;
 
 /**
  * This is {@link WSFederationRequest}.
@@ -14,6 +18,9 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
+@Setter
+@AllArgsConstructor
 public class WSFederationRequest {
 
     private final String wtrealm;
@@ -42,25 +49,6 @@ public class WSFederationRequest {
 
     private final String wreq;
 
-    protected WSFederationRequest(final String wtrealm, final String wreply, final String wctx,
-                                  final String wfresh, final String whr, final String wresult, final String relayState,
-                                  final String samlResponse, final String state, final String code, final String wa,
-                                  final String wauth, final String wreq) {
-        this.wtrealm = wtrealm;
-        this.wreply = wreply;
-        this.wctx = wctx;
-        this.wfresh = wfresh;
-        this.whr = whr;
-        this.wresult = wresult;
-        this.relayState = relayState;
-        this.wa = wa;
-        this.samlResponse = samlResponse;
-        this.state = state;
-        this.code = code;
-        this.wreq = wreq;
-        this.wauth = wauth;
-    }
-
     /**
      * Create federation request.
      *
@@ -82,57 +70,5 @@ public class WSFederationRequest {
         final String wa = request.getParameter(WSFederationConstants.WA);
         final String wauth = StringUtils.defaultIfBlank(request.getParameter(WSFederationConstants.WAUTH), "default");
         return new WSFederationRequest(wtrealm, wreply, wctx, wfresh, whr, wresult, relayState, samlResponse, state, code, wa, wauth, wreq);
-    }
-
-    public String getWreq() {
-        return wreq;
-    }
-
-    public String getWauth() {
-        return wauth;
-    }
-
-    public String getWtrealm() {
-        return wtrealm;
-    }
-
-    public String getWreply() {
-        return wreply;
-    }
-
-    public String getWctx() {
-        return wctx;
-    }
-
-    public String getWfresh() {
-        return wfresh;
-    }
-
-    public String getWa() {
-        return wa;
-    }
-
-    public String getWhr() {
-        return whr;
-    }
-
-    public String getWresult() {
-        return wresult;
-    }
-
-    public String getRelayState() {
-        return relayState;
-    }
-
-    public String getSamlResponse() {
-        return samlResponse;
-    }
-
-    public String getState() {
-        return state;
-    }
-
-    public String getCode() {
-        return code;
     }
 }
