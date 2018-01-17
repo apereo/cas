@@ -126,11 +126,15 @@ public class InterruptResponse implements Serializable {
             return false;
         }
         final InterruptResponse rhs = (InterruptResponse) obj;
-        return new EqualsBuilder().append(this.message, rhs.message).append(this.links, rhs.links).append(this.block, rhs.block).append(this.ssoEnabled, rhs.ssoEnabled).append(this.interrupt, rhs.interrupt).append(this.autoRedirect, rhs.autoRedirect).append(this.autoRedirectAfterSeconds, rhs.autoRedirectAfterSeconds).isEquals();
+        return new EqualsBuilder().append(this.message, rhs.message).append(this.links, rhs.links)
+            .append(this.block, rhs.block).append(this.ssoEnabled, rhs.ssoEnabled)
+            .append(this.interrupt, rhs.interrupt).append(this.autoRedirect, rhs.autoRedirect)
+            .append(this.autoRedirectAfterSeconds, rhs.autoRedirectAfterSeconds).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(message).append(links).append(block).append(ssoEnabled).append(interrupt).append(autoRedirect).append(autoRedirectAfterSeconds).toHashCode();
+        return new HashCodeBuilder().append(message).append(links).append(block)
+            .append(ssoEnabled).append(interrupt).append(autoRedirect).append(autoRedirectAfterSeconds).toHashCode();
     }
 }

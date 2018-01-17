@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -34,7 +35,7 @@ import javax.persistence.Table;
 @Slf4j
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
-    
+
     private static final long serialVersionUID = -4223319704861765405L;
 
     /**
@@ -79,16 +80,11 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
     @JsonCreator
-    public ServiceTicketImpl(@JsonProperty("id")
-                             final String id,
-                             @JsonProperty("grantingTicket")
-                             final TicketGrantingTicket ticket,
-                             @JsonProperty("service")
-                             final Service service,
-                             @JsonProperty("credentialProvided")
-                             final boolean credentialProvided,
-                             @JsonProperty("expirationPolicy")
-                             final ExpirationPolicy policy) {
+    public ServiceTicketImpl(@JsonProperty("id") final String id,
+                             @JsonProperty("grantingTicket") final TicketGrantingTicket ticket,
+                             @JsonProperty("service") final Service service,
+                             @JsonProperty("credentialProvided") final boolean credentialProvided,
+                             @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
 
         Assert.notNull(service, "service cannot be null");
@@ -123,18 +119,19 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     }
 
     @Override
+    @Synchronized
     public ProxyGrantingTicket grantProxyGrantingTicket(
-            final String id, final Authentication authentication,
-            final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
-        synchronized (this) {
-            if (this.grantedTicketAlready) {
-                LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
-                throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
-            }
-            this.grantedTicketAlready = Boolean.TRUE;
+        final String id, final Authentication authentication,
+        final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
+
+        if (this.grantedTicketAlready) {
+            LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
+            throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
         }
+        this.grantedTicketAlready = Boolean.TRUE;
+
         final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service,
-                this.getGrantingTicket(), authentication, expirationPolicy);
+            this.getGrantingTicket(), authentication, expirationPolicy);
         getGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }

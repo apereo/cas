@@ -28,7 +28,8 @@ public class CasProtocolView extends ThymeleafView {
      * @param properties         the properties
      * @param contentType        the content type
      */
-    public CasProtocolView(final String templateName, final ApplicationContext applicationContext, final SpringTemplateEngine templateEngine, final ThymeleafProperties properties, final String contentType) {
+    public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
+                           final SpringTemplateEngine templateEngine, final ThymeleafProperties properties, final String contentType) {
         super(templateName);
         setApplicationContext(applicationContext);
         setTemplateEngine(templateEngine);
@@ -47,7 +48,8 @@ public class CasProtocolView extends ThymeleafView {
      * @param templateEngine     the template engine
      * @param properties         the properties
      */
-    public CasProtocolView(final String templateName, final ApplicationContext applicationContext, final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
+    public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
+                           final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
         this(templateName, applicationContext, templateEngine, properties, null);
     }
 }

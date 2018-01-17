@@ -219,12 +219,28 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         }
         final AbstractRegisteredService that = (AbstractRegisteredService) o;
         final EqualsBuilder builder = new EqualsBuilder();
-        return builder.append(this.proxyPolicy, that.proxyPolicy).append(this.evaluationOrder, that.evaluationOrder).append(this.description, that.description).append(this.name, that.name).append(this.serviceId, that.serviceId).append(this.theme, that.theme).append(this.usernameAttributeProvider, that.usernameAttributeProvider).append(this.logoutType, that.logoutType).append(this.attributeReleasePolicy, that.attributeReleasePolicy).append(this.accessStrategy, that.accessStrategy).append(this.logo, that.logo).append(this.publicKey, that.publicKey).append(this.logoutUrl, that.logoutUrl).append(this.requiredHandlers, that.requiredHandlers).append(this.proxyPolicy, that.proxyPolicy).append(this.properties, that.properties).append(this.multifactorPolicy, that.multifactorPolicy).append(this.informationUrl, that.informationUrl).append(this.privacyUrl, that.privacyUrl).append(this.contacts, that.contacts).append(this.expirationPolicy, that.expirationPolicy).append(this.responseType, that.responseType).isEquals();
+        return builder.append(this.proxyPolicy, that.proxyPolicy).append(this.evaluationOrder, that.evaluationOrder)
+            .append(this.description, that.description).append(this.name, that.name).append(this.serviceId, that.serviceId)
+            .append(this.theme, that.theme).append(this.usernameAttributeProvider, that.usernameAttributeProvider)
+            .append(this.logoutType, that.logoutType).append(this.attributeReleasePolicy, that.attributeReleasePolicy)
+            .append(this.accessStrategy, that.accessStrategy).append(this.logo, that.logo).append(this.publicKey, that.publicKey)
+            .append(this.logoutUrl, that.logoutUrl).append(this.requiredHandlers, that.requiredHandlers)
+            .append(this.proxyPolicy, that.proxyPolicy).append(this.properties, that.properties)
+            .append(this.multifactorPolicy, that.multifactorPolicy).append(this.informationUrl, that.informationUrl)
+            .append(this.privacyUrl, that.privacyUrl).append(this.contacts, that.contacts)
+            .append(this.expirationPolicy, that.expirationPolicy).append(this.responseType, that.responseType).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder(7, 31).append(this.description).append(this.serviceId).append(this.name).append(this.theme).append(this.evaluationOrder).append(this.usernameAttributeProvider).append(this.accessStrategy).append(this.logoutType).append(this.attributeReleasePolicy).append(this.accessStrategy).append(this.logo).append(this.publicKey).append(this.logoutUrl).append(this.requiredHandlers).append(this.proxyPolicy).append(this.properties).append(this.multifactorPolicy).append(this.informationUrl).append(this.privacyUrl).append(this.contacts).append(this.expirationPolicy).append(this.responseType).toHashCode();
+        return new HashCodeBuilder(7, 31)
+            .append(this.description).append(this.serviceId).append(this.name).append(this.theme)
+            .append(this.evaluationOrder).append(this.usernameAttributeProvider).append(this.accessStrategy)
+            .append(this.logoutType).append(this.attributeReleasePolicy).append(this.accessStrategy)
+            .append(this.logo).append(this.publicKey).append(this.logoutUrl).append(this.requiredHandlers)
+            .append(this.proxyPolicy).append(this.properties).append(this.multifactorPolicy)
+            .append(this.informationUrl).append(this.privacyUrl).append(this.contacts)
+            .append(this.expirationPolicy).append(this.responseType).toHashCode();
     }
 
     public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
@@ -364,7 +380,10 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder().append(getEvaluationOrder(), other.getEvaluationOrder()).append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(), StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase()).append(getServiceId(), other.getServiceId()).append(getId(), other.getId()).toComparison();
+        return new CompareToBuilder().append(getEvaluationOrder(), other.getEvaluationOrder())
+            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
+                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+            .append(getServiceId(), other.getServiceId()).append(getId(), other.getId()).toComparison();
     }
 
     /**

@@ -120,7 +120,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata).map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity()).map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());
+        return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata)
+            .map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity())
+            .map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());
     }
 
     @Override
@@ -131,7 +133,8 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private void configureSecureTransport() {
         final String nullKey = "NULL";
-        if (StringUtils.isNotBlank(properties.getKeyStoreFilePath()) && StringUtils.isNotBlank(properties.getKeyStorePassword()) && StringUtils.isNotBlank(properties.getTrustStoreFilePath()) && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
+        if (StringUtils.isNotBlank(properties.getKeyStoreFilePath()) && StringUtils.isNotBlank(properties.getKeyStorePassword())
+            && StringUtils.isNotBlank(properties.getTrustStoreFilePath()) && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());

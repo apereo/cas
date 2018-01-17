@@ -98,16 +98,19 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
             return false;
         }
         final OneTimeToken rhs = (OneTimeToken) obj;
-        return new EqualsBuilder().append(this.token, rhs.token).append(this.userId, rhs.userId).append(this.id, rhs.id).append(this.issuedDateTime, rhs.issuedDateTime).isEquals();
+        return new EqualsBuilder().append(this.token, rhs.token).append(this.userId, rhs.userId)
+            .append(this.id, rhs.id).append(this.issuedDateTime, rhs.issuedDateTime).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder().append(token).append(userId).append(issuedDateTime).append(id).toHashCode();
+        return new HashCodeBuilder().append(token)
+            .append(userId).append(issuedDateTime).append(id).toHashCode();
     }
 
     @Override
     public int compareTo(final OneTimeToken o) {
-        return new CompareToBuilder().append(token, o.getToken()).append(userId, o.getUserId()).append(issuedDateTime, o.getIssuedDateTime()).append(id, o.id).build();
+        return new CompareToBuilder().append(token, o.getToken())
+            .append(userId, o.getUserId()).append(issuedDateTime, o.getIssuedDateTime()).append(id, o.id).build();
     }
 }

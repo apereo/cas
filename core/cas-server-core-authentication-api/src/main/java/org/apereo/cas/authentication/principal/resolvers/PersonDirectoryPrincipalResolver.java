@@ -71,10 +71,13 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
     }
 
     public PersonDirectoryPrincipalResolver(final boolean returnNullIfNoAttributes, final String principalAttributeName) {
-        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(), returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
+        this(new StubPersonAttributeDao(new HashMap<>()), new DefaultPrincipalFactory(),
+            returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
     }
 
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes, final String principalAttributeName) {
+    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
+                                            final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
+                                            final String principalAttributeName) {
         this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
     }
 
