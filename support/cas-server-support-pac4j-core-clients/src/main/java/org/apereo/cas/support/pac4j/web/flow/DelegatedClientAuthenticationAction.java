@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +34,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -44,7 +46,6 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import lombok.Getter;
 
 /**
  * This class represents an action to put at the beginning of the webflow.
@@ -142,7 +143,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
             if (credentials != null) {
                 final ClientCredential clientCredential = new ClientCredential(credentials);
-                final AuthenticationResult authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
+                final AuthenticationResult authenticationResult =
+                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
                 return success();
@@ -184,29 +186,32 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         saveRequestParameter(request, session, this.localParamName);
         saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
-        this.clients.findAllClients().stream().filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service)).forEach(client -> {
-            try {
-                final IndirectClient indirectClient = (IndirectClient) client;
-                final String name = client.getName();
-                final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-                final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-                final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
-                LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
-            } catch (final HttpAction e) {
-                if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                    LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
-                } else {
-                    LOGGER.warn(e.getMessage(), e);
+        this.clients.findAllClients().stream().filter(client -> client instanceof IndirectClient
+            && isDelegatedClientAuthorizedForService(client, service))
+            .forEach(client -> {
+                try {
+                    final IndirectClient indirectClient = (IndirectClient) client;
+                    final String name = client.getName();
+                    final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
+                    final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+                    final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                    LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
+                    urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
+                } catch (final HttpAction e) {
+                    if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
+                        LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
+                    } else {
+                        LOGGER.warn(e.getMessage(), e);
+                    }
+                } catch (final Exception e) {
+                    LOGGER.error("Cannot process client [{}]", client, e);
                 }
-            } catch (final Exception e) {
-                LOGGER.error("Cannot process client [{}]", client, e);
-            }
-        });
+            });
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
-            LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. " + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers for this request.");
+            LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
+                + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers for this request.");
         }
     }
 

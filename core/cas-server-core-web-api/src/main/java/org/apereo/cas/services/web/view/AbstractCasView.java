@@ -1,10 +1,12 @@
 package org.apereo.cas.services.web.view;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -12,10 +14,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
 import org.springframework.web.servlet.view.AbstractView;
+
 import java.time.ZonedDateTime;
 import java.util.Collection;
 import java.util.Enumeration;
@@ -24,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
 /**
  * Abstract class to handle retrieving the Assertion from the model.
@@ -345,7 +346,8 @@ public abstract class AbstractCasView extends AbstractView {
      * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
      */
     protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes, final String attributeValue,
-                                                                       final String attributeName, final RegisteredService service, final boolean doesAttributePolicyAllow) {
+                                                                       final String attributeName, final RegisteredService service,
+                                                                       final boolean doesAttributePolicyAllow) {
         if (StringUtils.isNotBlank(attributeValue)) {
             LOGGER.debug("Obtained [{}] as an authentication attribute", attributeName);
             if (doesAttributePolicyAllow) {
