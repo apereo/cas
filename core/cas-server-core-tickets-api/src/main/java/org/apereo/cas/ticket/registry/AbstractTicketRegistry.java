@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import com.google.common.io.ByteSource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -12,6 +13,7 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.springframework.util.Assert;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -19,6 +21,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
 import lombok.Setter;
 import lombok.NoArgsConstructor;
 
@@ -225,28 +228,25 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param result the result
      * @return the ticket
      */
+    @SneakyThrows
     protected Ticket decodeTicket(final Ticket result) {
-        try {
-            if (!isCipherExecutorEnabled()) {
-                LOGGER.trace(MESSAGE);
-                return result;
-            }
-            if (result == null) {
-                LOGGER.warn("Ticket passed is null and cannot be decoded");
-                return null;
-            }
-            if (!result.getClass().isAssignableFrom(EncodedTicket.class)) {
-                LOGGER.warn("Ticket passed is not an encoded ticket type; rather it's a [{}], no decoding is necessary.", result.getClass().getSimpleName());
-                return result;
-            }
-            LOGGER.debug("Attempting to decode [{}]", result);
-            final EncodedTicket encodedTicket = (EncodedTicket) result;
-            final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
-            LOGGER.debug("Decoded ticket to [{}]", ticket);
-            return ticket;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (!isCipherExecutorEnabled()) {
+            LOGGER.trace(MESSAGE);
+            return result;
         }
+        if (result == null) {
+            LOGGER.warn("Ticket passed is null and cannot be decoded");
+            return null;
+        }
+        if (!result.getClass().isAssignableFrom(EncodedTicket.class)) {
+            LOGGER.warn("Ticket passed is not an encoded ticket type; rather it's a [{}], no decoding is necessary.", result.getClass().getSimpleName());
+            return result;
+        }
+        LOGGER.debug("Attempting to decode [{}]", result);
+        final EncodedTicket encodedTicket = (EncodedTicket) result;
+        final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
+        LOGGER.debug("Decoded ticket to [{}]", ticket);
+        return ticket;
     }
 
     /**

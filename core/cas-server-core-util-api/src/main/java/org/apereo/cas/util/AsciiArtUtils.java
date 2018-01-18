@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.github.lalyos.jfiglet.FigletFont;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -37,19 +38,16 @@ public class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
+    @SneakyThrows
     public static void printAsciiArt(final PrintStream out, final String asciiArt, final String additional) {
-        try {
-            out.println(ANSI_CYAN);
-            if (StringUtils.isNotBlank(additional)) {
-                out.println(FigletFont.convertOneLine(asciiArt));
-                out.println(additional);
-            } else {
-                out.print(FigletFont.convertOneLine(asciiArt));
-            }
-            out.println(ANSI_RESET);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        out.println(ANSI_CYAN);
+        if (StringUtils.isNotBlank(additional)) {
+            out.println(FigletFont.convertOneLine(asciiArt));
+            out.println(additional);
+        } else {
+            out.print(FigletFont.convertOneLine(asciiArt));
         }
+        out.println(ANSI_RESET);
     }
 
     /**
@@ -59,14 +57,11 @@ public class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
+    @SneakyThrows
     public static void printAsciiArtWarning(final Logger out, final String asciiArt, final String additional) {
-        try {
-            out.warn(ANSI_CYAN);
-            out.warn("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
-            out.warn(ANSI_RESET);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        out.warn(ANSI_CYAN);
+        out.warn("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
+        out.warn(ANSI_RESET);
     }
 
     /**
@@ -76,14 +71,11 @@ public class AsciiArtUtils {
      * @param asciiArt   the ascii art
      * @param additional the additional
      */
+    @SneakyThrows
     public static void printAsciiArtInfo(final Logger out, final String asciiArt, final String additional) {
-        try {
-            out.info(ANSI_CYAN);
-            out.info("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
-            out.info(ANSI_RESET);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        out.info(ANSI_CYAN);
+        out.info("\n\n".concat(FigletFont.convertOneLine(asciiArt)).concat(additional));
+        out.info(ANSI_RESET);
     }
 
 }

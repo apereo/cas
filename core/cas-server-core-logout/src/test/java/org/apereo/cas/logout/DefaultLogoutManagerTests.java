@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
@@ -168,18 +169,15 @@ public class DefaultLogoutManagerTests {
         assertEquals(1, logoutRequests.size());
     }
 
+    @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        try {
-            final RegexRegisteredService s = new RegexRegisteredService();
-            s.setServiceId(id);
-            s.setName("Test registered service " + id);
-            s.setDescription("Registered service description");
-            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-            s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
-            return s;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final RegexRegisteredService s = new RegexRegisteredService();
+        s.setServiceId(id);
+        s.setName("Test registered service " + id);
+        s.setDescription("Registered service description");
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
+        return s;
     }
 
     public static AbstractWebApplicationService getService(final String url) {
