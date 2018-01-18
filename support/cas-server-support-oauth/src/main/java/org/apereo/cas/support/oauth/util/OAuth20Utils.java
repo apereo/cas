@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -45,13 +46,9 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
  * @since 3.5.0
  */
 @Slf4j
-public final class OAuth20Utils {
-
-
+@UtilityClass
+public class OAuth20Utils {
     private static final ObjectWriter WRITER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
-
-    private OAuth20Utils() {
-    }
 
     /**
      * Write to the output this error text and return a null view.

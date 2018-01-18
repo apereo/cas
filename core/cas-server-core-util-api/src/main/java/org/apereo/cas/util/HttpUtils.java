@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
@@ -30,11 +31,8 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public final class HttpUtils {
-
-
-    private HttpUtils() {
-    }
+@UtilityClass
+public class HttpUtils {
 
     /**
      * Execute http response.

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.spring.boot.AbstractCasBanner;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
@@ -21,16 +22,12 @@ import java.util.Set;
  * @since 5.1.0
  */
 @Slf4j
-public final class CasEmbeddedContainerUtils {
+@UtilityClass
+public class CasEmbeddedContainerUtils {
     /**
      * Property to dictate to the environment whether embedded container is running CAS.
      */
     public static final String EMBEDDED_CONTAINER_CONFIG_ACTIVE = "CasEmbeddedContainerConfigurationActive";
-
-
-
-    private CasEmbeddedContainerUtils() {
-    }
 
     /**
      * Gets runtime properties.

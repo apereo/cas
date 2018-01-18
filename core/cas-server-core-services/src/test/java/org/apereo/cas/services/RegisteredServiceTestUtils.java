@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -38,13 +39,11 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2.0
  */
 @Slf4j
-public final class RegisteredServiceTestUtils {
+@UtilityClass
+public class RegisteredServiceTestUtils {
     public static final String CONST_USERNAME = "test";
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
-
-    private RegisteredServiceTestUtils() {
-    }
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);

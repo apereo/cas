@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -16,7 +17,8 @@ import java.util.regex.Pattern;
  * @since 5.0.0
  */
 @Slf4j
-public final class TicketIdSanitizationUtils {
+@UtilityClass
+public class TicketIdSanitizationUtils {
     private static final Pattern TICKET_ID_PATTERN = Pattern.compile('(' + TicketGrantingTicket.PREFIX + '|'
             + ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX + '|' + ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX
             + ")(-)+(\\w)+(-)+(\\w)+");
@@ -27,8 +29,6 @@ public final class TicketIdSanitizationUtils {
      */
     private static final int VISIBLE_TAIL_LENGTH = 10;
     
-    private TicketIdSanitizationUtils() {}
-
     /**
      * Remove ticket id from the message.
      *

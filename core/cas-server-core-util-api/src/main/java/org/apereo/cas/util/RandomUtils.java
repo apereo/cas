@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.security.NoSuchAlgorithmException;
@@ -14,12 +15,8 @@ import java.security.SecureRandom;
  * @since 5.2.0
  */
 @Slf4j
-public final class RandomUtils {
-
-
-    private RandomUtils() {
-    }
-
+@UtilityClass
+public class RandomUtils {
     /**
      * Get strong enough SecureRandom instance and wrap the checked exception.
      * TODO Try {@code NativePRNGNonBlocking} and failover to default SHA1PRNG until Java 9.

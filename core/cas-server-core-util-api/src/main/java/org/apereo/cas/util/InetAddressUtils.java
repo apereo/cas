@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
@@ -12,12 +13,8 @@ import java.net.URL;
  * @since 5.0.0
  */
 @Slf4j
-public final class InetAddressUtils {
-
-
-    private InetAddressUtils() {
-    }
-
+@UtilityClass
+public class InetAddressUtils {
     /**
      * Gets by name.
      *
