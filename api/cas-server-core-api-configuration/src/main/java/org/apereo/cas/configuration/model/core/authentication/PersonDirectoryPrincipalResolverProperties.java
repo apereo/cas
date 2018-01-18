@@ -7,7 +7,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * Configuration properties class for cas.principal.resolver.persondir.
+ * Configuration properties class for Person Directory.
  *
  * @author Dmitriy Kopylenko
  * @since 5.0.0

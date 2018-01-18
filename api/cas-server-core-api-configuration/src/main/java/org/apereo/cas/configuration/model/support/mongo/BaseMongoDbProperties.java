@@ -56,7 +56,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * MongoDb database host for authentication.
      * Multiple host addresses may be defined, separated by comma.
      * If more than one host is defined, it is assumed that each host contains the port as well, if any.
-     * Otherwise the configuration may fallback onto {@link #getPort()}.
+     * Otherwise the configuration may fallback onto the port defined.
      */
     @RequiredProperty
     private String host = "localhost";
