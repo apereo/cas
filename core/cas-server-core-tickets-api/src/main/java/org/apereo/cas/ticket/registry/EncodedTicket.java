@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.time.ZonedDateTime;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -27,6 +28,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@NoArgsConstructor
 public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
@@ -34,12 +36,6 @@ public class EncodedTicket implements Ticket {
     private String id;
 
     private byte[] encodedTicket;
-
-    /**
-     * Private ctor used for serialization only.
-     **/
-    private EncodedTicket() {
-    }
 
     /**
      * Creates a new encoded ticket using the given encoder to encode the given

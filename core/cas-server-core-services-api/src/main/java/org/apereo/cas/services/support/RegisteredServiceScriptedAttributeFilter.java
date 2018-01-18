@@ -16,6 +16,7 @@ import java.util.regex.Matcher;
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link RegisteredServiceScriptedAttributeFilter}.
@@ -27,6 +28,7 @@ import lombok.Setter;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
 public class RegisteredServiceScriptedAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 122972056984610198L;
@@ -34,9 +36,6 @@ public class RegisteredServiceScriptedAttributeFilter implements RegisteredServi
     private int order;
 
     private String script;
-
-    public RegisteredServiceScriptedAttributeFilter() {
-    }
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
