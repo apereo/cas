@@ -3,9 +3,8 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
@@ -25,15 +24,12 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
     private static final long serialVersionUID = 205979491183779408L;
 
-    /**
-     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
-     * deserialization the field is null.
-     */
     /** The time to kill in seconds. */
     private long timeToKillInSeconds;
 
@@ -76,23 +72,4 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         return this.timeInBetweenUsesInSeconds;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ThrottledUseAndTimeoutExpirationPolicy rhs = (ThrottledUseAndTimeoutExpirationPolicy) obj;
-        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).append(this.timeInBetweenUsesInSeconds, rhs.timeInBetweenUsesInSeconds).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(timeToKillInSeconds).append(timeInBetweenUsesInSeconds).toHashCode();
-    }
 }

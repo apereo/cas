@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.springframework.util.Assert;
 import javax.annotation.PostConstruct;
@@ -25,6 +24,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @NoArgsConstructor
+@EqualsAndHashCode
 public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -32,10 +32,6 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
      */
     private static final long serialVersionUID = 7670537200691354820L;
 
-    /**
-     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
-     * deserialization the field is null.
-     */
     /**
      * Maximum time this ticket is valid.
      */
@@ -105,23 +101,4 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         return this.timeToKillInSeconds;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final TicketGrantingTicketExpirationPolicy rhs = (TicketGrantingTicketExpirationPolicy) obj;
-        return new EqualsBuilder().append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds).append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this.maxTimeToLiveInSeconds).append(this.timeToKillInSeconds).toHashCode();
-    }
 }
