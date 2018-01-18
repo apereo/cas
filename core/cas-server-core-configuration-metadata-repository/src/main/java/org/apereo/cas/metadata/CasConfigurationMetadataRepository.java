@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -37,19 +38,16 @@ public class CasConfigurationMetadataRepository {
      *
      * @param resource the resource
      */
+    @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
-        try {
-            final Resource[] resources = new PathMatchingResourcePatternResolver().getResources(resource);
-            final ConfigurationMetadataRepositoryJsonBuilder builder = ConfigurationMetadataRepositoryJsonBuilder.create();
-            Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
-                try (InputStream in = r.getInputStream()) {
-                    builder.withJsonResource(in);
-                }
-            }));
-            configMetadataRepo = builder.build();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final Resource[] resources = new PathMatchingResourcePatternResolver().getResources(resource);
+        final ConfigurationMetadataRepositoryJsonBuilder builder = ConfigurationMetadataRepositoryJsonBuilder.create();
+        Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
+            try (InputStream in = r.getInputStream()) {
+                builder.withJsonResource(in);
+            }
+        }));
+        configMetadataRepo = builder.build();
     }
 
     public ConfigurationMetadataRepository getRepository() {

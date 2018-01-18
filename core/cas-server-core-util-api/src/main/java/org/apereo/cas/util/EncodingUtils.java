@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
@@ -287,7 +288,7 @@ public class EncodingUtils {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
-    
+
     /**
      * Sign jws.
      *
@@ -318,17 +319,14 @@ public class EncodingUtils {
      * @param algHeaderValue the alg header value
      * @return the byte [ ]
      */
+    @SneakyThrows
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
-        try {
-            final String base64 = EncodingUtils.encodeBase64(value);
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setPayload(base64);
-            jws.setAlgorithmHeaderValue(algHeaderValue);
-            jws.setKey(key);
-            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final String base64 = EncodingUtils.encodeBase64(value);
+        final JsonWebSignature jws = new JsonWebSignature();
+        jws.setPayload(base64);
+        jws.setAlgorithmHeaderValue(algHeaderValue);
+        jws.setKey(key);
+        return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -340,7 +338,7 @@ public class EncodingUtils {
      */
     public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
-                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
 
     /**
@@ -352,9 +350,9 @@ public class EncodingUtils {
      */
     public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
-                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
-    
+
     /**
      * Encrypt the value based on the seed array whose length was given during afterPropertiesSet,
      * and the key and content encryption ids.
@@ -390,17 +388,13 @@ public class EncodingUtils {
      * @param value                  the value
      * @return the decrypted value
      */
-    public static String decryptJwtValue(final Key secretKeyEncryptionKey,
-                                   final String value) {
-        try {
-            final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setKey(secretKeyEncryptionKey);
-            jwe.setCompactSerialization(value);
-            LOGGER.debug("Decrypting value...");
-            return jwe.getPayload();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    @SneakyThrows
+    public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
+        final JsonWebEncryption jwe = new JsonWebEncryption();
+        jwe.setKey(secretKeyEncryptionKey);
+        jwe.setCompactSerialization(value);
+        LOGGER.debug("Decrypting value...");
+        return jwe.getPayload();
     }
 
     /**

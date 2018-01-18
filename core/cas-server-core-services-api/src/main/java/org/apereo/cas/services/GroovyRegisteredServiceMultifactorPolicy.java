@@ -1,14 +1,18 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
+
 import javax.persistence.Transient;
 import java.util.Set;
+
 import lombok.Getter;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
@@ -23,6 +27,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
 
     private static final long serialVersionUID = -3075860754996106437L;
@@ -68,35 +73,12 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
         return this.groovyPolicyInstance.isBypassEnabled();
     }
 
+    @SneakyThrows
     private void buildGroovyMultifactorPolicyInstanceIfNeeded() {
-        try {
-            if (this.groovyPolicyInstance == null) {
-                final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
-                this.groovyPolicyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceMultifactorPolicy.class);
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+        if (this.groovyPolicyInstance == null) {
+            final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            this.groovyPolicyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceMultifactorPolicy.class);
         }
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GroovyRegisteredServiceMultifactorPolicy rhs = (GroovyRegisteredServiceMultifactorPolicy) obj;
-        return new EqualsBuilder().append(this.groovyScript, rhs.groovyScript).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(groovyScript).toHashCode();
-    }
 }

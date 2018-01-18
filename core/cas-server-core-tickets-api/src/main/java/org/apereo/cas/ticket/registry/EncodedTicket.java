@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,8 +13,10 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
+
 import java.io.IOException;
 import java.time.ZonedDateTime;
+
 import lombok.ToString;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -44,13 +47,10 @@ public class EncodedTicket implements Ticket {
      * @param encodedTicket   the encoded ticket
      * @param encodedTicketId the encoded ticket id
      */
+    @SneakyThrows
     public EncodedTicket(final ByteSource encodedTicket, final String encodedTicketId) {
-        try {
-            this.id = encodedTicketId;
-            this.encodedTicket = encodedTicket.read();
-        } catch (final IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        this.id = encodedTicketId;
+        this.encodedTicket = encodedTicket.read();
     }
 
     /**
@@ -59,14 +59,12 @@ public class EncodedTicket implements Ticket {
      * @param encodedTicket   the encoded ticket that will be decoded from base64
      * @param encodedTicketId the encoded ticket id
      */
+    @SneakyThrows
     @JsonCreator
     public EncodedTicket(@JsonProperty("encoded") final String encodedTicket, @JsonProperty("id") final String encodedTicketId) {
         try {
             this.id = encodedTicketId;
             this.encodedTicket = EncodingUtils.decodeBase64(encodedTicket);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
     }
 
     @JsonIgnore

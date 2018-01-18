@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -66,13 +67,10 @@ public class CasServiceRegistryInitializationConfiguration {
 
     @RefreshScope
     @Bean
+    @SneakyThrows
     public ServiceRegistryDao embeddedJsonServiceRegistry() {
-        try {
-            final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
-            return new EmbeddedServiceRegistryDao(eventPublisher, location);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
+        return new EmbeddedServiceRegistryDao(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {

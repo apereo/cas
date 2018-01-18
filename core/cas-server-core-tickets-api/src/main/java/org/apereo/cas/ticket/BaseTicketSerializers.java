@@ -2,6 +2,7 @@ package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
@@ -130,11 +131,11 @@ public abstract class BaseTicketSerializers {
      * @param type          the type
      * @return the ticket instance.
      */
+    @SneakyThrows
     public static Ticket deserializeTicket(final String ticketContent, final String type) {
         if (StringUtils.isBlank(type)) {
             throw new InvalidTicketException("Invalid ticket type [blank] specified");
         }
-        try {
             final Class clazz;
             if (TICKET_TYPE_CACHE.containsKey(type)) {
                 clazz = TICKET_TYPE_CACHE.get(type);
@@ -143,37 +144,34 @@ public abstract class BaseTicketSerializers {
                 TICKET_TYPE_CACHE.put(type, clazz);
             }
             return deserializeTicket(ticketContent, clazz);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
-    }
 
-    /**
-     * Deserialize ticket.
-     *
-     * @param <T>           the type parameter
-     * @param ticketContent the ticket id
-     * @param clazz         the clazz
-     * @return the ticket instance
-     */
-    public static <T extends Ticket> T deserializeTicket(final String ticketContent, final Class<T> clazz) {
-        Ticket ticket = null;
-        if (TicketGrantingTicket.class.isAssignableFrom(clazz)) {
-            ticket = getTicketGrantingTicketSerializer().from(ticketContent);
-        } else if (ServiceTicket.class.isAssignableFrom(clazz)) {
-            ticket = getServiceTicketSerializer().from(ticketContent);
-        } else if (EncodedTicket.class.isAssignableFrom(clazz)) {
-            ticket = getEncodedTicketSerializer().from(ticketContent);
+        /**
+         * Deserialize ticket.
+         *
+         * @param <T>           the type parameter
+         * @param ticketContent the ticket id
+         * @param clazz         the clazz
+         * @return the ticket instance
+         */
+        public static <T extends Ticket> T deserializeTicket ( final String ticketContent, final Class<T> clazz){
+            Ticket ticket = null;
+            if (TicketGrantingTicket.class.isAssignableFrom(clazz)) {
+                ticket = getTicketGrantingTicketSerializer().from(ticketContent);
+            } else if (ServiceTicket.class.isAssignableFrom(clazz)) {
+                ticket = getServiceTicketSerializer().from(ticketContent);
+            } else if (EncodedTicket.class.isAssignableFrom(clazz)) {
+                ticket = getEncodedTicketSerializer().from(ticketContent);
+            }
+            if (ticket == null) {
+                throw new InvalidTicketException(clazz.getName());
+            }
+            if (!clazz.isAssignableFrom(ticket.getClass())) {
+                throw new ClassCastException("Ticket [" + ticket.getId()
+                    + " is of type " + ticket.getClass()
+                    + " when we were expecting " + clazz);
+            }
+            return (T) ticket;
         }
-        if (ticket == null) {
-            throw new InvalidTicketException(clazz.getName());
-        }
-        if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new ClassCastException("Ticket [" + ticket.getId()
-                + " is of type " + ticket.getClass()
-                + " when we were expecting " + clazz);
-        }
-        return (T) ticket;
-    }
 
-}
+    }

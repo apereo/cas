@@ -21,6 +21,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanRequest;
 import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,9 +30,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.core.env.PropertiesPropertySource;
 import org.springframework.core.env.PropertySource;
+
 import java.net.InetAddress;
 import java.util.Map;
 import java.util.Properties;
+
 import lombok.Getter;
 
 /**
@@ -112,28 +115,25 @@ public class DynamoDbCloudConfigBootstrapConfiguration implements PropertySource
         return client;
     }
 
+    @SneakyThrows
     private static void createSettingsTable(final AmazonDynamoDB amazonDynamoDBClient, final boolean deleteTables) {
-        try {
-            final String name = ColumnNames.ID.getColumnName();
-            final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
-                .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
-                .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
-                .withTableName(TABLE_NAME);
-            if (deleteTables) {
-                final DeleteTableRequest delete = new DeleteTableRequest(request.getTableName());
-                LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
-                TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
-            }
-            LOGGER.debug("Sending delete request [{}] to create table", request);
-            TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
-            LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
-            TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
-            final DescribeTableRequest describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
-            LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
-            final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
-            LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final String name = ColumnNames.ID.getColumnName();
+        final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(new AttributeDefinition(name, ScalarAttributeType.S))
+            .withKeySchema(new KeySchemaElement(name, KeyType.HASH))
+            .withProvisionedThroughput(new ProvisionedThroughput(PROVISIONED_THROUGHPUT, PROVISIONED_THROUGHPUT))
+            .withTableName(TABLE_NAME);
+        if (deleteTables) {
+            final DeleteTableRequest delete = new DeleteTableRequest(request.getTableName());
+            LOGGER.debug("Sending delete request [{}] to remove table if necessary", delete);
+            TableUtils.deleteTableIfExists(amazonDynamoDBClient, delete);
         }
+        LOGGER.debug("Sending delete request [{}] to create table", request);
+        TableUtils.createTableIfNotExists(amazonDynamoDBClient, request);
+        LOGGER.debug("Waiting until table [{}] becomes active...", request.getTableName());
+        TableUtils.waitUntilActive(amazonDynamoDBClient, request.getTableName());
+        final DescribeTableRequest describeTableRequest = new DescribeTableRequest().withTableName(request.getTableName());
+        LOGGER.debug("Sending request [{}] to obtain table description...", describeTableRequest);
+        final TableDescription tableDescription = amazonDynamoDBClient.describeTable(describeTableRequest).getTable();
+        LOGGER.debug("Located newly created table with description: [{}]", tableDescription);
     }
 }
