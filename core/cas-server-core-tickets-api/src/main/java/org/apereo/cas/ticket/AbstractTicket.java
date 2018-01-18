@@ -16,6 +16,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -39,6 +40,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@NoArgsConstructor
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
@@ -80,13 +82,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      */
     @Column(name = "NUMBER_OF_TIMES_USED")
     private int countOfUses;
-
-    /**
-     * Instantiates a new abstract ticket.
-     */
-    protected AbstractTicket() {
-    // nothing to do
-    }
 
     /**
      * Constructs a new Ticket with a unique id, a possible parent Ticket (can

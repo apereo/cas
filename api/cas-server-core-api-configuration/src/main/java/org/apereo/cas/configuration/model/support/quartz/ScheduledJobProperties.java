@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link ScheduledJobProperties}.
@@ -17,6 +18,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class ScheduledJobProperties implements Serializable {
 
     private static final long serialVersionUID = 9059671958275130605L;
@@ -26,9 +28,6 @@ public class ScheduledJobProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SchedulingProperties schedule = new SchedulingProperties();
-
-    public ScheduledJobProperties() {
-    }
 
     public ScheduledJobProperties(final String startDelay, final String repeatInterval) {
         schedule.setEnabled(true);

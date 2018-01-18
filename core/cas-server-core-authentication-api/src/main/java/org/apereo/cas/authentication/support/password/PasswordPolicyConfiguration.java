@@ -3,6 +3,7 @@ package org.apereo.cas.authentication.support.password;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Container for password policy configuration.
@@ -13,6 +14,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
 public class PasswordPolicyConfiguration {
 
     private boolean alwaysDisplayPasswordExpirationWarning;
@@ -33,9 +35,6 @@ public class PasswordPolicyConfiguration {
 
     public PasswordPolicyConfiguration(final PasswordPolicyProperties props) {
         this(props.isWarnAll(), props.getWarningDays(), props.getLoginFailures());
-    }
-
-    public PasswordPolicyConfiguration() {
     }
 
     public boolean isAlwaysDisplayPasswordExpirationWarning() {

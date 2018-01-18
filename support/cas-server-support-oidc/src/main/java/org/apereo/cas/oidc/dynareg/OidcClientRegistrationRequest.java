@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.List;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link OidcClientRegistrationRequest}.
@@ -21,6 +22,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@NoArgsConstructor
 public class OidcClientRegistrationRequest implements Serializable {
 
     private static final long serialVersionUID = 1832102135613155844L;
@@ -54,9 +56,6 @@ public class OidcClientRegistrationRequest implements Serializable {
 
     @JsonProperty("request_object_signing_alg")
     private String requestObjectSigningAlg;
-
-    public OidcClientRegistrationRequest() {
-    }
 
     @JsonIgnore
     public Collection<String> getScopes() {

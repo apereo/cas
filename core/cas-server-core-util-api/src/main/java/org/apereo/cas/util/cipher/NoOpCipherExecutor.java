@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import java.io.Serializable;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * No-Op cipher executor that does nothing for encryption/decryption.
@@ -13,12 +14,10 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Serializable> {
 
     private static CipherExecutor<Serializable, Serializable> INSTANCE;
-
-    protected NoOpCipherExecutor() {
-    }
 
     /**
      * Gets instance.

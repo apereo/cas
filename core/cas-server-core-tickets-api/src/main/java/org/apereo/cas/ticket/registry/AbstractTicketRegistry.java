@@ -20,6 +20,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * @author Scott Battaglia
@@ -30,6 +31,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
@@ -38,13 +40,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * The cipher executor for ticket objects.
      */
     protected CipherExecutor cipherExecutor;
-
-    /**
-     * Default constructor.
-     */
-    @SuppressWarnings("unchecked")
-    public AbstractTicketRegistry() {
-    }
 
     /**
      * @return specified ticket from the registry
