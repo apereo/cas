@@ -107,15 +107,6 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     /**
-     * gets the list of signing certificate files.
-     *
-     * @return the list of files
-     */
-    public List<Resource> getSigningCertificateResources() {
-        return this.signingCertificateResources;
-    }
-
-    /**
      * sets the signing certs.
      *
      * @param signingCertificateResources a list of certificate files to read in.
@@ -125,42 +116,8 @@ public class WsFederationConfiguration implements Serializable {
         createSigningWallet(this.signingCertificateResources);
     }
 
-    public boolean isAutoRedirect() {
-        return autoRedirect;
-    }
-
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
         this.signingWallet = signingCertificateFiles.stream().map(WsFederationConfiguration::getSigningCredential).collect(Collectors.toList());
-    }
-
-    /**
-     * gets the tolerance.
-     *
-     * @return the tolerance in milliseconds
-     */
-    public long getTolerance() {
-        return this.tolerance;
-    }
-
-    /**
-     * gets the attributeMutator.
-     *
-     * @return an attributeMutator
-     */
-    public WsFederationAttributeMutator getAttributeMutator() {
-        return this.attributeMutator;
-    }
-
-    public WsFedPrincipalResolutionAttributesType getAttributesType() {
-        return this.attributesType;
-    }
-
-    public Resource getEncryptionPrivateKey() {
-        return encryptionPrivateKey;
-    }
-
-    public Resource getEncryptionCertificate() {
-        return encryptionCertificate;
     }
 
     /**
