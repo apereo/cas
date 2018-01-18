@@ -28,7 +28,7 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     private static final long MAX_CACHE_SIZE = 100_000_000;
 
-    private final Map<String, Ticket> cache;
+    private final Map<String, Ticket> mapInstance;
 
     private final LoadingCache<String, Ticket> storage;
 
@@ -41,14 +41,10 @@ public class CachingTicketRegistry extends AbstractMapBasedTicketRegistry {
                 LOGGER.error("Load operation of the cache is not supported.");
                 return null;
             });
-        this.cache = this.storage.asMap();
+        this.mapInstance = this.storage.asMap();
         this.logoutManager = logoutManager;
     }
 
-    @Override
-    public Map<String, Ticket> getMapInstance() {
-        return this.cache;
-    }
 
     /**
      * The cached ticket removal listener.

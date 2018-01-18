@@ -1,5 +1,6 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import java.util.ArrayList;
@@ -14,15 +15,12 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class ChainingPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private static final long serialVersionUID = 7586914936775326709L;
 
     private List<PrincipalNameTransformer> transformers = new ArrayList<>();
-
-    public List<PrincipalNameTransformer> getTransformers() {
-        return transformers;
-    }
 
     @Override
     public String transform(final String formUserId) {

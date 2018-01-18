@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
@@ -35,15 +36,14 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 3.1
  */
-
 @Slf4j
+@Getter
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /**
      * Unique Id for serialization.
      */
     private static final long serialVersionUID = -4949380008568071855L;
-
 
 
     /**
@@ -54,7 +54,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     /**
      * the HTTP client for this client.
      */
-    private final transient CloseableHttpClient httpClient;
+    private final transient CloseableHttpClient wrappedHttpClient;
 
     /**
      * the request executor service for this client.
@@ -71,7 +71,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
                      final FutureRequestExecutionService requestExecutorService) {
         this.acceptableCodes = acceptableCodes.stream().sorted().collect(Collectors.toList());
-        this.httpClient = httpClient;
+        this.wrappedHttpClient = httpClient;
         this.requestExecutorService = requestExecutorService;
     }
 
@@ -104,7 +104,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public HttpMessage sendMessageToEndPoint(final URL url) {
         HttpEntity entity = null;
 
-        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {
@@ -145,7 +145,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public boolean isValidEndPoint(final URL url) {
         HttpEntity entity = null;
 
-        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
@@ -177,9 +177,5 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public void destroy() {
         IOUtils.closeQuietly(this.requestExecutorService);
     }
-
-    @Override
-    public org.apache.http.client.HttpClient getWrappedHttpClient() {
-        return this.httpClient;
-    }
+    
 }

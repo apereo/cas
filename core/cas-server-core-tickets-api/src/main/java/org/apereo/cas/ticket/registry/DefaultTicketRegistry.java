@@ -21,7 +21,7 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
     /**
      * A map to contain the tickets.
      */
-    private final Map<String, Ticket> cache;
+    private final Map<String, Ticket> mapInstance;
 
     public DefaultTicketRegistry() {
         this(NoOpCipherExecutor.getInstance());
@@ -29,16 +29,12 @@ public class DefaultTicketRegistry extends AbstractMapBasedTicketRegistry {
 
     public DefaultTicketRegistry(final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
-        this.cache = new ConcurrentHashMap<>();
+        this.mapInstance = new ConcurrentHashMap<>();
     }
 
     public DefaultTicketRegistry(final int initialCapacity, final int loadFactor, final int concurrencyLevel, final CipherExecutor cipherExecutor) {
         super(cipherExecutor);
-        this.cache = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
+        this.mapInstance = new ConcurrentHashMap<>(initialCapacity, loadFactor, concurrencyLevel);
     }
 
-    @Override
-    public Map<String, Ticket> getMapInstance() {
-        return this.cache;
-    }
 }

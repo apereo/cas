@@ -1,5 +1,6 @@
 package org.apereo.cas.metadata;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -22,10 +23,9 @@ import java.util.Arrays;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class CasConfigurationMetadataRepository {
-
-
-    private final ConfigurationMetadataRepository configMetadataRepo;
+    private final ConfigurationMetadataRepository repository;
 
     public CasConfigurationMetadataRepository() {
         this("classpath*:META-INF/spring-configuration-metadata.json");
@@ -47,13 +47,9 @@ public class CasConfigurationMetadataRepository {
                 builder.withJsonResource(in);
             }
         }));
-        configMetadataRepo = builder.build();
+        repository = builder.build();
     }
-
-    public ConfigurationMetadataRepository getRepository() {
-        return configMetadataRepo;
-    }
-
+    
     /**
      * Gets property group id.
      *

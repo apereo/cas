@@ -1,5 +1,6 @@
 package org.apereo.cas.rest;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -16,11 +17,12 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
-
-    
     private static final String USERNAME = "username";
     private static final String PASSWORD = "password";
+
+    private int order;
 
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
@@ -32,10 +34,5 @@ public class UsernamePasswordRestHttpRequestCredentialFactory implements RestHtt
         }
         final Credential c = new UsernamePasswordCredential(username, password);
         return CollectionUtils.wrap(c);
-    }
-
-    @Override
-    public int getOrder() {
-        return 0;
     }
 }

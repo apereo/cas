@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @NoArgsConstructor
+@Getter
 public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
@@ -43,11 +45,6 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
             super.setOrder(provider.getOrder());
         }
         this.providers.add(provider);
-    }
-
-    @Override
-    public Collection<MultifactorAuthenticationProvider> getProviders() {
-        return this.providers;
     }
 
     @Override
@@ -79,7 +76,8 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
             return null;
         }
         if (!clazz.isAssignableFrom(provider.getClass())) {
-            throw new ClassCastException("MultifactorAuthenticationProvider [" + provider.getId() + " is of type " + provider.getClass() + " when we were expecting " + clazz);
+            throw new ClassCastException("MultifactorAuthenticationProvider ["
+                + provider.getId() + " is of type " + provider.getClass() + " when we were expecting " + clazz);
         }
         return (T) provider;
     }

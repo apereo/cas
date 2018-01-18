@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
@@ -97,6 +98,8 @@ public class CasMetricsRepositoryConfiguration {
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+    @Getter
+    @ToString
     private static class MongoDbMetric implements Serializable {
 
         private static final long serialVersionUID = 8587687286389110789L;
@@ -111,14 +114,6 @@ public class CasMetricsRepositoryConfiguration {
             this.name = metric.getName();
             this.value = metric.getValue();
             this.timestamp = metric.getTimestamp();
-        }
-
-        public Number getValue() {
-            return value;
-        }
-
-        public Date getTimestamp() {
-            return timestamp;
         }
     }
 }

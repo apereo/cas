@@ -1,5 +1,8 @@
 package org.apereo.cas.services;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -10,14 +13,15 @@ import org.apereo.cas.authentication.principal.Service;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
+@EqualsAndHashCode
+@ToString
 public class ServiceContext {
 
     /** Service principal. */
-    
     private final Service service;
 
     /** Registered service corresponding to service principal. */
-    
     private final RegisteredService registeredService;
 
     /**
@@ -32,23 +36,5 @@ public class ServiceContext {
         if (!registeredService.matches(service)) {
             throw new IllegalArgumentException("Registered service does not match given service.");
         }
-    }
-
-    /**
-     * Gets the service principal.
-     *
-     * @return Non-null service principal.
-     */
-    public Service getService() {
-        return this.service;
-    }
-
-    /**
-     * Gets the registered service for the service principal.
-     *
-     * @return Non-null registered service.
-     */
-    public RegisteredService getRegisteredService() {
-        return this.registeredService;
     }
 }

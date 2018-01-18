@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredential;
@@ -25,6 +26,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
 public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends AbstractNonInteractiveCredentialsAction implements Ordered {
 
     /**
@@ -66,9 +68,4 @@ public abstract class BasePrincipalFromNonInteractiveCredentialsAction extends A
      * @return the remote principal id
      */
     protected abstract String getRemotePrincipalId(HttpServletRequest request);
-
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
 }

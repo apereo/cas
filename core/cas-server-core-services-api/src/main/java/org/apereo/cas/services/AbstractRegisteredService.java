@@ -139,27 +139,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @JoinTable(name = "RegisteredService_Contacts")
     @OrderColumn
     private List<RegisteredServiceContact> contacts = new ArrayList<>();
-
-    @Override
-    public long getId() {
-        return this.id;
-    }
-
-    @Override
-    public RegisteredServiceProxyPolicy getProxyPolicy() {
-        return this.proxyPolicy;
-    }
-
-    @Override
-    public RegisteredServiceAccessStrategy getAccessStrategy() {
-        return this.accessStrategy;
-    }
-
-    @Override
-    public URL getLogoutUrl() {
-        return this.logoutUrl;
-    }
-
+    
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.

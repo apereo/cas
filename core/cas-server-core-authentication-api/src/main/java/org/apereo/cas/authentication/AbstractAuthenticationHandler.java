@@ -71,9 +71,4 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
             this.order = order;
         }
     }
-
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
 }

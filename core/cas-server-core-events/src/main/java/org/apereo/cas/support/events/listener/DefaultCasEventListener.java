@@ -1,5 +1,7 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
@@ -28,14 +30,11 @@ import org.springframework.context.event.EventListener;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
+@Getter
 public class DefaultCasEventListener {
 
-    
     private final CasEventRepository casEventRepository;
-    
-    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
-        this.casEventRepository = casEventRepository;
-    }
 
     /**
      * Handle application ready event.
@@ -125,9 +124,5 @@ public class DefaultCasEventListener {
             dto.putGeoLocation(location);
         }
         return dto;
-    }
-
-    public CasEventRepository getCasEventRepository() {
-        return casEventRepository;
     }
 }

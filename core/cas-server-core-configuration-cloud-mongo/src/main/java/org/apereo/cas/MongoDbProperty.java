@@ -26,8 +26,4 @@ public class MongoDbProperty {
     private String name;
 
     private Object value;
-
-    public Object getValue() {
-        return value;
-    }
 }

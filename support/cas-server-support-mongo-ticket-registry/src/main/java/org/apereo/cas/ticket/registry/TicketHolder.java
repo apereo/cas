@@ -1,10 +1,13 @@
 package org.apereo.cas.ticket.registry;
 
-import java.io.Serializable;
-import java.util.Date;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.mongodb.core.index.Indexed;
-import lombok.Getter;
+
+import java.io.Serializable;
+import java.util.Date;
 
 /**
  * This is {@link TicketHolder}.
@@ -14,15 +17,23 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
+@ToString
 public class TicketHolder implements Serializable {
 
-    /** Field name to hold ticket json data. */
+    /**
+     * Field name to hold ticket json data.
+     */
     public static final String FIELD_NAME_JSON = "json";
 
-    /** Field name to hold ticket expiration time. */
+    /**
+     * Field name to hold ticket expiration time.
+     */
     public static final String FIELD_NAME_EXPIRE_AT = "expireAt";
 
-    /** Field name to hold ticket id. */
+    /**
+     * Field name to hold ticket id.
+     */
     public static final String FIELD_NAME_ID = "ticketId";
 
     private static final long serialVersionUID = -4843440028617071224L;
@@ -35,15 +46,4 @@ public class TicketHolder implements Serializable {
 
     @Indexed
     private final Date expireAt;
-
-    public TicketHolder(final String json, final String ticketId, final String type, final Date expireAt) {
-        this.json = json;
-        this.ticketId = ticketId;
-        this.type = type;
-        this.expireAt = new Date(expireAt.getTime());
-    }
-
-    public Date getExpireAt() {
-        return expireAt;
-    }
 }

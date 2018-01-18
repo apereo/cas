@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.inspektr.audit.AuditActionContext;
@@ -18,17 +19,13 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Slf4j
+@Getter
 public class DefaultAuditTrailExecutionPlan implements AuditTrailExecutionPlan {
     private List<AuditTrailManager> auditTrailManagers = new ArrayList<>();
 
     @Override
     public void registerAuditTrailManager(final AuditTrailManager manager) {
         this.auditTrailManagers.add(manager);
-    }
-
-    @Override
-    public List<AuditTrailManager> getAuditTrailManagers() {
-        return this.auditTrailManagers;
     }
 
     @Override

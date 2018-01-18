@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -39,6 +40,7 @@ import java.util.stream.Collectors;
  *  @since 4.1
  */
 @Slf4j
+@Getter
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
 
@@ -246,10 +248,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      * @return the type to serialize
      */
     protected abstract Class<T> getTypeToSerialize();
-
-    public ObjectMapper getObjectMapper() {
-        return objectMapper;
-    }
 
     /**
      * Read object from json.

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.springframework.core.Ordered;
@@ -13,6 +14,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public abstract class BaseAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
 
     private int order = Ordered.HIGHEST_PRECEDENCE;
@@ -25,8 +27,4 @@ public abstract class BaseAuthenticationMetaDataPopulator implements Authenticat
         this.order = order;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
 }

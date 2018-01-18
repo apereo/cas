@@ -27,8 +27,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class CouchbaseClientFactory {
-
-
     private static final int DEFAULT_TIMEOUT = 5;
 
     private Cluster cluster;
@@ -91,11 +89,7 @@ public class CouchbaseClientFactory {
     public void authenticate(final String uid, final String psw) {
         this.cluster = this.cluster.authenticate(uid, psw);
     }
-
-    public Cluster getCluster() {
-        return this.cluster;
-    }
-
+    
     /**
      * Inverse of connectBucket, shuts down the client, cancelling connection
      * task if not completed.

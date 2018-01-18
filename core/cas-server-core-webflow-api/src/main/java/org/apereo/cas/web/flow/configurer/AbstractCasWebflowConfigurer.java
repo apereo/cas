@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -80,6 +81,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
 
     /**
@@ -222,15 +224,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         decisionState.getTransitionSet().add(elseTransition);
         return decisionState;
     }
-
-    public FlowDefinitionRegistry getLoginFlowDefinitionRegistry() {
-        return loginFlowDefinitionRegistry;
-    }
-
-    public FlowBuilderServices getFlowBuilderServices() {
-        return flowBuilderServices;
-    }
-
+    
     @Override
     public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);

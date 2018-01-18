@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -75,6 +76,7 @@ import lombok.Setter;
 @TestPropertySource(locations = { "classpath:/core.properties" })
 @Slf4j
 @Setter
+@Getter
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired
@@ -101,38 +103,6 @@ public abstract class AbstractCentralAuthenticationServiceTests {
     @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
-
-    public ArgumentExtractor getArgumentExtractor() {
-        return this.argumentExtractor;
-    }
-
-    public AuthenticationManager getAuthenticationManager() {
-        return this.authenticationManager;
-    }
-
-    public CentralAuthenticationService getCentralAuthenticationService() {
-        return this.centralAuthenticationService;
-    }
-
-    public TicketRegistry getTicketRegistry() {
-        return this.ticketRegistry;
-    }
-
-    public ServicesManager getServicesManager() {
-        return this.servicesManager;
-    }
-
-    public AuthenticationSystemSupport getAuthenticationSystemSupport() {
-        return this.authenticationSystemSupport;
-    }
-
-    public TicketRegistrySupport getTicketRegistrySupport() {
-        return this.ticketRegistrySupport;
-    }
-
-    public WebApplicationServiceFactory getWebApplicationServiceFactory() {
-        return webApplicationServiceFactory;
-    }
 
     @TestConfiguration
     public static class CasTestConfiguration {

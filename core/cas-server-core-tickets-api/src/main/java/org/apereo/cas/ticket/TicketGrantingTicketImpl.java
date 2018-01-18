@@ -250,17 +250,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public Service getProxiedBy() {
-        return this.proxiedBy;
-    }
-
-    @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;
     }
 
-    @Override
-    public Collection getDescendantTickets() {
-        return descendantTickets;
-    }
 }

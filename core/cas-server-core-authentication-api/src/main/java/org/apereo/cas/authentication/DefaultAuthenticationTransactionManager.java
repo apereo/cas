@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionCompletedEvent;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,8 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 4.2.0
  */
 @Slf4j
+@Getter
 public class DefaultAuthenticationTransactionManager implements AuthenticationTransactionManager {
-
-
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -39,11 +39,6 @@ public class DefaultAuthenticationTransactionManager implements AuthenticationTr
             LOGGER.debug("Transaction ignored since there are no credentials to authenticate");
         }
         return this;
-    }
-
-    @Override
-    public AuthenticationManager getAuthenticationManager() {
-        return this.authenticationManager;
     }
 
     private void publishEvent(final ApplicationEvent event) {
