@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import java.util.Map;
@@ -26,13 +25,11 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
 
-    /**
-     * Log instance.
-     */
     private static final String CONST_SEPARATOR = "!";
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
@@ -65,23 +62,4 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         return generate(principalId, service.getId());
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ShibbolethCompatiblePersistentIdGenerator rhs = (ShibbolethCompatiblePersistentIdGenerator) obj;
-        return new EqualsBuilder().append(this.salt, rhs.salt).append(this.attribute, rhs.attribute).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this.salt).append(this.attribute).toHashCode();
-    }
 }
