@@ -82,6 +82,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnMissingBean(name = "duoMultifactorAuthenticationProvider")
     @Bean
     @RefreshScope
     public VariegatedMultifactorAuthenticationProvider duoMultifactorAuthenticationProvider() {
