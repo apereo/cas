@@ -134,17 +134,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         this(id, null, null, authentication, policy);
     }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return this.authentication;
-    }
-
+    
     /**
      * {@inheritDoc}
      * <p>The state of the ticket is affected by this operation and the

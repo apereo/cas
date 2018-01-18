@@ -1,5 +1,7 @@
 package org.apereo.cas.validation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -20,28 +22,12 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public abstract class AbstractCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
 
     /** Denotes whether we should always authenticate or not. */
     private boolean renew;
-
-    /**
-     * Instantiates a new abstract cas protocol validation specification.
-     *
-     * @param renew the renew
-     */
-    public AbstractCasProtocolValidationSpecification(final boolean renew) {
-        this.renew = renew;
-    }
-
-    /**
-     * Method to determine if we require renew to be true.
-     *
-     * @return true if renew is required, false otherwise.
-     */
-    public boolean isRenew() {
-        return this.renew;
-    }
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {

@@ -41,16 +41,4 @@ public class OidcIntrospectionAccessTokenResponse {
 
     @JsonProperty("grant_type")
     private String grantType;
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public long getIat() {
-        return iat;
-    }
-
-    public long getExp() {
-        return exp;
-    }
 }

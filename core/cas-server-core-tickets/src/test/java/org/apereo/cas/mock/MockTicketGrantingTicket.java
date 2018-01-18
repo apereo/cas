@@ -116,11 +116,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public boolean isExpired() {
-        return expired;
-    }
-
-    @Override
     public TicketGrantingTicket getTicketGrantingTicket() {
         return this;
     }

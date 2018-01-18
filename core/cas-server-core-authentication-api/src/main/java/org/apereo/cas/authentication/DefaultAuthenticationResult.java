@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.ToString;
@@ -16,6 +17,7 @@ import lombok.Setter;
 @Slf4j
 @ToString
 @Setter
+@Getter
 public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private static final long serialVersionUID = 8454900425245262824L;
@@ -45,19 +47,5 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
     public DefaultAuthenticationResult(final Authentication authentication) {
         this(authentication, null);
     }
-
-    @Override
-    public Authentication getAuthentication() {
-        return this.authentication;
-    }
-
-    @Override
-    public Service getService() {
-        return this.service;
-    }
-
-    @Override
-    public boolean isCredentialProvided() {
-        return this.credentialProvided;
-    }
+    
 }

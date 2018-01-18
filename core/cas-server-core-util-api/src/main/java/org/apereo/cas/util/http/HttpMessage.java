@@ -69,20 +69,8 @@ public class HttpMessage implements Serializable {
         this.asynchronous = async;
     }
 
-    public boolean isAsynchronous() {
-        return this.asynchronous;
-    }
-
-    public URL getUrl() {
-        return this.url;
-    }
-
     public String getMessage() {
         return this.formatOutputMessageInternal(this.message);
-    }
-
-    public int getResponseCode() {
-        return this.responseCode;
     }
 
     /**
