@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
@@ -24,10 +25,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public final class Beans {
-    
-    protected Beans() {
-    }
+@UtilityClass
+public class Beans {
 
     /**
      * New thread pool executor factory bean.

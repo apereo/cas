@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import net.spy.memcached.transcoders.Transcoder;
@@ -20,11 +21,8 @@ import java.util.Collection;
  * @since 5.2.0
  */
 @Slf4j
-public final class MemcachedUtils {
-
-
-    private MemcachedUtils() {
-    }
+@UtilityClass
+public class MemcachedUtils {
 
     /**
      * New transcoder transcoder.

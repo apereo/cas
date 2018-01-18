@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -25,12 +26,8 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
-public final class RegisteredServiceAccessStrategyUtils {
-
-
-
-    private RegisteredServiceAccessStrategyUtils() {
-    }
+@UtilityClass
+public class RegisteredServiceAccessStrategyUtils {
 
     /**
      * Ensure service access is allowed.

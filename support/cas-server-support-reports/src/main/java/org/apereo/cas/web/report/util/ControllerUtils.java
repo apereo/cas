@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -18,11 +19,8 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
-public final class ControllerUtils {
-
-
-    private ControllerUtils() {
-    }
+@UtilityClass
+public class ControllerUtils {
 
     /**
      * Configure model map for config server cloud bus endpoints.

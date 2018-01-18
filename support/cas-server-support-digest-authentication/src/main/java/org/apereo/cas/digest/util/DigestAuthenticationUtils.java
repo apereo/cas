@@ -1,5 +1,6 @@
 package org.apereo.cas.digest.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -16,10 +17,8 @@ import java.time.ZonedDateTime;
  * @since 5.0.0
  */
 @Slf4j
-public final class DigestAuthenticationUtils {
-
-    private DigestAuthenticationUtils() {
-    }
+@UtilityClass
+public class DigestAuthenticationUtils {
 
     /**
      * Create nonce string.

@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
 
@@ -26,16 +27,12 @@ import java.time.ZonedDateTime;
  *
  */
 @Slf4j
-public final class CertUtils {
+@UtilityClass
+public class CertUtils {
 
     /** X509 certificate type. */
     public static final String X509_CERTIFICATE_TYPE = "X509";
-
-
-    /** Suppressed constructor of utility class. */
-    private CertUtils() {
-    }
-
+    
     /**
      * Determines whether the given CRL is expired by examining the nextUpdate field.
      *

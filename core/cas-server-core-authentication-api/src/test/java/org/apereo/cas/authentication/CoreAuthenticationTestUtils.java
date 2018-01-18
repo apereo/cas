@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -25,7 +26,8 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0.2
  */
 @Slf4j
-public final class CoreAuthenticationTestUtils {
+@UtilityClass
+public class CoreAuthenticationTestUtils {
 
     public static final String CONST_USERNAME = "test";
 
@@ -36,10 +38,6 @@ public final class CoreAuthenticationTestUtils {
     private static final String CONST_PASSWORD = "test1";
 
     private static final DefaultPrincipalFactory PRINCIPAL_FACTORY = new DefaultPrincipalFactory();
-
-    private CoreAuthenticationTestUtils() {
-        // do not instantiate
-    }
 
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword() {
         return getCredentialsWithSameUsernameAndPassword(CONST_USERNAME);

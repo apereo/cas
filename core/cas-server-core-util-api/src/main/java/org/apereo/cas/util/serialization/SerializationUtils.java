@@ -1,5 +1,6 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 
@@ -21,11 +22,8 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Slf4j
-public final class SerializationUtils {
-
-
-    private SerializationUtils() {
-    }
+@UtilityClass
+public class SerializationUtils {
 
     /**
      * Serialize an object.

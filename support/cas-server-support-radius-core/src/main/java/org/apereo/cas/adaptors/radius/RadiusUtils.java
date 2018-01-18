@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 
@@ -16,12 +17,8 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-public final class RadiusUtils {
-
-
-
-    private RadiusUtils() {
-    }
+@UtilityClass
+public class RadiusUtils {
 
     /**
      * Authenticate pair.

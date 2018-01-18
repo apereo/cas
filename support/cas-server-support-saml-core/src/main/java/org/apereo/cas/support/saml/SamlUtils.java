@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
@@ -45,14 +46,10 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
-public final class SamlUtils {
-
-
+@UtilityClass
+public class SamlUtils {
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
     private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
-
-    private SamlUtils() {
-    }
 
     /**
      * Read certificate x 509 certificate.

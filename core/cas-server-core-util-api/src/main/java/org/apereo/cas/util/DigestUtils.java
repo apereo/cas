@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apache.commons.lang3.StringUtils;
@@ -17,11 +18,9 @@ import java.util.Arrays;
  * @since 5.0.0
  */
 @Slf4j
-public final class DigestUtils {
+@UtilityClass
+public class DigestUtils {
     private static final int ABBREVIATE_MAX_WIDTH = 125;
-    
-    private DigestUtils() {
-    }
 
     /**
      * Computes hex encoded SHA512 digest.

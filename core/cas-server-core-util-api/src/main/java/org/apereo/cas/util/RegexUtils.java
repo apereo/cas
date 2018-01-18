@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -16,17 +17,13 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
-public final class RegexUtils {
+@UtilityClass
+public class RegexUtils {
 
     /**
      * A pattern match that does not match anything.
      */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
-
-
-
-    private RegexUtils() {
-    }
 
     /**
      * Check to see if the specified pattern is a valid regular expression.

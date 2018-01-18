@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -40,11 +41,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public final class SamlIdPUtils {
-
-
-    private SamlIdPUtils() {
-    }
+@UtilityClass
+public class SamlIdPUtils {
 
     /**
      * Prepare peer entity saml endpoint.

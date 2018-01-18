@@ -5,6 +5,7 @@ import com.google.zxing.EncodeHintType;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.imageio.ImageIO;
@@ -24,7 +25,8 @@ import java.util.stream.IntStream;
  * @since 5.2.0
  */
 @Slf4j
-public final class QRUtils {
+@UtilityClass
+public class QRUtils {
 
     /**
      * Large width size.
@@ -35,10 +37,6 @@ public final class QRUtils {
      * Medium width size.
      */
     public static final int WIDTH_MEDIUM = 125;
-
-    private QRUtils() {
-    }
-
     /**
      * Generate qr code.
      *

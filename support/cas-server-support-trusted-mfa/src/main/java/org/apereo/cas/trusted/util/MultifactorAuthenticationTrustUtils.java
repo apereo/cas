@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -18,11 +19,8 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
-public final class MultifactorAuthenticationTrustUtils {
-
-
-    private MultifactorAuthenticationTrustUtils() {
-    }
+@UtilityClass
+public class MultifactorAuthenticationTrustUtils {
 
     /**
      * Generate key.

@@ -1,5 +1,6 @@
 package org.apereo.cas.interrupt.webflow;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.springframework.webflow.execution.RequestContext;
@@ -11,11 +12,8 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.2.0
  */
 @Slf4j
-public final class InterruptUtils {
-
-    private InterruptUtils() {
-    }
-
+@UtilityClass
+public class InterruptUtils {
     /**
      * Gets interrupt from.
      *

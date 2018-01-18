@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -49,7 +50,8 @@ import java.util.Map;
  */
 
 @Slf4j
-public final class WebUtils {
+@UtilityClass
+public class WebUtils {
 
     /**
      * Request attribute that contains message key describing details of authorization failure.
@@ -60,9 +62,7 @@ public final class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-
-
-
+    
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -74,12 +74,6 @@ public final class WebUtils {
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
     private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
-
-    /**
-     * Instantiates a new web utils instance.
-     */
-    private WebUtils() {
-    }
 
     /**
      * Gets the http servlet request from the context.

@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -23,11 +24,8 @@ import java.util.Properties;
  */
 
 @Slf4j
-public final class JpaBeans {
-
-    protected JpaBeans() {
-    }
-
+@UtilityClass
+public class JpaBeans {
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool.

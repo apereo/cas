@@ -17,8 +17,6 @@ import java.util.List;
 @Slf4j
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-
-    
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */

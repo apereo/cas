@@ -4,6 +4,7 @@ import com.google.common.base.Splitter;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 import groovy.lang.GroovyClassLoader;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -29,11 +30,8 @@ import java.util.regex.Pattern;
  */
 
 @Slf4j
-public final class CoreAuthenticationUtils {
-
-
-    private CoreAuthenticationUtils() {
-    }
+@UtilityClass
+public class CoreAuthenticationUtils {
 
     /**
      * Transform principal attributes list into map map.

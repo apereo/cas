@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,6 +32,7 @@ import java.util.Map;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
@@ -79,16 +81,6 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                             final String principalAttributeName) {
         this(attributeRepository, principalFactory, returnNullIfNoAttributes, formUserId -> formUserId, principalAttributeName);
-    }
-
-    public PersonDirectoryPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                            final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                            final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
-        this.attributeRepository = attributeRepository;
-        this.principalFactory = principalFactory;
-        this.returnNullIfNoAttributes = returnNullIfNoAttributes;
-        this.principalNameTransformer = principalNameTransformer;
-        this.principalAttributeName = principalAttributeName;
     }
 
     @Override

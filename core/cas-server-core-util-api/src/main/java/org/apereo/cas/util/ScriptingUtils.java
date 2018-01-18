@@ -4,6 +4,7 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +35,8 @@ import java.util.regex.Pattern;
  */
 
 @Slf4j
-public final class ScriptingUtils {
+@UtilityClass
+public class ScriptingUtils {
     /**
      * Pattern indicating groovy script is inlined.
      */
@@ -44,9 +46,6 @@ public final class ScriptingUtils {
      * Pattern indicating groovy script is a file/resource.
      */
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
-
-    private ScriptingUtils() {
-    }
 
     /**
      * Is inline groovy script ?.

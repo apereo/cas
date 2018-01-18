@@ -301,10 +301,10 @@
         <module name="FinalClass">
             <property name="severity" value="error"/>
         </module>
+        <!--
         <module name="HideUtilityClassConstructor">
             <property name="severity" value="error"/>
         </module>
-        <!--
         <module name="InterfaceIsType">
             <property name="severity" value="info"/>
         </module>

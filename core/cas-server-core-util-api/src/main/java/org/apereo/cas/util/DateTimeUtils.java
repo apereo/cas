@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import org.joda.time.ReadableInstant;
@@ -25,10 +26,8 @@ import java.util.concurrent.TimeUnit;
  * @since 5.0.0
  */
 @Slf4j
-public final class DateTimeUtils {
-
-    private DateTimeUtils() {
-    }
+@UtilityClass
+public class DateTimeUtils {
 
     /**
      * Parse the given value as a local datetime.
