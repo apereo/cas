@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.query;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -20,6 +22,7 @@ import java.io.StringWriter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
     /**
@@ -45,6 +48,7 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
     }
 
     @Override
+    @SneakyThrows
     public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,
                                            final String relyingParty, final TicketGrantingTicket ticketGrantingTicket) {
         try (StringWriter w = SamlUtils.transformSamlObject(this.configBean, samlObject)) {
@@ -56,8 +60,6 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
             }
             return at;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

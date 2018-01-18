@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
@@ -29,20 +30,20 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class AuthenticationExceptionHandlerActionTests {
  
     @Test
     public void handleAccountNotFoundExceptionByDefault() {
         final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction(
-                CollectionUtils.wrapSet(AccountLockedException.class,
-                        AccountNotFoundException.class)
+                CollectionUtils.wrapSet(AccountLockedException.class, AccountNotFoundException.class)
         );
         final RequestContext req = getMockRequestContext();
 
-        final Map<String, Class<? extends Throwable>> map = new HashMap<>();
-        map.put("notFound", AccountNotFoundException.class);
+        final Map<String, Throwable> map = new HashMap<>();
+        map.put("notFound", new AccountNotFoundException());
         final String id = handler.handle(new AuthenticationException(map), req);
-        assertEquals(id, AccountNotFoundException.class.getSimpleName());
+        assertEquals(AccountNotFoundException.class.getSimpleName(), id);
     }
 
     private RequestContext getMockRequestContext() {
@@ -55,8 +56,8 @@ public class AuthenticationExceptionHandlerActionTests {
     public void handleUnknownExceptionByDefault() {
         final AuthenticationExceptionHandlerAction handler = new AuthenticationExceptionHandlerAction();
         final RequestContext req = getMockRequestContext();
-        final Map<String, Class<? extends Throwable>> map = new HashMap<>();
-        map.put("unknown", GeneralSecurityException.class);
+        final Map<String, Throwable> map = new HashMap<>();
+        map.put("unknown", new GeneralSecurityException());
         final String id = handler.handle(new AuthenticationException(map), req);
         assertEquals("UNKNOWN", id);
     }

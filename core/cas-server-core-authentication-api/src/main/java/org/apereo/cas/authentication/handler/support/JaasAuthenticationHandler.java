@@ -1,14 +1,12 @@
 package org.apereo.cas.authentication.handler.support;
 
-import org.apereo.cas.authentication.HandlerResult;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
-
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
 import javax.security.auth.callback.NameCallback;
@@ -19,6 +17,7 @@ import javax.security.auth.login.LoginContext;
 import java.security.GeneralSecurityException;
 import java.util.Arrays;
 import java.util.Set;
+import lombok.Setter;
 
 /**
  * JAAS Authentication Handler for CAAS. This is a simple bridge from CAS'
@@ -56,8 +55,9 @@ import java.util.Set;
  * @see javax.security.auth.callback.NameCallback
  * @since 3.0.0
  */
+@Slf4j
+@Setter
 public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JaasAuthenticationHandler.class);
 
     /**
      * System property key to specify kerb5 realm.
@@ -95,14 +95,12 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
-        Assert.notNull(Configuration.getConfiguration(),
-                "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException {
-
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
         if (this.kerberosKdcSystemProperty != null) {
             LOGGER.debug("Configured kerberos system property [{}] to [{}]", SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
             System.setProperty(SYS_PROP_KERB5_KDC, this.kerberosKdcSystemProperty);
@@ -111,71 +109,24 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
             LOGGER.debug("Setting kerberos system property [{}] to [{}]", SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
             System.setProperty(SYS_PROP_KRB5_REALM, this.kerberosRealmSystemProperty);
         }
-
         final String username = credential.getUsername();
         final String password = credential.getPassword();
-
         Principal principal = null;
         final LoginContext lc = new LoginContext(this.realm, new UsernamePasswordCallbackHandler(username, password));
         try {
             LOGGER.debug("Attempting authentication for: [{}]", username);
             lc.login();
             final Set<java.security.Principal> principals = lc.getSubject().getPrincipals();
+            LOGGER.debug("JAAS principals extracted from subject are [{}}", principals);
             if (principals != null && !principals.isEmpty()) {
                 final java.security.Principal secPrincipal = principals.iterator().next();
+                LOGGER.debug("JAAS principal detected from subject login context is [{}}", secPrincipal.getName());
                 principal = this.principalFactory.createPrincipal(secPrincipal.getName());
             }
         } finally {
             lc.logout();
         }
-
         return createHandlerResult(credential, principal, null);
-    }
-
-    public void setRealm(final String realm) {
-        this.realm = realm;
-    }
-
-    /**
-     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
-     * However, if you like, you can instead specify the realm value by setting this following system property value.
-     * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
-     * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
-     * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
-     * may be obtained.
-     * <p>If you set values for these properties, then they override the default realm and KDC values specified
-     * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
-     * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
-     * then the default values used for these items are implementation-specific.
-     *
-     * @param kerberosRealmSystemProperty system property to indicate realm.
-     * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
-     * Oracle documentation</a>
-     * @since 4.1.0
-     */
-    public void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
-        this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
-    }
-
-    /**
-     * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
-     * However, if you like, you can instead specify the kdc value by setting this system property value.
-     * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosRealmSystemProperty(String)}.
-     * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
-     * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
-     * may be obtained.
-     * <p>If you set values for these properties, then they override the default realm and KDC values specified
-     * in {@code krb5.conf} (if such a file is found). The {@code krb5.conf} file is still consulted if values for items
-     * other than the default realm and KDC are needed. If no {@code krb5.conf} file is found,
-     * then the default values used for these items are implementation-specific.
-     *
-     * @param kerberosKdcSystemProperty system property to indicate kdc
-     * @see <a href="http://docs.oracle.com/javase/7/docs/technotes/guides/security/jgss/tutorials/KerberosReq.html">
-     * Oracle documentation</a>
-     * @since 4.1.0
-     */
-    public void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
-        this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
     }
 
     /**

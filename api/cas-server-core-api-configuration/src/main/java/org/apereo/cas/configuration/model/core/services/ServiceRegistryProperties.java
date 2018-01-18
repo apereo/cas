@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
@@ -16,8 +17,9 @@ import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.BaseRestEndpointProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for service.registry.
@@ -26,6 +28,9 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-services", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class ServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -368826011744304210L;
@@ -34,33 +39,34 @@ public class ServiceRegistryProperties implements Serializable {
      * Types of service managers that one can control.
      */
     public enum ServiceManagementTypes {
+
         /**
          * Group service definitions by their domain.
          */
-        DOMAIN,
-        /**
+        DOMAIN, /**
          * Default option to keep definitions in a map as they arrive.
          */
         DEFAULT
     }
+
     /**
      * Properties pertaining to Cosmos DB service registry.
      */
     @NestedConfigurationProperty
     private CosmosDbServiceRegistryProperties cosmosDb = new CosmosDbServiceRegistryProperties();
-    
+
     /**
      * Properties pertaining to REST service registry.
      */
     @NestedConfigurationProperty
     private BaseRestEndpointProperties rest = new BaseRestEndpointProperties();
-    
+
     /**
      * Properties pertaining to redis service registry.
      */
     @NestedConfigurationProperty
     private RedisServiceRegistryProperties redis = new RedisServiceRegistryProperties();
-    
+
     /**
      * Properties pertaining to JSON service registry.
      */
@@ -72,7 +78,7 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private YamlServiceRegistryProperties yaml = new YamlServiceRegistryProperties();
-    
+
     /**
      * Properties pertaining to jpa service registry.
      */
@@ -126,7 +132,7 @@ public class ServiceRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private SmsProperties sms = new SmsProperties();
-    
+
     /**
      * Flag that indicates whether to initialise active service registry implementation with a default set of service definition included
      * with CAS in JSON format.
@@ -149,140 +155,4 @@ public class ServiceRegistryProperties implements Serializable {
      * </ul>
      */
     private ServiceManagementTypes managementType = ServiceManagementTypes.DEFAULT;
-
-    public ServiceManagementTypes getManagementType() {
-        return managementType;
-    }
-
-    public void setManagementType(final ServiceManagementTypes managementType) {
-        this.managementType = managementType;
-    }
-
-    public BaseRestEndpointProperties getRest() {
-        return rest;
-    }
-
-    public void setRest(final BaseRestEndpointProperties rest) {
-        this.rest = rest;
-    }
-
-    public boolean isInitFromJson() {
-        return initFromJson;
-    }
-
-    public void setInitFromJson(final boolean initFromJson) {
-        this.initFromJson = initFromJson;
-    }
-
-    public boolean isWatcherEnabled() {
-        return watcherEnabled;
-    }
-
-    public void setWatcherEnabled(final boolean watcherEnabled) {
-        this.watcherEnabled = watcherEnabled;
-    }
-
-    public JpaServiceRegistryProperties getJpa() {
-        return jpa;
-    }
-
-    public void setJpa(final JpaServiceRegistryProperties jpa) {
-        this.jpa = jpa;
-    }
-
-    public LdapServiceRegistryProperties getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final LdapServiceRegistryProperties ldap) {
-        this.ldap = ldap;
-    }
-
-    public MongoDbServiceRegistryProperties getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final MongoDbServiceRegistryProperties mongo) {
-        this.mongo = mongo;
-    }
-
-    public CouchbaseServiceRegistryProperties getCouchbase() {
-        return couchbase;
-    }
-
-    public void setCouchbase(final CouchbaseServiceRegistryProperties couchbase) {
-        this.couchbase = couchbase;
-    }
-
-    public DynamoDbServiceRegistryProperties getDynamoDb() {
-        return dynamoDb;
-    }
-
-    public void setDynamoDb(final DynamoDbServiceRegistryProperties dynamoDb) {
-        this.dynamoDb = dynamoDb;
-    }
-
-    public JsonServiceRegistryProperties getJson() {
-        return json;
-    }
-
-    public void setJson(final JsonServiceRegistryProperties json) {
-        this.json = json;
-    }
-
-    public YamlServiceRegistryProperties getYaml() {
-        return yaml;
-    }
-
-    public void setYaml(final YamlServiceRegistryProperties yaml) {
-        this.yaml = yaml;
-    }
-
-    public StreamingServiceRegistryProperties getStream() {
-        return stream;
-    }
-
-    public void setStream(final StreamingServiceRegistryProperties stream) {
-        this.stream = stream;
-    }
-
-    public SchedulingProperties getSchedule() {
-        return schedule;
-    }
-
-    public void setSchedule(final SchedulingProperties schedule) {
-        this.schedule = schedule;
-    }
-
-    public RedisServiceRegistryProperties getRedis() {
-        return redis;
-    }
-
-    public void setRedis(final RedisServiceRegistryProperties redis) {
-        this.redis = redis;
-    }
-
-    public EmailProperties getMail() {
-        return mail;
-    }
-
-    public void setMail(final EmailProperties mail) {
-        this.mail = mail;
-    }
-
-    public SmsProperties getSms() {
-        return sms;
-    }
-
-    public void setSms(final SmsProperties sms) {
-        this.sms = sms;
-    }
-
-    public CosmosDbServiceRegistryProperties getCosmosDb() {
-        return cosmosDb;
-    }
-
-    public void setCosmosDb(final CosmosDbServiceRegistryProperties cosmosDb) {
-        this.cosmosDb = cosmosDb;
-    }
 }

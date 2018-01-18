@@ -1,17 +1,16 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Determines the username for this registered service based on a principal attribute.
@@ -20,11 +19,13 @@ import java.util.TreeMap;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@ToString
+@Getter
+@Setter
 public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -3546719400741715137L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalAttributeRegisteredServiceUsernameProvider.class);
 
     private String usernameAttribute;
 
@@ -49,61 +50,35 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         this.usernameAttribute = usernameAttribute;
     }
 
-    public String getUsernameAttribute() {
-        return this.usernameAttribute;
-    }
-
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
         String principalId = principal.getId();
-
         final Map<String, Object> originalPrincipalAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         originalPrincipalAttributes.putAll(principal.getAttributes());
-
-        LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].",
-                this.usernameAttribute, originalPrincipalAttributes);
-
+        LOGGER.debug("Original principal attributes available for selection of username attribute [{}] are [{}].", this.usernameAttribute, originalPrincipalAttributes);
         final Map<String, Object> releasePolicyAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         releasePolicyAttributes.putAll(getPrincipalAttributesFromReleasePolicy(principal, service, registeredService));
-
-        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].",
-                this.usernameAttribute, releasePolicyAttributes);
-
+        LOGGER.debug("Attributes resolved by the release policy available for selection of username attribute [{}] are [{}].", this.usernameAttribute, releasePolicyAttributes);
         if (releasePolicyAttributes.containsKey(this.usernameAttribute)) {
-            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]",
-                    registeredService.getServiceId(), this.usernameAttribute);
-
+            LOGGER.debug("Attribute release policy for registered service [{}] contains an attribute for [{}]", registeredService.getServiceId(), this.usernameAttribute);
             final Object value = releasePolicyAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else if (originalPrincipalAttributes.containsKey(this.usernameAttribute)) {
             LOGGER.debug("The selected username attribute [{}] was retrieved as a direct "
-                            + "principal attribute and not through the attribute release policy for service [{}]. "
-                            + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
-                            + "is explicitly authorized for release via the service attribute release policy.",
-                    this.usernameAttribute, service, this.usernameAttribute);
+                + "principal attribute and not through the attribute release policy for service [{}]. "
+                + "CAS is unable to detect new attribute values for [{}] after authentication unless the attribute "
+                + "is explicitly authorized for release via the service attribute release policy.",
+                this.usernameAttribute, service, this.usernameAttribute);
             final Object value = originalPrincipalAttributes.get(this.usernameAttribute);
             principalId = CollectionUtils.wrap(value).get(0).toString();
         } else {
             LOGGER.warn("Principal [{}] does not have an attribute [{}] among attributes [{}] so CAS cannot "
-                            + "provide the user attribute the service expects. "
-                            + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
-                            + "is allowed to be released by the service attribute release policy.",
-                    principalId,
-                    this.usernameAttribute,
-                    releasePolicyAttributes,
-                    principalId);
+                + "provide the user attribute the service expects. "
+                + "CAS will instead return the default principal id [{}]. Ensure the attribute selected as the username "
+                + "is allowed to be released by the service attribute release policy.", principalId, this.usernameAttribute, releasePolicyAttributes, principalId);
         }
-
-        LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].",
-                service.getId(), principalId, principal.getId());
+        LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();
-    }
-
-    @Override
-    public String toString() {
-        final ToStringBuilder toStringBuilder = new ToStringBuilder(null, ToStringStyle.SHORT_PREFIX_STYLE);
-        toStringBuilder.append("usernameAttribute", this.usernameAttribute);
-        return toStringBuilder.toString();
     }
 
     @Override
@@ -117,19 +92,13 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         if (obj.getClass() != getClass()) {
             return false;
         }
-        final PrincipalAttributeRegisteredServiceUsernameProvider rhs =
-                (PrincipalAttributeRegisteredServiceUsernameProvider) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.usernameAttribute, rhs.usernameAttribute)
-                .isEquals();
+        final PrincipalAttributeRegisteredServiceUsernameProvider rhs = (PrincipalAttributeRegisteredServiceUsernameProvider) obj;
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.usernameAttribute, rhs.usernameAttribute).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.usernameAttribute)
-                .toHashCode();
+        return new HashCodeBuilder().append(this.usernameAttribute).toHashCode();
     }
 
     /**
@@ -143,8 +112,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
      * @param registeredService the registered service
      * @return the principal attributes
      */
-    protected Map<String, Object> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service,
-                                                                          final RegisteredService registeredService) {
+    protected Map<String, Object> getPrincipalAttributesFromReleasePolicy(final Principal p, final Service service, final RegisteredService registeredService) {
         if (registeredService != null && registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.debug("Located service [{}] in the registry. Attempting to resolve attributes for [{}]", registeredService, p.getId());
             if (registeredService.getAttributeReleasePolicy() == null) {
@@ -155,9 +123,5 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         }
         LOGGER.debug("Could not locate service [{}] in the registry.", service.getId());
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
-    }
-
-    public void setUsernameAttribute(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
     }
 }

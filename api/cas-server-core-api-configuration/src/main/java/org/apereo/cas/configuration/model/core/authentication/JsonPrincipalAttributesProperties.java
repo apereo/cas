@@ -1,7 +1,10 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link JsonPrincipalAttributesProperties}.
@@ -25,21 +28,17 @@ import org.apereo.cas.configuration.support.SpringResourceProperties;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class JsonPrincipalAttributesProperties extends SpringResourceProperties {
+
     private static final long serialVersionUID = -6573755681498251678L;
+
     /**
      * The order of this attribute repository in the chain of repositories.
      * Can be used to explicitly position this source in chain and affects
      * merging strategies.
      */
     private int order;
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
 }
-

@@ -1,16 +1,16 @@
 package org.apereo.cas.configuration.model.support.ignite;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link IgniteProperties}.
@@ -19,9 +19,13 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ignite-ticket-registry")
+@Slf4j
+@Getter
+@Setter
 public class IgniteProperties implements Serializable {
 
     private static final long serialVersionUID = -5259465262649559156L;
+
     /**
      * Used by {@code TcpDiscoveryVmIpFinder} which is an
      * IP Finder which works only with pre-configured list of IP addresses specified via this setting.
@@ -155,170 +159,13 @@ public class IgniteProperties implements Serializable {
     public IgniteProperties() {
         this.crypto.setEnabled(false);
     }
-    
-    public long getAckTimeout() {
-        return Duration.parse(ackTimeout).toMillis();
-    }
 
-    public void setAckTimeout(final String ackTimeout) {
-        this.ackTimeout = ackTimeout;
-    }
-
-    public long getJoinTimeout() {
-        return Beans.newDuration(joinTimeout).toMillis();
-    }
-
-    public void setJoinTimeout(final String joinTimeout) {
-        this.joinTimeout = joinTimeout;
-    }
-
-    public String getLocalAddress() {
-        return localAddress;
-    }
-
-    public void setLocalAddress(final String localAddress) {
-        this.localAddress = localAddress;
-    }
-
-    public int getLocalPort() {
-        return localPort;
-    }
-
-    public void setLocalPort(final int localPort) {
-        this.localPort = localPort;
-    }
-
-    public long getNetworkTimeout() {
-        return Beans.newDuration(networkTimeout).toMillis();
-    }
-
-    public void setNetworkTimeout(final String networkTimeout) {
-        this.networkTimeout = networkTimeout;
-    }
-
-    public long getSocketTimeout() {
-        return Beans.newDuration(socketTimeout).toMillis();
-    }
-
-    public void setSocketTimeout(final String socketTimeout) {
-        this.socketTimeout = socketTimeout;
-    }
-
-    public int getThreadPriority() {
-        return threadPriority;
-    }
-
-    public void setThreadPriority(final int threadPriority) {
-        this.threadPriority = threadPriority;
-    }
-
-    public boolean isForceServerMode() {
-        return forceServerMode;
-    }
-
-    public void setForceServerMode(final boolean forceServerMode) {
-        this.forceServerMode = forceServerMode;
-    }
-
-    public boolean isClientMode() {
-        return clientMode;
-    }
-
-    public void setClientMode(final boolean clientMode) {
-        this.clientMode = clientMode;
-    }
-
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
-    public String getKeyStoreType() {
-        return keyStoreType;
-    }
-
-    public void setKeyStoreType(final String keyStoreType) {
-        this.keyStoreType = keyStoreType;
-    }
-
-    public String getKeyStoreFilePath() {
-        return keyStoreFilePath;
-    }
-
-    public void setKeyStoreFilePath(final String keyStoreFilePath) {
-        this.keyStoreFilePath = keyStoreFilePath;
-    }
-
-    public String getKeyStorePassword() {
-        return keyStorePassword;
-    }
-
-    public void setKeyStorePassword(final String keyStorePassword) {
-        this.keyStorePassword = keyStorePassword;
-    }
-
-    public String getTrustStoreType() {
-        return trustStoreType;
-    }
-
-    public void setTrustStoreType(final String trustStoreType) {
-        this.trustStoreType = trustStoreType;
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(final String protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getKeyAlgorithm() {
-        return keyAlgorithm;
-    }
-
-    public void setKeyAlgorithm(final String keyAlgorithm) {
-        this.keyAlgorithm = keyAlgorithm;
-    }
-
-    public String getTrustStoreFilePath() {
-        return trustStoreFilePath;
-    }
-
-    public void setTrustStoreFilePath(final String trustStoreFilePath) {
-        this.trustStoreFilePath = trustStoreFilePath;
-    }
-
-    public String getTrustStorePassword() {
-        return trustStorePassword;
-    }
-
-    public void setTrustStorePassword(final String trustStorePassword) {
-        this.trustStorePassword = trustStorePassword;
-    }
-
-    public List<String> getIgniteAddress() {
-        return igniteAddress;
-    }
-
-    public void setIgniteAddress(final List<String> igniteAddress) {
-        this.igniteAddress = igniteAddress;
-    }
-
-    public TicketsCache getTicketsCache() {
-        return ticketsCache;
-    }
-
-    public void setTicketsCache(final TicketsCache ticketsCache) {
-        this.ticketsCache = ticketsCache;
-    }
-
+    @Getter
+    @Setter
     public static class TicketsCache implements Serializable {
 
         private static final long serialVersionUID = 4715167757542984471L;
+
         /**
          * Specified the caching mode.
          * <ul>
@@ -340,6 +187,7 @@ public class IgniteProperties implements Serializable {
          * </ul>
          */
         private String cacheMode = "REPLICATED";
+
         /**
          * Specifies the atomicity mode.
          * <ul>
@@ -357,6 +205,7 @@ public class IgniteProperties implements Serializable {
          * </ul>
          */
         private String atomicityMode = "TRANSACTIONAL";
+
         /**
          * Mode indicating how Ignite should wait for write replies from other nodes.
          * Default value is FULL_ASYNC}, which means that Ignite will not wait for responses from participating nodes. This means that by default remote
@@ -379,29 +228,5 @@ public class IgniteProperties implements Serializable {
          * </ul>
          */
         private String writeSynchronizationMode = "FULL_SYNC";
-
-        public String getCacheMode() {
-            return cacheMode;
-        }
-
-        public void setCacheMode(final String cacheMode) {
-            this.cacheMode = cacheMode;
-        }
-
-        public String getAtomicityMode() {
-            return atomicityMode;
-        }
-
-        public void setAtomicityMode(final String atomicityMode) {
-            this.atomicityMode = atomicityMode;
-        }
-
-        public String getWriteSynchronizationMode() {
-            return writeSynchronizationMode;
-        }
-
-        public void setWriteSynchronizationMode(final String writeSynchronizationMode) {
-            this.writeSynchronizationMode = writeSynchronizationMode;
-        }
     }
 }

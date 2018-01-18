@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Dmitriy Kopylenko
  * @since 3.5.0
  */
+@Slf4j
 public class ServiceAuthorizationCheckTests {
 
     @Rule
@@ -97,6 +99,6 @@ public class ServiceAuthorizationCheckTests {
         this.thrown.expectMessage("Service Management: missing service. Service [null] is not found in service registry.");
 
         this.serviceAuthorizationCheck.doExecute(mockRequestContext);
-        fail("Should have thrown UnauthorizedServiceException");
+        throw new AssertionError("Should have thrown UnauthorizedServiceException");
     }
 }

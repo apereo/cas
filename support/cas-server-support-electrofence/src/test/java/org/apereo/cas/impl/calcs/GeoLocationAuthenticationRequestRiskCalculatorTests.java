@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
 import org.apereo.cas.authentication.Authentication;
@@ -88,6 +89,7 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @EnableScheduling
 @IfProfileValue(name = "geoLocationEnabled", value = "true")
+@Slf4j
 public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("casEventRepository")

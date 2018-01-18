@@ -1,5 +1,8 @@
 package org.apereo.cas.util;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.lang3.StringUtils;
@@ -11,12 +14,9 @@ import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
 import org.jose4j.jws.AlgorithmIdentifiers;
 import org.jose4j.jws.JsonWebSignature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -32,17 +32,15 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class EncodingUtils {
+
+@Slf4j
+@UtilityClass
+public class EncodingUtils {
 
     /**
      * JSON web key parameter that identifies the key..
      */
     public static final String JSON_WEB_KEY = "k";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EncodingUtils.class);
-
-    private EncodingUtils() {
-    }
 
     /**
      * Hex decode string.
@@ -200,12 +198,9 @@ public final class EncodingUtils {
      * @param encoding the encoding
      * @return the encoded value
      */
+    @SneakyThrows
     public static String urlEncode(final String value, final String encoding) {
-        try {
-            return URLEncoder.encode(value, encoding);
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return URLEncoder.encode(value, encoding);
     }
 
     /**
@@ -214,12 +209,9 @@ public final class EncodingUtils {
      * @param value the value to decode
      * @return the decoded value
      */
+    @SneakyThrows
     public static String urlDecode(final String value) {
-        try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
 
 
@@ -240,23 +232,20 @@ public final class EncodingUtils {
      * @param signingKey the signing key
      * @return the byte [ ]
      */
+    @SneakyThrows
     public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
-        try {
-            final String asString = new String(value, StandardCharsets.UTF_8);
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setCompactSerialization(asString);
-            jws.setKey(signingKey);
+        final String asString = new String(value, StandardCharsets.UTF_8);
+        final JsonWebSignature jws = new JsonWebSignature();
+        jws.setCompactSerialization(asString);
+        jws.setKey(signingKey);
 
-            final boolean verified = jws.verifySignature();
-            if (verified) {
-                final String payload = jws.getPayload();
-                LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
-                return EncodingUtils.decodeBase64(payload);
-            }
-            return null;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final boolean verified = jws.verifySignature();
+        if (verified) {
+            final String payload = jws.getPayload();
+            LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
+            return EncodingUtils.decodeBase64(payload);
         }
+        return null;
     }
 
 
@@ -289,7 +278,7 @@ public final class EncodingUtils {
             throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
-    
+
     /**
      * Sign jws.
      *
@@ -320,17 +309,14 @@ public final class EncodingUtils {
      * @param algHeaderValue the alg header value
      * @return the byte [ ]
      */
+    @SneakyThrows
     public static byte[] signJws(final Key key, final byte[] value, final String algHeaderValue) {
-        try {
-            final String base64 = EncodingUtils.encodeBase64(value);
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setPayload(base64);
-            jws.setAlgorithmHeaderValue(algHeaderValue);
-            jws.setKey(key);
-            return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final String base64 = EncodingUtils.encodeBase64(value);
+        final JsonWebSignature jws = new JsonWebSignature();
+        jws.setPayload(base64);
+        jws.setAlgorithmHeaderValue(algHeaderValue);
+        jws.setKey(key);
+        return jws.getCompactSerialization().getBytes(StandardCharsets.UTF_8);
     }
 
     /**
@@ -342,7 +328,7 @@ public final class EncodingUtils {
      */
     public static String encryptValueAsJwtDirectAes128Sha256(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.DIRECT,
-                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
 
     /**
@@ -354,9 +340,9 @@ public final class EncodingUtils {
      */
     public static String encryptValueAsJwtRsaOeap256Aes256Sha512(final Key key, final Serializable value) {
         return encryptValueAsJwt(key, value, KeyManagementAlgorithmIdentifiers.RSA_OAEP_256,
-                CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
+            CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM);
     }
-    
+
     /**
      * Encrypt the value based on the seed array whose length was given during afterPropertiesSet,
      * and the key and content encryption ids.
@@ -392,17 +378,13 @@ public final class EncodingUtils {
      * @param value                  the value
      * @return the decrypted value
      */
-    public static String decryptJwtValue(final Key secretKeyEncryptionKey,
-                                   final String value) {
-        try {
-            final JsonWebEncryption jwe = new JsonWebEncryption();
-            jwe.setKey(secretKeyEncryptionKey);
-            jwe.setCompactSerialization(value);
-            LOGGER.debug("Decrypting value...");
-            return jwe.getPayload();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+    @SneakyThrows
+    public static String decryptJwtValue(final Key secretKeyEncryptionKey, final String value) {
+        final JsonWebEncryption jwe = new JsonWebEncryption();
+        jwe.setKey(secretKeyEncryptionKey);
+        jwe.setCompactSerialization(value);
+        LOGGER.debug("Decrypting value...");
+        return jwe.getPayload();
     }
 
     /**

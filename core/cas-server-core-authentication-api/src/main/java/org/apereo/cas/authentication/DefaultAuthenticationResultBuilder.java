@@ -1,17 +1,18 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -22,11 +23,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class DefaultAuthenticationResultBuilder implements AuthenticationResultBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultAuthenticationResultBuilder.class);
+
     private static final long serialVersionUID = 6180465589526463843L;
 
-    private Credential providedCredential;
+    private List<Credential> providedCredentials = new ArrayList<>();
 
     private final Set<Authentication> authentications = Collections.synchronizedSet(new LinkedHashSet<>());
 
@@ -58,10 +60,10 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     @Override
     public AuthenticationResultBuilder collect(final Credential credential) {
-        this.providedCredential = credential;
+        this.providedCredentials.add(credential);
         return this;
     }
-    
+
     @Override
     public AuthenticationResult build() {
         return build(null);
@@ -76,7 +78,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
         }
         LOGGER.debug("Building an authentication result for authentication [{}] and service [{}]", authentication, service);
         final DefaultAuthenticationResult res = new DefaultAuthenticationResult(authentication, service);
-        res.setCredentialProvided(this.providedCredential != null);
+        res.setCredentialProvided(!this.providedCredentials.isEmpty());
         return res;
     }
 
@@ -119,7 +121,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
             principalAttributes.putAll(authenticatedPrincipal.getAttributes());
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
-                    principalAttributes, authenticatedPrincipal.getId());
+                principalAttributes, authenticatedPrincipal.getId());
 
             authn.getAttributes().keySet().stream().forEach(attrName -> {
                 if (authenticationAttributes.containsKey(attrName)) {
@@ -146,8 +148,8 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.debug("Finalized authentication attributes [{}] for inclusion in this authentication result", authenticationAttributes);
 
             authenticationBuilder.addSuccesses(authn.getSuccesses())
-                    .addFailures(authn.getFailures())
-                    .addCredentials(authn.getCredentials());
+                .addFailures(authn.getFailures())
+                .addCredentials(authn.getCredentials());
         });
     }
 

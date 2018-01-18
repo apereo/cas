@@ -1,8 +1,11 @@
 package org.apereo.cas.configuration.model.support.redis;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import java.io.Serializable;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseRedisProperties}.
@@ -10,7 +13,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@Getter
+@Setter
 public class BaseRedisProperties implements Serializable {
+
     private static final long serialVersionUID = -2600996981339638782L;
 
     /**
@@ -62,81 +69,11 @@ public class BaseRedisProperties implements Serializable {
      */
     private boolean useSsl;
 
-    public int getDatabase() {
-        return this.database;
-    }
-
-    public void setDatabase(final int database) {
-        this.database = database;
-    }
-
-    public String getHost() {
-        return this.host;
-    }
-
-    public void setHost(final String host) {
-        this.host = host;
-    }
-
-    public String getPassword() {
-        return this.password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public int getPort() {
-        return this.port;
-    }
-
-    public void setPort(final int port) {
-        this.port = port;
-    }
-
-    public void setTimeout(final int timeout) {
-        this.timeout = timeout;
-    }
-
-    public int getTimeout() {
-        return this.timeout;
-    }
-
-    public boolean isUsePool() {
-        return usePool;
-    }
-
-    public void setUsePool(final boolean usePool) {
-        this.usePool = usePool;
-    }
-
-    public boolean isUseSsl() {
-        return useSsl;
-    }
-
-    public void setUseSsl(final boolean useSsl) {
-        this.useSsl = useSsl;
-    }
-
-    public Pool getPool() {
-        return this.pool;
-    }
-
-    public void setPool(final Pool pool) {
-        this.pool = pool;
-    }
-
-    public Sentinel getSentinel() {
-        return sentinel;
-    }
-
-    public void setSentinel(final Sentinel sentinel) {
-        this.sentinel = sentinel;
-    }
-
     /**
      * Pool properties.
      */
+    @Getter
+    @Setter
     public static class Pool implements Serializable {
 
         private static final long serialVersionUID = 8534823157764550894L;
@@ -244,115 +181,13 @@ public class BaseRedisProperties implements Serializable {
          * to block indefinitely.
          */
         private int maxWait = -1;
-
-        public int getMaxIdle() {
-            return this.maxIdle;
-        }
-
-        public void setMaxIdle(final int maxIdle) {
-            this.maxIdle = maxIdle;
-        }
-
-        public int getMinIdle() {
-            return this.minIdle;
-        }
-
-        public void setMinIdle(final int minIdle) {
-            this.minIdle = minIdle;
-        }
-
-        public int getMaxActive() {
-            return this.maxActive;
-        }
-
-        public void setMaxActive(final int maxActive) {
-            this.maxActive = maxActive;
-        }
-
-        public int getMaxWait() {
-            return this.maxWait;
-        }
-
-        public void setMaxWait(final int maxWait) {
-            this.maxWait = maxWait;
-        }
-
-        public boolean isLifo() {
-            return lifo;
-        }
-
-        public void setLifo(final boolean lifo) {
-            this.lifo = lifo;
-        }
-
-        public boolean isFairness() {
-            return fairness;
-        }
-
-        public void setFairness(final boolean fairness) {
-            this.fairness = fairness;
-        }
-
-        public boolean isTestOnCreate() {
-            return testOnCreate;
-        }
-
-        public void setTestOnCreate(final boolean testOnCreate) {
-            this.testOnCreate = testOnCreate;
-        }
-
-        public boolean isTestOnBorrow() {
-            return testOnBorrow;
-        }
-
-        public void setTestOnBorrow(final boolean testOnBorrow) {
-            this.testOnBorrow = testOnBorrow;
-        }
-
-        public boolean isTestOnReturn() {
-            return testOnReturn;
-        }
-
-        public void setTestOnReturn(final boolean testOnReturn) {
-            this.testOnReturn = testOnReturn;
-        }
-
-        public boolean isTestWhileIdle() {
-            return testWhileIdle;
-        }
-
-        public void setTestWhileIdle(final boolean testWhileIdle) {
-            this.testWhileIdle = testWhileIdle;
-        }
-
-        public int getNumTestsPerEvictionRun() {
-            return numTestsPerEvictionRun;
-        }
-
-        public void setNumTestsPerEvictionRun(final int numTestsPerEvictionRun) {
-            this.numTestsPerEvictionRun = numTestsPerEvictionRun;
-        }
-
-        public long getSoftMinEvictableIdleTimeMillis() {
-            return softMinEvictableIdleTimeMillis;
-        }
-
-        public void setSoftMinEvictableIdleTimeMillis(final long softMinEvictableIdleTimeMillis) {
-            this.softMinEvictableIdleTimeMillis = softMinEvictableIdleTimeMillis;
-        }
-
-        public long getMinEvictableIdleTimeMillis() {
-            return minEvictableIdleTimeMillis;
-        }
-
-        public void setMinEvictableIdleTimeMillis(final long minEvictableIdleTimeMillis) {
-            this.minEvictableIdleTimeMillis = minEvictableIdleTimeMillis;
-        }
     }
 
     /**
      * Redis sentinel properties.
      */
+    @Getter
+    @Setter
     public static class Sentinel implements Serializable {
 
         private static final long serialVersionUID = 5434823157764550831L;
@@ -366,22 +201,5 @@ public class BaseRedisProperties implements Serializable {
          * list of host:port pairs.
          */
         private List<String> node;
-
-        public String getMaster() {
-            return this.master;
-        }
-
-        public void setMaster(final String master) {
-            this.master = master;
-        }
-
-        public List<String> getNode() {
-            return node;
-        }
-
-        public void setNode(final List<String> node) {
-            this.node = node;
-        }
     }
-
 }

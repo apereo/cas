@@ -1,12 +1,13 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.context.ApplicationContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafView;
-
 import java.util.Locale;
+import lombok.ToString;
 
 /**
  * This is {@link CasProtocolView}.
@@ -14,6 +15,8 @@ import java.util.Locale;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@ToString
 public class CasProtocolView extends ThymeleafView {
 
     /**
@@ -26,8 +29,7 @@ public class CasProtocolView extends ThymeleafView {
      * @param contentType        the content type
      */
     public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
-                           final SpringTemplateEngine templateEngine,
-                           final ThymeleafProperties properties, final String contentType) {
+                           final SpringTemplateEngine templateEngine, final ThymeleafProperties properties, final String contentType) {
         super(templateName);
         setApplicationContext(applicationContext);
         setTemplateEngine(templateEngine);
@@ -47,13 +49,7 @@ public class CasProtocolView extends ThymeleafView {
      * @param properties         the properties
      */
     public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
-                           final SpringTemplateEngine templateEngine,
-                           final ThymeleafProperties properties) {
+                           final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
         this(templateName, applicationContext, templateEngine, properties, null);
-    }
-
-    @Override
-    public String toString() {
-        return getTemplateName();
     }
 }

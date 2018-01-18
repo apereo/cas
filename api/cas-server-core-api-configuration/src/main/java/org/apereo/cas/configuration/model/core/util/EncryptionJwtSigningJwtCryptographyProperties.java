@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.core.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Common properties for all cryptography related configs.
@@ -14,9 +16,13 @@ import java.io.Serializable;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@Setter
 public class EncryptionJwtSigningJwtCryptographyProperties implements Serializable {
 
     private static final long serialVersionUID = -3015641631298039059L;
+
     /**
      * Whether crypto operations are enabled.
      */
@@ -36,36 +42,4 @@ public class EncryptionJwtSigningJwtCryptographyProperties implements Serializab
      * The signing/encryption algorithm to use.
      */
     private String alg = CipherExecutor.DEFAULT_CONTENT_ENCRYPTION_ALGORITHM;
-
-    public EncryptionJwtCryptoProperties getEncryption() {
-        return encryption;
-    }
-
-    public void setEncryption(final EncryptionJwtCryptoProperties encryption) {
-        this.encryption = encryption;
-    }
-
-    public SigningJwtCryptoProperties getSigning() {
-        return signing;
-    }
-
-    public void setSigning(final SigningJwtCryptoProperties signing) {
-        this.signing = signing;
-    }
-
-    public String getAlg() {
-        return alg;
-    }
-
-    public void setAlg(final String alg) {
-        this.alg = alg;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
 }

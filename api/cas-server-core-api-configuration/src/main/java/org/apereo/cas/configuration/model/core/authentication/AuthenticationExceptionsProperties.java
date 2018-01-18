@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,8 +15,13 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class AuthenticationExceptionsProperties implements Serializable {
+
     private static final long serialVersionUID = -2385347572099983874L;
+
     /**
      * Define custom exceptions that can then be mapped to message bundles for custom error handling.
      *
@@ -26,14 +33,4 @@ public class AuthenticationExceptionsProperties implements Serializable {
      * and then linked to custom messages.
      */
     private List<Class<? extends Exception>> exceptions = new ArrayList<>();
-
-    public List<Class<? extends Exception>> getExceptions() {
-        return exceptions;
-    }
-
-    public void setExceptions(final List<Class<? extends Exception>> exceptions) {
-        this.exceptions = exceptions;
-    }
 }
-
-

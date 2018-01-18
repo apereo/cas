@@ -1,13 +1,15 @@
 package org.apereo.cas.configuration.model.support.infinispan;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Encapsulates hazelcast properties exposed by CAS via properties file property source in a type-safe manner.
@@ -16,14 +18,19 @@ import java.io.Serializable;
  * @since 4.2.0
  */
 @RequiresModule(name = "cas-server-support-infinispan-ticket-registry")
+@Slf4j
+@Getter
+@Setter
 public class InfinispanProperties implements Serializable {
 
     private static final long serialVersionUID = 1974626726565626634L;
+
     /**
      * Path to the infinispan XML configuration file.
      */
     @RequiredProperty
     private Resource configLocation = new ClassPathResource("infinispan.xml");
+
     /**
      * Cache name to create and hold tickets in.
      */
@@ -38,29 +45,5 @@ public class InfinispanProperties implements Serializable {
 
     public InfinispanProperties() {
         this.crypto.setEnabled(false);
-    }
-    
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-    
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-    
-    public String getCacheName() {
-        return cacheName;
-    }
-
-    public void setCacheName(final String cacheName) {
-        this.cacheName = cacheName;
-    }
-
-    public Resource getConfigLocation() {
-        return configLocation;
-    }
-
-    public void setConfigLocation(final Resource configLocation) {
-        this.configLocation = configLocation;
     }
 }

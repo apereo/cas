@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.NoArgsConstructor;
 
 /**
  * Ticket expiration policy based on a hard timeout from ticket creation time rather than the
@@ -20,6 +21,8 @@ import java.time.temporal.ChronoUnit;
  * @since 3.1.2
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@NoArgsConstructor
 public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -33,12 +36,6 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     private long timeToKillInSeconds;
 
     /**
-     * No-arg constructor for serialization support.
-     */
-    public HardTimeoutExpirationPolicy() {
-    }
-
-    /**
      * Instantiates a new hard timeout expiration policy.
      *
      * @param timeToKillInSeconds the time to kill in seconds
@@ -50,8 +47,7 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        return ticketState == null || ticketState.getCreationTime()
-                .plus(this.timeToKillInSeconds, ChronoUnit.SECONDS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        return ticketState == null || ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override
@@ -65,7 +61,6 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
         return 0L;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -78,15 +73,11 @@ public class HardTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
             return false;
         }
         final HardTimeoutExpirationPolicy rhs = (HardTimeoutExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .isEquals();
+        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(timeToKillInSeconds)
-                .toHashCode();
+        return new HashCodeBuilder().append(timeToKillInSeconds).toHashCode();
     }
 }

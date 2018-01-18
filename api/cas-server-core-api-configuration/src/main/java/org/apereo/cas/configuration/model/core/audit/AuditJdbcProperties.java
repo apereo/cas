@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.core.audit;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,8 +13,18 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-audit-jdbc")
+@Slf4j
+@Getter
+@Setter
 public class AuditJdbcProperties extends AbstractJpaProperties {
+
     private static final long serialVersionUID = 4227475246873515918L;
+
+    /**
+     * Execute the recording of audit records in async manner.
+     * This setting must almost always be set to true.
+     */
+    private boolean asynchronous = true;
 
     /**
      * Indicates how long audit records should be kept in the database.
@@ -32,29 +45,4 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
      * @see org.springframework.transaction.TransactionDefinition
      */
     private String propagationBehaviorName = "PROPAGATION_REQUIRED";
-
-    public int getMaxAgeDays() {
-        return maxAgeDays;
-    }
-
-    public void setMaxAgeDays(final int maxAgeDays) {
-        this.maxAgeDays = maxAgeDays;
-    }
-
-    public String getPropagationBehaviorName() {
-        return propagationBehaviorName;
-    }
-
-    public void setPropagationBehaviorName(final String propagationBehaviorName) {
-        this.propagationBehaviorName = propagationBehaviorName;
-    }
-
-    public String getIsolationLevelName() {
-        return isolationLevelName;
-    }
-
-    public void setIsolationLevelName(final String isolationLevelName) {
-        this.isolationLevelName = isolationLevelName;
-    }
 }
-

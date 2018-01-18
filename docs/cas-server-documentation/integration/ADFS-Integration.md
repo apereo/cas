@@ -6,8 +6,9 @@ title: CAS - ADFS Integration
 # Overview
 
 The integration between the CAS Server and ADFS delegates user authentication from CAS Server
-to ADFS, making CAS Server a WS-Federation client.
-Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
+to ADFS, making CAS Server a WS-Federation client. Claims released from ADFS are made available as attributes to CAS Server, and by extension CAS Clients.
+
+<div class="alert alert-info"><strong>Remember</strong><p>The functionality described here allows CAS to use ADFS as an external identity provider. If you wish to do the opposite, allowing ADFS to become a CAS client and using CAS as an identity provider, you may take advantage of <a href="../installation/Configuring-SAML2-Authentication.html">SAML2 support in CAS</a> as one integration option.</p></div>
 
 Support is enabled by including the following dependency in the WAR overlay:
 

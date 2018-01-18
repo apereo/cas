@@ -1,6 +1,6 @@
 package org.apereo.cas.authentication;
 
-import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -18,14 +18,10 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.LdapAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.jooq.lambda.Unchecked;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -49,26 +45,26 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        LdapAuthenticationConfiguration.class})
-@TestPropertySource(locations = {"classpath:/ldap.properties"})
-public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationHandlerTests.class);
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    LdapAuthenticationConfiguration.class})
+@TestPropertySource(locations = {"classpath:/ldapauthn.properties"})
+@Slf4j
+public class LdapAuthenticationHandlerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -76,44 +72,39 @@ public class LdapAuthenticationHandlerTests extends AbstractLdapTests {
     @Qualifier("ldapAuthenticationHandlers")
     private Collection<AuthenticationHandler> handler;
 
-    @BeforeClass
-    public static void bootstrap() throws Exception {
-        LOGGER.debug("Running [{}]", LdapAuthenticationHandlerTests.class.getSimpleName());
-        initDirectoryServer(1380);
-    }
-
-    @AfterClass
-    public static void shutdown() {
-        DIRECTORY.close();
-    }
-
-    @Test
-    public void verifyAuthenticateSuccess() {
-        assertNotEquals(handler.size(), 0);
-        getEntries().forEach(entry -> {
-            final String username = entry.getAttribute("sAMAccountName").getStringValue();
-            final String psw = entry.getAttribute("userPassword").getStringValue();
-
-            this.handler.forEach(Unchecked.consumer(h -> {
-                final HandlerResult result = h.authenticate(new UsernamePasswordCredential(username, psw));
-                assertNotNull(result.getPrincipal());
-                assertEquals(username, result.getPrincipal().getId());
-                final Map<String, Object> attributes = result.getPrincipal().getAttributes();
-                assertTrue(attributes.containsKey("displayName"));
-                assertTrue(attributes.containsKey("mail"));
-            }));
-        });
-    }
-
     @Test
     public void verifyAuthenticateFailure() throws Throwable {
         assertNotEquals(handler.size(), 0);
         this.thrown.expect(FailedLoginException.class);
         try {
-            this.getEntries().stream()
-                    .map(entry -> entry.getAttribute("sAMAccountName").getStringValue())
-                    .forEach(username -> this.handler.forEach(
-                            Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential(username, "bad")))));
+            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("castest1", "bad"))));
+        } catch (final Exception e) {
+            throw e.getCause();
+        }
+    }
+
+    @Test
+    public void verifyAuthenticateSuccess() {
+        assertNotEquals(handler.size(), 0);
+
+        this.handler.forEach(Unchecked.consumer(h -> {
+            final UsernamePasswordCredential credential = new UsernamePasswordCredential("castest1", "castest1");
+            final AuthenticationHandlerExecutionResult result = h.authenticate(credential);
+            assertNotNull(result.getPrincipal());
+            assertEquals(credential.getUsername(), result.getPrincipal().getId());
+            final Map<String, Object> attributes = result.getPrincipal().getAttributes();
+            assertTrue(attributes.containsKey("givenName"));
+            assertTrue(attributes.containsKey("mail"));
+        }));
+
+    }
+
+    @Test
+    public void verifyAuthenticateFailureNotFound() throws Throwable {
+        assertNotEquals(handler.size(), 0);
+        this.thrown.expect(AccountNotFoundException.class);
+        try {
+            this.handler.forEach(Unchecked.consumer(h -> h.authenticate(new UsernamePasswordCredential("bad", "bad"))));
         } catch (final Exception e) {
             throw e.getCause();
         }

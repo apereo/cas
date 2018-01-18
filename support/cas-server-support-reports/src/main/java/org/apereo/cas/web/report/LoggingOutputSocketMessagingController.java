@@ -1,5 +1,8 @@
 package org.apereo.cas.web.report;
 
+import lombok.SneakyThrows;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -37,10 +40,10 @@ import java.util.HashSet;
  */
 @Controller("loggingConfigController")
 @RequestMapping("/status/loggingsocket")
+@Slf4j
 public class LoggingOutputSocketMessagingController {
 
     private static StringBuilder LOG_OUTPUT = new StringBuilder();
-    private static final Object LOCK = new Object();
 
     private LoggerContext loggerContext;
 
@@ -60,15 +63,12 @@ public class LoggingOutputSocketMessagingController {
      * given there is not an explicit property mapping for it provided by Boot, etc.
      */
     @PostConstruct
+    @SneakyThrows
     public void initialize() {
-        try {
-            final Pair<Resource, LoggerContext> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
-            if (pair != null) {
-                this.loggerContext = pair.getValue();
-                registerLogFileTailThreads();
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final Pair<Resource, LoggerContext> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        if (pair != null) {
+            this.loggerContext = pair.getValue();
+            registerLogFileTailThreads();
         }
     }
 
@@ -105,12 +105,11 @@ public class LoggingOutputSocketMessagingController {
      */
 
     @SendTo("/logs/logoutput")
+    @Synchronized
     public String logoutput() {
-        synchronized (LOCK) {
-            final String log = LOG_OUTPUT.toString();
-            LOG_OUTPUT = new StringBuilder();
-            return log;
-        }
+        final String log = LOG_OUTPUT.toString();
+        LOG_OUTPUT = new StringBuilder();
+        return log;
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenRepositoryTests;
 import org.junit.runner.RunWith;
@@ -14,5 +15,6 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests.class,
         GoogleAuthenticatorMongoDbTokenRepositoryTests.class})
+@Slf4j
 public class AllTestsSuite {
 }

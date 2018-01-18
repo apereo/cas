@@ -1,28 +1,26 @@
 package org.apereo.cas.support.saml.authentication;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
-
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Setter;
 
 /**
- * AuthenticationMetaDataPopulator to retrieve the Authentication Type.
- * <p>
- * Note: Authentication Methods are exposed under the key:
- * {@code samlAuthenticationStatement::authMethod} in the Authentication
- * attributes map.
+ * Capture SAML authentication metadata.
  *
- * @author Scott Battaglia
- * @author Marvin S. Addison
- * @since 3.1
+ * @author Misagh Moayyed
+ * @since 5.0.0
  */
-
+@Slf4j
+@ToString(callSuper = true)
+@Setter
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */
@@ -46,20 +44,11 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
      * Instantiates a new SAML authentication meta data populator.
      */
     public SamlAuthenticationMetaDataPopulator() {
-        this.authenticationMethods.put(
-                HttpBasedServiceCredential.class.getName(),
-                AUTHN_METHOD_SSL_TLS_CLIENT);
-        this.authenticationMethods.put(
-                UsernamePasswordCredential.class.getName(),
-                AUTHN_METHOD_PASSWORD);
-
+        this.authenticationMethods.put(HttpBasedServiceCredential.class.getName(), AUTHN_METHOD_SSL_TLS_CLIENT);
+        this.authenticationMethods.put(UsernamePasswordCredential.class.getName(), AUTHN_METHOD_PASSWORD);
         // Next two classes are in other modules, so avoid using Class#getName() to prevent circular dependency
-        this.authenticationMethods.put(
-                "org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials",
-                AUTHN_METHOD_UNSPECIFIED);
-        this.authenticationMethods.put(
-                "org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredentials",
-                AUTHN_METHOD_X509_PUBLICKEY);
+        this.authenticationMethods.put("org.apereo.cas.adaptors.trusted.authentication.principal.PrincipalBearingCredentials", AUTHN_METHOD_UNSPECIFIED);
+        this.authenticationMethods.put("org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredentials", AUTHN_METHOD_X509_PUBLICKEY);
     }
 
     @Override
@@ -86,13 +75,5 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
      */
     public void setUserDefinedMappings(final Map<String, String> userDefinedMappings) {
         this.authenticationMethods.putAll(userDefinedMappings);
-    }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("authenticationMethods", authenticationMethods)
-                .toString();
     }
 }

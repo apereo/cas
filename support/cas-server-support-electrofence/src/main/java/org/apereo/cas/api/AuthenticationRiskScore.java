@@ -1,9 +1,9 @@
 package org.apereo.cas.api;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
+import lombok.ToString;
 
 /**
  * This is {@link AuthenticationRiskScore}.
@@ -11,7 +11,10 @@ import java.math.BigDecimal;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@ToString
 public class AuthenticationRiskScore {
+
     private final BigDecimal score;
 
     public AuthenticationRiskScore(final BigDecimal score) {
@@ -20,13 +23,6 @@ public class AuthenticationRiskScore {
 
     public BigDecimal getScore() {
         return score;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("score", score)
-                .toString();
     }
 
     public boolean isHighestRisk() {

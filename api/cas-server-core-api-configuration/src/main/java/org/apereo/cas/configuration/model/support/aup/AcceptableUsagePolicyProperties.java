@@ -1,13 +1,15 @@
 package org.apereo.cas.configuration.model.support.aup;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RestEndpointProperties;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AcceptableUsagePolicyProperties}.
@@ -16,8 +18,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-aup-webflow")
+@Slf4j
+@Getter
+@Setter
 public class AcceptableUsagePolicyProperties implements Serializable {
+
     private static final long serialVersionUID = -7703477581675908899L;
+
     /**
      * Control AUP via LDAP.
      */
@@ -45,48 +52,11 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     @RequiredProperty
     private String aupAttributeName = "aupAccepted";
 
-    public String getAupAttributeName() {
-        return aupAttributeName;
-    }
-
-    public void setAupAttributeName(final String aupAttributeName) {
-        this.aupAttributeName = aupAttributeName;
-    }
-
-    public Rest getRest() {
-        return rest;
-    }
-
-    public void setRest(final Rest rest) {
-        this.rest = rest;
-    }
-
-    public Jdbc getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final Jdbc redis) {
-        this.jdbc = redis;
-    }
-
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
-    public MongoDb getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final MongoDb mongo) {
-        this.mongo = mongo;
-    }
-
     @RequiresModule(name = "cas-server-support-aup-mongo")
+    @Getter
+    @Setter
     public static class MongoDb extends SingleCollectionMongoDbProperties {
+
         private static final long serialVersionUID = -1918436901491275547L;
 
         public MongoDb() {
@@ -95,31 +65,31 @@ public class AcceptableUsagePolicyProperties implements Serializable {
     }
 
     @RequiresModule(name = "cas-server-support-aup-jdbc")
+    @Getter
+    @Setter
     public static class Jdbc extends AbstractJpaProperties {
+
         private static final long serialVersionUID = -1325011278378393385L;
 
         /**
          * The table name in the database that holds the AUP attribute to update for the user.
          */
         private String tableName;
-
-        public String getTableName() {
-            return tableName;
-        }
-
-        public void setTableName(final String tableName) {
-            this.tableName = tableName;
-        }
     }
 
     @RequiresModule(name = "cas-server-support-aup-rest")
+    @Getter
+    @Setter
     public static class Rest extends RestEndpointProperties {
+
         private static final long serialVersionUID = -8102345678378393382L;
     }
 
     @RequiresModule(name = "cas-server-support-aup-ldap")
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
+
         private static final long serialVersionUID = -7991011278378393382L;
     }
-
 }

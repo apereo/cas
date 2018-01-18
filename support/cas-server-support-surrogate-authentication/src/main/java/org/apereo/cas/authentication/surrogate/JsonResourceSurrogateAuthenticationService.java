@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.surrogate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.core.io.Resource;
 
@@ -13,6 +14,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class JsonResourceSurrogateAuthenticationService extends SimpleSurrogateAuthenticationService {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 

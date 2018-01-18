@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
@@ -20,8 +21,6 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.resolver.impl.AbstractCasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -35,8 +34,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RiskAwareAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RiskAwareAuthenticationWebflowEventResolver.class);
+
     
     private final AuthenticationRiskEvaluator authenticationRiskEvaluator;
     private final AuthenticationRiskMitigator authenticationRiskMitigator;

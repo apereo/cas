@@ -1,7 +1,8 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
@@ -15,8 +16,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -30,8 +29,9 @@ import java.security.GeneralSecurityException;
  * @since 3.5.0
  */
 @SuppressWarnings("unchecked")
+@Slf4j
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ClientAuthenticationHandler.class);
+
     
     private final Clients clients;
 
@@ -48,7 +48,7 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         try {
             final ClientCredential clientCredentials = (ClientCredential) credential;
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);

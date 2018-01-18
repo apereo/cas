@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.cookie;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Common properties for all cookie configs.
@@ -12,9 +14,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-cookie", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class CookieProperties implements Serializable {
 
     private static final long serialVersionUID = 6804770601645126835L;
+
     /**
      * Cookie name. Constructs a cookie with a specified name and value.
      * The name must conform to RFC 2965. That means it can contain only ASCII alphanumeric characters and
@@ -23,6 +29,7 @@ public class CookieProperties implements Serializable {
      * By default, cookies are created according to the RFC 2965 cookie specification.
      */
     private String name;
+
     /**
      * Cookie path.
      * Specifies a path for the cookie to which the client should return the cookie.
@@ -32,6 +39,7 @@ public class CookieProperties implements Serializable {
      * Consult RFC 2965 (available on the Internet) for more information on setting path names for cookies.
      */
     private String path = StringUtils.EMPTY;
+
     /**
      * Cookie domain. Specifies the domain within which this cookie should be presented.
      * The form of the domain name is specified by RFC 2965. A domain name begins with a dot (.foo.com)
@@ -40,14 +48,17 @@ public class CookieProperties implements Serializable {
      * By default, cookies are only returned to the server that sent them.
      */
     private String domain = StringUtils.EMPTY;
+
     /**
      * True if sending this cookie should be restricted to a secure protocol, or false if the it can be sent using any protocol.
      */
     private boolean secure = true;
+
     /**
      * true if this cookie contains the HttpOnly attribute. This means that the cookie should not be accessible to scripting engines, like javascript.
      */
     private boolean httpOnly = true;
+
     /**
      * The maximum age of the cookie, specified in seconds. By default, -1 indicating the cookie will persist until browser shutdown.
      * A positive value indicates that the cookie will expire after that many seconds have passed. Note that the value is
@@ -56,52 +67,4 @@ public class CookieProperties implements Serializable {
      * A zero value causes the cookie to be deleted.
      */
     private int maxAge = -1;
-
-    public boolean isHttpOnly() {
-        return httpOnly;
-    }
-
-    public void setHttpOnly(final boolean httpOnly) {
-        this.httpOnly = httpOnly;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getPath() {
-        return path;
-    }
-
-    public void setPath(final String path) {
-        this.path = path;
-    }
-
-    public int getMaxAge() {
-        return maxAge;
-    }
-
-    public void setMaxAge(final int maxAge) {
-        this.maxAge = maxAge;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
-    public void setDomain(final String domain) {
-        this.domain = domain;
-    }
-
-    public boolean isSecure() {
-        return secure;
-    }
-
-    public void setSecure(final boolean secure) {
-        this.secure = secure;
-    }
 }

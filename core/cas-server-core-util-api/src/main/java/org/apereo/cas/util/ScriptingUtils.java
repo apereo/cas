@@ -4,9 +4,11 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codehaus.groovy.control.CompilerConfiguration;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 
@@ -16,6 +18,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleBindings;
 import java.io.File;
+import java.lang.reflect.Constructor;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.security.AccessController;
@@ -30,7 +33,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public final class ScriptingUtils {
+
+@Slf4j
+@UtilityClass
+public class ScriptingUtils {
     /**
      * Pattern indicating groovy script is inlined.
      */
@@ -40,11 +46,6 @@ public final class ScriptingUtils {
      * Pattern indicating groovy script is a file/resource.
      */
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptingUtils.class);
-
-    private ScriptingUtils() {
-    }
 
     /**
      * Is inline groovy script ?.
@@ -201,7 +202,6 @@ public final class ScriptingUtils {
                 LOGGER.trace("Creating groovy object instance from class [{}]", groovyFile.getCanonicalPath());
 
                 final GroovyObject groovyObject = (GroovyObject) groovyClass.getDeclaredConstructor().newInstance();
-
                 LOGGER.trace("Executing groovy script's [{}] method, with parameters [{}]", methodName, args);
                 final Object result = groovyObject.invokeMethod(methodName, args);
                 LOGGER.trace("Results returned by the groovy script are [{}]", result);
@@ -210,9 +210,8 @@ public final class ScriptingUtils {
                     throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
                 }
                 return (T) result;
-            } else {
-                LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
             }
+            LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -290,6 +289,60 @@ public final class ScriptingUtils {
                 throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
             }
             return (T) result;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Gets object instance from groovy resource.
+     *
+     * @param <T>          the type parameter
+     * @param resource     the resource
+     * @param expectedType the expected type
+     * @return the object instance from groovy resource
+     */
+    public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
+                                                            final Class<T> expectedType) {
+        return getObjectInstanceFromGroovyResource(resource, new Class[]{}, new Object[]{}, expectedType);
+    }
+
+    /**
+     * Gets object instance from groovy resource.
+     *
+     * @param <T>             the type parameter
+     * @param resource        the resource
+     * @param constructorArgs the constructor args
+     * @param args            the args
+     * @param expectedType    the expected type
+     * @return the object instance from groovy resource
+     */
+    public static <T> T getObjectInstanceFromGroovyResource(final Resource resource,
+                                                            final Class[] constructorArgs,
+                                                            final Object[] args,
+                                                            final Class<T> expectedType) {
+        try {
+            if (resource == null) {
+                LOGGER.debug("No groovy script is defined", resource);
+                return null;
+            }
+
+            final String script = IOUtils.toString(resource.getInputStream(), StandardCharsets.UTF_8);
+            final GroovyClassLoader classLoader = new GroovyClassLoader(ScriptingUtils.class.getClassLoader(),
+                new CompilerConfiguration(), true);
+            final Class<T> clazz = classLoader.parseClass(script);
+
+            LOGGER.debug("Preparing constructor arguments [{}] for resource [{}]", args, resource);
+            final Constructor<T> ctor = clazz.getDeclaredConstructor(constructorArgs);
+            final T result = ctor.newInstance(args);
+
+            if (result != null && !expectedType.isAssignableFrom(result.getClass())) {
+                throw new ClassCastException("Result [" + result
+                    + " is of type " + result.getClass()
+                    + " when we were expecting " + expectedType);
+            }
+            return result;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.services.stream;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.services.stream.hazelcast.StreamServicesHazelcastProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link StreamingServiceRegistryProperties}.
@@ -13,17 +15,20 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-service-registry-stream")
+@Slf4j
+@Getter
+@Setter
 public class StreamingServiceRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = 4957127900906059461L;
 
     public enum ReplicationModes {
+
         /**
          * In this replication mode, all CAS nodes will try to sync copies
          * of service definition files individually on each node.
          */
-        ACTIVE_ACTIVE,
-        /**
+        ACTIVE_ACTIVE, /**
          * In this replication mode, one CAS service is designated to be the master
          * that contains all service definition files locally, and will stream changes
          * to other CAS passive nodes. Passive CAS nodes only access the replication
@@ -42,7 +47,7 @@ public class StreamingServiceRegistryProperties implements Serializable {
      * </ul>
      */
     private ReplicationModes replicationMode = ReplicationModes.ACTIVE_PASSIVE;
-    
+
     /**
      * Whether service registry events should be streamed and published
      * across a CAS cluster. One typical workflow is to enable the
@@ -52,34 +57,10 @@ public class StreamingServiceRegistryProperties implements Serializable {
      * the service registry schedule is not timed correctly.
      */
     private boolean enabled = true;
-    
+
     /**
      * Stream services with hazelcast.
      */
     @NestedConfigurationProperty
     private StreamServicesHazelcastProperties hazelcast = new StreamServicesHazelcastProperties();
-    
-    public StreamServicesHazelcastProperties getHazelcast() {
-        return hazelcast;
-    }
-
-    public void setHazelcast(final StreamServicesHazelcastProperties hazelcast) {
-        this.hazelcast = hazelcast;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public ReplicationModes getReplicationMode() {
-        return replicationMode;
-    }
-
-    public void setReplicationMode(final ReplicationModes replicationMode) {
-        this.replicationMode = replicationMode;
-    }
 }

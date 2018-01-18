@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final RestAuthenticationApi api;
@@ -39,7 +41,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
         throws GeneralSecurityException {
 
         try {

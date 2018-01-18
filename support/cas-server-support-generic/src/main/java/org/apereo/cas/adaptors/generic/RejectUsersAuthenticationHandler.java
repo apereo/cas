@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.generic;
 
-import org.apereo.cas.authentication.HandlerResult;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -23,6 +24,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     
     /**
@@ -37,8 +39,8 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
 
         final String username = credential.getUsername();
         if (this.users.contains(username)) {

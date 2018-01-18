@@ -1,15 +1,16 @@
 package org.apereo.cas.aup;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.configuration.model.support.aup.AcceptableUsagePolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.webflow.execution.RequestContext;
+
+import java.util.HashMap;
 
 /**
  * This is {@link RestAcceptableUsagePolicyRepository}.
@@ -20,9 +21,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttributeAcceptableUsagePolicyRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestAcceptableUsagePolicyRepository.class);
-
+    
     private static final long serialVersionUID = 1600024683199961892L;
 
     private final AcceptableUsagePolicyProperties.Rest properties;
@@ -39,7 +40,7 @@ public class RestAcceptableUsagePolicyRepository extends AbstractPrincipalAttrib
         try {
             final HttpResponse response = HttpUtils.execute(properties.getUrl(), properties.getMethod(),
                     properties.getBasicAuthUsername(), properties.getBasicAuthPassword(),
-                    CollectionUtils.wrap("username", credential.getId()));
+                    CollectionUtils.wrap("username", credential.getId()), new HashMap<>());
             return response.getStatusLine().getStatusCode() == HttpStatus.ACCEPTED.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

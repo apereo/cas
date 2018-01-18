@@ -1,7 +1,10 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * LDAP-specific password policy configuration container.
@@ -9,25 +12,28 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
+@Setter
+@NoArgsConstructor
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
     /**
      * Directory-specific account state handler component.
      */
-    private AccountStateHandler accountStateHandler;
+    private LdapAccountStateHandler accountStateHandler;
 
-    public LdapPasswordPolicyConfiguration(final PasswordPolicyProperties passwordPolicyProperties) {
-        super(passwordPolicyProperties);
+    public LdapPasswordPolicyConfiguration(final boolean alwaysDisplayPasswordExpirationWarning, final int passwordWarningNumberOfDays, final int loginFailures) {
+        super(alwaysDisplayPasswordExpirationWarning, passwordWarningNumberOfDays, loginFailures);
+    }
+
+    public LdapPasswordPolicyConfiguration(final PasswordPolicyProperties props) {
+        super(props);
     }
 
     /**
      * @return Account state handler component.
      */
-    public AccountStateHandler getAccountStateHandler() {
+    public LdapAccountStateHandler getAccountStateHandler() {
         return this.accountStateHandler;
-    }
-    
-    public void setAccountStateHandler(final AccountStateHandler accountStateHandler) {
-        this.accountStateHandler = accountStateHandler;
     }
 }

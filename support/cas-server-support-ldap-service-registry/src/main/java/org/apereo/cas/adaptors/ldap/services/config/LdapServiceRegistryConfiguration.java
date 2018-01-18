@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.ldap.services.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.services.DefaultLdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistryDao;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ldapServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapServiceRegistryConfiguration {
 
     @Autowired

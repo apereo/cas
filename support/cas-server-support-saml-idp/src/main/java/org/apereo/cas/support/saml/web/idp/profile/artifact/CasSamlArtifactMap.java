@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -19,6 +20,7 @@ import java.io.IOException;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final TicketRegistry ticketRegistry;

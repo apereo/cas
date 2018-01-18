@@ -1,14 +1,16 @@
 package org.apereo.cas.adaptors.yubikey;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link YubiKeyAccount}.
@@ -18,6 +20,10 @@ import javax.persistence.Table;
  */
 @Entity
 @Table(name = "YubiKeyAccount")
+@Slf4j
+@ToString
+@Getter
+@Setter
 public class YubiKeyAccount {
 
     @Id
@@ -38,35 +44,5 @@ public class YubiKeyAccount {
 
     public long getId() {
         return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public String getPublicId() {
-        return publicId;
-    }
-
-    public void setPublicId(final String publicId) {
-        this.publicId = publicId;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("id", id)
-                .append("publicId", publicId)
-                .append("username", username)
-                .toString();
     }
 }

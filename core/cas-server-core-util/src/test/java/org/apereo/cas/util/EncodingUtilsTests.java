@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.jose4j.keys.AesKey;
@@ -20,6 +22,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class EncodingUtilsTests {
 
     @Test
@@ -59,28 +62,22 @@ public class EncodingUtilsTests {
         final String jwt = EncodingUtils.decryptJwtValue(getPrivateKey(), found);
         assertTrue(jwt.equals(value));
     }
-    
+
+    @SneakyThrows
     private static PrivateKey getPrivateKey() {
-        try {
-            final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
-            factory.setAlgorithm(RsaKeyUtil.RSA);
-            factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
-            factory.setSingleton(false);
-            return factory.getObject();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setLocation(new ClassPathResource("keys/RSA2048Private.key"));
+        factory.setSingleton(false);
+        return factory.getObject();
     }
 
+    @SneakyThrows
     private static PublicKey getPublicKey() {
-        try {
-            final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
-            factory.setAlgorithm(RsaKeyUtil.RSA);
-            factory.setLocation(new ClassPathResource("keys/RSA2048Public.key"));
-            factory.setSingleton(false);
-            return factory.getObject();
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
+        factory.setAlgorithm(RsaKeyUtil.RSA);
+        factory.setResource(new ClassPathResource("keys/RSA2048Public.key"));
+        factory.setSingleton(false);
+        return factory.getObject();
     }
 }

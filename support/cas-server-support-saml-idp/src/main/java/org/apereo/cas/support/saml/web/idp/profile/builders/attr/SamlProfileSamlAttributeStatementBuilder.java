@@ -1,8 +1,9 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.attr;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPResponseProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -25,6 +26,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder<AttributeStatement> {
     private static final long serialVersionUID = 1815697787562189088L;
 
@@ -53,16 +55,17 @@ public class SamlProfileSamlAttributeStatementBuilder extends AbstractSaml20Obje
                                                        final RequestAbstractType authnRequest,
                                                        final SamlRegisteredService service,
                                                        final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        
+
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final Map<String, Object> attributes = new HashMap<>(assertion.getAttributes());
         attributes.putAll(assertion.getPrincipal().getAttributes());
         final Map<String, Object> encodedAttrs = this.samlAttributeEncoder.encodeAttributes(attributes, service);
-        
-        final SamlIdPProperties.Response resp = casProperties.getAuthn().getSamlIdp().getResponse();
+
+        final SamlIdPResponseProperties resp = casProperties.getAuthn().getSamlIdp().getResponse();
         final Map<String, String> nameFormats = new HashMap<>(resp.configureAttributeNameFormats());
         nameFormats.putAll(service.getAttributeNameFormats());
-        return newAttributeStatement(encodedAttrs, resp.isUseAttributeFriendlyName(), nameFormats,
-                casProperties.getAuthn().getSamlIdp().getResponse().getDefaultAttributeNameFormat());
+        return newAttributeStatement(encodedAttrs, service.getAttributeFriendlyNames(),
+            nameFormats,
+            resp.getDefaultAttributeNameFormat());
     }
 }

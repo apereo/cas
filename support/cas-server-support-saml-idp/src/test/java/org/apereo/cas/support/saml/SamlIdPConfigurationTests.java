@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -77,6 +78,7 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class})
 @TestPropertySource(properties = "cas.authn.samlIdp.metadata.location=classpath:/metadata")
+@Slf4j
 public class SamlIdPConfigurationTests {
 
     @Test

@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -17,13 +19,17 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
+@ToString
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
-    protected static class CasX509Certificate extends X509Certificate {
+    @ToString
+    public static class CasX509Certificate extends X509Certificate {
 
         private static final long serialVersionUID = -4449243195531417769L;
+
         private final X509Certificate x509Certificate = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
 
         private final boolean valid;
@@ -31,7 +37,6 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
         protected CasX509Certificate(final boolean valid) {
             this.valid = valid;
         }
-
 
         @Override
         public void checkValidity() throws CertificateExpiredException {
@@ -41,8 +46,7 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
         }
 
         @Override
-        public void checkValidity(final Date arg0)
-                throws CertificateExpiredException {
+        public void checkValidity(final Date arg0) throws CertificateExpiredException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
@@ -154,18 +158,11 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
         }
 
         @Override
-        public String toString() {
-            return CertUtils.toString(x509Certificate);
-        }
-
-        @Override
         public void verify(final PublicKey arg0, final String arg1) {
-            // nothing to do right now
         }
 
         @Override
         public void verify(final PublicKey arg0) {
-            // nothing to do right now
         }
     }
 }

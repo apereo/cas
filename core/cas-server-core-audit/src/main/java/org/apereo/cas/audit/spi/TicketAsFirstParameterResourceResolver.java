@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.AopUtils;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.aspectj.lang.JoinPoint;
@@ -11,6 +12,7 @@ import org.aspectj.lang.JoinPoint;
  * @since 3.1.2
  *
  */
+@Slf4j
 public class TicketAsFirstParameterResourceResolver implements AuditResourceResolver {
 
     @Override

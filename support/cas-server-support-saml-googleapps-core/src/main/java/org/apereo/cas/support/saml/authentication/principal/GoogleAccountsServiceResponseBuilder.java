@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -24,8 +26,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ResourceUtils;
@@ -43,11 +43,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
+
 
     private PrivateKey privateKey;
 
@@ -65,6 +65,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private String casServerPrefix;
 
+    @SneakyThrows
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
@@ -78,12 +79,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         this.samlObjectBuilder = samlObjectBuilder;
         this.casServerPrefix = casServerPrefix;
 
-        try {
-            createGoogleAppsPrivateKey();
-            createGoogleAppsPublicKey();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        createGoogleAppsPrivateKey();
+        createGoogleAppsPublicKey();
 
     }
 
@@ -200,11 +197,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-            bean.setLocation(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            bean.setResource(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
-            bean.setLocation(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+            bean.setResource(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
         } else {
-            bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            bean.setResource(new FileSystemResource(this.publicKeyLocation));
         }
 
         bean.setAlgorithm(this.keyAlgorithm);

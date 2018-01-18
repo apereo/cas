@@ -1,13 +1,12 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.openid4java.message.Message;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -23,10 +22,11 @@ import java.util.Map;
  * @author Frederic Esnault
  * @since 3.5
  */
+@Slf4j
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
 
     private static final long serialVersionUID = -594058549445950430L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(SmartOpenIdController.class);
+
 
     private final ServerManager serverManager;
     private final View successView;

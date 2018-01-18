@@ -1,12 +1,14 @@
 package org.apereo.cas.configuration.model.support.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AcceptAuthenticationProperties}.
@@ -15,13 +17,18 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication")
+@Slf4j
+@Getter
+@Setter
 public class AcceptAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 2448007503183227617L;
+
     /**
      * Accepted users for authentication, in the syntax of {@code uid::password}.
      */
     private String users = StringUtils.EMPTY;
+
     /**
      * Name of the authentication handler.
      */
@@ -43,50 +50,10 @@ public class AcceptAuthenticationProperties implements Serializable {
      * </ul>
      */
     private String credentialCriteria;
-    
+
     /**
      * This is principal transformation properties.
      */
     @NestedConfigurationProperty
     private PrincipalTransformationProperties principalTransformation = new PrincipalTransformationProperties();
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public String getUsers() {
-        return users;
-    }
-
-    public void setUsers(final String users) {
-        this.users = users;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getCredentialCriteria() {
-        return credentialCriteria;
-    }
-
-    public void setCredentialCriteria(final String credentialCriteria) {
-        this.credentialCriteria = credentialCriteria;
-    }
 }

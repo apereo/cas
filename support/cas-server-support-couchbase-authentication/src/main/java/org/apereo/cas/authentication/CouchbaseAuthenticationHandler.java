@@ -8,13 +8,13 @@ import com.couchbase.client.java.query.Select;
 import com.couchbase.client.java.query.SimpleN1qlQuery;
 import com.couchbase.client.java.query.Statement;
 import com.couchbase.client.java.query.dsl.Expression;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
@@ -29,8 +29,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseAuthenticationHandler.class);
+
 
     private final CouchbaseAuthenticationProperties couchbaseProperties;
     private final CouchbaseClientFactory couchbase;
@@ -47,15 +48,16 @@ public class CouchbaseAuthenticationHandler extends AbstractUsernamePasswordAuth
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
-                                                                 final String originalPassword) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential transformedCredential,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
         final Statement statement = Select.select("*")
                 .from(Expression.i(couchbaseProperties.getBucket()))
                 .where(Expression.x(couchbaseProperties.getUsernameAttribute())
                         .eq('\'' + transformedCredential.getUsername() + '\''));
 
         final SimpleN1qlQuery query = N1qlQuery.simple(statement);
-        final N1qlQueryResult result = couchbase.getBucket().query(query, couchbaseProperties.getTimeout(), TimeUnit.MILLISECONDS);
+        final N1qlQueryResult result = couchbase.getBucket()
+            .query(query, Beans.newDuration(couchbaseProperties.getTimeout()).toMillis(), TimeUnit.MILLISECONDS);
         if (result.finalSuccess()) {
             if (result.allRows().size() > 1) {
                 throw new FailedLoginException("More then one row found for user " + transformedCredential.getId());

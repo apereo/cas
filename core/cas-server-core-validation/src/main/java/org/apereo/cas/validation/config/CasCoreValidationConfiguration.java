@@ -1,5 +1,6 @@
 package org.apereo.cas.validation.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -12,8 +13,6 @@ import org.apereo.cas.validation.RegisteredServiceRequiredHandlersServiceTicketV
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,9 +31,10 @@ import java.util.List;
  */
 @Configuration("casCoreValidationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreValidationConfiguration implements ServiceTicketValidationAuthorizerConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreValidationConfiguration.class);
+
 
     @Autowired
     @Qualifier("servicesManager")

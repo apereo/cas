@@ -1,15 +1,14 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.security.cert.X509Certificate;
 import java.util.StringTokenizer;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolver}.
@@ -23,18 +22,17 @@ import java.util.StringTokenizer;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
+@Slf4j
+@ToString(callSuper = true)
+@NoArgsConstructor
 public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509CommonNameEDIPIPrincipalResolver.class);
+
     private static final String COMMON_NAME_VAR = "CN";
+
     private static final int EDIPI_LENGTH = 10;
 
-    public X509CommonNameEDIPIPrincipalResolver() {
-    }
-
-    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                final PrincipalFactory principalFactory,
-                                                final boolean returnNullIfNoAttributes,
-                                                final String principalAttributeName) {
+    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                                final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 
@@ -45,7 +43,6 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         if (StringUtils.isBlank(subjectDn)) {
             return null;
         }
-
         final String commonName = retrieveTheCommonName(subjectDn);
         if (StringUtils.isBlank(commonName)) {
             return null;
@@ -59,7 +56,6 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         boolean commonNameFound = false;
         String tempCommonName = null;
         final StringTokenizer st = new StringTokenizer(inSubjectDN, ",");
-
         while (!commonNameFound && st.hasMoreTokens()) {
             final String token = st.nextToken();
             if (isTokenCommonName(token)) {
@@ -74,7 +70,6 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
         boolean found = false;
         String tempEDIPI = null;
         final StringTokenizer st = new StringTokenizer(commonName, ".");
-
         while (!found && st.hasMoreTokens()) {
             final String token = st.nextToken();
             if (isTokenEDIPI(token)) {
@@ -82,7 +77,6 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
                 tempEDIPI = token;
             }
         }
-
         return tempEDIPI;
     }
 
@@ -99,12 +93,5 @@ public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalR
 
     private boolean isTokenEDIPI(final String inToken) {
         return inToken.length() == EDIPI_LENGTH && NumberUtils.isCreatable(inToken);
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

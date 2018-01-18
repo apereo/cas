@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -26,7 +27,10 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreAuthenticationMetadataConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreAuthenticationMetadataConfiguration {
+
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -47,10 +51,14 @@ public class CasCoreAuthenticationMetadataConfiguration {
     @Bean
     public CipherExecutor cacheCredentialsCipherExecutor() {
         final ClearpassProperties cp = casProperties.getClearpass();
-        if (cp.getCrypto().isEnabled() && cp.isCacheCredential()) {
-            return new CacheCredentialsCipherExecutor(cp.getCrypto().getEncryption().getKey(),
+        if (cp.isCacheCredential()) {
+            if (cp.getCrypto().isEnabled()) {
+                return new CacheCredentialsCipherExecutor(cp.getCrypto().getEncryption().getKey(),
                     cp.getCrypto().getSigning().getKey(),
                     cp.getCrypto().getAlg());
+            }
+            LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
+                + "turned off. Consider enabling the crypto configuration in CAS settings that allow the system to sign & encrypt the captured credential.");
         }
         return NoOpCipherExecutor.getInstance();
     }
@@ -60,7 +68,6 @@ public class CasCoreAuthenticationMetadataConfiguration {
     public AuthenticationMetaDataPopulator authenticationCredentialTypeMetaDataPopulator() {
         return new AuthenticationCredentialTypeMetaDataPopulator();
     }
-
 
     @ConditionalOnMissingBean(name = "casCoreAuthenticationMetadataAuthenticationEventExecutionPlanConfigurer")
     @Bean
@@ -72,6 +79,8 @@ public class CasCoreAuthenticationMetadataConfiguration {
 
             final ClearpassProperties cp = casProperties.getClearpass();
             if (cp.isCacheCredential()) {
+                LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass. Sharing the user credential with other applications "
+                    + "is generally NOT recommended, may lead to security vulnerabilities and MUST only be used as a last resort .");
                 plan.registerMetadataPopulator(new CacheCredentialsMetaDataPopulator(cacheCredentialsCipherExecutor()));
             }
         };

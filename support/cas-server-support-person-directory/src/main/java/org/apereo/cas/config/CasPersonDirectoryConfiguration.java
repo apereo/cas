@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
@@ -29,8 +30,6 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,8 +56,9 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casPersonDirectoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasPersonDirectoryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasPersonDirectoryConfiguration.class);
+
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -303,16 +303,16 @@ public class CasPersonDirectoryConfiguration {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
+        final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
-            .weakKeys()
-            .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
-            .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
+            .maximumSize(props.getMaximumCacheSize())
+            .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
             .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
         LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-            casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+            props.getExpirationTime());
         return impl;
     }
 

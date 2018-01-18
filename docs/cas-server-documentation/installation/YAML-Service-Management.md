@@ -30,11 +30,15 @@ serviceId: "testId"
 name: "YAML"
 id: 1000
 description: "description"
-attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy>
+attributeReleasePolicy: !<org.apereo.cas.services.ReturnAllAttributeReleasePolicy> {}
 accessStrategy: !<org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy>
   enabled: true
   ssoEnabled: true
 ```
+
+<div class="alert alert-warning"><strong>YAML Validation</strong><p>
+The tags containing classname hints (<code>!&lt;classname&gt;</code>) cause problems with many YAML validators. If you need to validate your YAML, try removing those tags for validation. Remember that an empty map (<code>{}</code>) may be required after the tag if you are not including any attributes for a property.
+</p></div>
 
 <div class="alert alert-warning"><strong>Clustering Services</strong><p>
 You MUST consider that if your CAS server deployment is clustered, each CAS node in the cluster must have

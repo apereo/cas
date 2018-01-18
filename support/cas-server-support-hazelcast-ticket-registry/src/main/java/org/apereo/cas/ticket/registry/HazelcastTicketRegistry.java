@@ -2,12 +2,11 @@ package org.apereo.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
@@ -27,12 +26,13 @@ import java.util.stream.Collectors;
  * @author Jonathan Johnson
  * @since 4.1.0
  */
+@Slf4j
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistry.class);
+
 
     private final HazelcastInstance hazelcastInstance;
     private final TicketCatalog ticketCatalog;
-    private final int pageSize;
+    private final long pageSize;
 
     /**
      * Instantiates a new Hazelcast ticket ticketGrantingTicketsRegistry.
@@ -41,7 +41,7 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
      * @param plan     the plan
      * @param pageSize the page size
      */
-    public HazelcastTicketRegistry(final HazelcastInstance hz, final TicketCatalog plan, final int pageSize) {
+    public HazelcastTicketRegistry(final HazelcastInstance hz, final TicketCatalog plan, final long pageSize) {
         this.hazelcastInstance = hz;
         this.pageSize = pageSize;
         this.ticketCatalog = plan;
@@ -81,21 +81,22 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @Override
     public Ticket getTicket(final String ticketId) {
         final String encTicketId = encodeTicketId(ticketId);
-        if (StringUtils.isNotBlank(encTicketId)) {
-            final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
-            if (metadata != null) {
-                final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
-                final Ticket ticket = map.get(encTicketId);
-                final Ticket result = decodeTicket(ticket);
-                if (result != null && result.isExpired()) {
-                    LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
-                    map.remove(encTicketId);
-                    return null;
-                }
-                return result;
-            }
-            LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
+        if (StringUtils.isBlank(encTicketId)) {
+            return null;
         }
+        final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
+        if (metadata != null) {
+            final IMap<String, Ticket> map = getTicketMapInstanceByMetadata(metadata);
+            final Ticket ticket = map.get(encTicketId);
+            final Ticket result = decodeTicket(ticket);
+            if (result != null && result.isExpired()) {
+                LOGGER.debug("Ticket [{}] has expired and is now removed from the cache", result.getId());
+                map.remove(encTicketId);
+                return null;
+            }
+            return result;
+        }
+        LOGGER.warn("No ticket definition could be found in the catalog to match [{}]", ticketId);
         return null;
     }
 
@@ -110,24 +111,30 @@ public class HazelcastTicketRegistry extends AbstractTicketRegistry implements C
     @Override
     public long deleteAll() {
         return this.ticketCatalog.findAll().stream()
-                .map(this::getTicketMapInstanceByMetadata)
-                .filter(Objects::nonNull)
-                .mapToInt(instance -> {
-                    final int size = instance.size();
-                    instance.evictAll();
-                    instance.clear();
-                    return size;
-                })
-                .sum();
+            .map(this::getTicketMapInstanceByMetadata)
+            .filter(Objects::nonNull)
+            .mapToInt(instance -> {
+                final int size = instance.size();
+                instance.evictAll();
+                instance.clear();
+                return size;
+            })
+            .sum();
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        return this.ticketCatalog.findAll().stream()
-                .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
-                .flatMap(tickets -> tickets.stream().limit(pageSize).collect(Collectors.toList()).stream())
-                .map(this::decodeTicket)
-                .collect(Collectors.toSet());
+        return this.ticketCatalog.findAll()
+            .stream()
+            .map(metadata -> getTicketMapInstanceByMetadata(metadata).values())
+            .flatMap(tickets -> {
+                if (pageSize > 0) {
+                    return tickets.stream().limit(pageSize).collect(Collectors.toList()).stream();
+                }
+                return tickets.stream().collect(Collectors.toList()).stream();
+            })
+            .map(this::decodeTicket)
+            .collect(Collectors.toSet());
     }
 
     /**

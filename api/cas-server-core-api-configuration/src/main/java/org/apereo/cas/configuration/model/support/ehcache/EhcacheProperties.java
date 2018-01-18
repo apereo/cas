@@ -1,14 +1,15 @@
 package org.apereo.cas.configuration.model.support.ehcache;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link EhcacheProperties}.
@@ -17,7 +18,11 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ehcache-ticket-registry")
+@Slf4j
+@Getter
+@Setter
 public class EhcacheProperties implements Serializable {
+
     private static final long serialVersionUID = 7772510035918976450L;
 
     /**
@@ -103,10 +108,12 @@ public class EhcacheProperties implements Serializable {
      */
     @RequiredProperty
     private String cacheManagerName = "ticketRegistryCacheManager";
+
     /**
      * The interval in seconds between runs of the disk expiry thread.
      */
     private int diskExpiryThreadIntervalSeconds;
+
     /**
      * Sets whether elements are eternal.
      * If eternal, timeouts are ignored and the element is never expired. False by default.
@@ -149,7 +156,7 @@ public class EhcacheProperties implements Serializable {
      * </ul>
      */
     private String persistence = "NONE";
-    
+
     /**
      * Crypto settings for the registry.
      */
@@ -159,174 +166,4 @@ public class EhcacheProperties implements Serializable {
     public EhcacheProperties() {
         this.crypto.setEnabled(false);
     }
-    
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
-    public boolean isLoaderAsync() {
-        return loaderAsync;
-    }
-
-    public void setLoaderAsync(final boolean loaderAsync) {
-        this.loaderAsync = loaderAsync;
-    }
-
-    public int getMaxChunkSize() {
-        return maxChunkSize;
-    }
-
-    public void setMaxChunkSize(final int maxChunkSize) {
-        this.maxChunkSize = maxChunkSize;
-    }
-
-    public int getMaximumBatchSize() {
-        return maximumBatchSize;
-    }
-
-    public void setMaximumBatchSize(final int maximumBatchSize) {
-        this.maximumBatchSize = maximumBatchSize;
-    }
-
-    public long getReplicationInterval() {
-        return Beans.newDuration(replicationInterval).toMillis();
-    }
-
-    public void setReplicationInterval(final String replicationInterval) {
-        this.replicationInterval = replicationInterval;
-    }
-
-    public boolean isReplicatePuts() {
-        return replicatePuts;
-    }
-
-    public void setReplicatePuts(final boolean replicatePuts) {
-        this.replicatePuts = replicatePuts;
-    }
-
-    public boolean isReplicateUpdatesViaCopy() {
-        return replicateUpdatesViaCopy;
-    }
-
-    public void setReplicateUpdatesViaCopy(final boolean replicateUpdatesViaCopy) {
-        this.replicateUpdatesViaCopy = replicateUpdatesViaCopy;
-    }
-
-    public boolean isReplicateRemovals() {
-        return replicateRemovals;
-    }
-
-    public void setReplicateRemovals(final boolean replicateRemovals) {
-        this.replicateRemovals = replicateRemovals;
-    }
-
-    public boolean isReplicateUpdates() {
-        return replicateUpdates;
-    }
-
-    public void setReplicateUpdates(final boolean replicateUpdates) {
-        this.replicateUpdates = replicateUpdates;
-    }
-
-    public boolean isReplicatePutsViaCopy() {
-        return replicatePutsViaCopy;
-    }
-
-    public void setReplicatePutsViaCopy(final boolean replicatePutsViaCopy) {
-        this.replicatePutsViaCopy = replicatePutsViaCopy;
-    }
-
-    public Resource getConfigLocation() {
-        return configLocation;
-    }
-
-    public void setConfigLocation(final Resource configLocation) {
-        this.configLocation = configLocation;
-    }
-
-    public boolean isShared() {
-        return shared;
-    }
-
-    public void setShared(final boolean shared) {
-        this.shared = shared;
-    }
-
-    public String getCacheManagerName() {
-        return cacheManagerName;
-    }
-
-    public void setCacheManagerName(final String cacheManagerName) {
-        this.cacheManagerName = cacheManagerName;
-    }
-
-    public int getDiskExpiryThreadIntervalSeconds() {
-        return diskExpiryThreadIntervalSeconds;
-    }
-
-    public void setDiskExpiryThreadIntervalSeconds(final int diskExpiryThreadIntervalSeconds) {
-        this.diskExpiryThreadIntervalSeconds = diskExpiryThreadIntervalSeconds;
-    }
-
-    public boolean isEternal() {
-        return eternal;
-    }
-
-    public void setEternal(final boolean eternal) {
-        this.eternal = eternal;
-    }
-
-    public int getMaxElementsInMemory() {
-        return maxElementsInMemory;
-    }
-
-    public void setMaxElementsInMemory(final int maxElementsInMemory) {
-        this.maxElementsInMemory = maxElementsInMemory;
-    }
-
-    public int getMaxElementsOnDisk() {
-        return maxElementsOnDisk;
-    }
-
-    public void setMaxElementsOnDisk(final int maxElementsOnDisk) {
-        this.maxElementsOnDisk = maxElementsOnDisk;
-    }
-
-    public String getMemoryStoreEvictionPolicy() {
-        return memoryStoreEvictionPolicy;
-    }
-
-    public void setMemoryStoreEvictionPolicy(final String memoryStoreEvictionPolicy) {
-        this.memoryStoreEvictionPolicy = memoryStoreEvictionPolicy;
-    }
-
-    public int getMaxElementsInCache() {
-        return maxElementsInCache;
-    }
-
-    public void setMaxElementsInCache(final int maxElementsInCache) {
-        this.maxElementsInCache = maxElementsInCache;
-    }
-
-    public boolean isSynchronousWrites() {
-        return synchronousWrites;
-    }
-
-    public void setSynchronousWrites(final boolean synchronousWrites) {
-        this.synchronousWrites = synchronousWrites;
-    }
-
-    public String getPersistence() {
-        return persistence;
-    }
-
-    public void setPersistence(final String persistence) {
-        this.persistence = persistence;
-    }
 }
-
-

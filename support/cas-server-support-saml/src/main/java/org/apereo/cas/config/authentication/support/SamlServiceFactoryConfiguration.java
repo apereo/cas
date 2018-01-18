@@ -1,5 +1,6 @@
 package org.apereo.cas.config.authentication.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -21,6 +22,7 @@ import java.util.Collection;
  */
 @Configuration("samlServiceFactoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlServiceFactoryConfiguration implements ServiceFactoryConfigurer {
     @Override
     public Collection<ServiceFactory<? extends WebApplicationService>> buildServiceFactories() {

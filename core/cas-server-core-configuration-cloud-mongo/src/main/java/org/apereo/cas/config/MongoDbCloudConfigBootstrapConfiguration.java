@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.MongoDbPropertySource;
 import org.apereo.cas.MongoDbPropertySourceLocator;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -18,23 +20,21 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbCloudConfigBootstrapConfiguration")
 @ConditionalOnProperty(name = "cas.spring.cloud.mongo.uri")
+@Slf4j
 public class MongoDbCloudConfigBootstrapConfiguration {
-    
-    
+
+
     @Autowired
     private ConfigurableEnvironment environment;
 
     @Bean
+    @SneakyThrows
     public MongoDbPropertySourceLocator mongoDbPropertySourceLocator() {
-        try {
-            final MongoTemplate mongoTemplate = mongoDbCloudConfigurationTemplate();
-            if (!mongoTemplate.collectionExists(MongoDbPropertySource.class.getSimpleName())) {
-                mongoTemplate.createCollection(MongoDbPropertySource.class.getSimpleName());
-            }
-            return new MongoDbPropertySourceLocator(mongoTemplate);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final MongoTemplate mongoTemplate = mongoDbCloudConfigurationTemplate();
+        if (!mongoTemplate.collectionExists(MongoDbPropertySource.class.getSimpleName())) {
+            mongoTemplate.createCollection(MongoDbPropertySource.class.getSimpleName());
         }
+        return new MongoDbPropertySourceLocator(mongoTemplate);
     }
 
     @Bean

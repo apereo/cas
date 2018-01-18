@@ -1,10 +1,11 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -22,6 +23,7 @@ import java.security.GeneralSecurityException;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
     
     private final TicketRegistry ticketRegistry;
@@ -33,7 +35,7 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
         final OpenIdCredential c = (OpenIdCredential) credential;
 
         final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(),
@@ -46,7 +48,7 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
         if (!principal.getId().equals(c.getUsername())) {
             throw new FailedLoginException("Principal ID mismatch");
         }
-        return new DefaultHandlerResult(this, new BasicCredentialMetaData(c), principal);
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(c), principal);
     }
 
     @Override

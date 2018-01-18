@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -26,6 +27,7 @@ import java.util.Collection;
  */
 @Configuration("wsFederationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class WsFederationAuthenticationConfiguration {
 
     @Autowired
@@ -40,7 +42,7 @@ public class WsFederationAuthenticationConfiguration {
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -56,11 +58,11 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action wsFederationAction(@Qualifier("wsFederationConfigurations")
-                                     final Collection<WsFederationConfiguration> wsFederationConfigurations) {
-        return new WsFederationAction(authenticationSystemSupport,
-                centralAuthenticationService,
-                wsFederationConfigurations,
-                wsFederationHelper(),
-                servicesManager);
+                                         final Collection<WsFederationConfiguration> wsFederationConfigurations) {
+        return new WsFederationAction(wsFederationHelper(),
+            wsFederationConfigurations,
+            centralAuthenticationService,
+            authenticationSystemSupport,
+            servicesManager);
     }
 }

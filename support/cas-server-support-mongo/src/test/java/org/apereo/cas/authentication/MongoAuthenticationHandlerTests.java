@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.config.CasMongoAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -61,6 +62,7 @@ import static org.junit.Assert.*;
                 RefreshAutoConfiguration.class})
 @EnableScheduling
 @TestPropertySource(locations={"classpath:/mongo.properties"})
+@Slf4j
 public class MongoAuthenticationHandlerTests {
 
     @Autowired
@@ -74,7 +76,7 @@ public class MongoAuthenticationHandlerTests {
     }
     @Test
     public void verifyAuthentication() throws Exception {
-        final HandlerResult result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
+        final AuthenticationHandlerExecutionResult result = this.authenticationHandler.authenticate(CoreAuthenticationTestUtils
                 .getCredentialsWithDifferentUsernameAndPassword("u1", "p1"));
         assertEquals("u1", result.getPrincipal().getId());
         assertTrue(result.getPrincipal().getAttributes().containsKey("loc"));

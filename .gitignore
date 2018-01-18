@@ -6,6 +6,7 @@ argfile*
 target
 test-output/
 bin/
+*.ignore
 *.ipr
 *.iml
 *.iws
@@ -30,7 +31,6 @@ MANIFEST.MF
 classes/
 *.bin
 
-**/tomcat/
 out
 ajcore.*
 reports

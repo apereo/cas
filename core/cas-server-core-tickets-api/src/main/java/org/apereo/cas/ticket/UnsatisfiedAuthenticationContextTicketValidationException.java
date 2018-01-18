@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
 /**
@@ -9,6 +10,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 4.3
  */
+@Slf4j
 public class UnsatisfiedAuthenticationContextTicketValidationException extends AbstractTicketValidationException {
     /** The code description. */
     protected static final String CODE = "INVALID_AUTHENTICATION_CONTEXT";

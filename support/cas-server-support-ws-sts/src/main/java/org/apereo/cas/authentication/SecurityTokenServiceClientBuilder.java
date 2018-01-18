@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -18,6 +19,7 @@ import java.util.HashMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SecurityTokenServiceClientBuilder {
     private final WsFederationProperties wsFederationProperties;
     private final String prefix;

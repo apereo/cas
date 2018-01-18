@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -9,8 +10,6 @@ import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,8 +27,9 @@ import java.util.stream.Collectors;
  * @author Andrew Tillinghast
  * @since 3.5
  */
+@Slf4j
 public class EhCacheTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EhCacheTicketRegistry.class);
+
 
     private final TicketCatalog ticketCatalog;
 
@@ -42,8 +42,7 @@ public class EhCacheTicketRegistry extends AbstractTicketRegistry {
      * @param cacheManager  the cache manager
      * @param cipher        the cipher
      */
-    public EhCacheTicketRegistry(final TicketCatalog ticketCatalog, final CacheManager cacheManager,
-                                 final CipherExecutor cipher) {
+    public EhCacheTicketRegistry(final TicketCatalog ticketCatalog, final CacheManager cacheManager, final CipherExecutor cipher) {
         this.ticketCatalog = ticketCatalog;
         this.cacheManager = cacheManager;
         setCipherExecutor(cipher);

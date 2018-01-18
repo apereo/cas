@@ -1,12 +1,13 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.NamedStubPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolExecutorFactoryBean;
 
 import java.time.Duration;
@@ -24,12 +25,9 @@ import java.util.stream.Collectors;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public final class Beans {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Beans.class);
-
-    protected Beans() {
-    }
+@Slf4j
+@UtilityClass
+public class Beans {
 
     /**
      * New thread pool executor factory bean.
@@ -64,19 +62,16 @@ public final class Beans {
      * @param p the properties
      * @return the person attribute dao
      */
+    @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
-        try {
-            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map<String, List<Object>> pdirMap = new HashMap<>();
-            p.getStub().getAttributes().forEach((key, value) -> {
-                final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
-                pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
-            });
-            dao.setBackingMap(pdirMap);
-            return dao;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+        final Map<String, List<Object>> pdirMap = new HashMap<>();
+        p.getStub().getAttributes().forEach((key, value) -> {
+            final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
+            pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
+        });
+        dao.setBackingMap(pdirMap);
+        return dao;
     }
 
 
@@ -88,16 +83,11 @@ public final class Beans {
      * @param length the length in seconds.
      * @return the duration
      */
+    @SneakyThrows
     public static Duration newDuration(final String length) {
-        try {
-            if (NumberUtils.isCreatable(length)) {
-                return Duration.ofSeconds(Long.parseLong(length));
-            }
-            return Duration.parse(length);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (NumberUtils.isCreatable(length)) {
+            return Duration.ofSeconds(Long.parseLong(length));
         }
+        return Duration.parse(length);
     }
-
-
 }

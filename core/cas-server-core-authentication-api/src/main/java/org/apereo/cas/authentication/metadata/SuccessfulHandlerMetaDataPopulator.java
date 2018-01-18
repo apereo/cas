@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.metadata;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.util.CollectionUtils;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,6 +20,8 @@ import java.util.Set;
  * @author Alaa Nassef
  * @since 4.0.0
  */
+@Slf4j
+@ToString(callSuper = true)
 public class SuccessfulHandlerMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     @Override
@@ -34,12 +36,5 @@ public class SuccessfulHandlerMetaDataPopulator extends BaseAuthenticationMetaDa
     @Override
     public boolean supports(final Credential credential) {
         return true;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

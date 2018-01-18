@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.Element;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -13,8 +15,6 @@ import org.bouncycastle.asn1.DERIA5String;
 import org.bouncycastle.asn1.x509.DistributionPoint;
 import org.bouncycastle.asn1.x509.GeneralName;
 import org.cryptacular.x509.ExtensionReader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 
 import java.net.MalformedURLException;
@@ -41,9 +41,10 @@ import java.util.stream.IntStream;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
+@Slf4j
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CRLDistributionPointRevocationChecker.class);
-    
+
+
     private final Cache crlCache;
     private final CRLFetcher fetcher;
     private final boolean throwOnFetchFailure;
@@ -75,7 +76,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
      * @param throwOnFetchFailure the throw on fetch failure
      */
     public CRLDistributionPointRevocationChecker(
-            final Cache crlCache, final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
+        final Cache crlCache, final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
         this(false, null, null, crlCache, fetcher, throwOnFetchFailure);
     }
 
@@ -96,7 +97,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
                                                  final boolean throwOnFetchFailure) {
         this(false, unavailableCRLPolicy, expiredCRLPolicy, crlCache, new ResourceCRLFetcher(), throwOnFetchFailure);
     }
-    
+
     public CRLDistributionPointRevocationChecker(final boolean checkAll, final RevocationPolicy<Void> unavailableCRLPolicy,
                                                  final RevocationPolicy<X509CRL> expiredCRLPolicy, final Cache crlCache,
                                                  final CRLFetcher fetcher, final boolean throwOnFetchFailure) {
@@ -107,6 +108,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     @Override
+    @SneakyThrows
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
 
         if (this.crlCache == null) {
@@ -127,45 +129,43 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
         boolean stopFetching = false;
 
-        try {
-            for (int index = 0; !stopFetching && index < urls.length; index++) {
-                final URI url = urls[index];
-                final Element item = this.crlCache.get(url);
 
-                if (item != null) {
-                    LOGGER.debug("Found CRL in cache for [{}]", CertUtils.toString(cert));
-                    final byte[] encodedCrl = (byte[]) item.getObjectValue();
-                    final X509CRL crlFetched = this.fetcher.fetch(new ByteArrayResource(encodedCrl));
+        for (int index = 0; !stopFetching && index < urls.length; index++) {
+            final URI url = urls[index];
+            final Element item = this.crlCache.get(url);
 
-                    if (crlFetched != null) {
-                        listOfLocations.add(crlFetched);
-                    } else {
-                        LOGGER.warn("Could fetch X509 CRL for [{}]. Returned value is null", url);
-                    }
+            if (item != null) {
+                LOGGER.debug("Found CRL in cache for [{}]", CertUtils.toString(cert));
+                final byte[] encodedCrl = (byte[]) item.getObjectValue();
+                final X509CRL crlFetched = this.fetcher.fetch(new ByteArrayResource(encodedCrl));
+
+                if (crlFetched != null) {
+                    listOfLocations.add(crlFetched);
                 } else {
-                    LOGGER.debug("CRL for [{}] is not cached. Fetching and caching...", CertUtils.toString(cert));
-                    try {
-                        final X509CRL crl = this.fetcher.fetch(url);
-                        if (crl != null) {
-                            LOGGER.info("Success. Caching fetched CRL at [{}].", url);
-                            addCRL(url, crl);
-                            listOfLocations.add(crl);
-                        }
-                    } catch (final Exception e) {
-                        LOGGER.error("Error fetching CRL at [{}]", url, e);
-                        if (this.throwOnFetchFailure) {
-                            throw new RuntimeException(e.getMessage(), e);
-                        }
-                    }
+                    LOGGER.warn("Could fetch X509 CRL for [{}]. Returned value is null", url);
                 }
-
-                if (!this.checkAll && !listOfLocations.isEmpty()) {
-                    LOGGER.debug("CRL fetching is configured to not check all locations.");
-                    stopFetching = true;
+            } else {
+                LOGGER.debug("CRL for [{}] is not cached. Fetching and caching...", CertUtils.toString(cert));
+                try {
+                    final X509CRL crl = this.fetcher.fetch(url);
+                    if (crl != null) {
+                        LOGGER.info("Success. Caching fetched CRL at [{}].", url);
+                        addCRL(url, crl);
+                        listOfLocations.add(crl);
+                    }
+                } catch (final Exception e) {
+                    LOGGER.error("Error fetching CRL at [{}]", url, e);
+                    if (this.throwOnFetchFailure) {
+                        throw new RuntimeException(e.getMessage(), e);
+                    }
                 }
             }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+
+            if (!this.checkAll && !listOfLocations.isEmpty()) {
+                LOGGER.debug("CRL fetching is configured to not check all locations.");
+                stopFetching = true;
+            }
+
         }
 
         LOGGER.debug("Found [{}] CRLs", listOfLocations.size());

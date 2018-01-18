@@ -1,6 +1,10 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
+
+import java.util.Objects;
+import java.util.stream.Stream;
 
 /**
  * This is {@link DefaultAuthenticationSystemSupport}.
@@ -9,6 +13,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Dmitriy Kopylenko
  * @since 4.2.0
  */
+@Slf4j
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     private final AuthenticationTransactionManager authenticationTransactionManager;
@@ -34,8 +39,8 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
     public AuthenticationResultBuilder handleInitialAuthenticationTransaction(final Service service,
                                                                               final Credential... credential) throws AuthenticationException {
         final DefaultAuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.principalElectionStrategy);
-        if (credential != null && credential.length > 0) {
-            builder.collect(credential[0]);
+        if (credential != null) {
+            Stream.of(credential).filter(Objects::nonNull).forEach(builder::collect);
         }
 
         return this.handleAuthenticationTransaction(service, builder, credential);
@@ -64,7 +69,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
 
     @Override
     public AuthenticationResult handleAndFinalizeSingleAuthenticationTransaction(final Service service, final Credential... credential)
-            throws AuthenticationException {
+        throws AuthenticationException {
 
         return finalizeAllAuthenticationTransactions(handleInitialAuthenticationTransaction(service, credential), service);
     }

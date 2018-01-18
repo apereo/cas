@@ -1,11 +1,14 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SearchJdbcAuthenticationProperties}.
@@ -14,18 +17,25 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
+@Slf4j
+@Getter
+@Setter
 public class SearchJdbcAuthenticationProperties extends AbstractJpaProperties {
+
     private static final long serialVersionUID = 6912107600297453730L;
+
     /**
      * Username column name.
      */
     @RequiredProperty
     private String fieldUser;
+
     /**
      * Password column name.
      */
     @RequiredProperty
     private String fieldPassword;
+
     /**
      * Table name where accounts are held.
      */
@@ -64,68 +74,4 @@ public class SearchJdbcAuthenticationProperties extends AbstractJpaProperties {
      * Order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public String getFieldUser() {
-        return fieldUser;
-    }
-
-    public void setFieldUser(final String fieldUser) {
-        this.fieldUser = fieldUser;
-    }
-
-    public String getFieldPassword() {
-        return fieldPassword;
-    }
-
-    public void setFieldPassword(final String fieldPassword) {
-        this.fieldPassword = fieldPassword;
-    }
-
-    public String getTableUsers() {
-        return tableUsers;
-    }
-
-    public void setTableUsers(final String tableUsers) {
-        this.tableUsers = tableUsers;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public String getCredentialCriteria() {
-        return credentialCriteria;
-    }
-
-    public void setCredentialCriteria(final String credentialCriteria) {
-        this.credentialCriteria = credentialCriteria;
-    }
 }

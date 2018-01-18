@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.support.password;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.crypto.DefaultPasswordEncoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,11 +18,8 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public final class PasswordEncoderUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordEncoderUtils.class);
-
-    private PasswordEncoderUtils() {
-    }
+@Slf4j
+public class PasswordEncoderUtils {
 
     /**
      * New password encoder password encoder.

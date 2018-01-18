@@ -2,9 +2,8 @@ package org.apereo.cas.services;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.function.Predicate;
@@ -16,9 +15,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RegisteredServiceHazelcastDistributedCacheManager extends
     BaseDistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceHazelcastDistributedCacheManager.class);
+
 
     private final HazelcastInstance instance;
     private final IMap<String, DistributedCacheObject<RegisteredService>> mapInstance;

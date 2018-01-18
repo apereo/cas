@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.support.jaas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link JaasAuthenticationProperties}.
@@ -13,17 +15,23 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@Setter
 public class JaasAuthenticationProperties implements Serializable {
+
     private static final long serialVersionUID = 4643338626978471986L;
+
     /**
      * JAAS realm to use.
      */
     @RequiredProperty
     private String realm;
+
     /**
      * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the realm value by setting this following system property value.
-     * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
+     * <p>If you set the realm property, you SHOULD also configure the kerberos KDC system property.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
      * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
@@ -36,10 +44,11 @@ public class JaasAuthenticationProperties implements Serializable {
      * Oracle documentation</a>
      */
     private String kerberosRealmSystemProperty;
+
     /**
      * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the realm value by setting this following system property value.
-     * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
+     * <p>If you set the realm property, you SHOULD also configure the kerberos KDC system property.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
      * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
@@ -80,60 +89,4 @@ public class JaasAuthenticationProperties implements Serializable {
      * Name of the authentication handler.
      */
     private String name;
-
-    public String getCredentialCriteria() {
-        return credentialCriteria;
-    }
-
-    public void setCredentialCriteria(final String credentialCriteria) {
-        this.credentialCriteria = credentialCriteria;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public String getRealm() {
-        return realm;
-    }
-
-    public void setRealm(final String realm) {
-        this.realm = realm;
-    }
-
-    public String getKerberosRealmSystemProperty() {
-        return kerberosRealmSystemProperty;
-    }
-
-    public void setKerberosRealmSystemProperty(final String kerberosRealmSystemProperty) {
-        this.kerberosRealmSystemProperty = kerberosRealmSystemProperty;
-    }
-
-    public String getKerberosKdcSystemProperty() {
-        return kerberosKdcSystemProperty;
-    }
-
-    public void setKerberosKdcSystemProperty(final String kerberosKdcSystemProperty) {
-        this.kerberosKdcSystemProperty = kerberosKdcSystemProperty;
-    }
 }

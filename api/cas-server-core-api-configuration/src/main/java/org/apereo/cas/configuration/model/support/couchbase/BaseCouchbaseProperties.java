@@ -1,9 +1,10 @@
 package org.apereo.cas.configuration.model.support.couchbase;
 
-import org.apereo.cas.configuration.support.Beans;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseCouchbaseProperties}.
@@ -11,8 +12,13 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@Getter
+@Setter
 public abstract class BaseCouchbaseProperties implements Serializable {
+
     private static final long serialVersionUID = 6550895842866988551L;
+
     /**
      * Flag to indicate if query is enabled.
      */
@@ -40,44 +46,4 @@ public abstract class BaseCouchbaseProperties implements Serializable {
      */
     @RequiredProperty
     private String bucket = "default";
-
-    public boolean isQueryEnabled() {
-        return queryEnabled;
-    }
-
-    public void setQueryEnabled(final boolean queryEnabled) {
-        this.queryEnabled = queryEnabled;
-    }
-
-    public String getNodeSet() {
-        return nodeSet;
-    }
-
-    public void setNodeSet(final String nodeSet) {
-        this.nodeSet = nodeSet;
-    }
-
-    public long getTimeout() {
-        return Beans.newDuration(timeout).getSeconds();
-    }
-
-    public void setTimeout(final String timeout) {
-        this.timeout = timeout;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public String getBucket() {
-        return bucket;
-    }
-
-    public void setBucket(final String bucket) {
-        this.bucket = bucket;
-    }
 }

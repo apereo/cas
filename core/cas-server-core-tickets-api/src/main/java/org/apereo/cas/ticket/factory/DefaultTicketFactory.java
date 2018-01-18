@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.Ticket;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class DefaultTicketFactory implements TicketFactory {
 
     private final Map<String, Object> factoryMap;

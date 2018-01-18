@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -7,6 +8,7 @@ import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
@@ -34,6 +36,7 @@ import java.util.HashSet;
  */
 @Configuration("wsfedAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class WsFedAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
@@ -60,7 +63,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setIdentityAttribute(wsfed.getIdentityAttribute());
         config.setIdentityProviderIdentifier(wsfed.getIdentityProviderIdentifier());
         config.setIdentityProviderUrl(wsfed.getIdentityProviderUrl());
-        config.setTolerance(wsfed.getTolerance());
+        config.setTolerance(Beans.newDuration(wsfed.getTolerance()).toMillis());
         config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
 
         org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getSigningCertificateResources())

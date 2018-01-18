@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.fortress;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.directory.fortress.core.AccessMgr;
 import org.apache.directory.fortress.core.GlobalErrIds;
 import org.apache.directory.fortress.core.PasswordException;
 import org.apache.directory.fortress.core.model.Session;
 import org.apache.directory.fortress.core.model.User;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
@@ -16,8 +17,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.xml.bind.JAXBContext;
@@ -31,8 +30,9 @@ import java.util.UUID;
  * @author yudhi.k.surtan
  * @since 5.2.0
  */
+@Slf4j
 public class FortressAuthenticationHandlerTests {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FortressAuthenticationHandlerTests.class);
+
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -65,7 +65,7 @@ public class FortressAuthenticationHandlerTests {
         session.setAuthenticated(true);
         Mockito.when(accessManager.createSession(Mockito.any(User.class), Mockito.anyBoolean())).thenReturn(session);
         try {
-            final HandlerResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
+            final AuthenticationHandlerExecutionResult handlerResult = fortressAuthenticationHandler.authenticateUsernamePasswordInternal(
                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(), null);
             Assert.assertEquals(CoreAuthenticationTestUtils.CONST_USERNAME,
                 handlerResult.getPrincipal().getId());

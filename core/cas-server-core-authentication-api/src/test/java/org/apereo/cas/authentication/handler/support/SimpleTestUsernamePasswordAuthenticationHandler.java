@@ -1,15 +1,14 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.PostConstruct;
@@ -30,9 +29,9 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleTestUsernamePasswordAuthenticationHandler.class);
+    
 
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
@@ -63,8 +62,8 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
@@ -88,7 +87,7 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
 
         if (StringUtils.hasText(username) && StringUtils.hasText(password) && username.equals(password)) {
             LOGGER.debug("User [{}] was successfully authenticated.", username);
-            return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential),
+            return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
                     this.principalFactory.createPrincipal(username));
         }
         LOGGER.debug("User [{}] failed authentication", username);

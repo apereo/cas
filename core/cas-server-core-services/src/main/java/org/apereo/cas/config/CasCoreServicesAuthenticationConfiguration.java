@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
@@ -25,6 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("casCoreServicesAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnBean(value = AuthenticationManager.class)
+@Slf4j
 public class CasCoreServicesAuthenticationConfiguration {
     @Bean
     public ProtocolAttributeEncoder noOpCasAttributeEncoder() {

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.shell.CasCommandLineShellBootstrapper;
 import org.apereo.cas.shell.cli.CasCommandLineEngine;
@@ -23,6 +24,7 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.scheduling.annotation.EnableAsync;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasCommandLineShellApplication}.
@@ -31,25 +33,16 @@ import org.springframework.scheduling.annotation.EnableAsync;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@SpringBootApplication(
-        exclude = {
-                HibernateJpaAutoConfiguration.class,
-                JerseyAutoConfiguration.class,
-                GroovyTemplateAutoConfiguration.class,
-                JmxAutoConfiguration.class,
-                DataSourceAutoConfiguration.class,
-                RedisAutoConfiguration.class,
-                MongoAutoConfiguration.class,
-                MongoDataAutoConfiguration.class,
-                CassandraAutoConfiguration.class,
-                DataSourceTransactionManagerAutoConfiguration.class,
-                MetricsDropwizardAutoConfiguration.class,
-                RedisRepositoriesAutoConfiguration.class})
+@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class, GroovyTemplateAutoConfiguration.class,
+    JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, MongoAutoConfiguration.class,
+    MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
+    MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
+
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
+@Slf4j
+@NoArgsConstructor
 public class CasCommandLineShellApplication {
-    protected CasCommandLineShellApplication() {
-    }
 
     /**
      * Main entry point of the CAS web application.
@@ -58,11 +51,8 @@ public class CasCommandLineShellApplication {
      */
     public static void main(final String[] args) {
         new SpringApplicationBuilder(CasCommandLineShellApplication.class)
-                .banner(new DefaultCasBanner())
-                .bannerMode(CasCommandLineParser.getBannerMode(args))
-                .logStartupInfo(false)
-                .web(false)
-                .run(args);
+            .banner(new DefaultCasBanner()).bannerMode(CasCommandLineParser.getBannerMode(args))
+            .logStartupInfo(false).web(false).run(args);
     }
 
     /**

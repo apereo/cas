@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -23,6 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @since 3.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class DefaultAuthentication implements Authentication {
 
     private static final long serialVersionUID = 3206127526058061391L;
@@ -50,12 +52,12 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication success event.
      */
-    private final Map<String, HandlerResult> successes;
+    private final Map<String, AuthenticationHandlerExecutionResult> successes;
 
     /**
      * Map of handler name to handler authentication failure cause.
      */
-    private Map<String, Class<? extends Throwable>> failures;
+    private Map<String, Throwable> failures;
 
     /**
      * No-arg constructor for serialization support.
@@ -81,7 +83,7 @@ public class DefaultAuthentication implements Authentication {
             final ZonedDateTime date,
             final Principal principal,
             final Map<String, Object> attributes,
-            final Map<String, HandlerResult> successes) {
+            final Map<String, AuthenticationHandlerExecutionResult> successes) {
 
         Assert.notNull(date, "Date cannot be null");
         Assert.notNull(principal, "Principal cannot be null");
@@ -111,8 +113,8 @@ public class DefaultAuthentication implements Authentication {
             final List<CredentialMetaData> credentials,
             final Principal principal,
             final Map<String, Object> attributes,
-            final Map<String, HandlerResult> successes,
-            final Map<String, Class<? extends Throwable>> failures) {
+            final Map<String, AuthenticationHandlerExecutionResult> successes,
+            final Map<String, Throwable> failures) {
 
         this(date, principal, attributes, successes);
 
@@ -144,12 +146,12 @@ public class DefaultAuthentication implements Authentication {
     }
 
     @Override
-    public Map<String, HandlerResult> getSuccesses() {
+    public Map<String, AuthenticationHandlerExecutionResult> getSuccesses() {
         return new HashMap<>(this.successes);
     }
 
     @Override
-    public Map<String, Class<? extends Throwable>> getFailures() {
+    public Map<String, Throwable> getFailures() {
         return CollectionUtils.wrap(this.failures);
     }
 

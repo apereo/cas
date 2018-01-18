@@ -1,10 +1,10 @@
 package org.apereo.cas.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import lombok.Setter;
 
 /**
  * This is {@link AbstractServiceRegistryDao}, that acts as the base parent class
@@ -13,12 +13,12 @@ import org.springframework.context.ApplicationEventPublisher;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@Setter
 public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServiceRegistryDao.class);
-    
+
     @Autowired
     private transient ApplicationEventPublisher eventPublisher;
-    
 
     /**
      * Publish event.
@@ -30,10 +30,6 @@ public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
             LOGGER.debug("Publishing event [{}]", event);
             this.eventPublisher.publishEvent(event);
         }
-    }
-
-    protected void setEventPublisher(final ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
     }
 
     @Override

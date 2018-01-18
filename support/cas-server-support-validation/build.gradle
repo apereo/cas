@@ -1,7 +1,8 @@
 description = "Apereo CAS Web Application Protocol Validation"
 dependencies {
     implementation libraries.thymeleaf
-    
+
+    implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":core:cas-server-core-services")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
@@ -38,4 +39,7 @@ dependencies {
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(":core:cas-server-core-web-api")
+
+    testImplementation libraries.thymeleaf
+    testImplementation libraries.thymeleafdialect
 }

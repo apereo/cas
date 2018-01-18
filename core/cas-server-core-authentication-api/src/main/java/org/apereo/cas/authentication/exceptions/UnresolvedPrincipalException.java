@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.exceptions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class UnresolvedPrincipalException extends PrincipalException {
 
     /**
@@ -56,7 +58,7 @@ public class UnresolvedPrincipalException extends PrincipalException {
      *
      * @param handlerErrors the handler errors
      */
-    public UnresolvedPrincipalException(final Map<String, Class<? extends Throwable>> handlerErrors) {
+    public UnresolvedPrincipalException(final Map<String, Throwable> handlerErrors) {
         super(UNRESOLVED_PRINCIPAL, handlerErrors, new HashMap<>(0));
     }
 

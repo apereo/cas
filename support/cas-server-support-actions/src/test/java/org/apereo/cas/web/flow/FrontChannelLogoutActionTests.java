@@ -1,16 +1,18 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
+import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.logout.DefaultSingleLogoutServiceMessageHandler;
-import org.apereo.cas.logout.DefaultLogoutManager;
 import org.apereo.cas.logout.LogoutExecutionPlan;
 import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
+import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -34,6 +36,7 @@ import static org.mockito.Mockito.*;
  * @author Jerome Leleu
  * @since 4.0.0
  */
+@Slf4j
 public class FrontChannelLogoutActionTests {
 
     private static final String FLOW_EXECUTION_KEY = "12234";
@@ -50,13 +53,13 @@ public class FrontChannelLogoutActionTests {
 
     @Before
     public void onSetUp() throws Exception {
-        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false).getObject(); 
-        
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false).getObject();
+
         final DefaultSingleLogoutServiceMessageHandler handler = new DefaultSingleLogoutServiceMessageHandler(new SimpleHttpClientFactoryBean().getObject(),
-                new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
-                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+            new SamlCompliantLogoutMessageCreator(), servicesManager, new DefaultSingleLogoutServiceLogoutUrlBuilder(validator), false,
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
         final DefaultLogoutManager logoutManager = new DefaultLogoutManager(new SamlCompliantLogoutMessageCreator(),
-                handler, false, mock(LogoutExecutionPlan.class));
+            handler, false, mock(LogoutExecutionPlan.class));
 
         this.frontChannelLogoutAction = new FrontChannelLogoutAction(logoutManager);
 
@@ -79,6 +82,6 @@ public class FrontChannelLogoutActionTests {
     public void verifyLogoutNoIndex() throws Exception {
         WebUtils.putLogoutRequests(this.requestContext, new ArrayList<>(0));
         final Event event = this.frontChannelLogoutAction.doExecute(this.requestContext);
-        assertEquals(FrontChannelLogoutAction.FINISH_EVENT, event.getId());
-    }    
+        assertEquals(CasWebflowConstants.TRANSITION_ID_FINISH, event.getId());
+    }
 }

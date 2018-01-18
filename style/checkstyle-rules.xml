@@ -8,6 +8,7 @@
     <!-- TreeWalker module checks -->
     <module name="TreeWalker">
         <property name="tabWidth" value="4"/>
+        <module name="SuppressionCommentFilter"/>
         <module name="NonEmptyAtclauseDescription">
             <property name="severity" value="error"/>
         </module>
@@ -179,7 +180,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="MethodLength">
-            <property name="max" value="160"/>
+            <property name="max" value="180"/>
         </module>
         <module name="ParameterNumber">
             <property name="max" value="20"/>
@@ -187,7 +188,7 @@
             <property name="tokens" value="METHOD_DEF"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="160"/>
+            <property name="max" value="190"/>
             <property name="tabWidth" value="4"/>
             <property name="severity" value="error"/>
         </module>
@@ -300,10 +301,10 @@
         <module name="FinalClass">
             <property name="severity" value="error"/>
         </module>
+        <!--
         <module name="HideUtilityClassConstructor">
             <property name="severity" value="error"/>
         </module>
-        <!--
         <module name="InterfaceIsType">
             <property name="severity" value="info"/>
         </module>
@@ -451,9 +452,14 @@
         <module name="RegexpSinglelineJava">
             <metadata name="net.sf.eclipsecs.core.comment" value="The logger object must be named &quot;logger&quot;"/>
             <property name="severity" value="error"/>
-            <property name="format" value="\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG)\b"/>
-            <property name="message"
-                      value="The Logger object must only be called &quot;logger&quot; or &quot;LOGGER&quot;"/>
+            <property name="format" value="(private|public|protected)\s+(static\s)*(final\s)*(static\s)*Logger\s+(log|LOG|LOGGER|logger)\b"/>
+            <property name="message"  value="Use the Lombok @Slf4j annotation to obtain a logger object instead." />
+        </module>
+        <module name="RegexpSinglelineJava">
+            <metadata name="net.sf.eclipsecs.core.comment" value="Using Lombok to generate toString() methods"/>
+            <property name="severity" value="error"/>
+            <property name="format" value="(private|public|protected)\s+(final\s+)*String\s+toString\(\)"/>
+            <property name="message"  value="Use the Lombok @ToString annotation to create toString() methods" />
         </module>
         <module name="RegexpSinglelineJava">
             <property name="id" value="finalNonUtilClass"/>

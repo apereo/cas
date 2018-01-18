@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.config.CasSupportJdbcAuditConfiguration;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
@@ -44,8 +45,6 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.servlet.http.HttpServletResponse;
 
-import static org.junit.Assert.*;
-
 /**
  * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
  *
@@ -77,6 +76,7 @@ import static org.junit.Assert.*;
         CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
 @TestPropertySource(locations = {"classpath:/casthrottle.properties"})
+@Slf4j
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
@@ -91,6 +91,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         request.setMethod("POST");
         request.setParameter("username", username);
         request.setRemoteAddr(fromAddress);
+        request.setRequestURI("/cas/login");
         final MockRequestContext context = new MockRequestContext();
         context.setCurrentEvent(new Event(StringUtils.EMPTY, "error"));
         request.setAttribute("flowRequestContext", context);
@@ -105,8 +106,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
             throttle.postHandle(request, response, null, null);
             return response;
         }
-        fail("Expected AbstractAuthenticationException");
-        return null;
+        throw new AssertionError("Expected AbstractAuthenticationException");
     }
 
     private static UsernamePasswordCredential badCredentials(final String username) {

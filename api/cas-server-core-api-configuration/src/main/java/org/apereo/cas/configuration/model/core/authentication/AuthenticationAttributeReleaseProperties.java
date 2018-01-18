@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +14,11 @@ import java.util.List;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-validation", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class AuthenticationAttributeReleaseProperties {
+
     /**
      * List of authentication attributes that should never be released.
      */
@@ -23,20 +29,4 @@ public class AuthenticationAttributeReleaseProperties {
      * should be released.
      */
     private List<String> onlyRelease = new ArrayList<>();
-
-    public List<String> getNeverRelease() {
-        return neverRelease;
-    }
-
-    public void setNeverRelease(final List<String> neverRelease) {
-        this.neverRelease = neverRelease;
-    }
-
-    public List<String> getOnlyRelease() {
-        return onlyRelease;
-    }
-
-    public void setOnlyRelease(final List<String> onlyRelease) {
-        this.onlyRelease = onlyRelease;
-    }
 }

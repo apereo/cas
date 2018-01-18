@@ -4,6 +4,8 @@ import com.authy.AuthyApiClient;
 import com.authy.api.Tokens;
 import com.authy.api.User;
 import com.authy.api.Users;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 
@@ -15,6 +17,7 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class AuthyClientInstance {
 
     private final AuthyApiClient authyClient;
@@ -24,24 +27,23 @@ public class AuthyClientInstance {
     private String mailAttribute = "mail";
     private String phoneAttribute = "phone";
     private String countryCode = "1";
-    
-    public AuthyClientInstance(final String apiKey, final String apiUrl, 
+
+    @SneakyThrows
+    public AuthyClientInstance(final String apiKey, final String apiUrl,
                                final String mailAttribute, final String phoneAttribute,
                                final String countryCode) {
-        try {
-            this.mailAttribute = mailAttribute;
-            this.phoneAttribute = phoneAttribute;
-            this.countryCode = countryCode;
-            
-            final String authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
-            final URL url = new URL(authyUrl);
-            final boolean testFlag = url.getProtocol().equals("http");
-            this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
-            this.authyUsers = this.authyClient.getUsers();
-            this.authyTokens = this.authyClient.getTokens();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        this.mailAttribute = mailAttribute;
+        this.phoneAttribute = phoneAttribute;
+        this.countryCode = countryCode;
+
+        final String authyUrl = StringUtils.defaultIfBlank(apiUrl, AuthyApiClient.DEFAULT_API_URI);
+        final URL url = new URL(authyUrl);
+        final boolean testFlag = url.getProtocol().equals("http");
+        this.authyClient = new AuthyApiClient(apiKey, authyUrl, testFlag);
+        this.authyUsers = this.authyClient.getUsers();
+        this.authyTokens = this.authyClient.getTokens();
+
     }
 
     public Users getAuthyUsers() {
@@ -51,7 +53,7 @@ public class AuthyClientInstance {
     public Tokens getAuthyTokens() {
         return authyTokens;
     }
-    
+
     /**
      * Gets authy error message.
      *

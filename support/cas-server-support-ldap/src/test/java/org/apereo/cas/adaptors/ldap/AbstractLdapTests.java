@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.ldap;
 
-import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
-import org.ldaptive.LdapEntry;
-import org.springframework.core.io.ClassPathResource;
-
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
+import org.springframework.core.io.ClassPathResource;
 
 /**
  * Base class for LDAP tests that provision and de-provision DIRECTORY data as part of test setup/teardown.
@@ -14,18 +15,20 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public abstract class AbstractLdapTests {
 
-    protected static InMemoryTestLdapDirectoryServer DIRECTORY;
+    private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
 
     public static synchronized void initDirectoryServer(final InputStream ldifFile,
                                                         final int port) {
         try {
-            final boolean createInstance = DIRECTORY == null || !DIRECTORY.isAlive();
+            final InMemoryTestLdapDirectoryServer directory = DIRECTORY_MAP.get(port);
+            final boolean createInstance = directory == null || !directory.isAlive();
             if (createInstance) {
-                final ClassPathResource properties = new ClassPathResource("ldap.properties");
+                final ClassPathResource properties = new ClassPathResource("ldapserver.properties");
                 final ClassPathResource schema = new ClassPathResource("schema/standard-ldap.schema");
-                DIRECTORY = new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream(), port);
+                DIRECTORY_MAP.put(port, new InMemoryTestLdapDirectoryServer(properties.getInputStream(), ldifFile, schema.getInputStream(), port));
             }
         } catch (final Exception e) {
             throw new IllegalArgumentException(e.getMessage(), e);
@@ -36,15 +39,11 @@ public abstract class AbstractLdapTests {
         initDirectoryServer(new ClassPathResource("ldif/ldap-base.ldif").getInputStream(), port);
     }
 
-    public static void initDirectoryServer() throws IOException {
-        initDirectoryServer(1389);
+    protected static InMemoryTestLdapDirectoryServer getDirectory(final int port) {
+        return getLdapDirectory(port);
     }
 
-    protected static InMemoryTestLdapDirectoryServer getDirectory() {
-        return DIRECTORY;
-    }
-
-    protected Collection<LdapEntry> getEntries() {
-        return DIRECTORY.getLdapEntries();
+    protected static InMemoryTestLdapDirectoryServer getLdapDirectory(final int port) {
+        return DIRECTORY_MAP.get(port);
     }
 }

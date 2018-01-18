@@ -1,7 +1,8 @@
 package org.apereo.cas.web.report;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -25,8 +26,6 @@ import org.apereo.cas.util.io.CopyServletOutputStream;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,8 +48,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndpoint {
-    private static final Logger LOGGER = LoggerFactory.getLogger(PersonDirectoryAttributeResolutionController.class);
+
 
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
@@ -172,7 +172,11 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
         String copy = renderViewAndGetResult(this.cas1ServiceSuccessView, model, request, response).getKey().getCopy();
         resValidation.put("cas1Response", StringEscapeUtils.escapeXml11(copy));
 
-        copy = renderViewAndGetResult(this.cas2ServiceSuccessView, model, request, response).getKey().getCopy();
+        if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
+            copy = renderViewAndGetResult(this.cas3ServiceSuccessView, model, request, response).getKey().getCopy();
+        } else {
+            copy = renderViewAndGetResult(this.cas2ServiceSuccessView, model, request, response).getKey().getCopy();
+        }
         resValidation.put("cas2Response", StringEscapeUtils.escapeXml11(copy));
 
         copy = renderViewAndGetResult(this.cas3ServiceSuccessView, model, request, response).getKey().getCopy();

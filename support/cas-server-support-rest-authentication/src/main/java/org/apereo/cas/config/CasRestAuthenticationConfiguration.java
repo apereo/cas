@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpHost;
 import org.apache.http.client.AuthCache;
@@ -42,12 +44,13 @@ import java.net.URI;
  */
 @Configuration("casRestAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasRestAuthenticationConfiguration {
 
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -57,24 +60,23 @@ public class CasRestAuthenticationConfiguration {
 
     @Bean
     @RefreshScope
+    @SneakyThrows
     public RestTemplate restAuthenticationTemplate() {
-        try {
-            final URI casHost = new URI(casProperties.getServer().getName());
-            final HttpHost host = new HttpHost(casHost.getHost(), casHost.getPort(), casHost.getScheme());
-            final ClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactoryBasicAuth(host);
-            return new RestTemplate(factory);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        final URI casHost = new URI(casProperties.getServer().getName());
+        final HttpHost host = new HttpHost(casHost.getHost(), casHost.getPort(), casHost.getScheme());
+        final ClientHttpRequestFactory factory = new HttpComponentsClientHttpRequestFactoryBasicAuth(host);
+        return new RestTemplate(factory);
+
     }
-    
+
     @ConditionalOnMissingBean(name = "restAuthenticationPrincipalFactory")
     @Bean
     @RefreshScope
     public PrincipalFactory restAuthenticationPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-    
+
     @ConditionalOnMissingBean(name = "restAuthenticationApi")
     @Bean
     @RefreshScope
@@ -85,8 +87,8 @@ public class CasRestAuthenticationConfiguration {
     @Bean
     public AuthenticationHandler restAuthenticationHandler() {
         final RestAuthenticationProperties rest = casProperties.getAuthn().getRest();
-        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(), 
-                servicesManager, restAuthenticationPrincipalFactory());
+        final RestAuthenticationHandler r = new RestAuthenticationHandler(rest.getName(), restAuthenticationApi(),
+            servicesManager, restAuthenticationPrincipalFactory());
         r.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rest.getPasswordEncoder()));
         return r;
     }

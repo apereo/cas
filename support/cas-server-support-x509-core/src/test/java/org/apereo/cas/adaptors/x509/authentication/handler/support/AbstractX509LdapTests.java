@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
 import org.apereo.cas.util.EncodingUtils;
@@ -12,20 +14,19 @@ import java.util.Collection;
 
 /**
  * Parent class to help with testing x509 operations that deal with LDAP.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public abstract class AbstractX509LdapTests extends AbstractLdapTests {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
-    
-    public static void bootstrap() {
-        try {
-            getDirectory().populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
-            populateCertificateRevocationListAttribute();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+    @SneakyThrows
+    public static void bootstrap(final int port) {
+        getDirectory(port).populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
+        populateCertificateRevocationListAttribute(port);
     }
 
     /**
@@ -34,10 +35,11 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
      * Encode it as base64 first. Doing this in the code rather
      * than in the ldif file to ensure the attribute can be populated
      * without dependencies on the classpath and or filesystem.
+     *
      * @throws Exception the exception
      */
-    private static void populateCertificateRevocationListAttribute() throws Exception {
-        final Collection<LdapEntry> col = getDirectory().getLdapEntries();
+    private static void populateCertificateRevocationListAttribute(final int port) throws Exception {
+        final Collection<LdapEntry> col = getDirectory(port).getLdapEntries();
         for (final LdapEntry ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
                 final LdapAttribute attr = new LdapAttribute(true);
@@ -47,11 +49,11 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
                 value = EncodingUtils.encodeBase64ToByteArray(value);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
-                LdapTestUtils.modifyLdapEntry(getDirectory().getConnection(), ldapEntry, attr);
+                LdapTestUtils.modifyLdapEntry(getDirectory(port).getConnection(), ldapEntry, attr);
 
             }
         }
     }
 
-    
+
 }

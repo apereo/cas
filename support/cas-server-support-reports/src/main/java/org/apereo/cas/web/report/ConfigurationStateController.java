@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
@@ -22,7 +23,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -34,14 +34,16 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class ConfigurationStateController extends BaseCasMvcEndpoint {
+
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
-    @Autowired
+    @Autowired(required = false)
     private RefreshEndpoint refreshEndpoint;
 
-    @Autowired
+    @Autowired(required = false)
     private EnvironmentEndpoint environmentEndpoint;
 
     @Autowired
@@ -77,7 +79,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     }
 
     private Boolean isRefreshEnabled() {
-        return !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint.isEnabled()
+        return !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint != null && refreshEndpoint.isEnabled()
             && environment.getProperty("spring.cloud.config.enabled", Boolean.class);
     }
 
@@ -95,30 +97,30 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @GetMapping("/getConfiguration")
     @ResponseBody
     public Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
+        final Map results = new TreeMap();
         ensureEndpointAccessIsAuthorized(request, response);
-        final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
-
-        if (environmentEndpoint.isEnabled()) {
-            final Map results = new TreeMap();
-            final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
-            environmentSettings.entrySet()
-                .stream()
-                .filter(entry -> pattern.matcher(entry.getKey()).matches())
-                .forEach(entry -> {
-                    final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
-                    keys.keySet().forEach(key -> {
-                        if (!results.containsKey(key)) {
-                            final String propHolder = String.format("${%s}", key);
-                            final String value = this.environment.resolvePlaceholders(propHolder);
-                            results.put(key, environmentEndpoint.sanitize(key, value));
-                        }
-                    });
-                });
-
+        if (environmentEndpoint == null || !environmentEndpoint.isEnabled()) {
+            LOGGER.warn("Environment endpoint is either undefined or disabled");
             return results;
         }
 
-        return new LinkedHashMap();
+        final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
+        final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
+        environmentSettings.entrySet()
+            .stream()
+            .filter(entry -> pattern.matcher(entry.getKey()).matches())
+            .forEach(entry -> {
+                final Map<String, Object> keys = (Map<String, Object>) entry.getValue();
+                keys.keySet().forEach(key -> {
+                    if (!results.containsKey(key)) {
+                        final String propHolder = String.format("${%s}", key);
+                        final String value = this.environment.resolvePlaceholders(propHolder);
+                        results.put(key, environmentEndpoint.sanitize(key, value));
+                    }
+                });
+            });
+
+        return results;
     }
 
     /**

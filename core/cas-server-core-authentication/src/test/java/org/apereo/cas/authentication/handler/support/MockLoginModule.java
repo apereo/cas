@@ -1,5 +1,8 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.http.auth.BasicUserPrincipal;
+
 import javax.security.auth.Subject;
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
@@ -13,13 +16,16 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class MockLoginModule implements LoginModule {
     private CallbackHandler callbackHandler;
-
+     private Subject subject;
+     
     @Override
     public void initialize(final Subject subject, final CallbackHandler handler, final Map<String, ?> arg2,
                            final Map<String, ?> arg3) {
         this.callbackHandler = handler;
+        this.subject = subject;
     }
 
     @Override
@@ -35,6 +41,7 @@ public class MockLoginModule implements LoginModule {
         final String password = new String(((PasswordCallback) callbacks[1]).getPassword());
 
         if ("test".equals(userName) && "test".equals(password)) {
+            this.subject.getPrincipals().add(new BasicUserPrincipal(userName));
             return true;
         }
 

@@ -1,11 +1,11 @@
 package org.apereo.cas.util;
 
+import com.google.common.base.Splitter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -23,16 +23,14 @@ import java.util.Objects;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public final class HttpRequestUtils {
+
+@Slf4j
+public class HttpRequestUtils {
     /**
      * Constant representing the request header for user agent.
      */
     public static final String USER_AGENT_HEADER = "user-agent";
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpRequestUtils.class);
-    
-    private HttpRequestUtils() {}
-    
+
     /**
      * Gets http servlet request from request attributes.
      *
@@ -71,11 +69,11 @@ public final class HttpRequestUtils {
         if (request != null) {
             final String geoLocationParam = request.getParameter("geolocation");
             if (StringUtils.isNotBlank(geoLocationParam)) {
-                final String[] geoLocation = geoLocationParam.split(",");
-                loc.setLatitude(geoLocation[latIndex]);
-                loc.setLongitude(geoLocation[longIndex]);
-                loc.setAccuracy(geoLocation[accuracyIndex]);
-                loc.setTimestamp(geoLocation[timeIndex]);
+                final List<String> geoLocation = Splitter.on(",").splitToList(geoLocationParam);
+                loc.setLatitude(geoLocation.get(latIndex));
+                loc.setLongitude(geoLocation.get(longIndex));
+                loc.setAccuracy(geoLocation.get(accuracyIndex));
+                loc.setTimestamp(geoLocation.get(timeIndex));
             }
         }
         return loc;
@@ -122,8 +120,8 @@ public final class HttpRequestUtils {
      */
     public static WebApplicationService getService(final List<ArgumentExtractor> argumentExtractors, final HttpServletRequest request) {
         return argumentExtractors.stream().map(argumentExtractor -> argumentExtractor.extractService(request))
-                .filter(Objects::nonNull).findFirst().orElse(null);
+            .filter(Objects::nonNull).findFirst().orElse(null);
     }
-    
-    
+
+
 }

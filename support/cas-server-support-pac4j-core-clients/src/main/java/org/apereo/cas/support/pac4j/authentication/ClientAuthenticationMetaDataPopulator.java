@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.Credential;
@@ -14,26 +15,18 @@ import org.apereo.cas.authentication.principal.ClientCredential;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
+@ToString(callSuper = true)
 public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
         final ClientCredential clientCredential = (ClientCredential) transaction.getCredential();
-        builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME,
-            clientCredential.getCredentials().getClientName());
+        builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, clientCredential.getCredentials().getClientName());
     }
 
     @Override
     public boolean supports(final Credential credential) {
         return credential instanceof ClientCredential;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-            .appendSuper(super.toString())
-            .toString();
     }
 }

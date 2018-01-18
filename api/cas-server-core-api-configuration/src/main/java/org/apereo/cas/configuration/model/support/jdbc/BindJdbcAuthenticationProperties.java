@@ -1,10 +1,13 @@
 package org.apereo.cas.configuration.model.support.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BindJdbcAuthenticationProperties}.
@@ -13,8 +16,13 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-jdbc-authentication")
+@Slf4j
+@Getter
+@Setter
 public class BindJdbcAuthenticationProperties extends AbstractJpaProperties {
+
     private static final long serialVersionUID = 4268982716707687796L;
+
     /**
      * A number of authentication handlers are allowed to determine whether they can operate on the provided credential
      * and as such lend themselves to be tried and tested during the authentication handler selection phase.
@@ -47,45 +55,4 @@ public class BindJdbcAuthenticationProperties extends AbstractJpaProperties {
      * Order of the authentication handler in the chain.
      */
     private int order = Integer.MAX_VALUE;
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(final Integer order) {
-        this.order = order;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public PasswordEncoderProperties getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoderProperties passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public PrincipalTransformationProperties getPrincipalTransformation() {
-        return principalTransformation;
-    }
-
-    public void setPrincipalTransformation(final PrincipalTransformationProperties principalTransformation) {
-        this.principalTransformation = principalTransformation;
-    }
-
-    public String getCredentialCriteria() {
-        return credentialCriteria;
-    }
-
-    public void setCredentialCriteria(final String credentialCriteria) {
-        this.credentialCriteria = credentialCriteria;
-    }
 }
-

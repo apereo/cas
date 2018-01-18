@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpCorsRequestProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestProperties;
+import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
+import org.apereo.cas.security.AddResponseHeadersFilter;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
 import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
@@ -33,6 +36,7 @@ import java.util.Map;
  */
 @Configuration("casFiltersConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasFiltersConfiguration {
 
     @Autowired
@@ -42,14 +46,27 @@ public class CasFiltersConfiguration {
     @Bean
     public FilterRegistrationBean characterEncodingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new CharacterEncodingFilter(
-            casProperties.getHttpWebRequest().getWeb().getEncoding(),
-            casProperties.getHttpWebRequest().getWeb().isForceEncoding()));
+        final HttpWebRequestProperties web = casProperties.getHttpWebRequest().getWeb();
+        bean.setFilter(new CharacterEncodingFilter(web.getEncoding(), web.isForceEncoding()));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("characterEncodingFilter");
         bean.setAsyncSupported(true);
         return bean;
     }
+
+    @RefreshScope
+    @Bean
+    public FilterRegistrationBean responseHeadersFilter() {
+        final FilterRegistrationBean bean = new FilterRegistrationBean();
+        final AddResponseHeadersFilter filter = new AddResponseHeadersFilter();
+        filter.setHeadersMap(casProperties.getHttpWebRequest().getCustomHeaders());
+        bean.setFilter(filter);
+        bean.setUrlPatterns(CollectionUtils.wrap("/*"));
+        bean.setName("responseHeadersFilter");
+        bean.setAsyncSupported(true);
+        return bean;
+    }
+
 
     @ConditionalOnProperty(prefix = "cas.httpWebRequest.cors", name = "enabled", havingValue = "true")
     @Bean
@@ -72,6 +89,7 @@ public class CasFiltersConfiguration {
         return bean;
     }
 
+
     @RefreshScope
     @Bean
     public FilterRegistrationBean responseHeadersSecurityFilter() {
@@ -81,7 +99,13 @@ public class CasFiltersConfiguration {
         initParams.put("enableXContentTypeOptions", BooleanUtils.toStringTrueFalse(header.isXcontent()));
         initParams.put("enableStrictTransportSecurity", BooleanUtils.toStringTrueFalse(header.isHsts()));
         initParams.put("enableXFrameOptions", BooleanUtils.toStringTrueFalse(header.isXframe()));
+        if (header.isXframe()) {
+            initParams.put("XFrameOptions", header.getXframeOptions());
+        }
         initParams.put("enableXSSProtection", BooleanUtils.toStringTrueFalse(header.isXss()));
+        if (header.isXss()) {
+            initParams.put("XSSProtection", header.getXssOptions());
+        }
         if (StringUtils.isNotBlank(header.getContentSecurityPolicy())) {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }

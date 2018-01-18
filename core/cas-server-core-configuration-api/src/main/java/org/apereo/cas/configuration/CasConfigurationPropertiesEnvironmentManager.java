@@ -1,13 +1,13 @@
 package org.apereo.cas.configuration;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
 import org.apache.commons.configuration2.FileBasedConfiguration;
 import org.apache.commons.configuration2.PropertiesConfiguration;
 import org.apache.commons.configuration2.builder.FileBasedConfigurationBuilder;
 import org.apache.commons.configuration2.builder.fluent.Parameters;
 import org.apache.commons.lang3.tuple.Pair;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
@@ -23,8 +23,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+
+@Slf4j
 public class CasConfigurationPropertiesEnvironmentManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationPropertiesEnvironmentManager.class);
+
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
@@ -59,21 +61,18 @@ public class CasConfigurationPropertiesEnvironmentManager {
      *
      * @param pair the pair
      */
+    @SneakyThrows
     public void savePropertyForStandaloneProfile(final Pair<String, String> pair) {
-        try {
-            final File file = getStandaloneProfileConfigurationDirectory();
-            final Parameters params = new Parameters();
+        final File file = getStandaloneProfileConfigurationDirectory();
+        final Parameters params = new Parameters();
 
-            final FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
-                    new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
-                            .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
+        final FileBasedConfigurationBuilder<FileBasedConfiguration> builder =
+            new FileBasedConfigurationBuilder<FileBasedConfiguration>(PropertiesConfiguration.class)
+                .configure(params.properties().setFile(new File(file, getApplicationName() + ".properties")));
 
-            final Configuration config = builder.getConfiguration();
-            config.setProperty(pair.getKey(), pair.getValue());
-            builder.save();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final Configuration config = builder.getConfiguration();
+        config.setProperty(pair.getKey(), pair.getValue());
+        builder.save();
     }
 
     /**
@@ -94,7 +93,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
     public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
                                                         final ApplicationContext applicationContext) {
         Assert.notNull(binder, "Configuration binder cannot be null");
-        
+
         final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         final String name = map.keySet().iterator().next();
         LOGGER.debug("Reloading CAS configuration via [{}]", name);

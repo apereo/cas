@@ -1,5 +1,6 @@
 package org.apereo.cas.web.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 
 import org.apereo.cas.util.CollectionUtils;
@@ -14,8 +15,6 @@ import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer;
 import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.CommonProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.InsufficientAuthenticationException;
@@ -35,8 +34,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class LdapAuthenticationProvider implements AuthenticationProvider {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationProvider.class);
+
 
     private final AuthorizationGenerator<CommonProfile> authorizationGenerator;
     private final AdminPagesSecurityProperties adminPagesSecurityProperties;

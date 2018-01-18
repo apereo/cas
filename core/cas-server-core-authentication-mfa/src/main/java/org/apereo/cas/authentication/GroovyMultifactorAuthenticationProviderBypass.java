@@ -1,12 +1,11 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ScriptingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -17,9 +16,10 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(GroovyMultifactorAuthenticationProviderBypass.class);
+
 
     private final Resource groovyScript;
 
@@ -29,16 +29,17 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
     }
 
     @Override
-    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication, final RegisteredService registeredService,
+    public boolean shouldMultifactorAuthenticationProviderExecute(final Authentication authentication,
+                                                                  final RegisteredService registeredService,
                                                                   final MultifactorAuthenticationProvider provider,
                                                                   final HttpServletRequest request) {
         try {
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                            + "service [{}] and provider [{}] via Groovy script [{}]",
-                    principal.getId(), registeredService, provider, this.groovyScript);
+                    + "service [{}] and provider [{}] via Groovy script [{}]",
+                principal.getId(), registeredService, provider, this.groovyScript);
             return ScriptingUtils.executeGroovyScript(this.groovyScript,
-                    new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
+                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

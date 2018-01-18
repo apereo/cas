@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link PasswordEncoderProperties}.
@@ -11,33 +13,33 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class PasswordEncoderProperties implements Serializable {
+
     private static final long serialVersionUID = -2396781005262069816L;
 
     public enum PasswordEncoderTypes {
+
         /**
          * No password encoding will take place.
          */
-        NONE,
-        /**
+        NONE, /**
          * Uses an encoding algorithm and a char encoding algorithm.
          */
-        DEFAULT,
-        /**
+        DEFAULT, /**
          * Uses {@link org.springframework.security.crypto.password.StandardPasswordEncoder}.
          * A standard {@code PasswordEncoder} implementation that uses SHA-256 hashing with 1024
          * iterations and a random 8-byte random salt value.
          */
-        STANDARD,
-        /**
+        STANDARD, /**
          * Uses {@link org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder}.
          */
-        BCRYPT,
-        /**
+        BCRYPT, /**
          * Uses {@link org.springframework.security.crypto.scrypt.SCryptPasswordEncoder}.
          */
-        SCRYPT,
-        /**
+        SCRYPT, /**
          * Uses {@link org.springframework.security.crypto.password.Pbkdf2PasswordEncoder}.
          */
         PBKDF2
@@ -76,46 +78,4 @@ public class PasswordEncoderProperties implements Serializable {
      * Usually relevant when dealing with PBKDF2 or BCRYPT encoders.
      */
     private int strength = 16;
-
-    public int getStrength() {
-        return strength;
-    }
-
-    public void setStrength(final int strength) {
-        this.strength = strength;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(final String secret) {
-        this.secret = secret;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(final String type) {
-        this.type = type;
-    }
-
-    public String getCharacterEncoding() {
-        return characterEncoding;
-    }
-
-    public void setCharacterEncoding(final String characterEncoding) {
-        this.characterEncoding = characterEncoding;
-    }
-
-    public String getEncodingAlgorithm() {
-        return encodingAlgorithm;
-    }
-
-    public void setEncodingAlgorithm(final String encodingAlgorithm) {
-        this.encodingAlgorithm = encodingAlgorithm;
-    }
 }
-
-

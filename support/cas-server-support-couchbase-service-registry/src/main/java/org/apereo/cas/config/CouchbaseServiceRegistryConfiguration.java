@@ -1,7 +1,9 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryDao;
@@ -23,6 +25,7 @@ import java.util.Set;
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CouchbaseServiceRegistryConfiguration {
     
     @Autowired
@@ -39,7 +42,7 @@ public class CouchbaseServiceRegistryConfiguration {
         final CouchbaseServiceRegistryProperties couchbase = casProperties.getServiceRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
-                couchbase.getPassword(), couchbase.getTimeout(),
+                couchbase.getPassword(), Beans.newDuration(couchbase.getTimeout()).toMillis(),
                 CouchbaseServiceRegistryDao.UTIL_DOCUMENT,
                 CouchbaseServiceRegistryDao.ALL_VIEWS);
     }

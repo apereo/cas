@@ -3,14 +3,13 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.net.URL;
+import lombok.ToString;
+import lombok.Getter;
 
 /**
  * A proxy policy that only allows proxying to pgt urls
@@ -18,11 +17,13 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@ToString
+@Getter
 public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegexMatchingRegisteredServiceProxyPolicy.class);
-    
+
     private static final long serialVersionUID = -211069319543047324L;
-    
+
     private String pattern;
 
     /**
@@ -49,10 +50,6 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
         }
     }
 
-    public String getPattern() {
-        return this.pattern;
-    }
-
     @JsonIgnore
     @Override
     public boolean isAllowedToProxy() {
@@ -77,11 +74,6 @@ public class RegexMatchingRegisteredServiceProxyPolicy implements RegisteredServ
         }
         final RegexMatchingRegisteredServiceProxyPolicy rhs = (RegexMatchingRegisteredServiceProxyPolicy) obj;
         return new EqualsBuilder().append(this.pattern, rhs.pattern).isEquals();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).append(this.pattern).toString();
     }
 
     @Override

@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
 import org.apereo.cas.configuration.model.support.sms.SmsProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link RiskBasedAuthenticationProperties}.
@@ -14,9 +16,13 @@ import java.io.Serializable;
  * @since 5.1.0
  */
 @RequiresModule(name = "cas-server-support-electrofence", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class RiskBasedAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 3826749727400569308L;
+
     /**
      * Handle risky authentication attempts via an IP criteria.
      */
@@ -55,118 +61,51 @@ public class RiskBasedAuthenticationProperties implements Serializable {
      */
     private long daysInRecentHistory = 30;
 
-    public long getDaysInRecentHistory() {
-        return daysInRecentHistory;
-    }
-
-    public void setDaysInRecentHistory(final long daysInRecentHistory) {
-        this.daysInRecentHistory = daysInRecentHistory;
-    }
-
-    public Response getResponse() {
-        return response;
-    }
-
-    public void setResponse(final Response response) {
-        this.response = response;
-    }
-
-    public double getThreshold() {
-        return threshold;
-    }
-
-    public void setThreshold(final double threshold) {
-        this.threshold = threshold;
-    }
-
-    public IpAddress getIp() {
-        return ip;
-    }
-
-    public void setIp(final IpAddress ip) {
-        this.ip = ip;
-    }
-
-    public Agent getAgent() {
-        return agent;
-    }
-
-    public void setAgent(final Agent agent) {
-        this.agent = agent;
-    }
-
-    public GeoLocation getGeoLocation() {
-        return geoLocation;
-    }
-
-    public void setGeoLocation(final GeoLocation geoLocation) {
-        this.geoLocation = geoLocation;
-    }
-
-    public DateTime getDateTime() {
-        return dateTime;
-    }
-
-    public void setDateTime(final DateTime dateTime) {
-        this.dateTime = dateTime;
-    }
-
+    @Getter
+    @Setter
     public static class IpAddress implements Serializable {
+
         private static final long serialVersionUID = 577801361041617794L;
+
         /**
          * Enable IP address checking and criteria
          * to calculate risky authentication attempts.
          */
         private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Agent implements Serializable {
 
         private static final long serialVersionUID = 7766080681971729400L;
+
         /**
          * Enable user-agent checking and criteria
          * to calculate risky authentication attempts.
          */
         private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 
+    @Getter
+    @Setter
     public static class GeoLocation implements Serializable {
 
         private static final long serialVersionUID = 4115333388680538358L;
+
         /**
          * Enable geolocation checking and criteria
          * to calculate risky authentication attempts.
          */
         private boolean enabled;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
 
+    @Getter
+    @Setter
     public static class DateTime implements Serializable {
 
         private static final long serialVersionUID = -3776875583039922050L;
+
         /**
          * Enable date/time checking and criteria
          * to calculate risky authentication attempts.
@@ -178,27 +117,14 @@ public class RiskBasedAuthenticationProperties implements Serializable {
          * in calculation to establish a pattern that can then be compared against the threshold.
          */
         private int windowInHours = 2;
-
-        public int getWindowInHours() {
-            return windowInHours;
-        }
-
-        public void setWindowInHours(final int windowInHours) {
-            this.windowInHours = windowInHours;
-        }
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
     }
-    
+
+    @Getter
+    @Setter
     public static class Response implements Serializable {
 
         private static final long serialVersionUID = 8254082561120701582L;
+
         /**
          * If an authentication attempt is deemed risky, block the response
          * and do not allow further attempts.
@@ -231,45 +157,5 @@ public class RiskBasedAuthenticationProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private SmsProperties sms = new SmsProperties();
-        
-        public SmsProperties getSms() {
-            return sms;
-        }
-
-        public void setSms(final SmsProperties sms) {
-            this.sms = sms;
-        }
-
-        public EmailProperties getMail() {
-            return mail;
-        }
-
-        public void setMail(final EmailProperties mail) {
-            this.mail = mail;
-        }
-
-        public boolean isBlockAttempt() {
-            return blockAttempt;
-        }
-
-        public void setBlockAttempt(final boolean blockAttempt) {
-            this.blockAttempt = blockAttempt;
-        }
-
-        public String getMfaProvider() {
-            return mfaProvider;
-        }
-
-        public void setMfaProvider(final String mfaProvider) {
-            this.mfaProvider = mfaProvider;
-        }
-
-        public String getRiskyAuthenticationAttribute() {
-            return riskyAuthenticationAttribute;
-        }
-
-        public void setRiskyAuthenticationAttribute(final String riskyAuthenticationAttribute) {
-            this.riskyAuthenticationAttribute = riskyAuthenticationAttribute;
-        }
     }
 }

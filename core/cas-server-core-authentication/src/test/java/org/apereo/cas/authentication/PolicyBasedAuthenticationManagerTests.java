@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@Slf4j
 public class PolicyBasedAuthenticationManagerTests {
 
     private static final String HANDLER_A = "HandlerA";
@@ -88,7 +91,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -120,7 +123,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -148,7 +151,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         this.thrown.expect(AuthenticationException.class);
         manager.authenticate(transaction);
-        fail("Should have thrown AuthenticationException");
+        throw new AssertionError("Should have thrown AuthenticationException");
     }
 
     @Test
@@ -175,7 +178,8 @@ public class PolicyBasedAuthenticationManagerTests {
      * @throws Exception On errors.
      */
     private static AuthenticationHandler newMockHandler(final boolean success) throws Exception {
-        return newMockHandler("MockAuthenticationHandler" + System.nanoTime(), success);
+        final String name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
+        return newMockHandler(name, success);
     }
 
     /**
@@ -194,7 +198,7 @@ public class PolicyBasedAuthenticationManagerTests {
         if (success) {
             final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
 
-            final HandlerResult result = new DefaultHandlerResult(mock, mock(CredentialMetaData.class), p);
+            final AuthenticationHandlerExecutionResult result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());

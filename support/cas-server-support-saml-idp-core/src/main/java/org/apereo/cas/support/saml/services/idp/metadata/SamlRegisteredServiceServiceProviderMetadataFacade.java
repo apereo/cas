@@ -1,6 +1,8 @@
 
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -22,8 +24,6 @@ import org.opensaml.saml.saml2.metadata.Organization;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.SingleLogoutService;
 import org.opensaml.xmlsec.signature.Signature;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -41,20 +41,13 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class SamlRegisteredServiceServiceProviderMetadataFacade {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlRegisteredServiceServiceProviderMetadataFacade.class);
+@Slf4j
+@RequiredArgsConstructor
+public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
     private final EntityDescriptor entityDescriptor;
     private final MetadataResolver metadataResolver;
-
-    private SamlRegisteredServiceServiceProviderMetadataFacade(final SPSSODescriptor ssoDescriptor,
-                                                               final EntityDescriptor entityDescriptor,
-                                                               final MetadataResolver metadataResolver) {
-        this.ssoDescriptor = ssoDescriptor;
-        this.entityDescriptor = entityDescriptor;
-        this.metadataResolver = metadataResolver;
-    }
 
     /**
      * Adapt saml metadata and parse. Acts as a facade.
@@ -94,7 +87,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
             LOGGER.info("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
             final MetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
             LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
-                    registeredService.getServiceId(), entityID);
+                registeredService.getServiceId(), entityID);
 
             final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
             if (entityDescriptor == null) {
@@ -120,7 +113,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         final SPSSODescriptor ssoDescriptor = entityDescriptor.getSPSSODescriptor(SAMLConstants.SAML20P_NS);
         if (ssoDescriptor != null) {
             LOGGER.debug("Located SP SSODescriptor in metadata for [{}]. Metadata is valid until [{}]", entityID,
-                    ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
+                ObjectUtils.defaultIfNull(ssoDescriptor.getValidUntil(), "forever"));
             if (ssoDescriptor.getValidUntil() != null && ssoDescriptor.getValidUntil().isBeforeNow()) {
                 LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
                 return Optional.empty();
@@ -208,7 +201,7 @@ public final class SamlRegisteredServiceServiceProviderMetadataFacade {
         final List<XMLObject> children = this.ssoDescriptor.getOrderedChildren();
         if (children != null) {
             nameIdFormats.addAll(children.stream().filter(NameIDFormat.class::isInstance)
-                    .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
+                .map(child -> ((NameIDFormat) child).getFormat()).collect(Collectors.toList()));
         }
         return nameIdFormats;
     }

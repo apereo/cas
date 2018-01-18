@@ -1,13 +1,13 @@
 package org.apereo.cas.configuration.support;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.hibernate.cfg.Environment;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
@@ -22,24 +22,22 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public final class JpaBeans {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaBeans.class);
-    
-    protected JpaBeans() {
-    }
 
+@Slf4j
+@UtilityClass
+public class JpaBeans {
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool.
      * <p>
-     * If jpaProperties contains {@link AbstractJpaProperties#getDataSourceName()} a lookup will be
+     * If properties specify a data source name, a lookup will be
      * attempted. If the DataSource is not found via JNDI then CAS will attempt to
      * configure a Hikari connection pool.
      * <p>
      * Since the datasource beans are {@link org.springframework.cloud.context.config.annotation.RefreshScope},
      * they will be a proxied by Spring
      * and on some application servers there have been classloading issues. A workaround
-     * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
+     * for this is to use activate data source proxying via settings and then the dataSource will be
      * wrapped in an application level class. If that is an issue, don't do it.
      * <p>
      * If user wants to do lookup as resource, they may include {@code java:/comp/env}
@@ -64,7 +62,7 @@ public final class JpaBeans {
                 return new DataSourceProxy(containerDataSource);
             } catch (final DataSourceLookupFailureException e) {
                 LOGGER.warn("Lookup of datasource [{}] failed due to {} "
-                        + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
+                    + "falling back to configuration via JPA properties.", dataSourceName, e.getMessage());
             }
         }
 
@@ -76,10 +74,10 @@ public final class JpaBeans {
             bean.setJdbcUrl(jpaProperties.getUrl());
             bean.setUsername(jpaProperties.getUser());
             bean.setPassword(jpaProperties.getPassword());
-            bean.setLoginTimeout((int) jpaProperties.getPool().getMaxWait());
+            bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).toMillis());
             bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
             bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
-            bean.setIdleTimeout(jpaProperties.getIdleTimeout());
+            bean.setIdleTimeout((int) Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
             bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
             bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
             bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
@@ -123,7 +121,7 @@ public final class JpaBeans {
         if (StringUtils.isNotBlank(config.getPersistenceUnitName())) {
             bean.setPersistenceUnitName(config.getPersistenceUnitName());
         }
-        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[] {}));
+        bean.setPackagesToScan(config.getPackagesToScan().toArray(new String[]{}));
 
         if (config.getDataSource() != null) {
             bean.setDataSource(config.getDataSource());

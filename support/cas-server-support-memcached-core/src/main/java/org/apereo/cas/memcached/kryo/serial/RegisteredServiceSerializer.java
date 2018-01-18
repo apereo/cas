@@ -4,6 +4,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -33,6 +35,7 @@ import java.util.HashSet;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
     /**
@@ -41,12 +44,9 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      *
      * @return mock url
      */
+    @SneakyThrows
     private static URL getEmptyUrl() {
-        try {
-            return new URL("https://");
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return new URL("https://");
     }
 
     @Override
@@ -102,7 +102,7 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input, RegisteredServiceUsernameAttributeProvider.class));
         svc.setAccessStrategy(readObjectByReflection(kryo, input, RegisteredServiceAccessStrategy.class));
         svc.setMultifactorPolicy(readObjectByReflection(kryo, input, RegisteredServiceMultifactorPolicy.class));
-        
+
         svc.setInformationUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
         svc.setPrivacyUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
         svc.setProperties(kryo.readObject(input, HashMap.class));
@@ -131,20 +131,17 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      * @param clazz the clazz
      * @return the t
      */
+    @SneakyThrows
     private static <T> T readObjectByReflection(final Kryo kryo, final Input input, final Class<T> clazz) {
-        try {
-            final String className = kryo.readObject(input, String.class);
-            final Class<T> foundClass = (Class<T>) Class.forName(className);
-            final Object result = kryo.readObject(input, foundClass);
+        final String className = kryo.readObject(input, String.class);
+        final Class<T> foundClass = (Class<T>) Class.forName(className);
+        final Object result = kryo.readObject(input, foundClass);
 
-            if (!clazz.isAssignableFrom(result.getClass())) {
-                throw new ClassCastException("Result [" + result
-                    + " is of type " + result.getClass()
-                    + " when we were expecting " + clazz);
-            }
-            return (T) result;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
         }
+        return (T) result;
     }
 }

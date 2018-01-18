@@ -1,16 +1,17 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Map;
+import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -20,6 +21,11 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
@@ -27,8 +33,6 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     /**
      * Log instance.
      */
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethCompatiblePersistentIdGenerator.class);
-
     private static final String CONST_SEPARATOR = "!";
 
     private static final int CONST_DEFAULT_SALT_COUNT = 16;
@@ -39,32 +43,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @JsonProperty
     private String attribute;
 
-    /**
-     * Instantiates a new shibboleth compatible persistent id generator.
-     * The salt is initialized to a random alphanumeric string with length {@link #CONST_DEFAULT_SALT_COUNT}.
-     * The generated id is pseudo-anonymous which allows it to be continually uniquely
-     * identified by for a particular service.
-     */
-    public ShibbolethCompatiblePersistentIdGenerator() {
-    }
-    
     public ShibbolethCompatiblePersistentIdGenerator(final String salt) {
-        this.salt = salt;
-    }
-
-    public String getAttribute() {
-        return attribute;
-    }
-
-    public void setAttribute(final String attribute) {
-        this.attribute = attribute;
-    }
-
-    public String getSalt() {
-        return salt;
-    }
-
-    public void setSalt(final String salt) {
         this.salt = salt;
     }
 
@@ -82,8 +61,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @Override
     public String generate(final Principal principal, final Service service) {
         final Map<String, Object> attributes = principal.getAttributes();
-        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute)
-                ? attributes.get(this.attribute).toString() : principal.getId();
+        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
         return generate(principalId, service.getId());
     }
 
@@ -99,26 +77,11 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
             return false;
         }
         final ShibbolethCompatiblePersistentIdGenerator rhs = (ShibbolethCompatiblePersistentIdGenerator) obj;
-        return new EqualsBuilder()
-                .append(this.salt, rhs.salt)
-                .append(this.attribute, rhs.attribute)
-                .isEquals();
+        return new EqualsBuilder().append(this.salt, rhs.salt).append(this.attribute, rhs.attribute).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.salt)
-                .append(this.attribute)
-                .toHashCode();
+        return new HashCodeBuilder().append(this.salt).append(this.attribute).toHashCode();
     }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("attribute", attribute)
-                .append("salt", StringUtils.abbreviate(salt, 2))
-                .toString();
-    }
-    
 }

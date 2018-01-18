@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.jpa.JpaVendorAdapter;
-
 import javax.sql.DataSource;
 import java.io.Serializable;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Simple structure to collect and pass around pieces of JPA config data reusable across
@@ -13,9 +15,13 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@Setter
 public class JpaConfigDataHolder implements Serializable {
 
     private static final long serialVersionUID = -3940423575751579622L;
+
     private final JpaVendorAdapter jpaVendorAdapter;
 
     private final String persistenceUnitName;
@@ -24,35 +30,15 @@ public class JpaConfigDataHolder implements Serializable {
 
     private final DataSource dataSource;
 
-    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
-                               final String persistenceUnitName,
-                               final List<String> packagesToScan) {
+    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter, final String persistenceUnitName, final List<String> packagesToScan) {
         this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
     }
 
-    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter,
-                               final String persistenceUnitName,
-                               final List<String> packagesToScan,
-                               final DataSource dataSource) {
+    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter, final String persistenceUnitName,
+                               final List<String> packagesToScan, final DataSource dataSource) {
         this.jpaVendorAdapter = jpaVendorAdapter;
         this.persistenceUnitName = persistenceUnitName;
         this.packagesToScan = packagesToScan;
         this.dataSource = dataSource;
-    }
-
-    public JpaVendorAdapter getJpaVendorAdapter() {
-        return jpaVendorAdapter;
-    }
-
-    public String getPersistenceUnitName() {
-        return persistenceUnitName;
-    }
-
-    public List<String> getPackagesToScan() {
-        return packagesToScan;
-    }
-
-    public DataSource getDataSource() {
-        return dataSource;
     }
 }

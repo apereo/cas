@@ -1,20 +1,18 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -27,8 +25,20 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+import lombok.Setter;
+
+
+/**
+ * Abstract class to override supports so that we don't need to duplicate the
+ * check for UsernamePasswordCredential.
+ *
+ * @author Scott Battaglia
+ * @author Marvin S. Addison
+ * @since 3.0.0
+ */
+@Slf4j
+@Setter
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractUsernamePasswordAuthenticationHandler.class);
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
 
@@ -36,74 +46,53 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
 
     private PasswordPolicyConfiguration passwordPolicyConfiguration;
 
-    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                         final PrincipalFactory principalFactory,
-                                                         final Integer order) {
+    public AbstractUsernamePasswordAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
         final UsernamePasswordCredential originalUserPass = (UsernamePasswordCredential) credential;
         final UsernamePasswordCredential userPass = new UsernamePasswordCredential(originalUserPass.getUsername(), originalUserPass.getPassword());
-
         if (StringUtils.isBlank(userPass.getUsername())) {
             throw new AccountNotFoundException("Username is null.");
         }
-
         LOGGER.debug("Transforming credential username via [{}]", this.principalNameTransformer.getClass().getName());
         final String transformedUsername = this.principalNameTransformer.transform(userPass.getUsername());
         if (StringUtils.isBlank(transformedUsername)) {
             throw new AccountNotFoundException("Transformed username is null.");
         }
-
         if (StringUtils.isBlank(userPass.getPassword())) {
             throw new FailedLoginException("Password is null.");
         }
-
-        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(), transformedUsername);
+        LOGGER.debug("Attempting to encode credential password via [{}] for [{}]", this.passwordEncoder.getClass().getName(),
+            transformedUsername);
         final String transformedPsw = this.passwordEncoder.encode(userPass.getPassword());
         if (StringUtils.isBlank(transformedPsw)) {
             throw new AccountNotFoundException("Encoded password is null.");
         }
-
         userPass.setUsername(transformedUsername);
         userPass.setPassword(transformedPsw);
-
         LOGGER.debug("Attempting authentication internally for transformed credential [{}]", userPass);
         return authenticateUsernamePasswordInternal(userPass, originalUserPass.getPassword());
     }
-
 
     /**
      * Authenticates a username/password credential by an arbitrary strategy with extra parameter original credential password before
      * encoding password. Override it if implementation need to use original password for authentication.
      *
-     * @param transformedCredential the credential object bearing the transformed username and password.
-     * @param originalPassword      original password from credential before password encoding
-     * @return HandlerResult resolved from credential on authentication success or null if no principal could be resolved
+     * @param credential       the credential object bearing the transformed username and password.
+     * @param originalPassword original password from credential before password encoding
+     * @return AuthenticationHandlerExecutionResult resolved from credential on authentication success or null if no principal could be resolved
      * from the credential.
      * @throws GeneralSecurityException On authentication failure.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult authenticateUsernamePasswordInternal(UsernamePasswordCredential transformedCredential, String originalPassword)
-            throws GeneralSecurityException, PreventedException;
+    protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential,
+                                                                                                 String originalPassword) throws GeneralSecurityException, PreventedException;
 
     protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
         return this.passwordPolicyConfiguration;
-    }
-
-    public void setPasswordEncoder(final PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
-    }
-
-    public void setPrincipalNameTransformer(final PrincipalNameTransformer principalNameTransformer) {
-        this.principalNameTransformer = principalNameTransformer;
-    }
-
-    public void setPasswordPolicyConfiguration(final PasswordPolicyConfiguration passwordPolicyConfiguration) {
-        this.passwordPolicyConfiguration = passwordPolicyConfiguration;
     }
 
     @Override
@@ -116,11 +105,9 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
             LOGGER.debug("No credential selection criteria is defined for handler [{}]. Credential is accepted for further processing", getName());
             return true;
         }
-
         LOGGER.debug("Examining credential [{}] eligibility for authentication handler [{}]", credential, getName());
         final boolean result = this.credentialSelectionPredicate.test(credential);
-        LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]",
-                credential, getName(), BooleanUtils.toStringTrueFalse(result));
+        LOGGER.debug("Credential [{}] eligibility is [{}] for authentication handler [{}]", credential, getName(), BooleanUtils.toStringTrueFalse(result));
         return result;
     }
 
@@ -135,6 +122,4 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
     protected boolean matches(final CharSequence charSequence, final String password) {
         return this.passwordEncoder.matches(charSequence, password);
     }
-
-
 }

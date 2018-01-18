@@ -1,11 +1,13 @@
 package org.apereo.cas.configuration.model.webapp;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for webflow.
@@ -14,9 +16,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-webflow")
+@Slf4j
+@Getter
+@Setter
 public class WebflowProperties implements Serializable {
 
     private static final long serialVersionUID = 4949978905279568311L;
+
     /**
      * Encryption/signing setting for webflow.
      */
@@ -58,64 +64,11 @@ public class WebflowProperties implements Serializable {
      */
     private Groovy groovy = new Groovy();
 
-    public Groovy getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final Groovy groovy) {
-        this.groovy = groovy;
-    }
-
-    public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-        return crypto;
-    }
-
-    public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-        this.crypto = crypto;
-    }
-
-    public boolean isAutoconfigure() {
-        return autoconfigure;
-    }
-
-    public void setAutoconfigure(final boolean autoconfigure) {
-        this.autoconfigure = autoconfigure;
-    }
-
-    public boolean isRefresh() {
-        return refresh;
-    }
-
-    public void setRefresh(final boolean refresh) {
-        this.refresh = refresh;
-    }
-
-    public boolean isAlwaysPauseRedirect() {
-        return alwaysPauseRedirect;
-    }
-
-    public void setAlwaysPauseRedirect(final boolean alwaysPauseRedirect) {
-        this.alwaysPauseRedirect = alwaysPauseRedirect;
-    }
-
-    public boolean isRedirectSameState() {
-        return redirectSameState;
-    }
-
-    public void setRedirectSameState(final boolean redirectSameState) {
-        this.redirectSameState = redirectSameState;
-    }
-
-    public WebflowSessionManagementProperties getSession() {
-        return session;
-    }
-
-    public void setSession(final WebflowSessionManagementProperties session) {
-        this.session = session;
-    }
-
     @RequiresModule(name = "cas-server-core-webflow", automated = true)
+    @Getter
+    @Setter
     public static class Groovy extends SpringResourceProperties {
+
         private static final long serialVersionUID = 8079027843747126083L;
     }
 }

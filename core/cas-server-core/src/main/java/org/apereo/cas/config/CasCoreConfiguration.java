@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
@@ -17,12 +18,11 @@ import org.apereo.cas.services.ServiceContext;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -38,8 +38,11 @@ import java.util.List;
 @Configuration("casCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class CasCoreConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreConfiguration.class);
+
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -86,15 +89,11 @@ public class CasCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
-            @Qualifier("authenticationServiceSelectionPlan")
-            final AuthenticationServiceSelectionPlan selectionStrategies,
-            @Qualifier("principalFactory")
-            final PrincipalFactory principalFactory,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor cipherExecutor) {
-        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, 
-                servicesManager, logoutManager,
-                selectionStrategies, authenticationPolicyFactory(), 
-                principalFactory, cipherExecutor);
+        @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan selectionStrategies,
+        @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+        @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor) {
+        return new DefaultCentralAuthenticationService(applicationEventPublisher,
+            ticketRegistry, servicesManager, logoutManager, ticketFactory, selectionStrategies,
+            authenticationPolicyFactory(), principalFactory, cipherExecutor);
     }
 }

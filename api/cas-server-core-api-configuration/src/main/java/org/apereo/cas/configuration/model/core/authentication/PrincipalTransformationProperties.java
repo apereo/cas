@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link PrincipalTransformationProperties}.
@@ -15,23 +17,25 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class PrincipalTransformationProperties implements Serializable {
 
     private static final long serialVersionUID = 1678602647607236322L;
 
     public enum CaseConversion {
+
         /**
          * No conversion.
          */
-        NONE,
-        /**
+        NONE, /**
          * Lowercase conversion.
          */
-        UPPERCASE,
-        /**
+        UPPERCASE, /**
          * Uppcase conversion.
          */
-        LOWERCASE,
+        LOWERCASE
     }
 
     /**
@@ -63,48 +67,11 @@ public class PrincipalTransformationProperties implements Serializable {
      */
     private CaseConversion caseConversion = CaseConversion.NONE;
 
-    public String getPrefix() {
-        return prefix;
-    }
-
-    public void setPrefix(final String prefix) {
-        this.prefix = prefix;
-    }
-
-    public String getSuffix() {
-        return suffix;
-    }
-
-    public void setSuffix(final String suffix) {
-        this.suffix = suffix;
-    }
-
-    public CaseConversion getCaseConversion() {
-        return caseConversion;
-    }
-
-    public void setCaseConversion(final CaseConversion caseConversion) {
-        this.caseConversion = caseConversion;
-    }
-
-    public String getPattern() {
-        return pattern;
-    }
-
-    public void setPattern(final String pattern) {
-        this.pattern = pattern;
-    }
-
-    public Groovy getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final Groovy groovy) {
-        this.groovy = groovy;
-    }
-
     @RequiresModule(name = "cas-server-core-authentication", automated = true)
+    @Getter
+    @Setter
     public static class Groovy extends SpringResourceProperties {
+
         private static final long serialVersionUID = 8079027843747126083L;
     }
 }

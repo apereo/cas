@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.core.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link TicketGrantingTicketProperties}.
@@ -11,9 +13,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class TicketGrantingTicketProperties implements Serializable {
 
     private static final long serialVersionUID = 2349079252583399336L;
+
     /**
      * Maximum length of TGTs.
      */
@@ -57,134 +63,53 @@ public class TicketGrantingTicketProperties implements Serializable {
      */
     private RememberMe rememberMe = new RememberMe();
 
-    public RememberMe getRememberMe() {
-        return rememberMe;
-    }
-
-    public void setRememberMe(final RememberMe rememberMe) {
-        this.rememberMe = rememberMe;
-    }
-
-    public Timeout getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(final Timeout timeout) {
-        this.timeout = timeout;
-    }
-
-    public ThrottledTimeout getThrottledTimeout() {
-        return throttledTimeout;
-    }
-
-    public void setThrottledTimeout(final ThrottledTimeout throttledTimeout) {
-        this.throttledTimeout = throttledTimeout;
-    }
-
-    public HardTimeout getHardTimeout() {
-        return hardTimeout;
-    }
-
-    public void setHardTimeout(final HardTimeout hardTimeout) {
-        this.hardTimeout = hardTimeout;
-    }
-
-    public boolean isOnlyTrackMostRecentSession() {
-        return onlyTrackMostRecentSession;
-    }
-
-    public int getTimeToKillInSeconds() {
-        return timeToKillInSeconds;
-    }
-
-    public void setTimeToKillInSeconds(final int timeToKillInSeconds) {
-        this.timeToKillInSeconds = timeToKillInSeconds;
-    }
-
-    public void setOnlyTrackMostRecentSession(final boolean onlyTrackMostRecentSession) {
-        this.onlyTrackMostRecentSession = onlyTrackMostRecentSession;
-    }
-
-    public int getMaxTimeToLiveInSeconds() {
-        return maxTimeToLiveInSeconds;
-    }
-
-    public void setMaxTimeToLiveInSeconds(final int maxTimeToLiveInSeconds) {
-        this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
-    }
-
-    public int getMaxLength() {
-        return maxLength;
-    }
-
-    public void setMaxLength(final int maxLength) {
-        this.maxLength = maxLength;
-    }
-
+    @Getter
+    @Setter
     public static class HardTimeout implements Serializable {
+
         private static final long serialVersionUID = 4160963910346416908L;
+
         /**
          * Timeout in seconds to kill the session and consider tickets expired.
          */
         private long timeToKillInSeconds;
-
-        public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
-        }
-
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-            this.timeToKillInSeconds = timeToKillInSeconds;
-        }
     }
 
+    @Getter
+    @Setter
     public static class Timeout implements Serializable {
 
         private static final long serialVersionUID = 8635419913795245907L;
+
         /**
          * Maximum time in seconds. for TGTs to be live in CAS server.
          */
         private int maxTimeToLiveInSeconds;
-
-        public int getMaxTimeToLiveInSeconds() {
-            return maxTimeToLiveInSeconds;
-        }
-
-        public void setMaxTimeToLiveInSeconds(final int maxTimeToLiveInSeconds) {
-            this.maxTimeToLiveInSeconds = maxTimeToLiveInSeconds;
-        }
     }
-    
+
+    @Getter
+    @Setter
     public static class ThrottledTimeout implements Serializable {
+
         private static final long serialVersionUID = -2370751379747804646L;
+
         /**
          * Timeout in seconds to kill the session and consider tickets expired.
          */
         private long timeToKillInSeconds;
+
         /**
          * Timeout in between each attempt.
          */
         private long timeInBetweenUsesInSeconds;
-
-        public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
-        }
-
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-            this.timeToKillInSeconds = timeToKillInSeconds;
-        }
-
-        public long getTimeInBetweenUsesInSeconds() {
-            return timeInBetweenUsesInSeconds;
-        }
-
-        public void setTimeInBetweenUsesInSeconds(final long timeInBetweenUsesInSeconds) {
-            this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
-        }
     }
-    
+
+    @Getter
+    @Setter
     public static class RememberMe implements Serializable {
 
         private static final long serialVersionUID = 1899959269597512610L;
+
         /**
          * Flag to indicate whether remember-me facility is enabled.
          */
@@ -194,21 +119,5 @@ public class TicketGrantingTicketProperties implements Serializable {
          * Time in seconds after which remember-me enabled SSO session will be destroyed.
          */
         private long timeToKillInSeconds = 1_209_600;
-
-        public boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public long getTimeToKillInSeconds() {
-            return timeToKillInSeconds;
-        }
-
-        public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-            this.timeToKillInSeconds = timeToKillInSeconds;
-        }
     }
 }

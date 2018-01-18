@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -7,8 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -25,13 +25,13 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class TemplatedMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "/idp/metadata";
 
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TemplatedMetadataAndCertificatesGenerationService.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -43,37 +43,31 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
      * Initializes a new Generate saml metadata.
      */
     @PostConstruct
+    @SneakyThrows
     public void initialize() {
-        try {
-            final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-            final Resource metadataLocation = idp.getMetadata().getLocation();
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final Resource metadataLocation = idp.getMetadata().getLocation();
 
-            if (!metadataLocation.exists()) {
-                LOGGER.debug("Metadata directory [{}] does not exist. Creating...", metadataLocation);
-                if (!metadataLocation.getFile().mkdir()) {
-                    throw new IllegalArgumentException("Metadata directory location " + metadataLocation + " cannot be located/created");
-                }
+        if (!metadataLocation.exists()) {
+            LOGGER.debug("Metadata directory [{}] does not exist. Creating...", metadataLocation);
+            if (!metadataLocation.getFile().mkdir()) {
+                throw new IllegalArgumentException("Metadata directory location " + metadataLocation + " cannot be located/created");
             }
-            LOGGER.info("Metadata directory location is at [{}] with entityID [{}]", metadataLocation, idp.getEntityId());
-
-            performGenerationSteps();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
+        LOGGER.info("Metadata directory location is at [{}] with entityID [{}]", metadataLocation, idp.getEntityId());
+
+        performGenerationSteps();
     }
-    
+
     /**
      * Is metadata missing?
      *
      * @return true/false
      */
+    @SneakyThrows
     public boolean isMetadataMissing() {
-        try {
-            final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-            return !idp.getMetadata().getMetadataFile().exists();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        return !idp.getMetadata().getMetadataFile().exists();
     }
 
     @Override
@@ -107,13 +101,10 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         return casProperties.getServer().getPrefix().concat("/idp");
     }
 
+    @SneakyThrows
     private String getIdPHostName() {
-        try {
-            final URL url = new URL(casProperties.getServer().getPrefix());
-            return url.getHost();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final URL url = new URL(casProperties.getServer().getPrefix());
+        return url.getHost();
     }
 
     /**
@@ -152,7 +143,7 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         if (signingCert.exists()) {
             FileUtils.forceDelete(signingCert);
         }
-        
+
         generator.setCertificateFile(signingCert);
         final File signingKey = idp.getMetadata().getSigningKeyFile().getFile();
         if (signingKey.exists()) {
@@ -184,11 +175,11 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
         try (StringWriter writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             final String metadata = writer.toString()
-                    .replace("${entityId}", idp.getEntityId())
-                    .replace("${scope}", idp.getScope())
-                    .replace("${idpEndpointUrl}", getIdPEndpointUrl())
-                    .replace("${encryptionKey}", encryptionKey)
-                    .replace("${signingKey}", signingKey);
+                .replace("${entityId}", idp.getEntityId())
+                .replace("${scope}", idp.getScope())
+                .replace("${idpEndpointUrl}", getIdPEndpointUrl())
+                .replace("${encryptionKey}", encryptionKey)
+                .replace("${signingKey}", signingKey);
             FileUtils.write(idp.getMetadata().getMetadataFile(), metadata, StandardCharsets.UTF_8);
         }
     }

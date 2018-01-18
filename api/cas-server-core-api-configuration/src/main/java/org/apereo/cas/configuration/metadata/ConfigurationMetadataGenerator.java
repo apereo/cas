@@ -8,6 +8,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.javaparser.JavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.Modifier;
+import com.github.javaparser.ast.body.ClassOrInterfaceDeclaration;
 import com.github.javaparser.ast.body.FieldDeclaration;
 import com.github.javaparser.ast.body.VariableDeclarator;
 import com.github.javaparser.ast.expr.BooleanLiteralExpr;
@@ -16,6 +18,8 @@ import com.github.javaparser.ast.expr.LiteralStringValueExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.base.Predicate;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
@@ -32,11 +36,10 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
+import org.springframework.core.io.Resource;
 import org.springframework.util.ReflectionUtils;
 
 import java.io.File;
@@ -75,8 +78,10 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+
+@Slf4j
 public class ConfigurationMetadataGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigurationMetadataGenerator.class);
+
     private static final Pattern PATTERN_GENERICS = Pattern.compile(".+\\<(.+)\\>");
     private static final Pattern NESTED_TYPE_PATTERN = Pattern.compile("java\\.util\\.\\w+<(org\\.apereo\\.cas\\..+)>");
 
@@ -96,7 +101,9 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        new ConfigurationMetadataGenerator(args[0], args[1]).execute();
+        final String buildDir = args[0];
+        final String projectDir = args[1];
+        new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
     }
 
     /**
@@ -119,16 +126,16 @@ public class ConfigurationMetadataGenerator {
         final Set<ConfigurationMetadataProperty> collectedGroups = new HashSet<>();
 
         properties.stream()
-                .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
-                .forEach(Unchecked.consumer(p -> {
-                    final Matcher matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
-                    final boolean indexBrackets = matcher.matches();
-                    final String typeName = matcher.group(1);
-                    final String typePath = buildTypeSourcePath(typeName);
+            .filter(p -> NESTED_TYPE_PATTERN.matcher(p.getType()).matches())
+            .forEach(Unchecked.consumer(p -> {
+                final Matcher matcher = NESTED_TYPE_PATTERN.matcher(p.getType());
+                final boolean indexBrackets = matcher.matches();
+                final String typeName = matcher.group(1);
+                final String typePath = buildTypeSourcePath(typeName);
 
-                    parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
+                parseCompilationUnit(collectedProps, collectedGroups, p, typePath, typeName, indexBrackets);
 
-                }));
+            }));
 
         properties.addAll(collectedProps);
         groups.addAll(collectedGroups);
@@ -149,6 +156,7 @@ public class ConfigurationMetadataGenerator {
         return sourcePath + "/src/main/java/" + newName + ".java";
     }
 
+    @SneakyThrows
     private void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
                                       final Set<ConfigurationMetadataProperty> collectedGroups,
                                       final ConfigurationMetadataProperty p,
@@ -159,8 +167,17 @@ public class ConfigurationMetadataGenerator {
         try (InputStream is = new FileInputStream(typePath)) {
             final CompilationUnit cu = JavaParser.parse(is);
             new FieldVisitor(collectedProps, collectedGroups, indexNameWithBrackets, typeName).visit(cu, p);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            if (cu.getTypes().size() > 0) {
+                final ClassOrInterfaceDeclaration decl = ClassOrInterfaceDeclaration.class.cast(cu.getType(0));
+                for (int i = 0; i < decl.getExtendedTypes().size(); i++) {
+                    final ClassOrInterfaceType parentType = decl.getExtendedTypes().get(i);
+                    final Class parentClazz = locatePropertiesClassForType(parentType);
+                    final String parentTypePath = buildTypeSourcePath(parentClazz.getName());
+
+                    parseCompilationUnit(collectedProps, collectedGroups, p,
+                        parentTypePath, parentClazz.getName(), indexNameWithBrackets);
+                }
+            }
         }
     }
 
@@ -184,15 +201,17 @@ public class ConfigurationMetadataGenerator {
             if (field.getVariables().isEmpty()) {
                 throw new IllegalArgumentException("Field " + field + " has no variable definitions");
             }
+            final VariableDeclarator var = field.getVariable(0);
+            if (field.getModifiers().contains(Modifier.STATIC)) {
+                LOGGER.debug("Field [{}] is static and will be ignored for metadata generation", var.getNameAsString());
+                return;
+            }
 
             if (field.getJavadoc().isPresent()) {
                 final ConfigurationMetadataProperty prop = createConfigurationProperty(field, property);
                 processNestedClassOrInterfaceTypeIfNeeded(field, prop);
             } else {
-                final VariableDeclarator var = field.getVariable(0);
-                if (!var.getNameAsString().matches("serialVersionUID")) {
-                    LOGGER.error("Field " + field + " has no Javadoc defined");
-                }
+                LOGGER.error("Field " + field + " has no Javadoc defined");
             }
         }
 
@@ -200,9 +219,9 @@ public class ConfigurationMetadataGenerator {
                                                                           final ConfigurationMetadataProperty arg) {
             final VariableDeclarator variable = n.getVariables().get(0);
             final String name = StreamSupport.stream(RelaxedNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
-                    .map(Object::toString)
-                    .findFirst()
-                    .orElse(variable.getNameAsString());
+                .map(Object::toString)
+                .findFirst()
+                .orElse(variable.getNameAsString());
 
             final String indexedGroup = arg.getName().concat(indexNameWithBrackets ? "[]" : StringUtils.EMPTY);
             final String indexedName = indexedGroup.concat(".").concat(name);
@@ -214,13 +233,12 @@ public class ConfigurationMetadataGenerator {
             prop.setName(indexedName);
             prop.setId(indexedName);
 
-
             final String elementType = n.getElementType().asString();
             if (elementType.equals(String.class.getSimpleName())
-                    || elementType.equals(Integer.class.getSimpleName())
-                    || elementType.equals(Long.class.getSimpleName())
-                    || elementType.equals(Double.class.getSimpleName())
-                    || elementType.equals(Float.class.getSimpleName())) {
+                || elementType.equals(Integer.class.getSimpleName())
+                || elementType.equals(Long.class.getSimpleName())
+                || elementType.equals(Double.class.getSimpleName())
+                || elementType.equals(Float.class.getSimpleName())) {
                 prop.setType("java.lang." + elementType);
             } else {
                 prop.setType(elementType);
@@ -259,11 +277,13 @@ public class ConfigurationMetadataGenerator {
         }
 
         private boolean shouldTypeBeExcluded(final ClassOrInterfaceType type) {
-            return type.getNameAsString().matches(String.class.getSimpleName() + "|"
+            return type.getNameAsString().matches(
+                String.class.getSimpleName() + "|"
                     + Integer.class.getSimpleName() + "|"
                     + Double.class.getSimpleName() + "|"
                     + Long.class.getSimpleName() + "|"
                     + Float.class.getSimpleName() + "|"
+                    + Boolean.class.getSimpleName() + "|"
                     + PrincipalTransformationProperties.CaseConversion.class.getSimpleName() + "|"
                     + QueryType.class.getSimpleName() + "|"
                     + AbstractLdapProperties.LdapType.class.getSimpleName() + "|"
@@ -271,6 +291,7 @@ public class ConfigurationMetadataGenerator {
                     + PasswordPolicyProperties.PasswordPolicyHandlingOptions.class.getSimpleName() + "|"
                     + LdapSearchEntryHandlersProperties.SearchEntryHandlerTypes.class.getSimpleName() + "|"
                     + Map.class.getSimpleName() + "|"
+                    + Resource.class.getSimpleName() + "|"
                     + List.class.getSimpleName() + "|"
                     + Set.class.getSimpleName());
         }
@@ -286,19 +307,19 @@ public class ConfigurationMetadataGenerator {
         final Predicate<String> filterResults = s -> s.endsWith(type.getNameAsString());
         final String packageName = ConfigurationMetadataGenerator.class.getPackage().getName();
         final Reflections reflections =
-                new Reflections(new ConfigurationBuilder()
-                        .filterInputsBy(filterInputs)
-                        .setUrls(ClasspathHelper.forPackage(packageName))
-                        .setScanners(new TypeElementsScanner()
-                                        .includeFields(false)
-                                        .includeMethods(false)
-                                        .includeAnnotations(false)
-                                        .filterResultsBy(filterResults),
-                                new SubTypesScanner(false)));
+            new Reflections(new ConfigurationBuilder()
+                .filterInputsBy(filterInputs)
+                .setUrls(ClasspathHelper.forPackage(packageName))
+                .setScanners(new TypeElementsScanner()
+                        .includeFields(false)
+                        .includeMethods(false)
+                        .includeAnnotations(false)
+                        .filterResultsBy(filterResults),
+                    new SubTypesScanner(false)));
         final Class clz = reflections.getSubTypesOf(Serializable.class).stream()
-                .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
+            .filter(c -> c.getSimpleName().equalsIgnoreCase(type.getNameAsString()))
+            .findFirst()
+            .orElseThrow(() -> new IllegalArgumentException("Cant locate class for " + type.getNameAsString()));
         cachedPropertiesClasses.put(type.getNameAsString(), clz);
         return clz;
     }
@@ -313,10 +334,10 @@ public class ConfigurationMetadataGenerator {
                 final String propName = StringUtils.substringAfterLast(entry.getName(), ".");
                 final String groupName = StringUtils.substringBeforeLast(entry.getName(), ".");
                 final ConfigurationMetadataProperty grp = groups
-                        .stream()
-                        .filter(g -> g.getName().equalsIgnoreCase(groupName))
-                        .findFirst()
-                        .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
+                    .stream()
+                    .filter(g -> g.getName().equalsIgnoreCase(groupName))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("Cant locate group " + groupName));
 
                 final Matcher matcher = PATTERN_GENERICS.matcher(grp.getType());
                 final String className = matcher.find() ? matcher.group(1) : grp.getType();
@@ -328,10 +349,10 @@ public class ConfigurationMetadataGenerator {
 
                 if (clazz.isAnnotationPresent(RequiresModule.class)) {
                     final RequiresModule annotation = Arrays.stream(clazz.getAnnotations())
-                            .filter(a -> a.annotationType().equals(RequiresModule.class))
-                            .findFirst()
-                            .map(RequiresModule.class::cast)
-                            .get();
+                        .filter(a -> a.annotationType().equals(RequiresModule.class))
+                        .findFirst()
+                        .map(RequiresModule.class::cast)
+                        .get();
                     final ValueHint valueHint = new ValueHint();
                     valueHint.setValue(Stream.of(RequiresModule.class.getName(), annotation.automated()).collect(Collectors.toList()));
                     valueHint.setDescription(annotation.name());
@@ -339,8 +360,8 @@ public class ConfigurationMetadataGenerator {
                 }
 
                 final boolean foundRequiredProperty = StreamSupport.stream(RelaxedNames.forCamelCase(propName).spliterator(), false)
-                        .map(n -> ReflectionUtils.findField(clazz, n))
-                        .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
+                    .map(n -> ReflectionUtils.findField(clazz, n))
+                    .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
 
                 if (foundRequiredProperty) {
                     final ValueHint valueHint = new ValueHint();

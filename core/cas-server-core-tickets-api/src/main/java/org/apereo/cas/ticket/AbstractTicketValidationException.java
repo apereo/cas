@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
 /**
@@ -8,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Scott Battaglia
  * @since 4.2.0
  */
+@Slf4j
 public abstract class AbstractTicketValidationException extends AbstractTicketException {
     /** The code description. */
     protected static final String CODE = "INVALID_TICKET";

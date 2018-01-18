@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 
 import java.util.HashSet;
@@ -13,6 +14,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class ChainingMetadataResolverAdapter implements MetadataResolverAdapter {
 
     private final Set<MetadataResolverAdapter> adapters;

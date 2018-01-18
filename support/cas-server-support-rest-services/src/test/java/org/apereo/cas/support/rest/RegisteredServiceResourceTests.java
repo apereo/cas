@@ -1,21 +1,31 @@
 package org.apereo.cas.support.rest;
 
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CentralAuthenticationService;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationException;
+import org.apereo.cas.authentication.AuthenticationManager;
+import org.apereo.cas.authentication.AuthenticationTransaction;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
+import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
+import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
+import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
+import org.apereo.cas.util.EncodingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.http.MediaType;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
-import java.util.HashMap;
+import java.io.StringWriter;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -29,107 +39,85 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * @since 4.0.0
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
+@Slf4j
 public class RegisteredServiceResourceTests {
-
-    private static final String SERVICE_ID = "serviceId";
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
-    @Mock
-    private CentralAuthenticationService casMock;
 
     @Mock
     private ServicesManager servicesManager;
 
     @Test
     public void checkRegisteredServiceNotAuthorized() throws Exception {
-        configureCasMockToCreateValidTGT();
-
-        final RegisteredServiceResource registeredServiceResource = new RegisteredServiceResource(servicesManager, casMock, "memberOf", "staff");
-
-        configureMockMvcFor(registeredServiceResource)
-                .perform(post("/cas/v1/services/add/TGT-1")
-                .param(SERVICE_ID, SERVICE_ID)
-                .param(NAME, NAME)
-                .param(DESCRIPTION, DESCRIPTION)
-                .param("evaluationOrder", "1000")
-                .param("enabled", "false")
-                .param("ssoEnabled", "true"))
-                .andExpect(status().isBadRequest());
+        runTest("memberOf", "something", "test:test", status().isForbidden());
     }
 
     @Test
     public void checkRegisteredServiceNormal() throws Exception {
-        configureCasMockToCreateValidTGT();
-
-        final RegisteredServiceResource registeredServiceResource = new RegisteredServiceResource(servicesManager, casMock, "memberOf", "cas");
-
-        configureMockMvcFor(registeredServiceResource)
-                .perform(post("/cas/v1/services/add/TGT-1")
-                .param(SERVICE_ID, SERVICE_ID)
-                .param(NAME, NAME)
-                .param(DESCRIPTION, DESCRIPTION)
-                .param("evaluationOrder", "1000")
-                .param("enabled", "false")
-                .param("ssoEnabled", "true"))
-                .andExpect(status().isOk());
+        runTest("memberOf", "admin", "test:test", status().isOk());
     }
 
     @Test
-    public void checkRegisteredServiceNoTgt() throws Exception {
-        final RegisteredServiceResource registeredServiceResource = new RegisteredServiceResource(servicesManager, casMock, "memberOf", "staff");
-
-        configureMockMvcFor(registeredServiceResource)
-                .perform(post("/cas/v1/services/add/TGT-1")
-                .param(SERVICE_ID, SERVICE_ID)
-                .param(NAME, NAME)
-                .param(DESCRIPTION, DESCRIPTION)
-                .param("evaluationOrder", "1000")
-                .param("enabled", "false")
-                .param("ssoEnabled", "true"))
-                .andExpect(status().isNotFound());
+    public void checkRegisteredServiceNoAuthn() throws Exception {
+        runTest("memberOf", "something", "testfail:something", status().isUnauthorized());
     }
-
+    
     @Test
     public void checkRegisteredServiceNoAttributeValue() throws Exception {
-        final RegisteredServiceResource registeredServiceResource = new RegisteredServiceResource(servicesManager, casMock, "Test", StringUtils.EMPTY);
-
-        configureMockMvcFor(registeredServiceResource)
-                .perform(post("/cas/v1/services/add/TGT-12345"))
-                .andExpect(status().isBadRequest());
+        runTest("memberOf", null, "test:test", status().isForbidden());
     }
 
     @Test
-    public void checkRegisteredServiceNoAttributeName() throws Exception {
-        final RegisteredServiceResource registeredServiceResource = new RegisteredServiceResource(servicesManager, casMock, null, "staff");
-
-        configureMockMvcFor(registeredServiceResource)
-                .perform(post("/cas/v1/services/add/TGT-12345"))
-                .andExpect(status().isBadRequest());
-    }
-
-    @Test
-    public void checkRegisteredServiceNoAttributes() throws Exception {
-        configureMockMvcFor(new RegisteredServiceResource(servicesManager, casMock, null, null))
-                .perform(post("/cas/v1/services/add/TGT-12345"))
-                .andExpect(status().isBadRequest());
-    }
-
-    private void configureCasMockToCreateValidTGT() {
-        final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
-        when(tgt.getId()).thenReturn("TGT-1");
-        when(tgt.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication(
-                CoreAuthenticationTestUtils.getPrincipal("casuser",
-                        new HashMap<>(RegisteredServiceTestUtils.getTestAttributes()))));
-        when(this.casMock.getTicket(anyString(), any())).thenReturn(tgt);
-        when(this.servicesManager.save(any(RegisteredService.class))).thenReturn(
-                RegisteredServiceTestUtils.getRegisteredService("TEST"));
+    public void checkRegisteredServiceNoAttribute() throws Exception {
+        runTest(null, null, "test:test", status().isForbidden());
     }
 
     private MockMvc configureMockMvcFor(final RegisteredServiceResource registeredServiceResource) {
+        final DefaultRegisteredServiceJsonSerializer sz = new DefaultRegisteredServiceJsonSerializer();
+        final MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter(sz.getObjectMapper());
         return MockMvcBuilders.standaloneSetup(registeredServiceResource)
-                .defaultRequest(get("/")
-                        .contextPath("/cas")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .build();
+            .defaultRequest(get("/")
+                .contextPath("/cas")
+                .contentType(MediaType.APPLICATION_JSON))
+            .setMessageConverters(converter)
+            .build();
+    }
+
+    private RegisteredServiceResource getRegisteredServiceResource(final String attrName, final String attrValue) {
+        final AuthenticationManager mgmr = mock(AuthenticationManager.class);
+        when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("test")))).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(mgmr.authenticate(argThat(new AuthenticationCredentialMatcher("testfail")))).thenThrow(AuthenticationException.class);
+        
+        return new RegisteredServiceResource(new DefaultAuthenticationSystemSupport(
+            new DefaultAuthenticationTransactionManager(mgmr),
+            new DefaultPrincipalElectionStrategy()),
+            new WebApplicationServiceFactory(), servicesManager,
+            attrName, attrValue);
+    }
+
+    private void runTest(final String attrName, final String attrValue, final String credentials, final ResultMatcher result) throws Exception {
+        final RegisteredServiceResource registeredServiceResource = getRegisteredServiceResource(attrName, attrValue);
+        final RegisteredService service = RegisteredServiceTestUtils.getRegisteredService();
+        final DefaultRegisteredServiceJsonSerializer sz = new DefaultRegisteredServiceJsonSerializer();
+        try (StringWriter writer = new StringWriter()) {
+            sz.to(writer, service);
+            configureMockMvcFor(registeredServiceResource)
+                .perform(post("/cas/v1/services")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .header("Authorization", "Basic " + EncodingUtils.encodeBase64(credentials))
+                    .content(writer.toString()))
+                .andExpect(result);
+        }
+    }
+
+    private static class AuthenticationCredentialMatcher implements ArgumentMatcher<AuthenticationTransaction> {
+        private String id;
+
+        AuthenticationCredentialMatcher(final String id) {
+            this.id = id;
+        }
+
+        @Override
+        public boolean matches(final AuthenticationTransaction t) {
+            return t != null && t.getCredential().getId().equalsIgnoreCase(this.id);
+        }
     }
 }

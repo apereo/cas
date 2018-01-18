@@ -2,9 +2,10 @@ package org.apereo.cas.web.report.config;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
@@ -12,8 +13,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
-import org.apereo.cas.monitor.HealthStatus;
-import org.apereo.cas.monitor.Monitor;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -23,7 +22,6 @@ import org.apereo.cas.web.report.CasInfoEndpointContributor;
 import org.apereo.cas.web.report.CasServerDiscoveryProfileController;
 import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.DashboardController;
-import org.apereo.cas.web.report.HealthCheckController;
 import org.apereo.cas.web.report.LoggingConfigController;
 import org.apereo.cas.web.report.LoggingOutputSocketMessagingController;
 import org.apereo.cas.web.report.MetricsController;
@@ -33,10 +31,12 @@ import org.apereo.cas.web.report.SingleSignOnSessionStatusController;
 import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
 import org.apereo.cas.web.report.SpringWebflowReportController;
 import org.apereo.cas.web.report.StatisticsController;
+import org.apereo.cas.web.report.StatusController;
 import org.apereo.cas.web.report.TrustedDevicesController;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.endpoint.HealthEndpoint;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -65,6 +65,7 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @Configuration("casReportsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableWebSocketMessageBroker
+@Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
 
     @Autowired
@@ -118,8 +119,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     private ServerProperties serverProperties;
 
     @Autowired
-    @Qualifier("healthCheckMonitor")
-    private Monitor<HealthStatus> healthCheckMonitor;
+    private HealthEndpoint healthEndpoint;
 
     @Autowired
     @Qualifier("centralAuthenticationService")
@@ -141,8 +141,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Bean
     public MvcEndpoint personDirectoryAttributeResolutionController() {
         return new PersonDirectoryAttributeResolutionController(casProperties, servicesManager,
-                authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
-                principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
+            authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
+            principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
     }
 
     @Profile("standalone")
@@ -153,8 +153,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
-    public MvcEndpoint healthCheckController() {
-        return new HealthCheckController(healthCheckMonitor, casProperties);
+    public MvcEndpoint statusController() {
+        return new StatusController(casProperties, healthEndpoint);
     }
 
     @Bean
@@ -169,7 +169,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Bean
     @Autowired
-    public MvcEndpoint loggingConfigController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
+    public MvcEndpoint loggingConfigController(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
         return new LoggingConfigController(auditTrailManager, casProperties);
     }
 
@@ -185,9 +185,9 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Autowired
     @Bean
-    public MvcEndpoint statisticsController(@Qualifier("auditTrailManager") final DelegatingAuditTrailManager auditTrailManager) {
+    public MvcEndpoint statisticsController(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
         return new StatisticsController(auditTrailManager, centralAuthenticationService,
-                metricsRegistry, healthCheckRegistry, casProperties);
+            metricsRegistry, healthCheckRegistry, casProperties);
     }
 
     @Bean
@@ -246,7 +246,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
             return new CasServerDiscoveryProfileController(casProperties, servicesManager, casServerProfileRegistrar);
         }
     }
-    
+
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableSimpleBroker("/logs");
@@ -258,7 +258,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
         registry.addEndpoint("/logoutput")
-                .addInterceptors(new HttpSessionHandshakeInterceptor())
-                .withSockJS();
+            .addInterceptors(new HttpSessionHandshakeInterceptor())
+            .withSockJS();
     }
 }

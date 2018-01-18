@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -13,8 +14,11 @@ import org.springframework.core.io.ResourceLoader;
  * holds the application context
  * @since 3.0.0.
  */
+@Slf4j
 public class ApplicationContextProvider implements ApplicationContextAware, ResourceLoaderAware {
+
     private static ApplicationContext CONTEXT;
+
     private static ResourceLoader RESOURCE_LOADER;
 
     public static ApplicationContext getApplicationContext() {
@@ -25,7 +29,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
     public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
     }
-
     public ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
     }

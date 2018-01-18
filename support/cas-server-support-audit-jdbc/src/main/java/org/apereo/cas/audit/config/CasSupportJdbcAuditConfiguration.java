@@ -1,14 +1,15 @@
 package org.apereo.cas.audit.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.entity.AuditTrailEntity;
-import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditJdbcProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.inspektr.audit.AuditTrailManager;
 import org.apereo.inspektr.audit.support.JdbcAuditTrailManager;
 import org.apereo.inspektr.audit.support.MaxAgeWhereClauseMatchCriteria;
 import org.apereo.inspektr.audit.support.WhereClauseMatchCriteria;
@@ -37,17 +38,19 @@ import javax.sql.DataSource;
 @EnableAspectJAutoProxy
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class CasSupportJdbcAuditConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
-    public JdbcAuditTrailManager jdbcAuditTrailManager() {
+    public AuditTrailManager jdbcAuditTrailManager() {
         final AuditJdbcProperties jdbc = casProperties.getAudit().getJdbc();
         final JdbcAuditTrailManager t = new JdbcAuditTrailManager(inspektrAuditTransactionTemplate());
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());
+        t.setAsynchronous(jdbc.isAsynchronous());
         String tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
             tableName = jdbc.getDefaultSchema() + '.' + tableName;
@@ -60,8 +63,8 @@ public class CasSupportJdbcAuditConfiguration {
     }
 
     @Bean
-    public DelegatingAuditTrailManager auditTrailManager() {
-        return new DefaultDelegatingAuditTrailManager(jdbcAuditTrailManager());
+    public AuditTrailExecutionPlanConfigurer jdbcAuditTrailExecutionPlanConfigurer() {
+        return plan -> plan.registerAuditTrailManager(jdbcAuditTrailManager());
     }
 
     @Lazy

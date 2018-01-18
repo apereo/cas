@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
@@ -40,6 +41,7 @@ import static org.junit.Assert.*;
         "cas.serviceRegistry.dynamoDb.credentialAccessKey=AKIALUS4ZCYABQ",
         "cas.serviceRegistry.dynamoDb.dropTablesOnStartup=true",
         "cas.serviceRegistry.dynamoDb.credentialSecretKey=obZx92Un8zu+D1zTkJOFfZ"})
+@Slf4j
 public class DynamoDbServiceRegistryTests {
     @Autowired
     @Qualifier("serviceRegistryDao")

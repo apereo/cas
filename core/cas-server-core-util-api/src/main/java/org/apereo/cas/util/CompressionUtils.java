@@ -1,9 +1,9 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,17 +25,11 @@ import java.util.zip.InflaterInputStream;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class CompressionUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(CompressionUtils.class);
+@Slf4j
+@UtilityClass
+public class CompressionUtils {
 
     private static final int INFLATED_ARRAY_LENGTH = 10000;
-
-    /**
-     * Private ctor for a utility class.
-     */
-    private CompressionUtils() {
-    }
 
     /**
      * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.
@@ -128,15 +122,11 @@ public final class CompressionUtils {
      * @return the string, or null
      */
     public static String decompress(final String zippedBase64Str) {
-        GZIPInputStream zi = null;
-        try {
-            final byte[] bytes = EncodingUtils.decodeBase64(zippedBase64Str);
-            zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
+        final byte[] bytes = EncodingUtils.decodeBase64(zippedBase64Str);
+        try (GZIPInputStream zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
             return IOUtils.toString(zi, Charset.defaultCharset());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-        } finally {
-            IOUtils.closeQuietly(zi);
         }
         return null;
     }
@@ -149,11 +139,9 @@ public final class CompressionUtils {
      * @return the string in UTF-8 format and base64'ed, or null.
      */
     public static String compress(final String srcTxt) {
-        try {
-            final ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
-            final GZIPOutputStream zos = new GZIPOutputStream(rstBao);
+        try (ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
+             GZIPOutputStream zos = new GZIPOutputStream(rstBao)) {
             zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-            IOUtils.closeQuietly(zos);
             final byte[] bytes = rstBao.toByteArray();
             final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
             return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);

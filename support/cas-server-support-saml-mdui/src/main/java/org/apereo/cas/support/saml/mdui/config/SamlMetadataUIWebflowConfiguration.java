@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -31,6 +32,7 @@ import org.springframework.webflow.execution.Action;
  */
 @Configuration("samlMetadataUIWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlMetadataUIWebflowConfiguration {
 
     @Autowired

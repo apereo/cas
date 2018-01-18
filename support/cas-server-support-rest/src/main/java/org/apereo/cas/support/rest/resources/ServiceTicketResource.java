@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -12,8 +13,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,9 +38,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 4.1.0
  */
 @RestController("serviceTicketResourceRestController")
+@Slf4j
 public class ServiceTicketResource {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTicketResource.class);
+
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory webApplicationServiceFactory;

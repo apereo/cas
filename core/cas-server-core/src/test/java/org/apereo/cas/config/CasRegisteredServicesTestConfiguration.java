@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.TestOneTimePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
@@ -22,8 +23,8 @@ import org.springframework.context.annotation.Bean;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 /**
  * This is {@link CasRegisteredServicesTestConfiguration}.
@@ -32,6 +33,7 @@ import java.util.Set;
  * @since 5.2.0
  */
 @TestConfiguration("casRegisteredServicesTestConfiguration")
+@Slf4j
 public class CasRegisteredServicesTestConfiguration {
 
     @Bean
@@ -67,7 +69,7 @@ public class CasRegisteredServicesTestConfiguration {
         svc = RegisteredServiceTestUtils.getRegisteredService("https://example\\.com/high/.*");
         svc.setEvaluationOrder(20);
         svc.setAttributeReleasePolicy(new ReturnAllAttributeReleasePolicy());
-        final Set handlers = CollectionUtils.wrapSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
+        final HashSet handlers = CollectionUtils.wrapHashSet(AcceptUsersAuthenticationHandler.class.getSimpleName(),
                 TestOneTimePasswordAuthenticationHandler.class.getSimpleName());
         svc.setRequiredHandlers(handlers);
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
@@ -155,6 +157,18 @@ public class CasRegisteredServicesTestConfiguration {
         svc.setEvaluationOrder(1000);
         l.add(svc);
 
+        svc = RegisteredServiceTestUtils.getRegisteredService("https://localhost.*");
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        svc.setEvaluationOrder(100);
+        l.add(svc);
+
+        svc = RegisteredServiceTestUtils.getRegisteredService("https://carmenwiki.osu.edu.*");
+        svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
+        svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());
+        svc.setEvaluationOrder(99);
+        l.add(svc);
+        
         svc = RegisteredServiceTestUtils.getRegisteredService("jwtservice");
         svc.setAccessStrategy(new DefaultRegisteredServiceAccessStrategy(new HashMap<>()));
         svc.setUsernameAttributeProvider(new DefaultRegisteredServiceUsernameProvider());

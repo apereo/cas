@@ -1,11 +1,10 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.nio.charset.Charset;
@@ -16,9 +15,10 @@ import java.nio.charset.Charset;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultPasswordEncoder implements PasswordEncoder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPasswordEncoder.class);
+
 
     private final String encodingAlgorithm;
     private final String characterEncoding;

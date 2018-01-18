@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.digest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link DigestProperties}.
@@ -13,9 +15,13 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-digest-authentication")
+@Slf4j
+@Getter
+@Setter
 public class DigestProperties implements Serializable {
 
     private static final long serialVersionUID = -7920128284733546444L;
+
     /**
      * The digest realm to use.
      */
@@ -36,38 +42,4 @@ public class DigestProperties implements Serializable {
      * Name of the authentication handler.
      */
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getRealm() {
-        return realm;
-    }
-
-    public void setRealm(final String realm) {
-        this.realm = realm;
-    }
-
-    public String getAuthenticationMethod() {
-        return authenticationMethod;
-    }
-
-    public void setAuthenticationMethod(final String authenticationMethod) {
-        this.authenticationMethod = authenticationMethod;
-    }
-
-    public Map<String, String> getUsers() {
-        return users;
-    }
-
-    public void setUsers(final Map<String, String> users) {
-        this.users = users;
-    }
 }
-
-

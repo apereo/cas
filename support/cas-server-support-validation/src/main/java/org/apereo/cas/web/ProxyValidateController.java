@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -7,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -23,25 +25,27 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class ProxyValidateController extends AbstractServiceValidateController {
 
     public ProxyValidateController(final CasProtocolValidationSpecification validationSpecification,
-                                    final AuthenticationSystemSupport authenticationSystemSupport,
-                                    final ServicesManager servicesManager,
-                                    final CentralAuthenticationService centralAuthenticationService,
-                                    final ProxyHandler proxyHandler,
-                                    final ArgumentExtractor argumentExtractor,
-                                    final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
-                                    final AuthenticationContextValidator authenticationContextValidator,
-                                    final View jsonView,
-                                    final View successView, final View failureView,
-                                    final String authnContextAttribute,
+                                   final AuthenticationSystemSupport authenticationSystemSupport,
+                                   final ServicesManager servicesManager,
+                                   final CentralAuthenticationService centralAuthenticationService,
+                                   final ProxyHandler proxyHandler,
+                                   final ArgumentExtractor argumentExtractor,
+                                   final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy,
+                                   final AuthenticationContextValidator authenticationContextValidator,
+                                   final View jsonView,
+                                   final View successView, final View failureView,
+                                   final String authnContextAttribute,
                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
-        super(validationSpecification, authenticationSystemSupport, servicesManager,
-                centralAuthenticationService, proxyHandler, argumentExtractor,
-                multifactorTriggerSelectionStrategy, authenticationContextValidator,
-                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
+            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
+            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, jsonView, authnContextAttribute);
     }
+
     /**
      * Handle model and view.
      *

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
@@ -19,6 +20,7 @@ import org.springframework.web.servlet.View;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class OAuth20ResourceOwnerCredentialsResponseBuilder implements OAuth20AuthorizationResponseBuilder {
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
     private final OAuth20TokenGenerator accessTokenGenerator;

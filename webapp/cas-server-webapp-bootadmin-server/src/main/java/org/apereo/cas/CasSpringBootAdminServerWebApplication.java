@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import de.codecentric.boot.admin.config.EnableAdminServer;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.jmx.JmxAutoConfiguration;
 import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasSpringBootAdminServerWebApplication}.
@@ -24,23 +26,15 @@ import org.springframework.boot.builder.SpringApplicationBuilder;
  * @since 5.1.0
  */
 @SpringBootApplication
-@EnableAutoConfiguration(
-        exclude = {HibernateJpaAutoConfiguration.class,
-                JerseyAutoConfiguration.class,
-                GroovyTemplateAutoConfiguration.class,
-                JmxAutoConfiguration.class,
-                DataSourceAutoConfiguration.class,
-                RedisAutoConfiguration.class,
-                MongoAutoConfiguration.class,
-                MongoDataAutoConfiguration.class,
-                CassandraAutoConfiguration.class,
-                DataSourceTransactionManagerAutoConfiguration.class,
-                MetricsDropwizardAutoConfiguration.class,
-                RedisRepositoriesAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
+    GroovyTemplateAutoConfiguration.class, JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class,
+    MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class, MetricsDropwizardAutoConfiguration.class,
+    RedisRepositoriesAutoConfiguration.class })
 @EnableAdminServer
+@Slf4j
+@NoArgsConstructor
 public class CasSpringBootAdminServerWebApplication {
-    protected CasSpringBootAdminServerWebApplication() {
-    }
 
     /**
      * Main.
@@ -48,9 +42,6 @@ public class CasSpringBootAdminServerWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasSpringBootAdminServerWebApplication.class)
-                .banner(new CasSpringBootAdminServerBanner())
-                .logStartupInfo(true)
-                .run(args);
+        new SpringApplicationBuilder(CasSpringBootAdminServerWebApplication.class).banner(new CasSpringBootAdminServerBanner()).logStartupInfo(true).run(args);
     }
 }

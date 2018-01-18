@@ -4,16 +4,19 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
-
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import lombok.ToString;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -34,6 +37,10 @@ import java.time.ZonedDateTime;
 @MappedSuperclass
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
+@Slf4j
+@ToString
+@Getter
+@NoArgsConstructor
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
@@ -77,13 +84,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private int countOfUses;
 
     /**
-     * Instantiates a new abstract ticket.
-     */
-    protected AbstractTicket() {
-        // nothing to do
-    }
-
-    /**
      * Constructs a new Ticket with a unique id, a possible parent Ticket (can
      * be null) and a specified Expiration Policy.
      *
@@ -94,7 +94,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
         Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
         Assert.notNull(id, "id cannot be null");
-
         this.id = id;
         this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
@@ -102,18 +101,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     }
 
     @Override
-    public String getId() {
-        return this.id;
-    }
-
-    @Override
     public void update() {
         this.previousLastTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
-
-        if (getGrantingTicket() != null && !getGrantingTicket().isExpired()) {
-            final TicketState state = TicketState.class.cast(getGrantingTicket());
+        if (getTicketGrantingTicket() != null && !getTicketGrantingTicket().isExpired()) {
+            final TicketState state = TicketState.class.cast(getTicketGrantingTicket());
             state.update();
         }
     }
@@ -140,7 +133,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public boolean isExpired() {
-        final TicketGrantingTicket tgt = getGrantingTicket();
+        final TicketGrantingTicket tgt = getTicketGrantingTicket();
         return this.expirationPolicy.isExpired(this) || (tgt != null && tgt.isExpired()) || isExpiredInternal();
     }
 
@@ -165,17 +158,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         if (!(object instanceof Ticket)) {
             return false;
         }
-
         final Ticket ticket = (Ticket) object;
-
-        return new EqualsBuilder()
-            .append(ticket.getId(), this.getId())
-            .isEquals();
-    }
-
-    @Override
-    public String toString() {
-        return this.getId();
+        return new EqualsBuilder().append(ticket.getId(), this.getId()).isEquals();
     }
 
     @Override

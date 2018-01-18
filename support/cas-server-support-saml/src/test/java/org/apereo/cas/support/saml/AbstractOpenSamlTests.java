@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -19,10 +20,10 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CoreSamlConfiguration;
 import org.apereo.cas.config.SamlConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
@@ -36,12 +37,14 @@ import org.opensaml.core.xml.io.MarshallerFactory;
 import org.opensaml.core.xml.io.UnmarshallerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.thymeleaf.ThymeleafProperties;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
-import org.springframework.test.context.ContextConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.thymeleaf.spring4.SpringTemplateEngine;
 
 import javax.annotation.PostConstruct;
 
@@ -55,41 +58,42 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {AbstractOpenSamlTests.SamlTestConfiguration.class,
-                CoreSamlConfiguration.class,
-                SamlConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreWebConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                CasCoreServicesConfiguration.class,
-                CasCoreValidationConfiguration.class,
-                CasProtocolViewsConfiguration.class,
-                CasValidationConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, 
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreConfiguration.class})
-@ContextConfiguration(locations = "classpath:/opensaml-config.xml", initializers = EnvironmentConversionServiceInitializer.class)
+    classes = {AbstractOpenSamlTests.SamlTestConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CoreSamlConfiguration.class,
+        SamlConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreServicesConfiguration.class,
+        CasCoreValidationConfiguration.class,
+        CasProtocolViewsConfiguration.class,
+        CasValidationConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreConfiguration.class})
+@Slf4j
 public abstract class AbstractOpenSamlTests {
     protected static final String SAML_REQUEST = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-            + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
-            + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
-            + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
-            + "ProviderName=\"https://localhost:8443/myRutgers\" "
-            + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
+        + "<samlp:AuthnRequest xmlns:samlp=\"urn:oasis:names:tc:SAML:2.0:protocol\" "
+        + "ID=\"5545454455\" Version=\"2.0\" IssueInstant=\"Value\" "
+        + "ProtocolBinding=\"urn:oasis:names.tc:SAML:2.0:bindings:HTTP-Redirect\" "
+        + "ProviderName=\"https://localhost:8443/myRutgers\" "
+        + "AssertionConsumerServiceURL=\"https://localhost:8443/myRutgers\"/>";
 
     @Autowired
     protected ApplicationContext applicationContext;
@@ -117,12 +121,22 @@ public abstract class AbstractOpenSamlTests {
         @Autowired
         protected ApplicationContext applicationContext;
 
+        @Bean
+        public SpringTemplateEngine springTemplateEngine() {
+            return new SpringTemplateEngine();
+        }
+
+        @Bean
+        public ThymeleafProperties thymeleafProperties() {
+            return new ThymeleafProperties();
+        }
+
         @PostConstruct
         public void init() {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Test
     public void autowireApplicationContext() {
         assertNotNull(this.applicationContext);

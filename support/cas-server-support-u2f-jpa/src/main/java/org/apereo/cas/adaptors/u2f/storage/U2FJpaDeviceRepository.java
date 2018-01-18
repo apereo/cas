@@ -2,9 +2,8 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +24,9 @@ import java.util.stream.Collectors;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerU2f")
+@Slf4j
 public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(U2FJpaDeviceRepository.class);
+
 
     private static final String DELETE_QUERY = "DELETE from U2FDeviceRegistration r ";
     private static final String SELECT_QUERY = "SELECT r from U2FDeviceRegistration r ";
@@ -54,7 +54,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
                     .setParameter("expdate", expirationDate)
                     .getResultList()
                     .stream()
-                    .map(r -> DeviceRegistration.fromJson(r.getRecord()))
+                    .map(r -> DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord())))
                     .collect(Collectors.toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No device registration was found for [{}]", username);
@@ -73,7 +73,7 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         final U2FDeviceRegistration jpa = new U2FDeviceRegistration();
         jpa.setUsername(username);
-        jpa.setRecord(registration.toJson());
+        jpa.setRecord(getCipherExecutor().encode(registration.toJson()));
         jpa.setCreatedDate(LocalDate.now());
         this.entityManager.merge(jpa);
     }

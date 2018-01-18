@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -9,7 +10,7 @@ import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Slf4j
 public class RememberMeAuthenticationMetaDataPopulatorTests {
 
     private final RememberMeAuthenticationMetaDataPopulator p = new RememberMeAuthenticationMetaDataPopulator();
@@ -60,7 +62,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
         final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(CoreAuthenticationTestUtils.getPrincipal())
                 .addCredential(meta)
-                .addSuccess("test", new DefaultHandlerResult(handler, meta));
+                .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (this.p.supports(credential)) {
             this.p.populateAttributes(builder, AuthenticationTransaction.wrap(credential));

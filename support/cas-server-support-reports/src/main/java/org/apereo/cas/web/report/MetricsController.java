@@ -2,6 +2,7 @@ package org.apereo.cas.web.report;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.servlets.MetricsServlet;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +23,7 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class MetricsController extends BaseCasMvcEndpoint {
 
     private final Properties initParameters = new Properties();
@@ -58,8 +60,6 @@ public class MetricsController extends BaseCasMvcEndpoint {
     }
 
     private class DelegatingServletConfig implements ServletConfig {
-        protected DelegatingServletConfig() {
-        }
 
         @Override
         public String getServletName() {

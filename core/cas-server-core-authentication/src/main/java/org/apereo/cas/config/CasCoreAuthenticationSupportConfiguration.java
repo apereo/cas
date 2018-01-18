@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -28,6 +29,7 @@ import org.springframework.context.annotation.Lazy;
  */
 @Configuration("casCoreAuthenticationSupportConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreAuthenticationSupportConfiguration {
 
     @Autowired
@@ -49,16 +51,18 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Bean
     @Lazy
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
-    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(@Qualifier("servicesManager") final ServicesManager servicesManager) {
+    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(@Qualifier("servicesManager")
+                                                                                            final ServicesManager servicesManager) {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager);
     }
 
     @Autowired
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("principalElectionStrategy") 
-                                                                          final PrincipalElectionStrategy principalElectionStrategy,
-                                                                          @Qualifier("authenticationTransactionManager") 
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("principalElectionStrategy")
+                                                                              final PrincipalElectionStrategy principalElectionStrategy,
+                                                                          @Qualifier("authenticationTransactionManager")
                                                                           final AuthenticationTransactionManager authenticationTransactionManager) {
         return new DefaultAuthenticationSystemSupport(authenticationTransactionManager, principalElectionStrategy);
     }
+
 }

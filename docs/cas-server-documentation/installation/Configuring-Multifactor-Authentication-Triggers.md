@@ -52,6 +52,57 @@ MFA can be triggered for a specific application registered inside the CAS servic
 }
 ```
 
+Additionally, you may determine the multifactor authentication policy for a registered service using a Groovy script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "name": "test",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy",
+    "groovyScript" : "file:///etc/cas/config/mfa-policy.groovy"
+  }
+}
+```
+
+The script itself may be designed as such by overriding the needed operations where necessary:
+
+```groovy
+import org.apereo.cas.services.*
+import java.util.*
+
+class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy {
+    @Override
+    Set<String> getMultifactorAuthenticationProviders() {
+        ...
+    }
+
+    @Override
+    RegisteredServiceMultifactorPolicy.FailureModes getFailureMode() {
+        ...
+    }
+
+    @Override
+    String getPrincipalAttributeNameTrigger() {
+        ...
+    }
+
+    @Override
+    String getPrincipalAttributeValueToMatch() {
+        ...
+    }
+
+    @Override
+    boolean isBypassEnabled() {
+        ...
+    }
+}
+```
+
+Refer to the CAS API documentation to learn more about operations and expected behaviors.
+
 ## Global Principal Attribute
 
 MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.

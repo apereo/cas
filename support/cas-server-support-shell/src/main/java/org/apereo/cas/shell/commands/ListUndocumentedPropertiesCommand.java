@@ -1,9 +1,8 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -19,8 +18,9 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class ListUndocumentedPropertiesCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ListUndocumentedPropertiesCommand.class);
+
 
     /**
      * List undocumented settings.

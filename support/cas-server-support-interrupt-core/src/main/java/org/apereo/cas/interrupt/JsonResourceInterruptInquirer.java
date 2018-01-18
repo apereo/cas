@@ -2,13 +2,13 @@ package org.apereo.cas.interrupt;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.ResourceUtils;
 import org.hjson.JsonValue;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
@@ -23,8 +23,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JsonResourceInterruptInquirer.class);
+
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     
     private final Resource resource;
@@ -44,6 +45,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
         return new InterruptResponse(false);
     }
 
+    @SneakyThrows
     private void readResourceForInterrupts() {
         this.interrupts = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(resource)) {
@@ -51,8 +53,6 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
                 final TypeReference<Map<String, InterruptResponse>> personList = new TypeReference<Map<String, InterruptResponse>>() {
                 };
                 this.interrupts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
             }
         }
     }

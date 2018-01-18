@@ -1,15 +1,16 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.monitor.Monitor;
-import org.apereo.cas.monitor.PooledLdapConnectionFactoryMonitor;
+import org.apereo.cas.monitor.PooledLdapConnectionFactoryHealthIndicator;
 import org.apereo.cas.util.LdapUtils;
 import org.ldaptive.pool.PooledConnectionFactory;
 import org.ldaptive.pool.SearchValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import java.util.concurrent.ExecutorService;
  */
 @Configuration("ldapMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapMonitorConfiguration {
 
     @Autowired
@@ -39,10 +41,11 @@ public class LdapMonitorConfiguration {
 
     @Autowired
     @Bean
-    public Monitor pooledLdapConnectionFactoryMonitor(@Qualifier("pooledConnectionFactoryMonitorExecutorService") final ExecutorService executor) {
+    public HealthIndicator pooledLdapConnectionFactoryHealthIndicator(@Qualifier("pooledConnectionFactoryMonitorExecutorService")
+                                                                          final ExecutorService executor) {
         final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
         final PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new PooledLdapConnectionFactoryMonitor(executor, (int) ldap.getMaxWait(),
-                connectionFactory, new SearchValidator());
+        return new PooledLdapConnectionFactoryHealthIndicator((int) Beans.newDuration(ldap.getMaxWait()).toMillis(),
+            connectionFactory, executor, new SearchValidator());
     }
 }

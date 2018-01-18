@@ -1,9 +1,11 @@
 package org.apereo.cas.configuration.model.support.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AbstractLdapAuthenticationProperties}.
@@ -11,6 +13,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@Setter
 public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 3849857270054289852L;
@@ -19,19 +24,17 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * The enum Authentication types.
      */
     public enum AuthenticationTypes {
+
         /**
          * Active Directory.
          */
-        AD,
-        /**
+        AD, /**
          * Authenticated Search.
          */
-        AUTHENTICATED,
-        /**
+        AUTHENTICATED, /**
          * Direct Bind.
          */
-        DIRECT,
-        /**
+        DIRECT, /**
          * Anonymous Search.
          */
         ANONYMOUS
@@ -78,7 +81,6 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * on the authenticator, or the default should be used.
      */
     private boolean enhanceWithEntryResolver = true;
-    
 
     /**
      * Define how aliases are de-referenced.
@@ -91,57 +93,9 @@ public abstract class AbstractLdapAuthenticationProperties extends AbstractLdapS
      * </ul>
      */
     private String derefAliases;
-    
+
     /**
      * Search entry to define on the authenticator.
      */
     private List<LdapSearchEntryHandlersProperties> searchEntryHandlers = new ArrayList<>();
-
-    public List<LdapSearchEntryHandlersProperties> getSearchEntryHandlers() {
-        return searchEntryHandlers;
-    }
-
-    public void setSearchEntryHandlers(final List<LdapSearchEntryHandlersProperties> searchEntryHandlers) {
-        this.searchEntryHandlers = searchEntryHandlers;
-    }
-
-    public AuthenticationTypes getType() {
-        return type;
-    }
-
-    public void setType(final AuthenticationTypes type) {
-        this.type = type;
-    }
-
-    public String getDnFormat() {
-        return dnFormat;
-    }
-
-    public void setDnFormat(final String dnFormat) {
-        this.dnFormat = dnFormat;
-    }
-
-    public boolean isEnhanceWithEntryResolver() {
-        return enhanceWithEntryResolver;
-    }
-
-    public void setEnhanceWithEntryResolver(final boolean enhanceWithEntryResolver) {
-        this.enhanceWithEntryResolver = enhanceWithEntryResolver;
-    }
-
-    public String getPrincipalAttributePassword() {
-        return principalAttributePassword;
-    }
-
-    public void setPrincipalAttributePassword(final String principalAttributePassword) {
-        this.principalAttributePassword = principalAttributePassword;
-    }
-
-    public String getDerefAliases() {
-        return derefAliases;
-    }
-
-    public void setDerefAliases(final String derefAliases) {
-        this.derefAliases = derefAliases;
-    }
 }

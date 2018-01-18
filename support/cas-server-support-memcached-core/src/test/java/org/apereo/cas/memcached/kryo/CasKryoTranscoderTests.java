@@ -1,13 +1,14 @@
 package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.KryoException;
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.mock.MockServiceTicket;
@@ -44,6 +45,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class CasKryoTranscoderTests {
 
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
@@ -53,7 +55,6 @@ public class CasKryoTranscoderTests {
     private static final String PASSWORD = "foo";
     private static final String NICKNAME_KEY = "nickname";
     private static final String NICKNAME_VALUE = "bob";
-
 
     private final CasKryoTranscoder transcoder;
 
@@ -93,8 +94,8 @@ public class CasKryoTranscoderTests {
         bldr.setAttributes(new HashMap<>(this.principalAttributes));
         bldr.setAuthenticationDate(ZonedDateTime.now());
         bldr.addCredential(new BasicCredentialMetaData(userPassCredential));
-        bldr.addFailure("error", AccountNotFoundException.class);
-        bldr.addSuccess("authn", new DefaultHandlerResult(
+        bldr.addFailure("error", new AccountNotFoundException());
+        bldr.addSuccess("authn", new DefaultAuthenticationHandlerExecutionResult(
                 new AcceptUsersAuthenticationHandler(""),
                 new BasicCredentialMetaData(userPassCredential)));
 
@@ -260,10 +261,10 @@ public class CasKryoTranscoderTests {
         expectedST.setExpiration(step);
         try {
             transcoder.encode(expectedST);
-            fail("Unregistered class is not allowed by Kryo");
+            throw new AssertionError("Unregistered class is not allowed by Kryo");
         } catch (final KryoException e) {
         } catch (final Exception e) {
-            fail("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
+            throw new AssertionError("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
         }
     }
 }

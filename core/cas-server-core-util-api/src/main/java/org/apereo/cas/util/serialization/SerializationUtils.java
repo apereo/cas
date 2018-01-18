@@ -1,8 +1,9 @@
 package org.apereo.cas.util.serialization;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -21,11 +22,9 @@ import java.io.Serializable;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0
  */
-public final class SerializationUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SerializationUtils.class);
-
-    private SerializationUtils() {
-    }
+@Slf4j
+@UtilityClass
+public class SerializationUtils {
 
     /**
      * Serialize an object.
@@ -47,11 +46,10 @@ public final class SerializationUtils {
      * @param outputStream The stream to receive the object
      * @since 5.0.0
      */
+    @SneakyThrows
     public static void serialize(final Serializable object, final OutputStream outputStream) {
         try (ObjectOutputStream out = new ObjectOutputStream(outputStream)) {
             out.writeObject(object);
-        } catch (final IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -127,15 +125,12 @@ public final class SerializationUtils {
      * @return the t
      * @since 4.2
      */
+    @SneakyThrows
     public static <T extends Serializable> T decodeAndDeserializeObject(final byte[] object,
                                                                         final CipherExecutor cipher,
                                                                         final Class<T> type) {
-        try {
-            final byte[] decoded = (byte[]) cipher.decode(object);
-            return deserializeAndCheckObject(decoded, type);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final byte[] decoded = (byte[]) cipher.decode(object);
+        return deserializeAndCheckObject(decoded, type);
     }
 
     /**

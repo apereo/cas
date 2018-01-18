@@ -3,13 +3,14 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import lombok.NoArgsConstructor;
 
 /**
  * Concrete implementation of a proxy granting ticket (PGT). A PGT is
@@ -28,14 +29,11 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@NoArgsConstructor
 public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements ProxyGrantingTicket {
-    private static final long serialVersionUID = -8126909926138945649L;
 
-    /**
-     * Instantiates a new proxy granting ticket impl.
-     */
-    public ProxyGrantingTicketImpl() {
-    }
+    private static final long serialVersionUID = -8126909926138945649L;
 
     /**
      * Instantiates a new proxy granting ticket impl.
@@ -58,30 +56,17 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
      * @param policy                     the policy
      */
     @JsonCreator
-    public ProxyGrantingTicketImpl(
-            @JsonProperty("id")
-            final String id,
-            @JsonProperty("proxiedBy")
-            final Service proxiedBy,
-            @JsonProperty("grantingTicket")
-            final TicketGrantingTicket parentTicketGrantingTicket,
-            @JsonProperty("authentication")
-            final Authentication authentication,
-            @JsonProperty("expirationPolicy")
-            final ExpirationPolicy policy) {
+    public ProxyGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
+                                   @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+                                   @JsonProperty("authentication") final Authentication authentication,
+                                   @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, proxiedBy, parentTicketGrantingTicket, authentication, policy);
     }
 
     @Override
-    public ProxyTicket grantProxyTicket(final String id, final Service service,
-                                        final ExpirationPolicy expirationPolicy,
-                                        final boolean onlyTrackMostRecentSession) {
-        final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this,
-                service, false,
-                expirationPolicy);
-
+    public ProxyTicket grantProxyTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean onlyTrackMostRecentSession) {
+        final ProxyTicket serviceTicket = new ProxyTicketImpl(id, this, service, false, expirationPolicy);
         trackServiceSession(serviceTicket.getId(), service, onlyTrackMostRecentSession);
-
         return serviceTicket;
     }
 

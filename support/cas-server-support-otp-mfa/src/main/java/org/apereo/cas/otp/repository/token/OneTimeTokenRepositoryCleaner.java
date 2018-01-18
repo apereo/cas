@@ -1,7 +1,7 @@
 package org.apereo.cas.otp.repository.token;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.ZonedDateTime;
 
@@ -11,12 +11,10 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OneTimeTokenRepositoryCleaner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OneTimeTokenRepositoryCleaner.class);
-
     private final OneTimeTokenRepository tokenRepository;
-    private final Object lock = new Object();
-    
+
     public OneTimeTokenRepositoryCleaner(final OneTimeTokenRepository tokenRepository) {
         this.tokenRepository = tokenRepository;
     }
@@ -24,11 +22,10 @@ public class OneTimeTokenRepositoryCleaner {
     /**
      * Clean the repository.
      */
+    @Synchronized
     public void clean() {
         LOGGER.debug("Starting to clean previously used authenticator tokens from [{}] at [{}]", this.tokenRepository, ZonedDateTime.now());
-        synchronized (this.lock) {
-            tokenRepository.clean();
-        }
+        tokenRepository.clean();
         LOGGER.info("Finished cleaning authenticator tokens at [{}]", ZonedDateTime.now());
     }
 }

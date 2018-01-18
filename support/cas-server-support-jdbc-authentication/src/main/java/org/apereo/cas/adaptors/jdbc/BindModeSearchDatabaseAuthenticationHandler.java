@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.authentication.HandlerResult;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -24,6 +25,7 @@ import java.sql.SQLException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -32,8 +34,9 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
 
         if (getDataSource() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly");

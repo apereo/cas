@@ -1,5 +1,7 @@
 package org.apereo.cas.web.report;
 
+import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -21,7 +23,6 @@ import org.springframework.cloud.context.restart.RestartEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -29,6 +30,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Getter;
 
 /**
  * This is {@link DashboardController}.
@@ -36,6 +38,8 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@Getter
 public class DashboardController extends BaseCasMvcEndpoint {
 
     @Autowired(required = false)
@@ -43,7 +47,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
 
     @Autowired(required = false)
     private ShutdownEndpoint shutdownEndpoint;
-    
+
     @Autowired
     private InfoEndpoint infoEndpoint;
 
@@ -85,7 +89,6 @@ public class DashboardController extends BaseCasMvcEndpoint {
     @GetMapping
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-
         final Map<String, Object> model = getEndpointsModelMap();
         return new ModelAndView("monitoring/viewDashboard", model);
     }
@@ -99,32 +102,24 @@ public class DashboardController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/endpoints")
     @ResponseBody
-    public Set<EndpointBean> getEndpoints(final HttpServletRequest request,
-                                          final HttpServletResponse response) {
+    public Set<EndpointBean> getEndpoints(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        
         final Map<String, Object> endpointsModel = getEndpointsModelMap();
-        return endpointsModel.entrySet()
-            .stream()
-            .map(entry -> {
-                final EndpointBean bean = new EndpointBean();
-                bean.setName(StringUtils.remove(entry.getKey(), "Enabled"));
-                String title = StringUtils.capitalize(StringUtils.remove(bean.getName(), "Endpoint"));
-                title = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(title), ' ');
-                bean.setTitle(title);
-                return bean;
-            })
-            .collect(Collectors.toSet());
+        return endpointsModel.entrySet().stream().map(entry -> {
+            final EndpointBean bean = new EndpointBean();
+            bean.setName(StringUtils.remove(entry.getKey(), "Enabled"));
+            String title = StringUtils.capitalize(StringUtils.remove(bean.getName(), "Endpoint"));
+            title = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(title), ' ');
+            bean.setTitle(title);
+            return bean;
+        }).collect(Collectors.toSet());
     }
 
     private Map<String, Object> getEndpointsModelMap() {
         final Map<String, Object> model = new HashMap<>();
-
         processSpringBootEndpoints(model);
         processCasProvidedEndpoints(model);
-
-        final boolean endpointAvailable = model.entrySet()
-            .stream()
+        final boolean endpointAvailable = model.entrySet().stream()
             .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
         model.put("dashboardEndpointsEnabled", endpointAvailable);
         model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
@@ -174,25 +169,13 @@ public class DashboardController extends BaseCasMvcEndpoint {
     /**
      * The Endpoint bean that holds info about each available endpoint.
      */
+    @Data
     public static class EndpointBean implements Serializable {
+
         private static final long serialVersionUID = -3446962071459197099L;
+
         private String name;
+
         private String title;
-
-        public String getTitle() {
-            return title;
-        }
-
-        public void setTitle(final String title) {
-            this.title = title;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
     }
 }

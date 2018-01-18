@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link GrouperPrincipalAttributesProperties}.
@@ -11,8 +13,13 @@ import java.io.Serializable;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-person-directory", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class GrouperPrincipalAttributesProperties implements Serializable {
+
     private static final long serialVersionUID = 7139471665871712818L;
+
     /**
      * The order of this attribute repository in the chain of repositories.
      * Can be used to explicitly position this source in chain and affects
@@ -24,21 +31,4 @@ public class GrouperPrincipalAttributesProperties implements Serializable {
      * Enable the attribute repository source.
      */
     private boolean enabled;
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
@@ -21,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +47,7 @@ import static org.junit.Assert.*;
     JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
     CasCoreServicesConfiguration.class})
 @DirtiesContext
+@Slf4j
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
@@ -154,6 +157,26 @@ public class JpaServiceRegistryDaoImplTests {
 
     }
 
+
+    @Test
+    public void verifyRegisteredServiceContacts() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("testContacts");
+        r.setServiceId("testContacts");
+
+        final List<RegisteredServiceContact> propertyMap = new ArrayList<>();
+
+        final DefaultRegisteredServiceContact property = new DefaultRegisteredServiceContact();
+        property.setDepartment("department");
+        property.setId(1234);
+        property.setPhone("123-456-789");
+        r.setContacts(propertyMap);
+
+        this.serviceRegistryDao.save(r);
+        final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
+        assertEquals(2, r2.getProperties().size());
+    }
+    
     @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();

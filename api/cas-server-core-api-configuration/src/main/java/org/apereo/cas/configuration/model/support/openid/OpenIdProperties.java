@@ -1,10 +1,12 @@
 package org.apereo.cas.configuration.model.support.openid;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link OpenIdProperties}.
@@ -13,9 +15,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-openid")
+@Slf4j
+@Getter
+@Setter
 public class OpenIdProperties implements Serializable {
 
     private static final long serialVersionUID = -2935759289483632610L;
+
     /**
      * Principal construction settings.
      */
@@ -32,29 +38,4 @@ public class OpenIdProperties implements Serializable {
      * Name of the underlying authentication handler.
      */
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isEnforceRpId() {
-        return enforceRpId;
-    }
-
-    public void setEnforceRpId(final boolean enforceRpId) {
-        this.enforceRpId = enforceRpId;
-    }
-
-    public PersonDirectoryPrincipalResolverProperties getPrincipal() {
-        return principal;
-    }
-
-    public void setPrincipal(final PersonDirectoryPrincipalResolverProperties principal) {
-        this.principal = principal;
-    }
 }
-

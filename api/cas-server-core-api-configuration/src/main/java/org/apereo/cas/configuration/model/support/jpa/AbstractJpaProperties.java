@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Common properties for all jpa configs.
@@ -15,6 +16,9 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@Setter
 public abstract class AbstractJpaProperties implements Serializable {
 
     private static final long serialVersionUID = 761486823496930920L;
@@ -156,156 +160,4 @@ public abstract class AbstractJpaProperties implements Serializable {
      * or returned back verbatim.
      */
     private boolean dataSourceProxy;
-
-    public String getDefaultCatalog() {
-        return defaultCatalog;
-    }
-
-    public void setDefaultCatalog(final String defaultCatalog) {
-        this.defaultCatalog = defaultCatalog;
-    }
-
-    public String getDefaultSchema() {
-        return defaultSchema;
-    }
-
-    public void setDefaultSchema(final String defaultSchema) {
-        this.defaultSchema = defaultSchema;
-    }
-
-    public String getDialect() {
-        return dialect;
-    }
-
-    public void setDialect(final String dialect) {
-        this.dialect = dialect;
-    }
-
-    public String getDdlAuto() {
-        return ddlAuto;
-    }
-
-    public void setDdlAuto(final String ddlAuto) {
-        this.ddlAuto = ddlAuto;
-    }
-
-    public int getBatchSize() {
-        return batchSize;
-    }
-
-    public void setBatchSize(final int batchSize) {
-        this.batchSize = batchSize;
-    }
-
-    public String getDriverClass() {
-        return driverClass;
-    }
-
-    public void setDriverClass(final String driverClass) {
-        this.driverClass = driverClass;
-    }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(final String url) {
-        this.url = url;
-    }
-
-    public String getUser() {
-        return user;
-    }
-
-    public void setUser(final String user) {
-        this.user = user;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public ConnectionPoolingProperties getPool() {
-        return pool;
-    }
-
-    public void setPool(final ConnectionPoolingProperties pool) {
-        this.pool = pool;
-    }
-
-    public long getIdleTimeout() {
-        return Beans.newDuration(idleTimeout).toMillis();
-    }
-
-    public void setIdleTimeout(final String idleTimeout) {
-        this.idleTimeout = idleTimeout;
-    }
-
-    public int getLeakThreshold() {
-        return leakThreshold;
-    }
-
-    public void setLeakThreshold(final int leakThreshold) {
-        this.leakThreshold = leakThreshold;
-    }
-    
-    public boolean isIsolateInternalQueries() {
-        return isolateInternalQueries;
-    }
-
-    public void setIsolateInternalQueries(final boolean isolateInternalQueries) {
-        this.isolateInternalQueries = isolateInternalQueries;
-    }
-
-    public String getHealthQuery() {
-        return healthQuery;
-    }
-
-    public void setHealthQuery(final String healthQuery) {
-        this.healthQuery = healthQuery;
-    }
-
-    public boolean isAutocommit() {
-        return autocommit;
-    }
-
-    public void setAutocommit(final boolean autocommit) {
-        this.autocommit = autocommit;
-    }
-
-    public String getDataSourceName() {
-        return dataSourceName;
-    }
-
-    public void setDataSourceName(final String dataSourceName) {
-        this.dataSourceName = dataSourceName;
-    }
-
-    public boolean isDataSourceProxy() {
-        return dataSourceProxy;
-    }
-
-    public void setDataSourceProxy(final boolean dataSourceProxy) {
-        this.dataSourceProxy = dataSourceProxy;
-    }
-
-    public Map<String, String> getProperties() {
-        return properties;
-    }
-
-    public void setProperties(final Map<String, String> properties) {
-        this.properties = properties;
-    }
-
-    public long getFailFastTimeout() {
-        return failFastTimeout;
-    }
-
-    public void setFailFastTimeout(final long failFastTimeout) {
-        this.failFastTimeout = failFastTimeout;
-    }
 }

@@ -1,15 +1,18 @@
 package org.apereo.cas.configuration.model.core.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
+
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for cas.monitor.
@@ -18,9 +21,13 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-monitor", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class MonitorProperties implements Serializable {
 
     private static final long serialVersionUID = -7047060071480971606L;
+
     /**
      * The free memory threshold for the memory monitor.
      * If the amount of free memory available reaches this point
@@ -41,7 +48,8 @@ public class MonitorProperties implements Serializable {
     /**
      * Warning options that generally deal with cache-based resources, etc.
      */
-    private Warn warn = new Warn();
+    @NestedConfigurationProperty
+    private MonitorWarningProperties warn = new MonitorWarningProperties();
 
     /**
      * Options for monitoring sensitive CAS endpoints and resources.
@@ -71,158 +79,39 @@ public class MonitorProperties implements Serializable {
      */
     private MongoDb mongo = new MongoDb();
 
-    public Memcached getMemcached() {
-        return memcached;
-    }
-
-    public void setMemcached(final Memcached memcached) {
-        this.memcached = memcached;
-    }
-
-    public Endpoints getEndpoints() {
-        return endpoints;
-    }
-
-    public void setEndpoints(final Endpoints endpoints) {
-        this.endpoints = endpoints;
-    }
-
-    public Jdbc getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final Jdbc jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public Warn getWarn() {
-        return warn;
-    }
-
-    public void setWarn(final Warn warn) {
-        this.warn = warn;
-    }
-
-    public int getFreeMemThreshold() {
-        return freeMemThreshold;
-    }
-
-    public void setFreeMemThreshold(final int freeMemThreshold) {
-        this.freeMemThreshold = freeMemThreshold;
-    }
-
-    public Tgt getTgt() {
-        return tgt;
-    }
-
-    public void setTgt(final Tgt tgt) {
-        this.tgt = tgt;
-    }
-
-    public St getSt() {
-        return st;
-    }
-
-    public void setSt(final St st) {
-        this.st = st;
-    }
-
-    public Ldap getLdap() {
-        return ldap;
-    }
-
-    public void setLdap(final Ldap ldap) {
-        this.ldap = ldap;
-    }
-
-    public MongoDb getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final MongoDb mongo) {
-        this.mongo = mongo;
-    }
-
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
+    @Getter
+    @Setter
     public static class St implements Serializable {
+
         private static final long serialVersionUID = -8167395674267219982L;
 
         /**
          * Warning settings for this monitor.
          */
         @NestedConfigurationProperty
-        private Warn warn = new Warn(5000);
-
-        public Warn getWarn() {
-            return warn;
-        }
-
-        public void setWarn(final Warn warn) {
-            this.warn = warn;
-        }
+        private MonitorWarningProperties warn = new MonitorWarningProperties(5000);
     }
 
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
+    @Getter
+    @Setter
     public static class Tgt implements Serializable {
 
         private static final long serialVersionUID = -2756454350350278724L;
+
         /**
          * Warning options for monitoring TGT production.
          */
         @NestedConfigurationProperty
-        private Warn warn = new Warn(10000);
-
-        public Warn getWarn() {
-            return warn;
-        }
-
-        public void setWarn(final Warn warn) {
-            this.warn = warn;
-        }
+        private MonitorWarningProperties warn = new MonitorWarningProperties(10000);
     }
 
     @RequiresModule(name = "cas-server-core-monitor", automated = true)
-    public static class Warn implements Serializable {
-
-        private static final long serialVersionUID = 2788617778375787703L;
-        /**
-         * The monitor threshold where if reached, CAS might generate a warning status for health checks.
-         */
-        private int threshold = 10;
-
-        /**
-         * The monitor eviction threshold where if reached, CAS might generate a warning status for health checks.
-         * The underlying data source and monitor (i.e. cache) must support the concept of evictions.
-         */
-        private long evictionThreshold;
-
-
-        public Warn() {
-        }
-
-        public Warn(final int threshold) {
-            this.threshold = threshold;
-        }
-
-        public int getThreshold() {
-            return threshold;
-        }
-
-        public void setThreshold(final int threshold) {
-            this.threshold = threshold;
-        }
-
-        public long getEvictionThreshold() {
-            return evictionThreshold;
-        }
-
-        public void setEvictionThreshold(final long evictionThreshold) {
-            this.evictionThreshold = evictionThreshold;
-        }
-    }
-
-    @RequiresModule(name = "cas-server-core-monitor", automated = true)
+    @Getter
+    @Setter
     public static class Ldap extends AbstractLdapProperties {
+
         private static final long serialVersionUID = 4722929378440179113L;
 
         /**
@@ -236,36 +125,29 @@ public class MonitorProperties implements Serializable {
          */
         @NestedConfigurationProperty
         private ConnectionPoolingProperties pool = new ConnectionPoolingProperties();
-
-        public ConnectionPoolingProperties getPool() {
-            return pool;
-        }
-
-        public void setPool(final ConnectionPoolingProperties pool) {
-            this.pool = pool;
-        }
-
-        public long getMaxWait() {
-            return Beans.newDuration(maxWait).toMillis();
-        }
-
-        public void setMaxWait(final String maxWait) {
-            this.maxWait = maxWait;
-        }
     }
 
     @RequiresModule(name = "cas-server-support-memcached-monitor")
+    @Getter
+    @Setter
     public static class Memcached extends BaseMemcachedProperties {
+
         private static final long serialVersionUID = -9139788158851782673L;
     }
 
     @RequiresModule(name = "cas-server-support-mongo-monitor")
+    @Getter
+    @Setter
     public static class MongoDb extends BaseMongoDbProperties {
+
         private static final long serialVersionUID = -1918436901491275547L;
     }
 
     @RequiresModule(name = "cas-server-support-jdbc-monitor")
+    @Getter
+    @Setter
     public static class Jdbc extends AbstractJpaProperties {
+
         private static final long serialVersionUID = -7139788158851782673L;
 
         /**
@@ -278,23 +160,6 @@ public class MonitorProperties implements Serializable {
          * before it times outs and considers the pool in bad shape.
          */
         private String maxWait = "PT5S";
-
-        public String getValidationQuery() {
-            return validationQuery;
-        }
-
-        public void setValidationQuery(final String validationQuery) {
-            this.validationQuery = validationQuery;
-        }
-
-        public long getMaxWait() {
-            return Beans.newDuration(maxWait).toMillis();
-        }
-
-        public void setMaxWait(final String maxWait) {
-            this.maxWait = maxWait;
-        }
-
     }
 
     /**
@@ -303,10 +168,12 @@ public class MonitorProperties implements Serializable {
      * By default, no endpoint is enabled or allowed access.
      * Endpoints may go through multiple levels and layers of security.
      */
+    @Setter
+    @Getter
     public abstract static class BaseEndpoint {
 
         /**
-         * Disable access to the endpoint completely. 
+         * Disable access to the endpoint completely.
          */
         private Boolean enabled;
 
@@ -319,33 +186,19 @@ public class MonitorProperties implements Serializable {
          * IP pattern checking, etc, set this flag to false. For more elaborate means of authenticating
          * into an endpoint such as basic authn and verifications credentials with a master account, LDAP, JDBC, etc
          * set this endpoint to true and configure spring security appropriate as is described by the docs.
-         *
+         * <p>
          * By default all endpoints are considered disabled and sensitive.
-         *
+         * <p>
          * <p>It's important to note that these endpoints and their settings only affect
          * what CAS provides. Additional endpoints provided by Spring Boot are controlled
          * elsewhere by Spring Boot itself.</p>
          */
         private Boolean sensitive;
-
-        public Boolean isEnabled() {
-            return enabled;
-        }
-
-        public void setEnabled(final Boolean enabled) {
-            this.enabled = enabled;
-        }
-
-        public Boolean isSensitive() {
-            return sensitive;
-        }
-
-        public void setSensitive(final Boolean sensitive) {
-            this.sensitive = sensitive;
-        }
     }
 
     @RequiresModule(name = "cas-server-support-reports", automated = true)
+    @Getter
+    @Setter
     public static class Endpoints extends BaseEndpoint {
 
         /**
@@ -402,6 +255,7 @@ public class MonitorProperties implements Serializable {
          * Discovery related settings.
          */
         private Discovery discovery = new Discovery();
+
         /**
          * Trusted devices related settings.
          */
@@ -411,6 +265,7 @@ public class MonitorProperties implements Serializable {
          * Status related settings.
          */
         private Status status = new Status();
+
         /**
          * Single Sign On Status related settings.
          */
@@ -430,146 +285,10 @@ public class MonitorProperties implements Serializable {
          * Configuration metadata, documentation and fields, etc.
          */
         private ConfigurationMetadata configurationMetadata = new ConfigurationMetadata();
-        
+
         public Endpoints() {
             setSensitive(Boolean.TRUE);
             setEnabled(Boolean.FALSE);
-        }
-
-        public ConfigurationMetadata getConfigurationMetadata() {
-            return configurationMetadata;
-        }
-
-        public void setConfigurationMetadata(final ConfigurationMetadata configurationMetadata) {
-            this.configurationMetadata = configurationMetadata;
-        }
-
-        public RegisteredServicesReport getRegisteredServicesReport() {
-            return registeredServicesReport;
-        }
-
-        public Discovery getDiscovery() {
-            return discovery;
-        }
-
-        public void setDiscovery(final Discovery discovery) {
-            this.discovery = discovery;
-        }
-
-        public void setRegisteredServicesReport(final RegisteredServicesReport registeredServicesReport) {
-            this.registeredServicesReport = registeredServicesReport;
-        }
-
-        public SpringWebflowReport getSpringWebflowReport() {
-            return springWebflowReport;
-        }
-
-        public void setSpringWebflowReport(final SpringWebflowReport springWebflowReport) {
-            this.springWebflowReport = springWebflowReport;
-        }
-
-        public SingleSignOnStatus getSingleSignOnStatus() {
-            return singleSignOnStatus;
-        }
-
-        public void setSingleSignOnStatus(final SingleSignOnStatus singleSignOnStatus) {
-            this.singleSignOnStatus = singleSignOnStatus;
-        }
-
-        public Status getStatus() {
-            return status;
-        }
-
-        public void setStatus(final Status status) {
-            this.status = status;
-        }
-
-        public Dashboard getDashboard() {
-            return dashboard;
-        }
-
-        public void setDashboard(final Dashboard dashboard) {
-            this.dashboard = dashboard;
-        }
-
-        public AuditEvents getAuditEvents() {
-            return auditEvents;
-        }
-
-        public void setAuditEvents(final AuditEvents auditEvents) {
-            this.auditEvents = auditEvents;
-        }
-
-        public AuthenticationEvents getAuthenticationEvents() {
-            return authenticationEvents;
-        }
-
-        public void setAuthenticationEvents(final AuthenticationEvents authenticationEvents) {
-            this.authenticationEvents = authenticationEvents;
-        }
-
-        public ConfigurationState getConfigurationState() {
-            return configurationState;
-        }
-
-        public void setConfigurationState(final ConfigurationState configurationState) {
-            this.configurationState = configurationState;
-        }
-
-        public HealthCheck getHealthCheck() {
-            return healthCheck;
-        }
-
-        public void setHealthCheck(final HealthCheck healthCheck) {
-            this.healthCheck = healthCheck;
-        }
-
-        public LoggingConfig getLoggingConfig() {
-            return loggingConfig;
-        }
-
-        public void setLoggingConfig(final LoggingConfig loggingConfig) {
-            this.loggingConfig = loggingConfig;
-        }
-
-        public Metrics getMetrics() {
-            return metrics;
-        }
-
-        public void setMetrics(final Metrics metrics) {
-            this.metrics = metrics;
-        }
-
-        public AttributeResolution getAttributeResolution() {
-            return attributeResolution;
-        }
-
-        public void setAttributeResolution(final AttributeResolution attributeResolution) {
-            this.attributeResolution = attributeResolution;
-        }
-
-        public SingleSignOnReport getSingleSignOnReport() {
-            return singleSignOnReport;
-        }
-
-        public void setSingleSignOnReport(final SingleSignOnReport singleSignOnReport) {
-            this.singleSignOnReport = singleSignOnReport;
-        }
-
-        public Statistics getStatistics() {
-            return statistics;
-        }
-
-        public void setStatistics(final Statistics statistics) {
-            this.statistics = statistics;
-        }
-
-        public TrustedDevices getTrustedDevices() {
-            return trustedDevices;
-        }
-
-        public void setTrustedDevices(final TrustedDevices trustedDevices) {
-            this.trustedDevices = trustedDevices;
         }
 
         @RequiresModule(name = "cas-server-support-reports", automated = true)

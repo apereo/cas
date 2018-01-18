@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -13,6 +14,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests
         extends AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 

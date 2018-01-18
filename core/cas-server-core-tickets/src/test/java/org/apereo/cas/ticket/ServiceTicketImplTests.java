@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class ServiceTicketImplTests {
 
     private static final String ST_ID = "stest1";
@@ -102,7 +104,7 @@ public class ServiceTicketImplTests {
     public void verifyGetTicket() {
         final Service simpleService = CoreAuthenticationTestUtils.getService();
         final ServiceTicket s = new ServiceTicketImpl(ST_ID, tgt, simpleService, false, new NeverExpiresExpirationPolicy());
-        assertEquals(tgt, s.getGrantingTicket());
+        assertEquals(tgt, s.getTicketGrantingTicket());
     }
 
     @Test

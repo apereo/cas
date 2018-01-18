@@ -1,6 +1,6 @@
 package org.apereo.cas.configuration.support;
 
-import org.apache.commons.lang3.tuple.Pair;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,12 +17,13 @@ import static org.junit.Assert.*;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
+@Slf4j
 public class CasConfigurationJasyptCipherExecutorTests {
     @Autowired
     private Environment environment;
 
     static {
-        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getName(), "P@$$w0rd");
+        System.setProperty(CasConfigurationJasyptCipherExecutor.JasyptEncryptionParameters.PASSWORD.getPropertyName(), "P@$$w0rd");
     }
 
     private CasConfigurationJasyptCipherExecutor jasypt;
@@ -42,29 +43,25 @@ public class CasConfigurationJasyptCipherExecutorTests {
 
     @Test
     public void verifyDecryptionEncryptionPairNotNeeded() {
-        final Pair<String, Object> pair = Pair.of("keyName", "keyValue");
-        final Pair<String, Object> result = jasypt.decryptPair(pair);
+        final String result = jasypt.decryptValue("keyValue");
         assertNotNull(result);
-        assertEquals(result.getKey(), pair.getKey());
-        assertEquals(result.getValue(), pair.getValue());
+        assertEquals("keyValue", result);
 
     }
 
     @Test
     public void verifyDecryptionEncryptionPairFails() {
-        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue");
-        final Pair<String, Object> result = jasypt.decryptPair(pair);
+        final String encVal = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + "keyValue";
+        final String result = jasypt.decode(encVal);
         assertNull(result);
     }
 
     @Test
     public void verifyDecryptionEncryptionPairSuccess() {
         final String value = jasypt.encryptValue("Testing");
-        final Pair<String, Object> pair = Pair.of("keyName", CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + value);
-        final Pair<String, Object> result = jasypt.decryptPair(pair);
+        final String result = jasypt.decode(value);
         assertNotNull(result);
-        assertEquals(result.getKey(), pair.getKey());
-        assertEquals("Testing", result.getValue());
+        assertEquals("Testing", result);
     }
 }
 

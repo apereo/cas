@@ -1,11 +1,18 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * This is {@link RestEndpointProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@Getter
+@Setter
 public class RestEndpointProperties extends BaseRestEndpointProperties {
     private static final long serialVersionUID = 2687020856160473089L;
     
@@ -15,12 +22,4 @@ public class RestEndpointProperties extends BaseRestEndpointProperties {
      */
     @RequiredProperty
     private String method;
-    
-    public String getMethod() {
-        return method;
-    }
-
-    public void setMethod(final String method) {
-        this.method = method;
-    }
 }

@@ -243,6 +243,11 @@ To see the relevant list of CAS properties for this feature, please [review this
 CAS is also able to use [Vault](https://www.vaultproject.io/) to
 locate properties and settings. [Please review this guide](Configuration-Properties-Security.html).
 
+##### HashiCorp Consul
+
+CAS is also able to use [Consul](https://www.consul.io/) to
+locate properties and settings. [Please review this guide](Service-Discovery-Guide-Consul.html).
+
 ##### Apache ZooKeeper
 
 CAS is also able to use [Apache ZooKeeper](https://zookeeper.apache.org/) to locate properties and settings.
@@ -308,6 +313,22 @@ The `DynamoDbCasProperties` table is automatically created by CAS with the follo
 ```
 
 To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#dynamodb).
+
+##### Azure KeyVault Secrets
+
+CAS is also able to use Microsoft Azure's KeyVault Secrets to locate properties and settings. Support is provided via the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+     <groupId>org.apereo.cas</groupId>
+     <artifactId>cas-server-core-configuration-cloud-azure-keyvault</artifactId>
+     <version>${cas.version}</version>
+</dependency>
+```
+
+To see the relevant list of CAS properties for this feature, please [review this guide](Configuration-Properties.html#azure-keyvault-secrets).
+
+**IMPORTANT**: The allowed  name pattern in Azure Key Vault is `^[0-9a-zA-Z-]+$`.For properties that contain that contain `.` in the name (i.e. `cas.some.property`),  replace `.` with `-` when you store the setting in Azure Key Vault (i.e. `cas-some-property`). The module  will handle the transformation for you. 
 
 ##### JDBC
 

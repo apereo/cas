@@ -1,8 +1,10 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseMultifactorProviderProperties}.
@@ -10,8 +12,13 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@Getter
+@Setter
 public abstract class BaseMultifactorProviderProperties implements Serializable {
+
     private static final long serialVersionUID = -2690281104343633871L;
+
     /**
      * At times, CAS needs to determine the correct provider when step-up authentication is required.
      * Consider for a moment that CAS already has established an SSO session with/without a provider and has
@@ -35,12 +42,14 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      * </p>
      */
     private int rank;
+
     /**
      * The identifier for the multifactor provider.
      * In most cases, this need not be configured explicitly, unless
      * multiple instances of the same provider type are configured in CAS.
      */
     private String id;
+
     /**
      * Multifactor bypass options for this provider.
      * Each multifactor provider is equipped with options to allow for MFA bypass. Once the provider is chosen to honor
@@ -49,42 +58,9 @@ public abstract class BaseMultifactorProviderProperties implements Serializable 
      */
     @NestedConfigurationProperty
     private MultifactorAuthenticationProviderBypassProperties bypass = new MultifactorAuthenticationProviderBypassProperties();
+
     /**
      * The name of the authentication handler used to verify credentials in MFA.
      */
     private String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public MultifactorAuthenticationProviderBypassProperties getBypass() {
-        return bypass;
-    }
-
-    public void setBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
-        this.bypass = bypass;
-    }
-
-    public int getRank() {
-        return rank;
-    }
-
-    public void setRank(final int rank) {
-        this.rank = rank;
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
-    }
-    
 }
-

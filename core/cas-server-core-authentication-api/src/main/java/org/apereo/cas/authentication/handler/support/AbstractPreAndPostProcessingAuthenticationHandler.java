@@ -1,16 +1,18 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.authentication.PrePostAuthenticationHandler;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
+import org.springframework.util.Assert;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -25,6 +27,7 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Slf4j
 public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends AbstractAuthenticationHandler implements PrePostAuthenticationHandler {
 
     public AbstractPreAndPostProcessingAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -33,7 +36,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException, PreventedException {
         if (!preAuthenticate(credential)) {
             throw new FailedLoginException();
         }
@@ -49,7 +52,7 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      *                                  {@link #authenticate(Credential)}.
      * @throws PreventedException       On the indeterminate case when authentication is prevented.
      */
-    protected abstract HandlerResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
+    protected abstract AuthenticationHandlerExecutionResult doAuthentication(Credential credential) throws GeneralSecurityException, PreventedException;
 
     /**
      * Helper method to construct a handler result
@@ -62,7 +65,9 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected HandlerResult createHandlerResult(final Credential credential, final Principal principal, final List<MessageDescriptor> warnings) {
-        return new DefaultHandlerResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+    protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential, final Principal principal,
+                                                                       final List<MessageDescriptor> warnings) {
+        Assert.notNull(principal, "Cannot create authentication handler result with a null principal for credential " + credential.getId());
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheManager;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -68,8 +69,11 @@ import java.security.cert.X509Certificate;
         CasCoreServicesConfiguration.class})
 @TestPropertySource(locations = {"classpath:/x509.properties"})
 @EnableScheduling
+@Slf4j
 public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
-    
+
+    private static final int LDAP_PORT = 1389;
+
     @Autowired
     @Qualifier("crlFetcher")
     private CRLFetcher fetcher;
@@ -84,8 +88,8 @@ public class LdaptiveResourceCRLFetcherTests extends AbstractX509LdapTests {
     
     @BeforeClass
     public static void bootstrapTests() throws Exception {
-        initDirectoryServer();
-        AbstractX509LdapTests.bootstrap();
+        initDirectoryServer(LDAP_PORT);
+        AbstractX509LdapTests.bootstrap(LDAP_PORT);
     }
 
     @Test

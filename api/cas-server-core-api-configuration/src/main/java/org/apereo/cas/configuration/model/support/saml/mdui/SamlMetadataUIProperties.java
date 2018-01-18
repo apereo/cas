@@ -1,13 +1,15 @@
 package org.apereo.cas.configuration.model.support.saml.mdui;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.quartz.SchedulingProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SamlMetadataUIProperties}.
@@ -16,9 +18,13 @@ import java.util.List;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-saml-mdui")
+@Slf4j
+@Getter
+@Setter
 public class SamlMetadataUIProperties implements Serializable {
 
     private static final long serialVersionUID = 2113479681245996975L;
+
     /**
      * The parameter name that indicates the entity id of the service provider
      * submitted to CAS.
@@ -35,6 +41,7 @@ public class SamlMetadataUIProperties implements Serializable {
      * When parsing metadata, whether the root element is required to be signed.
      */
     private boolean requireSignedRoot;
+
     /**
      * Whether valid metadata is required when parsing metadata.
      */
@@ -60,53 +67,4 @@ public class SamlMetadataUIProperties implements Serializable {
         schedule.setStartDelay("PT30S");
         schedule.setRepeatInterval("PT2M");
     }
-
-    public SchedulingProperties getSchedule() {
-        return schedule;
-    }
-
-    public void setSchedule(final SchedulingProperties schedule) {
-        this.schedule = schedule;
-    }
-
-    public List<String> getResources() {
-        return resources;
-    }
-
-    public void setResources(final List<String> resources) {
-        this.resources = resources;
-    }
-
-    public boolean isRequireValidMetadata() {
-        return requireValidMetadata;
-    }
-
-    public void setRequireValidMetadata(final boolean requireValidMetadata) {
-        this.requireValidMetadata = requireValidMetadata;
-    }
-
-    public String getParameter() {
-        return parameter;
-    }
-
-    public void setParameter(final String parameter) {
-        this.parameter = parameter;
-    }
-
-    public long getMaxValidity() {
-        return maxValidity;
-    }
-
-    public void setMaxValidity(final long maxValidity) {
-        this.maxValidity = maxValidity;
-    }
-
-    public boolean isRequireSignedRoot() {
-        return requireSignedRoot;
-    }
-
-    public void setRequireSignedRoot(final boolean requireSignedRoot) {
-        this.requireSignedRoot = requireSignedRoot;
-    }
-
 }

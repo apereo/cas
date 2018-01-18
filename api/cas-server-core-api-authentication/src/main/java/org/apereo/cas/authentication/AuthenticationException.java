@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * Authentication raised by {@link AuthenticationManager} to signal authentication failure.
@@ -12,16 +14,18 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
+@Getter
 public class AuthenticationException extends RuntimeException {
 
     /** Serialization metadata. */
     private static final long serialVersionUID = -6032827784134751797L;
 
     /** Immutable map of handler names to the errors they raised. */
-    private final Map<String, Class<? extends Throwable>> handlerErrors;
+    private final Map<String, Throwable> handlerErrors;
 
     /** Immutable map of handler names to an authentication success metadata instance. */
-    private final Map<String, HandlerResult> handlerSuccesses;
+    private final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses;
 
     /**
      * Creates a new instance for the case when no handlers were attempted, i.e. no successes or failures.
@@ -29,10 +33,7 @@ public class AuthenticationException extends RuntimeException {
      * @param msg the msg
      */
     public AuthenticationException(final String msg) {
-        this(
-            msg,
-            new HashMap<>(0),
-            new HashMap<>(0));
+        this(msg, new HashMap<>(0), new HashMap<>(0));
     }
 
     /**
@@ -47,7 +48,7 @@ public class AuthenticationException extends RuntimeException {
      *
      * @param handlerErrors Map of handler names to errors.
      */
-    public AuthenticationException(final Map<String, Class<? extends Throwable>> handlerErrors) {
+    public AuthenticationException(final Map<String, Throwable> handlerErrors) {
         this(handlerErrors, new HashMap<>(0));
     }
 
@@ -57,12 +58,8 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerErrors Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
-    public AuthenticationException(final Map<String, Class<? extends Throwable>> handlerErrors, 
-                                   final Map<String, HandlerResult> handlerSuccesses) {
-        this(
-            String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()),
-            handlerErrors,
-            handlerSuccesses);
+    public AuthenticationException(final Map<String, Throwable> handlerErrors, final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
+        this(String.format("%s errors, %s successes", handlerErrors.size(), handlerSuccesses.size()), handlerErrors, handlerSuccesses);
     }
 
     /**
@@ -73,30 +70,10 @@ public class AuthenticationException extends RuntimeException {
      * @param handlerErrors Map of handler names to errors.
      * @param handlerSuccesses Map of handler names to authentication successes.
      */
-    public AuthenticationException(
-            final String message,
-            final Map<String, Class<? extends Throwable>> handlerErrors,
-            final Map<String, HandlerResult> handlerSuccesses) {
+    public AuthenticationException(final String message, final Map<String, Throwable> handlerErrors,
+                                   final Map<String, AuthenticationHandlerExecutionResult> handlerSuccesses) {
         super(message);
         this.handlerErrors = new HashMap<>(handlerErrors);
         this.handlerSuccesses = new HashMap<>(handlerSuccesses);
-    }
-
-    /**
-     * Gets an unmodifiable map of handler names to errors.
-     *
-     * @return Immutable map of handler names to errors.
-     */
-    public Map<String, Class<? extends Throwable>> getHandlerErrors() {
-        return this.handlerErrors;
-    }
-
-    /**
-     * Gets an unmodifiable map of handler names to authentication successes.
-     *
-     * @return Immutable map of handler names to authentication successes.
-     */
-    public Map<String, HandlerResult> getHandlerSuccesses() {
-        return this.handlerSuccesses;
     }
 }

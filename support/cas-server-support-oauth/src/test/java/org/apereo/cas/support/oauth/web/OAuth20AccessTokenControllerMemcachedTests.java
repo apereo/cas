@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -83,6 +84,7 @@ import static org.junit.Assert.*;
                 CasCoreUtilConfiguration.class,
                 CasCoreWebConfiguration.class})
 @TestPropertySource(locations = {"classpath:/memcached-oauth.properties"})
+@Slf4j
 public class OAuth20AccessTokenControllerMemcachedTests extends AbstractOAuth20Tests {
     @Before
     public void setUp() {

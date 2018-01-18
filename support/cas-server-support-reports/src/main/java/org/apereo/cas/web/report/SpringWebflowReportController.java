@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -31,7 +32,10 @@ import java.util.stream.StreamSupport;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SpringWebflowReportController extends BaseCasMvcEndpoint {
+
+    
     /**
      * Instantiates a new Base cas mvc endpoint.
      *
@@ -102,10 +106,13 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
                     }
 
                     final Field field = ReflectionUtils.findField(((ViewState) state).getViewFactory().getClass(), "viewId");
-                    ReflectionUtils.makeAccessible(field);
-                    final Expression exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
-                    stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
-
+                    if (field != null) {
+                        ReflectionUtils.makeAccessible(field);
+                        final Expression exp = (Expression) ReflectionUtils.getField(field, ((ViewState) state).getViewFactory());
+                        stateMap.put("viewId", StringUtils.defaultIfBlank(exp.getExpressionString(), exp.getValue(null).toString()));
+                    } else {
+                        LOGGER.warn("Field viewId cannot be located on view state [{}]", state);
+                    }
                 }
 
                 if (state instanceof TransitionableState) {

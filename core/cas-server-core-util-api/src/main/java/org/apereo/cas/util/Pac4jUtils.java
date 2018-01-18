@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
@@ -17,9 +19,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public final class Pac4jUtils {
-    private Pac4jUtils() {}
-
+@Slf4j
+@UtilityClass
+public class Pac4jUtils {
     /**
      * Return the username of the authenticated user (based on pac4j security).
      *

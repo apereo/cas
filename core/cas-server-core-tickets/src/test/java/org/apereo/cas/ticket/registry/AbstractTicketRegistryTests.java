@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -37,6 +38,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractTicketRegistryTests {
 
     @ClassRule
@@ -61,19 +63,19 @@ public abstract class AbstractTicketRegistryTests {
     }
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.ticketRegistry = this.getNewTicketRegistry();
         if (ticketRegistry != null) {
             this.ticketRegistry.deleteAll();
             setUpEncryption();
         }
     }
-    
+
     private void setUpEncryption() {
         final AbstractTicketRegistry registry = AopTestUtils.getTargetObject(this.ticketRegistry);
         if (this.useEncryption) {
             final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(
-                    new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
+                new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
             registry.setCipherExecutor(cipher);
         } else {
             registry.setCipherExecutor(NoOpCipherExecutor.getInstance());
@@ -103,10 +105,10 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyAddTicketToCache() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
     }
 
@@ -115,7 +117,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket(null, TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
     }
 
@@ -124,7 +126,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL", TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
     }
 
@@ -132,11 +134,11 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyGetExistingTicketWithProperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, TicketGrantingTicket.class);
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
     }
 
@@ -144,13 +146,13 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyGetExistingTicketWithImproperClass() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX, ServiceTicket.class));
         } catch (final ClassCastException e) {
             return;
         }
-        fail("ClassCastException expected.");
+        throw new AssertionError("ClassCastException expected");
     }
 
     @Test
@@ -158,7 +160,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket(null);
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
     }
 
@@ -167,7 +169,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             this.ticketRegistry.getTicket("FALALALALALAL");
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED, e);
         }
     }
 
@@ -175,11 +177,11 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyGetExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX);
         } catch (final Exception e) {
-            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
+            throw new AssertionError(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -187,22 +189,22 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyAddAndUpdateTicket() {
         try {
             TicketGrantingTicket tgt = new TicketGrantingTicketImpl(
-                    TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy());
+                TicketGrantingTicket.PREFIX,
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy());
             this.ticketRegistry.addTicket(tgt);
 
             tgt = this.ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
             assertTrue(tgt.getServices().isEmpty());
 
             tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),
-                    new NeverExpiresExpirationPolicy(), false, false);
+                new NeverExpiresExpirationPolicy(), false, false);
             this.ticketRegistry.updateTicket(tgt);
 
             tgt = this.ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
             assertEquals(Collections.singleton("ST1"), tgt.getServices().keySet());
         } catch (final Exception e) {
-            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
+            throw new AssertionError(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -212,12 +214,12 @@ public abstract class AbstractTicketRegistryTests {
         try {
             for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
                 this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
-                        CoreAuthenticationTestUtils.getAuthentication(),
-                        new NeverExpiresExpirationPolicy()));
+                    CoreAuthenticationTestUtils.getAuthentication(),
+                    new NeverExpiresExpirationPolicy()));
             }
             assertEquals(TICKETS_IN_REGISTRY, this.ticketRegistry.deleteAll());
         } catch (final Exception e) {
-            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
+            throw new AssertionError(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -225,12 +227,12 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyDeleteExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             assertSame(1, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX));
             assertNull(this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX));
         } catch (final Exception e) {
-            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
+            throw new AssertionError(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -238,11 +240,11 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyDeleteNonExistingTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             assertSame(0, this.ticketRegistry.deleteTicket(TicketGrantingTicket.PREFIX + "NON-EXISTING-SUFFIX"));
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -250,11 +252,11 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyDeleteNullTicket() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                CoreAuthenticationTestUtils.getAuthentication(),
+                new NeverExpiresExpirationPolicy()));
             assertFalse("Ticket was deleted.", this.ticketRegistry.deleteTicket(null) == 1);
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -263,7 +265,7 @@ public abstract class AbstractTicketRegistryTests {
         try {
             assertEquals("The size of the empty registry is not zero.", 0, this.ticketRegistry.getTickets().size());
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -274,10 +276,10 @@ public abstract class AbstractTicketRegistryTests {
 
         for (int i = 0; i < TICKETS_IN_REGISTRY; i++) {
             final TicketGrantingTicket ticketGrantingTicket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + i,
-                    CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+                CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
             final ServiceTicket st = ticketGrantingTicket.grantServiceTicket("ST" + i,
-                    RegisteredServiceTestUtils.getService(),
-                    new NeverExpiresExpirationPolicy(), false, true);
+                RegisteredServiceTestUtils.getService(),
+                new NeverExpiresExpirationPolicy(), false, true);
             tickets.add(ticketGrantingTicket);
             tickets.add(st);
             this.ticketRegistry.addTicket(ticketGrantingTicket);
@@ -287,13 +289,15 @@ public abstract class AbstractTicketRegistryTests {
         try {
             final Collection<Ticket> ticketRegistryTickets = this.ticketRegistry.getTickets();
             assertEquals("The size of the registry is not the same as the collection.",
-                    tickets.size(), ticketRegistryTickets.size());
+                tickets.size(), ticketRegistryTickets.size());
 
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
-                    .forEach(ticket -> fail("Ticket " + ticket + " was not found in retrieval of collection of all tickets."));
+                .forEach(ticket -> {
+                    throw new AssertionError("Ticket " + ticket + " was not found in retrieval of collection of all tickets.");
+                });
         } catch (final Exception e) {
-            fail(EXCEPTION_CAUGHT_NONE_EXPECTED);
+            throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
     }
 
@@ -301,17 +305,17 @@ public abstract class AbstractTicketRegistryTests {
     public void verifyDeleteTicketWithChildren() {
         try {
             this.ticketRegistry.addTicket(new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX + "1", CoreAuthenticationTestUtils.getAuthentication(),
-                    new NeverExpiresExpirationPolicy()));
+                new NeverExpiresExpirationPolicy()));
             final TicketGrantingTicket tgt = this.ticketRegistry.getTicket(TicketGrantingTicket.PREFIX + "1", TicketGrantingTicket.class);
 
             final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
 
             final ServiceTicket st1 = tgt.grantServiceTicket(
-                    "ST11", service, new NeverExpiresExpirationPolicy(), false, false);
+                "ST11", service, new NeverExpiresExpirationPolicy(), false, false);
             final ServiceTicket st2 = tgt.grantServiceTicket(
-                    "ST21", service, new NeverExpiresExpirationPolicy(), false, false);
+                "ST21", service, new NeverExpiresExpirationPolicy(), false, false);
             final ServiceTicket st3 = tgt.grantServiceTicket(
-                    "ST31", service, new NeverExpiresExpirationPolicy(), false, false);
+                "ST31", service, new NeverExpiresExpirationPolicy(), false, false);
 
             this.ticketRegistry.addTicket(st1);
             this.ticketRegistry.addTicket(st2);
@@ -330,15 +334,15 @@ public abstract class AbstractTicketRegistryTests {
             assertNull(this.ticketRegistry.getTicket("ST21", ServiceTicket.class));
             assertNull(this.ticketRegistry.getTicket("ST31", ServiceTicket.class));
         } catch (final Exception e) {
-            fail(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage());
+            throw new AssertionError(CAUGHT_AN_EXCEPTION_BUT_WAS_NOT_EXPECTED + e.getMessage(), e);
         }
     }
 
     @Test
     public void verifyWriteGetDelete() {
         final Ticket ticket = new TicketGrantingTicketImpl(TicketGrantingTicket.PREFIX,
-                CoreAuthenticationTestUtils.getAuthentication(),
-                new NeverExpiresExpirationPolicy());
+            CoreAuthenticationTestUtils.getAuthentication(),
+            new NeverExpiresExpirationPolicy());
         ticketRegistry.addTicket(ticket);
         final Ticket ticketFromRegistry = ticketRegistry.getTicket(TicketGrantingTicket.PREFIX);
         assertNotNull(ticketFromRegistry);
@@ -375,7 +379,7 @@ public abstract class AbstractTicketRegistryTests {
         this.ticketRegistry.addTicket(pgt);
         this.ticketRegistry.updateTicket(tgt);
         this.ticketRegistry.updateTicket(st1);
-        assertEquals(pgt.getGrantingTicket(), tgt);
+        assertEquals(pgt.getTicketGrantingTicket(), tgt);
         assertNotNull(this.ticketRegistry.getTicket(PGT_1_ID, ProxyGrantingTicket.class));
         assertEquals(a, pgt.getAuthentication());
         assertNotNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));
@@ -396,7 +400,7 @@ public abstract class AbstractTicketRegistryTests {
         final Service service = RegisteredServiceTestUtils.getService("TGT_DELETE_TEST");
         IntStream.range(1, 5).forEach(i -> {
             final ServiceTicket st = tgt.grantServiceTicket(ST_1_ID + "-" + i, service,
-                    new NeverExpiresExpirationPolicy(), false, true);
+                new NeverExpiresExpirationPolicy(), false, true);
             this.ticketRegistry.addTicket(st);
             this.ticketRegistry.updateTicket(tgt);
 

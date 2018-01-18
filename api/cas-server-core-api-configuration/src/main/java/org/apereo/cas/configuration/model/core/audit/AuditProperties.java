@@ -1,7 +1,9 @@
 package org.apereo.cas.configuration.model.core.audit;
 
-import org.apereo.inspektr.audit.support.AbstractStringAuditTrailManager;
-
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import java.io.Serializable;
 
 /**
@@ -10,9 +12,26 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@Setter
 public class AuditProperties implements Serializable {
 
     private static final long serialVersionUID = 3946106584608417663L;
+
+    /**
+     * Retrieve audit records from storage, starting from now
+     * and going back the indicated number of days in history.
+     */
+    private int numberOfDaysInHistory = 30;
+
+    /**
+     * Whether ticket validation events in the audit log should include
+     * information about the assertion that is validated; things such as
+     * the principal id and attributes released.
+     */
+    private boolean includeValidationAssertion;
+
     /**
      * Application code to use in the audit logs.
      *
@@ -21,11 +40,6 @@ public class AuditProperties implements Serializable {
      * to identify the application and filter results based on the code.
      */
     private String appCode = "CAS";
-
-    /**
-     * Character to separate audit fields if single-line audits are used.
-     */
-    private String singlelineSeparator = "|";
 
     /**
      * Request header to use identify the server address.
@@ -53,113 +67,32 @@ public class AuditProperties implements Serializable {
     private boolean useServerHostAddress;
 
     /**
-     * Indicates whether audit logs should be recorded as a single-line.
-     *
-     * By default, audit logs are split into multiple lines where each action and activity
-     * takes up a full line. This is a more compact version.
-     */
-    private boolean useSingleLine;
-
-    /**
      * Family of sub-properties pertaining to Jdbc-based audit destinations.
      */
+    @NestedConfigurationProperty
     private AuditJdbcProperties jdbc = new AuditJdbcProperties();
 
     /**
      * Family of sub-properties pertaining to MongoDb-based audit destinations.
      */
+    @NestedConfigurationProperty
     private AuditMongoDbProperties mongo = new AuditMongoDbProperties();
 
     /**
-     * The audit format to use in the logs.
+     * Family of sub-properties pertaining to rest-based audit destinations.
      */
-    private AbstractStringAuditTrailManager.AuditFormats auditFormat =
-            AbstractStringAuditTrailManager.AuditFormats.DEFAULT;
+    @NestedConfigurationProperty
+    private AuditRestProperties rest = new AuditRestProperties();
+
+    /**
+     * Family of sub-properties pertaining to file-based audit destinations.
+     */
+    @NestedConfigurationProperty
+    private AuditSlf4jLogProperties slf4j = new AuditSlf4jLogProperties();
 
     /**
      * Indicates whether catastrophic audit failures should simply be logged
      * or whether errors should bubble up and thrown back.
      */
     private boolean ignoreAuditFailures;
-
-    public AuditMongoDbProperties getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final AuditMongoDbProperties mongo) {
-        this.mongo = mongo;
-    }
-
-    public AuditJdbcProperties getJdbc() {
-        return jdbc;
-    }
-
-    public void setJdbc(final AuditJdbcProperties jdbc) {
-        this.jdbc = jdbc;
-    }
-
-    public String getAppCode() {
-        return appCode;
-    }
-
-    public void setAppCode(final String appCode) {
-        this.appCode = appCode;
-    }
-
-    public String getSinglelineSeparator() {
-        return singlelineSeparator;
-    }
-
-    public void setSinglelineSeparator(final String singlelineSeparator) {
-        this.singlelineSeparator = singlelineSeparator;
-    }
-
-    public boolean isUseSingleLine() {
-        return useSingleLine;
-    }
-
-    public void setUseSingleLine(final boolean useSingleLine) {
-        this.useSingleLine = useSingleLine;
-    }
-
-    public AbstractStringAuditTrailManager.AuditFormats getAuditFormat() {
-        return auditFormat;
-    }
-
-    public void setAuditFormat(final AbstractStringAuditTrailManager.AuditFormats auditFormat) {
-        this.auditFormat = auditFormat;
-    }
-
-    public boolean isIgnoreAuditFailures() {
-        return ignoreAuditFailures;
-    }
-
-    public void setIgnoreAuditFailures(final boolean ignoreAuditFailures) {
-        this.ignoreAuditFailures = ignoreAuditFailures;
-    }
-
-    public String getAlternateServerAddrHeaderName() {
-        return alternateServerAddrHeaderName;
-    }
-
-    public void setAlternateServerAddrHeaderName(final String alternateServerAddrHeaderName) {
-        this.alternateServerAddrHeaderName = alternateServerAddrHeaderName;
-    }
-
-    public String getAlternateClientAddrHeaderName() {
-        return alternateClientAddrHeaderName;
-    }
-
-    public void setAlternateClientAddrHeaderName(final String alternateClientAddrHeaderName) {
-        this.alternateClientAddrHeaderName = alternateClientAddrHeaderName;
-    }
-
-    public boolean isUseServerHostAddress() {
-        return useServerHostAddress;
-    }
-
-    public void setUseServerHostAddress(final boolean useServerHostAddress) {
-        this.useServerHostAddress = useServerHostAddress;
-    }
-
 }

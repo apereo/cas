@@ -1,9 +1,12 @@
 package org.apereo.cas.services.web.view;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.RememberMeCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,11 +14,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.web.support.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.Assertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.view.AbstractView;
 
 import java.time.ZonedDateTime;
@@ -33,8 +33,9 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
+@Getter
 public abstract class AbstractCasView extends AbstractView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCasView.class);
 
     /**
      * Indicate whether this view will be generating the success response or not.
@@ -52,7 +53,6 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final ServicesManager servicesManager;
 
-
     /**
      * authentication context attribute name.
      */
@@ -63,10 +63,8 @@ public abstract class AbstractCasView extends AbstractView {
      */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
 
-    public AbstractCasView(final boolean successResponse,
-                           final ProtocolAttributeEncoder protocolAttributeEncoder,
-                           final ServicesManager servicesManager,
-                           final String authenticationContextAttribute,
+    public AbstractCasView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder,
+                           final ServicesManager servicesManager, final String authenticationContextAttribute,
                            final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
         this.successResponse = successResponse;
         this.protocolAttributeEncoder = protocolAttributeEncoder;
@@ -124,7 +122,6 @@ public abstract class AbstractCasView extends AbstractView {
     protected String getProxyGrantingTicketIou(final Map<String, Object> model) {
         return (String) model.get(CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET_IOU);
     }
-
 
     /**
      * Gets the authentication from the model.
@@ -223,7 +220,6 @@ public abstract class AbstractCasView extends AbstractView {
         return authnMethod != null && authnMethod.contains(Boolean.TRUE) && isAssertionBackedByNewLogin(model);
     }
 
-
     /**
      * Gets satisfied multifactor authentication provider.
      *
@@ -257,12 +253,10 @@ public abstract class AbstractCasView extends AbstractView {
         final Set<Map.Entry<String, Object>> entries = attributes.entrySet();
         return entries.stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> {
             final Object value = entry.getValue();
-            if (value instanceof Collection || value instanceof Map || value instanceof Object[]
-                    || value instanceof Iterator || value instanceof Enumeration) {
+            if (value instanceof Collection || value instanceof Map || value instanceof Object[] || value instanceof Iterator || value instanceof Enumeration) {
                 return value;
             }
             return CollectionUtils.wrap(value);
-
         }));
     }
 
@@ -315,17 +309,13 @@ public abstract class AbstractCasView extends AbstractView {
      * @param model      the model
      * @param service    the service
      */
-    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
-                                                                         final Map<String, Object> model,
+    protected void decideIfCredentialPasswordShouldBeReleasedAsAttribute(final Map<String, Object> attributes, final Map<String, Object> model,
                                                                          final RegisteredService service) {
-
         final RegisteredServiceAttributeReleasePolicy policy = service.getAttributeReleasePolicy();
         final boolean isAuthorized = policy != null && policy.isAuthorizedToReleaseCredentialPassword();
-
-        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes,
-                getAuthenticationAttribute(model, CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL),
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL,
-                service, isAuthorized);
+        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, getAuthenticationAttribute(model,
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL),
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, service, isAuthorized);
     }
 
     /**
@@ -339,15 +329,11 @@ public abstract class AbstractCasView extends AbstractView {
      * @param service    the service
      */
     protected void decideIfProxyGrantingTicketShouldBeReleasedAsAttribute(final Map<String, Object> attributes,
-                                                                          final Map<String, Object> model,
-                                                                          final RegisteredService service) {
+                                                                          final Map<String, Object> model, final RegisteredService service) {
         final RegisteredServiceAttributeReleasePolicy policy = service.getAttributeReleasePolicy();
         final boolean isAuthorized = policy != null && policy.isAuthorizedToReleaseProxyGrantingTicket();
-
-        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes,
-                getProxyGrantingTicketId(model),
-                CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET,
-                service, isAuthorized);
+        decideAttributeReleaseBasedOnServiceAttributePolicy(attributes, getProxyGrantingTicketId(model),
+            CasViewConstants.MODEL_ATTRIBUTE_NAME_PROXY_GRANTING_TICKET, service, isAuthorized);
     }
 
     /**
@@ -359,27 +345,22 @@ public abstract class AbstractCasView extends AbstractView {
      * @param service                  the service
      * @param doesAttributePolicyAllow does attribute policy allow release of this attribute?
      */
-    protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes,
-                                                                       final String attributeValue,
-                                                                       final String attributeName,
-                                                                       final RegisteredService service,
+    protected void decideAttributeReleaseBasedOnServiceAttributePolicy(final Map<String, Object> attributes, final String attributeValue,
+                                                                       final String attributeName, final RegisteredService service,
                                                                        final boolean doesAttributePolicyAllow) {
         if (StringUtils.isNotBlank(attributeValue)) {
             LOGGER.debug("Obtained [{}] as an authentication attribute", attributeName);
-
             if (doesAttributePolicyAllow) {
                 LOGGER.debug("Obtained [{}] is passed to the CAS validation payload", attributeName);
                 attributes.put(attributeName, CollectionUtils.wrap(attributeValue));
             } else {
-                LOGGER.debug("Attribute release policy for [{}] does not authorize the release of [{}]",
-                        service.getServiceId(), attributeName);
+                LOGGER.debug("Attribute release policy for [{}] does not authorize the release of [{}]", service.getServiceId(), attributeName);
                 attributes.remove(attributeName);
             }
         } else {
             LOGGER.trace("[{}] is not available and will not be released to the validation response.", attributeName);
         }
     }
-
 
     /**
      * Put into model.
@@ -409,9 +390,4 @@ public abstract class AbstractCasView extends AbstractView {
     public ServicesManager getServicesManager() {
         return this.servicesManager;
     }
-
-    public String getAuthenticationContextAttribute() {
-        return authenticationContextAttribute;
-    }
-
 }

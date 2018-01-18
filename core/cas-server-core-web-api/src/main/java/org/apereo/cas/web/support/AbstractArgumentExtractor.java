@@ -1,9 +1,8 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
@@ -15,10 +14,9 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1.2
  */
+@Slf4j
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractArgumentExtractor.class);
-    
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */

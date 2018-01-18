@@ -1,24 +1,22 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
 
 /**
  * Resolves the username for the service to be the default principal id.
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@NoArgsConstructor
 public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 5823989148794052951L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceUsernameProvider.class);
-
-    public DefaultRegisteredServiceUsernameProvider() {
-    }
 
     public DefaultRegisteredServiceUsernameProvider(final String canonicalizationMode) {
         super(canonicalizationMode);
@@ -41,15 +39,11 @@ public class DefaultRegisteredServiceUsernameProvider extends BaseRegisteredServ
         if (obj.getClass() != getClass()) {
             return false;
         }
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).toHashCode();
     }
 }

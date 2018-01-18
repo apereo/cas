@@ -1,8 +1,8 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.MongoDbAuditTrailManager;
-import org.apereo.cas.audit.spi.DefaultDelegatingAuditTrailManager;
-import org.apereo.cas.audit.spi.DelegatingAuditTrailManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.audit.AuditMongoDbProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -21,6 +21,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("casSupportMongoDbAuditConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasSupportMongoDbAuditConfiguration {
 
     @Autowired
@@ -32,12 +33,13 @@ public class CasSupportMongoDbAuditConfiguration {
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
         factory.createCollection(mongoTemplate, mongo.getCollection(), mongo.isDropCollection());
-        return new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
+        final MongoDbAuditTrailManager mgmr = new MongoDbAuditTrailManager(mongoTemplate, mongo.getCollection());
+        mgmr.setAsynchronous(mongo.isAsynchronous());
+        return mgmr;
     }
 
     @Bean
-    public DelegatingAuditTrailManager auditTrailManager() {
-        return new DefaultDelegatingAuditTrailManager(mongoDbAuditTrailManager());
+    public AuditTrailExecutionPlanConfigurer mongoDbAuditTrailExecutionPlanConfigurer() {
+        return plan -> plan.registerAuditTrailManager(mongoDbAuditTrailManager());
     }
-
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -85,8 +87,6 @@ import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URL;
@@ -107,7 +107,9 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-public final class LdapUtils {
+@Slf4j
+@UtilityClass
+public class LdapUtils {
     /**
      * Default parameter name in search filters for ldap.
      */
@@ -118,16 +120,7 @@ public final class LdapUtils {
      */
     public static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
-
     private static final String LDAP_PREFIX = "ldap";
-
-    /**
-     * Instantiates a new ldap utils.
-     */
-    private LdapUtils() {
-        // private constructor so that no one can instantiate.
-    }
 
     /**
      * Reads a Boolean value from the LdapEntry.
@@ -285,8 +278,11 @@ public final class LdapUtils {
      * @return true, if successful
      */
     public static boolean containsResultEntry(final Response<SearchResult> response) {
-        final SearchResult result = response.getResult();
-        return result != null && result.getEntry() != null;
+        if (response != null) {
+            final SearchResult result = response.getResult();
+            return result != null && result.getEntry() != null;
+        }
+        return false;
     }
 
     /**
@@ -918,7 +914,7 @@ public final class LdapUtils {
                         final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
                                 .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
                                 .collect(Collectors.toList());
-                        LOGGER.warn("[{}] pool passivator could be created for [{}] given bind credentials are not specified. "
+                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
                                 + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
                                 + "set the pool passivator setting to one of [{}]",
                                 l.getPoolPassivator(), l.getLdapUrl(), values);

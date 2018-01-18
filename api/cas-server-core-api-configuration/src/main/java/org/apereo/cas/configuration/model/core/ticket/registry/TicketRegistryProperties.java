@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.core.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.couchbase.ticketregistry.CouchbaseTicketRegistryProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
@@ -15,8 +16,9 @@ import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link TicketRegistryProperties}.
@@ -25,6 +27,9 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-tickets", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class TicketRegistryProperties implements Serializable {
 
     private static final long serialVersionUID = -4735458476452635679L;
@@ -34,7 +39,7 @@ public class TicketRegistryProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private JmsTicketRegistryProperties jms = new JmsTicketRegistryProperties();
-    
+
     /**
      * DynamoDb registry settings.
      */
@@ -106,111 +111,9 @@ public class TicketRegistryProperties implements Serializable {
     @NestedConfigurationProperty
     private ScheduledJobProperties cleaner = new ScheduledJobProperties("PT10S", "PT1M");
 
-    public MongoTicketRegistryProperties getMongo() {
-        return mongo;
-    }
-
-    public void setMongo(final MongoTicketRegistryProperties mongo) {
-        this.mongo = mongo;
-    }
-
-    public InMemory getInMemory() {
-        return inMemory;
-    }
-
-    public void setInMemory(final InMemory inMemory) {
-        this.inMemory = inMemory;
-    }
-
-    public ScheduledJobProperties getCleaner() {
-        return cleaner;
-    }
-
-    public void setCleaner(final ScheduledJobProperties cleaner) {
-        this.cleaner = cleaner;
-    }
-
-    public CouchbaseTicketRegistryProperties getCouchbase() {
-        return couchbase;
-    }
-
-    public void setCouchbase(final CouchbaseTicketRegistryProperties couchbase) {
-        this.couchbase = couchbase;
-    }
-
-    public EhcacheProperties getEhcache() {
-        return ehcache;
-    }
-
-    public void setEhcache(final EhcacheProperties ehcache) {
-        this.ehcache = ehcache;
-    }
-
-    public HazelcastTicketRegistryProperties getHazelcast() {
-        return hazelcast;
-    }
-
-    public void setHazelcast(final HazelcastTicketRegistryProperties hazelcast) {
-        this.hazelcast = hazelcast;
-    }
-
-    public IgniteProperties getIgnite() {
-        return ignite;
-    }
-
-    public void setIgnite(final IgniteProperties ignite) {
-        this.ignite = ignite;
-    }
-
-    public JpaTicketRegistryProperties getJpa() {
-        return jpa;
-    }
-
-    public void setJpa(final JpaTicketRegistryProperties jpa) {
-        this.jpa = jpa;
-    }
-
-    public MemcachedTicketRegistryProperties getMemcached() {
-        return memcached;
-    }
-
-    public void setMemcached(final MemcachedTicketRegistryProperties memcached) {
-        this.memcached = memcached;
-    }
-
-    public InfinispanProperties getInfinispan() {
-        return infinispan;
-    }
-
-    public void setInfinispan(final InfinispanProperties infinispan) {
-        this.infinispan = infinispan;
-    }
-
-    public RedisTicketRegistryProperties getRedis() {
-        return redis;
-    }
-
-    public void setRedis(final RedisTicketRegistryProperties redis) {
-        this.redis = redis;
-    }
-
-    public DynamoDbTicketRegistryProperties getDynamoDb() {
-        return dynamoDb;
-    }
-                                        
-    public void setDynamoDb(final DynamoDbTicketRegistryProperties dynamoDb) {
-        this.dynamoDb = dynamoDb;
-    }
-
-    public JmsTicketRegistryProperties getJms() {
-        return jms;
-    }
-
-    public void setJms(final JmsTicketRegistryProperties jms) {
-        this.jms = jms;
-    }
-
     @RequiresModule(name = "cas-server-core-tickets", automated = true)
+    @Getter
+    @Setter
     public static class InMemory implements Serializable {
 
         private static final long serialVersionUID = -2600525447128979994L;
@@ -221,7 +124,7 @@ public class TicketRegistryProperties implements Serializable {
          * registry cleaner in the background.
          */
         private boolean cache;
-        
+
         /**
          * The initial capacity of the underlying memory store.
          * The implementation performs internal sizing to accommodate this many elements.
@@ -248,46 +151,6 @@ public class TicketRegistryProperties implements Serializable {
 
         public InMemory() {
             crypto.setEnabled(false);
-        }
-
-        public EncryptionRandomizedSigningJwtCryptographyProperties getCrypto() {
-            return crypto;
-        }
-
-        public void setCrypto(final EncryptionRandomizedSigningJwtCryptographyProperties crypto) {
-            this.crypto = crypto;
-        }
-
-        public int getInitialCapacity() {
-            return initialCapacity;
-        }
-
-        public void setInitialCapacity(final int initialCapacity) {
-            this.initialCapacity = initialCapacity;
-        }
-
-        public int getLoadFactor() {
-            return loadFactor;
-        }
-
-        public void setLoadFactor(final int loadFactor) {
-            this.loadFactor = loadFactor;
-        }
-
-        public int getConcurrency() {
-            return concurrency;
-        }
-
-        public void setConcurrency(final int concurrency) {
-            this.concurrency = concurrency;
-        }
-
-        public boolean isCache() {
-            return cache;
-        }
-
-        public void setCache(final boolean cache) {
-            this.cache = cache;
         }
     }
 }

@@ -1,13 +1,15 @@
 package org.apereo.cas.configuration.model.core.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.util.LinkedCaseInsensitiveMap;
-
 import javax.security.auth.login.LoginException;
 import java.io.Serializable;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Configuration properties class for password.policy.
@@ -16,19 +18,22 @@ import java.util.Map;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-core-authentication", automated = true)
+@Slf4j
+@Getter
+@Setter
 public class PasswordPolicyProperties implements Serializable {
+
     private static final long serialVersionUID = -3878237508646993100L;
 
     public enum PasswordPolicyHandlingOptions {
+
         /**
          * Default option to handle policy changes.
          */
-        DEFAULT,
-        /**
+        DEFAULT, /**
          * Handle account password policies via Groovy.
          */
-        GROOVY,
-        /**
+        GROOVY, /**
          * Strategy to only activate password policy
          * if the authentication response code is not blacklisted.
          */
@@ -64,6 +69,7 @@ public class PasswordPolicyProperties implements Serializable {
      * The class must be an implementation of {@code org.ldaptive.auth.AuthenticationResponseHandler}.
      */
     private String customPolicyClass;
+
     /**
      * When dealing with FreeIPA, indicates the number of allows login failures.
      */
@@ -75,11 +81,13 @@ public class PasswordPolicyProperties implements Serializable {
      * whose value matches this field.
      */
     private String warningAttributeValue;
+
     /**
      * Used by an account state handling policy that only calculates account warnings
      * in case the LDAP entry carries this attribute.
      */
     private String warningAttributeName;
+
     /**
      * Indicates if warning should be displayed, when the ldap attribute value
      * matches the {@link #warningAttributeValue}.
@@ -90,11 +98,13 @@ public class PasswordPolicyProperties implements Serializable {
      * Always display the password expiration warning regardless.
      */
     private boolean warnAll;
+
     /**
      * In the event that AD is chosen as the type, this is used to calculate
      * a warning period to see if account expiry is within the calculated window.
      */
     private int warningDays = 30;
+
     /**
      * LDAP type. Accepted values are {@code GENERIC,AD,FreeIPA,EDirectory}
      */
@@ -105,104 +115,11 @@ public class PasswordPolicyProperties implements Serializable {
      */
     private Groovy groovy = new Groovy();
 
-    public AbstractLdapProperties.LdapType getType() {
-        return type;
-    }
-
-    public String getCustomPolicyClass() {
-        return customPolicyClass;
-    }
-
-    public void setCustomPolicyClass(final String customPolicyClass) {
-        this.customPolicyClass = customPolicyClass;
-    }
-
-    public void setType(final AbstractLdapProperties.LdapType type) {
-        this.type = type;
-    }
-
-    public void setWarnAll(final boolean warnAll) {
-        this.warnAll = warnAll;
-    }
-
-    public int getWarningDays() {
-        return warningDays;
-    }
-
-    public void setWarningDays(final int warningDays) {
-        this.warningDays = warningDays;
-    }
-
-    public String getWarningAttributeValue() {
-        return warningAttributeValue;
-    }
-
-    public void setWarningAttributeValue(final String warningAttributeValue) {
-        this.warningAttributeValue = warningAttributeValue;
-    }
-
-    public String getWarningAttributeName() {
-        return warningAttributeName;
-    }
-
-    public void setWarningAttributeName(final String warningAttributeName) {
-        this.warningAttributeName = warningAttributeName;
-    }
-
-    public boolean isDisplayWarningOnMatch() {
-        return displayWarningOnMatch;
-    }
-
-    public void setDisplayWarningOnMatch(final boolean displayWarningOnMatch) {
-        this.displayWarningOnMatch = displayWarningOnMatch;
-    }
-
-    public boolean isWarnAll() {
-        return warnAll;
-    }
-
-    public int getLoginFailures() {
-        return loginFailures;
-    }
-
-    public void setLoginFailures(final int loginFailures) {
-        this.loginFailures = loginFailures;
-    }
-
-    public Map<String, Class<LoginException>> getPolicyAttributes() {
-        return policyAttributes;
-    }
-
-    public void setPolicyAttributes(final Map<String, Class<LoginException>> policyAttributes) {
-        this.policyAttributes = policyAttributes;
-    }
-
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public PasswordPolicyHandlingOptions getStrategy() {
-        return strategy;
-    }
-
-    public void setStrategy(final PasswordPolicyHandlingOptions strategy) {
-        this.strategy = strategy;
-    }
-
-    public Groovy getGroovy() {
-        return groovy;
-    }
-
-    public void setGroovy(final Groovy groovy) {
-        this.groovy = groovy;
-    }
-
     @RequiresModule(name = "cas-server-support-ldap")
+    @Getter
+    @Setter
     public static class Groovy extends SpringResourceProperties {
+
         private static final long serialVersionUID = 8079027843747126083L;
     }
 }

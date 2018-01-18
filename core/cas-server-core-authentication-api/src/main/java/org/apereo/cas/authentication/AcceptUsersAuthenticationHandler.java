@@ -1,12 +1,10 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.StringUtils;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
@@ -14,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Setter;
 
 /**
  * Handler that contains a list of valid users and passwords. Useful if there is
@@ -29,8 +28,9 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
+@Setter
 public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AcceptUsersAuthenticationHandler.class);
 
     /**
      * The list of users we will accept.
@@ -55,37 +55,28 @@ public class AcceptUsersAuthenticationHandler extends AbstractUsernamePasswordAu
      * @param order            the order
      * @param users            the users
      */
-    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
-                                            final Integer order, final Map<String, String> users) {
+    public AcceptUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                            final PrincipalFactory principalFactory, final Integer order, final Map<String, String> users) {
         super(name, servicesManager, principalFactory, order);
         this.users = users;
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                 final String originalPassword) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword) throws GeneralSecurityException {
         if (this.users == null || this.users.isEmpty()) {
             throw new FailedLoginException("No user can be accepted because none is defined");
         }
         final String username = credential.getUsername();
         final String cachedPassword = this.users.get(username);
-
         if (cachedPassword == null) {
             LOGGER.debug("[{}] was not found in the map.", username);
             throw new AccountNotFoundException(username + " not found in backing map.");
         }
-
         if (!StringUtils.equals(credential.getPassword(), cachedPassword)) {
             throw new FailedLoginException();
         }
         final List<MessageDescriptor> list = new ArrayList<>();
         return createHandlerResult(credential, this.principalFactory.createPrincipal(username), list);
-    }
-
-    /**
-     * @param users The users to set.
-     */
-    public void setUsers(final Map<String, String> users) {
-        this.users = new HashMap<>(users);
     }
 }

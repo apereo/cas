@@ -1,6 +1,8 @@
 package org.apereo.cas.web.consent;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.consent.ConsentDecision;
 import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
@@ -11,8 +13,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.CallbackLogic;
 import org.pac4j.core.http.J2ENopHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,8 +37,9 @@ import java.util.concurrent.Callable;
  */
 @Controller("casConsentReviewController")
 @RequestMapping("/consentReview")
+@Slf4j
 public class CasConsentReviewController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConsentReviewController.class);
+
     private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
     private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
 
@@ -106,7 +107,8 @@ public class CasConsentReviewController {
             }
             return null;
         };
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        return new WebAsyncTask<>(timeout, asyncTask);
     }
     
     /**

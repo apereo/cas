@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.adaptors.trusted.config.TrustedAuthenticationConfiguration;
 import org.junit.Assert;
@@ -19,6 +20,7 @@ import org.springframework.webflow.test.MockRequestContext;
  * @since 3.0.5
  */
 @Import(TrustedAuthenticationConfiguration.class)
+@Slf4j
 public class PrincipalFromRequestUserPrincipalNonInteractiveCredentialsActionTests extends AbstractCentralAuthenticationServiceTests {
 
     @Autowired

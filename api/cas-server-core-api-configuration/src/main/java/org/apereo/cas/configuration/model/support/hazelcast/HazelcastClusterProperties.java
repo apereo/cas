@@ -1,13 +1,16 @@
 package org.apereo.cas.configuration.model.support.hazelcast;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.support.hazelcast.discovery.HazelcastDiscoveryProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-
 import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link HazelcastClusterProperties}.
@@ -16,7 +19,11 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @RequiresModule(name = "cas-server-support-hazelcast-core")
+@Slf4j
+@Getter
+@Setter
 public class HazelcastClusterProperties implements Serializable {
+
     private static final long serialVersionUID = 1817784607045775145L;
 
     /**
@@ -44,6 +51,7 @@ public class HazelcastClusterProperties implements Serializable {
      * </ul>
      */
     private String partitionMemberGroupType;
+
     /**
      * Hazelcast has a flexible logging configuration and doesn't depend on any logging framework except JDK logging.
      * It has in-built adaptors for a number of logging frameworks and also supports custom loggers by providing logging interfaces.
@@ -56,19 +64,23 @@ public class HazelcastClusterProperties implements Serializable {
      * </ul>
      */
     private String loggingType = "slf4j";
+
     /**
      * Max timeout of heartbeat in seconds for a node to assume it is dead.
      */
     private int maxNoHeartbeatSeconds = 300;
+
     /**
      * The instance name.
      */
     @RequiredProperty
     private String instanceName = "localhost";
+
     /**
      * You may also want to choose to use only one port. In that case, you can disable the auto-increment feature of port.
      */
     private boolean portAutoIncrement = true;
+
     /**
      * You can specify the ports which Hazelcast will use to communicate between cluster members.
      * The name of the parameter for this is port and its default value is 5701.
@@ -77,6 +89,7 @@ public class HazelcastClusterProperties implements Serializable {
      */
     @RequiredProperty
     private int port = 5701;
+
     /**
      * Enables a multicast configuration using a group address and port.
      * Contains the configuration for the multicast discovery mechanism.
@@ -85,6 +98,7 @@ public class HazelcastClusterProperties implements Serializable {
      * It depends on your environment if multicast is possible or allowed; otherwise you need to have a look at the tcp/ip cluster
      */
     private boolean multicastEnabled;
+
     /**
      * Enable TCP/IP config.
      * Contains the configuration for the Tcp/Ip join mechanism.
@@ -93,6 +107,7 @@ public class HazelcastClusterProperties implements Serializable {
      * and doesn't rely on these well known members anymore.
      */
     private boolean tcpipEnabled = true;
+
     /**
      * Sets the well known members.
      * If members is empty, calling this method will have the same effect as calling clear().
@@ -100,10 +115,12 @@ public class HazelcastClusterProperties implements Serializable {
      */
     @RequiredProperty
     private List<String> members = Stream.of("localhost").collect(Collectors.toList());
+
     /**
      * Sets the maximum size of the map.
      */
     private int maxHeapSizePercentage = 85;
+
     /**
      * <ul>
      * <li>FREE_HEAP_PERCENTAGE: Policy based on minimum free JVM heap memory percentage per JVM.</li>
@@ -122,12 +139,14 @@ public class HazelcastClusterProperties implements Serializable {
      * </ul>
      */
     private String maxSizePolicy = "USED_HEAP_PERCENTAGE";
+
     /**
      * Hazelcast supports policy-based eviction for distributed maps. Currently supported policies
      * are LRU (Least Recently Used) and LFU (Least Frequently Used) and NONE.
      * See <a href="http://docs.hazelcast.org/docs/latest-development/manual/html/Distributed_Data_Structures/Map/Map_Eviction.html">this</a> for more info.
      */
     private String evictionPolicy = "LRU";
+
     /**
      * To provide data safety, Hazelcast allows you to specify the number of backup copies you want to have. That way,
      * data on a cluster member will be copied onto other member(s).
@@ -139,6 +158,7 @@ public class HazelcastClusterProperties implements Serializable {
      * Sync backup operations have a blocking cost which may lead to latency issues.
      */
     private int backupCount = 1;
+
     /**
      * Hazelcast supports both synchronous and asynchronous backups. By default, backup operations are synchronous.
      * In this case, backup operations block operations until backups are successfully copied to backup members
@@ -148,17 +168,20 @@ public class HazelcastClusterProperties implements Serializable {
      * fire and forget and do not require acknowledgements; the backup operations are performed at some point in time.
      */
     private int asyncBackupCount;
+
     /**
      * Connection timeout in seconds for the TCP/IP config
      * and members joining the cluster.
      */
     private int timeout = 5;
+
     /**
      * IPv6 support has been switched off by default, since some platforms
      * have issues in use of IPv6 stack. And some other platforms such as Amazon AWS have no support at all. To enable IPv6 support
      * set this setting to false.
      */
     private boolean ipv4Enabled = true;
+
     /**
      * Multicast trusted interfaces for discovery.
      * With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication.
@@ -166,6 +189,7 @@ public class HazelcastClusterProperties implements Serializable {
      * as they just multicast to all the other members for listening. Whether multicast is possible or allowed depends on your environment.
      */
     private String multicastTrustedInterfaces;
+
     /**
      * The multicast group address used for discovery.
      * With the multicast auto-discovery mechanism, Hazelcast allows cluster members to find each other using multicast communication.
@@ -173,10 +197,12 @@ public class HazelcastClusterProperties implements Serializable {
      * as they just multicast to all the other members for listening. Whether multicast is possible or allowed depends on your environment.
      */
     private String multicastGroup;
+
     /**
      * The multicast port used for discovery.
      */
     private int multicastPort;
+
     /**
      * specifies the time in seconds that a member should wait for a valid multicast response from another
      * member running in the network before declaring itself the leader member (the first member joined to the cluster)
@@ -187,6 +213,7 @@ public class HazelcastClusterProperties implements Serializable {
      * or the members might give up too early and create their own cluster.
      */
     private int multicastTimeout = 2;
+
     /**
      * Gets the time to live for the multicast package in seconds.
      * This is the default time-to-live for multicast packets sent out on the socket
@@ -198,180 +225,4 @@ public class HazelcastClusterProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private HazelcastDiscoveryProperties discovery = new HazelcastDiscoveryProperties();
-
-    public int getBackupCount() {
-        return backupCount;
-    }
-
-    public void setBackupCount(final int backupCount) {
-        this.backupCount = backupCount;
-    }
-
-    public int getAsyncBackupCount() {
-        return asyncBackupCount;
-    }
-
-    public void setAsyncBackupCount(final int asyncBackupCount) {
-        this.asyncBackupCount = asyncBackupCount;
-    }
-
-    public String getLoggingType() {
-        return loggingType;
-    }
-
-    public void setLoggingType(final String loggingType) {
-        this.loggingType = loggingType;
-    }
-
-    public int getMaxNoHeartbeatSeconds() {
-        return maxNoHeartbeatSeconds;
-    }
-
-    public void setMaxNoHeartbeatSeconds(final int maxNoHeartbeatSeconds) {
-        this.maxNoHeartbeatSeconds = maxNoHeartbeatSeconds;
-    }
-
-    public String getInstanceName() {
-        return instanceName;
-    }
-
-    public void setInstanceName(final String instanceName) {
-        this.instanceName = instanceName;
-    }
-
-    public boolean isPortAutoIncrement() {
-        return portAutoIncrement;
-    }
-
-    public void setPortAutoIncrement(final boolean portAutoIncrement) {
-        this.portAutoIncrement = portAutoIncrement;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(final int port) {
-        this.port = port;
-    }
-
-    public boolean isMulticastEnabled() {
-        return multicastEnabled;
-    }
-
-    public void setMulticastEnabled(final boolean multicastEnabled) {
-        this.multicastEnabled = multicastEnabled;
-    }
-
-    public boolean isTcpipEnabled() {
-        return tcpipEnabled;
-    }
-
-    public void setTcpipEnabled(final boolean tcpipEnabled) {
-        this.tcpipEnabled = tcpipEnabled;
-    }
-
-    public List<String> getMembers() {
-        return members;
-    }
-
-    public void setMembers(final List<String> members) {
-        this.members = members;
-    }
-
-    public int getMaxHeapSizePercentage() {
-        return maxHeapSizePercentage;
-    }
-
-    public void setMaxHeapSizePercentage(final int maxHeapSizePercentage) {
-        this.maxHeapSizePercentage = maxHeapSizePercentage;
-    }
-
-    public String getMaxSizePolicy() {
-        return maxSizePolicy;
-    }
-
-    public void setMaxSizePolicy(final String maxSizePolicy) {
-        this.maxSizePolicy = maxSizePolicy;
-    }
-
-    public String getEvictionPolicy() {
-        return evictionPolicy;
-    }
-
-    public void setEvictionPolicy(final String evictionPolicy) {
-        this.evictionPolicy = evictionPolicy;
-    }
-
-    public String getMulticastTrustedInterfaces() {
-        return multicastTrustedInterfaces;
-    }
-
-    public void setMulticastTrustedInterfaces(final String multicastTrustedInterfaces) {
-        this.multicastTrustedInterfaces = multicastTrustedInterfaces;
-    }
-
-    public String getMulticastGroup() {
-        return multicastGroup;
-    }
-
-    public void setMulticastGroup(final String multicastGroup) {
-        this.multicastGroup = multicastGroup;
-    }
-
-    public int getMulticastPort() {
-        return multicastPort;
-    }
-
-    public void setMulticastPort(final int multicastPort) {
-        this.multicastPort = multicastPort;
-    }
-
-    public int getMulticastTimeout() {
-        return multicastTimeout;
-    }
-
-    public void setMulticastTimeout(final int multicastTimeout) {
-        this.multicastTimeout = multicastTimeout;
-    }
-
-    public int getMulticastTimeToLive() {
-        return multicastTimeToLive;
-    }
-
-    public void setMulticastTimeToLive(final int multicastTimeToLive) {
-        this.multicastTimeToLive = multicastTimeToLive;
-    }
-
-    public int getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(final int timeout) {
-        this.timeout = timeout;
-    }
-
-    public boolean isIpv4Enabled() {
-        return ipv4Enabled;
-    }
-
-    public void setIpv4Enabled(final boolean ipv4Enabled) {
-        this.ipv4Enabled = ipv4Enabled;
-    }
-
-    public String getPartitionMemberGroupType() {
-        return partitionMemberGroupType;
-    }
-
-    public void setPartitionMemberGroupType(final String partitionMemberGroupType) {
-        this.partitionMemberGroupType = partitionMemberGroupType;
-    }
-
-    public HazelcastDiscoveryProperties getDiscovery() {
-        return discovery;
-    }
-
-    public void setDiscovery(final HazelcastDiscoveryProperties discovery) {
-        this.discovery = discovery;
-    }
 }

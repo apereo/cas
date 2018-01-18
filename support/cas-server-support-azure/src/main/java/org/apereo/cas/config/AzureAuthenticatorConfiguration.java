@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorMultifactorTrustWebflowConfigurer;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorMultifactorWebflowConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -30,6 +31,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @Configuration("azureAuthenticatorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@Slf4j
 public class AzureAuthenticatorConfiguration {
 
     @Autowired
@@ -37,14 +39,14 @@ public class AzureAuthenticatorConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
     private FlowBuilderServices flowBuilderServices;
-    
+
     @Bean
     public FlowDefinitionRegistry azureAuthenticatorFlowRegistry() {
         final FlowDefinitionRegistryBuilder builder = new FlowDefinitionRegistryBuilder(this.applicationContext, this.flowBuilderServices);
@@ -52,17 +54,17 @@ public class AzureAuthenticatorConfiguration {
         builder.addFlowLocationPattern("/mfa-azure/*-webflow.xml");
         return builder.build();
     }
-    
+
     @ConditionalOnMissingBean(name = "azureAuthenticatorMultifactorWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer azureAuthenticatorMultifactorWebflowConfigurer() {
         final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                azureAuthenticatorFlowRegistry(), applicationContext, casProperties);
+            azureAuthenticatorFlowRegistry(), applicationContext, casProperties);
         w.initialize();
         return w;
     }
-    
+
     /**
      * The azure authenticator multifactor trust configuration.
      */
@@ -76,11 +78,11 @@ public class AzureAuthenticatorConfiguration {
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer azureMultifactorTrustWebflowConfigurer() {
             final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                    casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry(),
-                    applicationContext, casProperties);
+                casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry(),
+                applicationContext, casProperties);
             w.initialize();
             return w;
         }
     }
-    
+
 }

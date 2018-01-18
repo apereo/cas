@@ -1,9 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.net.ssl.KeyManager;
@@ -34,45 +34,39 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class DefaultCasSslContext {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasSslContext.class);
+@Slf4j
+public class DefaultCasSslContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
     private final SSLContext sslContext;
 
+    @SneakyThrows
     public DefaultCasSslContext(final Resource trustStoreFile, final String trustStorePassword, final String trustStoreType) {
-        try {
+        final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
+        final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
 
-            final KeyStore casTrustStore = KeyStore.getInstance(trustStoreType);
-            final char[] trustStorePasswordCharArray = trustStorePassword.toCharArray();
-
-            try (InputStream casStream = trustStoreFile.getInputStream()) {
-                casTrustStore.load(casStream, trustStorePasswordCharArray);
-            }
-
-            final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
-            final X509KeyManager customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
-            final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
-
-            final String defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
-            final Collection<X509TrustManager> customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
-            final Collection<X509TrustManager> jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
-
-            final KeyManager[] keyManagers = {
-                new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
-            };
-            final List<X509TrustManager> allManagers = new ArrayList<>(customTrustManager);
-            allManagers.addAll(jvmTrustManagers);
-            final TrustManager[] trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
-
-            this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
-            sslContext.init(keyManagers, trustManagers, null);
-
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+        try (InputStream casStream = trustStoreFile.getInputStream()) {
+            casTrustStore.load(casStream, trustStorePasswordCharArray);
         }
+
+        final String defaultAlgorithm = KeyManagerFactory.getDefaultAlgorithm();
+        final X509KeyManager customKeyManager = getKeyManager(ALG_NAME_PKIX, casTrustStore, trustStorePasswordCharArray);
+        final X509KeyManager jvmKeyManager = getKeyManager(defaultAlgorithm, null, null);
+
+        final String defaultTrustAlgorithm = TrustManagerFactory.getDefaultAlgorithm();
+        final Collection<X509TrustManager> customTrustManager = getTrustManager(ALG_NAME_PKIX, casTrustStore);
+        final Collection<X509TrustManager> jvmTrustManagers = getTrustManager(defaultTrustAlgorithm, null);
+
+        final KeyManager[] keyManagers = {
+            new CompositeX509KeyManager(CollectionUtils.wrapList(jvmKeyManager, customKeyManager))
+        };
+        final List<X509TrustManager> allManagers = new ArrayList<>(customTrustManager);
+        allManagers.addAll(jvmTrustManagers);
+        final TrustManager[] trustManagers = new TrustManager[]{new CompositeX509TrustManager(allManagers)};
+
+        this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
+        sslContext.init(keyManagers, trustManagers, null);
     }
 
     /**
@@ -179,7 +173,6 @@ public class DefaultCasSslContext {
      */
     private static class CompositeX509TrustManager implements X509TrustManager {
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(CompositeX509TrustManager.class);
 
         private final List<X509TrustManager> trustManagers;
 

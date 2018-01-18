@@ -1,7 +1,8 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -9,8 +10,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
@@ -26,9 +25,10 @@ import java.util.Collection;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@Slf4j
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DuoAuthenticationHandler.class);
+
     
     private final VariegatedMultifactorAuthenticationProvider provider;
 
@@ -49,7 +49,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
      * @throws GeneralSecurityException general security exception for errors
      */
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         if (credential instanceof DuoDirectCredential) {
             LOGGER.debug("Attempting to directly authenticate credential against Duo");
             return authenticateDuoApiCredential(credential);
@@ -57,7 +57,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         return authenticateDuoCredential(credential);
     }
 
-    private HandlerResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
+    private AuthenticationHandlerExecutionResult authenticateDuoApiCredential(final Credential credential) throws FailedLoginException {
         try {
             final DuoSecurityAuthenticationService duoAuthenticationService = getDuoAuthenticationService();
             final DuoDirectCredential c = DuoDirectCredential.class.cast(credential);
@@ -72,7 +72,7 @@ public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         throw new FailedLoginException("Duo authentication has failed");
     }
 
-    private HandlerResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
+    private AuthenticationHandlerExecutionResult authenticateDuoCredential(final Credential credential) throws FailedLoginException {
         try {
             final DuoCredential duoCredential = (DuoCredential) credential;
             if (!duoCredential.isValid()) {

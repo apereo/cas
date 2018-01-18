@@ -1,5 +1,8 @@
 package org.apereo.cas.configuration.model.support.ldap.serviceregistry;
 
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 
@@ -10,6 +13,9 @@ import org.apereo.cas.configuration.support.RequiresModule;
  * @since 5.0.0
  */
 @RequiresModule(name = "cas-server-support-ldap-service-registry")
+@Slf4j
+@Getter
+@Setter
 public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties {
 
     private static final long serialVersionUID = 2372867394066286022L;
@@ -31,30 +37,15 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
      */
     private String serviceDefinitionAttribute = "description";
 
-    public String getObjectClass() {
-        return objectClass;
-    }
+    /**
+     * The load filter used to load entries by the {@link #objectClass}.
+     * This is typically used to load all definitions that might be mapped to a service definition.
+     * The search filter used to load entries by the {@link #idAttribute}.
+     * This is typically used to load a specific service definition by its id during search operations.
+     */
+    private String loadFilter = "(objectClass=%s)";
 
-    public void setObjectClass(final String objectClass) {
-        this.objectClass = objectClass;
-    }
-
-    public String getIdAttribute() {
-        return idAttribute;
-    }
-
-    public void setIdAttribute(final String idAttribute) {
-        this.idAttribute = idAttribute;
-    }
-
-    public String getServiceDefinitionAttribute() {
-        return serviceDefinitionAttribute;
-    }
-
-    public void setServiceDefinitionAttribute(final String serviceDefinitionAttribute) {
-        this.serviceDefinitionAttribute = serviceDefinitionAttribute;
+    public LdapServiceRegistryProperties() {
+        setSearchFilter("(%s={0})");
     }
 }
-
-
-

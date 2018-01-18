@@ -1,15 +1,16 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CredentialMetaData;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionStrategy;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
 import org.apereo.cas.authentication.policy.AcceptAnyAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -88,24 +89,25 @@ import static org.mockito.Mockito.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class
+    RefreshAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class
 })
+@Slf4j
 public class CentralAuthenticationServiceImplWithMockitoTests {
 
     private static final String TGT_ID = "tgt-id";
@@ -144,9 +146,9 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         this.authentication = mock(Authentication.class);
         when(this.authentication.getAuthenticationDate()).thenReturn(ZonedDateTime.now(ZoneOffset.UTC));
         final CredentialMetaData metadata = new BasicCredentialMetaData(
-                RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
-        final Map<String, HandlerResult> successes = new HashMap<>();
-        successes.put("handler1", new DefaultHandlerResult(mock(AuthenticationHandler.class), metadata));
+            RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("principal"));
+        final Map<String, AuthenticationHandlerExecutionResult> successes = new HashMap<>();
+        successes.put("handler1", new DefaultAuthenticationHandlerExecutionResult(mock(AuthenticationHandler.class), metadata));
         when(this.authentication.getCredentials()).thenReturn(Arrays.asList(metadata));
         when(this.authentication.getSuccesses()).thenReturn(successes);
         when(this.authentication.getPrincipal()).thenReturn(new DefaultPrincipalFactory().createPrincipal(PRINCIPAL));
@@ -157,7 +159,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final TicketGrantingTicket tgtRootMock = createRootTicketGrantingTicket();
 
         final TicketGrantingTicket tgtMock = createMockTicketGrantingTicket(TGT_ID, stMock, false,
-                tgtRootMock, new ArrayList<>());
+            tgtRootMock, new ArrayList<>());
         when(tgtMock.getProxiedBy()).thenReturn(getService("proxiedBy"));
 
         final List<Authentication> authnListMock = mock(List.class);
@@ -166,7 +168,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         when(authnListMock.toArray()).thenReturn(new Object[]{this.authentication, this.authentication});
         when(authnListMock.get(anyInt())).thenReturn(this.authentication);
         when(tgtMock.getChainedAuthentications()).thenReturn(authnListMock);
-        when(stMock.getGrantingTicket()).thenReturn(tgtMock);
+        when(stMock.getTicketGrantingTicket()).thenReturn(tgtMock);
 
         final Service service2 = getService(SVC2_ID);
         final ServiceTicket stMock2 = createMockServiceTicket(ST2_ID, service2);
@@ -180,15 +182,17 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         final ServicesManager smMock = getServicesManager(service1, service2);
 
         final DefaultTicketFactory factory = new DefaultTicketFactory(
-                new DefaultProxyGrantingTicketFactory(null, null, null),
-                new DefaultTicketGrantingTicketFactory(null, null, null),
-                new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null),
-                new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
+            new DefaultProxyGrantingTicketFactory(null, null, null),
+            new DefaultTicketGrantingTicketFactory(null, null, null),
+            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null),
+            new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
-                new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
-        this.cas = new DefaultCentralAuthenticationService(ticketRegMock, factory, smMock, mock(LogoutManager.class),
-                authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
-                new DefaultPrincipalFactory(), null);
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
+        this.cas = new DefaultCentralAuthenticationService(
+            mock(ApplicationEventPublisher.class), ticketRegMock, smMock,
+            mock(LogoutManager.class), factory,
+            authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
+            new DefaultPrincipalFactory(), null);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 
@@ -269,7 +273,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
         assertEquals(PRINCIPAL, assertion.getPrimaryAuthentication().getPrincipal().getId());
         assertSame(2, assertion.getChainedAuthentications().size());
         IntStream.range(0, assertion.getChainedAuthentications().size())
-                .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
+            .forEach(i -> assertEquals(assertion.getChainedAuthentications().get(i), authentication));
     }
 
     private TicketGrantingTicket createRootTicketGrantingTicket() {
@@ -287,11 +291,11 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         final String svcId = svcTicket.getService().getId();
         when(tgtMock.grantServiceTicket(anyString(), argThat(new VerifyServiceByIdMatcher(svcId)),
-                any(ExpirationPolicy.class), anyBoolean(), anyBoolean())).thenReturn(svcTicket);
+            any(ExpirationPolicy.class), anyBoolean(), anyBoolean())).thenReturn(svcTicket);
         when(tgtMock.getRoot()).thenReturn(root);
         when(tgtMock.getChainedAuthentications()).thenReturn(chainedAuthnList);
         when(tgtMock.getAuthentication()).thenReturn(this.authentication);
-        when(svcTicket.getGrantingTicket()).thenReturn(tgtMock);
+        when(svcTicket.getTicketGrantingTicket()).thenReturn(tgtMock);
 
         return tgtMock;
     }

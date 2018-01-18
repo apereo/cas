@@ -4,6 +4,7 @@ title: CAS - Configuring Service Access Strategy
 ---
 
 # Configure Service Access Strategy
+
 The access strategy of a registered service provides fine-grained control over the service authorization rules.
 it describes whether the service is allowed to use the CAS server, allowed to participate in
 single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
@@ -109,7 +110,7 @@ To access the service, the principal must have a `cn` attribute whose value is e
     "ssoEnabled" : true,
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
-      "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ]
+      "cn" : [ "java.util.HashSet", [ "admin", "Admin", "TheAdmin" ] ]
     }
   }
 }
@@ -135,7 +136,7 @@ OR the principal must have a `member` attribute whose value is either of `admins
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
       "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
-      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+      "member" : [ "java.util.HashSet", [ "admins", "adminGroup", "staff" ] ]
     }
   }
 }
@@ -162,7 +163,7 @@ also must not have an attribute "role" whose value matches the pattern `deny.+`.
     "requiredAttributes" : {
       "@class" : "java.util.HashMap",
       "cn" : [ "java.util.HashSet", [ "admin, Admin, TheAdmin" ] ],
-      "member" : [ "java.util.HashSet", [ "admins, adminGroup, staff" ] ]
+      "member" : [ "java.util.HashSet", [ "admins", "adminGroup", "staff" ] ]
     },
     "rejectedAttributes" : {
       "@class" : "java.util.HashMap",
@@ -229,6 +230,48 @@ Remote endpoint access strategy authorizing service access based on response cod
   }
 }
 ```
+
+## Groovy
+
+This strategy delegates to a Groovy script to dynamically decide the access rules requested by CAS at runtime:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^https://.+",
+  "id" : 1,
+  "accessStrategy" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceAccessStrategy",
+    "groovyScript" : "file:///etc/cas/config/access-strategy.groovy"
+  }
+}
+```
+
+The script itself may be designed as such by overriding the needed operations where necessary:
+
+```groovy
+import org.apereo.cas.services.*
+import java.util.*
+
+class GroovyRegisteredAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+    @Override
+    boolean isServiceAccessAllowed() {
+        ...
+    }
+
+    @Override
+    boolean isServiceAccessAllowedForSso() {
+        ...
+    }
+
+    @Override
+    boolean doPrincipalAttributesAllowServiceAccess(String principal, Map<String, Object> attributes) {
+        ...
+    }
+}
+```
+
+Refer to the CAS API documentation to learn more about operations and expected behaviors.
 
 ## Grouper
 

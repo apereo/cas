@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +19,7 @@ import java.util.Collection;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
+@Slf4j
 public class DefaultTicketRegistryTests extends AbstractTicketRegistryTests {
 
     public DefaultTicketRegistryTests(final boolean useEncryption) {

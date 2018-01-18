@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
-import net.shibboleth.utilities.java.support.velocity.SLF4JLogChute;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.BasicParserPool;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.ClassUtils;
@@ -35,6 +36,7 @@ import java.util.Properties;
  */
 @Configuration("coreSamlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CoreSamlConfiguration {
 
     private static final int POOL_SIZE = 100;
@@ -46,7 +48,6 @@ public class CoreSamlConfiguration {
     @Bean(name = "shibboleth.VelocityEngine")
     public VelocityEngine velocityEngineFactoryBean() {
         final Properties properties = new Properties();
-        properties.put(RuntimeConstants.RUNTIME_LOG_INSTANCE, SLF4JLogChute.class.getName());
         properties.put(RuntimeConstants.INPUT_ENCODING, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.ENCODING_DEFAULT, StandardCharsets.UTF_8.name());
         properties.put(RuntimeConstants.RESOURCE_LOADER, "file, classpath, string");
@@ -64,6 +65,7 @@ public class CoreSamlConfiguration {
         return new OpenSamlConfigBean(parserPool());
     }
 
+    @SneakyThrows
     @Bean(name = "shibboleth.ParserPool", initMethod = "initialize")
     public BasicParserPool parserPool() {
         final BasicParserPool pool = new BasicParserPool();
@@ -76,12 +78,8 @@ public class CoreSamlConfiguration {
         pool.setNamespaceAware(true);
 
         final Map<String, Object> attributes = new HashMap<>();
-        try {
-            final Class clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
-            attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final Class clazz = ClassUtils.getClass(casProperties.getSamlCore().getSecurityManager());
+        attributes.put("http://apache.org/xml/properties/security-manager", clazz.getDeclaredConstructor().newInstance());
         pool.setBuilderAttributes(attributes);
 
         final Map<String, Boolean> features = new HashMap<>();

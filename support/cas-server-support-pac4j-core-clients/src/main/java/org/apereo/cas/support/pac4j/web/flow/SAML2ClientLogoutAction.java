@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
@@ -8,8 +9,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.exception.TechnicalException;
 import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.saml.client.SAML2Client;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,9 +30,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SAML2ClientLogoutAction extends AbstractAction {
 
     private static final Logger LOGGER2 = LoggerFactory.getLogger(SAML2ClientLogoutAction.class);
+
 
     private final Clients clients;
 

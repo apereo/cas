@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
@@ -55,6 +56,7 @@ import net.sf.ehcache.Cache;
  */
 @Configuration("x509AuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class X509AuthenticationConfiguration {
 
     private static final int HEX = 16;

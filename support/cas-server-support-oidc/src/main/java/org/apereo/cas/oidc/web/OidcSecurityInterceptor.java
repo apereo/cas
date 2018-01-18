@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
 import org.apereo.cas.util.Pac4jUtils;
@@ -8,6 +9,7 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.apereo.cas.authentication.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
@@ -38,6 +41,12 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
 
 
         boolean clearCreds = false;
+        // check if CasAuthentication Available(if the TGT is Effective)
+        final Optional<Authentication> authentication=authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
+        if (!authentication.isPresent()) {
+            clearCreds=true;
+        }
+        
         final Optional<UserProfile> auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
 
         if (auth.isPresent()) {
@@ -48,6 +57,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         }
 
         final Set<String> prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
+       
         if (!clearCreds) {
             clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
         }

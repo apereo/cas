@@ -1,10 +1,11 @@
 package org.apereo.cas.configuration.model.support.mongo;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.RequiredProperty;
-
 import java.io.Serializable;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseMongoDbProperties}.
@@ -12,7 +13,11 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@Getter
+@Setter
 public abstract class BaseMongoDbProperties implements Serializable {
+
     private static final long serialVersionUID = -2471243083598934186L;
 
     /**
@@ -28,7 +33,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      */
     @RequiredProperty
     private String clientUri = StringUtils.EMPTY;
-    
+
     /**
      * MongoDb database port.
      */
@@ -51,7 +56,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * MongoDb database host for authentication.
      * Multiple host addresses may be defined, separated by comma.
      * If more than one host is defined, it is assumed that each host contains the port as well, if any.
-     * Otherwise the configuration may fallback onto {@link #getPort()}.
+     * Otherwise the configuration may fallback onto the port defined.
      */
     @RequiredProperty
     private String host = "localhost";
@@ -73,7 +78,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * mongo db instances will pass the write concern on to the shards.
      */
     private String writeConcern = "NORMAL";
-    
+
     /**
      * MongoDb database instance name.
      */
@@ -84,7 +89,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * Whether the database socket connection should be tagged with keep-alive.
      */
     private boolean socketKeepAlive;
-    
+
     /**
      * Name of the database to use for authentication.
      */
@@ -101,121 +106,12 @@ public abstract class BaseMongoDbProperties implements Serializable {
      */
     private boolean sslEnabled;
 
-    public String getClientUri() {
-        return clientUri;
-    }
-
-    public void setClientUri(final String clientUri) {
-        this.clientUri = clientUri;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(final String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(final int port) {
-        this.port = port;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(final String userId) {
-        this.userId = userId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-    
-    public long getTimeout() {
-        return Beans.newDuration(timeout).toMillis();
-    }
-
-    public void setTimeout(final String timeout) {
-        this.timeout = timeout;
-    }
-
-    public long getIdleTimeout() {
-        return Beans.newDuration(idleTimeout).toMillis();
-    }
-
-    public void setIdleTimeout(final String idleTimeout) {
-        this.idleTimeout = idleTimeout;
-    }
-
-    public String getWriteConcern() {
-        return writeConcern;
-    }
-
-    public void setWriteConcern(final String writeConcern) {
-        this.writeConcern = writeConcern;
-    }
-
-    public boolean isSocketKeepAlive() {
-        return socketKeepAlive;
-    }
-
-    public void setSocketKeepAlive(final boolean socketKeepAlive) {
-        this.socketKeepAlive = socketKeepAlive;
-    }
-
-    public MongoDbConnections getConns() {
-        return conns;
-    }
-
-    public void setConns(final MongoDbConnections conns) {
-        this.conns = conns;
-    }
-    
-    public String getDatabaseName() {
-        return databaseName;
-    }
-
-    public void setDatabaseName(final String databaseName) {
-        this.databaseName = databaseName;
-    }
-
-    public String getAuthenticationDatabaseName() {
-        return authenticationDatabaseName;
-    }
-
-    public void setAuthenticationDatabaseName(final String authenticationDatabaseName) {
-        this.authenticationDatabaseName = authenticationDatabaseName;
-    }
-
-    public String getReplicaSet() {
-        return replicaSet;
-    }
-
-    public void setReplicaSet(final String replicaSet) {
-        this.replicaSet = replicaSet;
-    }
-
-    public boolean isSslEnabled() {
-        return sslEnabled;
-    }
-
-    public void setSslEnabled(final boolean sslEnabled) {
-        this.sslEnabled = sslEnabled;
-    }
-
+    @Getter
+    @Setter
     public static class MongoDbConnections implements Serializable {
 
         private static final long serialVersionUID = -2398415870062168474L;
+
         /**
          * Maximum number of connections to keep around.
          */
@@ -225,21 +121,5 @@ public abstract class BaseMongoDbProperties implements Serializable {
          * Total number of connections allowed per host.
          */
         private int perHost = 10;
-
-        public int getLifetime() {
-            return lifetime;
-        }
-
-        public void setLifetime(final int lifetime) {
-            this.lifetime = lifetime;
-        }
-
-        public int getPerHost() {
-            return perHost;
-        }
-
-        public void setPerHost(final int perHost) {
-            this.perHost = perHost;
-        }
     }
 }

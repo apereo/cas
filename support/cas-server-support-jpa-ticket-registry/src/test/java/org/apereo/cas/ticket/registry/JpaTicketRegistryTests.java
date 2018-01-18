@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -26,7 +28,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -41,8 +42,6 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
@@ -100,6 +99,7 @@ import static org.junit.Assert.*;
     CasCoreWebConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class JpaTicketRegistryTests {
     /**
      * Number of clients contending for operations in concurrent test.
@@ -116,7 +116,6 @@ public class JpaTicketRegistryTests {
 
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistryTests.class);
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -170,7 +169,7 @@ public class JpaTicketRegistryTests {
 
         // PGT
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
-        updateTicketInTransaction(stFromDb.getGrantingTicket());
+        updateTicketInTransaction(stFromDb.getTicketGrantingTicket());
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         assertNotNull(pgtFromDb);
         assertEquals(newPgt.getId(), pgtFromDb.getId());
@@ -193,7 +192,7 @@ public class JpaTicketRegistryTests {
 
         // PGT 2
         final ProxyGrantingTicket newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
-        updateTicketInTransaction(st2FromDb.getGrantingTicket());
+        updateTicketInTransaction(st2FromDb.getTicketGrantingTicket());
         final ProxyGrantingTicket pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
         assertNotNull(pgt2FromDb);
         assertEquals(newPgt2.getId(), pgt2FromDb.getId());
@@ -235,7 +234,7 @@ public class JpaTicketRegistryTests {
             }
         } catch (final Exception e) {
             LOGGER.error("testConcurrentServiceTicketGeneration produced an error", e);
-            fail("testConcurrentServiceTicketGeneration failed.");
+            throw new AssertionError("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();
         }
@@ -262,15 +261,12 @@ public class JpaTicketRegistryTests {
             true);
     }
 
+    @SneakyThrows
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
-        try {
-            return parent.grantProxyGrantingTicket(
-                ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                CoreAuthenticationTestUtils.getAuthentication(),
-                EXP_POLICY_PGT);
-        } catch (final AbstractTicketException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return parent.grantProxyGrantingTicket(
+            ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(),
+            EXP_POLICY_PGT);
     }
 
     static ProxyTicket newPT(final ProxyGrantingTicket parent) {

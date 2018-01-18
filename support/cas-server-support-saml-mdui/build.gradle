@@ -19,6 +19,7 @@ dependencies {
     implementation libraries.opensaml
     
     testImplementation project(":support:cas-server-support-person-directory")
+    testImplementation project(path: ":core:cas-server-core", configuration: "tests")
     testImplementation project(path: ":support:cas-server-support-saml", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
@@ -35,4 +36,6 @@ dependencies {
     testImplementation project(":support:cas-server-support-validation")
     testImplementation project(":core:cas-server-core-validation-api")
     testImplementation project(":core:cas-server-core-cookie")
+
+    testImplementation libraries.thymeleaf
 }

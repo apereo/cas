@@ -1,5 +1,6 @@
 package org.apereo.cas.services.replication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
@@ -7,8 +8,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.Collection;
@@ -22,8 +21,9 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceReplicationStrategy.class);
+
 
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
     private final StreamingServiceRegistryProperties properties;

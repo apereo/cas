@@ -1,15 +1,14 @@
 package org.apereo.cas.ticket;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultTicketCatalog}.
@@ -17,25 +16,17 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@NoArgsConstructor
 public class DefaultTicketCatalog implements TicketCatalog {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketCatalog.class);
 
     private final Map<String, TicketDefinition> ticketMetadataMap = new HashMap<>();
 
-    public DefaultTicketCatalog() {
-    }
-
     @Override
     public TicketDefinition find(final String ticketId) {
-        final TicketDefinition defn = ticketMetadataMap.values()
-                .stream()
-                .filter(md -> ticketId.startsWith(md.getPrefix()))
-                .findFirst()
-                .orElse(null);
+        final TicketDefinition defn = ticketMetadataMap.values().stream().filter(md -> ticketId.startsWith(md.getPrefix())).findFirst().orElse(null);
         if (defn == null) {
-            LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog "
-                    + "which only contains the following ticket types: [{}]",
-                    ticketId, ticketMetadataMap.keySet());
+            LOGGER.error("Ticket definition for [{}] cannot be found in the ticket catalog " + "which only contains the following ticket types: [{}]", ticketId, ticketMetadataMap.keySet());
         }
         return defn;
     }
@@ -48,10 +39,7 @@ public class DefaultTicketCatalog implements TicketCatalog {
 
     @Override
     public Collection<TicketDefinition> find(final Class<Ticket> ticketClass) {
-        final List list = ticketMetadataMap.values()
-                .stream()
-                .filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass))
-                .collect(Collectors.toList());
+        final List list = ticketMetadataMap.values().stream().filter(t -> t.getImplementationClass().isAssignableFrom(ticketClass)).collect(Collectors.toList());
         OrderComparator.sort(list);
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}] that match [{}]", list, ticketClass);
         return list;
@@ -81,5 +69,4 @@ public class DefaultTicketCatalog implements TicketCatalog {
         LOGGER.debug("Located all registered and known sorted ticket definitions [{}]", list);
         return list;
     }
-
 }

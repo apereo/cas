@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import static org.junit.Assert.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 /**
@@ -11,6 +12,7 @@ import org.junit.Test;
  * @since 3.2.1
  *
  */
+@Slf4j
 public class RememberMePasswordCredentialTests {
 
     @Test

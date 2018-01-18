@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.metadata;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.springframework.core.Ordered;
+import lombok.ToString;
 
 /**
  * This is {@link BaseAuthenticationMetaDataPopulator}.
@@ -10,7 +11,10 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@ToString
 public abstract class BaseAuthenticationMetaDataPopulator implements AuthenticationMetaDataPopulator {
+
     private int order = Ordered.HIGHEST_PRECEDENCE;
 
     public BaseAuthenticationMetaDataPopulator() {
@@ -24,12 +28,5 @@ public abstract class BaseAuthenticationMetaDataPopulator implements Authenticat
     @Override
     public int getOrder() {
         return order;
-    }
-    
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("order", order)
-                .toString();
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.test.context.TestPropertySource;
 
@@ -12,6 +13,7 @@ import org.springframework.test.context.TestPropertySource;
  */
 @TestPropertySource(locations={"classpath:/inmemory.properties"})
 @EnableScheduling
+@Slf4j
 public class InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapterTests
             extends AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapterTests {
     
