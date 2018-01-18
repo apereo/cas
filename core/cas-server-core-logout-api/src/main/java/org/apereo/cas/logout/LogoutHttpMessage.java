@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.http.HttpMessage;
 import org.springframework.http.MediaType;
-
 import java.net.URL;
+import lombok.Setter;
 
 /**
  * A logout http message that is accompanied by a special content type
@@ -14,6 +14,7 @@ import java.net.URL;
  * @since 4.1.0
  */
 @Slf4j
+@Setter
 public class LogoutHttpMessage extends HttpMessage {
 
     private static final long serialVersionUID = 399581521957873727L;
@@ -41,11 +42,6 @@ public class LogoutHttpMessage extends HttpMessage {
      */
     @Override
     protected String formatOutputMessageInternal(final String message) {
-        return (this.prefixLogoutParameterName ? LOGOUT_REQUEST_PARAMETER + '=' : StringUtils.EMPTY)
-                + super.formatOutputMessageInternal(message);
-    }
-
-    public void setPrefixLogoutParameterName(final boolean prefixLogoutParameterName) {
-        this.prefixLogoutParameterName = prefixLogoutParameterName;
+        return (this.prefixLogoutParameterName ? LOGOUT_REQUEST_PARAMETER + '=' : StringUtils.EMPTY) + super.formatOutputMessageInternal(message);
     }
 }

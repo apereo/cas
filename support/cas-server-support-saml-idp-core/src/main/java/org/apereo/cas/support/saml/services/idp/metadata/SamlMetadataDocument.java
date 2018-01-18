@@ -12,6 +12,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SamlMetadataDocument}.
@@ -24,6 +25,7 @@ import lombok.Getter;
 @Document
 @Slf4j
 @Getter
+@Setter
 public class SamlMetadataDocument {
 
     @javax.persistence.Id
@@ -50,21 +52,5 @@ public class SamlMetadataDocument {
 
     public long getId() {
         return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public void setValue(final String value) {
-        this.value = value;
-    }
-
-    public void setSignature(final String signature) {
-        this.signature = signature;
     }
 }

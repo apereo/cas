@@ -12,6 +12,7 @@ import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseBinaryCipherExecutor}.
@@ -25,6 +26,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<byte[], byte[]> {
 
     /**
@@ -63,10 +65,6 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         } catch (final Exception e) {
             throw new RuntimeException(e);
         }
-    }
-
-    public void setSecretKeyAlgorithm(final String secretKeyAlgorithm) {
-        this.secretKeyAlgorithm = secretKeyAlgorithm;
     }
 
     @Override
@@ -152,11 +150,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     private void ensureSigningKeyExists(final String signingSecretKey, final int signingKeySize) {
         String signingKeyToUse = signingSecretKey;
         if (StringUtils.isBlank(signingKeyToUse)) {
-            LOGGER.warn("Secret key for signing is not defined under [{}]. CAS will attempt to auto-generate the signing key", getSigningKeySetting());
+            LOGGER.warn("Secret key for signing is not defined under [{}]. CAS will attempt to auto-generate the signing key",
+                getSigningKeySetting());
             signingKeyToUse = generateOctetJsonWebKeyOfSize(signingKeySize);
             LOGGER.warn("Generated signing key [{}] of size [{}]. The generated key MUST be added to CAS settings under setting [{}].",
                 signingKeyToUse, signingKeySize, getSigningKeySetting());
         }
-        setSigningKey(signingKeyToUse);
+        configureSigningKey(signingKeyToUse);
     }
 }

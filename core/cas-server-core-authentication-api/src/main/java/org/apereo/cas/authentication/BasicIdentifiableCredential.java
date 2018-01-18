@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BasicIdentifiableCredential}, a simple credential implementation
@@ -18,6 +19,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class BasicIdentifiableCredential implements Credential, Serializable {
 
     private static final long serialVersionUID = -700605020472810939L;
@@ -30,10 +32,6 @@ public class BasicIdentifiableCredential implements Credential, Serializable {
      * @param id the id
      */
     public BasicIdentifiableCredential(final String id) {
-        this.id = id;
-    }
-
-    public void setId(final String id) {
         this.id = id;
     }
 

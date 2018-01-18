@@ -49,6 +49,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -74,30 +75,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
     private static final long serialVersionUID = -8943828074939533986L;
 
-    /**
-     * Build the central authentication service implementation.
-     *
-     * @param ticketRegistry              the tickets registry.
-     * @param ticketFactory               the ticket factory
-     * @param servicesManager             the services manager.
-     * @param logoutManager               the logout manager.
-     * @param selectionStrategies         The service selection strategy during validation events.
-     * @param authenticationPolicyFactory Authentication policy that uses a service context to
-     *                                    produce stateful security policies to apply when authenticating credentials.
-     * @param principalFactory            principal factory to create principal objects
-     * @param cipherExecutor              Cipher executor to handle ticket validation.
-     */
-    public DefaultCentralAuthenticationService(final TicketRegistry ticketRegistry,
-                                               final TicketFactory ticketFactory,
-                                               final ServicesManager servicesManager,
-                                               final LogoutManager logoutManager,
-                                               final AuthenticationServiceSelectionPlan selectionStrategies,
-                                               final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
-                                               final PrincipalFactory principalFactory,
-                                               final CipherExecutor<String, String> cipherExecutor) {
-        super(ticketRegistry, ticketFactory, servicesManager, logoutManager,
-            selectionStrategies, authenticationPolicyFactory,
-            principalFactory, cipherExecutor);
+    public DefaultCentralAuthenticationService(final ApplicationEventPublisher applicationEventPublisher,
+                                               final TicketRegistry ticketRegistry, final ServicesManager servicesManager,
+                                               final LogoutManager logoutManager, final TicketFactory ticketFactory,
+                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                               final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory,
+                                               final PrincipalFactory principalFactory, final CipherExecutor<String, String> cipherExecutor) {
+        super(applicationEventPublisher, ticketRegistry, servicesManager, logoutManager, ticketFactory,
+            authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory, principalFactory, cipherExecutor);
     }
 
     @Audit(

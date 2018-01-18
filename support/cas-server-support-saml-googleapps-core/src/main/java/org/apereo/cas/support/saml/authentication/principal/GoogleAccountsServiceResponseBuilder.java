@@ -200,11 +200,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-            bean.setLocation(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            bean.setResource(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
-            bean.setLocation(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+            bean.setResource(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
         } else {
-            bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            bean.setResource(new FileSystemResource(this.publicKeyLocation));
         }
 
         bean.setAlgorithm(this.keyAlgorithm);

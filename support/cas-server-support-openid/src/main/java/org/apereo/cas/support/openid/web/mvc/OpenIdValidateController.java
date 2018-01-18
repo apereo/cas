@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
@@ -33,9 +34,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OpenIdValidateController extends AbstractServiceValidateController {
-
-
-
+    
     private final ServerManager serverManager;
 
     public OpenIdValidateController(final CasProtocolValidationSpecification validationSpecification, 
@@ -48,11 +47,10 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                                     final View failureView, final String authnContextAttribute, 
                                     final ServerManager serverManager,
                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
-        super(validationSpecification, authenticationSystemSupport, servicesManager, 
-                centralAuthenticationService, proxyHandler, 
-                argumentExtractor, multifactorTriggerSelectionStrategy, 
-                authenticationContextValidator, jsonView, successView, 
-                failureView, authnContextAttribute, validationAuthorizers);
+        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
+            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
+            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, jsonView, authnContextAttribute);
         this.serverManager = serverManager;
     }
 

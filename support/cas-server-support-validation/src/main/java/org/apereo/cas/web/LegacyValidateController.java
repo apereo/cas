@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -39,10 +40,10 @@ public class LegacyValidateController extends AbstractServiceValidateController 
                                     final View successView, final View failureView,
                                     final String authnContextAttribute,
                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
-        super(validationSpecification, authenticationSystemSupport, servicesManager,
-                centralAuthenticationService, proxyHandler, argumentExtractor,
-                multifactorTriggerSelectionStrategy, authenticationContextValidator,
-                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
+            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
+            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, jsonView, authnContextAttribute);
     }
 
     /**
@@ -62,9 +63,9 @@ public class LegacyValidateController extends AbstractServiceValidateController 
     protected void prepareForTicketValidation(final HttpServletRequest request, final WebApplicationService service, final String serviceTicketId) {
         super.prepareForTicketValidation(request, service, serviceTicketId);
         LOGGER.debug("Preparing to validate ticket [{}] for service [{}] via [{}]. Do note that this validation event "
-                        + "is not equipped to release principal attributes to applications. To access the authenticated "
-                        + "principal along with attributes, invoke the [{}] endpoint instead.",
-                CasProtocolConstants.ENDPOINT_VALIDATE,
-                serviceTicketId, service, CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3);
+                + "is not equipped to release principal attributes to applications. To access the authenticated "
+                + "principal along with attributes, invoke the [{}] endpoint instead.",
+            CasProtocolConstants.ENDPOINT_VALIDATE,
+            serviceTicketId, service, CasProtocolConstants.ENDPOINT_SERVICE_VALIDATE_V3);
     }
 }

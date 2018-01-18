@@ -13,6 +13,7 @@ import java.io.Serializable;
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.*;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -24,6 +25,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
@@ -44,21 +46,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
         return this.order;
     }
 
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public void setGlobalFailureMode(final String globalFailureMode) {
-        this.globalFailureMode = globalFailureMode;
-    }
-
     @Override
-    public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService,
-                                  final HttpServletRequest request) {
+    public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService, final HttpServletRequest request) {
         if (event == null || !event.getId().matches(getId())) {
             LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", event, getId());
             return false;
@@ -128,10 +117,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      */
     protected boolean isAvailable() {
         return true;
-    }
-
-    public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
-        this.bypassEvaluator = bypassEvaluator;
     }
 
     @Override

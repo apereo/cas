@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link DuoUserAccount}.
@@ -15,6 +16,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class DuoUserAccount {
 
     private DuoUserAccountAuthStatus status = DuoUserAccountAuthStatus.AUTH;
@@ -29,20 +31,8 @@ public class DuoUserAccount {
         this.username = username;
     }
 
-    public void setMessage(final String message) {
-        this.message = message;
-    }
-
-    public void setEnrollPortalUrl(final String enrollPortalUrl) {
-        this.enrollPortalUrl = enrollPortalUrl;
-    }
-
     public DuoUserAccountAuthStatus getStatus() {
         return status;
-    }
-
-    public void setStatus(final DuoUserAccountAuthStatus status) {
-        this.status = status;
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import java.io.Serializable;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link PasswordChangeBean}.
@@ -14,6 +15,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class PasswordChangeBean implements Serializable {
 
     private static final long serialVersionUID = 8885460875620586503L;
@@ -21,14 +23,6 @@ public class PasswordChangeBean implements Serializable {
     private String password;
 
     private String confirmedPassword;
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public void setConfirmedPassword(final String confirmedPassword) {
-        this.confirmedPassword = confirmedPassword;
-    }
 
     @Override
     public boolean equals(final Object obj) {

@@ -22,6 +22,7 @@ import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import java.security.Security;
 import java.util.List;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * Implementation of a RadiusServer that utilizes the JRadius packages available
@@ -34,14 +35,14 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
 public class JRadiusServerImpl implements RadiusServer {
 
     /**
      * Default retry count, {@value}.
      **/
     public static final int DEFAULT_RETRY_COUNT = 3;
-
-    /** Logger instance. */
+    
     /** RADIUS protocol. */
     private final RadiusProtocol protocol;
 
@@ -94,10 +95,9 @@ public class JRadiusServerImpl implements RadiusServer {
      * @param nasIdentifier the new nas identifier
      * @param nasRealPort the new nas real port
      */
-    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory,
-                             final int retries, final String nasIpAddress, final String nasIpv6Address,
-                             final long nasPort, final long nasPortId, final String nasIdentifier,
-                             final long nasRealPort) {
+    public JRadiusServerImpl(final RadiusProtocol protocol, final RadiusClientFactory clientFactory, final int retries,
+                             final String nasIpAddress, final String nasIpv6Address, final long nasPort, final long nasPortId,
+                             final String nasIdentifier, final long nasRealPort) {
         this.protocol = protocol;
         this.radiusClientFactory = clientFactory;
         this.retries = retries;
@@ -143,8 +143,7 @@ public class JRadiusServerImpl implements RadiusServer {
             LOGGER.debug("RADIUS response from [{}]: [{}]", client.getRemoteInetAddress().getCanonicalHostName(), response.getClass().getName());
             if (response instanceof AccessAccept) {
                 final List<RadiusAttribute> attributes = response.getAttributes().getAttributeList();
-                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]",
-                    response.getCode(), attributes, response.getIdentifier());
+                LOGGER.debug("Radius response code [{}] accepted with attributes [{}] and identifier [{}]", response.getCode(), attributes, response.getIdentifier());
                 return new RadiusResponse(response.getCode(), response.getIdentifier(), attributes);
             }
             LOGGER.debug("Response is not recognized");
@@ -154,15 +153,5 @@ public class JRadiusServerImpl implements RadiusServer {
             }
         }
         return null;
-    }
-
-    /**
-     * Sets the nas port type.
-     *
-     * @param nasPortType the new nas port type
-     * @since 4.1.0
-     */
-    public void setNasPortType(final long nasPortType) {
-        this.nasPortType = nasPortType;
     }
 }

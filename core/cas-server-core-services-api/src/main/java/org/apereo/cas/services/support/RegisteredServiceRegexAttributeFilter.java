@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -22,6 +23,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
@@ -119,10 +121,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         return order;
     }
 
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
     /**
      * Filter map attributes based on the values given.
      *
@@ -167,8 +165,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
-            attributeValue, attributeName, this.pattern.pattern());
+        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...", attributeValue, attributeName, this.pattern.pattern());
     }
 
     @Override

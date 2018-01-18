@@ -83,7 +83,7 @@ public class CasCoreAuthenticationPrincipalConfiguration {
         } else {
             LOGGER.debug("Attribute repository sources are not available for principal resolution so principal resolver will echo "
                 + "back the principal resolved during authentication directly.");
-            resolver.setChain(new EchoingPrincipalResolver());
+            resolver.setChain(CollectionUtils.wrapList(new EchoingPrincipalResolver()));
         }
 
         return resolver;

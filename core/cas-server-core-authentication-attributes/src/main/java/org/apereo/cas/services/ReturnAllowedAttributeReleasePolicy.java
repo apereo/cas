@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Return only the collection of allowed attributes out of what's resolved
@@ -24,6 +25,7 @@ import lombok.Getter;
 @Slf4j
 @ToString(callSuper = true)
 @Getter
+@Setter
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
@@ -46,10 +48,6 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         setAllowedAttributes(allowedAttributes);
     }
 
-    public void setAllowedAttributes(final List<String> allowed) {
-        this.allowedAttributes = allowed;
-    }
-
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
         return authorizeReleaseOfAllowedAttributes(attrs);
@@ -65,10 +63,11 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         final Map<String, Object> resolvedAttributes = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
         resolvedAttributes.putAll(attrs);
         final Map<String, Object> attributesToRelease = new HashMap<>(resolvedAttributes.size());
-        getAllowedAttributes().stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null).forEach(attribute -> {
-            LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
-            attributesToRelease.put((String) attribute[0], attribute[1]);
-        });
+        getAllowedAttributes().stream().map(attr -> new Object[]{attr, resolvedAttributes.get(attr)}).filter(pair -> pair[1] != null)
+            .forEach(attribute -> {
+                LOGGER.debug("Found attribute [{}] in the list of allowed attributes", attribute[0]);
+                attributesToRelease.put((String) attribute[0], attribute[1]);
+            });
         return attributesToRelease;
     }
 

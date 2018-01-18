@@ -42,13 +42,13 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
-    private final Map<String, Collection<String>> principalAttributeMap;
+    private final Map<String, Object> principalAttributeMap;
 
     public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
-                                              final Map<String, Collection<String>> attributes) {
+                                              final Map<String, Object> attributes) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.sql = sql;
         this.fieldPassword = fieldPassword;
@@ -89,11 +89,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            this.principalAttributeMap.forEach((key, attributeNames) -> {
+            this.principalAttributeMap.forEach((key, names) -> {
                 final Object attribute = dbFields.get(key);
 
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", key);
+                    final Collection<String> attributeNames = (Collection<String>) names;
                     attributeNames.forEach(s -> {
                         LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
                         attributes.put(s, CollectionUtils.wrap(attribute.toString()));

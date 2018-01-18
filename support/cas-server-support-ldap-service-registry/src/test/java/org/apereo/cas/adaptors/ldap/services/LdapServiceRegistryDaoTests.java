@@ -18,6 +18,7 @@ import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -59,7 +60,7 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao dao;
-    
+
     @BeforeClass
     public static void bootstrap() throws Exception {
         initDirectoryServer(1390);
@@ -189,14 +190,14 @@ public class LdapServiceRegistryDaoTests extends AbstractLdapTests {
         rs.setName("Service Name Regex");
         rs.setProxyPolicy(new RefuseRegisteredServiceProxyPolicy());
         rs.setUsernameAttributeProvider(new AnonymousRegisteredServiceUsernameAttributeProvider(
-                new ShibbolethCompatiblePersistentIdGenerator("hello")
+            new ShibbolethCompatiblePersistentIdGenerator("hello")
         ));
         rs.setDescription("Service description");
         rs.setServiceId("^http?://.+");
         rs.setTheme("the theme name");
         rs.setEvaluationOrder(123);
         rs.setDescription("Here is another description");
-        rs.setRequiredHandlers(Stream.of("handler1", "handler2").collect(Collectors.toSet()));
+        rs.setRequiredHandlers(CollectionUtils.wrapHashSet("handler1", "handler2"));
 
         final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();

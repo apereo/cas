@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import java.util.function.Predicate;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Base class for all authentication handlers that support configurable naming.
@@ -17,6 +18,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public abstract class AbstractAuthenticationHandler implements AuthenticationHandler {
 
     /**
@@ -73,9 +75,5 @@ public abstract class AbstractAuthenticationHandler implements AuthenticationHan
     @Override
     public int getOrder() {
         return this.order;
-    }
-
-    public void setCredentialSelectionPredicate(final Predicate<Credential> credentialSelectionPredicate) {
-        this.credentialSelectionPredicate = credentialSelectionPredicate;
     }
 }

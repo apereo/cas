@@ -7,13 +7,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Setter;
 
 /**
  * The {@link GrouperRegisteredServiceAccessStrategy} is an access strategy
@@ -24,11 +24,12 @@ import java.util.Map;
  * @since 4.2
  */
 @Slf4j
+@Setter
 public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -3557247044344135788L;
-    private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
 
+    private static final String GROUPER_GROUPS_ATTRIBUTE_NAME = "grouperAttributes";
 
     private GrouperGroupField groupField = GrouperGroupField.NAME;
 
@@ -36,42 +37,30 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         final Map<String, Object> allAttributes = new HashMap<>(principalAttributes);
         final List<String> grouperGroups = new ArrayList<>();
-
         final Collection<WsGetGroupsResult> results = GrouperFacade.getGroupsForSubjectId(principal);
-
         if (results.isEmpty()) {
             LOGGER.warn("Subject id [{}] could not be located. Access denied", principal);
             return false;
         }
-
         final boolean denied = results.stream().anyMatch(groupsResult -> {
             if (groupsResult.getWsGroups() == null || groupsResult.getWsGroups().length == 0) {
                 LOGGER.warn("No groups could be found for subject [{}]. Access denied", groupsResult.getWsSubject().getName());
                 return true;
             }
-
             Arrays.stream(groupsResult.getWsGroups()).forEach(group -> grouperGroups.add(GrouperFacade.getGrouperGroupAttribute(this.groupField, group)));
             return false;
         });
-
         if (denied) {
             return false;
         }
-
         LOGGER.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes", grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
-
         allAttributes.put(GROUPER_GROUPS_ATTRIBUTE_NAME, grouperGroups);
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
-    }
-
-    public void setGroupField(final GrouperGroupField groupField) {
-        this.groupField = groupField;
     }
 
     public GrouperGroupField getGroupField() {
         return this.groupField;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
@@ -85,17 +74,11 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
             return false;
         }
         final GrouperRegisteredServiceAccessStrategy rhs = (GrouperRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.groupField, rhs.groupField)
-                .isEquals();
+        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.groupField, rhs.groupField).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(groupField)
-                .toHashCode();
+        return new HashCodeBuilder().appendSuper(super.hashCode()).append(groupField).toHashCode();
     }
 }

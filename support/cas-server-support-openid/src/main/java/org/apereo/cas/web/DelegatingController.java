@@ -5,10 +5,10 @@ import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.AbstractController;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import lombok.Setter;
 
 /**
  * Delegating controller.
@@ -19,6 +19,7 @@ import java.util.List;
  * @since 3.5
  */
 @Slf4j
+@Setter
 public class DelegatingController extends AbstractController {
 
     /**
@@ -66,22 +67,6 @@ public class DelegatingController extends AbstractController {
         final String convertedDescription = getMessageSourceAccessor().getMessage(code, args, code);
         modelAndView.addObject("code", StringEscapeUtils.escapeHtml4(code));
         modelAndView.addObject("description", StringEscapeUtils.escapeHtml4(convertedDescription));
-
         return modelAndView;
-    }
-
-    /**
-     * @param delegates the delegate controllers to set
-     */
-
-    public void setDelegates(final List<AbstractDelegateController> delegates) {
-        this.delegates = delegates;
-    }
-
-    /**
-     * @param failureView The failureView to set.
-     */
-    public void setFailureView(final String failureView) {
-        this.failureView = failureView;
     }
 }

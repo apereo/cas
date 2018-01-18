@@ -24,13 +24,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.Setter;
 
 /**
  * This is {@link InitialAuthenticationAttemptWebflowEventResolver},
@@ -41,23 +41,20 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
+@Setter
 public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCasWebflowEventResolver implements CasDelegatingWebflowEventResolver {
-
 
     private final List<CasWebflowEventResolver> orderedResolvers = new ArrayList<>();
 
     private CasWebflowEventResolver selectiveResolver;
 
     public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                            final CentralAuthenticationService centralAuthenticationService,
-                                                            final ServicesManager servicesManager,
-                                                            final TicketRegistrySupport ticketRegistrySupport,
-                                                            final CookieGenerator warnCookieGenerator,
+                                                            final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
+                                                            final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
                                                             final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                             final MultifactorAuthenticationProviderSelector selector) {
-        super(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
+            warnCookieGenerator, authenticationSelectionStrategies, selector);
     }
 
     @Override
@@ -65,7 +62,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         try {
             final Credential credential = getCredentialFromContext(context);
             final Service service = WebUtils.getService(context);
-
             if (credential != null) {
                 final AuthenticationResultBuilder builder = this.authenticationSystemSupport.handleInitialAuthenticationTransaction(service, credential);
                 if (builder.getInitialAuthentication().isPresent()) {
@@ -73,7 +69,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     WebUtils.putAuthentication(builder.getInitialAuthentication().get(), context);
                 }
             }
-
             final RegisteredService registeredService = determineRegisteredServiceForEvent(context, service);
             LOGGER.debug("Attempting to resolve candidate authentication events for service [{}]", service);
             final Set<Event> resolvedEvents = resolveCandidateAuthenticationEvents(context, service, registeredService);
@@ -86,8 +81,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
                     return CollectionUtils.wrapSet(finalResolvedEvent);
                 }
             }
-
-
             final AuthenticationResultBuilder builder = WebUtils.getAuthenticationResultBuilder(context);
             if (builder == null) {
                 throw new IllegalArgumentException("No authentication result builder can be located in the context");
@@ -110,7 +103,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         if (service != null) {
             LOGGER.debug("Locating service [{}] in service registry to determine authentication policy", service);
             registeredService = this.servicesManager.findServiceBy(service);
-
             LOGGER.debug("Locating authentication event in the request context...");
             final Authentication authn = WebUtils.getAuthentication(context);
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
@@ -128,11 +120,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @return the set
      */
     protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
-        return this.orderedResolvers
-                .stream()
-                .map(resolver -> resolver.resolveSingle(context))
-                .filter(Objects::nonNull)
-                .collect(Collectors.toSet());
+        return this.orderedResolvers.stream().map(resolver -> resolver.resolveSingle(context)).filter(Objects::nonNull).collect(Collectors.toSet());
     }
 
     @Override
@@ -149,10 +137,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         }
     }
 
-    public void setSelectiveResolver(final CasWebflowEventResolver r) {
-        this.selectiveResolver = r;
-    }
-
     private Event returnAuthenticationExceptionEventIfNeeded(final Exception e) {
         final Exception ex;
         if (e instanceof AuthenticationException || e instanceof AbstractTicketException) {
@@ -162,7 +146,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         } else {
             return null;
         }
-
         LOGGER.debug(ex.getMessage(), ex);
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }

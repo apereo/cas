@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
@@ -40,6 +41,8 @@ import java.util.List;
 @Slf4j
 public class CasCoreConfiguration {
 
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -86,15 +89,11 @@ public class CasCoreConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "centralAuthenticationService")
     public CentralAuthenticationService centralAuthenticationService(
-            @Qualifier("authenticationServiceSelectionPlan")
-            final AuthenticationServiceSelectionPlan selectionStrategies,
-            @Qualifier("principalFactory")
-            final PrincipalFactory principalFactory,
-            @Qualifier("protocolTicketCipherExecutor")
-            final CipherExecutor cipherExecutor) {
-        return new DefaultCentralAuthenticationService(ticketRegistry, ticketFactory, 
-                servicesManager, logoutManager,
-                selectionStrategies, authenticationPolicyFactory(), 
-                principalFactory, cipherExecutor);
+        @Qualifier("authenticationServiceSelectionPlan") final AuthenticationServiceSelectionPlan selectionStrategies,
+        @Qualifier("principalFactory") final PrincipalFactory principalFactory,
+        @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor) {
+        return new DefaultCentralAuthenticationService(applicationEventPublisher,
+            ticketRegistry, servicesManager, logoutManager, ticketFactory, selectionStrategies,
+            authenticationPolicyFactory(), principalFactory, cipherExecutor);
     }
 }

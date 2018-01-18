@@ -13,6 +13,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Set;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * This is {@link BaseMultifactorAuthenticationTrustStorage}.
@@ -24,13 +25,12 @@ import lombok.ToString;
 @Transactional(transactionManager = "transactionManagerMfaAuthnTrust")
 @Slf4j
 @ToString
+@Setter
 public abstract class BaseMultifactorAuthenticationTrustStorage implements MultifactorAuthenticationTrustStorage {
 
     private CipherExecutor<Serializable, String> cipherExecutor;
 
-    @Audit(action = "TRUSTED_AUTHENTICATION",
-        actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
-        resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
+    @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER", resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
         LOGGER.debug("Stored authentication trust record for [{}]", record);
@@ -63,10 +63,6 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
      */
     protected String generateKey(final MultifactorAuthenticationTrustRecord r) {
         return cipherExecutor.encode(MultifactorAuthenticationTrustUtils.generateKey(r));
-    }
-
-    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
     }
 
     /**

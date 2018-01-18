@@ -108,7 +108,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
         } else {
             LOGGER.debug("Located signing key to use for [{}]", getName());
         }
-        setSigningKey(signingKeyToUse);
+        configureSigningKey(signingKeyToUse);
     }
 
     private void configureEncryptionParameters(final String secretKeyEncryption, final String contentEncryptionAlgorithmIdentifier) {
@@ -129,7 +129,7 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
                 final PublicKeyFactoryBean factory = new PublicKeyFactoryBean();
                 factory.setAlgorithm(RsaKeyUtil.RSA);
-                factory.setLocation(resource);
+                factory.setResource(resource);
                 factory.setSingleton(false);
                 this.secretKeyEncryptionKey = factory.getObject();
                 this.encryptionAlgorithm = KeyManagementAlgorithmIdentifiers.RSA_OAEP_256;

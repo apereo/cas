@@ -14,6 +14,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
@@ -23,6 +24,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
@@ -99,9 +101,5 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     @Override
     public String getFriendlyName() {
         return "Duo Security";
-    }
-
-    public void setRegistrationUrl(final String registrationUrl) {
-        this.registrationUrl = registrationUrl;
     }
 }

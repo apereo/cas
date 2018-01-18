@@ -13,6 +13,7 @@ import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Mock service ticket.
@@ -22,6 +23,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;
@@ -125,9 +127,5 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     @Override
     public int hashCode() {
         return this.id.hashCode();
-    }
-
-    public void setExpiration(final ExpirationPolicy expiration) {
-        this.expiration = expiration;
     }
 }

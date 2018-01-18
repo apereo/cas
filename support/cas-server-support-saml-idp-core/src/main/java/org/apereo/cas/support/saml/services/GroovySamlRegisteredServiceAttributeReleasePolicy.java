@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
@@ -13,6 +15,8 @@ import org.springframework.core.io.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Setter;
+
 /**
  * This is {@link GroovySamlRegisteredServiceAttributeReleasePolicy}.
  *
@@ -21,22 +25,14 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class GroovySamlRegisteredServiceAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 3020434998499030162L;
 
     private String groovyScript;
-
-    public GroovySamlRegisteredServiceAttributeReleasePolicy() {
-    }
-
-    public GroovySamlRegisteredServiceAttributeReleasePolicy(final String groovyScript) {
-        this.groovyScript = groovyScript;
-    }
-
-    public void setGroovyScript(final String groovyScript) {
-        this.groovyScript = groovyScript;
-    }
 
     @Override
     protected Map<String, Object> getAttributesForSamlRegisteredService(final Map<String, Object> attributes,

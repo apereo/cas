@@ -6,6 +6,7 @@ import org.springframework.boot.configurationmetadata.ValueProvider;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ConfigurationMetadataHint}.
@@ -15,6 +16,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class ConfigurationMetadataHint {
 
     private String name;
@@ -22,16 +24,4 @@ public class ConfigurationMetadataHint {
     private final List<ValueHint> values = new ArrayList();
 
     private final List<ValueProvider> providers = new ArrayList();
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public List<ValueHint> getValues() {
-        return values;
-    }
-
-    public List<ValueProvider> getProviders() {
-        return providers;
-    }
 }

@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -39,10 +40,10 @@ public class ServiceValidateController extends AbstractServiceValidateController
                                      final View successView, final View failureView,
                                      final String authnContextAttribute,
                                      final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
-        super(validationSpecification, authenticationSystemSupport, servicesManager,
-                centralAuthenticationService, proxyHandler, argumentExtractor,
-                multifactorTriggerSelectionStrategy, authenticationContextValidator,
-                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
+            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
+            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, jsonView, authnContextAttribute);
     }
 
     /**

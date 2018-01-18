@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -80,7 +81,7 @@ public final class CollectionUtils {
      * @param source the source
      * @return the map
      */
-    public static <K, V> Map<K, Collection<V>> wrap(final Multimap<K, V> source) {
+    public static <K, V> Map<K, V> wrap(final Multimap<K, V> source) {
         if (source != null && !source.isEmpty()) {
             final Map inner = source.asMap();
             final Map map = new HashMap<>();
@@ -134,7 +135,7 @@ public final class CollectionUtils {
      * @return the map
      */
     public static <K extends String, V extends Object> Map<K, V> wrap(final String key, final Object value,
-                                        final String key2, final Object value2) {
+                                                                      final String key2, final Object value2) {
         final Map m = wrap(key, value);
         m.put(key2, value2);
         return m;
@@ -291,6 +292,19 @@ public final class CollectionUtils {
      */
     public static <T> Set<T> wrapSet(final T... source) {
         final Set<T> list = new LinkedHashSet<>();
+        addToCollection(list, source);
+        return list;
+    }
+
+    /**
+     * Wrap hash set.
+     *
+     * @param <T>    the type parameter
+     * @param source the source
+     * @return the set
+     */
+    public static <T> HashSet<T> wrapHashSet(final T... source) {
+        final HashSet<T> list = new HashSet<>();
         addToCollection(list, source);
         return list;
     }

@@ -85,19 +85,6 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     }
 
     /**
-     * Sets subject type.
-     *
-     * @param subjectType the subject type
-     */
-    public void setSubjectType(final String subjectType) {
-        if (StringUtils.isBlank(this.subjectType)) {
-            this.subjectType = OidcSubjectTypes.PUBLIC.getType();
-        } else {
-            this.subjectType = subjectType;
-        }
-    }
-
-    /**
      * Indicates the service was dynamically registered.
      * Records the registration time automatically.
      *

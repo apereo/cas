@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
@@ -40,9 +41,10 @@ public class SamlValidateController extends AbstractServiceValidateController {
                                   final View jsonView, final View successView, final View failureView,
                                   final String authnContextAttribute,
                                   final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
-        super(validationSpecification, authenticationSystemSupport, servicesManager, centralAuthenticationService, 
-                proxyHandler, argumentExtractor, multifactorTriggerSelectionStrategy, authenticationContextValidator, 
-                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
+            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
+            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, jsonView, authnContextAttribute);
     }
 
     /**
@@ -55,7 +57,7 @@ public class SamlValidateController extends AbstractServiceValidateController {
      */
     @PostMapping(path = SamlProtocolConstants.ENDPOINT_SAML_VALIDATE)
     @Override
-    public ModelAndView handleRequestInternal(final HttpServletRequest request, 
+    public ModelAndView handleRequestInternal(final HttpServletRequest request,
                                               final HttpServletResponse response) throws Exception {
         return super.handleRequestInternal(request, response);
     }

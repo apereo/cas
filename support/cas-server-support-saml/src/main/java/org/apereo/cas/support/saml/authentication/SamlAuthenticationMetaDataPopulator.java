@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.metadata.BaseAuthenticationMetaDataPopulator;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.Setter;
 
 /**
  * Capture SAML authentication metadata.
@@ -19,6 +20,7 @@ import java.util.Map;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Setter
 public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     /** The Constant ATTRIBUTE_AUTHENTICATION_METHOD. */

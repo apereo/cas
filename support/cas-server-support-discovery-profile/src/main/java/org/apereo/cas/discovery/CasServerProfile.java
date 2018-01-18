@@ -3,6 +3,7 @@ package org.apereo.cas.discovery;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CasServerProfile}.
@@ -12,6 +13,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class CasServerProfile {
 
     /**
@@ -35,20 +37,4 @@ public class CasServerProfile {
      * This indicates the capability and capacity of the server; NOT that the feature is necessarily currently active.
      */
     private Map<String, String> multifactorAuthenticationProviderTypesSupported;
-
-    public void setRegisteredServiceTypesSupported(final Map<String, Class> registeredServiceTypesSupported) {
-        this.registeredServiceTypesSupported = registeredServiceTypesSupported;
-    }
-
-    public void setMultifactorAuthenticationProviderTypesSupported(final Map<String, String> multifactorAuthenticationProviderTypesSupported) {
-        this.multifactorAuthenticationProviderTypesSupported = multifactorAuthenticationProviderTypesSupported;
-    }
-
-    public void setRegisteredServiceTypes(final Map<String, Class> registeredServiceTypes) {
-        this.registeredServiceTypes = registeredServiceTypes;
-    }
-
-    public void setMultifactorAuthenticationProviderTypes(final Map<String, String> multifactorAuthenticationProviderTypes) {
-        this.multifactorAuthenticationProviderTypes = multifactorAuthenticationProviderTypes;
-    }
 }

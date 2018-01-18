@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * This is {@link ChainingAttributeReleasePolicy}.
@@ -17,6 +18,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
 public class ChainingAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 3795054936775326709L;
@@ -25,10 +27,6 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
 
     public List<RegisteredServiceAttributeReleasePolicy> getPolicies() {
         return policies;
-    }
-
-    public void setPolicies(final List<RegisteredServiceAttributeReleasePolicy> policies) {
-        this.policies = policies;
     }
 
     @Override

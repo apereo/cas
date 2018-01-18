@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * The {@link DefaultAuthenticationResult} represents a concrete implementation of {@link AuthenticationResult}.
@@ -14,6 +15,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
 public class DefaultAuthenticationResult implements AuthenticationResult {
 
     private static final long serialVersionUID = 8454900425245262824L;
@@ -57,9 +59,5 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
     @Override
     public boolean isCredentialProvided() {
         return this.credentialProvided;
-    }
-
-    public void setCredentialProvided(final boolean credentialProvided) {
-        this.credentialProvided = credentialProvided;
     }
 }

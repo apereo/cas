@@ -58,11 +58,11 @@ public class WsFederationAuthenticationConfiguration {
     @Bean
     @RefreshScope
     public Action wsFederationAction(@Qualifier("wsFederationConfigurations")
-                                     final Collection<WsFederationConfiguration> wsFederationConfigurations) {
-        return new WsFederationAction(authenticationSystemSupport,
-                centralAuthenticationService,
-                wsFederationConfigurations,
-                wsFederationHelper(),
-                servicesManager);
+                                         final Collection<WsFederationConfiguration> wsFederationConfigurations) {
+        return new WsFederationAction(wsFederationHelper(),
+            wsFederationConfigurations,
+            centralAuthenticationService,
+            authenticationSystemSupport,
+            servicesManager);
     }
 }

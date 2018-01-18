@@ -1,8 +1,10 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.spnego.util.ReverseDNSRunnable;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -11,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * Abstract class for defining a simple binary filter to determine whether a
@@ -25,6 +28,8 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
+@Getter
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
     /** Pattern of ip addresses to check. **/
@@ -45,7 +50,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @param ipsToCheckPattern the ips to check pattern
      */
     public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern) {
-        setIpsToCheckPattern(ipsToCheckPattern);
+        setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
     }
 
     /**
@@ -56,7 +61,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
      * @param dnsTimeout # of milliseconds to wait for a DNS request to return
      */
     public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute, final long dnsTimeout) {
-        setIpsToCheckPattern(ipsToCheckPattern);
+        setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
         this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
         this.timeout = dnsTimeout;
     }
@@ -137,22 +142,6 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
             }
         }
         return userAddress;
-    }
-
-    /**
-     * Alternative header to be used for retrieving the remote system IP address.
-     * @param alternativeRemoteHostAttribute the alternative remote host attribute
-     */
-    public void setAlternativeRemoteHostAttribute(final String alternativeRemoteHostAttribute) {
-        this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
-    }
-
-    /**
-     * Regular expression string to define IPs which should be considered.
-     * @param ipsToCheckPattern the ips to check as a regex pattern
-     */
-    public void setIpsToCheckPattern(final String ipsToCheckPattern) {
-        this.ipsToCheckPattern = Pattern.compile(ipsToCheckPattern);
     }
 
     /**

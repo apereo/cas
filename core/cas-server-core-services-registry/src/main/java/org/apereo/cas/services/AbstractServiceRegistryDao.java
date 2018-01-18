@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
+import lombok.Setter;
 
 /**
  * This is {@link AbstractServiceRegistryDao}, that acts as the base parent class
@@ -13,12 +14,11 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 5.1.0
  */
 @Slf4j
+@Setter
 public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
 
-    
     @Autowired
     private transient ApplicationEventPublisher eventPublisher;
-    
 
     /**
      * Publish event.
@@ -30,10 +30,6 @@ public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
             LOGGER.debug("Publishing event [{}]", event);
             this.eventPublisher.publishEvent(event);
         }
-    }
-
-    protected void setEventPublisher(final ApplicationEventPublisher eventPublisher) {
-        this.eventPublisher = eventPublisher;
     }
 
     @Override
