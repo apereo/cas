@@ -25,7 +25,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
 
     private static final long serialVersionUID = -851233878780818494L;
 
-    private int order =  Integer.MAX_VALUE;
+    private int order = Integer.MAX_VALUE;
 
     public WebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
         super(servicesManager);
