@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import java.io.Serializable;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseU2FDeviceRepository}.
@@ -14,6 +15,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     private final LoadingCache<String, String> requestStorage;
@@ -22,10 +24,6 @@ public abstract class BaseU2FDeviceRepository implements U2FDeviceRepository {
 
     public BaseU2FDeviceRepository(final LoadingCache<String, String> requestStorage) {
         this.requestStorage = requestStorage;
-    }
-
-    public void setCipherExecutor(final CipherExecutor<Serializable, String> cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
     }
 
     @Override

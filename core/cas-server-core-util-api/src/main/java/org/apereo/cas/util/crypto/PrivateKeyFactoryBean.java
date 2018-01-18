@@ -18,6 +18,7 @@ import java.security.PrivateKey;
 import java.security.Security;
 import java.security.spec.PKCS8EncodedKeySpec;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Factory Bean for creating a private key from a file.
@@ -27,6 +28,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
 
     static {
@@ -78,14 +80,6 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     @Override
     public Class getObjectType() {
         return PrivateKey.class;
-    }
-
-    public void setLocation(final Resource location) {
-        this.location = location;
-    }
-
-    public void setAlgorithm(final String algorithm) {
-        this.algorithm = algorithm;
     }
 
     public Resource getLocation() {

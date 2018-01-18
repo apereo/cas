@@ -78,15 +78,6 @@ public class SpnegoCredential implements Credential, Serializable {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }
-    
-    /**
-     * Sets next token.
-     *
-     * @param nextToken the next token
-     */
-    public void setNextToken(final byte[] nextToken) {
-        this.nextToken = consumeByteSourceOrNull(ByteSource.wrap(nextToken));
-    }
 
     @Override
     public String getId() {
@@ -112,8 +103,7 @@ public class SpnegoCredential implements Credential, Serializable {
             return false;
         }
         final SpnegoCredential c = (SpnegoCredential) obj;
-        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal())
-            && Arrays.equals(this.getNextToken(), c.getNextToken());
+        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal()) && Arrays.equals(this.getNextToken(), c.getNextToken());
     }
 
     @Override

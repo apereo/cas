@@ -10,6 +10,8 @@ import org.springframework.core.io.Resource;
 import java.util.HashMap;
 import java.util.Map;
 
+import lombok.Setter;
+
 /**
  * This is {@link GroovyScriptAttributeReleasePolicy} that attempts to release attributes
  * based on the execution result of an external groovy script.
@@ -19,6 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 @Getter
+@Setter
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 1703080077563402223L;
@@ -29,10 +32,6 @@ public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServic
     }
 
     public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
-        this.groovyScript = groovyScript;
-    }
-
-    public void setGroovyScript(final String groovyScript) {
         this.groovyScript = groovyScript;
     }
 

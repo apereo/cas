@@ -16,7 +16,9 @@ import org.springframework.core.io.ResourceLoader;
  */
 @Slf4j
 public class ApplicationContextProvider implements ApplicationContextAware, ResourceLoaderAware {
+
     private static ApplicationContext CONTEXT;
+
     private static ResourceLoader RESOURCE_LOADER;
 
     public static ApplicationContext getApplicationContext() {
@@ -27,7 +29,6 @@ public class ApplicationContextProvider implements ApplicationContextAware, Reso
     public void setApplicationContext(final ApplicationContext ctx) {
         CONTEXT = ctx;
     }
-
     public ConfigurableApplicationContext getConfigurableApplicationContext() {
         return (ConfigurableApplicationContext) CONTEXT;
     }

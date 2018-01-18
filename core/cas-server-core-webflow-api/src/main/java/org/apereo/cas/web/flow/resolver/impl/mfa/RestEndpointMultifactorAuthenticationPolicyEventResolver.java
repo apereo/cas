@@ -26,11 +26,11 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import lombok.Setter;
 
 /**
  * This is {@link RestEndpointMultifactorAuthenticationPolicyEventResolver}.
@@ -40,14 +40,14 @@ import java.util.Set;
  */
 @Slf4j
 @Getter
+@Setter
 public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
 
     private final String restEndpoint;
 
     public RestEndpointMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                                     final CentralAuthenticationService centralAuthenticationService,
-                                                                    final ServicesManager servicesManager,
-                                                                    final TicketRegistrySupport ticketRegistrySupport,
+                                                                    final ServicesManager servicesManager, final TicketRegistrySupport ticketRegistrySupport,
                                                                     final CookieGenerator warnCookieGenerator,
                                                                     final AuthenticationServiceSelectionPlan authSelectionStrategies,
                                                                     final MultifactorAuthenticationProviderSelector selector,
@@ -70,8 +70,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
             LOGGER.debug("Rest endpoint to determine event is not configured for [{}]", principal.getId());
             return null;
         }
-        final Map<String, MultifactorAuthenticationProvider> providerMap =
-            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+        final Map<String, MultifactorAuthenticationProvider> providerMap = MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context");
             return null;
@@ -86,9 +85,7 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
         return new HashSet<>(0);
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT",
-        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Audit(action = "AUTHENTICATION_EVENT", actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER", resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
@@ -141,14 +138,6 @@ public class RestEndpointMultifactorAuthenticationPolicyEventResolver extends Ba
 
         public RestEndpointEntity(final String principalId, final String serviceId) {
             this.principalId = principalId;
-            this.serviceId = serviceId;
-        }
-
-        public void setPrincipalId(final String principalId) {
-            this.principalId = principalId;
-        }
-
-        public void setServiceId(final String serviceId) {
             this.serviceId = serviceId;
         }
     }

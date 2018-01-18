@@ -117,7 +117,7 @@ public class MetadataUIUtils {
         spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
             final UIInfo uiInfo = (UIInfo) obj;
             LOGGER.trace("Found MDUI info for [{}]", entityId);
-            mdui.setUIInfo(uiInfo);
+            mdui.setUiInfo(uiInfo);
         });
         return mdui;
     }

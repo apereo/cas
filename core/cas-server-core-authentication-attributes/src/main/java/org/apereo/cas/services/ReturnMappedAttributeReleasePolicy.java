@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Matcher;
+import lombok.Setter;
 
 /**
  * Return a collection of allowed attributes for the principal, but additionally,
@@ -26,6 +27,7 @@ import java.util.regex.Matcher;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Setter
 public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
@@ -46,15 +48,6 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
      */
     public ReturnMappedAttributeReleasePolicy(final Map allowedAttributes) {
         this.allowedAttributes = allowedAttributes;
-    }
-
-    /**
-     * Sets the allowed attributes.
-     *
-     * @param allowed the allowed attributes.
-     */
-    public void setAllowedAttributes(final Map allowed) {
-        this.allowedAttributes = allowed;
     }
 
     /**
@@ -103,7 +96,8 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
             processFileBasedGroovyAttributes(resolvedAttributes, attributesToRelease, matcherFile, attributeName);
         } else {
             if (attributeValue != null) {
-                LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]", attributeName, mappedAttributeName);
+                LOGGER.debug("Found attribute [{}] in the list of allowed attributes, mapped to the name [{}]",
+                    attributeName, mappedAttributeName);
                 attributesToRelease.put(mappedAttributeName, attributeValue);
             } else {
                 LOGGER.warn("Could not find value for mapped attribute [{}] that is based off of [{}] in the allowed attributes list. "

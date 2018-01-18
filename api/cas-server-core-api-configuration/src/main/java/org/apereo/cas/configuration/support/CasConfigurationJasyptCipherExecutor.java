@@ -8,8 +8,8 @@ import org.apereo.cas.CipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.env.Environment;
-
 import java.security.Security;
+import lombok.Setter;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -17,14 +17,15 @@ import java.security.Security;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
 @Slf4j
+@Setter
 public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
+
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
     public static final String ENCRYPTED_VALUE_PREFIX = "{cipher}";
-    
+
     /**
      * The Jasypt encryption parameters.
      */
@@ -33,16 +34,13 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt algorithm name to use.
          */
-        ALGORITHM("cas.standalone.config.security.alg", "PBEWithMD5AndTripleDES"),
-        /**
+        ALGORITHM("cas.standalone.config.security.alg", "PBEWithMD5AndTripleDES"), /**
          * Jasypt provider name to use.
          */
-        PROVIDER("cas.standalone.config.security.provider", null),
-        /**
+        PROVIDER("cas.standalone.config.security.provider", null), /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.config.security.iteration", null),
-        /**
+        ITERATIONS("cas.standalone.config.security.iteration", null), /**
          * Jasypt password to use.
          */
         PASSWORD("cas.standalone.config.security.psw", null);
@@ -52,6 +50,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         @Getter
         private final String propertyName;
+
         /**
          * The Default value.
          */
@@ -83,16 +82,12 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public CasConfigurationJasyptCipherExecutor(final Environment environment) {
         Security.addProvider(new BouncyCastleProvider());
         this.jasyptInstance = new StandardPBEStringEncryptor();
-
         final String alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         setAlgorithm(alg);
-
         final String psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
         setPassword(psw);
-
         final String pName = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PROVIDER);
         setProviderName(pName);
-
         final String iter = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ITERATIONS);
         setKeyObtentionIterations(iter);
     }
@@ -186,11 +181,9 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         try {
             if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
                 initializeJasyptInstanceIfNecessary();
-
                 final String encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
                 LOGGER.trace("Decrypting value [{}]...", encValue);
                 final String result = this.jasyptInstance.decrypt(encValue);
-
                 if (StringUtils.isNotBlank(result)) {
                     LOGGER.debug("Decrypted value [{}] successfully.", encValue);
                     return result;

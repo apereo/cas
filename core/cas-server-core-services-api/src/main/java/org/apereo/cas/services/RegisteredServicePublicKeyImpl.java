@@ -13,6 +13,7 @@ import org.springframework.util.ResourceUtils;
 import java.security.PublicKey;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Represents a public key for a CAS registered service.
@@ -22,6 +23,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;
@@ -52,22 +54,14 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
         this.algorithm = algorithm;
     }
 
-    public void setLocation(final String location) {
-        this.location = location;
-    }
-
-    public void setAlgorithm(final String algorithm) {
-        this.algorithm = algorithm;
-    }
-
     @Override
     public PublicKey createInstance() {
         try {
             final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
             if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
+                factory.setResource(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
             } else {
-                factory.setLocation(new FileSystemResource(this.location));
+                factory.setResource(new FileSystemResource(this.location));
             }
             factory.setAlgorithm(this.algorithm);
             factory.setSingleton(false);
