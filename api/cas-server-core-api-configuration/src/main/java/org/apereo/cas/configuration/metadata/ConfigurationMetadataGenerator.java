@@ -18,6 +18,7 @@ import com.github.javaparser.ast.expr.LiteralStringValueExpr;
 import com.github.javaparser.ast.type.ClassOrInterfaceType;
 import com.github.javaparser.ast.visitor.VoidVisitorAdapter;
 import com.google.common.base.Predicate;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -155,6 +156,7 @@ public class ConfigurationMetadataGenerator {
         return sourcePath + "/src/main/java/" + newName + ".java";
     }
 
+    @SneakyThrows
     private void parseCompilationUnit(final Set<ConfigurationMetadataProperty> collectedProps,
                                       final Set<ConfigurationMetadataProperty> collectedGroups,
                                       final ConfigurationMetadataProperty p,
@@ -176,8 +178,6 @@ public class ConfigurationMetadataGenerator {
                         parentTypePath, parentClazz.getName(), indexNameWithBrackets);
                 }
             }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

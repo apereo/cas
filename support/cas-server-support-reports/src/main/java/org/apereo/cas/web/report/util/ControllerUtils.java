@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report.util;
 
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -40,24 +41,20 @@ public class ControllerUtils {
      * @param resourceLoader the resource loader
      * @return the logger context
      */
+    @SneakyThrows
     public static Pair<Resource, LoggerContext> buildLoggerContext(final Environment environment, final ResourceLoader resourceLoader) {
-        try {
-            final String logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
-            LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
+        final String logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
+        LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
 
-            if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
-                final Resource logConfigurationFile = resourceLoader.getResource(logFile);
-                LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
-                final LoggerContext loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
-                LOGGER.debug("Installing log configuration listener to detect changes and update");
-                loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-                return Pair.of(logConfigurationFile, loggerContext);
-
-            }
-            LOGGER.warn("Logging configuration cannot be found in the environment settings");
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (ResourceUtils.doesResourceExist(logFile, resourceLoader)) {
+            final Resource logConfigurationFile = resourceLoader.getResource(logFile);
+            LOGGER.debug("Loaded logging configuration resource [{}]. Initializing logger context...", logConfigurationFile);
+            final LoggerContext loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
+            LOGGER.debug("Installing log configuration listener to detect changes and update");
+            loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
+            return Pair.of(logConfigurationFile, loggerContext);
         }
+        LOGGER.warn("Logging configuration cannot be found in the environment settings");
         return null;
     }
 }
