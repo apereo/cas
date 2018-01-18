@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -43,6 +44,7 @@ import lombok.Getter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGrantingTicket {
 
     /**
@@ -98,12 +100,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     private HashSet<String> descendantTickets = new HashSet<>();
 
     /**
-     * Instantiates a new ticket granting ticket impl.
-     */
-    public TicketGrantingTicketImpl() {
-    }
-
-    /**
      * Constructs a new TicketGrantingTicket.
      * May throw an {@link IllegalArgumentException} if the Authentication object is null.
      *
@@ -116,8 +112,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonCreator
     public TicketGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
                                     @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
-                                    @JsonProperty("authentication") final Authentication authentication,
-                                    @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
+                                    @JsonProperty("authentication") final Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");

@@ -17,6 +17,7 @@ import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -34,6 +35,7 @@ import lombok.Setter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @Setter
+@NoArgsConstructor
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     private static final long serialVersionUID = -4223319704861765405L;
@@ -59,13 +61,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     @Column(name = "TICKET_ALREADY_GRANTED", nullable = false)
     private Boolean grantedTicketAlready = Boolean.FALSE;
-
-    /**
-     * Instantiates a new service ticket impl.
-     */
-    public ServiceTicketImpl() {
-    // exists for JPA purposes
-    }
 
     /**
      * Constructs a new ServiceTicket with a Unique Id, a TicketGrantingTicket,

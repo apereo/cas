@@ -60,8 +60,6 @@ public class MetricsController extends BaseCasMvcEndpoint {
     }
 
     private class DelegatingServletConfig implements ServletConfig {
-        protected DelegatingServletConfig() {
-        }
 
         @Override
         public String getServletName() {

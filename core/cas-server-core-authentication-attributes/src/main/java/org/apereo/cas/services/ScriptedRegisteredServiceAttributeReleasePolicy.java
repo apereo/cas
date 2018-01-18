@@ -13,6 +13,7 @@ import java.util.regex.Matcher;
 
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link ScriptedRegisteredServiceAttributeReleasePolicy}.
@@ -23,14 +24,12 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class ScriptedRegisteredServiceAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -979532578142774128L;
 
     private String scriptFile;
-
-    public ScriptedRegisteredServiceAttributeReleasePolicy() {
-    }
 
     public ScriptedRegisteredServiceAttributeReleasePolicy(final String scriptFile) {
         this.scriptFile = scriptFile;

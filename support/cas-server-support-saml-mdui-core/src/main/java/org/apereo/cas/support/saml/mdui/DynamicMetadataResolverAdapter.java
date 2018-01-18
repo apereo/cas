@@ -7,12 +7,12 @@ import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
 /**
  * A metadata adapter {@link DynamicMetadataResolverAdapter}
@@ -23,8 +23,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Slf4j
+@NoArgsConstructor
 public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
-
 
     /**
      * Instantiates a new static metadata resolver adapter.
@@ -33,9 +33,6 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
      */
     public DynamicMetadataResolverAdapter(final Map<Resource, MetadataFilterChain> metadataResources) {
         super(metadataResources);
-    }
-
-    public DynamicMetadataResolverAdapter() {
     }
 
     @Override
@@ -49,7 +46,6 @@ public class DynamicMetadataResolverAdapter extends AbstractMetadataResolverAdap
         if (resource instanceof UrlResource && resource.getURL().toExternalForm().toLowerCase().endsWith("/entities/")) {
             final String encodedId = EncodingUtils.urlEncode(entityId);
             final URL url = new URL(resource.getURL().toExternalForm().concat(encodedId));
-
             LOGGER.debug("Locating metadata input stream for [{}] via [{}]", encodedId, url);
             final HttpURLConnection httpcon = (HttpURLConnection) url.openConnection();
             httpcon.setDoOutput(true);

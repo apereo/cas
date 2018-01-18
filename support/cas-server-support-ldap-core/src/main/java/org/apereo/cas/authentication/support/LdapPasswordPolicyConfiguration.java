@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProperties;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * LDAP-specific password policy configuration container.
@@ -13,6 +14,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
 public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration {
 
     /**
@@ -26,9 +28,6 @@ public class LdapPasswordPolicyConfiguration extends PasswordPolicyConfiguration
 
     public LdapPasswordPolicyConfiguration(final PasswordPolicyProperties props) {
         super(props);
-    }
-
-    public LdapPasswordPolicyConfiguration() {
     }
 
     /**

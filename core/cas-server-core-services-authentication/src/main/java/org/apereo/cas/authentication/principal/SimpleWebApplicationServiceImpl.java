@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.extern.slf4j.Slf4j;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a service which wishes to use the CAS protocol.
@@ -18,12 +18,11 @@ import javax.persistence.Entity;
 @DiscriminatorValue("simple")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
+@NoArgsConstructor
 public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 8334068957483758042L;
 
-    private SimpleWebApplicationServiceImpl() {}
-    
     /**
      * Instantiates a new Simple web application service.
      *
@@ -32,10 +31,8 @@ public class SimpleWebApplicationServiceImpl extends AbstractWebApplicationServi
      * @param artifactId  the artifact id
      */
     @JsonCreator
-    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id,
-                                              @JsonProperty("originalUrl") final String originalUrl,
+    protected SimpleWebApplicationServiceImpl(@JsonProperty("id") final String id, @JsonProperty("originalUrl") final String originalUrl,
                                               @JsonProperty("artifactId") final String artifactId) {
         super(id, originalUrl, artifactId);
     }
 }
-

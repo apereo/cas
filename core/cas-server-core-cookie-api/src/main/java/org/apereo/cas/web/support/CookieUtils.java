@@ -4,8 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-
 import javax.servlet.http.HttpServletRequest;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CookieUtils}.
@@ -14,9 +14,8 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @Slf4j
+@NoArgsConstructor
 public class CookieUtils {
-    protected CookieUtils() {
-    }
 
     /**
      * Gets ticket granting ticket from request.

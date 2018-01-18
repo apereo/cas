@@ -10,6 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Configuration properties class for shiro.authn.
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class ShiroAuthenticationProperties extends SpringResourceProperties {
 
     private static final long serialVersionUID = 8997401036330472417L;
@@ -51,7 +53,4 @@ public class ShiroAuthenticationProperties extends SpringResourceProperties {
      * Name of the authentication handler.
      */
     private String name;
-
-    public ShiroAuthenticationProperties() {
-    }
 }

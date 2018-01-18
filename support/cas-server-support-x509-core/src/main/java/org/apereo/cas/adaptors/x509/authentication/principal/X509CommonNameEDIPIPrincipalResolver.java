@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import java.security.cert.X509Certificate;
 import java.util.StringTokenizer;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link X509CommonNameEDIPIPrincipalResolver}.
@@ -23,18 +24,15 @@ import java.util.StringTokenizer;
  */
 @Slf4j
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class X509CommonNameEDIPIPrincipalResolver extends AbstractX509PrincipalResolver {
 
     private static final String COMMON_NAME_VAR = "CN";
 
     private static final int EDIPI_LENGTH = 10;
 
-    public X509CommonNameEDIPIPrincipalResolver() {
-    }
-
-    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                                final String principalAttributeName) {
+    public X509CommonNameEDIPIPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                                final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

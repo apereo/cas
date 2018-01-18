@@ -14,6 +14,7 @@ import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.Failure
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -26,6 +27,7 @@ import lombok.Setter;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
@@ -37,9 +39,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     private String id;
 
     private int order;
-
-    public AbstractMultifactorAuthenticationProvider() {
-    }
 
     @Override
     public int getOrder() {
@@ -102,8 +101,7 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                 throw new AuthenticationException();
             }
             LOGGER.warn("[{}] could not be reached. Since the authentication provider is configured for the "
-                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]",
-                providerName, failureMode, providerName, service);
+                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]", providerName, failureMode, providerName, service);
             return false;
         }
         LOGGER.debug("Failure mode is set to [{}]. Assuming the provider is available.", failureMode);

@@ -11,6 +11,7 @@ import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -23,6 +24,7 @@ import lombok.Setter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @Setter
+@NoArgsConstructor
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -36,12 +38,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     private long timeToKillInSeconds;
 
     private long timeInBetweenUsesInSeconds;
-
-    /**
-     * Instantiates a new Throttled use and timeout expiration policy.
-     */
-    public ThrottledUseAndTimeoutExpirationPolicy() {
-    }
 
     @JsonCreator
     public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {

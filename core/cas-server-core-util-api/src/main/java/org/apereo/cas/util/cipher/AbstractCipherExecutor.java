@@ -11,6 +11,7 @@ import org.springframework.core.io.Resource;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -20,15 +21,10 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
 
     private Key signingKey;
-
-    /**
-     * Instantiates a new cipher executor.
-     */
-    protected AbstractCipherExecutor() {
-    }
 
     /**
      * Instantiates a new cipher executor.
@@ -61,7 +57,6 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
             if (ResourceUtils.isFile(signingSecretKey) && ResourceUtils.doesResourceExist(signingSecretKey)) {
                 final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);
                 LOGGER.debug("Located signing key resource [{}]. Attempting to extract private key...", resource);
-
                 final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
                 factory.setAlgorithm(RsaKeyUtil.RSA);
                 factory.setLocation(resource);

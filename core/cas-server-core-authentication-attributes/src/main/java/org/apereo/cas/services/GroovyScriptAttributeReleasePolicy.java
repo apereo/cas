@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyScriptAttributeReleasePolicy} that attempts to release attributes
@@ -22,14 +23,12 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 1703080077563402223L;
 
     private String groovyScript;
-
-    public GroovyScriptAttributeReleasePolicy() {
-    }
 
     public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
         this.groovyScript = groovyScript;

@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
-
 import java.io.Serializable;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link SamlServiceProviderProperties}.
@@ -17,6 +17,7 @@ import java.io.Serializable;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class SamlServiceProviderProperties implements Serializable {
 
     /**
@@ -576,9 +577,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class Bynder extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -3168960591734555088L;
-
-        public Bynder() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -587,9 +585,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class CherWell extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -3168960591734555088L;
-
-        public CherWell() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -598,9 +593,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class NewRelic extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -3268960591734555088L;
-
-        public NewRelic() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -609,9 +601,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class Yuja extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -1168960591734555088L;
-
-        public Yuja() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -620,9 +609,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class Symplicity extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -3178960591734555088L;
-
-        public Symplicity() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -631,9 +617,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class Egnyte extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -3168760591734555088L;
-
-        public Egnyte() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -642,9 +625,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class EverBridge extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -5168960591734555088L;
-
-        public EverBridge() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")
@@ -653,9 +633,6 @@ public class SamlServiceProviderProperties implements Serializable {
     public static class SunshineStateEdResearchAlliance extends AbstractSamlSPProperties {
 
         private static final long serialVersionUID = -5558960591734555088L;
-
-        public SunshineStateEdResearchAlliance() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-saml-sp-integrations")

@@ -5,9 +5,9 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.util.Assert;
-
 import java.util.Collection;
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link AbstractMapBasedTicketRegistry}.
@@ -16,11 +16,8 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@NoArgsConstructor
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
-
-
-    public AbstractMapBasedTicketRegistry() {
-    }
 
     /**
      * Creates a new, empty registry with the cipher.

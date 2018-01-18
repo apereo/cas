@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import lombok.NoArgsConstructor;
 
 /**
  * Extracts the Principal out of PrincipalBearingCredential. It is very simple
@@ -18,14 +19,11 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  */
 @Slf4j
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class PrincipalBearingPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    public PrincipalBearingPrincipalResolver() {
-    }
-
-    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                             final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                             final String principalAttributeName) {
+    public PrincipalBearingPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                             final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

@@ -6,6 +6,7 @@ import org.apereo.cas.util.EncodingUtils;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * A cipher executor that does compression/base64.
@@ -15,12 +16,10 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class Base64CipherExecutor extends AbstractCipherExecutor<Serializable, String> {
 
     private static CipherExecutor<Serializable, String> INSTANCE;
-
-    protected Base64CipherExecutor() {
-    }
 
     /**
      * Gets instance.

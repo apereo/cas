@@ -13,6 +13,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link PasswordManagementProperties}.
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class PasswordManagementProperties implements Serializable {
 
     private static final long serialVersionUID = -260644582798411176L;
@@ -186,9 +188,6 @@ public class PasswordManagementProperties implements Serializable {
          * How long in minutes should the password expiration link remain valid.
          */
         private float expirationMinutes = 1;
-
-        public Reset() {
-        }
     }
 
     @RequiresModule(name = "cas-server-support-pm")

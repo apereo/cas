@@ -4,10 +4,10 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import lombok.NoArgsConstructor;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -18,15 +18,10 @@ import java.util.List;
 @Slf4j
 @ToString
 @Setter
+@NoArgsConstructor
 public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
-
-    /**
-     * Instantiates a new In memory service registry.
-     */
-    public InMemoryServiceRegistry() {
-    }
 
     /**
      * Instantiates a new In memory service registry dao.

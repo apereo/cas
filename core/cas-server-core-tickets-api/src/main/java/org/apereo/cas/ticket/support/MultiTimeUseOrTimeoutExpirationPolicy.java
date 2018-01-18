@@ -9,10 +9,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.springframework.util.Assert;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.NoArgsConstructor;
 
 /**
  * ExpirationPolicy that is based on certain number of uses of a ticket or a
@@ -23,6 +23,7 @@ import java.time.temporal.ChronoUnit;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@NoArgsConstructor
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = -5704993954986738308L;
@@ -31,21 +32,11 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
      * deserialization the field is null.
      */
-
-
     @JsonProperty("timeToLive")
     private long timeToKillInSeconds;
 
     @JsonProperty("numberOfUses")
     private int numberOfUses;
-
-    /**
-     * No-arg constructor for serialization support.
-     */
-    private MultiTimeUseOrTimeoutExpirationPolicy() {
-        this.timeToKillInSeconds = 0;
-        this.numberOfUses = 0;
-    }
 
     /**
      * Instantiates a new multi time use or timeout expiration policy.
@@ -54,8 +45,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
      * @param timeToKillInSeconds the time to kill in seconds
      */
     @JsonCreator
-    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
-                                                 @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+    public MultiTimeUseOrTimeoutExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.numberOfUses = numberOfUses;
         Assert.isTrue(this.numberOfUses > 0, "numberOfUses must be greater than 0.");
@@ -73,14 +63,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             LOGGER.debug("Ticket usage count [{}] is greater than or equal to [{}]. Ticket has expired", countUses, this.numberOfUses);
             return true;
         }
-
         final ZonedDateTime systemTime = getCurrentSystemTime();
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
         final ZonedDateTime expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-
         if (systemTime.isAfter(expirationTime)) {
             LOGGER.debug("Ticket has expired because the difference between current time [{}] and ticket time [{}] is greater than or equal to [{}].",
-                    systemTime, lastTimeUsed, this.timeToKillInSeconds);
+                systemTime, lastTimeUsed, this.timeToKillInSeconds);
             return true;
         }
         return false;
@@ -118,18 +106,12 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
             return false;
         }
         final MultiTimeUseOrTimeoutExpirationPolicy rhs = (MultiTimeUseOrTimeoutExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .append(this.numberOfUses, rhs.numberOfUses)
-                .isEquals();
+        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).append(this.numberOfUses, rhs.numberOfUses).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(timeToKillInSeconds)
-                .append(numberOfUses)
-                .toHashCode();
+        return new HashCodeBuilder().append(timeToKillInSeconds).append(numberOfUses).toHashCode();
     }
 
     /**
@@ -140,9 +122,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
         private static final long serialVersionUID = -5814201080268311070L;
 
-        private ProxyTicketExpirationPolicy() {
-        }
-
         /**
          * Instantiates a new proxy ticket expiration policy.
          *
@@ -150,8 +129,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
-                                           @JsonProperty("timeToKillInSeconds") final long timeToKillInSeconds) {
+        public ProxyTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToKillInSeconds") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }
@@ -164,9 +142,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
 
         private static final long serialVersionUID = -5814201080268311070L;
 
-        private ServiceTicketExpirationPolicy() {
-        }
-
         /**
          * Instantiates a new Service ticket expiration policy.
          *
@@ -174,8 +149,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
          * @param timeToKillInSeconds the time to kill in seconds
          */
         @JsonCreator
-        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses,
-                                             @JsonProperty("timeToLive") final long timeToKillInSeconds) {
+        public ServiceTicketExpirationPolicy(@JsonProperty("numberOfUses") final int numberOfUses, @JsonProperty("timeToLive") final long timeToKillInSeconds) {
             super(numberOfUses, timeToKillInSeconds);
         }
     }

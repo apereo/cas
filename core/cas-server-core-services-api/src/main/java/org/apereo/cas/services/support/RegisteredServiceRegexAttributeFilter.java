@@ -13,6 +13,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.ToString;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Slf4j
 @ToString
 @Setter
+@NoArgsConstructor
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
@@ -31,13 +33,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     private Pattern pattern;
 
     private int order;
-
-    /**
-     * Instantiates a new Registered service regex attribute filter.
-     * Required for serialization.
-     */
-    protected RegisteredServiceRegexAttributeFilter() {
-    }
 
     /**
      * Instantiates a new registered service regex attribute filter.

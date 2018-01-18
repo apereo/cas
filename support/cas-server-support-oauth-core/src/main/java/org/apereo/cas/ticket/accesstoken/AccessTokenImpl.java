@@ -6,10 +6,10 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
-
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Collection;
+import lombok.NoArgsConstructor;
 
 /**
  * An OAuth access token implementation.
@@ -20,16 +20,10 @@ import java.util.Collection;
 @Entity
 @DiscriminatorValue(AccessToken.PREFIX)
 @Slf4j
+@NoArgsConstructor
 public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
 
     private static final long serialVersionUID = 2339545346159721563L;
-
-    /**
-     * Instantiates a new OAuth access token.
-     */
-    public AccessTokenImpl() {
-        // exists for JPA purposes
-    }
 
     /**
      * Constructs a new access token with unique id for a service and authentication.
@@ -42,11 +36,8 @@ public class AccessTokenImpl extends OAuthCodeImpl implements AccessToken {
      * @param scopes               the scopes
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public AccessTokenImpl(final String id, final Service service,
-                           final Authentication authentication,
-                           final ExpirationPolicy expirationPolicy,
-                           final TicketGrantingTicket ticketGrantingTicket,
-                           final Collection<String> scopes) {
+    public AccessTokenImpl(final String id, final Service service, final Authentication authentication, final ExpirationPolicy expirationPolicy,
+                           final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         super(id, service, authentication, expirationPolicy, ticketGrantingTicket, scopes);
     }
 

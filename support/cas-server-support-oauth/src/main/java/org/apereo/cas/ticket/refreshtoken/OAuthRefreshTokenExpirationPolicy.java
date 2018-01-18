@@ -9,10 +9,10 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.NoArgsConstructor;
 
 /**
  * This is OAuth refresh token expiration policy (max time to live = 1 month by default).
@@ -22,6 +22,7 @@ import java.time.temporal.ChronoUnit;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@NoArgsConstructor
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -35,12 +36,6 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
     private long timeToKillInSeconds;
 
     /**
-     * No-arg constructor for serialization support.
-     */
-    public OAuthRefreshTokenExpirationPolicy() {
-    }
-
-    /**
      * Instantiates a new OAuth refresh token expiration policy.
      *
      * @param timeToKillInSeconds the time to kill in seconds
@@ -52,8 +47,7 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        return ticketState == null || ticketState.getCreationTime()
-                .plus(this.timeToKillInSeconds, ChronoUnit.SECONDS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        return ticketState == null || ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
     @Override
@@ -67,7 +61,6 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
         return 0L;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -80,15 +73,11 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
             return false;
         }
         final OAuthRefreshTokenExpirationPolicy rhs = (OAuthRefreshTokenExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .isEquals();
+        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(timeToKillInSeconds)
-                .toHashCode();
+        return new HashCodeBuilder().append(timeToKillInSeconds).toHashCode();
     }
 }

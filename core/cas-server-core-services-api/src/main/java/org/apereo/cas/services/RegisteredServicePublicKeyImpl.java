@@ -14,6 +14,7 @@ import java.security.PublicKey;
 import lombok.ToString;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a public key for a CAS registered service.
@@ -24,6 +25,7 @@ import lombok.Setter;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;
@@ -35,13 +37,6 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
     @JsonIgnore
     @Transient
     private Class<PublicKeyFactoryBean> publicKeyFactoryBeanClass = PublicKeyFactoryBean.class;
-
-    /**
-     * Instantiates a new Registered service public key impl.
-     * Required for proper serialization.
-     */
-    public RegisteredServicePublicKeyImpl() {
-    }
 
     /**
      * Instantiates a new Registered service public key impl.

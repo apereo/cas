@@ -17,17 +17,16 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Document;
-
 import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Properties;
-
 import static org.apache.cxf.fediz.core.FedizConstants.SAML2_METADATA_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.SCHEMA_INSTANCE_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.WS_ADDRESSING_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.WS_FEDERATION_NS;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link WSFederationMetadataWriter}.
@@ -36,11 +35,8 @@ import static org.apache.cxf.fediz.core.FedizConstants.WS_FEDERATION_NS;
  * @since 5.1.0
  */
 @Slf4j
+@NoArgsConstructor
 public class WSFederationMetadataWriter {
-
-
-    protected WSFederationMetadataWriter() {
-    }
 
     /**
      * Produce metadata document.
@@ -51,40 +47,29 @@ public class WSFederationMetadataWriter {
     public static Document produceMetadataDocument(final CasConfigurationProperties config) {
         try {
             final WsFederationProperties.SecurityTokenService sts = config.getAuthn().getWsfedIdp().getSts();
-            final Properties prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(), sts.getRealm().getKeystorePassword(),
-                    sts.getRealm().getKeystoreAlias());
+            final Properties prop = CryptoUtils.getSecurityProperties(sts.getRealm().getKeystoreFile(), sts.getRealm().getKeystorePassword(), sts.getRealm().getKeystoreAlias());
             final Crypto crypto = CryptoFactory.getInstance(prop);
             final W3CDOMStreamWriter writer = new W3CDOMStreamWriter();
             writer.writeStartDocument(StandardCharsets.UTF_8.name(), "1.0");
-
             final String referenceID = IDGenerator.generateID("_");
             writer.writeStartElement("md", "EntityDescriptor", SAML2_METADATA_NS);
             writer.writeAttribute("ID", referenceID);
-
             final String idpEntityId = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST);
             writer.writeAttribute("entityID", idpEntityId);
-
             writer.writeNamespace("md", SAML2_METADATA_NS);
             writer.writeNamespace("fed", WS_FEDERATION_NS);
             writer.writeNamespace("wsa", WS_ADDRESSING_NS);
             writer.writeNamespace("auth", WS_FEDERATION_NS);
             writer.writeNamespace("xsi", SCHEMA_INSTANCE_NS);
-
-            final String stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS)
-                    .concat(config.getAuthn().getWsfedIdp().getIdp().getRealmName());
+            final String stsUrl = config.getServer().getPrefix().concat(WSFederationConstants.ENDPOINT_STS).concat(config.getAuthn().getWsfedIdp().getIdp().getRealmName());
             writeFederationMetadata(writer, idpEntityId, stsUrl, crypto);
-
             writer.writeEndElement();
             writer.writeEndDocument();
             writer.close();
-
             final String out = DOM2Writer.nodeToString(writer.getDocument());
             LOGGER.debug("Produced unsigned metadata");
             LOGGER.debug(out);
-
-            final Document result = SignatureUtils.signMetaInfo(crypto, null,
-                    config.getAuthn().getWsfedIdp().getSts().getRealm().getKeyPassword(),
-                    writer.getDocument(), referenceID);
+            final Document result = SignatureUtils.signMetaInfo(crypto, null, config.getAuthn().getWsfedIdp().getSts().getRealm().getKeyPassword(), writer.getDocument(), referenceID);
             if (result != null) {
                 return result;
             }
@@ -94,10 +79,7 @@ public class WSFederationMetadataWriter {
         }
     }
 
-    private static void writeFederationMetadata(final XMLStreamWriter writer,
-                                                final String idpEntityId,
-                                                final String ststUrl,
-                                                final Crypto crypto) throws Exception {
+    private static void writeFederationMetadata(final XMLStreamWriter writer, final String idpEntityId, final String ststUrl, final Crypto crypto) throws Exception {
         writer.writeStartElement("md", "RoleDescriptor", WS_FEDERATION_NS);
         writer.writeAttribute(SCHEMA_INSTANCE_NS, "type", "fed:SecurityTokenServiceType");
         writer.writeAttribute("protocolSupportEnumeration", WS_FEDERATION_NS);
@@ -106,7 +88,6 @@ public class WSFederationMetadataWriter {
         writer.writeStartElement(StringUtils.EMPTY, "KeyInfo", "http://www.w3.org/2000/09/xmldsig#");
         writer.writeStartElement(StringUtils.EMPTY, "X509Data", "http://www.w3.org/2000/09/xmldsig#");
         writer.writeStartElement(StringUtils.EMPTY, "X509Certificate", "http://www.w3.org/2000/09/xmldsig#");
-
         try {
             final String keyAlias = crypto.getDefaultX509Identifier();
             final X509Certificate cert = CertsUtils.getX509CertificateFromCrypto(crypto, keyAlias);
@@ -115,33 +96,24 @@ public class WSFederationMetadataWriter {
             LOGGER.error("Failed to add certificate information to metadata. Metadata incomplete", ex);
             throw new RuntimeException(ex.getMessage(), ex);
         }
-
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-
         writer.writeStartElement("fed", "SecurityTokenServiceEndpoint", WS_FEDERATION_NS);
         writer.writeStartElement("wsa", "EndpointReference", WS_ADDRESSING_NS);
-
         writer.writeStartElement("wsa", "Address", WS_ADDRESSING_NS);
         writer.writeCharacters(ststUrl);
-
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-
         writer.writeStartElement("fed", "PassiveRequestorEndpoint", WS_FEDERATION_NS);
         writer.writeStartElement("wsa", "EndpointReference", WS_ADDRESSING_NS);
-
         writer.writeStartElement("wsa", "Address", WS_ADDRESSING_NS);
         writer.writeCharacters(idpEntityId);
-
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();
-
-
         writer.writeStartElement("fed", "ClaimTypesOffered", WS_FEDERATION_NS);
         Arrays.stream(WSFederationClaims.values()).forEach(Unchecked.consumer(claim -> {
             writer.writeStartElement("auth", "ClaimType", WS_FEDERATION_NS);
@@ -150,8 +122,6 @@ public class WSFederationMetadataWriter {
             writer.writeEndElement();
         }));
         writer.writeEndElement();
-
-
         writer.writeEndElement();
     }
 }

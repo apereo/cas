@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 /**
  * Implementation of a Service that supports Google Accounts (eventually a more
@@ -22,6 +23,7 @@ import lombok.Getter;
 @DiscriminatorValue("google")
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
@@ -31,9 +33,6 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     @Column(length = 255, updatable = true, insertable = true)
     private String requestId;
-
-    private GoogleAccountsService() {
-    }
 
     /**
      * Instantiates a new google accounts service.

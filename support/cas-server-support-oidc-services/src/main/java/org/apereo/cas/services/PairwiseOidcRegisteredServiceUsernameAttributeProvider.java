@@ -12,6 +12,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link PairwiseOidcRegisteredServiceUsernameAttributeProvider}.
@@ -36,14 +37,12 @@ import org.springframework.web.util.UriComponentsBuilder;
  */
 @Slf4j
 @Getter
+@NoArgsConstructor
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 469929103943101717L;
 
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
-
-    public PairwiseOidcRegisteredServiceUsernameAttributeProvider() {
-    }
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
@@ -102,7 +101,9 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
     @Getter
     @AllArgsConstructor
     private static class PairwiseService implements Service {
+
         private static final long serialVersionUID = -6154643329901712381L;
+
         private final String id;
     }
 }

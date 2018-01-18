@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import lombok.NoArgsConstructor;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
@@ -19,14 +20,11 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  */
 @Slf4j
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    public SpnegoPrincipalResolver() {
-    }
-
     public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
-                                   final String principalAttributeName) {
+                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalNameTransformer, principalAttributeName);
     }
 

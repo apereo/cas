@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import java.security.cert.X509Certificate;
+import lombok.NoArgsConstructor;
 
 /**
  * Returns a principal based on the Subject DNs name.
@@ -14,14 +15,11 @@ import java.security.cert.X509Certificate;
  */
 @Slf4j
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class X509SubjectDNPrincipalResolver extends AbstractX509PrincipalResolver {
 
-    public X509SubjectDNPrincipalResolver() {
-    }
-
-    public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                          final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
-                                          final String principalAttributeName) {
+    public X509SubjectDNPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
+                                          final boolean returnNullIfNoAttributes, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
 

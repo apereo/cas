@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
+import lombok.NoArgsConstructor;
 
 /**
  * AlwaysExpiresExpirationPolicy always answers true when asked if a Ticket is
@@ -16,18 +17,13 @@ import org.apereo.cas.ticket.TicketState;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@NoArgsConstructor
 public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
      * Serializable Unique ID.
      */
     private static final long serialVersionUID = 3836547698242303540L;
-
-    /**
-     * Instantiates a new Always expires expiration policy.
-     */
-    public AlwaysExpiresExpirationPolicy() {
-    }
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
@@ -45,7 +41,6 @@ public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
     public Long getTimeToIdle() {
         return 0L;
     }
-
 
     @Override
     public boolean equals(final Object obj) {
