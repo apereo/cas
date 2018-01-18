@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import java.util.Map;
 
@@ -15,6 +14,7 @@ import java.util.Map;
  */
 @Slf4j
 @ToString(callSuper = true)
+@EqualsAndHashCode(callSuper = true)
 public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5519257723778012771L;
@@ -24,22 +24,4 @@ public class ReturnAllAttributeReleasePolicy extends AbstractRegisteredServiceAt
         return resolvedAttributes;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).appendSuper(super.hashCode()).toHashCode();
-    }
 }
