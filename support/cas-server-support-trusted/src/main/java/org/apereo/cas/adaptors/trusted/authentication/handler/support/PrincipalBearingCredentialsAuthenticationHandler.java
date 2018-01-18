@@ -21,9 +21,6 @@ import org.apereo.cas.services.ServicesManager;
  */
 @Slf4j
 public class PrincipalBearingCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-
-
-
     public PrincipalBearingCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
         super(name, servicesManager, principalFactory, null);
     }

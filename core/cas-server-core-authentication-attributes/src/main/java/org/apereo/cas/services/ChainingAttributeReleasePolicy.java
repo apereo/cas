@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -19,15 +20,12 @@ import lombok.Setter;
 @Slf4j
 @ToString
 @Setter
+@Getter
 public class ChainingAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 3795054936775326709L;
 
     private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
-
-    public List<RegisteredServiceAttributeReleasePolicy> getPolicies() {
-        return policies;
-    }
 
     @Override
     public Map<String, Object> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {

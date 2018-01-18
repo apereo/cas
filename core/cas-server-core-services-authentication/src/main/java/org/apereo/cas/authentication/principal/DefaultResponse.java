@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 import com.google.common.base.Splitter;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
 import java.util.List;
@@ -19,6 +20,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public class DefaultResponse implements Response {
 
     /**
@@ -37,20 +39,7 @@ public class DefaultResponse implements Response {
     private final String url;
 
     private final Map<String, String> attributes;
-
-    /**
-     * Instantiates a new response.
-     *
-     * @param responseType the response type
-     * @param url          the url
-     * @param attributes   the attributes
-     */
-    protected DefaultResponse(final ResponseType responseType, final String url, final Map<String, String> attributes) {
-        this.responseType = responseType;
-        this.url = url;
-        this.attributes = attributes;
-    }
-
+    
     /**
      * Gets the post response.
      *
@@ -106,11 +95,6 @@ public class DefaultResponse implements Response {
         final String urlRedirect = builder.toString();
         LOGGER.debug("Final redirect response is [{}]", urlRedirect);
         return new DefaultResponse(ResponseType.REDIRECT, urlRedirect, parameters);
-    }
-
-    @Override
-    public Response.ResponseType getResponseType() {
-        return this.responseType;
     }
 
     /**

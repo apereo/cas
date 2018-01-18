@@ -99,10 +99,6 @@ public class EncodedTicket implements Ticket {
         return null;
     }
 
-    protected byte[] getEncoded() {
-        return this.encodedTicket;
-    }
-
     @JsonIgnore
     @Override
     public boolean isExpired() {
