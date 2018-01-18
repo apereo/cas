@@ -1,11 +1,11 @@
 package org.apereo.cas.authentication.principal;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import java.util.Map;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
+
+import java.util.Map;
 
 /**
  * Default implementation of {@link PrincipalAttributesRepository}
@@ -16,6 +16,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@EqualsAndHashCode(callSuper = true)
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
 
     private static final long serialVersionUID = -4535358847021241725L;
@@ -30,25 +31,6 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
         LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
             this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder().appendSuper(super.equals(obj)).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).toHashCode();
     }
 
     @Override

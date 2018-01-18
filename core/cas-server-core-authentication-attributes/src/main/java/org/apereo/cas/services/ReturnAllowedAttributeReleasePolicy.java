@@ -1,9 +1,10 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.util.ArrayList;
@@ -26,27 +27,14 @@ import lombok.Setter;
 @ToString(callSuper = true)
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -5771481877391140569L;
 
-    private List<String> allowedAttributes;
-
-    /**
-     * Instantiates a new Return allowed attribute release policy.
-     */
-    public ReturnAllowedAttributeReleasePolicy() {
-        this(new ArrayList<>());
-    }
-
-    /**
-     * Instantiates a new Return allowed attribute release policy.
-     *
-     * @param allowedAttributes the allowed attributes
-     */
-    public ReturnAllowedAttributeReleasePolicy(final List<String> allowedAttributes) {
-        setAllowedAttributes(allowedAttributes);
-    }
+    private List<String> allowedAttributes = new ArrayList<>();
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attrs, final RegisteredService service) {
@@ -71,23 +59,4 @@ public class ReturnAllowedAttributeReleasePolicy extends AbstractRegisteredServi
         return attributesToRelease;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ReturnAllowedAttributeReleasePolicy rhs = (ReturnAllowedAttributeReleasePolicy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(getAllowedAttributes(), rhs.getAllowedAttributes()).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).appendSuper(super.hashCode()).append(getAllowedAttributes()).toHashCode();
-    }
 }

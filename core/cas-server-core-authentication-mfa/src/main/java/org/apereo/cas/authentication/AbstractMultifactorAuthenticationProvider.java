@@ -1,20 +1,22 @@
 package org.apereo.cas.authentication;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.springframework.webflow.execution.Event;
+
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.*;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -28,6 +30,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"order", "id"})
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
@@ -39,11 +42,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     private String id;
 
     private int order;
-
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
 
     @Override
     public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService, final HttpServletRequest request) {
@@ -115,26 +113,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      */
     protected boolean isAvailable() {
         return true;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final MultifactorAuthenticationProvider rhs = (MultifactorAuthenticationProvider) obj;
-        return new EqualsBuilder().append(this.getOrder(), rhs.getOrder()).append(this.getId(), rhs.getId()).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(getOrder()).append(getId()).toHashCode();
     }
 
     @Override
