@@ -19,11 +19,7 @@ import org.springframework.security.crypto.scrypt.SCryptPasswordEncoder;
  * @since 5.2.0
  */
 @Slf4j
-public final class PasswordEncoderUtils {
-
-
-    private PasswordEncoderUtils() {
-    }
+public class PasswordEncoderUtils {
 
     /**
      * New password encoder password encoder.

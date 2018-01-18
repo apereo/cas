@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProviderBypassProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
@@ -15,11 +16,8 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
-public final class MultifactorAuthenticationUtils {
-
-    
-    private MultifactorAuthenticationUtils() {}
-    
+@UtilityClass
+public class MultifactorAuthenticationUtils {
     /**
      * New multifactor authentication provider bypass multifactor.
      *

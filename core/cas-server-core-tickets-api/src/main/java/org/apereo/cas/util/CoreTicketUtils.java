@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -14,11 +15,8 @@ import org.apereo.cas.util.cipher.NoOpCipherExecutor;
  * @since 5.2.0
  */
 @Slf4j
-public final class CoreTicketUtils {
-
-
-    private CoreTicketUtils() {}
-    
+@UtilityClass
+public class CoreTicketUtils {
     /**
      * New ticket registry cipher executor cipher executor.
      *

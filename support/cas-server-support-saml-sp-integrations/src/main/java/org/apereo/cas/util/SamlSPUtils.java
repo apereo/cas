@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
@@ -35,11 +36,8 @@ import java.util.stream.StreamSupport;
  * @since 5.0.0
  */
 @Slf4j
-public final class SamlSPUtils {
-
-
-    private SamlSPUtils() {
-    }
+@UtilityClass
+public class SamlSPUtils {
 
     /**
      * New saml service provider registration.

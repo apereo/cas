@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdurmont.semver4j.Semver;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
@@ -23,13 +24,11 @@ import java.util.Properties;
  * @since 5.3.0
  */
 @Slf4j
-public final class SystemUtils {
+@UtilityClass
+public class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
-
-    private SystemUtils() {
-    }
 
     /**
      * Gets system info.

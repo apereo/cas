@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -36,15 +37,9 @@ import static org.springframework.util.ResourceUtils.*;
  * @since 5.0.0
  */
 @Slf4j
-public final class ResourceUtils {
-
-
-
-    // This constant covers both http and https
+@UtilityClass
+public class ResourceUtils {
     private static final String HTTP_URL_PREFIX = "http";
-
-    private ResourceUtils() {
-    }
 
     /**
      * Gets resource from a String location.
