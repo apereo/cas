@@ -248,90 +248,6 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
         return new FutureRequestExecutionService(httpClient, this.executorService);
     }
 
-    public ExecutorService getExecutorService() {
-        return this.executorService;
-    }
-
-    public int getThreadsNumber() {
-        return this.threadsNumber;
-    }
-
-    public int getQueueSize() {
-        return this.queueSize;
-    }
-
-    public int getMaxPooledConnections() {
-        return this.maxPooledConnections;
-    }
-
-    public int getMaxConnectionsPerRoute() {
-        return this.maxConnectionsPerRoute;
-    }
-
-    public List<Integer> getAcceptableCodes() {
-        return new ArrayList<>(this.acceptableCodes);
-    }
-
-    public long getConnectionTimeout() {
-        return this.connectionTimeout;
-    }
-
-    public int getReadTimeout() {
-        return this.readTimeout;
-    }
-
-    public RedirectStrategy getRedirectionStrategy() {
-        return this.redirectionStrategy;
-    }
-
-    public SSLConnectionSocketFactory getSslSocketFactory() {
-        return this.sslSocketFactory;
-    }
-
-    public HostnameVerifier getHostnameVerifier() {
-        return this.hostnameVerifier;
-    }
-
-    public CredentialsProvider getCredentialsProvider() {
-        return this.credentialsProvider;
-    }
-
-    public CookieStore getCookieStore() {
-        return this.cookieStore;
-    }
-
-    public ConnectionReuseStrategy getConnectionReuseStrategy() {
-        return this.connectionReuseStrategy;
-    }
-
-    public ConnectionBackoffStrategy getConnectionBackoffStrategy() {
-        return this.connectionBackoffStrategy;
-    }
-
-    public ServiceUnavailableRetryStrategy getServiceUnavailableRetryStrategy() {
-        return this.serviceUnavailableRetryStrategy;
-    }
-
-    public Collection<? extends Header> getDefaultHeaders() {
-        return this.defaultHeaders;
-    }
-
-    public AuthenticationStrategy getProxyAuthenticationStrategy() {
-        return this.proxyAuthenticationStrategy;
-    }
-
-    public boolean isCircularRedirectsAllowed() {
-        return this.circularRedirectsAllowed;
-    }
-
-    public boolean isAuthenticationEnabled() {
-        return this.authenticationEnabled;
-    }
-
-    public boolean isRedirectsEnabled() {
-        return this.redirectsEnabled;
-    }
-
     /**
      * Destroy.
      */
@@ -347,11 +263,5 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      * The type Default http client.
      */
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
-    }
-
-    /**
-     * The type Ssl trust store aware http client.
-     */
-    public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
     }
 }
