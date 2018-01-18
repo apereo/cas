@@ -60,10 +60,10 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
     @Test
     public void verifySerializeAndReturnMappedAttributeReleasePolicyToJson() throws IOException {
-        final Multimap<String, String> allowedAttributes = ArrayListMultimap.create();
+        final Multimap<String, Object> allowedAttributes = ArrayListMultimap.create();
         allowedAttributes.put("keyOne", "valueOne");
-        final ReturnMappedAttributeReleasePolicy policyWritten =
-            new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
+        final Map<String, Object> wrap = CollectionUtils.wrap(allowedAttributes);
+        final ReturnMappedAttributeReleasePolicy policyWritten = new ReturnMappedAttributeReleasePolicy(wrap);
 
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final RegisteredServiceAttributeReleasePolicy policyRead = MAPPER.readValue(JSON_FILE, ReturnMappedAttributeReleasePolicy.class);
@@ -89,7 +89,7 @@ public class ReturnMappedAttributeReleasePolicyTests {
 
     @Test
     public void verifyMappingWithoutAttributeValue() {
-        final Multimap<String, String> allowedAttributes = ArrayListMultimap.create();
+        final Multimap<String, Object> allowedAttributes = ArrayListMultimap.create();
         final String mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", mappedAttribute);
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));
