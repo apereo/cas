@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import com.google.common.collect.Sets;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -161,8 +162,8 @@ public class SamlObjectSignatureValidator {
         LOGGER.debug("Resolving role descriptor for [{}]", peer.getEntityId());
 
         final RoleDescriptor roleDescriptor = roleDescriptorResolver.resolveSingle(
-                new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
-                        new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
+            new CriteriaSet(new EntityIdCriterion(peer.getEntityId()),
+                new EntityRoleCriterion(SPSSODescriptor.DEFAULT_ELEMENT_NAME)));
         peer.setRole(roleDescriptor.getElementQName());
         final SAMLProtocolContext protocol = context.getSubcontext(SAMLProtocolContext.class, true);
         protocol.setProtocol(SAMLConstants.SAML20P_NS);
@@ -192,7 +193,7 @@ public class SamlObjectSignatureValidator {
         while (!foundValidCredential && it.hasNext()) {
             try {
                 final Credential c = it.next();
-                
+
                 final CredentialResolver resolver = new StaticCredentialResolver(c);
                 final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(c);
                 final SignatureTrustEngine trustEngine = new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
@@ -205,7 +206,7 @@ public class SamlObjectSignatureValidator {
                 LOGGER.debug("Invoking [{}] to handle signature validation for [{}]", handler.getClass().getSimpleName(), peer.getEntityId());
                 handler.invoke(context);
                 LOGGER.debug("Successfully validated request signature for [{}].", profileRequest.getIssuer());
-                
+
                 foundValidCredential = true;
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
@@ -225,7 +226,7 @@ public class SamlObjectSignatureValidator {
                                                    final RoleDescriptorResolver roleDescriptorResolver) throws Exception {
         final SAMLSignatureProfileValidator validator = new SAMLSignatureProfileValidator();
         LOGGER.debug("Validating profile signature for [{}] via [{}]...", profileRequest.getIssuer(),
-                validator.getClass().getSimpleName());
+            validator.getClass().getSimpleName());
         validator.validate(signature);
         LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
@@ -254,24 +255,22 @@ public class SamlObjectSignatureValidator {
         }
     }
 
+    @SneakyThrows
     private Set<Credential> getSigningCredential(final RoleDescriptorResolver resolver, final RequestAbstractType profileRequest) {
-        try {
-            final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
-            final SignatureValidationConfiguration config = getSignatureValidationConfiguration();
-            kekCredentialResolver.setRoleDescriptorResolver(resolver);
-            kekCredentialResolver.setKeyInfoCredentialResolver(
-                    DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
-            kekCredentialResolver.initialize();
-            final CriteriaSet criteriaSet = new CriteriaSet();
-            criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
-            criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
+        final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
+        final SignatureValidationConfiguration config = getSignatureValidationConfiguration();
+        kekCredentialResolver.setRoleDescriptorResolver(resolver);
+        kekCredentialResolver.setKeyInfoCredentialResolver(
+            DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
+        kekCredentialResolver.initialize();
+        final CriteriaSet criteriaSet = new CriteriaSet();
+        criteriaSet.add(new SignatureValidationConfigurationCriterion(config));
+        criteriaSet.add(new UsageCriterion(UsageType.SIGNING));
 
-            buildEntityCriteriaForSigningCredential(profileRequest, criteriaSet);
+        buildEntityCriteriaForSigningCredential(profileRequest, criteriaSet);
 
-            return Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return Sets.newLinkedHashSet(kekCredentialResolver.resolve(criteriaSet));
+
     }
 
     /**
@@ -293,11 +292,11 @@ public class SamlObjectSignatureValidator {
      */
     protected SignatureValidationConfiguration getSignatureValidationConfiguration() {
         final BasicSignatureValidationConfiguration config =
-                DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
+            DefaultSecurityConfigurationBootstrap.buildDefaultSignatureValidationConfiguration();
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-                && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
+            && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
             config.setWhitelistMerge(true);
         }

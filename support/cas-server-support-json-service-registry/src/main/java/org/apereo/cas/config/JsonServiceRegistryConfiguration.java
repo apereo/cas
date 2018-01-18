@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
@@ -37,15 +38,12 @@ public class JsonServiceRegistryConfiguration {
     @Autowired
     @Qualifier("registeredServiceReplicationStrategy")
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
-    
+
     @Bean
+    @SneakyThrows
     public ServiceRegistryDao serviceRegistryDao() {
-        try {
-            final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-            return new JsonServiceRegistryDao(registry.getJson().getLocation(), 
-                    registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        return new JsonServiceRegistryDao(registry.getJson().getLocation(),
+            registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
     }
 }

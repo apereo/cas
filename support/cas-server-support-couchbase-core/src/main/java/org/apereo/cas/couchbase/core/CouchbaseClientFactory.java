@@ -5,6 +5,7 @@ import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
@@ -26,7 +27,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class CouchbaseClientFactory {
-
 
 
     private static final int DEFAULT_TIMEOUT = 5;
@@ -100,13 +100,10 @@ public class CouchbaseClientFactory {
      * Inverse of connectBucket, shuts down the client, cancelling connection
      * task if not completed.
      */
+    @SneakyThrows
     public void shutdown() {
-        try {
-            if (this.cluster != null) {
-                this.cluster.disconnect();
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (this.cluster != null) {
+            this.cluster.disconnect();
         }
     }
 

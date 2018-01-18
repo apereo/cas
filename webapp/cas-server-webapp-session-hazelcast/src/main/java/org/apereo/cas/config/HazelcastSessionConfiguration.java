@@ -4,6 +4,7 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,18 +39,16 @@ public class HazelcastSessionConfiguration {
      * @return the hazelcast instance
      */
     @Bean
+    @SneakyThrows
     public HazelcastInstance hazelcastInstance() {
         final Resource hzConfigResource = casProperties.getWebflow().getSession().getHzLocation();
-        try {
-            final URL configUrl = hzConfigResource.getURL();
-            final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
-            config.setConfigurationUrl(configUrl);
-            config.setInstanceName(this.getClass().getSimpleName())
-                    .setProperty("hazelcast.logging.type", "slf4j")
-                    .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
-            return Hazelcast.newHazelcastInstance(config);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final URL configUrl = hzConfigResource.getURL();
+        final Config config = new XmlConfigBuilder(hzConfigResource.getInputStream()).build();
+        config.setConfigurationUrl(configUrl);
+        config.setInstanceName(this.getClass().getSimpleName())
+            .setProperty("hazelcast.logging.type", "slf4j")
+            .setProperty("hazelcast.max.no.heartbeat.seconds", "300");
+        return Hazelcast.newHazelcastInstance(config);
     }
+
 }

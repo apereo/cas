@@ -1,6 +1,7 @@
 
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
@@ -62,22 +63,21 @@ public class CasConfigurationSupportUtilitiesConfiguration {
             runNativeConfigurationDirectoryPathWatchService();
         }
 
+        @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
-            try {
-                final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
-                if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
-                    LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                    final PathWatcherService watcher = new PathWatcherService(config.toPath(),
-                        createConfigurationCreatedEvent.andNext(publish),
-                        createConfigurationModifiedEvent.andNext(publish),
-                        createConfigurationDeletedEvent.andNext(publish));
-                    watcher.start(config.getName());
-                } else {
-                    LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
-                }
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+
+            final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+            if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
+                LOGGER.debug("Starting to watch configuration directory [{}]", config);
+                final PathWatcherService watcher = new PathWatcherService(config.toPath(),
+                    createConfigurationCreatedEvent.andNext(publish),
+                    createConfigurationModifiedEvent.andNext(publish),
+                    createConfigurationDeletedEvent.andNext(publish));
+                watcher.start(config.getName());
+            } else {
+                LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
             }
+
         }
     }
 }

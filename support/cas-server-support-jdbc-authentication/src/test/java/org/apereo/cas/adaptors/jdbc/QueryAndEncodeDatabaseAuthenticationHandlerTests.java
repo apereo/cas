@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.crypto.hash.DefaultHashService;
 import org.apache.shiro.crypto.hash.HashRequest;
@@ -83,8 +84,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         final String psw = genPassword("user" + i, "salt" + i, NUM_ITERATIONS);
 
         return String.format(
-                "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
-                "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
+            "insert into users (username, password, salt, numIterations, expired, disabled) values('%s', '%s', '%s', %s, '%s', '%s');",
+            "user" + i, psw, "salt" + i, NUM_ITERATIONS, expired, disabled);
     }
 
     @After
@@ -102,7 +103,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationFailsToFindUser() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(AccountNotFoundException.class);
         this.thrown.expectMessage("test not found with SQL query");
@@ -113,7 +114,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationInvalidSql() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+            buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(PreventedException.class);
         this.thrown.expectMessage("SQL exception while executing query for test");
@@ -124,7 +125,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationMultipleAccounts() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(FailedLoginException.class);
         this.thrown.expectMessage("Multiple records found for user0");
@@ -135,7 +136,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationSuccessful() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("user1");
         final AuthenticationHandlerExecutionResult r = q.authenticate(c);
@@ -147,7 +148,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationWithExpiredField() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+            buildSql(), PASSWORD_FIELD_NAME, "salt", EXPIRED_FIELD_NAME, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountPasswordMustChangeException.class);
         this.thrown.expectMessage("Password has expired");
@@ -159,7 +160,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationWithDisabledField() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, DISABLED_FIELD_NAME, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
 
         this.thrown.expect(AccountDisabledException.class);
         this.thrown.expectMessage("Account has been disabled");
@@ -171,7 +172,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
     @Test
     public void verifyAuthenticationSuccessfulWithAPasswordEncoder() throws Exception {
         final QueryAndEncodeDatabaseAuthenticationHandler q = new QueryAndEncodeDatabaseAuthenticationHandler("", null, null, null, dataSource, ALG_NAME,
-                buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
+            buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, NUM_ITERATIONS_FIELD_NAME, 0, STATIC_SALT);
         q.setPasswordEncoder(new PasswordEncoder() {
             @Override
             public String encode(final CharSequence password) {
@@ -186,7 +187,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
 
         q.setPrincipalNameTransformer(new PrefixSuffixPrincipalNameTransformer("user", null));
         final AuthenticationHandlerExecutionResult r = q.authenticate(
-                CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("1", "user"));
 
         assertNotNull(r);
         assertEquals("user1", r.getPrincipal().getId());
@@ -200,18 +201,15 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
         return String.format(SQL, "username=?;");
     }
 
+    @SneakyThrows
     private static String genPassword(final String psw, final String salt, final int iter) {
-        try {
-            final DefaultHashService hash = new DefaultHashService();
-            hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
-            hash.setHashIterations(iter);
-            hash.setGeneratePublicSalt(false);
-            hash.setHashAlgorithmName(ALG_NAME);
+        final DefaultHashService hash = new DefaultHashService();
+        hash.setPrivateSalt(ByteSource.Util.bytes(STATIC_SALT));
+        hash.setHashIterations(iter);
+        hash.setGeneratePublicSalt(false);
+        hash.setHashAlgorithmName(ALG_NAME);
 
-            return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return hash.computeHash(new HashRequest.Builder().setSource(psw).setSalt(salt).setIterations(iter).build()).toHex();
     }
 
     @Entity(name = "users")

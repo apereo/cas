@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -48,12 +49,9 @@ public class InfinispanTicketRegistryConfiguration {
     }
 
     @Bean
+    @SneakyThrows
     public EmbeddedCacheManager cacheManager() {
-        try {
-            final Resource loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
-            return new DefaultCacheManager(loc.getInputStream());
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final Resource loc = casProperties.getTicket().getRegistry().getInfinispan().getConfigLocation();
+        return new DefaultCacheManager(loc.getInputStream());
     }
 }

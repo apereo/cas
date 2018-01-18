@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
@@ -192,8 +193,8 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
                                                                                                     final RequestAbstractType authnRequest) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, 
-                registeredService, authnRequest);
+        return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+            registeredService, authnRequest);
     }
 
     /**
@@ -206,7 +207,7 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
                                                                                                     final String entityId) {
         return SamlRegisteredServiceServiceProviderMetadataFacade
-                .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
+            .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
     }
 
     /**
@@ -218,21 +219,21 @@ public abstract class AbstractSamlProfileHandlerController {
     protected SamlRegisteredService verifySamlRegisteredService(final String serviceId) {
         if (StringUtils.isBlank(serviceId)) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Could not verify/locate SAML registered service since no serviceId is provided");
+                "Could not verify/locate SAML registered service since no serviceId is provided");
         }
         LOGGER.debug("Checking service access in CAS service registry for [{}]", serviceId);
         final RegisteredService registeredService =
-                this.servicesManager.findServiceBy(this.webApplicationServiceFactory.createService(serviceId));
+            this.servicesManager.findServiceBy(this.webApplicationServiceFactory.createService(serviceId));
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
             LOGGER.warn("[{}] is not found in the registry or service access is denied. Ensure service is registered in service registry",
-                    serviceId);
+                serviceId);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
 
         if (registeredService instanceof SamlRegisteredService) {
             final SamlRegisteredService samlRegisteredService = (SamlRegisteredService) registeredService;
             LOGGER.debug("Located SAML service in the registry as [{}] with the metadata location of [{}]",
-                    samlRegisteredService.getServiceId(), samlRegisteredService.getMetadataLocation());
+                samlRegisteredService.getServiceId(), samlRegisteredService.getMetadataLocation());
             return samlRegisteredService;
         }
         LOGGER.error("CAS has found a match for service [{}] in registry but the match is not defined as a SAML service", serviceId);
@@ -247,7 +248,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Service registerCallback(final String callbackUrl) {
         final Service callbackService = this.webApplicationServiceFactory.createService(
-                casProperties.getServer().getPrefix().concat(callbackUrl.concat(".+")));
+            casProperties.getServer().getPrefix().concat(callbackUrl.concat(".+")));
         if (!this.servicesManager.matchesExistingService(callbackService)) {
             LOGGER.debug("Initializing callback service [{}]", callbackService);
 
@@ -280,7 +281,7 @@ public abstract class AbstractSamlProfileHandlerController {
         }
         final byte[] encodedRequest = EncodingUtils.decodeBase64(requestValue.getBytes(StandardCharsets.UTF_8));
         final AuthnRequest authnRequest = (AuthnRequest)
-                XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
+            XMLObjectSupport.unmarshallFromInputStream(this.configBean.getParserPool(), new ByteArrayInputStream(encodedRequest));
         return authnRequest;
     }
 
@@ -298,13 +299,13 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final RegisteredService registeredService,
                                           final Map<String, Object> attributesToCombine) {
         final Map attributes = registeredService.getAttributeReleasePolicy()
-                .getAttributes(authentication.getPrincipal(), service, registeredService);
+            .getAttributes(authentication.getPrincipal(), service, registeredService);
         final AttributePrincipal principal = new AttributePrincipalImpl(authentication.getPrincipal().getId(), attributes);
         final Map authnAttrs = new LinkedHashMap(authentication.getAttributes());
         authnAttrs.putAll(attributesToCombine);
         return new AssertionImpl(principal, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
-                null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
-                authnAttrs);
+            null, DateTimeUtils.dateOf(authentication.getAuthenticationDate()),
+            authnAttrs);
     }
 
     /**
@@ -320,7 +321,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                           final Map<String, Object> attributes) {
         final AttributePrincipal p = new AttributePrincipalImpl(principal, attributes);
         return new AssertionImpl(p, DateTimeUtils.dateOf(ZonedDateTime.now()),
-                null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
+            null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
     }
 
     /**
@@ -331,33 +332,31 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param clazz   the clazz
      * @return the saml object
      */
+    @SneakyThrows
     protected Pair<? extends SignableSAMLObject, MessageContext> decodeSamlContextFromHttpRequest(final HttpServletRequest request,
                                                                                                   final BaseHttpServletRequestXMLMessageDecoder decoder,
                                                                                                   final Class<? extends SignableSAMLObject> clazz) {
         LOGGER.info("Received SAML profile request [{}]", request.getRequestURI());
 
-        try {
-            decoder.setHttpServletRequest(request);
-            decoder.setParserPool(this.parserPool);
-            decoder.initialize();
-            decoder.decode();
+        decoder.setHttpServletRequest(request);
+        decoder.setParserPool(this.parserPool);
+        decoder.initialize();
+        decoder.decode();
 
-            final MessageContext messageContext = decoder.getMessageContext();
-            final SignableSAMLObject object = (SignableSAMLObject) messageContext.getMessage();
+        final MessageContext messageContext = decoder.getMessageContext();
+        final SignableSAMLObject object = (SignableSAMLObject) messageContext.getMessage();
 
-            if (object == null) {
-                throw new SAMLException("No " + clazz.getName() + " could be found in this request context. Decoder has failed.");
-            }
-
-            if (!clazz.isAssignableFrom(object.getClass())) {
-                throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
-            }
-
-            LOGGER.debug("Decoded SAML object [{}] from http request", object.getElementQName());
-            return Pair.of(object, messageContext);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (object == null) {
+            throw new SAMLException("No " + clazz.getName() + " could be found in this request context. Decoder has failed.");
         }
+
+        if (!clazz.isAssignableFrom(object.getClass())) {
+            throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
+        }
+
+        LOGGER.debug("Decoded SAML object [{}] from http request", object.getElementQName());
+        return Pair.of(object, messageContext);
+
     }
 
     /**
@@ -391,8 +390,8 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Created service url [{}]", serviceUrl);
 
         final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
-                CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
-                authnRequest.isPassive());
+            CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, authnRequest.isForceAuthn(),
+            authnRequest.isPassive());
 
         final String urlToRedirectTo = buildRedirectUrlByRequestedAuthnContext(initialUrl, authnRequest, request);
 
@@ -410,12 +409,12 @@ public abstract class AbstractSamlProfileHandlerController {
     protected Map<String, String> getAuthenticationContextMappings() {
         final Map<String, String> mappings = new TreeMap();
         casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings()
-                .stream()
-                .map(s -> {
-                    final String[] bits = s.split("->");
-                    return Pair.of(bits[0], bits[1]);
-                })
-                .forEach(p -> mappings.put(p.getKey(), p.getValue()));
+            .stream()
+            .map(s -> {
+                final String[] bits = s.split("->");
+                return Pair.of(bits[0], bits[1]);
+            })
+            .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;
     }
 
@@ -437,13 +436,13 @@ public abstract class AbstractSamlProfileHandlerController {
         final Map<String, String> mappings = getAuthenticationContextMappings();
 
         final Optional<AuthnContextClassRef> p =
-                authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
-                        .stream()
-                        .filter(ref -> {
-                            final String clazz = ref.getAuthnContextClassRef();
-                            return mappings.containsKey(clazz);
-                        })
-                        .findFirst();
+            authnRequest.getRequestedAuthnContext().getAuthnContextClassRefs()
+                .stream()
+                .filter(ref -> {
+                    final String clazz = ref.getAuthnContextClassRef();
+                    return mappings.containsKey(clazz);
+                })
+                .findFirst();
 
         if (p.isPresent()) {
             final String mappedClazz = mappings.get(p.get().getAuthnContextClassRef());
@@ -471,23 +470,23 @@ public abstract class AbstractSamlProfileHandlerController {
         try (StringWriter writer = SamlUtils.transformSamlObject(this.configBean, authnRequest)) {
             final URLBuilder builder = new URLBuilder(this.callbackService.getId());
             builder.getQueryParams().add(
-                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
-                            SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
+                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_ENTITY_ID,
+                    SamlIdPUtils.getIssuerFromSamlRequest(authnRequest)));
 
             final String samlRequest = EncodingUtils.encodeBase64(writer.toString().getBytes(StandardCharsets.UTF_8));
             builder.getQueryParams().add(
-                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST,
-                            samlRequest));
+                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_REQUEST,
+                    samlRequest));
             builder.getQueryParams().add(
-                    new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
-                            SAMLBindingSupport.getRelayState(messageContext)));
+                new net.shibboleth.utilities.java.support.collection.Pair<>(SamlProtocolConstants.PARAMETER_SAML_RELAY_STATE,
+                    SAMLBindingSupport.getRelayState(messageContext)));
             final String url = builder.buildURL();
 
             LOGGER.trace("Built service callback url [{}]", url);
             return CommonUtils.constructServiceUrl(request, response,
-                    url, casProperties.getServer().getName(),
-                    CasProtocolConstants.PARAMETER_SERVICE,
-                    CasProtocolConstants.PARAMETER_TICKET, false);
+                url, casProperties.getServer().getName(),
+                CasProtocolConstants.PARAMETER_SERVICE,
+                CasProtocolConstants.PARAMETER_TICKET, false);
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
         }
@@ -518,8 +517,8 @@ public abstract class AbstractSamlProfileHandlerController {
      * @throws Exception the exception
      */
     protected Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> verifySamlAuthenticationRequest(
-            final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
-            final HttpServletRequest request) throws Exception {
+        final Pair<? extends SignableSAMLObject, MessageContext> authenticationContext,
+        final HttpServletRequest request) throws Exception {
         final AuthnRequest authnRequest = AuthnRequest.class.cast(authenticationContext.getKey());
         final String issuer = SamlIdPUtils.getIssuerFromSamlRequest(authnRequest);
         LOGGER.debug("Located issuer [{}] from authentication request", issuer);
@@ -527,8 +526,8 @@ public abstract class AbstractSamlProfileHandlerController {
         final SamlRegisteredService registeredService = verifySamlRegisteredService(issuer);
         LOGGER.debug("Fetching saml metadata adaptor for [{}]", issuer);
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                        registeredService, authnRequest);
+            SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                registeredService, authnRequest);
 
         if (!adaptor.isPresent()) {
             LOGGER.warn("No metadata could be found for [{}]", issuer);
@@ -599,7 +598,7 @@ public abstract class AbstractSamlProfileHandlerController {
                                      final String binding) {
 
         final Pair<SamlRegisteredService, SamlRegisteredServiceServiceProviderMetadataFacade> pair =
-                getRegisteredServiceAndFacade(authenticationContext.getKey());
+            getRegisteredServiceAndFacade(authenticationContext.getKey());
 
         final String entityId = pair.getValue().getEntityId();
         LOGGER.debug("Preparing SAML response for [{}]", entityId);
@@ -622,11 +621,11 @@ public abstract class AbstractSamlProfileHandlerController {
 
         LOGGER.debug("Located SAML metadata for [{}]", registeredService.getServiceId());
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                getSamlMetadataFacadeFor(registeredService, request);
+            getSamlMetadataFacadeFor(registeredService, request);
 
         if (!adaptor.isPresent()) {
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE,
-                    "Cannot find metadata linked to " + issuer);
+                "Cannot find metadata linked to " + issuer);
         }
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
         return Pair.of(registeredService, facade);

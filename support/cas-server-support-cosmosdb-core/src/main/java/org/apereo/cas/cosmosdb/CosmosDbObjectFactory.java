@@ -8,6 +8,7 @@ import com.microsoft.azure.spring.data.documentdb.common.GetHashMac;
 import com.microsoft.azure.spring.data.documentdb.core.DocumentDbTemplate;
 import com.microsoft.azure.spring.data.documentdb.core.convert.MappingDocumentDbConverter;
 import com.microsoft.azure.spring.data.documentdb.core.mapping.DocumentDbMappingContext;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cosmosdb.BaseCosmosDbProperties;
@@ -28,7 +29,7 @@ public class CosmosDbObjectFactory {
     private static final String USER_AGENT_SUFFIX = "spring-boot-starter/0.2.0";
 
     private final ApplicationContext applicationContext;
-            
+
     public CosmosDbObjectFactory(final ApplicationContext applicationContext) {
         this.applicationContext = applicationContext;
     }
@@ -42,14 +43,14 @@ public class CosmosDbObjectFactory {
     public DocumentClient createDocumentClient(final BaseCosmosDbProperties properties) {
         final ConnectionPolicy policy = ConnectionPolicy.GetDefault();
         String userAgent = (policy.getUserAgentSuffix() == null
-                ? StringUtils.EMPTY
-                : ";" + policy.getUserAgentSuffix()) + ";" + USER_AGENT_SUFFIX;
+            ? StringUtils.EMPTY
+            : ";" + policy.getUserAgentSuffix()) + ";" + USER_AGENT_SUFFIX;
         if (properties.isAllowTelemetry() && GetHashMac.getHashMac() != null) {
             userAgent += ";" + GetHashMac.getHashMac();
         }
         policy.setUserAgentSuffix(userAgent);
         return new DocumentClient(properties.getUri(), properties.getKey(), policy,
-                ConsistencyLevel.valueOf(properties.getConsistencyLevel()));
+            ConsistencyLevel.valueOf(properties.getConsistencyLevel()));
     }
 
     /**
@@ -66,7 +67,7 @@ public class CosmosDbObjectFactory {
     /**
      * Document db template.
      *
-     * @param properties         the properties
+     * @param properties the properties
      * @return the document db template
      */
     public DocumentDbTemplate createDocumentDbTemplate(final BaseCosmosDbProperties properties) {
@@ -89,20 +90,17 @@ public class CosmosDbObjectFactory {
         final MappingDocumentDbConverter mappingDocumentDbConverter = createMappingDocumentDbConverter(documentDbMappingContext);
         return new DocumentDbTemplate(documentDbFactory, mappingDocumentDbConverter, properties.getDatabase());
     }
-    
+
     /**
      * Create document db mapping context.
      *
      * @return the document db mapping context
      */
+    @SneakyThrows
     public DocumentDbMappingContext createDocumentDbMappingContext() {
-        try {
-            final DocumentDbMappingContext documentDbMappingContext = new DocumentDbMappingContext();
-            documentDbMappingContext.setInitialEntitySet(new EntityScanner(applicationContext).scan(Persistent.class));
-            return documentDbMappingContext;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final DocumentDbMappingContext documentDbMappingContext = new DocumentDbMappingContext();
+        documentDbMappingContext.setInitialEntitySet(new EntityScanner(applicationContext).scan(Persistent.class));
+        return documentDbMappingContext;
     }
 
     /**
