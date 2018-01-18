@@ -1,14 +1,13 @@
 package org.apereo.cas.authentication;
 
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
-import java.util.ArrayList;
+
 import java.util.List;
 import lombok.ToString;
 import lombok.Getter;
@@ -25,6 +24,8 @@ import lombok.Getter;
 @ToString
 @NoArgsConstructor
 @Getter
+@Setter
+@EqualsAndHashCode
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     /**
@@ -116,45 +117,4 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
         this.warnings = warnings;
     }
 
-    @Override
-    public CredentialMetaData getCredentialMetaData() {
-        return this.credentialMetaData;
-    }
-
-    @Override
-    public Principal getPrincipal() {
-        return this.principal;
-    }
-
-    @Override
-    public List<MessageDescriptor> getWarnings() {
-        return this.warnings == null ? new ArrayList<>(0) : new ArrayList<>(this.warnings);
-    }
-
-    @Override
-    public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(109, 31);
-        builder.append(this.handlerName);
-        builder.append(this.credentialMetaData);
-        builder.append(this.principal);
-        builder.append(this.warnings);
-        return builder.toHashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof DefaultAuthenticationHandlerExecutionResult)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        final DefaultAuthenticationHandlerExecutionResult other = (DefaultAuthenticationHandlerExecutionResult) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.handlerName, other.handlerName);
-        builder.append(this.credentialMetaData, other.credentialMetaData);
-        builder.append(this.principal, other.principal);
-        builder.append(CollectionUtils.wrap(this.warnings), CollectionUtils.wrap(other.warnings));
-        return builder.isEquals();
-    }
 }

@@ -1,11 +1,14 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -13,11 +16,6 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.util.ResourceUtils;
 
 import java.security.PublicKey;
-
-import lombok.ToString;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Represents a public key for a CAS registered service.
@@ -30,6 +28,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"location", "algorithm"})
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;
@@ -67,23 +66,4 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
         return factory.getObject();
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final RegisteredServicePublicKeyImpl rhs = (RegisteredServicePublicKeyImpl) obj;
-        return new EqualsBuilder().append(this.location, rhs.location).append(this.algorithm, rhs.algorithm).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this.location).append(this.algorithm).toHashCode();
-    }
 }
