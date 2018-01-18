@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
@@ -22,6 +24,10 @@ import lombok.Setter;
 @Slf4j
 @ToString(callSuper = true)
 @Setter
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -3483733307124962357L;
@@ -48,29 +54,5 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
             }));
         }
         return releaseAttributes;
-    }
-
-    public boolean isUseFriendlyName() {
-        return useFriendlyName;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final MetadataRequestedAttributesAttributeReleasePolicy rhs = (MetadataRequestedAttributesAttributeReleasePolicy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.useFriendlyName, rhs.useFriendlyName).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(useFriendlyName).toHashCode();
     }
 }

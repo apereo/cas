@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 import java.time.ZoneOffset;
@@ -23,6 +22,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @NoArgsConstructor
+@EqualsAndHashCode
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -61,23 +61,4 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
         return 0L;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final OAuthRefreshTokenExpirationPolicy rhs = (OAuthRefreshTokenExpirationPolicy) obj;
-        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(timeToKillInSeconds).toHashCode();
-    }
 }

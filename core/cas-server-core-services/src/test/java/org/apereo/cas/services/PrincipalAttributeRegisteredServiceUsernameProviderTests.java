@@ -35,7 +35,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("email");
 
-        final Multimap<String, String> allowedAttributes = ArrayListMultimap.create();
+        final Multimap<String, Object> allowedAttributes = ArrayListMultimap.create();
         final String mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", mappedAttribute);
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));

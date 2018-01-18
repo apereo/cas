@@ -8,14 +8,14 @@ import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
 import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
+import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -54,13 +54,12 @@ import java.util.List;
 public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
 
 
-
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -71,7 +70,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-    
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -89,21 +88,21 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         final DefaultVariegatedMultifactorAuthenticationProvider provider = new DefaultVariegatedMultifactorAuthenticationProvider();
 
         casProperties.getAuthn().getMfa().getDuo()
-                .stream()
-                .filter(duo -> StringUtils.isNotBlank(duo.getDuoApiHost())
-                        && StringUtils.isNotBlank(duo.getDuoIntegrationKey())
-                        && StringUtils.isNotBlank(duo.getDuoSecretKey())
-                        && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
-                .forEach(duo -> {
-                    final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
-                    final DefaultDuoMultifactorAuthenticationProvider duoP = new DefaultDuoMultifactorAuthenticationProvider(s);
-                    duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
-                    duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
-                    duoP.setOrder(duo.getRank());
-                    duoP.setId(duo.getId());
-                    duoP.setRegistrationUrl(duo.getRegistrationUrl());
-                    provider.addProvider(duoP);
-                });
+            .stream()
+            .filter(duo -> StringUtils.isNotBlank(duo.getDuoApiHost())
+                && StringUtils.isNotBlank(duo.getDuoIntegrationKey())
+                && StringUtils.isNotBlank(duo.getDuoSecretKey())
+                && StringUtils.isNotBlank(duo.getDuoApplicationKey()))
+            .forEach(duo -> {
+                final BasicDuoSecurityAuthenticationService s = new BasicDuoSecurityAuthenticationService(duo, httpClient);
+                final DefaultDuoMultifactorAuthenticationProvider duoP =
+                    new DefaultDuoMultifactorAuthenticationProvider(duo.getRegistrationUrl(), s);
+                duoP.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
+                duoP.setBypassEvaluator(MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(duo.getBypass()));
+                duoP.setOrder(duo.getRank());
+                duoP.setId(duo.getId());
+                provider.addProvider(duoP);
+            });
 
         if (provider.getProviders().isEmpty()) {
             throw new IllegalArgumentException("At least one Duo instance must be defined");
@@ -120,13 +119,13 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     public Action determineDuoUserAccountAction() {
         return new DetermineDuoUserAccountAction(duoMultifactorAuthenticationProvider());
     }
-    
+
     @Bean
     @RefreshScope
     public AuthenticationMetaDataPopulator duoAuthenticationMetaDataPopulator() {
         final String authenticationContextAttribute = casProperties.getAuthn().getMfa().getAuthenticationContextAttribute();
         return new AuthenticationContextAttributeMetaDataPopulator(authenticationContextAttribute, duoAuthenticationHandler(),
-                duoMultifactorAuthenticationProvider());
+            duoMultifactorAuthenticationProvider());
     }
 
     @RefreshScope
@@ -153,9 +152,9 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
     public CasWebflowConfigurer duoMultifactorWebflowConfigurer() {
         final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-        final CasWebflowConfigurer w = new DuoMultifactorWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry, deviceRegistrationEnabled,
-                duoMultifactorAuthenticationProvider(), applicationContext, casProperties);
+        final CasWebflowConfigurer w = new DuoMultifactorWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, deviceRegistrationEnabled,
+            duoMultifactorAuthenticationProvider(), applicationContext, casProperties);
         w.initialize();
         return w;
     }

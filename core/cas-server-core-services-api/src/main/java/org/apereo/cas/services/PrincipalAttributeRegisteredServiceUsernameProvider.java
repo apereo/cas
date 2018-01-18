@@ -1,8 +1,9 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.CollectionUtils;
@@ -23,30 +24,17 @@ import lombok.Setter;
 @ToString
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -3546719400741715137L;
 
     private String usernameAttribute;
 
-    /**
-     * Private constructor to get around serialization issues.
-     */
-    private PrincipalAttributeRegisteredServiceUsernameProvider() {
-        this.usernameAttribute = null;
-    }
-
-    /**
-     * Instantiates a new default registered service username provider.
-     *
-     * @param usernameAttribute the username attribute
-     */
-    public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute) {
-        this.usernameAttribute = usernameAttribute;
-    }
-
     public PrincipalAttributeRegisteredServiceUsernameProvider(final String usernameAttribute, final String canonicalizationMode) {
-        super(canonicalizationMode);
+        super(canonicalizationMode, false);
         this.usernameAttribute = usernameAttribute;
     }
 
@@ -80,27 +68,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProvider extends BaseReg
         LOGGER.debug("Principal id to return for [{}] is [{}]. The default principal id is [{}].", service.getId(), principalId, principal.getId());
         return principalId.trim();
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final PrincipalAttributeRegisteredServiceUsernameProvider rhs = (PrincipalAttributeRegisteredServiceUsernameProvider) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.usernameAttribute, rhs.usernameAttribute).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(this.usernameAttribute).toHashCode();
-    }
-
+    
     /**
      * Gets principal attributes. Will attempt to locate the principal
      * attribute repository from the context if one is defined to use
