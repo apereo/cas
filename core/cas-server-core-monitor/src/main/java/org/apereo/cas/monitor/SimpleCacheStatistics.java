@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.util.Formatter;
 import lombok.Getter;
@@ -12,6 +13,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public class SimpleCacheStatistics implements CacheStatistics {
 
     private static final double BYTES_PER_MB = 1048510.0;
@@ -29,37 +31,7 @@ public class SimpleCacheStatistics implements CacheStatistics {
     public SimpleCacheStatistics(final long size, final long capacity, final long evictions) {
         this(size, capacity, evictions, "N/A");
     }
-
-    /**
-     * Creates a new named instance with given parameters.
-     *
-     * @param size      Current cache size (e.g. items, bytes, etc).
-     * @param capacity  Current cache capacity (e.g. items, bytes, etc).  The units of capacity must be equal to size
-     *                  in order to produce a meaningful value for {@link #getPercentFree}.
-     * @param evictions Number of evictions reported by cache.
-     * @param name      Name of cache instance to which statistics apply.
-     */
-    public SimpleCacheStatistics(final long size, final long capacity, final long evictions, final String name) {
-        this.size = size;
-        this.capacity = capacity;
-        this.evictions = evictions;
-        this.name = name;
-    }
-
-    @Override
-    public long getSize() {
-        return this.size;
-    }
-
-    @Override
-    public long getCapacity() {
-        return this.capacity;
-    }
-
-    @Override
-    public long getEvictions() {
-        return this.evictions;
-    }
+    
 
     @Override
     public int getPercentFree() {

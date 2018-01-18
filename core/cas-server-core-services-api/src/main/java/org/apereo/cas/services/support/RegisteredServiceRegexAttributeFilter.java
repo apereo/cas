@@ -104,11 +104,6 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         return attributesToRelease;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
     /**
      * Filter map attributes based on the values given.
      *
