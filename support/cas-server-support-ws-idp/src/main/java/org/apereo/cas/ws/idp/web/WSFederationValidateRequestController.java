@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -37,18 +38,18 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
 
 
     public WSFederationValidateRequestController(
-            final ServicesManager servicesManager,
-            final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-            final CasConfigurationProperties casProperties,
-            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
-            final HttpClient httpClient,
-            final SecurityTokenTicketFactory securityTokenTicketFactory,
-            final TicketRegistry ticketRegistry,
-            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-            final TicketRegistrySupport ticketRegistrySupport) {
+        final ServicesManager servicesManager,
+        final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
+        final CasConfigurationProperties casProperties,
+        final AuthenticationServiceSelectionStrategy serviceSelectionStrategy,
+        final HttpClient httpClient,
+        final SecurityTokenTicketFactory securityTokenTicketFactory,
+        final TicketRegistry ticketRegistry,
+        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
+        final TicketRegistrySupport ticketRegistrySupport) {
         super(servicesManager,
-                webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
-                securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
+            webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
+            securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
     }
 
     /**
@@ -71,7 +72,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
                 break;
             default:
                 throw new UnauthorizedAuthenticationException("The authentication request is not recognized",
-                        new HashMap<>(0));
+                    new HashMap<>(0));
         }
     }
 
@@ -82,7 +83,7 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
             final Service service = webApplicationServiceFactory.createService(fedRequest.getWreply());
             final WSFederationRegisteredService registeredService = getWsFederationRegisteredService(service);
             LOGGER.debug("Invoking logout operation for request [{}], redirecting next to [{}] matched against [{}]",
-                    fedRequest, fedRequest.getWreply(), registeredService);
+                fedRequest, fedRequest.getWreply(), registeredService);
             final String logoutParam = casProperties.getLogout().getRedirectParameter();
             logoutUrl = logoutUrl.concat("?").concat(logoutParam).concat("=").concat(service.getId());
         }
@@ -97,19 +98,16 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         redirectToIdentityProvider(fedRequest, response, request, service);
     }
 
+    @SneakyThrows
     private void redirectToIdentityProvider(final WSFederationRequest fedRequest, final HttpServletResponse response,
                                             final HttpServletRequest request, final WSFederationRegisteredService service) {
-        try {
-            final String serviceUrl = constructServiceUrl(request, response, fedRequest);
-            LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
-            final boolean renew = shouldRenewAuthentication(fedRequest, request);
-            final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
-                    CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
-            LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
-            final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
-            authenticationRedirectStrategy.redirect(request, response, initialUrl);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final String serviceUrl = constructServiceUrl(request, response, fedRequest);
+        LOGGER.debug("Created service url [{}] mapped to [{}]", serviceUrl, service);
+        final boolean renew = shouldRenewAuthentication(fedRequest, request);
+        final String initialUrl = CommonUtils.constructRedirectUrl(casProperties.getServer().getLoginUrl(),
+            CasProtocolConstants.PARAMETER_SERVICE, serviceUrl, renew, false);
+        LOGGER.debug("Redirecting authN request to [{}]", initialUrl);
+        final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
+        authenticationRedirectStrategy.redirect(request, response, initialUrl);
     }
 }

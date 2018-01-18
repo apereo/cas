@@ -1,5 +1,6 @@
 package org.apereo.cas.shell;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.springframework.shell.Bootstrap;
@@ -18,12 +19,9 @@ public class CasCommandLineShellBootstrapper {
      *
      * @param args the args
      */
+    @SneakyThrows
     public void execute(final String[] args) {
-        try {
-            CasCommandLineParser.convertToSystemProperties(args);
-            Bootstrap.main(new String[]{});
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        CasCommandLineParser.convertToSystemProperties(args);
+        Bootstrap.main(new String[]{});
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -52,40 +53,39 @@ public class PredicatedPrincipalAttributeMultifactorAuthenticationPolicyEventRes
     }
 
     @Override
+    @SneakyThrows
     protected Set<Event> resolveMultifactorProviderViaPredicate(final RequestContext context,
                                                                 final RegisteredService service,
                                                                 final Principal principal,
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
-        try {
-            if (predicateResource == null || !ResourceUtils.doesResourceExist(predicateResource)) {
-                LOGGER.debug("No groovy script predicate is defined to decide which multifactor authentication provider should be chosen");
-                return null;
-            }
 
-            final Object[] args = {service, principal, providers, LOGGER};
-            final Predicate<MultifactorAuthenticationProvider> predicate =
-                ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS,
-                    args, Predicate.class);
-
-            LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
-                predicate.getClass().getSimpleName(), predicateResource, providers);
-
-            if (providers == null || providers.isEmpty()) {
-                LOGGER.error("No multifactor authentication providers are available in the application context");
-                return null;
-            }
-
-            final MultifactorAuthenticationProvider provider = providers
-                .stream()
-                .filter(predicate)
-                .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
-                .findFirst()
-                .orElse(null);
-
-            LOGGER.debug("Predicate instance [{}] returned multifactor authentication provider [{}]", predicate.getClass().getSimpleName(), provider);
-            return evaluateEventForProviderInContext(principal, service, context, provider);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (predicateResource == null || !ResourceUtils.doesResourceExist(predicateResource)) {
+            LOGGER.debug("No groovy script predicate is defined to decide which multifactor authentication provider should be chosen");
+            return null;
         }
+
+        final Object[] args = {service, principal, providers, LOGGER};
+        final Predicate<MultifactorAuthenticationProvider> predicate =
+            ScriptingUtils.getObjectInstanceFromGroovyResource(predicateResource, PREDICATE_CTOR_PARAMETERS,
+                args, Predicate.class);
+
+        LOGGER.debug("Created predicate instance [{}] from [{}] to filter multifactor authentication providers [{}]",
+            predicate.getClass().getSimpleName(), predicateResource, providers);
+
+        if (providers == null || providers.isEmpty()) {
+            LOGGER.error("No multifactor authentication providers are available in the application context");
+            return null;
+        }
+
+        final MultifactorAuthenticationProvider provider = providers
+            .stream()
+            .filter(predicate)
+            .sorted(Comparator.comparingInt(MultifactorAuthenticationProvider::getOrder))
+            .findFirst()
+            .orElse(null);
+
+        LOGGER.debug("Predicate instance [{}] returned multifactor authentication provider [{}]", predicate.getClass().getSimpleName(), provider);
+        return evaluateEventForProviderInContext(principal, service, context, provider);
+
     }
 }

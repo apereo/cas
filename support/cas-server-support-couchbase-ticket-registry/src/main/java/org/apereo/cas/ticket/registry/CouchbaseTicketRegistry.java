@@ -6,6 +6,7 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -42,9 +43,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      * All tickets view.
      */
     public static final View ALL_TICKETS_VIEW = DefaultView.create(
-            VIEW_NAME_ALL_TICKETS,
-            "function(d,m) {emit(m.id);}",
-            "_count");
+        VIEW_NAME_ALL_TICKETS,
+        "function(d,m) {emit(m.id);}",
+        "_count");
 
     /**
      * Views available.
@@ -55,7 +56,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      * "statistics" document.
      */
     public static final String UTIL_DOCUMENT = "statistics";
-
 
 
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
@@ -127,13 +127,10 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      * Stops the couchbase client.
      */
     @PreDestroy
+    @SneakyThrows
     public void destroy() {
-        try {
-            LOGGER.debug("Shutting down Couchbase");
-            this.couchbase.shutdown();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        LOGGER.debug("Shutting down Couchbase");
+        this.couchbase.shutdown();
     }
 
     @Override
@@ -193,12 +190,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
         LOGGER.debug("Running query on document [{}] and view [{}] with prefix [{}]",
-                UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
+            UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
         return this.couchbase.getBucket().query(
-                ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
-                        .startKey(prefix)
-                        .endKey(prefix + END_TOKEN)
-                        .reduce());
+            ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
+                .startKey(prefix)
+                .endKey(prefix + END_TOKEN)
+                .reduce());
     }
 
     /**
@@ -212,7 +209,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
             LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
-                    + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
+                + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
 
         }
         return expTime;

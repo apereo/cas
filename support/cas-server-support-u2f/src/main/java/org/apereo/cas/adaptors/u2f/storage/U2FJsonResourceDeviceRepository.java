@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.Resource;
 
@@ -26,23 +27,20 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
 
     private final Resource jsonResource;
 
+    @SneakyThrows
     public U2FJsonResourceDeviceRepository(final LoadingCache<String, String> requestStorage,
                                            final Resource jsonResource,
                                            final long expirationTime, final TimeUnit expirationTimeUnit) {
         super(requestStorage, expirationTime, expirationTimeUnit);
-        try {
-            this.jsonResource = jsonResource;
+        this.jsonResource = jsonResource;
 
-            mapper = new ObjectMapper()
-                    .findAndRegisterModules()
-                    .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-            if (!this.jsonResource.exists()) {
-                if (this.jsonResource.getFile().createNewFile()) {
-                    LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
-                }
+        mapper = new ObjectMapper()
+            .findAndRegisterModules()
+            .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
+        if (!this.jsonResource.exists()) {
+            if (this.jsonResource.getFile().createNewFile()) {
+                LOGGER.debug("Created JSON resource [{}] for U2F device registrations", jsonResource);
             }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -53,8 +51,8 @@ public class U2FJsonResourceDeviceRepository extends BaseResourceU2FDeviceReposi
             return new HashMap<>(0);
         }
         return mapper.readValue(jsonResource.getInputStream(),
-                new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
-                });
+            new TypeReference<Map<String, List<U2FDeviceRegistration>>>() {
+            });
     }
 
     @Override

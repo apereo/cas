@@ -2,6 +2,7 @@ package org.apereo.cas.services;
 
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
@@ -9,6 +10,7 @@ import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.services.support.RegisteredServiceMappedRegexAttributeFilter;
 import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.jooq.lambda.Unchecked;
 import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -320,6 +322,7 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
     }
 
     @Test
+    @SneakyThrows
     public void verifyServiceRemovals() {
         final List<RegisteredService> list = new ArrayList<>(5);
         IntStream.range(1, 5).forEach(i -> {
@@ -332,16 +335,12 @@ public abstract class AbstractResourceBasedServiceRegistryDaoTests {
             list.add(this.dao.save(r));
         });
 
-        list.forEach(r2 -> {
-            try {
-                Thread.sleep(500);
-                this.dao.delete(r2);
-                Thread.sleep(2000);
-            } catch (final InterruptedException e) {
-                throw new RuntimeException(e.getMessage(), e);
-            }
+        list.forEach(Unchecked.consumer(r2 -> {
+            Thread.sleep(500);
+            this.dao.delete(r2);
+            Thread.sleep(2000);
             assertNull(this.dao.findServiceById(r2.getId()));
-        });
+        }));
     }
 
     @Test

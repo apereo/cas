@@ -1,15 +1,16 @@
 package org.apereo.cas.authentication;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.springframework.util.Assert;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultVariegatedMultifactorAuthenticationProvider}.
@@ -25,15 +26,19 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
 
     private Collection<MultifactorAuthenticationProvider> providers = new HashSet<>();
 
+    /**
+     * For variegated providers with multiple configured encapsulated variation ones, use `id` and `order`
+     * props from the first one as the top level pieces of data
+     * to be correctly used by downstream components e.g. get correct ranking and id
+     * If in the future there will be an actual use case for utilizing concrete ids and ranking order for each individual
+     * variation of provider within variegated wrapper, then we could refactor this code to introduce more pluggable
+     * strategy API for configuring these parts.
+     *
+     * @param provider the provider
+     */
     @Override
     public void addProvider(final MultifactorAuthenticationProvider provider) {
-        //For variegated providers with multiple configured encapsulated variation ones, use `id` and `order`
-        //props from the first one as the top level pieces of data
-        //to be correctly used by downstream components e.g. get correct ranking and id
-        //If in the future there will be an actual use case for utilizing concrete ids and ranking order for each individual
-        //variation of provider within variegated wrapper, then we could refactor this code to introduce more pluggable
-        //strategy API for configuring these parts.
-        if(this.providers.isEmpty()) {
+        if (this.providers.isEmpty()) {
             super.setId(provider.getId());
             super.setOrder(provider.getOrder());
         }
@@ -60,7 +65,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     public boolean matches(final String identifier) {
         return findProvider(identifier) != null;
     }
-  
+
     @Override
     public MultifactorAuthenticationProvider findProvider(final String identifier) {
         return this.providers.stream().filter(p -> p.matches(identifier)).findFirst().orElse(null);

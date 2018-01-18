@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -173,6 +174,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    @SneakyThrows
     public void to(final File out, final T object) {
         try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
@@ -186,8 +188,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             } else {
                 FileUtils.write(out, writer.toString(), StandardCharsets.UTF_8);
             }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

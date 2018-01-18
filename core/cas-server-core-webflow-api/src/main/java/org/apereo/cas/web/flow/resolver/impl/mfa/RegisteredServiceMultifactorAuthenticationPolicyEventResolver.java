@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl.mfa;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -43,7 +44,7 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
                                                                          final AuthenticationServiceSelectionPlan authSelectionStrategies,
                                                                          final MultifactorAuthenticationProviderSelector selector) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies, selector);
+            ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies, selector);
     }
 
     @Override
@@ -79,37 +80,33 @@ public class RegisteredServiceMultifactorAuthenticationPolicyEventResolver exten
      * @param service   the service
      * @return the event
      */
+    @SneakyThrows
     protected Set<Event> resolveEventPerAuthenticationProvider(final Principal principal,
                                                                final RequestContext context,
                                                                final RegisteredService service) {
-        try {
-            final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(getAuthenticationProviderForService(service));
-            if (providers != null && !providers.isEmpty()) {
-                final MultifactorAuthenticationProvider provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
-                LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
+        final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(getAuthenticationProviderForService(service));
+        if (providers != null && !providers.isEmpty()) {
+            final MultifactorAuthenticationProvider provider = this.multifactorAuthenticationProviderSelector.resolve(providers, service, principal);
+            LOGGER.debug("Selected multifactor authentication provider for this transaction is [{}]", provider);
 
-                if (!provider.isAvailable(service)) {
-                    LOGGER.warn("Multifactor authentication provider [{}] could not be verified/reached.", provider);
-                    return null;
-                }
-                final String identifier = provider.getId();
-                LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
-
-                final Event event = validateEventIdForMatchingTransitionInContext(identifier, context, buildEventAttributeMap(principal, service, provider));
-                return CollectionUtils.wrapSet(event);
+            if (!provider.isAvailable(service)) {
+                LOGGER.warn("Multifactor authentication provider [{}] could not be verified/reached.", provider);
+                return null;
             }
+            final String identifier = provider.getId();
+            LOGGER.debug("Attempting to build an event based on the authentication provider [{}] and service [{}]", provider, service.getName());
 
-            LOGGER.debug("No multifactor authentication providers could be located for [{}]", service);
-            return null;
-
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            final Event event = validateEventIdForMatchingTransitionInContext(identifier, context, buildEventAttributeMap(principal, service, provider));
+            return CollectionUtils.wrapSet(event);
         }
+
+        LOGGER.debug("No multifactor authentication providers could be located for [{}]", service);
+        return null;
     }
 
-    @Audit(action = "AUTHENTICATION_EVENT", 
-            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+    @Audit(action = "AUTHENTICATION_EVENT",
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);

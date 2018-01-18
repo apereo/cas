@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -27,7 +28,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -115,7 +115,6 @@ public class JpaTicketRegistryTests {
     private static final ExpirationPolicy EXP_POLICY_PGT = new HardTimeoutExpirationPolicy(2000);
 
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
-
 
 
     @Autowired
@@ -262,15 +261,12 @@ public class JpaTicketRegistryTests {
             true);
     }
 
+    @SneakyThrows
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
-        try {
-            return parent.grantProxyGrantingTicket(
-                ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                CoreAuthenticationTestUtils.getAuthentication(),
-                EXP_POLICY_PGT);
-        } catch (final AbstractTicketException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return parent.grantProxyGrantingTicket(
+            ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(),
+            EXP_POLICY_PGT);
     }
 
     static ProxyTicket newPT(final ProxyGrantingTicket parent) {

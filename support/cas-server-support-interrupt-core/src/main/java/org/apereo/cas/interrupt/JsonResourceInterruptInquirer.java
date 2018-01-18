@@ -2,6 +2,7 @@ package org.apereo.cas.interrupt;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -44,6 +45,7 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
         return new InterruptResponse(false);
     }
 
+    @SneakyThrows
     private void readResourceForInterrupts() {
         this.interrupts = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(resource)) {
@@ -51,8 +53,6 @@ public class JsonResourceInterruptInquirer extends BaseInterruptInquirer {
                 final TypeReference<Map<String, InterruptResponse>> personList = new TypeReference<Map<String, InterruptResponse>>() {
                 };
                 this.interrupts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
             }
         }
     }

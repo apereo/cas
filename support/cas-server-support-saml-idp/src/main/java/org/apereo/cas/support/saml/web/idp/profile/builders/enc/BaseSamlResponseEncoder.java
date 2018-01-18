@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.SamlException;
@@ -39,7 +40,7 @@ public abstract class BaseSamlResponseEncoder {
      * The Http request.
      */
     protected final HttpServletRequest httpRequest;
-    
+
     public BaseSamlResponseEncoder(final VelocityEngine velocityEngineFactory,
                                    final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                    final HttpServletResponse httpResponse,
@@ -58,20 +59,18 @@ public abstract class BaseSamlResponseEncoder {
      * @return the response
      * @throws SamlException the saml exception
      */
+    @SneakyThrows
     public final Response encode(final Response samlResponse, final String relayState) throws SamlException {
-        try {
-            if (httpResponse != null) {
-                final BaseSAML2MessageEncoder encoder = getMessageEncoderInstance();
-                encoder.setHttpServletResponse(httpResponse);
+        if (httpResponse != null) {
+            final BaseSAML2MessageEncoder encoder = getMessageEncoderInstance();
+            encoder.setHttpServletResponse(httpResponse);
 
-                final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
-                encoder.setMessageContext(ctx);
-                finalizeEncode(encoder, samlResponse, relayState);
-            }
-            return samlResponse;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            final MessageContext ctx = getEncoderMessageContext(samlResponse, relayState);
+            encoder.setMessageContext(ctx);
+            finalizeEncode(encoder, samlResponse, relayState);
         }
+        return samlResponse;
+
     }
 
     /**
@@ -100,7 +99,7 @@ public abstract class BaseSamlResponseEncoder {
      * @throws Exception the saml exception
      */
     protected void finalizeEncode(final BaseSAML2MessageEncoder encoder,
-                                  final Response samlResponse, 
+                                  final Response samlResponse,
                                   final String relayState) throws Exception {
         encoder.initialize();
         encoder.encode();

@@ -2,6 +2,7 @@ package org.apereo.cas.trusted.authentication.storage;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.util.ResourceUtils;
@@ -27,9 +28,9 @@ import java.util.stream.Collectors;
 public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    
+
     private final Resource location;
-    
+
     private Map<String, MultifactorAuthenticationTrustRecord> storage;
 
     public JsonMultifactorAuthenticationTrustStorage(final Resource location) {
@@ -46,12 +47,12 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     @Override
     public void expire(final LocalDate onOrBefore) {
         final Set<MultifactorAuthenticationTrustRecord> results = storage
-                .values()
-                .stream()
-                .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
-                .sorted()
-                .distinct()
-                .collect(Collectors.toSet());
+            .values()
+            .stream()
+            .filter(entry -> entry.getRecordDate().isEqual(onOrBefore) || entry.getRecordDate().isBefore(onOrBefore))
+            .sorted()
+            .distinct()
+            .collect(Collectors.toSet());
 
         LOGGER.info("Found [{}] expired records", results.size());
         if (!results.isEmpty()) {
@@ -65,23 +66,23 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
         expire(onOrAfterDate);
         return storage
-                .values()
-                .stream()
-                .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
-                .sorted()
-                .distinct()
-                .collect(Collectors.toSet());
+            .values()
+            .stream()
+            .filter(entry -> entry.getRecordDate().isEqual(onOrAfterDate) || entry.getRecordDate().isAfter(onOrAfterDate))
+            .sorted()
+            .distinct()
+            .collect(Collectors.toSet());
     }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {
         return storage
-                .values()
-                .stream()
-                .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
-                .sorted()
-                .distinct()
-                .collect(Collectors.toSet());
+            .values()
+            .stream()
+            .filter(entry -> entry.getPrincipal().equalsIgnoreCase(principal))
+            .sorted()
+            .distinct()
+            .collect(Collectors.toSet());
     }
 
 
@@ -91,27 +92,23 @@ public class JsonMultifactorAuthenticationTrustStorage extends BaseMultifactorAu
         writeTrustedRecordsToResource();
         return record;
     }
-    
+
+    @SneakyThrows
     private void readTrustedRecordsFromResource() {
         this.storage = new LinkedHashMap<>();
         if (ResourceUtils.doesResourceExist(location)) {
             try (Reader reader = new InputStreamReader(location.getInputStream(), StandardCharsets.UTF_8)) {
-                final TypeReference<Map<String, MultifactorAuthenticationTrustRecord>> personList = 
-                        new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
-                };
+                final TypeReference<Map<String, MultifactorAuthenticationTrustRecord>> personList =
+                    new TypeReference<Map<String, MultifactorAuthenticationTrustRecord>>() {
+                    };
                 this.storage = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
             }
         }
     }
-    
+
+    @SneakyThrows
     private void writeTrustedRecordsToResource() {
-        try {
-            MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.location.getFile(), this.storage);
-            readTrustedRecordsFromResource();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.location.getFile(), this.storage);
+        readTrustedRecordsFromResource();
     }
 }

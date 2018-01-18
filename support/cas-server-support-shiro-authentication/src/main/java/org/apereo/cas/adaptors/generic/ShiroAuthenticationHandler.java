@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
@@ -136,20 +137,17 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      *
      * @param resource the resource
      */
+    @SneakyThrows
     public void loadShiroConfiguration(final Resource resource) {
-        try {
-            final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
-            if (shiroResource != null && shiroResource.exists()) {
-                final String location = shiroResource.getURI().toString();
-                LOGGER.debug("Loading Shiro configuration from [{}]", location);
-                final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
-                final SecurityManager securityManager = factory.getInstance();
-                SecurityUtils.setSecurityManager(securityManager);
-            } else {
-                LOGGER.debug("Shiro configuration is not defined");
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final Resource shiroResource = ResourceUtils.prepareClasspathResourceIfNeeded(resource);
+        if (shiroResource != null && shiroResource.exists()) {
+            final String location = shiroResource.getURI().toString();
+            LOGGER.debug("Loading Shiro configuration from [{}]", location);
+            final Factory<SecurityManager> factory = new IniSecurityManagerFactory(location);
+            final SecurityManager securityManager = factory.getInstance();
+            SecurityUtils.setSecurityManager(securityManager);
+        } else {
+            LOGGER.debug("Shiro configuration is not defined");
         }
     }
 }

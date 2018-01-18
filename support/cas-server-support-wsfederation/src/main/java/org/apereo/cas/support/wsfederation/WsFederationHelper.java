@@ -1,5 +1,8 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
@@ -52,6 +55,7 @@ import org.opensaml.xmlsec.signature.support.SignatureTrustEngine;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -67,8 +71,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Helper class that does the heavy lifting with the openSaml library.
@@ -267,49 +269,44 @@ public class WsFederationHelper {
      * @param wsFederationConfiguration the ws federation configuration
      * @return the signature trust engine
      */
+    @SneakyThrows
     private static SignatureTrustEngine buildSignatureTrustEngine(final WsFederationConfiguration wsFederationConfiguration) {
-        try {
-            final List<Credential> signingWallet = wsFederationConfiguration.getSigningWallet();
-            final CredentialResolver resolver = new StaticCredentialResolver(signingWallet);
-            final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
-            return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final List<Credential> signingWallet = wsFederationConfiguration.getSigningWallet();
+        final CredentialResolver resolver = new StaticCredentialResolver(signingWallet);
+        final KeyInfoCredentialResolver keyResolver = new StaticKeyInfoCredentialResolver(signingWallet);
+        return new ExplicitKeySignatureTrustEngine(resolver, keyResolver);
     }
 
+    @SneakyThrows
     private static Credential getEncryptionCredential(final WsFederationConfiguration config) {
-        try {
-            // This will need to contain the private keypair in PEM format
-            LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
-            final BufferedReader br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
-            Security.addProvider(new BouncyCastleProvider());
-            LOGGER.debug("Parsing credential private key");
-            final PEMParser pemParser = new PEMParser(br);
-            final Object privateKeyPemObject = pemParser.readObject();
-            final JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
-            final KeyPair kp;
-            if (privateKeyPemObject instanceof PEMEncryptedKeyPair) {
-                LOGGER.debug("Encryption private key is an encrypted keypair");
-                final PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
-                final PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
-                LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
-                kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
-            } else {
-                LOGGER.debug("Extracting a keypair from the private key");
-                kp = converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
-            }
-            final X509CertParser certParser = new X509CertParser();
-            // This is the certificate shared with ADFS in DER format, i.e certificate.crt
-            LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
-            certParser.engineInit(config.getEncryptionCertificate().getInputStream());
-            LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
-            final X509CertificateObject cert = (X509CertificateObject) certParser.engineRead();
-            LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
-            return new BasicX509Credential(cert, kp.getPrivate());
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        // This will need to contain the private keypair in PEM format
+        LOGGER.debug("Locating encryption credential private key [{}]", config.getEncryptionPrivateKey());
+        final BufferedReader br = new BufferedReader(new InputStreamReader(config.getEncryptionPrivateKey().getInputStream(), StandardCharsets.UTF_8));
+        Security.addProvider(new BouncyCastleProvider());
+        LOGGER.debug("Parsing credential private key");
+        final PEMParser pemParser = new PEMParser(br);
+        final Object privateKeyPemObject = pemParser.readObject();
+        final JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider(new BouncyCastleProvider());
+        final KeyPair kp;
+        if (privateKeyPemObject instanceof PEMEncryptedKeyPair) {
+            LOGGER.debug("Encryption private key is an encrypted keypair");
+            final PEMEncryptedKeyPair ckp = (PEMEncryptedKeyPair) privateKeyPemObject;
+            final PEMDecryptorProvider decProv = new JcePEMDecryptorProviderBuilder().build(config.getEncryptionPrivateKeyPassword().toCharArray());
+            LOGGER.debug("Attempting to decrypt the encrypted keypair based on the provided encryption private key password");
+            kp = converter.getKeyPair(ckp.decryptKeyPair(decProv));
+        } else {
+            LOGGER.debug("Extracting a keypair from the private key");
+            kp = converter.getKeyPair((PEMKeyPair) privateKeyPemObject);
         }
+        final X509CertParser certParser = new X509CertParser();
+        // This is the certificate shared with ADFS in DER format, i.e certificate.crt
+        LOGGER.debug("Locating encryption certificate [{}]", config.getEncryptionCertificate());
+        certParser.engineInit(config.getEncryptionCertificate().getInputStream());
+        LOGGER.debug("Invoking certificate engine to parse the certificate [{}]", config.getEncryptionCertificate());
+        final X509CertificateObject cert = (X509CertificateObject) certParser.engineRead();
+        LOGGER.debug("Creating final credential based on the certificate [{}] and the private key", cert.getIssuerDN());
+        return new BasicX509Credential(cert, kp.getPrivate());
+
     }
 
     private static Decrypter buildAssertionDecrypter(final WsFederationConfiguration config) {

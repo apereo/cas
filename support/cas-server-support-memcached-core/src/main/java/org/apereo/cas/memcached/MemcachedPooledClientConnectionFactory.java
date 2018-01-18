@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.ConnectionFactoryBuilder;
 import net.spy.memcached.DefaultHashAlgorithm;
@@ -33,43 +34,40 @@ public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFact
     }
 
     @Override
+    @SneakyThrows
     public MemcachedClientIF create() {
-        try {
-            final MemcachedClientFactoryBean factoryBean = new MemcachedClientFactoryBean();
-            factoryBean.setServers(memcachedProperties.getServers());
-            factoryBean.setTranscoder(this.transcoder);
+        final MemcachedClientFactoryBean factoryBean = new MemcachedClientFactoryBean();
+        factoryBean.setServers(memcachedProperties.getServers());
+        factoryBean.setTranscoder(this.transcoder);
 
-            if (StringUtils.isNotBlank(memcachedProperties.getLocatorType())) {
-                factoryBean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(memcachedProperties.getLocatorType()));
-            }
-            if (StringUtils.isNotBlank(memcachedProperties.getFailureMode())) {
-                factoryBean.setFailureMode(FailureMode.valueOf(memcachedProperties.getFailureMode()));
-            }
-            if (StringUtils.isNotBlank(memcachedProperties.getHashAlgorithm())) {
-                factoryBean.setHashAlg(DefaultHashAlgorithm.valueOf(memcachedProperties.getHashAlgorithm()));
-            }
-
-            factoryBean.setDaemon(memcachedProperties.isDaemon());
-            factoryBean.setShouldOptimize(memcachedProperties.isShouldOptimize());
-            factoryBean.setUseNagleAlgorithm(memcachedProperties.isUseNagleAlgorithm());
-
-            if (memcachedProperties.getOpTimeout() > 0) {
-                factoryBean.setOpTimeout(memcachedProperties.getOpTimeout());
-            }
-            if (memcachedProperties.getMaxReconnectDelay() > 0) {
-                factoryBean.setMaxReconnectDelay(memcachedProperties.getMaxReconnectDelay());
-            }
-            if (memcachedProperties.getShutdownTimeoutSeconds() > 0) {
-                factoryBean.setShutdownTimeoutSeconds(memcachedProperties.getShutdownTimeoutSeconds());
-            }
-            if (memcachedProperties.getTimeoutExceptionThreshold() > 0) {
-                factoryBean.setTimeoutExceptionThreshold(memcachedProperties.getTimeoutExceptionThreshold());
-            }
-            factoryBean.afterPropertiesSet();
-            return (MemcachedClientIF) factoryBean.getObject();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (StringUtils.isNotBlank(memcachedProperties.getLocatorType())) {
+            factoryBean.setLocatorType(ConnectionFactoryBuilder.Locator.valueOf(memcachedProperties.getLocatorType()));
         }
+        if (StringUtils.isNotBlank(memcachedProperties.getFailureMode())) {
+            factoryBean.setFailureMode(FailureMode.valueOf(memcachedProperties.getFailureMode()));
+        }
+        if (StringUtils.isNotBlank(memcachedProperties.getHashAlgorithm())) {
+            factoryBean.setHashAlg(DefaultHashAlgorithm.valueOf(memcachedProperties.getHashAlgorithm()));
+        }
+
+        factoryBean.setDaemon(memcachedProperties.isDaemon());
+        factoryBean.setShouldOptimize(memcachedProperties.isShouldOptimize());
+        factoryBean.setUseNagleAlgorithm(memcachedProperties.isUseNagleAlgorithm());
+
+        if (memcachedProperties.getOpTimeout() > 0) {
+            factoryBean.setOpTimeout(memcachedProperties.getOpTimeout());
+        }
+        if (memcachedProperties.getMaxReconnectDelay() > 0) {
+            factoryBean.setMaxReconnectDelay(memcachedProperties.getMaxReconnectDelay());
+        }
+        if (memcachedProperties.getShutdownTimeoutSeconds() > 0) {
+            factoryBean.setShutdownTimeoutSeconds(memcachedProperties.getShutdownTimeoutSeconds());
+        }
+        if (memcachedProperties.getTimeoutExceptionThreshold() > 0) {
+            factoryBean.setTimeoutExceptionThreshold(memcachedProperties.getTimeoutExceptionThreshold());
+        }
+        factoryBean.afterPropertiesSet();
+        return (MemcachedClientIF) factoryBean.getObject();
     }
 
     @Override

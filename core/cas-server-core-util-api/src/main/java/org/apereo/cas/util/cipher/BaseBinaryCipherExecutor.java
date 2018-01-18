@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.EncodingUtils;
@@ -7,10 +8,12 @@ import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jose4j.jwk.JsonWebKey;
 import org.jose4j.jwk.OctJwkGenerator;
 import org.jose4j.jwk.OctetSequenceJsonWebKey;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -80,15 +83,12 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
     }
 
     @Override
+    @SneakyThrows
     public byte[] decode(final byte[] value) {
-        try {
-            final byte[] verifiedValue = verifySignature(value);
-            this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
-            final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);
-            return bytePlainText;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final byte[] verifiedValue = verifySignature(value);
+        this.aesCipher.init(Cipher.DECRYPT_MODE, this.encryptionKey);
+        final byte[] bytePlainText = aesCipher.doFinal(verifiedValue);
+        return bytePlainText;
     }
 
     private static String generateOctetJsonWebKeyOfSize(final int size) {

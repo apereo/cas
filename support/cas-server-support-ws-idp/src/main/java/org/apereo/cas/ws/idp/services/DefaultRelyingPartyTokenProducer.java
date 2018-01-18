@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.cxf.binding.soap.SoapFault;
@@ -21,7 +22,6 @@ import org.w3c.dom.Element;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -57,16 +57,13 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return serializeRelyingPartyToken(rpToken);
     }
 
+    @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
-        try {
-            final StringWriter sw = new StringWriter();
-            final Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
-            t.transform(new DOMSource(rpToken), new StreamResult(sw));
-            return sw.toString();
-        } catch (final TransformerException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final StringWriter sw = new StringWriter();
+        final Transformer t = TransformerFactory.newInstance().newTransformer();
+        t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
+        t.transform(new DOMSource(rpToken), new StreamResult(sw));
+        return sw.toString();
     }
 
     private static void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,

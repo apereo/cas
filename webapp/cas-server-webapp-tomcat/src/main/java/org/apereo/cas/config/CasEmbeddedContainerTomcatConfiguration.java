@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.authenticator.BasicAuthenticator;
@@ -110,14 +111,13 @@ public class CasEmbeddedContainerTomcatConfiguration {
                          
             final RewriteValve valve = new RewriteValve() {
                 @Override
+                @SneakyThrows
                 protected synchronized void startInternal() throws LifecycleException {
                     super.startInternal();
                     try (InputStream is = res.getInputStream();
                          InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                          BufferedReader buffer = new BufferedReader(isr)) {
                         parse(buffer);
-                    } catch (final Exception e) {
-                        throw new RuntimeException(e.getMessage(), e);
                     }
                 }
             };

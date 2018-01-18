@@ -3,6 +3,8 @@ package org.apereo.cas.pm.impl;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
+import lombok.Getter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -14,13 +16,13 @@ import org.apereo.cas.pm.PasswordChangeBean;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
 import org.springframework.util.Assert;
+
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
 
 /**
  * This is {@link JsonResourcePasswordManagementService}.
@@ -46,13 +48,12 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         readAccountsFromJsonResource();
     }
 
+    @SneakyThrows
     private void readAccountsFromJsonResource() {
         try (Reader reader = new InputStreamReader(jsonResource.getInputStream(), StandardCharsets.UTF_8)) {
             final TypeReference<Map<String, JsonBackedAccount>> personList = new TypeReference<Map<String, JsonBackedAccount>>() {
             };
             this.jsonBackedAccounts = MAPPER.readValue(JsonValue.readHjson(reader).toString(), personList);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 
@@ -79,13 +80,10 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
         return writeAccountToJsonResource();
     }
 
+    @SneakyThrows
     private boolean writeAccountToJsonResource() {
-        try {
-            MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
-            readAccountsFromJsonResource();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        MAPPER.writerWithDefaultPrettyPrinter().writeValue(this.jsonResource.getFile(), this.jsonBackedAccounts);
+        readAccountsFromJsonResource();
         return true;
     }
 

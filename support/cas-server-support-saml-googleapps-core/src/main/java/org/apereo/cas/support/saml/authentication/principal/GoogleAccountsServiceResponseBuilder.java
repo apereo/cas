@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -46,7 +47,6 @@ import java.util.Map;
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
-    
 
 
     private PrivateKey privateKey;
@@ -65,6 +65,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private String casServerPrefix;
 
+    @SneakyThrows
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
@@ -78,12 +79,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         this.samlObjectBuilder = samlObjectBuilder;
         this.casServerPrefix = casServerPrefix;
 
-        try {
-            createGoogleAppsPrivateKey();
-            createGoogleAppsPublicKey();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        createGoogleAppsPrivateKey();
+        createGoogleAppsPublicKey();
 
     }
 

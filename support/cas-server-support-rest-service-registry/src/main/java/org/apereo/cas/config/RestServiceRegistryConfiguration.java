@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -36,22 +37,21 @@ public class RestServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
+    @SneakyThrows
     public ServiceRegistryDao serviceRegistryDao() {
-        try {
-            final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-            final RestTemplate restTemplate = new RestTemplate();
-            final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
 
-            if (StringUtils.isNotBlank(registry.getRest().getBasicAuthUsername())
-                    && StringUtils.isNotBlank(registry.getRest().getBasicAuthPassword())) {
-                final String auth = registry.getRest().getBasicAuthUsername() + ":" + registry.getRest().getBasicAuthPassword();
-                final byte[] encodedAuth = EncodingUtils.encodeBase64ToByteArray(auth.getBytes(StandardCharsets.UTF_8));
-                final String authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
-                headers.put("Authorization", CollectionUtils.wrap(authHeader));
-            }
-            return new RestServiceRegistryDao(restTemplate, registry.getRest().getUrl(), headers);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        final RestTemplate restTemplate = new RestTemplate();
+        final MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
+
+        if (StringUtils.isNotBlank(registry.getRest().getBasicAuthUsername())
+            && StringUtils.isNotBlank(registry.getRest().getBasicAuthPassword())) {
+            final String auth = registry.getRest().getBasicAuthUsername() + ":" + registry.getRest().getBasicAuthPassword();
+            final byte[] encodedAuth = EncodingUtils.encodeBase64ToByteArray(auth.getBytes(StandardCharsets.UTF_8));
+            final String authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
+            headers.put("Authorization", CollectionUtils.wrap(authHeader));
         }
+        return new RestServiceRegistryDao(restTemplate, registry.getRest().getUrl(), headers);
+
     }
 }

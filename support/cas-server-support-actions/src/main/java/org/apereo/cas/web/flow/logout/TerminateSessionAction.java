@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
@@ -63,32 +64,28 @@ public class TerminateSessionAction extends AbstractAction {
      * @param context Request context.
      * @return "success"
      */
+    @SneakyThrows
     public Event terminate(final RequestContext context) {
-        // in login's webflow : we can get the value from context as it has already been stored
-        try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
-            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
+        final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-            String tgtId = WebUtils.getTicketGrantingTicketId(context);
-            // for logout, we need to get the cookie's value
-            if (tgtId == null) {
-                tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
-            }
-            if (tgtId != null) {
-                LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
-                final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
-                WebUtils.putLogoutRequests(context, logoutRequests);
-            }
-            LOGGER.debug("Removing CAS cookies");
-            this.ticketGrantingTicketCookieGenerator.removeCookie(response);
-            this.warnCookieGenerator.removeCookie(response);
-
-            destroyApplicationSession(request, response);
-            LOGGER.debug("Terminated all CAS sessions successfully.");
-            return this.eventFactorySupport.success(this);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        String tgtId = WebUtils.getTicketGrantingTicketId(context);
+        // for logout, we need to get the cookie's value
+        if (tgtId == null) {
+            tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
+        if (tgtId != null) {
+            LOGGER.debug("Destroying SSO session linked to ticket-granting ticket [{}]", tgtId);
+            final List<LogoutRequest> logoutRequests = this.centralAuthenticationService.destroyTicketGrantingTicket(tgtId);
+            WebUtils.putLogoutRequests(context, logoutRequests);
+        }
+        LOGGER.debug("Removing CAS cookies");
+        this.ticketGrantingTicketCookieGenerator.removeCookie(response);
+        this.warnCookieGenerator.removeCookie(response);
+
+        destroyApplicationSession(request, response);
+        LOGGER.debug("Terminated all CAS sessions successfully.");
+        return this.eventFactorySupport.success(this);
     }
 
     /**
@@ -104,8 +101,8 @@ public class TerminateSessionAction extends AbstractAction {
         manager.logout();
 
         final HttpSession session = request.getSession();
-        if (session != null) {            
-            final Object requestedUrl=request.getSession().getAttribute(Pac4jConstants.REQUESTED_URL);
+        if (session != null) {
+            final Object requestedUrl = request.getSession().getAttribute(Pac4jConstants.REQUESTED_URL);
             session.invalidate();
             // copy pac4jRequestedUrl to  new session
             request.getSession(true).setAttribute(Pac4jConstants.REQUESTED_URL, requestedUrl);
