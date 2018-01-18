@@ -35,11 +35,6 @@ import lombok.Setter;
  * LDAP authentication handler that uses the ldaptive {@code Authenticator} component underneath.
  * This handler provides simple attribute resolution machinery by reading attributes from the entry
  * corresponding to the DN of the bound user (in the bound security context) upon successful authentication.
- * Principal resolution is controlled by the following properties:
- * <ul>
- * <li>{@link #setPrincipalIdAttribute(String)}</li>
- * <li>{@link #setPrincipalAttributeMap(java.util.Map)}</li>
- * </ul>
  *
  * @author Marvin S. Addison
  * @since 4.0.0
@@ -149,8 +144,7 @@ public class LdapAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     /**
      * Creates a CAS principal with attributes if the LDAP entry contains principal attributes.
      *
-     * @param username  Username that was successfully authenticated which is used for principal ID when
-     *                  {@link #setPrincipalIdAttribute(String)} is not specified.
+     * @param username  Username that was successfully authenticated which is used for principal ID when principal id is not specified.
      * @param ldapEntry LDAP entry that may contain principal attributes.
      * @return Principal if the LDAP entry contains at least a principal ID attribute value, null otherwise.
      * @throws LoginException On security policy errors related to principal creation.
