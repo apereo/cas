@@ -4,7 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -15,10 +18,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
 
 import java.time.ZonedDateTime;
-
-import lombok.ToString;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * Ticket implementation that encodes a source ticket and stores the encoded
@@ -61,9 +60,8 @@ public class EncodedTicket implements Ticket {
     @SneakyThrows
     @JsonCreator
     public EncodedTicket(@JsonProperty("encoded") final String encodedTicket, @JsonProperty("id") final String encodedTicketId) {
-        try {
-            this.id = encodedTicketId;
-            this.encodedTicket = EncodingUtils.decodeBase64(encodedTicket);
+        this.id = encodedTicketId;
+        this.encodedTicket = EncodingUtils.decodeBase64(encodedTicket);
     }
 
     @JsonIgnore
