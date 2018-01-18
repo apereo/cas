@@ -36,7 +36,7 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class InitialFlowSetupAction extends AbstractAction {
-
+    
     private final List<ArgumentExtractor> argumentExtractors;
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -52,7 +52,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         return success();
     }
 
-    private void configureWebflowContextForService(final RequestContext context) {
+    protected void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
@@ -82,11 +82,11 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putService(context, service);
     }
 
-    private void configureWebflowContext(final RequestContext context) {
+    protected void configureWebflowContext(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
         WebUtils.putWarningCookie(context, Boolean.valueOf(this.warnCookieGenerator.retrieveCookieValue(request)));
-        
+
         WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
         WebUtils.putGeoLocationTrackingIntoFlowScope(context, casProperties.getEvents().isTrackGeolocation());
         WebUtils.putPasswordManagementEnabled(context, casProperties.getAuthn().getPm().isEnabled());
@@ -96,7 +96,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                         || StringUtils.isNotBlank(casProperties.getAuthn().getReject().getUsers()));
     }
 
-    private void configureCookieGenerators(final RequestContext context) {
+    protected void configureCookieGenerators(final RequestContext context) {
         final String contextPath = context.getExternalContext().getContextPath();
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
