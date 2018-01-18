@@ -1,5 +1,8 @@
 package org.apereo.cas.web.support;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -15,39 +18,16 @@ import java.util.List;
  * @since 3.1.2
  */
 @Slf4j
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
 
     /**
      * The factory responsible for creating service objects based on the arguments extracted.
      */
-    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList;
+    protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories= new ArrayList<>();;
 
-    /**
-     * Default extractor initiation.
-     */
-    public AbstractArgumentExtractor() {
-        this.serviceFactoryList = new ArrayList<>();
-    }
-
-    /**
-     * Instantiates a new argument extractor.
-     *
-     * @param serviceFactory the service factory
-     */
-    public AbstractArgumentExtractor(final ServiceFactory<? extends WebApplicationService> serviceFactory) {
-        this.serviceFactoryList = new ArrayList<>();
-        this.serviceFactoryList.add(serviceFactory);
-    }
-
-    /**
-     * Instantiates a new argument extractor.
-     *
-     * @param serviceFactoryList the service factory list
-     */
-    public AbstractArgumentExtractor(final List<ServiceFactory<? extends WebApplicationService>> serviceFactoryList) {
-        this.serviceFactoryList = new ArrayList<>();
-        this.serviceFactoryList.addAll(serviceFactoryList);
-    }
 
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
@@ -71,12 +51,7 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
     protected abstract WebApplicationService extractServiceInternal(HttpServletRequest request);
 
     public ServiceFactory<? extends WebApplicationService> getServiceFactory() {
-        return this.serviceFactoryList.get(0);
-    }
-
-    @Override
-    public List<ServiceFactory<? extends WebApplicationService>> getServiceFactories() {
-        return this.serviceFactoryList;
+        return this.serviceFactories.get(0);
     }
 
 }

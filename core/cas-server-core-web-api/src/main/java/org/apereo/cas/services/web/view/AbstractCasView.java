@@ -383,11 +383,4 @@ public abstract class AbstractCasView extends AbstractView {
         model.putAll(values);
     }
 
-    public ProtocolAttributeEncoder getProtocolAttributeEncoder() {
-        return this.protocolAttributeEncoder;
-    }
-
-    public ServicesManager getServicesManager() {
-        return this.servicesManager;
-    }
 }

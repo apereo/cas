@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
 import org.springframework.util.Assert;
@@ -12,6 +13,7 @@ import org.springframework.util.Assert;
  * @since 4.0.0
  */
 @Slf4j
+@Getter
 public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketException {
 
     /** Serializable ID for unique id. */
@@ -34,12 +36,4 @@ public class UnsatisfiedAuthenticationPolicyException extends AbstractTicketExce
         this.policy = policy;
     }
 
-    /**
-     * Gets the unsatisfied policy that caused this exception.
-     *
-     * @return Non-null unsatisfied policy cause.
-     */
-    public ContextualAuthenticationPolicy<?> getPolicy() {
-        return this.policy;
-    }
 }

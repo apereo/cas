@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.ssl.SSLContexts;
@@ -36,6 +37,7 @@ import java.util.stream.Collectors;
  */
 
 @Slf4j
+@Getter
 public class DefaultCasSslContext {
     private static final String ALG_NAME_PKIX = "PKIX";
 
@@ -67,15 +69,6 @@ public class DefaultCasSslContext {
 
         this.sslContext = SSLContexts.custom().useProtocol("SSL").build();
         sslContext.init(keyManagers, trustManagers, null);
-    }
-
-    /**
-     * Gets the trusted ssl context.
-     *
-     * @return the trusted ssl context
-     */
-    public SSLContext getSslContext() {
-        return this.sslContext;
     }
 
     /**
