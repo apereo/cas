@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,7 @@ import java.util.List;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@Getter
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -364,10 +366,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             LOGGER.trace(e.getMessage(), e);
             return null;
         }
-    }
-
-    public OpenSamlConfigBean getConfigBean() {
-        return configBean;
     }
 
     /**

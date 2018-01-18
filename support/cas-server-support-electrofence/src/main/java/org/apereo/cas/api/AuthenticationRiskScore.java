@@ -1,5 +1,6 @@
 package org.apereo.cas.api;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.math.BigDecimal;
@@ -13,6 +14,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class AuthenticationRiskScore {
 
     private final BigDecimal score;
@@ -20,11 +22,7 @@ public class AuthenticationRiskScore {
     public AuthenticationRiskScore(final BigDecimal score) {
         this.score = score;
     }
-
-    public BigDecimal getScore() {
-        return score;
-    }
-
+    
     public boolean isHighestRisk() {
         return getScore().compareTo(AuthenticationRequestRiskCalculator.HIGHEST_RISK_SCORE) == 0;
     }

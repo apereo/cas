@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -33,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  */
 @Slf4j
+@Getter
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
@@ -101,10 +103,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      */
     public ResourceCRLRevocationChecker(final Collection<Resource> crls) {
         this(new ResourceCRLFetcher(), crls, DEFAULT_REFRESH_INTERVAL);
-    }
-
-    public ResourceCRLRevocationChecker(final Resource... crls) {
-        this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
     }
 
     /**
@@ -180,17 +178,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      */
     private void addCrls(final Collection<X509CRL> results) {
         results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
-    }
-
-    /**
-     * @return Returns the CRL fetcher component.
-     */
-    protected CRLFetcher getFetcher() {
-        return this.fetcher;
-    }
-
-    protected Collection<Resource> getResources() {
-        return this.resources;
     }
 
     @Override
