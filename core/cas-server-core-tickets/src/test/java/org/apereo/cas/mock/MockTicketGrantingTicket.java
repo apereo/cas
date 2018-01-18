@@ -58,12 +58,17 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(c);
-        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal, attributes)).addCredential(metaData).addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(), new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
+        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
+            .createPrincipal(principal, attributes)).addCredential(metaData)
+            .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
         created = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
+        this(principal,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            new HashMap());
     }
 
     @Override
@@ -77,7 +82,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, false, true);
+        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
+            false, true);
     }
 
     @Override

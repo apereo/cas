@@ -1,11 +1,10 @@
 package org.apereo.cas.services;
 
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
@@ -38,6 +37,7 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 469929103943101717L;
@@ -75,27 +75,6 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         }
         final UriComponents uri = UriComponentsBuilder.fromUriString(client.getServiceId()).build();
         return uri.getHost();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final PairwiseOidcRegisteredServiceUsernameAttributeProvider rhs = (PairwiseOidcRegisteredServiceUsernameAttributeProvider) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        return builder.appendSuper(super.equals(obj)).append(this.persistentIdGenerator, rhs.persistentIdGenerator).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(persistentIdGenerator).toHashCode();
     }
 
     @Getter

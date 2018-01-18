@@ -1,9 +1,9 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
@@ -15,7 +15,6 @@ import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
@@ -26,23 +25,15 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Getter
 @Setter
-@NoArgsConstructor
+@EqualsAndHashCode
+@RequiredArgsConstructor
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private String registrationUrl;
+    private final String registrationUrl;
 
-    private DuoSecurityAuthenticationService duoAuthenticationService;
-
-    public DefaultDuoMultifactorAuthenticationProvider(final DuoSecurityAuthenticationService duoAuthenticationService) {
-        this.duoAuthenticationService = duoAuthenticationService;
-    }
-
-    @Override
-    public DuoSecurityAuthenticationService getDuoAuthenticationService() {
-        return this.duoAuthenticationService;
-    }
+    private final DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
     protected boolean isAvailable() {
@@ -53,26 +44,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     @Override
     public String getId() {
         return StringUtils.defaultIfBlank(super.getId(), DuoSecurityMultifactorProperties.DEFAULT_IDENTIFIER);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final DefaultDuoMultifactorAuthenticationProvider rhs = (DefaultDuoMultifactorAuthenticationProvider) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(duoAuthenticationService, rhs.duoAuthenticationService).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(duoAuthenticationService).toHashCode();
     }
 
     @Override
