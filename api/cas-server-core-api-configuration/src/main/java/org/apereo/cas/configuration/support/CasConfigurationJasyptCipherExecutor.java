@@ -8,8 +8,8 @@ import org.apereo.cas.CipherExecutor;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.springframework.core.env.Environment;
+
 import java.security.Security;
-import lombok.Setter;
 
 /**
  * This is {@link CasConfigurationJasyptCipherExecutor}.
@@ -17,10 +17,9 @@ import lombok.Setter;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Slf4j
-@Setter
-public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
 
+@Slf4j
+public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<String, String> {
     /**
      * Prefix inserted at the beginning of a value to indicate it's encrypted.
      */
@@ -34,13 +33,16 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt algorithm name to use.
          */
-        ALGORITHM("cas.standalone.config.security.alg", "PBEWithMD5AndTripleDES"), /**
+        ALGORITHM("cas.standalone.config.security.alg", "PBEWithMD5AndTripleDES"),
+        /**
          * Jasypt provider name to use.
          */
-        PROVIDER("cas.standalone.config.security.provider", null), /**
+        PROVIDER("cas.standalone.config.security.provider", null),
+        /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.config.security.iteration", null), /**
+        ITERATIONS("cas.standalone.config.security.iteration", null),
+        /**
          * Jasypt password to use.
          */
         PASSWORD("cas.standalone.config.security.psw", null);
@@ -50,7 +52,6 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
          */
         @Getter
         private final String propertyName;
-
         /**
          * The Default value.
          */
@@ -82,6 +83,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
     public CasConfigurationJasyptCipherExecutor(final Environment environment) {
         Security.addProvider(new BouncyCastleProvider());
         this.jasyptInstance = new StandardPBEStringEncryptor();
+
         final String alg = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.ALGORITHM);
         setAlgorithm(alg);
         final String psw = getJasyptParamFromEnv(environment, JasyptEncryptionParameters.PASSWORD);
@@ -163,12 +165,22 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String encryptValue(final String value) {
         try {
-            initializeJasyptInstanceIfNecessary();
-            return ENCRYPTED_VALUE_PREFIX + this.jasyptInstance.encrypt(value);
+            return encryptValue2(value);
         } catch (final Exception e) {
             LOGGER.error("Could not encrypt value [{}]", e);
         }
         return null;
+    }
+
+    /**
+     * Encrypt value string (but don't log error, for use in shell).
+     *
+     * @param value the value
+     * @return the string
+     */
+    public String encryptValue2(final String value) {
+        initializeJasyptInstanceIfNecessary();
+        return ENCRYPTED_VALUE_PREFIX + this.jasyptInstance.encrypt(value);
     }
 
     /**
@@ -179,24 +191,37 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String decryptValue(final String value) {
         try {
-            if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
-                initializeJasyptInstanceIfNecessary();
-                final String encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
-                LOGGER.trace("Decrypting value [{}]...", encValue);
-                final String result = this.jasyptInstance.decrypt(encValue);
-                if (StringUtils.isNotBlank(result)) {
-                    LOGGER.debug("Decrypted value [{}] successfully.", encValue);
-                    return result;
-                }
-                LOGGER.warn("Encrypted value [{}] has no values.", encValue);
-            }
-            return value;
+            return decryptValue2(value);
         } catch (final Exception e) {
             LOGGER.error("Could not decrypt value [{}]", e);
         }
         return null;
     }
 
+    /**
+     * Decrypt value string. (but don't log error, for use in shell).
+     *
+     * @param value the value
+     * @return the string
+     */
+    public String decryptValue2(final String value) {
+        if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
+            initializeJasyptInstanceIfNecessary();
+
+            final String encValue = value.substring(ENCRYPTED_VALUE_PREFIX.length());
+            LOGGER.trace("Decrypting value [{}]...", encValue);
+            final String result = this.jasyptInstance.decrypt(encValue);
+
+            if (StringUtils.isNotBlank(result)) {
+                LOGGER.debug("Decrypted value [{}] successfully.", encValue);
+                return result;
+            }
+            LOGGER.warn("Encrypted value [{}] has no values.", encValue);
+        }
+        return value;
+    }
+    
+    
     /**
      * Initialize jasypt instance if necessary.
      */
