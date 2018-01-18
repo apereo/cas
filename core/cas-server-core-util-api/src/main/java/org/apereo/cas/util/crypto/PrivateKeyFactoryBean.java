@@ -82,7 +82,4 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
         return PrivateKey.class;
     }
 
-    public Resource getLocation() {
-        return this.location;
-    }
 }

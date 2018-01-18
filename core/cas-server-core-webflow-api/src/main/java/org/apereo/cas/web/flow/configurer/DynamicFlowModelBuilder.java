@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.configurer;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -20,8 +21,8 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@SuppressWarnings("JdkObsolete")
 @Slf4j
+@Getter
 public class DynamicFlowModelBuilder implements FlowModelBuilder {
     /**
      * The Flow model.
@@ -90,12 +91,7 @@ public class DynamicFlowModelBuilder implements FlowModelBuilder {
     public void setStates(final List<AbstractStateModel> states) {
         this.flowModel.setStates(new LinkedList<>(states));
     }
-
-    @Override
-    public FlowModel getFlowModel() throws FlowModelBuilderException {
-        return this.flowModel;
-    }
-
+    
     @Override
     public void dispose() throws FlowModelBuilderException {
         this.flowModel = null;

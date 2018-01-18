@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.trusted.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -23,6 +24,7 @@ import org.springframework.util.Assert;
  * @since 3.0.0
  */
 @Slf4j
+@Getter
 public class PrincipalBearingCredential extends AbstractCredential {
 
     /** Serialization version marker. */
@@ -41,16 +43,7 @@ public class PrincipalBearingCredential extends AbstractCredential {
         Assert.notNull(principal, "principal cannot be null");
         this.principal = principal;
     }
-
-    /**
-     * Get the previously authenticated Principal.
-     *
-     * @return authenticated Principal
-     */
-    public Principal getPrincipal() {
-        return this.principal;
-    }
-
+    
     @JsonIgnore
     @Override
     public String getId() {

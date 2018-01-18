@@ -197,7 +197,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
-            return generateErrorView(code, new Object[]{serviceTicketId, e.getOriginalService().getId(), service.getId()}, request, service);
+            return generateErrorView(code, new Object[]{serviceTicketId, e.getService().getId(), service.getId()}, request, service);
         } catch (final AbstractTicketException e) {
             return generateErrorView(e.getCode(), new Object[]{serviceTicketId}, request, service);
         } catch (final UnauthorizedProxyingException e) {

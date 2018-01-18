@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -17,10 +18,8 @@ import java.net.URL;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
-
-
-
     private final ServicesManager servicesManager;
     private final HttpClient httpClient;
     private boolean asynchronous = true;
@@ -144,9 +143,5 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         return registeredService != null
                 && registeredService.getAccessStrategy().isServiceAccessAllowed()
                 && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
-    }
-
-    public ServicesManager getServicesManager() {
-        return this.servicesManager;
     }
 }
