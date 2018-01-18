@@ -7,10 +7,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.Setter;
 
 /**
  * Implementation of an expiration policy that adds the concept of saying that a
@@ -20,8 +20,9 @@ import java.time.temporal.ChronoUnit;
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@Setter
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
@@ -31,8 +32,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
      * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
      * deserialization the field is null.
      */
-
-
     /** The time to kill in seconds. */
     private long timeToKillInSeconds;
 
@@ -41,22 +40,13 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
     /**
      * Instantiates a new Throttled use and timeout expiration policy.
      */
-    public ThrottledUseAndTimeoutExpirationPolicy(){}
+    public ThrottledUseAndTimeoutExpirationPolicy() {
+    }
 
-    
     @JsonCreator
-    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, 
-                                                  @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
+    public ThrottledUseAndTimeoutExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds, @JsonProperty("timeToIdle") final long timeInBetweenUsesInSeconds) {
         this.timeToKillInSeconds = timeToKillInSeconds;
         this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
-    }
-    
-    public void setTimeInBetweenUsesInSeconds(final long timeInBetweenUsesInSeconds) {
-        this.timeInBetweenUsesInSeconds = timeInBetweenUsesInSeconds;
-    }
-
-    public void setTimeToKillInSeconds(final long timeToKillInSeconds) {
-        this.timeToKillInSeconds = timeToKillInSeconds;
     }
 
     @Override
@@ -64,24 +54,19 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         final ZonedDateTime currentTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime lastTimeUsed = ticketState.getLastTimeUsed();
         final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
-
         if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
-            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less "
-                    + "than the timeToKillInSeconds");
+            LOGGER.debug("Ticket is not expired due to a count of zero and the time being less " + "than the timeToKillInSeconds");
             return false;
         }
-
         if (currentTime.isAfter(killTime)) {
             LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInSeconds");
             return true;
         }
-
         final ZonedDateTime dontUseUntil = lastTimeUsed.plus(this.timeInBetweenUsesInSeconds, ChronoUnit.SECONDS);
         if (currentTime.isBefore(dontUseUntil)) {
             LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
             return true;
         }
-
         return false;
     }
 
@@ -95,7 +80,6 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         return this.timeInBetweenUsesInSeconds;
     }
 
-
     @Override
     public boolean equals(final Object obj) {
         if (obj == null) {
@@ -108,17 +92,11 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
             return false;
         }
         final ThrottledUseAndTimeoutExpirationPolicy rhs = (ThrottledUseAndTimeoutExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .append(this.timeInBetweenUsesInSeconds, rhs.timeInBetweenUsesInSeconds)
-                .isEquals();
+        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).append(this.timeInBetweenUsesInSeconds, rhs.timeInBetweenUsesInSeconds).isEquals();
     }
 
     @Override
     public int hashCode() {
-        return new HashCodeBuilder()
-                .append(timeToKillInSeconds)
-                .append(timeInBetweenUsesInSeconds)
-                .toHashCode();
+        return new HashCodeBuilder().append(timeToKillInSeconds).append(timeInBetweenUsesInSeconds).toHashCode();
     }
 }

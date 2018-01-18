@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.Serializable;
 import java.util.List;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link OidcClientRegistrationResponse}.
@@ -14,6 +15,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class OidcClientRegistrationResponse implements Serializable {
 
     private static final long serialVersionUID = 1436206039117219598L;
@@ -47,44 +49,4 @@ public class OidcClientRegistrationResponse implements Serializable {
 
     @JsonProperty("token_endpoint_auth_method")
     private String tokenEndpointAuthMethod;
-
-    public void setClientId(final String clientId) {
-        this.clientId = clientId;
-    }
-
-    public void setClientSecret(final String clientSecret) {
-        this.clientSecret = clientSecret;
-    }
-
-    public void setClientName(final String clientName) {
-        this.clientName = clientName;
-    }
-
-    public void setApplicationType(final String applicationType) {
-        this.applicationType = applicationType;
-    }
-
-    public void setSubjectType(final String subjectType) {
-        this.subjectType = subjectType;
-    }
-
-    public void setGrantTypes(final List<String> grantTypes) {
-        this.grantTypes = grantTypes;
-    }
-
-    public void setResponseTypes(final List<String> responseTypes) {
-        this.responseTypes = responseTypes;
-    }
-
-    public void setRedirectUris(final List<String> redirectUris) {
-        this.redirectUris = redirectUris;
-    }
-
-    public void setRequestObjectSigningAlg(final String requestObjectSigningAlg) {
-        this.requestObjectSigningAlg = requestObjectSigningAlg;
-    }
-
-    public void setTokenEndpointAuthMethod(final String tokenEndpointAuthMethod) {
-        this.tokenEndpointAuthMethod = tokenEndpointAuthMethod;
-    }
 }

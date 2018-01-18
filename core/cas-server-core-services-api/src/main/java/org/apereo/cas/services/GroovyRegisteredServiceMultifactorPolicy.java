@@ -10,6 +10,7 @@ import org.springframework.core.io.Resource;
 import javax.persistence.Transient;
 import java.util.Set;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link GroovyRegisteredServiceMultifactorPolicy}.
@@ -19,6 +20,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
 
     private static final long serialVersionUID = -3075860754996106437L;
@@ -65,10 +67,6 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
     public boolean isBypassEnabled() {
         buildGroovyMultifactorPolicyInstanceIfNeeded();
         return this.groovyPolicyInstance.isBypassEnabled();
-    }
-
-    public void setGroovyScript(final String groovyScript) {
-        this.groovyScript = groovyScript;
     }
 
     private void buildGroovyMultifactorPolicyInstanceIfNeeded() {

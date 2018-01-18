@@ -10,6 +10,7 @@ import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import java.util.Map;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -22,6 +23,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
@@ -52,14 +54,6 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
         this.salt = salt;
     }
 
-    public void setAttribute(final String attribute) {
-        this.attribute = attribute;
-    }
-
-    public void setSalt(final String salt) {
-        this.salt = salt;
-    }
-
     @Override
     public String generate(final String principal, final String service) {
         if (StringUtils.isBlank(salt)) {
@@ -74,8 +68,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @Override
     public String generate(final Principal principal, final Service service) {
         final Map<String, Object> attributes = principal.getAttributes();
-        final String principalId = StringUtils.isNotBlank(this.attribute)
-            && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
+        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
         return generate(principalId, service.getId());
     }
 

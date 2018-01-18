@@ -7,13 +7,13 @@ import org.apereo.inspektr.audit.AuditTrailManager;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import lombok.Setter;
 
 /**
  * This is {@link MongoDbAuditTrailManager}.
@@ -22,22 +22,20 @@ import java.util.concurrent.Executors;
  * @since 5.2.0
  */
 @Slf4j
+@Setter
 public class MongoDbAuditTrailManager implements AuditTrailManager {
 
-
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
     private boolean asynchronous = true;
 
     private final String collectionName;
+
     private final MongoTemplate mongoTemplate;
 
     public MongoDbAuditTrailManager(final MongoTemplate mongoTemplate, final String collectionName) {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
-    }
-
-    public void setAsynchronous(final boolean asynchronous) {
-        this.asynchronous = asynchronous;
     }
 
     @Override

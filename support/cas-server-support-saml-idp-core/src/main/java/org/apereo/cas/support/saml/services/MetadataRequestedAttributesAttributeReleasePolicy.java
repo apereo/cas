@@ -11,6 +11,7 @@ import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.springframework.context.ApplicationContext;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import lombok.Setter;
 
 /**
  * This is {@link MetadataRequestedAttributesAttributeReleasePolicy}.
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Setter
 public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -3483733307124962357L;
@@ -50,10 +52,6 @@ public class MetadataRequestedAttributesAttributeReleasePolicy extends BaseSamlR
 
     public boolean isUseFriendlyName() {
         return useFriendlyName;
-    }
-
-    public void setUseFriendlyName(final boolean useFriendlyName) {
-        this.useFriendlyName = useFriendlyName;
     }
 
     @Override

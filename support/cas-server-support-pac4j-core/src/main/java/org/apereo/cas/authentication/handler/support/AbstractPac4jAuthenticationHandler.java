@@ -8,9 +8,9 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.profile.UserProfile;
-
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import lombok.Setter;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.
@@ -19,14 +19,12 @@ import java.security.GeneralSecurityException;
  * @since 4.1.0
  */
 @Slf4j
+@Setter
 public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
-    
     private boolean isTypedIdUsed;
 
-    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                              final PrincipalFactory principalFactory,
-                                              final Integer order) {
+    public AbstractPac4jAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
@@ -38,13 +36,10 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
      * @return the built handler result
      * @throws GeneralSecurityException On authentication failure.
      */
-    protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials, final UserProfile profile)
-            throws GeneralSecurityException {
-
+    protected AuthenticationHandlerExecutionResult createResult(final ClientCredential credentials, final UserProfile profile) throws GeneralSecurityException {
         if (profile == null) {
             throw new FailedLoginException("Authentication did not produce a user profile for: " + credentials);
         }
-
         final String id;
         if (isTypedIdUsed) {
             id = profile.getTypedId();
@@ -52,20 +47,13 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         } else {
             id = profile.getId();
         }
-
         if (StringUtils.isBlank(id)) {
             throw new FailedLoginException("No identifier found for this user profile: " + profile);
         }
-
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
-        
         final Principal principal = this.principalFactory.createPrincipal(id, profile.getAttributes());
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
         return createHandlerResult(credentials, principal, null);
-    }
-
-    public void setTypedIdUsed(final boolean typedIdUsed) {
-        this.isTypedIdUsed = typedIdUsed;
     }
 }

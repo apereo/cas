@@ -12,7 +12,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
 import org.springframework.util.Assert;
-
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -20,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import lombok.Setter;
 
 /**
  * @author Scott Battaglia
@@ -29,11 +29,10 @@ import java.util.stream.Stream;
  * </p>
  */
 @Slf4j
+@Setter
 public abstract class AbstractTicketRegistry implements TicketRegistry {
 
     private static final String MESSAGE = "Ticket encryption is not enabled. Falling back to default behavior";
-
-
 
     /**
      * The cipher executor for ticket objects.
@@ -56,19 +55,13 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
-
         final Ticket ticket = this.getTicket(ticketId);
-
         if (ticket == null) {
             return null;
         }
-
         if (!clazz.isAssignableFrom(ticket.getClass())) {
-            throw new ClassCastException("Ticket [" + ticket.getId()
-                    + " is of type " + ticket.getClass()
-                    + " when we were expecting " + clazz);
+            throw new ClassCastException("Ticket [" + ticket.getId() + " is of type " + ticket.getClass() + " when we were expecting " + clazz);
         }
-
         return (T) ticket;
     }
 
@@ -78,8 +71,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return getTickets().stream().filter(TicketGrantingTicket.class::isInstance).count();
         } catch (final Exception t) {
             LOGGER.trace("sessionCount() operation is not implemented by the ticket registry instance [{}]. "
-                            + "Message is: [{}] Returning unknown as [{}]",
-                    this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+                + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
     }
@@ -90,8 +82,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             return getTickets().stream().filter(ServiceTicket.class::isInstance).count();
         } catch (final Exception t) {
             LOGGER.trace("serviceTicketCount() operation is not implemented by the ticket registry instance [{}]. "
-                            + "Message is: [{}] Returning unknown as [{}]",
-                    this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
+                + "Message is: [{}] Returning unknown as [{}]", this.getClass().getName(), t.getMessage(), Long.MIN_VALUE);
             return Long.MIN_VALUE;
         }
     }
@@ -99,34 +90,27 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     @Override
     public int deleteTicket(final String ticketId) {
         final AtomicInteger count = new AtomicInteger(0);
-
         if (StringUtils.isBlank(ticketId)) {
             return count.intValue();
         }
-
         final Ticket ticket = getTicket(ticketId);
         if (ticket == null) {
             return count.intValue();
         }
-
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Removing children of ticket [{}] from the registry.", ticket.getId());
             final TicketGrantingTicket tgt = (TicketGrantingTicket) ticket;
             count.addAndGet(deleteChildren(tgt));
-
             if (ticket instanceof ProxyGrantingTicket) {
                 deleteProxyGrantingTicketFromParent((ProxyGrantingTicket) ticket);
             } else {
                 deleteLinkedProxyGrantingTickets(count, tgt);
             }
         }
-
         LOGGER.debug("Removing ticket [{}] from the registry.", ticket);
-
         if (deleteSingleTicket(ticketId)) {
             count.incrementAndGet();
         }
-
         return count.intValue();
     }
 
@@ -149,7 +133,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
     protected int deleteTickets(final Stream<String> tickets) {
         return tickets.mapToInt(this::deleteTicket).sum();
     }
-    
+
     private void deleteLinkedProxyGrantingTickets(final AtomicInteger count, final TicketGrantingTicket tgt) {
         final Set<String> pgts = new LinkedHashSet<>(tgt.getProxyGrantingTickets().keySet());
         final boolean hasPgts = !pgts.isEmpty();
@@ -173,10 +157,8 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticket the ticket
      * @return the count of tickets that were removed including child tickets and zero if the ticket was not deleted
      */
-
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         final AtomicInteger count = new AtomicInteger(0);
-
         // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
@@ -189,7 +171,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 }
             });
         }
-
         return count.intValue();
     }
 
@@ -200,10 +181,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @return true/false
      */
     public abstract boolean deleteSingleTicket(String ticketId);
-
-    public void setCipherExecutor(final CipherExecutor cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
-    }
 
     /**
      * Encode ticket id into a SHA-512.
@@ -235,12 +212,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             LOGGER.trace(MESSAGE);
             return ticket;
         }
-
         if (ticket == null) {
             LOGGER.debug("Ticket passed is null and cannot be encoded");
             return null;
         }
-
         LOGGER.debug("Encoding ticket [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
@@ -261,22 +236,17 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
                 LOGGER.trace(MESSAGE);
                 return result;
             }
-
             if (result == null) {
                 LOGGER.warn("Ticket passed is null and cannot be decoded");
                 return null;
             }
             if (!result.getClass().isAssignableFrom(EncodedTicket.class)) {
-                LOGGER.warn("Ticket passed is not an encoded ticket type; rather it's a [{}], no decoding is necessary.",
-                        result.getClass().getSimpleName());
+                LOGGER.warn("Ticket passed is not an encoded ticket type; rather it's a [{}], no decoding is necessary.", result.getClass().getSimpleName());
                 return result;
             }
-
             LOGGER.debug("Attempting to decode [{}]", result);
             final EncodedTicket encodedTicket = (EncodedTicket) result;
-
-            final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(
-                    encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
+            final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
             LOGGER.debug("Decoded ticket to [{}]", ticket);
             return ticket;
         } catch (final Exception e) {
@@ -295,16 +265,10 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
             LOGGER.trace(MESSAGE);
             return items;
         }
-
-        return items
-                .stream()
-                .map(this::decodeTicket)
-                .collect(Collectors.toSet());
+        return items.stream().map(this::decodeTicket).collect(Collectors.toSet());
     }
 
     protected boolean isCipherExecutorEnabled() {
         return this.cipherExecutor != null && this.cipherExecutor.isEnabled();
     }
-
-
 }

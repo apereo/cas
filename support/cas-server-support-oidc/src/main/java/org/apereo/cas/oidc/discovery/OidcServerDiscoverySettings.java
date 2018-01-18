@@ -7,6 +7,7 @@ import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import java.util.List;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link OidcServerDiscoverySettings}.
@@ -16,6 +17,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class OidcServerDiscoverySettings {
 
     @JsonProperty("scopes_supported")
@@ -54,10 +56,6 @@ public class OidcServerDiscoverySettings {
         this.casProperties = casProperties;
     }
 
-    public void setIntrospectionSupportedAuthenticationMethods(final List<String> introspectionSupportedAuthenticationMethods) {
-        this.introspectionSupportedAuthenticationMethods = introspectionSupportedAuthenticationMethods;
-    }
-
     @JsonProperty("authorization_endpoint")
     public String getAuthorizationEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL);
@@ -91,33 +89,5 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("introspection_endpoint")
     public String getIntrospectionEndpoint() {
         return this.serverPrefix.concat('/' + OidcConstants.BASE_OIDC_URL + '/' + OidcConstants.INTROSPECTION_URL);
-    }
-
-    public void setScopesSupported(final List<String> scopesSupported) {
-        this.scopesSupported = scopesSupported;
-    }
-
-    public void setResponseTypesSupported(final List<String> responseTypesSupported) {
-        this.responseTypesSupported = responseTypesSupported;
-    }
-
-    public void setSubjectTypesSupported(final List<String> supportedSubjectResponseTypes) {
-        this.subjectTypesSupported = supportedSubjectResponseTypes;
-    }
-
-    public void setClaimTypesSupported(final List<String> claimTypesSupported) {
-        this.claimTypesSupported = claimTypesSupported;
-    }
-
-    public void setClaimsSupported(final List<String> claimsSupported) {
-        this.claimsSupported = claimsSupported;
-    }
-
-    public void setGrantTypesSupported(final List<String> grantTypesSupported) {
-        this.grantTypesSupported = grantTypesSupported;
-    }
-
-    public void setIdTokenSigningAlgValuesSupported(final List<String> idTokenSigningAlgValuesSupported) {
-        this.idTokenSigningAlgValuesSupported = idTokenSigningAlgValuesSupported;
     }
 }

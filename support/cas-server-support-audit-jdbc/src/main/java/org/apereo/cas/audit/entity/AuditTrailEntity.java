@@ -8,6 +8,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.time.ZonedDateTime;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link AuditTrailEntity} that represents the audit table.
@@ -19,6 +20,7 @@ import lombok.Getter;
 @Entity(name = "COM_AUDIT_TRAIL")
 @Slf4j
 @Getter
+@Setter
 public class AuditTrailEntity {
 
     /**
@@ -60,39 +62,7 @@ public class AuditTrailEntity {
         return this.id;
     }
 
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setUser(final String user) {
-        this.user = user;
-    }
-
-    public void setClientIp(final String clientIp) {
-        this.clientIp = clientIp;
-    }
-
-    public void setServerIp(final String serverIp) {
-        this.serverIp = serverIp;
-    }
-
-    public void setResource(final String resource) {
-        this.resource = resource;
-    }
-
-    public void setAction(final String action) {
-        this.action = action;
-    }
-
-    public void setApplicationCode(final String applicationCode) {
-        this.applicationCode = applicationCode;
-    }
-
     public ZonedDateTime getDate() {
         return this.date;
-    }
-
-    public void setDate(final ZonedDateTime date) {
-        this.date = date;
     }
 }

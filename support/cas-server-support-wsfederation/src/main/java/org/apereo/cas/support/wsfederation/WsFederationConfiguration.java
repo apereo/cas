@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This class gathers configuration information for the WS Federation Identity Provider.
@@ -26,6 +27,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class WsFederationConfiguration implements Serializable {
 
     private static final long serialVersionUID = 2310859477512242659L;
@@ -80,10 +82,6 @@ public class WsFederationConfiguration implements Serializable {
         return StringUtils.isBlank(this.name) ? getClass().getSimpleName() : this.name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public void initialize() {
         this.signingCertificateResources.stream().forEach(Unchecked.consumer(r -> {
             try {
@@ -94,42 +92,6 @@ public class WsFederationConfiguration implements Serializable {
             }
         }));
         createSigningWallet(this.signingCertificateResources);
-    }
-
-    /**
-     * sets the identity of the IdP.
-     *
-     * @param identityAttribute the identity
-     */
-    public void setIdentityAttribute(final String identityAttribute) {
-        this.identityAttribute = identityAttribute;
-    }
-
-    /**
-     * sets the identity provider identifier.
-     *
-     * @param identityProviderIdentifier the identifier.
-     */
-    public void setIdentityProviderIdentifier(final String identityProviderIdentifier) {
-        this.identityProviderIdentifier = identityProviderIdentifier;
-    }
-
-    /**
-     * sets the identity provider url.
-     *
-     * @param identityProviderUrl the url
-     */
-    public void setIdentityProviderUrl(final String identityProviderUrl) {
-        this.identityProviderUrl = identityProviderUrl;
-    }
-
-    /**
-     * sets the relying party identifier.
-     *
-     * @param relyingPartyIdentifier the identifier
-     */
-    public void setRelyingPartyIdentifier(final String relyingPartyIdentifier) {
-        this.relyingPartyIdentifier = relyingPartyIdentifier;
     }
 
     /**
@@ -163,16 +125,8 @@ public class WsFederationConfiguration implements Serializable {
         createSigningWallet(this.signingCertificateResources);
     }
 
-    public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
-        this.signingCertificateResources = signingCertificateResources;
-    }
-
     public boolean isAutoRedirect() {
         return autoRedirect;
-    }
-
-    public void setAutoRedirect(final boolean autoRedirect) {
-        this.autoRedirect = autoRedirect;
     }
 
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
@@ -189,15 +143,6 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     /**
-     * sets the tolerance of the validity of the timestamp token.
-     *
-     * @param tolerance the tolerance in milliseconds
-     */
-    public void setTolerance(final long tolerance) {
-        this.tolerance = tolerance;
-    }
-
-    /**
      * gets the attributeMutator.
      *
      * @return an attributeMutator
@@ -206,41 +151,16 @@ public class WsFederationConfiguration implements Serializable {
         return this.attributeMutator;
     }
 
-    /**
-     * sets the attributeMutator.
-     *
-     * @param attributeMutator an attributeMutator
-     */
-    public void setAttributeMutator(final WsFederationAttributeMutator attributeMutator) {
-        this.attributeMutator = attributeMutator;
-    }
-
     public WsFedPrincipalResolutionAttributesType getAttributesType() {
         return this.attributesType;
-    }
-
-    public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
-        this.attributesType = attributesType;
     }
 
     public Resource getEncryptionPrivateKey() {
         return encryptionPrivateKey;
     }
 
-    public void setEncryptionPrivateKey(final Resource encryptionPrivateKey) {
-        this.encryptionPrivateKey = encryptionPrivateKey;
-    }
-
     public Resource getEncryptionCertificate() {
         return encryptionCertificate;
-    }
-
-    public void setEncryptionCertificate(final Resource encryptionCertificate) {
-        this.encryptionCertificate = encryptionCertificate;
-    }
-
-    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
-        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
     }
 
     /**

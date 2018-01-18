@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 import java.net.URI;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategy}.
@@ -20,6 +21,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -2407494148882123062L;
@@ -83,14 +85,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.getDelegatedAuthenticationPolicy();
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public void setGroovyScript(final String groovyScript) {
-        this.groovyScript = groovyScript;
     }
 
     private void buildGroovyAccessStrategyInstanceIfNeeded() {

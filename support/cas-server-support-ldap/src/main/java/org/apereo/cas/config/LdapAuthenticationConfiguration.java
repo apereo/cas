@@ -88,7 +88,7 @@ public class LdapAuthenticationConfiguration {
                 .stream()
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
-                    final Multimap<String, String> multiMapAttributes = 
+                    final Multimap<String, Object> multiMapAttributes =
                             CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
@@ -137,7 +137,7 @@ public class LdapAuthenticationConfiguration {
                         handler.setPasswordPolicyConfiguration(cfg);
                     }
 
-                    final Map<String, Collection<String>> attributes = CollectionUtils.wrap(multiMapAttributes);
+                    final Map<String, Object> attributes = CollectionUtils.wrap(multiMapAttributes);
                     handler.setPrincipalAttributeMap(attributes);
 
                     LOGGER.debug("Initializing LDAP authentication handler for [{}]", l.getLdapUrl());
@@ -180,7 +180,7 @@ public class LdapAuthenticationConfiguration {
 
     private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
                                                                                   final Authenticator authenticator,
-                                                                                  final Multimap<String, String> attributes) {
+                                                                                  final Multimap<String, Object> attributes) {
         final LdapPasswordPolicyConfiguration cfg =
             new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();
