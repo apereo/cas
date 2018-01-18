@@ -106,7 +106,8 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
-                                                                                                        final String authorityValidationRegEx, final boolean authorityValidationRegExCaseSensitive) throws Exception {
+                                                                                                        final String authorityValidationRegEx,
+                                                                                                        final boolean authorityValidationRegExCaseSensitive) {
         final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
             authorityValidationRegExCaseSensitive).getObject();
         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
