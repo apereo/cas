@@ -17,7 +17,6 @@ import org.jose4j.jws.JsonWebSignature;
 
 import javax.crypto.Cipher;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -199,12 +198,9 @@ public class EncodingUtils {
      * @param encoding the encoding
      * @return the encoded value
      */
+    @SneakyThrows
     public static String urlEncode(final String value, final String encoding) {
-        try {
-            return URLEncoder.encode(value, encoding);
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return URLEncoder.encode(value, encoding);
     }
 
     /**
@@ -213,12 +209,9 @@ public class EncodingUtils {
      * @param value the value to decode
      * @return the decoded value
      */
+    @SneakyThrows
     public static String urlDecode(final String value) {
-        try {
-            return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
-        } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return URLDecoder.decode(value, StandardCharsets.UTF_8.name());
     }
 
 
@@ -239,23 +232,20 @@ public class EncodingUtils {
      * @param signingKey the signing key
      * @return the byte [ ]
      */
+    @SneakyThrows
     public static byte[] verifyJwsSignature(final Key signingKey, final byte[] value) {
-        try {
-            final String asString = new String(value, StandardCharsets.UTF_8);
-            final JsonWebSignature jws = new JsonWebSignature();
-            jws.setCompactSerialization(asString);
-            jws.setKey(signingKey);
+        final String asString = new String(value, StandardCharsets.UTF_8);
+        final JsonWebSignature jws = new JsonWebSignature();
+        jws.setCompactSerialization(asString);
+        jws.setKey(signingKey);
 
-            final boolean verified = jws.verifySignature();
-            if (verified) {
-                final String payload = jws.getPayload();
-                LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
-                return EncodingUtils.decodeBase64(payload);
-            }
-            return null;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final boolean verified = jws.verifySignature();
+        if (verified) {
+            final String payload = jws.getPayload();
+            LOGGER.trace("Successfully decoded value. Result in Base64-encoding is [{}]", payload);
+            return EncodingUtils.decodeBase64(payload);
         }
+        return null;
     }
 
 

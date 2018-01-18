@@ -14,7 +14,6 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.EncodingUtils;
 
-import java.io.IOException;
 import java.time.ZonedDateTime;
 
 import lombok.ToString;
