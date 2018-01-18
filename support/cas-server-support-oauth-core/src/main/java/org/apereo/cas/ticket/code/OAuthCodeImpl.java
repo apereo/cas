@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.code;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -34,6 +35,7 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue(OAuthCode.PREFIX)
 @Slf4j
 @NoArgsConstructor
+@Getter
 public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     private static final long serialVersionUID = -8072724186202305800L;
@@ -89,12 +91,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     public boolean isFromNewLogin() {
         return true;
     }
-
-    @Override
-    public Service getService() {
-        return this.service;
-    }
-
+    
     @Override
     public boolean isValidFor(final Service serviceToValidate) {
         update();
@@ -104,16 +101,6 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     @Override
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         throw new UnsupportedOperationException("No PGT grant is available in OAuth");
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return this.authentication;
-    }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 
     @Override

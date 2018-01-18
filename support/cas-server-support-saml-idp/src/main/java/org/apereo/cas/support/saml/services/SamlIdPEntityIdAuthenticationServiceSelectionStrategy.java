@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
@@ -17,10 +18,9 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
-
-
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
@@ -56,10 +56,5 @@ public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements Au
         final Optional<URIBuilder.BasicNameValuePair> param = builder.getQueryParams().stream()
                 .filter(p -> p.getName().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID)).findFirst();
         return param;
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
     }
 }

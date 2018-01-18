@@ -75,19 +75,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             recordSubmissionFailure(request);
         }
     }
-
-    protected double getThresholdRate() {
-        return this.thresholdRate;
-    }
-
-    protected int getFailureThreshold() {
-        return this.failureThreshold;
-    }
-
-    protected int getFailureRangeInSeconds() {
-        return this.failureRangeInSeconds;
-    }
-
+    
     /**
      * Record throttling event.
      *

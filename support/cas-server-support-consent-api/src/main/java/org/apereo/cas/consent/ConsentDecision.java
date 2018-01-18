@@ -55,24 +55,4 @@ public class ConsentDecision {
     @Lob
     @Column(name = "attributes", length = Integer.MAX_VALUE)
     private String attributes;
-
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
-    }
-
-    public ChronoUnit getReminderTimeUnit() {
-        return reminderTimeUnit;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public ConsentOptions getOptions() {
-        return options;
-    }
-
-    public Long getReminder() {
-        return reminder;
-    }
 }

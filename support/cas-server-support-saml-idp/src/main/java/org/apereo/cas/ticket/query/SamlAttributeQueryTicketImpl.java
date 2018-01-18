@@ -101,11 +101,6 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     }
 
     @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
-    }
-
-    @Override
     public String getPrefix() {
         return SamlAttributeQueryTicket.PREFIX;
     }

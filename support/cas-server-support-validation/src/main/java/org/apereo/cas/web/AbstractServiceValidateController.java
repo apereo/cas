@@ -1,6 +1,7 @@
 package org.apereo.cas.web;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -70,6 +71,7 @@ import java.util.Set;
 @Slf4j
 @Setter
 @AllArgsConstructor
+@Getter
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
 
     private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
@@ -421,15 +423,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
     }
-
-    public View getSuccessView() {
-        return successView;
-    }
-
-    public View getFailureView() {
-        return failureView;
-    }
-
+    
     /**
      * Add validation specification.
      *

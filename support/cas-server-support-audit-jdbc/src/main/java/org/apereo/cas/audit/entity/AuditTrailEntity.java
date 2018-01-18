@@ -57,12 +57,4 @@ public class AuditTrailEntity {
     public AuditTrailEntity() {
         this.id = System.currentTimeMillis();
     }
-
-    public long getId() {
-        return this.id;
-    }
-
-    public ZonedDateTime getDate() {
-        return this.date;
-    }
 }

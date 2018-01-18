@@ -44,12 +44,4 @@ public class GeoLocationResponse {
     public String build() {
         return this.addresses.stream().collect(Collectors.joining(","));
     }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
 }

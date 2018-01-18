@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -33,6 +34,7 @@ import java.util.List;
  * @since 3.1
  */
 @Slf4j
+@Getter
 public class InitialFlowSetupAction extends AbstractAction {
 
     private final CasConfigurationProperties casProperties;
@@ -126,9 +128,5 @@ public class InitialFlowSetupAction extends AbstractAction {
             LOGGER.debug("TGC cookie path is set to [{}] and path [{}]", this.ticketGrantingTicketCookieGenerator.getCookieDomain(),
                     this.ticketGrantingTicketCookieGenerator.getCookiePath());
         }
-    }
-
-    public ServicesManager getServicesManager() {
-        return servicesManager;
     }
 }

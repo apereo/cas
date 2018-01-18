@@ -33,8 +33,4 @@ public class CasSurrogateAuthenticationSuccessfulEvent extends AbstractCasEvent 
         this.principal = principal;
         this.surrogate = surrogate;
     }
-
-    public Principal getPrincipal() {
-        return principal;
-    }
 }

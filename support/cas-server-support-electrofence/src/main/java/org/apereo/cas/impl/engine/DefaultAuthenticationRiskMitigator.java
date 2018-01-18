@@ -1,5 +1,7 @@
 package org.apereo.cas.impl.engine;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
@@ -18,17 +20,10 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.1.0
  */
 @Slf4j
+@Getter
+@AllArgsConstructor
 public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMitigator {
     private final AuthenticationRiskContingencyPlan contingencyPlan;
-
-    public DefaultAuthenticationRiskMitigator(final AuthenticationRiskContingencyPlan contingencyPlan) {
-        this.contingencyPlan = contingencyPlan;
-    }
-
-    @Override
-    public AuthenticationRiskContingencyPlan getContingencyPlan() {
-        return this.contingencyPlan;
-    }
 
     @Audit(action = "MITIGATE_RISKY_AUTHENTICATION", actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
             resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")

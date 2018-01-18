@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.cli;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
@@ -21,9 +22,8 @@ import java.util.regex.Pattern;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class CasCommandLineParser {
-
-
     private static final int WIDTH = 120;
 
     private final CommandLineParser parser;
@@ -217,10 +217,6 @@ public class CasCommandLineParser {
      */
     public boolean hasOption(final CommandLine line, final Option opt) {
         return line.hasOption(opt.getOpt());
-    }
-
-    public Options getOptions() {
-        return this.options;
     }
 
     /**

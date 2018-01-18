@@ -1,5 +1,6 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -33,6 +34,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
 public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials> extends AbstractPac4jAuthenticationHandler {
 
     /**
@@ -106,8 +108,4 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the authenticator
      */
     protected abstract Authenticator getAuthenticator(Credential credential);
-
-    public ProfileCreator getProfileCreator() {
-        return this.profileCreator;
-    }
 }
