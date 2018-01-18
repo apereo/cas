@@ -22,9 +22,6 @@ import lombok.Getter;
 public class DefaultResponse implements Response {
 
     /**
-     * Log instance.
-     */
-    /**
      * Pattern to detect unprintable ASCII characters.
      */
     private static final Pattern NON_PRINTABLE = Pattern.compile("[\\x00-\\x1F\\x7F]+");
