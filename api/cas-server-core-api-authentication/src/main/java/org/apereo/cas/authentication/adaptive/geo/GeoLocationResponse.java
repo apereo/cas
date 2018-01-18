@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link GeoLocationResponse} that represents a particular geo location
@@ -17,6 +18,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class GeoLocationResponse {
 
     private final Set<String> addresses = new ConcurrentSkipListSet<>();
@@ -47,15 +49,7 @@ public class GeoLocationResponse {
         return latitude;
     }
 
-    public void setLatitude(final double latitude) {
-        this.latitude = latitude;
-    }
-
     public double getLongitude() {
         return longitude;
-    }
-
-    public void setLongitude(final double longitude) {
-        this.longitude = longitude;
     }
 }

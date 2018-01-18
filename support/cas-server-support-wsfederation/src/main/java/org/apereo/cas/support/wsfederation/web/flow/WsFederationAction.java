@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -33,6 +34,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
@@ -43,6 +45,8 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
+@AllArgsConstructor
 public class WsFederationAction extends AbstractAction {
 
     private static final String LOCALE = "locale";
@@ -73,16 +77,6 @@ public class WsFederationAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
 
-    public WsFederationAction(final AuthenticationSystemSupport authenticationSystemSupport,
-                              final CentralAuthenticationService centralAuthenticationService,
-                              final Collection<WsFederationConfiguration> wsFederationConfiguration,
-                              final WsFederationHelper wsFederationHelper, final ServicesManager servicesManager) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.configuration = wsFederationConfiguration;
-        this.wsFederationHelper = wsFederationHelper;
-        this.servicesManager = servicesManager;
-    }
 
     /**
      * Executes the webflow action.
@@ -191,8 +185,7 @@ public class WsFederationAction extends AbstractAction {
                     configuration.getAttributeMutator().modifyAttributes(credential.getAttributes());
                 }
             } else {
-                LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier [{}] and IdP identifier [{}]",
-                    rpId, configuration.getIdentityProviderIdentifier());
+                LOGGER.warn("SAML assertions are blank or no longer valid based on RP identifier [{}] and IdP identifier [{}]", rpId, configuration.getIdentityProviderIdentifier());
                 final String url = getAuthorizationUrl(configuration) + rpId;
                 context.getFlowScope().put(PROVIDERURL, url);
                 LOGGER.warn("Created authentication url [{}] and returning error", url);
@@ -203,8 +196,7 @@ public class WsFederationAction extends AbstractAction {
             restoreRequestAttribute(request, session, LOCALE);
             restoreRequestAttribute(request, session, METHOD);
             LOGGER.debug("Creating final authentication result based on the given credential");
-            final AuthenticationResult authenticationResult =
-                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+            final AuthenticationResult authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
             WebUtils.putTicketGrantingTicketInScopes(context, this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult));
             LOGGER.info("Token validated and new [{}] created: [{}]", credential.getClass().getName(), credential);
@@ -229,8 +221,7 @@ public class WsFederationAction extends AbstractAction {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
-                relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties
-                    .WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
+                relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
             }
         }
         LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
@@ -266,6 +257,8 @@ public class WsFederationAction extends AbstractAction {
     /**
      * The Wsfed client passed to the webflow view layer.
      */
+    @Getter
+    @Setter
     public static class WsFedClient implements Serializable {
 
         private static final long serialVersionUID = 2733280849157146990L;
@@ -275,17 +268,5 @@ public class WsFederationAction extends AbstractAction {
         private String name;
 
         private String replyingPartyId;
-
-        public void setRedirectUrl(final String redirectUrl) {
-            this.redirectUrl = redirectUrl;
-        }
-
-        public void setName(final String name) {
-            this.name = name;
-        }
-
-        public void setReplyingPartyId(final String replyingPartyId) {
-            this.replyingPartyId = replyingPartyId;
-        }
     }
 }

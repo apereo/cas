@@ -1,12 +1,12 @@
 package org.apereo.cas.util;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import lombok.Setter;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -20,6 +20,7 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
  * @since 3.0.0
  */
 @Slf4j
+@Setter
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /**
@@ -82,9 +83,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
      *                              uniqueness across JVMs.
      * @since 4.1.0
      */
-    public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator,
-                                          final RandomStringGenerator randomStringGenerator,
-                                          final String suffix) {
+    public DefaultUniqueTicketIdGenerator(final NumericGenerator numericGenerator, final RandomStringGenerator randomStringGenerator, final String suffix) {
         this.randomStringGenerator = randomStringGenerator;
         this.numericGenerator = numericGenerator;
         setSuffix(suffix);
@@ -93,17 +92,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     @Override
     public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
-        return prefix + '-' + number + '-'
-            + this.randomStringGenerator.getNewString() + this.suffix;
-    }
-
-    /**
-     * Sets suffix.
-     *
-     * @param suffix the suffix
-     */
-    public void setSuffix(final String suffix) {
-        this.suffix = StringUtils.isNoneBlank(suffix) ? '-' + suffix : StringUtils.EMPTY;
+        return prefix + '-' + number + '-' + this.randomStringGenerator.getNewString() + this.suffix;
     }
 
     /**

@@ -8,9 +8,9 @@ import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
 import org.springframework.core.io.Resource;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import lombok.Setter;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -19,8 +19,9 @@ import java.security.Key;
  * @since 4.2
  */
 @Slf4j
+@Setter
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    
+
     private Key signingKey;
 
     /**
@@ -35,9 +36,8 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @param signingSecretKey the signing key
      */
     public AbstractCipherExecutor(final String signingSecretKey) {
-        setSigningKey(signingSecretKey);
+        configureSigningKey(signingSecretKey);
     }
-
 
     /**
      * Sign the array by first turning it into a base64 encoded string.
@@ -56,7 +56,7 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      *
      * @param signingSecretKey the signing secret key
      */
-    public void setSigningKey(final String signingSecretKey) {
+    public void configureSigningKey(final String signingSecretKey) {
         try {
             if (ResourceUtils.isFile(signingSecretKey) && ResourceUtils.doesResourceExist(signingSecretKey)) {
                 final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);

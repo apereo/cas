@@ -48,7 +48,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyMappedAttributeFilterMappedAttributesIsCaseInsensitive() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Multimap<String, String> mappedAttr = ArrayListMultimap.create();
+        final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));
 
@@ -91,7 +91,7 @@ public class RegisteredServiceAttributeReleasePolicyTests {
     @Test
     public void verifyAttributeFilterMappedAttributes() {
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy();
-        final Multimap<String, String> mappedAttr = ArrayListMultimap.create();
+        final Multimap<String, Object> mappedAttr = ArrayListMultimap.create();
         mappedAttr.put(ATTR_1, NEW_ATTR_1_VALUE);
 
         policy.setAllowedAttributes(CollectionUtils.wrap(mappedAttr));

@@ -8,6 +8,7 @@ import org.ldaptive.auth.AccountState;
 import org.ldaptive.auth.AuthenticationResponse;
 import java.util.List;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * The component supports both opt-in and opt-out warnings on a per-user basis.
@@ -17,6 +18,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapAccountStateHandler {
 
     private String warnAttributeName;
@@ -24,23 +26,7 @@ public class OptionalWarningLdapLdapAccountStateHandler extends DefaultLdapLdapA
     private String warningAttributeValue;
 
     private boolean displayWarningOnMatch;
-
-    public void setWarnAttributeName(final String warnAttributeName) {
-        this.warnAttributeName = warnAttributeName;
-    }
-
-    public void setWarningAttributeValue(final String warningAttributeValue) {
-        this.warningAttributeValue = warningAttributeValue;
-    }
-
-    public boolean isDisplayWarningOnMatch() {
-        return displayWarningOnMatch;
-    }
-
-    public void setDisplayWarningOnMatch(final boolean displayWarningOnMatch) {
-        this.displayWarningOnMatch = displayWarningOnMatch;
-    }
-
+    
     @Override
     protected void handleWarning(final AccountState.Warning warning, final AuthenticationResponse response,
                                  final LdapPasswordPolicyConfiguration configuration, final List<MessageDescriptor> messages) {

@@ -13,6 +13,7 @@ import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDate;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link U2FDeviceRegistration}.
@@ -25,6 +26,7 @@ import lombok.Getter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @Getter
+@Setter
 public class U2FDeviceRegistration {
 
     @org.springframework.data.annotation.Id
@@ -48,27 +50,11 @@ public class U2FDeviceRegistration {
         setId(System.currentTimeMillis());
     }
 
-    public void setRecord(final String record) {
-        this.record = record;
-    }
-
     public LocalDate getCreatedDate() {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDate createdDate) {
-        this.createdDate = createdDate;
-    }
-
     public long getId() {
         return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
     }
 }

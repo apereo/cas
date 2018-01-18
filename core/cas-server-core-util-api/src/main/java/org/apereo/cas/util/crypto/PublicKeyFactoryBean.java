@@ -9,6 +9,7 @@ import java.security.KeyFactory;
 import java.security.PublicKey;
 import java.security.spec.X509EncodedKeySpec;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * FactoryBean for creating a public key from a file.
@@ -20,6 +21,7 @@ import lombok.Getter;
 @Slf4j
 @ToString(callSuper = true)
 @Getter
+@Setter
 public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
 
     private Resource resource;
@@ -37,21 +39,9 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
             return factory.generatePublic(pubSpec);
         }
     }
-
+    
     @Override
     public Class getObjectType() {
         return PublicKey.class;
-    }
-
-    public Resource getResource() {
-        return this.resource;
-    }
-
-    public void setLocation(final Resource resource) {
-        this.resource = resource;
-    }
-
-    public void setAlgorithm(final String algorithm) {
-        this.algorithm = algorithm;
     }
 }

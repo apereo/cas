@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.URL;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link HttpMessage}.
@@ -17,6 +18,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class HttpMessage implements Serializable {
 
     private static final long serialVersionUID = 2015460875654586133L;
@@ -79,10 +81,6 @@ public class HttpMessage implements Serializable {
         return this.formatOutputMessageInternal(this.message);
     }
 
-    public void setContentType(final String type) {
-        this.contentType = type;
-    }
-
     public int getResponseCode() {
         return this.responseCode;
     }
@@ -100,9 +98,5 @@ public class HttpMessage implements Serializable {
             LOGGER.warn("Unable to encode URL", e);
         }
         return message;
-    }
-
-    public void setResponseCode(final int responseCode) {
-        this.responseCode = responseCode;
     }
 }

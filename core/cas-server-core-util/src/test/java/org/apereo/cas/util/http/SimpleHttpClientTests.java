@@ -3,6 +3,7 @@ package org.apereo.cas.util.http;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
 
 import javax.net.ssl.SSLContext;
@@ -14,6 +15,7 @@ import static org.junit.Assert.*;
 
 /**
  * Test cases for {@link SimpleHttpClient}.
+ *
  * @author Scott Battaglia
  * @since 3.1
  */
@@ -46,7 +48,7 @@ public class SimpleHttpClientTests {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(getFriendlyToAllSSLSocketFactory());
         clientFactory.setHostnameVerifier(new NoopHostnameVerifier());
-        clientFactory.setAcceptableCodes(new int[] {200, 403});
+        clientFactory.setAcceptableCodes(CollectionUtils.wrapList(200, 403));
         final SimpleHttpClient client = clientFactory.getObject();
         assertTrue(client.isValidEndPoint("https://wrong.host.badssl.com/"));
     }
@@ -57,13 +59,17 @@ public class SimpleHttpClientTests {
             public X509Certificate[] getAcceptedIssuers() {
                 return null;
             }
+
             @Override
-            public void checkClientTrusted(final X509Certificate[] certs, final String authType) {}
+            public void checkClientTrusted(final X509Certificate[] certs, final String authType) {
+            }
+
             @Override
-            public void checkServerTrusted(final X509Certificate[] certs, final String authType) {}
+            public void checkServerTrusted(final X509Certificate[] certs, final String authType) {
+            }
         };
         final SSLContext sc = SSLContext.getInstance("SSL");
-        sc.init(null, new TrustManager[] {trm}, null);
+        sc.init(null, new TrustManager[]{trm}, null);
         return new SSLConnectionSocketFactory(sc, new NoopHostnameVerifier());
     }
 }

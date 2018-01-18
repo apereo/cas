@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link WSFederationClaimsReleasePolicy}.
@@ -18,6 +19,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -2814928645221579489L;
@@ -38,10 +40,6 @@ public class WSFederationClaimsReleasePolicy extends AbstractRegisteredServiceAt
      */
     public WSFederationClaimsReleasePolicy(final Map<String, String> allowedAttributes) {
         setAllowedAttributes(allowedAttributes);
-    }
-
-    public void setAllowedAttributes(final Map<String, String> allowed) {
-        this.allowedAttributes = allowed;
     }
 
     @Override

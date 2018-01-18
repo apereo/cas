@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CasUserAccount}.
@@ -17,6 +18,7 @@ import lombok.Getter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @Getter
+@Setter
 public class CasUserAccount implements Serializable {
 
     private static final long serialVersionUID = 7579594722197541062L;
@@ -52,27 +54,11 @@ public class CasUserAccount implements Serializable {
 
     private LocalDate expirationDate;
 
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public void setAttributes(final Map<String, Object> attributes) {
-        this.attributes = attributes;
-    }
-
     public AccountStatus getStatus() {
         return status;
     }
 
-    public void setStatus(final AccountStatus status) {
-        this.status = status;
-    }
-
     public LocalDate getExpirationDate() {
         return expirationDate;
-    }
-
-    public void setExpirationDate(final LocalDate expirationDate) {
-        this.expirationDate = expirationDate;
     }
 }

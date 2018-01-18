@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import java.util.UUID;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is an {@link AbstractCasExpirationPolicy}
@@ -18,6 +19,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private static final long serialVersionUID = 8042104336580063690L;
@@ -26,10 +28,6 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     public AbstractCasExpirationPolicy() {
         this.name = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
-    }
-
-    public void setName(final String name) {
-        this.name = name;
     }
 
     @Override

@@ -5,6 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link CosmosDbDocument}.
@@ -15,6 +16,7 @@ import lombok.Getter;
 @Document
 @Slf4j
 @Getter
+@Setter
 public class CosmosDbDocument {
 
     @Id
@@ -24,16 +26,4 @@ public class CosmosDbDocument {
     private String partitionKey;
 
     private String body;
-
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public void setPartitionKey(final String partitionKey) {
-        this.partitionKey = partitionKey;
-    }
-
-    public void setBody(final String body) {
-        this.body = body;
-    }
 }
