@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,11 +27,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public final class CollectionUtils {
-
-
-    private CollectionUtils() {
-    }
+@UtilityClass
+public class CollectionUtils {
 
     /**
      * Converts the provided object into a collection

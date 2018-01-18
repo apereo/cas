@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -16,12 +17,11 @@ import java.util.List;
  * @since 4.2.0
  */
 @Slf4j
-public final class CoreValidationTestUtils {
+@UtilityClass
+public class CoreValidationTestUtils {
 
     private static final String[] CONST_NO_PRINCIPALS = new String[0];
-
-    private CoreValidationTestUtils() {}
-
+    
     public static Assertion getAssertion(final boolean fromNewLogin) {
         return getAssertion(fromNewLogin, CONST_NO_PRINCIPALS);
     }

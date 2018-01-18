@@ -18,13 +18,10 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @Slf4j
-public final class CoreAttributesTestUtils {
+public class CoreAttributesTestUtils {
 
     public static final String CONST_USERNAME = "test";
     private static final String CONST_TEST_URL = "https://google.com";
-    
-    private CoreAttributesTestUtils() {
-    }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
         return new DefaultPrincipalFactory().createPrincipal(name, attributes);

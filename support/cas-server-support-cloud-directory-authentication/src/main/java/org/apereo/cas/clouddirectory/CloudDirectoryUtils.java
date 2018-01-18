@@ -10,6 +10,7 @@ import com.amazonaws.services.clouddirectory.model.ObjectReference;
 import com.amazonaws.services.clouddirectory.model.RangeMode;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValueRange;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryProperties;
 
@@ -20,10 +21,8 @@ import org.apereo.cas.configuration.model.support.clouddirectory.CloudDirectoryP
  * @since 5.2.0
  */
 @Slf4j
-public final class CloudDirectoryUtils {
-    
-    private CloudDirectoryUtils() {
-    }
+@UtilityClass
+public class CloudDirectoryUtils {
 
     /**
      * Gets attribute key value by name.

@@ -3,6 +3,7 @@ package org.apereo.cas.util;
 import com.unboundid.ldap.sdk.AddRequest;
 import com.unboundid.ldap.sdk.Attribute;
 import com.unboundid.ldap.sdk.LDAPConnection;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.ldaptive.AttributeModification;
 import org.ldaptive.AttributeModificationType;
@@ -31,8 +32,8 @@ import java.util.stream.Collectors;
  * @since 4.0.0
  */
 @Slf4j
-public final class LdapTestUtils {
-
+@UtilityClass
+public class LdapTestUtils {
 
     /**
      * Placeholder for base DN in LDIF files.
@@ -43,12 +44,6 @@ public final class LdapTestUtils {
      * System-wide newline character string.
      */
     private static final String NEWLINE = System.getProperty("line.separator");
-
-    /**
-     * Private constructor of utility class.
-     */
-    private LdapTestUtils() {
-    }
 
     /**
      * Reads an LDIF into a collection of LDAP entries. The components performs a simple property

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
@@ -24,7 +25,8 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Slf4j
-public final class RestResourceUtils {
+@UtilityClass
+public class RestResourceUtils {
 
     private static ObjectMapper MAPPER;
 
@@ -35,9 +37,6 @@ public final class RestResourceUtils {
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
             .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
-
-    private RestResourceUtils() {
     }
 
     /**

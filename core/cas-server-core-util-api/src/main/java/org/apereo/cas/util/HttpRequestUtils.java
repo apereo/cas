@@ -25,16 +25,11 @@ import java.util.Objects;
  */
 
 @Slf4j
-public final class HttpRequestUtils {
+public class HttpRequestUtils {
     /**
      * Constant representing the request header for user agent.
      */
     public static final String USER_AGENT_HEADER = "user-agent";
-
-
-
-    private HttpRequestUtils() {
-    }
 
     /**
      * Gets http servlet request from request attributes.

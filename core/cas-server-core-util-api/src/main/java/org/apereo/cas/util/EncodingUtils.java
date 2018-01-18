@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
@@ -33,17 +34,13 @@ import java.util.Map;
  */
 
 @Slf4j
-public final class EncodingUtils {
+@UtilityClass
+public class EncodingUtils {
 
     /**
      * JSON web key parameter that identifies the key..
      */
     public static final String JSON_WEB_KEY = "k";
-
-
-
-    private EncodingUtils() {
-    }
 
     /**
      * Hex decode string.
