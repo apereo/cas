@@ -2,6 +2,7 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +32,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of ={"initToken", "nextToken", "principal"})
 public class SpnegoCredential implements Credential, Serializable {
 
     /**
@@ -97,24 +99,7 @@ public class SpnegoCredential implements Credential, Serializable {
         return IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !obj.getClass().equals(this.getClass())) {
-            return false;
-        }
-        final SpnegoCredential c = (SpnegoCredential) obj;
-        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal()) && Arrays.equals(this.getNextToken(), c.getNextToken());
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = super.hashCode();
-        if (this.principal != null) {
-            hash = this.principal.hashCode();
-        }
-        return new HashCodeBuilder().append(this.getInitToken()).append(this.getNextToken()).append(hash).toHashCode();
-    }
-
+    
     /**
      * Read the contents of the source into a byte array.
      *
