@@ -62,15 +62,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     }
 
     /**
-     * Gets the authentication date.
-     *
-     * @return Authentication date.
-     */
-    public ZonedDateTime getAuthenticationDate() {
-        return this.authenticationDate;
-    }
-
-    /**
      * Sets the authentication date and returns this instance.
      *
      * @param d Authentication date.
@@ -81,16 +72,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder setAuthenticationDate(final ZonedDateTime d) {
         this.authenticationDate = d;
         return this;
-    }
-
-    /**
-     * Gets the authenticated principal.
-     *
-     * @return Principal.
-     */
-    @Override
-    public Principal getPrincipal() {
-        return this.principal;
     }
 
     @Override
@@ -110,15 +91,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder setPrincipal(final Principal p) {
         this.principal = p;
         return this;
-    }
-
-    /**
-     * Gets the list of credentials that were attempted to be authenticated.
-     *
-     * @return Non-null list of credentials that attempted authentication.
-     */
-    public List<CredentialMetaData> getCredentials() {
-        return this.credentials;
     }
 
     /**
