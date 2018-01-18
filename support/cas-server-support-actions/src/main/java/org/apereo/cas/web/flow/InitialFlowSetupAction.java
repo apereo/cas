@@ -37,12 +37,12 @@ public class InitialFlowSetupAction extends AbstractAction {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InitialFlowSetupAction.class);
 
-    private final CasConfigurationProperties casProperties;
-    private final ServicesManager servicesManager;
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    private final CookieRetrievingCookieGenerator warnCookieGenerator;
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private final List<ArgumentExtractor> argumentExtractors;
+    protected CasConfigurationProperties casProperties;
+    protected ServicesManager servicesManager;
+    protected AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    protected CookieRetrievingCookieGenerator warnCookieGenerator;
+    protected CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+    protected List<ArgumentExtractor> argumentExtractors;
 
     public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
                                   final ServicesManager servicesManager,
@@ -66,7 +66,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         return success();
     }
 
-    private void configureWebflowContextForService(final RequestContext context) {
+    protected void configureWebflowContextForService(final RequestContext context) {
         final Service service = WebUtils.getService(this.argumentExtractors, context);
         if (service != null) {
             LOGGER.debug("Placing service in context scope: [{}]", service.getId());
@@ -96,7 +96,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putService(context, service);
     }
 
-    private void configureWebflowContext(final RequestContext context) {
+    protected void configureWebflowContext(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request));
         WebUtils.putGoogleAnalyticsTrackingIdIntoFlowScope(context, casProperties.getGoogleAnalytics().getGoogleAnalyticsTrackingId());
@@ -110,7 +110,7 @@ public class InitialFlowSetupAction extends AbstractAction {
         WebUtils.putRememberMeAuthenticationEnabled(context, casProperties.getTicket().getTgt().getRememberMe().isEnabled());
     }
 
-    private void configureCookieGenerators(final RequestContext context) {
+    protected void configureCookieGenerators(final RequestContext context) {
         final String contextPath = context.getExternalContext().getContextPath();
         final String cookiePath = StringUtils.isNotBlank(contextPath) ? contextPath + '/' : "/";
 
