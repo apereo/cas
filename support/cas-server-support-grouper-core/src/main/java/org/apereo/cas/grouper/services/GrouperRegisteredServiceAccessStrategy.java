@@ -1,9 +1,9 @@
 package org.apereo.cas.grouper.services;
 
 import edu.internet2.middleware.grouperClient.ws.beans.WsGetGroupsResult;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.grouper.GrouperFacade;
 import org.apereo.cas.grouper.GrouperGroupField;
 import org.apereo.cas.services.TimeBasedRegisteredServiceAccessStrategy;
@@ -25,6 +25,8 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
+@EqualsAndHashCode(callSuper = true)
 public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -3557247044344135788L;
@@ -56,29 +58,5 @@ public class GrouperRegisteredServiceAccessStrategy extends TimeBasedRegisteredS
         LOGGER.debug("Adding [{}] under attribute name [{}] to collection of CAS attributes", grouperGroups, GROUPER_GROUPS_ATTRIBUTE_NAME);
         allAttributes.put(GROUPER_GROUPS_ATTRIBUTE_NAME, grouperGroups);
         return super.doPrincipalAttributesAllowServiceAccess(principal, allAttributes);
-    }
-
-    public GrouperGroupField getGroupField() {
-        return this.groupField;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GrouperRegisteredServiceAccessStrategy rhs = (GrouperRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.groupField, rhs.groupField).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(groupField).toHashCode();
     }
 }
