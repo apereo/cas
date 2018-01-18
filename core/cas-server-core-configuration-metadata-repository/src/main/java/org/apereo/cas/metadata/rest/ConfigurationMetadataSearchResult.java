@@ -1,10 +1,9 @@
 package org.apereo.cas.metadata.rest;
 
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
@@ -29,6 +28,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"order", "group"})
 public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
 
     private static final long serialVersionUID = 7767348341760984539L;
@@ -99,25 +99,6 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
         return propDescription;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ConfigurationMetadataSearchResult rhs = (ConfigurationMetadataSearchResult) obj;
-        return new EqualsBuilder().append(this.order, rhs.order).append(getName(), rhs.getName()).append(this.group, rhs.group).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(order).append(getName()).append(group).toHashCode();
-    }
 
     @Override
     public int compareTo(final ConfigurationMetadataSearchResult o) {
