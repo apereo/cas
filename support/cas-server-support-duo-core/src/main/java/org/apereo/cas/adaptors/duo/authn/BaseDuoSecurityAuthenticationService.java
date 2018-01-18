@@ -36,8 +36,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-
+    
     /**
      * Duo Properties.
      */

@@ -4,9 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import org.springframework.util.Assert;
 import java.time.ZoneOffset;
@@ -24,14 +23,11 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @NoArgsConstructor
+@EqualsAndHashCode
 public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = -5704993954986738308L;
 
-    /**
-     * The Logger instance for this class. Using a transient instance field for the Logger doesn't work, on object
-     * deserialization the field is null.
-     */
     @JsonProperty("timeToLive")
     private long timeToKillInSeconds;
 
@@ -92,26 +88,6 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
     @Override
     public Long getTimeToIdle() {
         return 0L;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final MultiTimeUseOrTimeoutExpirationPolicy rhs = (MultiTimeUseOrTimeoutExpirationPolicy) obj;
-        return new EqualsBuilder().append(this.timeToKillInSeconds, rhs.timeToKillInSeconds).append(this.numberOfUses, rhs.numberOfUses).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(timeToKillInSeconds).append(numberOfUses).toHashCode();
     }
 
     /**
