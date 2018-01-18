@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.resolver.SamlRegisteredServiceMetadataResolver;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
