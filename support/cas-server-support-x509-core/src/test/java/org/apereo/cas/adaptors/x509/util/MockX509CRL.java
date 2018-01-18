@@ -61,12 +61,7 @@ public class MockX509CRL extends X509CRL {
     public Principal getIssuerDN() {
         return this.issuer;
     }
-
-    @Override
-    public Date getNextUpdate() {
-        return this.nextUpdate;
-    }
-
+    
     @Override
     public Set<String> getNonCriticalExtensionOIDs() {
         return null;
@@ -105,11 +100,6 @@ public class MockX509CRL extends X509CRL {
     @Override
     public byte[] getTBSCertList() {
         return null;
-    }
-
-    @Override
-    public Date getThisUpdate() {
-        return this.thisUpdate;
     }
 
     @Override

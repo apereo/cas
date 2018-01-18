@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.authentication.adaptive;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
@@ -12,6 +13,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @since 5.1.0
  */
 @Slf4j
+@Getter
 public class CasRiskBasedAuthenticationEvaluationStartedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 748568299766263298L;
@@ -32,13 +34,5 @@ public class CasRiskBasedAuthenticationEvaluationStartedEvent extends AbstractCa
         super(source);
         this.authentication = authentication;
         this.service = service;
-    }
-
-    public Authentication getAuthentication() {
-        return authentication;
-    }
-
-    public RegisteredService getService() {
-        return service;
     }
 }

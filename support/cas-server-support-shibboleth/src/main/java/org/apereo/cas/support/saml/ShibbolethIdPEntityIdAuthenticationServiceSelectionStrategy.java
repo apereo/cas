@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,10 +23,9 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@Getter
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
-
-
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
@@ -90,10 +90,5 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             LOGGER.error(e.getMessage(), e);
         }
         return Optional.empty();
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
     }
 }

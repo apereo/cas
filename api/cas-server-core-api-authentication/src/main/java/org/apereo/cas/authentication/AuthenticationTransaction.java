@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
  * @since 4.2.0
  */
 @Slf4j
+@Getter
 public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;
@@ -36,11 +38,7 @@ public class AuthenticationTransaction implements Serializable {
         this.credentials = credentials;
         this.service = service;
     }
-
-    public Collection<Credential> getCredentials() {
-        return this.credentials;
-    }
-
+    
     /**
      * Wrap credentials into an authentication transaction, as a factory method,
      * and return the final result.
@@ -62,10 +60,6 @@ public class AuthenticationTransaction implements Serializable {
      */
     public static AuthenticationTransaction wrap(final Credential... credentials) {
         return wrap(null, credentials);
-    }
-
-    public Service getService() {
-        return this.service;
     }
 
     /**
