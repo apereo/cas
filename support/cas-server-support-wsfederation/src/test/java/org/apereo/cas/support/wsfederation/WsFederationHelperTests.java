@@ -116,7 +116,9 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     @Test
     public void verifyValidateSignatureModifiedSignature() {
         final String wresult = testTokens.get("badTokenModifiedSignature");
-        final Pair<Assertion, WsFederationConfiguration> assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+        final Pair<Assertion, WsFederationConfiguration> assertion =
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
+                wsFederationConfigurations);
         final boolean result = wsFederationHelper.validateSignature(assertion);
         assertFalse("testValidateSignatureModifiedSignature() - False", result);
     }

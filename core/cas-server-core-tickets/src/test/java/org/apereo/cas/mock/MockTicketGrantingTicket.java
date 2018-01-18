@@ -87,7 +87,8 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
+    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+                                            final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         update();
         return new MockServiceTicket(id, service, this);
     }
