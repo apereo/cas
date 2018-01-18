@@ -1,11 +1,13 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.VfsResource;
 
 import java.io.File;
 import java.net.URL;
 import java.time.ZonedDateTime;
+
 
 /**
  * Class that exposes the CAS version. Fetches the "Implementation-Version"
@@ -14,19 +16,9 @@ import java.time.ZonedDateTime;
  * @author Dmitriy Kopylenko
  * @since 3.0.0
  */
-
 @Slf4j
+@UtilityClass
 public class CasVersion {
-
-
-    
-    /**
-     * Private constructor for CasVersion. You should not be able to instantiate
-     * this class.
-     */
-    protected CasVersion() {
-        // this class is not instantiable
-    }
 
     /**
      * @return Return the full CAS version string.
@@ -44,34 +36,30 @@ public class CasVersion {
     public static String getSpecificationVersion() {
         return CasVersion.class.getPackage().getSpecificationVersion();
     }
-    
+
     /**
      * Gets last modified date/time for the module.
+     *
      * @return the date/time
      */
     public static ZonedDateTime getDateTime() {
         try {
             final Class clazz = CasVersion.class;
             final URL resource = clazz.getResource(clazz.getSimpleName() + ".class");
-            
             if ("file".equals(resource.getProtocol())) {
                 return DateTimeUtils.zonedDateTimeOf(new File(resource.toURI()).lastModified());
             }
-            
             if ("jar".equals(resource.getProtocol())) {
                 final String path = resource.getPath();
                 final File file = new File(path.substring(5, path.indexOf('!')));
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());
-            } 
-            
+            }
             if ("vfs".equals(resource.getProtocol())) {
                 final File file = new VfsResource(resource.openConnection().getContent()).getFile();
                 return DateTimeUtils.zonedDateTimeOf(file.lastModified());
             }
-            
             LOGGER.warn("Unhandled url protocol: [{}] resource: [{}]", resource.getProtocol(), resource);
             return ZonedDateTime.now();
-            
         } catch (final Exception e) {
             throw new RuntimeException(e.getMessage(), e);
         }

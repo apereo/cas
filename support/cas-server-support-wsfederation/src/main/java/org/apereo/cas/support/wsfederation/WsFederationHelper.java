@@ -68,6 +68,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Helper class that does the heavy lifting with the openSaml library.
@@ -77,15 +78,10 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
 public class WsFederationHelper {
 
     private OpenSamlConfigBean configBean;
-
-    /**
-     * private constructor.
-     */
-    public WsFederationHelper() {
-    }
 
     /**
      * createCredentialFromToken converts a SAML 1.1 assertion to a WSFederationCredential.

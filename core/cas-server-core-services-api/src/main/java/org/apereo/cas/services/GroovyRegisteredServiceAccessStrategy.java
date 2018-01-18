@@ -12,6 +12,7 @@ import java.net.URI;
 import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategy}.
@@ -22,6 +23,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -2407494148882123062L;
@@ -36,9 +38,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     @JsonIgnore
     @Transient
     private transient RegisteredServiceAccessStrategy groovyStrategyInstance;
-
-    public GroovyRegisteredServiceAccessStrategy() {
-    }
 
     @Override
     @JsonIgnore

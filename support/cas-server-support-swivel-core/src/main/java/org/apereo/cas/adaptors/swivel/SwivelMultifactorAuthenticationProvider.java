@@ -6,9 +6,9 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.springframework.http.HttpMethod;
-
 import java.net.HttpURLConnection;
 import java.net.URL;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link SwivelMultifactorAuthenticationProvider}.
@@ -17,19 +17,13 @@ import java.net.URL;
  * @since 5.2.0
  */
 @Slf4j
+@NoArgsConstructor
 public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
-    private static final long serialVersionUID = 498455080794156917L;
 
+    private static final long serialVersionUID = 498455080794156917L;
 
     private String swivelUrl;
 
-    /**
-     * Required for serialization and reflection.
-     */
-    public SwivelMultifactorAuthenticationProvider() {
-    }
-    
-    
     public SwivelMultifactorAuthenticationProvider(final String swivelUrl) {
         this.swivelUrl = swivelUrl;
     }

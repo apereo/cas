@@ -11,7 +11,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -21,6 +20,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Collection;
 import java.util.HashSet;
+import lombok.NoArgsConstructor;
 
 /**
  * An OAuth code implementation.
@@ -33,6 +33,7 @@ import java.util.HashSet;
 @DiscriminatorColumn(name = "TYPE")
 @DiscriminatorValue(OAuthCode.PREFIX)
 @Slf4j
+@NoArgsConstructor
 public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
 
     private static final long serialVersionUID = -8072724186202305800L;
@@ -63,13 +64,6 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     private Authentication authentication;
 
     /**
-     * Instantiates a new OAuth code impl.
-     */
-    public OAuthCodeImpl() {
-        // exists for JPA purposes
-    }
-
-    /**
      * Constructs a new OAuth code with unique id for a service and authentication.
      *
      * @param id                   the unique identifier for the ticket.
@@ -80,11 +74,9 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * @param scopes               the scopes
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public OAuthCodeImpl(final String id, final Service service, final Authentication authentication,
-                         final ExpirationPolicy expirationPolicy, final TicketGrantingTicket ticketGrantingTicket,
-                         final Collection<String> scopes) {
+    public OAuthCodeImpl(final String id, final Service service, final Authentication authentication, final ExpirationPolicy expirationPolicy,
+                         final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         super(id, expirationPolicy);
-
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(authentication, "authentication cannot be null");
         this.service = service;
@@ -110,9 +102,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
     }
 
     @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(
-        final String id, final Authentication authentication,
-        final ExpirationPolicy expirationPolicy) {
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         throw new UnsupportedOperationException("No PGT grant is available in OAuth");
     }
 

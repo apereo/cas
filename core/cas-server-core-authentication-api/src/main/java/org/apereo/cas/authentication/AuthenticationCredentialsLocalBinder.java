@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication;
 
 import lombok.extern.slf4j.Slf4j;
-
 import java.util.Arrays;
 import java.util.Collection;
-
 import static java.util.stream.Collectors.joining;
+import lombok.NoArgsConstructor;
 
 /**
  * ThreadLocal based holder for current set of credentials and/or authentication object for any current
@@ -22,15 +21,16 @@ import static java.util.stream.Collectors.joining;
  * @since 5.0.0
  */
 @Slf4j
+@NoArgsConstructor
 public class AuthenticationCredentialsLocalBinder {
 
     private static final ThreadLocal<Authentication> CURRENT_AUTHENTICATION = new ThreadLocal<>();
-    private static final ThreadLocal<Authentication> IN_PROGRESS_AUTHENTICATION = new ThreadLocal<>();
-    private static final ThreadLocal<AuthenticationBuilder> CURRENT_AUTHENTICATION_BUILDER = new ThreadLocal<>();
-    private static final ThreadLocal<String[]> CURRENT_CREDENTIAL_IDS = new ThreadLocal<>();
 
-    protected AuthenticationCredentialsLocalBinder() {
-    }
+    private static final ThreadLocal<Authentication> IN_PROGRESS_AUTHENTICATION = new ThreadLocal<>();
+
+    private static final ThreadLocal<AuthenticationBuilder> CURRENT_AUTHENTICATION_BUILDER = new ThreadLocal<>();
+
+    private static final ThreadLocal<String[]> CURRENT_CREDENTIAL_IDS = new ThreadLocal<>();
 
     /**
      * Bind Authentication to ThreadLocal for authentication event that has internally being processed and yet hasn't been fully established

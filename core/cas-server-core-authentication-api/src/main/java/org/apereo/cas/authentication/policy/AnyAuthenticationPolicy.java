@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Authentication policy that is satisfied by at least one successfully authenticated credential.
@@ -13,18 +14,13 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
 public class AnyAuthenticationPolicy implements AuthenticationPolicy {
 
     /**
      * Flag to try all credentials before policy is satisfied. Defaults to {@code false}.
      */
     private boolean tryAll;
-
-    /**
-     * Instantiates a new Any authentication policy.
-     */
-    public AnyAuthenticationPolicy() {
-    }
 
     /**
      * Instantiates a new Any authentication policy.

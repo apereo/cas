@@ -11,6 +11,7 @@ import javax.persistence.Transient;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyRegisteredServiceMultifactorPolicy}.
@@ -21,6 +22,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@NoArgsConstructor
 public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServiceMultifactorPolicy {
 
     private static final long serialVersionUID = -3075860754996106437L;
@@ -30,9 +32,6 @@ public class GroovyRegisteredServiceMultifactorPolicy implements RegisteredServi
     @JsonIgnore
     @Transient
     private transient RegisteredServiceMultifactorPolicy groovyPolicyInstance;
-
-    public GroovyRegisteredServiceMultifactorPolicy() {
-    }
 
     @JsonIgnore
     @Override
