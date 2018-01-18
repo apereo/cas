@@ -3,13 +3,16 @@ package org.apereo.cas.authentication.principal;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+
 import lombok.ToString;
 import lombok.Getter;
 
@@ -27,6 +30,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@NoArgsConstructor
 public class SimplePrincipal implements Principal {
 
     /**
@@ -44,23 +48,6 @@ public class SimplePrincipal implements Principal {
      * Principal attributes.
      **/
     private Map<String, Object> attributes;
-
-    /**
-     * No-arg constructor for serialization support.
-     */
-    private SimplePrincipal() {
-        this.id = null;
-        this.attributes = new HashMap<>();
-    }
-
-    /**
-     * Instantiates a new simple principal.
-     *
-     * @param id the id
-     */
-    private SimplePrincipal(final String id) {
-        this(id, new HashMap<>());
-    }
 
     /**
      * Instantiates a new simple principal.
