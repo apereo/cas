@@ -5,6 +5,7 @@ import com.maxmind.geoip2.DatabaseReader;
 import com.maxmind.geoip2.exception.AddressNotFoundException;
 import com.maxmind.geoip2.model.CityResponse;
 import com.maxmind.geoip2.model.CountryResponse;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.configuration.model.support.geo.maxmind.MaxmindProperties;
@@ -24,28 +25,24 @@ import java.net.InetAddress;
 public class MaxmindDatabaseGeoLocationService extends AbstractGeoLocationService {
 
 
-
     private final DatabaseReader cityDatabaseReader;
     private final DatabaseReader countryDatabaseReader;
 
+    @SneakyThrows
     public MaxmindDatabaseGeoLocationService(final MaxmindProperties properties) {
-        try {
 
-            if (properties.getCityDatabase().exists()) {
-                this.cityDatabaseReader = new DatabaseReader.Builder(properties.getCityDatabase().getFile())
-                                .withCache(new CHMCache()).build();
-            } else {
-                this.cityDatabaseReader = null;
-            }
+        if (properties.getCityDatabase().exists()) {
+            this.cityDatabaseReader = new DatabaseReader.Builder(properties.getCityDatabase().getFile())
+                .withCache(new CHMCache()).build();
+        } else {
+            this.cityDatabaseReader = null;
+        }
 
-            if (properties.getCountryDatabase().exists()) {
-                this.countryDatabaseReader = new DatabaseReader.Builder(properties.getCountryDatabase().getFile())
-                                .withCache(new CHMCache()).build();
-            } else {
-                this.countryDatabaseReader = null;
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (properties.getCountryDatabase().exists()) {
+            this.countryDatabaseReader = new DatabaseReader.Builder(properties.getCountryDatabase().getFile())
+                .withCache(new CHMCache()).build();
+        } else {
+            this.countryDatabaseReader = null;
         }
 
         if (this.cityDatabaseReader == null && this.countryDatabaseReader == null) {

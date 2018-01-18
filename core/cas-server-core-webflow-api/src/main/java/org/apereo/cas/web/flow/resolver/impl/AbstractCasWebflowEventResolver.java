@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -288,24 +289,23 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @param attributes the attributes
      * @return the event
      */
+    @SneakyThrows
     protected Event validateEventIdForMatchingTransitionInContext(final String eventId, final RequestContext context, final Map<String, Object> attributes) {
-        try {
-            final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
-            final Event event = new Event(this, eventId, attributesMap);
 
-            LOGGER.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...", event.getId());
+        final AttributeMap<Object> attributesMap = new LocalAttributeMap<>(attributes);
+        final Event event = new Event(this, eventId, attributesMap);
 
-            final TransitionDefinition def = context.getMatchingTransition(event.getId());
-            if (def == null) {
-                LOGGER.warn("Transition definition cannot be found for event [{}]", event.getId());
-                throw new AuthenticationException();
-            }
-            LOGGER.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes [{}].",
-                def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
-            return event;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        LOGGER.debug("Resulting event id is [{}]. Locating transitions in the context for that event id...", event.getId());
+
+        final TransitionDefinition def = context.getMatchingTransition(event.getId());
+        if (def == null) {
+            LOGGER.warn("Transition definition cannot be found for event [{}]", event.getId());
+            throw new AuthenticationException();
         }
+        LOGGER.debug("Found matching transition [{}] with target [{}] for event [{}] with attributes [{}].",
+            def.getId(), def.getTargetStateId(), event.getId(), event.getAttributes());
+        return event;
+
     }
 
     /**
@@ -366,23 +366,22 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
         return null;
     }
 
+    @SneakyThrows
     private Set<Event> resolveEventViaSingleAttribute(final Principal principal,
                                                       final Object attributeValue,
                                                       final RegisteredService service,
                                                       final RequestContext context,
                                                       final MultifactorAuthenticationProvider provider,
                                                       final Predicate<String> predicate) {
-        try {
-            if (attributeValue instanceof String) {
-                LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
-                if (predicate.test((String) attributeValue)) {
-                    LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
-                    return evaluateEventForProviderInContext(principal, service, context, provider);
-                }
-                LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
+
+        if (attributeValue instanceof String) {
+            LOGGER.debug("Attribute value [{}] is a single-valued attribute", attributeValue);
+            if (predicate.test((String) attributeValue)) {
+                LOGGER.debug("Attribute value predicate [{}] has matched the [{}]", predicate, attributeValue);
+                return evaluateEventForProviderInContext(principal, service, context, provider);
             }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+            LOGGER.debug("Attribute value predicate [{}] could not match the [{}]", predicate, attributeValue);
+
         }
         LOGGER.debug("Attribute value [{}] is not a single-valued attribute", attributeValue);
         return null;

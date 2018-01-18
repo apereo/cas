@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -44,12 +45,12 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
     protected final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder;
 
     public SamlProfileSamlSoap11ResponseBuilder(
-            final OpenSamlConfigBean openSamlConfigBean,
-            final BaseSamlObjectSigner samlObjectSigner,
-            final VelocityEngine velocityEngineFactory,
-            final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
-            final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
-            final SamlObjectEncrypter samlObjectEncrypter) {
+        final OpenSamlConfigBean openSamlConfigBean,
+        final BaseSamlObjectSigner samlObjectSigner,
+        final VelocityEngine velocityEngineFactory,
+        final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
+        final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
+        final SamlObjectEncrypter samlObjectEncrypter) {
         super(openSamlConfigBean, samlObjectSigner, velocityEngineFactory, samlProfileSamlAssertionBuilder, samlObjectEncrypter);
         this.saml2ResponseBuilder = saml2ResponseBuilder;
     }
@@ -75,8 +76,8 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
         final Header header = newSoapObject(Header.class);
         header.getUnknownXMLObjects().add(ecpResponse);
         final Body body = newSoapObject(Body.class);
-        final org.opensaml.saml.saml2.core.Response saml2Response = 
-                buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding);
+        final org.opensaml.saml.saml2.core.Response saml2Response =
+            buildSaml2Response(casAssertion, authnRequest, service, adaptor, request, binding);
         body.getUnknownXMLObjects().add(saml2Response);
         final Envelope envelope = newSoapObject(Envelope.class);
         envelope.setHeader(header);
@@ -97,16 +98,17 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
      * @return the org . opensaml . saml . saml 2 . core . response
      */
     protected org.opensaml.saml.saml2.core.Response buildSaml2Response(final Object casAssertion,
-                                                                     final RequestAbstractType authnRequest, final SamlRegisteredService service,
-                                                                     final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                                                     final HttpServletRequest request,
-                                                                     final String binding) {
+                                                                       final RequestAbstractType authnRequest, final SamlRegisteredService service,
+                                                                       final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
+                                                                       final HttpServletRequest request,
+                                                                       final String binding) {
         return (org.opensaml.saml.saml2.core.Response)
-                saml2ResponseBuilder.build(authnRequest, request, null, 
-                        casAssertion, service, adaptor, binding);
+            saml2ResponseBuilder.build(authnRequest, request, null,
+                casAssertion, service, adaptor, binding);
     }
-    
+
     @Override
+    @SneakyThrows
     protected Envelope encode(final SamlRegisteredService service,
                               final Envelope envelope,
                               final HttpServletResponse httpResponse,
@@ -116,18 +118,14 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                               final String binding,
                               final RequestAbstractType authnRequest,
                               final Object assertion) throws SamlException {
-        try {
-            final MessageContext result = new MessageContext();
-            final SOAP11Context ctx = result.getSubcontext(SOAP11Context.class, true);
-            ctx.setEnvelope(envelope);
-            final HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
-            encoder.setHttpServletResponse(httpResponse);
-            encoder.setMessageContext(result);
-            encoder.initialize();
-            encoder.encode();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final MessageContext result = new MessageContext();
+        final SOAP11Context ctx = result.getSubcontext(SOAP11Context.class, true);
+        ctx.setEnvelope(envelope);
+        final HTTPSOAP11Encoder encoder = new HTTPSOAP11Encoder();
+        encoder.setHttpServletResponse(httpResponse);
+        encoder.setMessageContext(result);
+        encoder.initialize();
+        encoder.encode();
         return envelope;
     }
 }

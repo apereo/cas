@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -23,16 +24,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.io.ByteArrayInputStream;
-import java.io.Serializable;
-import java.io.StringWriter;
-import java.lang.reflect.Field;
-import java.nio.charset.Charset;
-import java.security.PrivateKey;
-import java.security.Provider;
-import java.security.PublicKey;
-import java.util.Collection;
-import java.util.List;
 import javax.xml.XMLConstants;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
@@ -50,6 +41,16 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.namespace.QName;
 import javax.xml.parsers.DocumentBuilderFactory;
+import java.io.ByteArrayInputStream;
+import java.io.Serializable;
+import java.io.StringWriter;
+import java.lang.reflect.Field;
+import java.nio.charset.Charset;
+import java.security.PrivateKey;
+import java.security.Provider;
+import java.security.PublicKey;
+import java.util.Collection;
+import java.util.List;
 
 /**
  * An abstract builder to serve as the template handler
@@ -78,8 +79,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
     private static final long serialVersionUID = -6833230731146922780L;
 
 
-
-
     /**
      * The Config bean.
      */
@@ -96,18 +95,15 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param objectType the object type
      * @return the t
      */
+    @SneakyThrows
     public <T extends SAMLObject> T newSamlObject(final Class<T> objectType) {
-        try {
-            final QName qName = getSamlObjectQName(objectType);
-            final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
-                    XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-            if (builder == null) {
-                throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-            }
-            return objectType.cast(builder.buildObject(qName));
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final QName qName = getSamlObjectQName(objectType);
+        final SAMLObjectBuilder<T> builder = (SAMLObjectBuilder<T>)
+            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
         }
+        return objectType.cast(builder.buildObject(qName));
     }
 
     /**
@@ -117,17 +113,15 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * @param objectType the object type
      * @return the t
      */
+    @SneakyThrows
     public <T extends SOAPObject> T newSoapObject(final Class<T> objectType) {
-        try {
-            final QName qName = getSamlObjectQName(objectType);
-            final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>) XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
-            if (builder == null) {
-                throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
-            }
-            return objectType.cast(builder.buildObject(qName));
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final QName qName = getSamlObjectQName(objectType);
+        final SOAPObjectBuilder<T> builder = (SOAPObjectBuilder<T>)
+            XMLObjectProviderRegistrySupport.getBuilderFactory().getBuilder(qName);
+        if (builder == null) {
+            throw new IllegalStateException("No SAML object builder is registered for class " + objectType.getName());
         }
+        return objectType.cast(builder.buildObject(qName));
     }
 
     /**
@@ -221,7 +215,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
         if (doc != null) {
             final org.jdom.Element signedElement = signSamlElement(doc.getRootElement(),
-                    privateKey, publicKey);
+                privateKey, publicKey);
             doc.setRootElement((org.jdom.Element) signedElement.detach());
             return new XMLOutputter().outputString(doc);
         }
@@ -240,7 +234,7 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
             builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
             return builder
-                    .build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
+                .build(new ByteArrayInputStream(xmlString.getBytes(Charset.defaultCharset())));
         } catch (final Exception e) {
             return null;
         }
@@ -260,12 +254,12 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
 
             final Class<?> clazz = Class.forName(providerName);
             final XMLSignatureFactory sigFactory = XMLSignatureFactory
-                    .getInstance("DOM", (Provider) clazz.getDeclaredConstructor().newInstance());
+                .getInstance("DOM", (Provider) clazz.getDeclaredConstructor().newInstance());
 
             final List<Transform> envelopedTransform = CollectionUtils.wrap(sigFactory.newTransform(Transform.ENVELOPED, (TransformParameterSpec) null));
 
             final Reference ref = sigFactory.newReference(StringUtils.EMPTY, sigFactory
-                    .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
+                .newDigestMethod(DigestMethod.SHA1, null), envelopedTransform, null, null);
 
             // Create the SignatureMethod based on the type of key
             final SignatureMethod signatureMethod;
@@ -282,9 +276,9 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
             }
 
             final CanonicalizationMethod canonicalizationMethod = sigFactory
-                    .newCanonicalizationMethod(
-                            CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
-                            (C14NMethodParameterSpec) null);
+                .newCanonicalizationMethod(
+                    CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS,
+                    (C14NMethodParameterSpec) null);
 
             // Create the SignedInfo
             final SignedInfo signedInfo = sigFactory.newSignedInfo(canonicalizationMethod, signatureMethod, CollectionUtils.wrap(ref));

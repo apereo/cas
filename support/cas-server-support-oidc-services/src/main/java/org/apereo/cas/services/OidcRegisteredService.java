@@ -2,11 +2,14 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -15,7 +18,6 @@ import javax.persistence.PostLoad;
 import java.time.ZonedDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import lombok.Getter;
 
 /**
  * This is {@link OidcRegisteredService}.
@@ -137,22 +139,20 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     }
 
     @Override
+    @SneakyThrows
     public void copyFrom(final RegisteredService source) {
         super.copyFrom(source);
-        try {
-            final OidcRegisteredService oidcService = (OidcRegisteredService) source;
-            setJwks(oidcService.getJwks());
-            setImplicit(oidcService.isImplicit());
-            setSignIdToken(oidcService.isSignIdToken());
-            setIdTokenEncryptionAlg(oidcService.getIdTokenEncryptionAlg());
-            setIdTokenEncryptionEncoding(oidcService.idTokenEncryptionEncoding);
-            setEncryptIdToken(oidcService.isEncryptIdToken());
-            setDynamicallyRegistered(oidcService.isDynamicallyRegistered());
-            setScopes(oidcService.getScopes());
-            setSectorIdentifierUri(oidcService.getSectorIdentifierUri());
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        final OidcRegisteredService oidcService = (OidcRegisteredService) source;
+        setJwks(oidcService.getJwks());
+        setImplicit(oidcService.isImplicit());
+        setSignIdToken(oidcService.isSignIdToken());
+        setIdTokenEncryptionAlg(oidcService.getIdTokenEncryptionAlg());
+        setIdTokenEncryptionEncoding(oidcService.idTokenEncryptionEncoding);
+        setEncryptIdToken(oidcService.isEncryptIdToken());
+        setDynamicallyRegistered(oidcService.isDynamicallyRegistered());
+        setScopes(oidcService.getScopes());
+        setSectorIdentifierUri(oidcService.getSectorIdentifierUri());
     }
 
     @JsonIgnore

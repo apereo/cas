@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 
 import java.io.IOException;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
-import lombok.ToString;
 
 /**
  * Factory for creating RADIUS client instances.
@@ -56,16 +56,13 @@ public class RadiusClientFactory {
      * @param inetAddress        RADIUS server network address.
      * @param sharedSecret       RADIUS server authentication shared secret.
      */
+    @SneakyThrows
     public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout,
                                final String inetAddress, final String sharedSecret) {
         this.accountingPort = accountingPort;
         this.authenticationPort = authenticationPort;
         this.socketTimeout = socketTimeout;
-        try {
-            this.inetAddress = InetAddress.getByName(inetAddress);
-        } catch (final UnknownHostException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        this.inetAddress = InetAddress.getByName(inetAddress);
         this.sharedSecret = sharedSecret;
     }
 
