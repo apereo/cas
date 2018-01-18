@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal.cache;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
 import org.apereo.cas.util.CollectionUtils;
@@ -37,6 +36,7 @@ import lombok.Setter;
 @ToString
 @Getter
 @Setter
+@EqualsAndHashCode(of = {"timeUnit", "expiration"})
 public abstract class AbstractPrincipalAttributesRepository implements PrincipalAttributesRepository, Closeable {
 
     /**
@@ -126,10 +126,6 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
     public AbstractPrincipalAttributesRepository(final long expiration, final String timeUnit) {
         this.expiration = expiration;
         this.timeUnit = timeUnit;
-    }
-
-    public MergingStrategy getMergingStrategy() {
-        return this.mergingStrategy;
     }
 
     /**
@@ -265,27 +261,4 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
         return this.attributeRepository;
     }
 
-    public long getExpiration() {
-        return this.expiration;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final AbstractPrincipalAttributesRepository rhs = (AbstractPrincipalAttributesRepository) obj;
-        return new EqualsBuilder().append(this.timeUnit, rhs.timeUnit).append(this.expiration, rhs.expiration).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).append(this.timeUnit).append(this.expiration).toHashCode();
-    }
 }

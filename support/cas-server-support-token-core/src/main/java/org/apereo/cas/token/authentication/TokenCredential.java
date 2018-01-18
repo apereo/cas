@@ -1,5 +1,6 @@
 package org.apereo.cas.token.authentication;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.principal.Service;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Getter
 public class TokenCredential extends BasicIdentifiableCredential {
 
     private static final long serialVersionUID = 2749515041385101770L;
@@ -27,9 +29,5 @@ public class TokenCredential extends BasicIdentifiableCredential {
     public TokenCredential(final String tokenId, final Service service) {
         super(tokenId);
         this.service = service;
-    }
-
-    public Service getService() {
-        return this.service;
     }
 }

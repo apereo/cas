@@ -1,10 +1,11 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.ScriptingUtils;
@@ -28,27 +29,14 @@ import lombok.Setter;
 @Slf4j
 @ToString(callSuper = true)
 @Setter
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
+@NoArgsConstructor
 public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
 
-    private Map<String, Object> allowedAttributes;
-
-    /**
-     * Instantiates a new Return mapped attribute release policy.
-     */
-    public ReturnMappedAttributeReleasePolicy() {
-        this(new TreeMap<>());
-    }
-
-    /**
-     * Instantiates a new Return mapped attribute release policy.
-     *
-     * @param allowedAttributes the allowed attributes
-     */
-    public ReturnMappedAttributeReleasePolicy(final Map allowedAttributes) {
-        this.allowedAttributes = allowedAttributes;
-    }
+    private Map<String, Object> allowedAttributes = new TreeMap<>();
 
     /**
      * Gets the allowed attributes.
@@ -142,23 +130,4 @@ public class ReturnMappedAttributeReleasePolicy extends AbstractRegisteredServic
         return ScriptingUtils.executeGroovyShellScript(groovyScript, args, Object.class);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ReturnMappedAttributeReleasePolicy rhs = (ReturnMappedAttributeReleasePolicy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.allowedAttributes, rhs.allowedAttributes).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.allowedAttributes).toHashCode();
-    }
 }
