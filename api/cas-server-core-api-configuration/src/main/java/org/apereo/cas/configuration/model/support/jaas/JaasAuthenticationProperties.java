@@ -31,7 +31,7 @@ public class JaasAuthenticationProperties implements Serializable {
     /**
      * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the realm value by setting this following system property value.
-     * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
+     * <p>If you set the realm property, you SHOULD also configure the kerberos KDC system property.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
      * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
@@ -48,7 +48,7 @@ public class JaasAuthenticationProperties implements Serializable {
     /**
      * Typically, the default realm and the KDC for that realm are indicated in the Kerberos {@code krb5.conf} configuration file.
      * However, if you like, you can instead specify the realm value by setting this following system property value.
-     * <p>If you set the realm property, you SHOULD also configure the {@link #setKerberosKdcSystemProperty(String)}.
+     * <p>If you set the realm property, you SHOULD also configure the kerberos KDC system property.
      * <p>Also note that if you set these properties, then no cross-realm authentication is possible unless
      * a {@code krb5.conf} file is also provided from which the additional information required for cross-realm authentication
      * may be obtained.
