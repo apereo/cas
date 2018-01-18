@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.ToString;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * The filter that chains other filters inside it.
@@ -19,21 +21,16 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
+@NoArgsConstructor
 public class RegisteredServiceChainingAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 903015750234610128L;
 
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>();
 
-    public RegisteredServiceChainingAttributeFilter() {
-    }
-
     public List<RegisteredServiceAttributeFilter> getFilters() {
         return filters;
-    }
-
-    public void setFilters(final List<RegisteredServiceAttributeFilter> filters) {
-        this.filters = filters;
     }
 
     @Override

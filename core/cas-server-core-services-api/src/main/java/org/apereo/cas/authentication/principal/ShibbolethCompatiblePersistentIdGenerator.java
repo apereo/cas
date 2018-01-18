@@ -10,6 +10,8 @@ import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import java.util.Map;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Generates PersistentIds based on the Shibboleth algorithm.
@@ -22,6 +24,8 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
+@NoArgsConstructor
 public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGenerator {
 
     private static final long serialVersionUID = 6182838799563190289L;
@@ -39,24 +43,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @JsonProperty
     private String attribute;
 
-    /**
-     * Instantiates a new shibboleth compatible persistent id generator.
-     * The salt is initialized to a random alphanumeric string with length {@link #CONST_DEFAULT_SALT_COUNT}.
-     * The generated id is pseudo-anonymous which allows it to be continually uniquely
-     * identified by for a particular service.
-     */
-    public ShibbolethCompatiblePersistentIdGenerator() {
-    }
-
     public ShibbolethCompatiblePersistentIdGenerator(final String salt) {
-        this.salt = salt;
-    }
-
-    public void setAttribute(final String attribute) {
-        this.attribute = attribute;
-    }
-
-    public void setSalt(final String salt) {
         this.salt = salt;
     }
 
@@ -74,8 +61,7 @@ public class ShibbolethCompatiblePersistentIdGenerator implements PersistentIdGe
     @Override
     public String generate(final Principal principal, final Service service) {
         final Map<String, Object> attributes = principal.getAttributes();
-        final String principalId = StringUtils.isNotBlank(this.attribute)
-            && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
+        final String principalId = StringUtils.isNotBlank(this.attribute) && attributes.containsKey(this.attribute) ? attributes.get(this.attribute).toString() : principal.getId();
         return generate(principalId, service.getId());
     }
 

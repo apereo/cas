@@ -5,11 +5,11 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.springframework.util.Assert;
-
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.stream.Collectors;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultVariegatedMultifactorAuthenticationProvider}.
@@ -18,15 +18,12 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider
-        implements VariegatedMultifactorAuthenticationProvider, Serializable {
+@NoArgsConstructor
+public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
-    
-    private Collection<MultifactorAuthenticationProvider> providers = new HashSet<>();
 
-    public DefaultVariegatedMultifactorAuthenticationProvider() {
-    }
+    private Collection<MultifactorAuthenticationProvider> providers = new HashSet<>();
 
     @Override
     public void addProvider(final MultifactorAuthenticationProvider provider) {
@@ -53,7 +50,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
         final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
         return count == providers.size();
     }
-    
+
     @Override
     protected boolean isAvailable() {
         return true;
@@ -63,7 +60,7 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     public boolean matches(final String identifier) {
         return findProvider(identifier) != null;
     }
-
+  
     @Override
     public MultifactorAuthenticationProvider findProvider(final String identifier) {
         return this.providers.stream().filter(p -> p.matches(identifier)).findFirst().orElse(null);
@@ -72,19 +69,13 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     @Override
     public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, final Class<T> clazz) {
         Assert.notNull(clazz, "clazz cannot be null");
-
         final MultifactorAuthenticationProvider provider = findProvider(identifier);
-
         if (provider == null) {
             return null;
         }
-
         if (!clazz.isAssignableFrom(provider.getClass())) {
-            throw new ClassCastException("MultifactorAuthenticationProvider [" + provider.getId()
-                    + " is of type " + provider.getClass()
-                    + " when we were expecting " + clazz);
+            throw new ClassCastException("MultifactorAuthenticationProvider [" + provider.getId() + " is of type " + provider.getClass() + " when we were expecting " + clazz);
         }
-
         return (T) provider;
     }
 

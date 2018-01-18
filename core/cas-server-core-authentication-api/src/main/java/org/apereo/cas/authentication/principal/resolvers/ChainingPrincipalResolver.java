@@ -12,12 +12,12 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.support.MergingPersonAttributeDaoImpl;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import lombok.ToString;
+import lombok.Setter;
 
 /**
  * Delegates to one or more principal resolves in series to resolve a principal. The input to first configured resolver
@@ -32,6 +32,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Setter
 public class ChainingPrincipalResolver implements PrincipalResolver {
 
     /**
@@ -43,21 +44,6 @@ public class ChainingPrincipalResolver implements PrincipalResolver {
      * The chain of delegate resolvers that are invoked in order.
      */
     private List<PrincipalResolver> chain;
-
-    /**
-     * Sets the resolver chain. The resolvers other than the first one MUST be capable of performing resolution
-     * on the basis of {@link Credential#getId()} alone;
-     * {@link PersonDirectoryPrincipalResolver} notably meets that requirement.
-     *
-     * @param chain List of delegate resolvers that are invoked in a chain.
-     */
-    public void setChain(final List<PrincipalResolver> chain) {
-        this.chain = chain;
-    }
-
-    public void setChain(final PrincipalResolver... chain) {
-        this.chain = Arrays.stream(chain).collect(Collectors.toList());
-    }
 
     /**
      * {@inheritDoc}

@@ -1,13 +1,16 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.hibernate.annotations.GenericGenerator;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -31,9 +34,6 @@ import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Base class for mutable, persistable registered services.
@@ -45,13 +45,14 @@ import lombok.Getter;
  */
 @Entity
 @Inheritance
-@DiscriminatorColumn(name = "expression_type", length = 50,
-    discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
+@DiscriminatorColumn(name = "expression_type", length = 50, discriminatorType = DiscriminatorType.STRING, columnDefinition = "VARCHAR(50) DEFAULT 'regex'")
 @Table(name = "RegexRegisteredService")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @ToString
 @Getter
+@Setter
+@EqualsAndHashCode
 public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
@@ -132,12 +133,12 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredServiceImpl_Props")
-    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
+    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredService_Contacts")
     @OrderColumn
-    private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
+    private List<RegisteredServiceContact> contacts = new ArrayList<>();
 
     @Override
     public long getId() {
@@ -179,126 +180,12 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         this.expirationPolicy = ObjectUtils.defaultIfNull(this.expirationPolicy, new DefaultRegisteredServiceExpirationPolicy());
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null) {
-            return false;
-        }
-        if (this == o) {
-            return true;
-        }
-        if (!(o instanceof AbstractRegisteredService)) {
-            return false;
-        }
-        final AbstractRegisteredService that = (AbstractRegisteredService) o;
-        final EqualsBuilder builder = new EqualsBuilder();
-        return builder.append(this.proxyPolicy, that.proxyPolicy).append(this.evaluationOrder, that.evaluationOrder)
-            .append(this.description, that.description).append(this.name, that.name).append(this.serviceId, that.serviceId)
-            .append(this.theme, that.theme).append(this.usernameAttributeProvider, that.usernameAttributeProvider)
-            .append(this.logoutType, that.logoutType).append(this.attributeReleasePolicy, that.attributeReleasePolicy)
-            .append(this.accessStrategy, that.accessStrategy).append(this.logo, that.logo).append(this.publicKey, that.publicKey)
-            .append(this.logoutUrl, that.logoutUrl).append(this.requiredHandlers, that.requiredHandlers).append(this.proxyPolicy, that.proxyPolicy)
-            .append(this.properties, that.properties).append(this.multifactorPolicy, that.multifactorPolicy).append(this.informationUrl, that.informationUrl)
-            .append(this.privacyUrl, that.privacyUrl).append(this.contacts, that.contacts).append(this.expirationPolicy, that.expirationPolicy)
-            .append(this.responseType, that.responseType).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(7, 31).append(this.description)
-            .append(this.serviceId).append(this.name).append(this.theme).append(this.evaluationOrder)
-            .append(this.usernameAttributeProvider)
-            .append(this.accessStrategy).append(this.logoutType).append(this.attributeReleasePolicy).append(this.accessStrategy)
-            .append(this.logo).append(this.publicKey).append(this.logoutUrl).append(this.requiredHandlers).append(this.proxyPolicy)
-            .append(this.properties).append(this.multifactorPolicy).append(this.informationUrl).append(this.privacyUrl)
-            .append(this.contacts).append(this.expirationPolicy).append(this.responseType).toHashCode();
-    }
-
-    public void setProxyPolicy(final RegisteredServiceProxyPolicy policy) {
-        this.proxyPolicy = policy;
-    }
-
-    public void setDescription(final String description) {
-        this.description = description;
-    }
-
     /**
      * Sets the service identifier. Extensions are to define the format.
      *
      * @param id the new service id
      */
     public abstract void setServiceId(String id);
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public void setTheme(final String theme) {
-        this.theme = theme;
-    }
-
-    @Override
-    public void setEvaluationOrder(final int evaluationOrder) {
-        this.evaluationOrder = evaluationOrder;
-    }
-
-    @Override
-    public int getEvaluationOrder() {
-        return this.evaluationOrder;
-    }
-
-    @Override
-    public RegisteredServiceUsernameAttributeProvider getUsernameAttributeProvider() {
-        return this.usernameAttributeProvider;
-    }
-
-    public void setAccessStrategy(final RegisteredServiceAccessStrategy accessStrategy) {
-        this.accessStrategy = accessStrategy;
-    }
-
-    public void setLogoutUrl(final URL logoutUrl) {
-        this.logoutUrl = logoutUrl;
-    }
-
-    public void setInformationUrl(final String informationUrl) {
-        this.informationUrl = informationUrl;
-    }
-
-    public void setPrivacyUrl(final String privacyUrl) {
-        this.privacyUrl = privacyUrl;
-    }
-
-    /**
-     * Sets the user attribute provider instance
-     * when providing usernames to this registered service.
-     *
-     * @param usernameProvider the new username attribute
-     */
-    public void setUsernameAttributeProvider(final RegisteredServiceUsernameAttributeProvider usernameProvider) {
-        this.usernameAttributeProvider = usernameProvider;
-    }
-
-    @Override
-    public LogoutType getLogoutType() {
-        return this.logoutType;
-    }
-
-    /**
-     * Set the logout type of the service.
-     *
-     * @param logoutType the logout type of the service.
-     */
-    public void setLogoutType(final LogoutType logoutType) {
-        this.logoutType = logoutType;
-    }
-
-    public void setResponseType(final String responseType) {
-        this.responseType = responseType;
-    }
 
     @Override
     public AbstractRegisteredService clone() {
@@ -328,7 +215,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
         setLogo(source.getLogo());
         setLogoutUrl(source.getLogoutUrl());
         setPublicKey(source.getPublicKey());
-        setRequiredHandlers(source.getRequiredHandlers());
+        setRequiredHandlers(new HashSet<>(source.getRequiredHandlers()));
         setProperties(source.getProperties());
         setMultifactorPolicy(source.getMultifactorPolicy());
         setInformationUrl(source.getInformationUrl());
@@ -346,9 +233,9 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     @Override
     public int compareTo(final RegisteredService other) {
-        return new CompareToBuilder().append(getEvaluationOrder(), other.getEvaluationOrder())
-            .append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
-                StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
+        return new CompareToBuilder().append(getEvaluationOrder(),
+            other.getEvaluationOrder()).append(StringUtils.defaultIfBlank(getName(), StringUtils.EMPTY).toLowerCase(),
+            StringUtils.defaultIfBlank(other.getName(), StringUtils.EMPTY).toLowerCase())
             .append(getServiceId(), other.getServiceId()).append(getId(), other.getId()).toComparison();
     }
 
@@ -359,87 +246,4 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     protected abstract AbstractRegisteredService newInstance();
 
-    @Override
-    public Set<String> getRequiredHandlers() {
-        if (this.requiredHandlers == null) {
-            this.requiredHandlers = new HashSet<>();
-        }
-        return this.requiredHandlers;
-    }
-
-    /**
-     * Sets the required handlers for this service.
-     *
-     * @param handlers the new required handlers
-     */
-    public void setRequiredHandlers(final Set<String> handlers) {
-        getRequiredHandlers().clear();
-        if (handlers == null) {
-            return;
-        }
-        getRequiredHandlers().addAll(handlers);
-    }
-
-    /**
-     * Sets the attribute filtering policy.
-     *
-     * @param policy the new attribute filtering policy
-     */
-    public void setAttributeReleasePolicy(final RegisteredServiceAttributeReleasePolicy policy) {
-        this.attributeReleasePolicy = policy;
-    }
-
-    @Override
-    public RegisteredServiceAttributeReleasePolicy getAttributeReleasePolicy() {
-        return this.attributeReleasePolicy;
-    }
-
-    public void setLogo(final String logo) {
-        this.logo = logo;
-    }
-
-    @Override
-    public RegisteredServicePublicKey getPublicKey() {
-        return this.publicKey;
-    }
-
-    public void setPublicKey(final RegisteredServicePublicKey publicKey) {
-        this.publicKey = publicKey;
-    }
-
-    @Override
-    public Map<String, RegisteredServiceProperty> getProperties() {
-        return (Map) this.properties;
-    }
-
-    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
-        this.properties = (Map) properties;
-    }
-
-    @Override
-    public RegisteredServiceMultifactorPolicy getMultifactorPolicy() {
-        return this.multifactorPolicy;
-    }
-
-    public void setMultifactorPolicy(final RegisteredServiceMultifactorPolicy multifactorPolicy) {
-        this.multifactorPolicy = multifactorPolicy;
-    }
-
-    @Override
-    public List<RegisteredServiceContact> getContacts() {
-        return (List) this.contacts;
-    }
-
-    public void setContacts(final List<RegisteredServiceContact> contacts) {
-        this.contacts = (List) contacts;
-    }
-
-    @Override
-    public RegisteredServiceExpirationPolicy getExpirationPolicy() {
-        return expirationPolicy;
-    }
-
-    public void setExpirationPolicy(final RegisteredServiceExpirationPolicy expirationPolicy) {
-        this.expirationPolicy = expirationPolicy;
-    }
 }

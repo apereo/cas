@@ -150,7 +150,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final Multimap<String, String> map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        final Multimap<String, Object> map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null,
                 this.dataSource, SQL, PASSWORD_FIELD,
                 null, null,

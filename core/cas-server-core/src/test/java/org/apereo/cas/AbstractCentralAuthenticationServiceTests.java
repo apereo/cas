@@ -46,50 +46,20 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
-
 import javax.annotation.PostConstruct;
+import lombok.Setter;
 
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
-@SpringBootTest(
-    classes = {
-        AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCookieConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreServicesAuthenticationConfiguration.class,
-        AopAutoConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreValidationConfiguration.class})
+@SpringBootTest(classes = { AbstractCentralAuthenticationServiceTests.CasTestConfiguration.class, CasAuthenticationEventExecutionPlanTestConfiguration.class, CasCoreServicesConfiguration.class, CasWebApplicationServiceFactoryConfiguration.class, CasDefaultServiceTicketIdGeneratorsConfiguration.class, CasCoreTicketIdGeneratorsConfiguration.class, CasCoreUtilConfiguration.class, CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class, CasCoreAuthenticationPrincipalConfiguration.class, CasCoreAuthenticationPolicyConfiguration.class, CasCoreAuthenticationMetadataConfiguration.class, CasCoreAuthenticationSupportConfiguration.class, CasCoreAuthenticationHandlersConfiguration.class, CasCoreHttpConfiguration.class, CasCoreConfiguration.class, CasRegisteredServicesTestConfiguration.class, CasCoreAuthenticationServiceSelectionStrategyConfiguration.class, CasCoreTicketsConfiguration.class, CasCoreTicketCatalogConfiguration.class, CasCoreWebConfiguration.class, CasCoreLogoutConfiguration.class, CasCookieConfiguration.class, RefreshAutoConfiguration.class, CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class, AopAutoConfiguration.class, CasPersonDirectoryTestConfiguration.class, CasCoreWebflowConfiguration.class, CasCoreValidationConfiguration.class })
 @RunWith(SpringRunner.class)
 @EnableAspectJAutoProxy
 @DirtiesContext
-@TestPropertySource(locations = {"classpath:/core.properties"})
+@TestPropertySource(locations = { "classpath:/core.properties" })
 @Slf4j
+@Setter
 public abstract class AbstractCentralAuthenticationServiceTests {
 
     @Autowired
@@ -129,10 +99,6 @@ public abstract class AbstractCentralAuthenticationServiceTests {
         return this.centralAuthenticationService;
     }
 
-    public void setCentralAuthenticationService(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
-
     public TicketRegistry getTicketRegistry() {
         return this.ticketRegistry;
     }
@@ -155,6 +121,7 @@ public abstract class AbstractCentralAuthenticationServiceTests {
 
     @TestConfiguration
     public static class CasTestConfiguration {
+
         @Autowired
         protected ApplicationContext applicationContext;
 
@@ -163,5 +130,4 @@ public abstract class AbstractCentralAuthenticationServiceTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-
 }

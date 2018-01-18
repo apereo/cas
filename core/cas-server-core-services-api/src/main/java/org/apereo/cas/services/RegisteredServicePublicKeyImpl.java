@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -10,18 +11,25 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.data.annotation.Transient;
 import org.springframework.util.ResourceUtils;
+
 import java.security.PublicKey;
+
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Represents a public key for a CAS registered service.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @Slf4j
 @ToString
 @Getter
+@Setter
+@NoArgsConstructor
 public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKey {
 
     private static final long serialVersionUID = -8497658523695695863L;
@@ -36,15 +44,8 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
 
     /**
      * Instantiates a new Registered service public key impl.
-     * Required for proper serialization.
-     */
-    public RegisteredServicePublicKeyImpl() {
-    }
-
-    /**
-     * Instantiates a new Registered service public key impl.
      *
-     * @param location the location
+     * @param location  the location
      * @param algorithm the algorithm
      */
     public RegisteredServicePublicKeyImpl(final String location, final String algorithm) {
@@ -52,30 +53,18 @@ public class RegisteredServicePublicKeyImpl implements RegisteredServicePublicKe
         this.algorithm = algorithm;
     }
 
-    public void setLocation(final String location) {
-        this.location = location;
-    }
-
-    public void setAlgorithm(final String algorithm) {
-        this.algorithm = algorithm;
-    }
-
+    @SneakyThrows
     @Override
     public PublicKey createInstance() {
-        try {
-            final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
-            if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-                factory.setLocation(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
-            } else {
-                factory.setLocation(new FileSystemResource(this.location));
-            }
-            factory.setAlgorithm(this.algorithm);
-            factory.setSingleton(false);
-            return factory.getObject();
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+        final PublicKeyFactoryBean factory = this.publicKeyFactoryBeanClass.getDeclaredConstructor().newInstance();
+        if (this.location.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
+            factory.setResource(new ClassPathResource(StringUtils.removeStart(this.location, ResourceUtils.CLASSPATH_URL_PREFIX)));
+        } else {
+            factory.setResource(new FileSystemResource(this.location));
         }
+        factory.setAlgorithm(this.algorithm);
+        factory.setSingleton(false);
+        return factory.getObject();
     }
 
     @Override

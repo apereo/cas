@@ -18,6 +18,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ConfigurationMetadataSearchResult}.
@@ -27,6 +28,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
 
     private static final long serialVersionUID = 7767348341760984539L;
@@ -74,28 +76,12 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
         }
     }
 
-    public void setRequiredModule(final String requiredModule) {
-        this.requiredModule = requiredModule;
-    }
-
     public boolean isRequiredProperty() {
         return requiredProperty;
     }
 
-    public void setRequiredProperty(final boolean requiredProperty) {
-        this.requiredProperty = requiredProperty;
-    }
-
-    public void setGroup(final String group) {
-        this.group = group;
-    }
-
     public boolean isRequiredModuleAutomated() {
         return requiredModuleAutomated;
-    }
-
-    public void setRequiredModuleAutomated(final boolean requiredModuleAutomated) {
-        this.requiredModuleAutomated = requiredModuleAutomated;
     }
 
     private String cleanUpDescription(final String propDescription) {
@@ -124,10 +110,6 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
     @Override
     public int getOrder() {
         return this.order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
     }
 
     @Override

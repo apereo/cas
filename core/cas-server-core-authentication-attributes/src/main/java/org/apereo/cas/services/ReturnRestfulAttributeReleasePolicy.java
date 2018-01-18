@@ -16,6 +16,8 @@ import java.io.StringWriter;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Return a collection of allowed attributes for the principal based on an external REST endpoint.
@@ -26,6 +28,8 @@ import lombok.Getter;
 @Slf4j
 @ToString(callSuper = true)
 @Getter
+@Setter
+@NoArgsConstructor
 public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
@@ -34,18 +38,11 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
 
     private String endpoint;
 
-    /**
-     * Instantiates a new Return mapped attribute release policy.
-     */
-    public ReturnRestfulAttributeReleasePolicy() {
-    }
-
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {
         try (StringWriter writer = new StringWriter()) {
             MAPPER.writer(new MinimalPrettyPrinter()).writeValue(writer, attributes);
-            final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(),
-                CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
+            final HttpResponse response = HttpUtils.executePost(this.endpoint, writer.toString(), CollectionUtils.wrap("principal", principal.getId(), "service", service.getServiceId()));
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 return MAPPER.readValue(response.getEntity().getContent(), new TypeReference<Map<String, Object>>() {
                 });
@@ -74,9 +71,5 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.endpoint).toHashCode();
-    }
-
-    public void setEndpoint(final String endpoint) {
-        this.endpoint = endpoint;
     }
 }

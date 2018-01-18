@@ -8,10 +8,9 @@ import org.opensaml.saml.ext.saml2mdui.UIInfo;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.Extensions;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
-
 import javax.servlet.http.HttpServletRequest;
-
 import java.util.List;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link MetadataUIUtils}.
@@ -20,12 +19,8 @@ import java.util.List;
  * @since 5.1.0
  */
 @Slf4j
+@NoArgsConstructor
 public class MetadataUIUtils {
-
-
-
-    protected MetadataUIUtils() {
-    }
 
     /**
      * Gets SP SSO descriptor.
@@ -55,11 +50,10 @@ public class MetadataUIUtils {
      * @param entityId        the entity id
      * @return true/false
      */
-    public static boolean isMetadataFoundForEntityId(final MetadataResolverAdapter metadataAdapter,
-                                                     final String entityId) {
+    public static boolean isMetadataFoundForEntityId(final MetadataResolverAdapter metadataAdapter, final String entityId) {
         return metadataAdapter.getEntityDescriptorForEntityId(entityId) != null;
     }
-    
+
     /**
      * Locate MDUI for entity id simple metadata ui info.
      *
@@ -70,9 +64,7 @@ public class MetadataUIUtils {
      * @return the simple metadata ui info
      */
     public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final MetadataResolverAdapter metadataAdapter,
-                                                                            final String entityId,
-                                                                            final RegisteredService registeredService,
-                                                                            final HttpServletRequest requestContext) {
+                                                                            final String entityId, final RegisteredService registeredService, final HttpServletRequest requestContext) {
         final EntityDescriptor entityDescriptor = metadataAdapter.getEntityDescriptorForEntityId(entityId);
         return locateMetadataUserInterfaceForEntityId(entityDescriptor, entityId, registeredService, requestContext);
     }
@@ -86,38 +78,32 @@ public class MetadataUIUtils {
      * @param requestContext    the request context
      * @return the simple metadata ui info
      */
-    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor,
-                                                                            final String entityId,
-                                                                            final RegisteredService registeredService,
-                                                                            final HttpServletRequest requestContext) {
+    public static SamlMetadataUIInfo locateMetadataUserInterfaceForEntityId(final EntityDescriptor entityDescriptor, final String entityId,
+                                                                            final RegisteredService registeredService, final HttpServletRequest requestContext) {
         final SamlMetadataUIInfo mdui = new SamlMetadataUIInfo(registeredService, requestContext.getLocale().getLanguage());
         if (entityDescriptor == null) {
             LOGGER.trace("Entity descriptor not found for [{}]", entityId);
             return mdui;
         }
-
         final SPSSODescriptor spssoDescriptor = getSPSsoDescriptor(entityDescriptor);
         if (spssoDescriptor == null) {
             LOGGER.trace("SP SSO descriptor not found for [{}]", entityId);
             return mdui;
         }
-
         final Extensions extensions = spssoDescriptor.getExtensions();
         if (extensions == null) {
             LOGGER.trace("No extensions in the SP SSO descriptor are found for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
-
         final List<XMLObject> spExtensions = extensions.getUnknownXMLObjects(UIInfo.DEFAULT_ELEMENT_NAME);
         if (spExtensions.isEmpty()) {
             LOGGER.trace("No extensions in the SP SSO descriptor are located for [{}]", UIInfo.DEFAULT_ELEMENT_NAME.getNamespaceURI());
             return mdui;
         }
-
         spExtensions.stream().filter(UIInfo.class::isInstance).forEach(obj -> {
             final UIInfo uiInfo = (UIInfo) obj;
             LOGGER.trace("Found MDUI info for [{}]", entityId);
-            mdui.setUIInfo(uiInfo);
+            mdui.setUiInfo(uiInfo);
         });
         return mdui;
     }

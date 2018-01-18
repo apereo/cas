@@ -5,6 +5,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link MongoDbProperty}.
@@ -15,6 +16,7 @@ import lombok.Getter;
 @Document
 @Slf4j
 @Getter
+@Setter
 public class MongoDbProperty {
 
     @Id
@@ -25,19 +27,7 @@ public class MongoDbProperty {
 
     private Object value;
 
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public Object getValue() {
         return value;
-    }
-
-    public void setValue(final Object value) {
-        this.value = value;
     }
 }

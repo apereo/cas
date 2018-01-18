@@ -12,6 +12,7 @@ import org.springframework.context.ApplicationContext;
 import javax.persistence.PostLoad;
 import java.util.Locale;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link BaseRegisteredServiceUsernameAttributeProvider}.
@@ -21,6 +22,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public abstract class BaseRegisteredServiceUsernameAttributeProvider implements RegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -8381275200333399951L;
@@ -64,11 +66,9 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      * @param username          the username
      * @return the encrypted username or null
      */
-    protected String encryptResolvedUsername(final Principal principal, final Service service,
-                                             final RegisteredService registeredService, final String username) {
+    protected String encryptResolvedUsername(final Principal principal, final Service service, final RegisteredService registeredService, final String username) {
         final ApplicationContext applicationContext = ApplicationContextProvider.getApplicationContext();
-        final RegisteredServiceCipherExecutor cipher = applicationContext.getBean("registeredServiceCipherExecutor",
-            RegisteredServiceCipherExecutor.class);
+        final RegisteredServiceCipherExecutor cipher = applicationContext.getBean("registeredServiceCipherExecutor", RegisteredServiceCipherExecutor.class);
         return cipher.encode(username, registeredService);
     }
 
@@ -91,16 +91,8 @@ public abstract class BaseRegisteredServiceUsernameAttributeProvider implements 
      */
     protected abstract String resolveUsernameInternal(Principal principal, Service service, RegisteredService registeredService);
 
-    public void setCanonicalizationMode(final String canonicalizationMode) {
-        this.canonicalizationMode = canonicalizationMode;
-    }
-
     public boolean isEncryptUsername() {
         return encryptUsername;
-    }
-
-    public void setEncryptUsername(final boolean encryptUsername) {
-        this.encryptUsername = encryptUsername;
     }
 
     @Override

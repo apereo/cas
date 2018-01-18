@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link PatternMatchingEntityIdAttributeReleasePolicy}.
@@ -21,6 +22,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
 public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 2633701342213724854L;
@@ -44,9 +46,5 @@ public class PatternMatchingEntityIdAttributeReleasePolicy extends BaseSamlRegis
             return authorizeReleaseOfAllowedAttributes(attributes);
         }
         return new HashMap<>(0);
-    }
-
-    public void setEntityIds(final String entityIds) {
-        this.entityIds = entityIds;
     }
 }

@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link ConsentDecision}.
@@ -25,6 +26,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class ConsentDecision {
 
     @Id
@@ -58,51 +60,19 @@ public class ConsentDecision {
         return createdDate;
     }
 
-    public void setCreatedDate(final LocalDateTime date) {
-        this.createdDate = date;
-    }
-
     public ChronoUnit getReminderTimeUnit() {
         return reminderTimeUnit;
-    }
-
-    public void setReminderTimeUnit(final ChronoUnit reminderTimeUnit) {
-        this.reminderTimeUnit = reminderTimeUnit;
     }
 
     public long getId() {
         return id;
     }
 
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setPrincipal(final String principal) {
-        this.principal = principal;
-    }
-
-    public void setService(final String service) {
-        this.service = service;
-    }
-
     public ConsentOptions getOptions() {
         return options;
     }
 
-    public void setOptions(final ConsentOptions options) {
-        this.options = options;
-    }
-
-    public void setReminder(final Long reminder) {
-        this.reminder = reminder;
-    }
-
     public Long getReminder() {
         return reminder;
-    }
-
-    public void setAttributes(final String attributes) {
-        this.attributes = attributes;
     }
 }

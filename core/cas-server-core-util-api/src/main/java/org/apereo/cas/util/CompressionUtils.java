@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -25,16 +26,10 @@ import java.util.zip.InflaterInputStream;
  * @since 4.1
  */
 @Slf4j
-public final class CompressionUtils {
-
+@UtilityClass
+public class CompressionUtils {
 
     private static final int INFLATED_ARRAY_LENGTH = 10000;
-
-    /**
-     * Private ctor for a utility class.
-     */
-    private CompressionUtils() {
-    }
 
     /**
      * Inflate the given byte array by {@link #INFLATED_ARRAY_LENGTH}.

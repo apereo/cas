@@ -180,7 +180,7 @@
             <property name="severity" value="error"/>
         </module>
         <module name="MethodLength">
-            <property name="max" value="160"/>
+            <property name="max" value="180"/>
         </module>
         <module name="ParameterNumber">
             <property name="max" value="20"/>
@@ -188,7 +188,7 @@
             <property name="tokens" value="METHOD_DEF"/>
         </module>
         <module name="LineLength">
-            <property name="max" value="160"/>
+            <property name="max" value="190"/>
             <property name="tabWidth" value="4"/>
             <property name="severity" value="error"/>
         </module>
@@ -301,10 +301,10 @@
         <module name="FinalClass">
             <property name="severity" value="error"/>
         </module>
+        <!--
         <module name="HideUtilityClassConstructor">
             <property name="severity" value="error"/>
         </module>
-        <!--
         <module name="InterfaceIsType">
             <property name="severity" value="info"/>
         </module>

@@ -1,16 +1,21 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
+
 import javax.persistence.Transient;
 import java.net.URI;
 import java.util.Map;
+
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategy}.
@@ -20,6 +25,8 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
+@NoArgsConstructor
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -2407494148882123062L;
@@ -34,9 +41,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     @JsonIgnore
     @Transient
     private transient RegisteredServiceAccessStrategy groovyStrategyInstance;
-
-    public GroovyRegisteredServiceAccessStrategy() {
-    }
 
     @Override
     @JsonIgnore
@@ -85,23 +89,11 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
         return this.groovyStrategyInstance.getDelegatedAuthenticationPolicy();
     }
 
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public void setGroovyScript(final String groovyScript) {
-        this.groovyScript = groovyScript;
-    }
-
+    @SneakyThrows
     private void buildGroovyAccessStrategyInstanceIfNeeded() {
-        try {
-            if (this.groovyStrategyInstance == null) {
-                final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
-                this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
-            }
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+        if (this.groovyStrategyInstance == null) {
+            final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
+            this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
         }
     }
 

@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
@@ -20,10 +19,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * If the check of the certificate is valid, flow goes to sendTicketGrantingTicket.
  * On error or authenticationFailure, the user is sent to the login page.
  * The authenticationFailure outcome can happen when CAS got a valid certificate but
- * couldn't find entry for the certificate in an attribute repository and
- * falling back to principal from the certificate is turned off via:
- * {@code cas.authn.x509.principal.returnNull=true} provided by
- * {@link PersonDirectoryPrincipalResolverProperties#isReturnNull()}.
+ * couldn't find entry for the certificate in an attribute repository.
  * <p>
  * Credentials are cleared out at the end of the action in case the user
  * is sent to the login page where the X509 credentials object will cause

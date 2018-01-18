@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.Map;
 import java.util.regex.Matcher;
 import lombok.Getter;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Resolves the username for the service to be the default principal id.
@@ -24,14 +26,13 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@Setter
+@NoArgsConstructor
 public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = 5823989148794052951L;
 
     private String groovyScript;
-
-    public GroovyRegisteredServiceUsernameProvider() {
-    }
 
     public GroovyRegisteredServiceUsernameProvider(final String groovyScript) {
         this.groovyScript = groovyScript;
@@ -106,9 +107,5 @@ public class GroovyRegisteredServiceUsernameProvider extends BaseRegisteredServi
     @Override
     public int hashCode() {
         return new HashCodeBuilder().appendSuper(super.hashCode()).append(groovyScript).toHashCode();
-    }
-
-    public void setGroovyScript(final String groovyScript) {
-        this.groovyScript = groovyScript;
     }
 }

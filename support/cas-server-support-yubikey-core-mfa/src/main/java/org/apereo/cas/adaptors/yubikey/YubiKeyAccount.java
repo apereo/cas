@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import lombok.ToString;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link YubiKeyAccount}.
@@ -22,6 +23,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
 public class YubiKeyAccount {
 
     @Id
@@ -42,17 +44,5 @@ public class YubiKeyAccount {
 
     public long getId() {
         return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setPublicId(final String publicId) {
-        this.publicId = publicId;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
     }
 }

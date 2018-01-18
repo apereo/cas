@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -38,13 +40,11 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2.0
  */
 @Slf4j
-public final class RegisteredServiceTestUtils {
+@UtilityClass
+public class RegisteredServiceTestUtils {
     public static final String CONST_USERNAME = "test";
     public static final String CONST_TEST_URL = "https://google.com";
     public static final String CONST_TEST_URL2 = "https://example.com";
-
-    private RegisteredServiceTestUtils() {
-    }
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials() {
         return getHttpBasedServiceCredentials(CONST_TEST_URL);
@@ -112,46 +112,43 @@ public final class RegisteredServiceTestUtils {
     public static AbstractRegisteredService getRegisteredService() {
         return getRegisteredService(CONST_TEST_URL);
     }
-    
+
+    @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        try {
-            final RegexRegisteredService s = new RegexRegisteredService();
-            s.setServiceId(id);
-            s.setEvaluationOrder(1);
-            s.setName("Test registered service " + id);
-            s.setDescription("Registered service description");
-            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-            s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
-            s.setTheme("exampleTheme");
-            s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
-            final DefaultRegisteredServiceAccessStrategy accessStrategy =
-                    new DefaultRegisteredServiceAccessStrategy(true, true);
-            accessStrategy.setRequireAllAttributes(true);
-            accessStrategy.setRequiredAttributes(getTestAttributes());
-            s.setAccessStrategy(accessStrategy);
-            s.setLogo("https://logo.example.org/logo.png");
-            s.setLogoutType(LogoutType.BACK_CHANNEL);
-            s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
-            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
+        final RegexRegisteredService s = new RegexRegisteredService();
+        s.setServiceId(id);
+        s.setEvaluationOrder(1);
+        s.setName("Test registered service " + id);
+        s.setDescription("Registered service description");
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
+        s.setTheme("exampleTheme");
+        s.setUsernameAttributeProvider(new PrincipalAttributeRegisteredServiceUsernameProvider("uid"));
+        final DefaultRegisteredServiceAccessStrategy accessStrategy =
+            new DefaultRegisteredServiceAccessStrategy(true, true);
+        accessStrategy.setRequireAllAttributes(true);
+        accessStrategy.setRequiredAttributes(getTestAttributes());
+        s.setAccessStrategy(accessStrategy);
+        s.setLogo("https://logo.example.org/logo.png");
+        s.setLogoutType(LogoutType.BACK_CHANNEL);
+        s.setLogoutUrl(new URL("https://sys.example.org/logout.png"));
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^http.+"));
 
-            s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
+        s.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:RSA1024Public.key", "RSA"));
 
-            final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
-            policy.setAuthorizedToReleaseCredentialPassword(true);
-            policy.setAuthorizedToReleaseProxyGrantingTicket(true);
+        final ReturnAllowedAttributeReleasePolicy policy = new ReturnAllowedAttributeReleasePolicy();
+        policy.setAuthorizedToReleaseCredentialPassword(true);
+        policy.setAuthorizedToReleaseProxyGrantingTicket(true);
 
-            final CachingPrincipalAttributesRepository repo =
-                    new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
-            repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
-            policy.setPrincipalAttributesRepository(repo);
-            policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
-            policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
-            s.setAttributeReleasePolicy(policy);
+        final CachingPrincipalAttributesRepository repo =
+            new CachingPrincipalAttributesRepository(TimeUnit.SECONDS.name(), 10);
+        repo.setMergingStrategy(AbstractPrincipalAttributesRepository.MergingStrategy.ADD);
+        policy.setPrincipalAttributesRepository(repo);
+        policy.setAttributeFilter(new RegisteredServiceRegexAttributeFilter("https://.+"));
+        policy.setAllowedAttributes(new ArrayList<>(getTestAttributes().keySet()));
+        s.setAttributeReleasePolicy(policy);
 
-            return s;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return s;
     }
 
     public static Principal getPrincipal() {

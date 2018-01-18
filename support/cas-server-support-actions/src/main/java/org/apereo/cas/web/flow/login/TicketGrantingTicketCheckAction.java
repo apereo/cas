@@ -9,6 +9,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+import lombok.NoArgsConstructor;
 
 /**
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
@@ -23,7 +24,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.0.0
  */
 @Slf4j
+@NoArgsConstructor
 public class TicketGrantingTicketCheckAction extends AbstractAction {
+
     /**
      * TGT does not exist event ID={@value}.
      **/
@@ -39,12 +42,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      **/
     public static final String VALID = "valid";
 
-
-
     private CentralAuthenticationService centralAuthenticationService;
-
-    public TicketGrantingTicketCheckAction() {
-    }
 
     /**
      * Creates a new instance with the given ticket registry.
@@ -68,7 +66,6 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
         if (!StringUtils.hasText(tgtId)) {
             return new Event(this, NOT_EXISTS);
         }
-
         String eventId = INVALID;
         try {
             final Ticket ticket = this.centralAuthenticationService.getTicket(tgtId, Ticket.class);

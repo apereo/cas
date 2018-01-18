@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.support;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
@@ -24,10 +26,8 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
-public final class Beans {
-    
-    protected Beans() {
-    }
+@UtilityClass
+public class Beans {
 
     /**
      * New thread pool executor factory bean.
@@ -62,19 +62,16 @@ public final class Beans {
      * @param p the properties
      * @return the person attribute dao
      */
+    @SneakyThrows
     public static IPersonAttributeDao newStubAttributeRepository(final PrincipalAttributesProperties p) {
-        try {
-            final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
-            final Map<String, List<Object>> pdirMap = new HashMap<>();
-            p.getStub().getAttributes().forEach((key, value) -> {
-                final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
-                pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
-            });
-            dao.setBackingMap(pdirMap);
-            return dao;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final NamedStubPersonAttributeDao dao = new NamedStubPersonAttributeDao();
+        final Map<String, List<Object>> pdirMap = new HashMap<>();
+        p.getStub().getAttributes().forEach((key, value) -> {
+            final String[] vals = org.springframework.util.StringUtils.commaDelimitedListToStringArray(value);
+            pdirMap.put(key, Arrays.stream(vals).collect(Collectors.toList()));
+        });
+        dao.setBackingMap(pdirMap);
+        return dao;
     }
 
 
@@ -86,16 +83,11 @@ public final class Beans {
      * @param length the length in seconds.
      * @return the duration
      */
+    @SneakyThrows
     public static Duration newDuration(final String length) {
-        try {
-            if (NumberUtils.isCreatable(length)) {
-                return Duration.ofSeconds(Long.parseLong(length));
-            }
-            return Duration.parse(length);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        if (NumberUtils.isCreatable(length)) {
+            return Duration.ofSeconds(Long.parseLong(length));
         }
+        return Duration.parse(length);
     }
-
-
 }

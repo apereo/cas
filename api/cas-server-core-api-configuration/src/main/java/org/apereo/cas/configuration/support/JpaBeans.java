@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
@@ -23,23 +24,20 @@ import java.util.Properties;
  */
 
 @Slf4j
-public final class JpaBeans {
-
-    protected JpaBeans() {
-    }
-
+@UtilityClass
+public class JpaBeans {
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool.
      * <p>
-     * If jpaProperties contains {@link AbstractJpaProperties#getDataSourceName()} a lookup will be
+     * If properties specify a data source name, a lookup will be
      * attempted. If the DataSource is not found via JNDI then CAS will attempt to
      * configure a Hikari connection pool.
      * <p>
      * Since the datasource beans are {@link org.springframework.cloud.context.config.annotation.RefreshScope},
      * they will be a proxied by Spring
      * and on some application servers there have been classloading issues. A workaround
-     * for this is to use the {@link AbstractJpaProperties#isDataSourceProxy()} setting and then the dataSource will be
+     * for this is to use activate data source proxying via settings and then the dataSource will be
      * wrapped in an application level class. If that is an issue, don't do it.
      * <p>
      * If user wants to do lookup as resource, they may include {@code java:/comp/env}

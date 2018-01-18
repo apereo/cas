@@ -8,7 +8,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,12 +151,6 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return true;
     }
 
-    @JsonIgnore
-    @Override
-    public void setServiceAccessAllowed(final boolean value) {
-        this.enabled = value;
-    }
-
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
@@ -186,8 +179,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes  the required attributes
      * @return the boolean
      */
-    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes,
-                                                               final Map<String, Set<String>> requiredAttributes) {
+    protected boolean doRequiredAttributesAllowPrincipalAccess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
         LOGGER.debug("These required attributes [{}] are examined against [{}] before service can proceed.", requiredAttributes, principalAttributes);
         if (requiredAttributes.isEmpty()) {
             return true;
@@ -237,8 +229,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param requiredAttributes  the required attributes
      * @return true /false
      */
-    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes,
-                                                                 final Map<String, Set<String>> requiredAttributes) {
+    protected boolean enoughRequiredAttributesAvailableToProcess(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
         if (principalAttributes.isEmpty() && !requiredAttributes.isEmpty()) {
             LOGGER.debug("No principal attributes are found to satisfy defined attribute requirements");
             return false;

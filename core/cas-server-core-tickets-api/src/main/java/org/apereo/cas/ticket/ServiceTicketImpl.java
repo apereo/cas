@@ -9,7 +9,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.springframework.util.Assert;
-
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -17,6 +16,8 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -33,8 +34,9 @@ import javax.persistence.Table;
 @DiscriminatorValue(ServiceTicket.PREFIX)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@Setter
+@NoArgsConstructor
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
-
 
     private static final long serialVersionUID = -4223319704861765405L;
 
@@ -61,13 +63,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     private Boolean grantedTicketAlready = Boolean.FALSE;
 
     /**
-     * Instantiates a new service ticket impl.
-     */
-    public ServiceTicketImpl() {
-        // exists for JPA purposes
-    }
-
-    /**
      * Constructs a new ServiceTicket with a Unique Id, a TicketGrantingTicket,
      * a Service, Expiration Policy and a flag to determine if the ticket
      * creation was from a new Login or not.
@@ -80,13 +75,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
     @JsonCreator
-    public ServiceTicketImpl(@JsonProperty("id") final String id,
-                             @JsonProperty("grantingTicket") final TicketGrantingTicket ticket,
-                             @JsonProperty("service") final Service service,
-                             @JsonProperty("credentialProvided") final boolean credentialProvided,
+    public ServiceTicketImpl(@JsonProperty("id") final String id, @JsonProperty("grantingTicket") final TicketGrantingTicket ticket,
+                             @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
                              @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
-
         Assert.notNull(service, "service cannot be null");
         Assert.notNull(ticket, "ticket cannot be null");
         this.ticketGrantingTicket = ticket;
@@ -120,18 +112,13 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     @Override
     @Synchronized
-    public ProxyGrantingTicket grantProxyGrantingTicket(
-        final String id, final Authentication authentication,
-        final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
-
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         if (this.grantedTicketAlready) {
             LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
             throw new InvalidProxyGrantingTicketForServiceTicketException(this.service);
         }
         this.grantedTicketAlready = Boolean.TRUE;
-
-        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service,
-            this.getTicketGrantingTicket(), authentication, expirationPolicy);
+        final ProxyGrantingTicket pgt = new ProxyGrantingTicketImpl(id, this.service, this.getTicketGrantingTicket(), authentication, expirationPolicy);
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }
@@ -144,14 +131,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     @Override
     public Authentication getAuthentication() {
         return getTicketGrantingTicket().getAuthentication();
-    }
-
-    public void setTicketGrantingTicket(final TicketGrantingTicket ticketGrantingTicket) {
-        this.ticketGrantingTicket = ticketGrantingTicket;
-    }
-
-    public void setService(final Service service) {
-        this.service = service;
     }
 
     @Override

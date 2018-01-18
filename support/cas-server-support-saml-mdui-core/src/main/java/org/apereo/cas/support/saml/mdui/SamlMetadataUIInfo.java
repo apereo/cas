@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
@@ -14,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.opensaml.saml.saml2.metadata.LocalizedName;
 import java.util.regex.Pattern;
+import lombok.Setter;
 
 /**
  * This is {@link SamlMetadataUIInfo}.
@@ -23,6 +25,8 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @ToString(callSuper = true)
+@Setter
+@Getter
 public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInfo {
 
     private static final long serialVersionUID = -1434801982864628179L;
@@ -124,10 +128,6 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
             }
         });
         return list;
-    }
-
-    public void setUIInfo(final UIInfo uiInfo) {
-        this.uiInfo = uiInfo;
     }
 
     /**
