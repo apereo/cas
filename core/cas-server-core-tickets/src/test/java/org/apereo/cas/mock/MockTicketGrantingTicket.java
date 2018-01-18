@@ -1,5 +1,6 @@
 package org.apereo.cas.mock;
 
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -35,6 +36,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@EqualsAndHashCode(of ={"id"})
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
@@ -161,16 +163,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return compareTo((Ticket) obj) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
-    }
+    
 
     @Override
     public String getPrefix() {

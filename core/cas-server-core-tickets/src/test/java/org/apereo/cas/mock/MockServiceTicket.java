@@ -1,5 +1,6 @@
 package org.apereo.cas.mock;
 
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@EqualsAndHashCode(of ={"id"})
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;
@@ -117,15 +119,5 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     @Override
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return compareTo((Ticket) obj) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
     }
 }
