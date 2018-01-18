@@ -76,14 +76,6 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
         }
     }
 
-    public boolean isRequiredProperty() {
-        return requiredProperty;
-    }
-
-    public boolean isRequiredModuleAutomated() {
-        return requiredModuleAutomated;
-    }
-
     private String cleanUpDescription(final String propDescription) {
         String description = propDescription;
         final String format = "<code>%s</code>";
@@ -105,11 +97,6 @@ public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProp
             return description;
         }
         return propDescription;
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
     }
 
     @Override

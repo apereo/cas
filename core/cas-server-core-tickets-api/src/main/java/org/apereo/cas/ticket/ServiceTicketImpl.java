@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -36,6 +37,7 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@Getter
 public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
 
     private static final long serialVersionUID = -4223319704861765405L;
@@ -86,16 +88,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         this.fromNewLogin = credentialProvided || ticket.getCountOfUses() == 0;
     }
 
-    @Override
-    public boolean isFromNewLogin() {
-        return this.fromNewLogin;
-    }
-
-    @Override
-    public Service getService() {
-        return this.service;
-    }
-
     /**
      * {@inheritDoc}
      * <p>The state of the ticket is affected by this operation and the
@@ -122,12 +114,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
-    }
-
+    
     @Override
     public Authentication getAuthentication() {
         return getTicketGrantingTicket().getAuthentication();
