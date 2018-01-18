@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
@@ -122,39 +123,33 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * Initializes the process that periodically fetches CRL data.
      */
     @PostConstruct
-    @SuppressWarnings("FutureReturnValueIgnored")
+    @SneakyThrows
     public void init() {
         if (!validateConfiguration()) {
             return;
         }
-
-        try {
-            // Fetch CRL data synchronously and throw exception to abort if any fail
-            final Collection<X509CRL> results = this.fetcher.fetch(getResources());
-            ResourceCRLRevocationChecker.this.addCrls(results);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        
+        // Fetch CRL data synchronously and throw exception to abort if any fail
+        final Collection<X509CRL> results = this.fetcher.fetch(getResources());
+        ResourceCRLRevocationChecker.this.addCrls(results);
 
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = () -> {
             try {
                 final Collection<Resource> resources = getResources();
-                final Collection<X509CRL> results = getFetcher().fetch(resources);
-                ResourceCRLRevocationChecker.this.addCrls(results);
+                final Collection<X509CRL> fetchedResults = getFetcher().fetch(resources);
+                ResourceCRLRevocationChecker.this.addCrls(fetchedResults);
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
             }
         };
-        try {
-            this.scheduler.scheduleAtFixedRate(
-                scheduledFetcher,
-                this.refreshInterval,
-                this.refreshInterval,
-                TimeUnit.SECONDS);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        this.scheduler.scheduleAtFixedRate(
+            scheduledFetcher,
+            this.refreshInterval,
+            this.refreshInterval,
+            TimeUnit.SECONDS);
+
     }
 
     private boolean validateConfiguration() {

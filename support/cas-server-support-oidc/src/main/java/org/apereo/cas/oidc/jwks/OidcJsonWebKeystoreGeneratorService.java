@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
@@ -32,20 +33,17 @@ public class OidcJsonWebKeystoreGeneratorService {
      * Generate.
      */
     @PostConstruct
+    @SneakyThrows
     public void generate() {
-        try {
-            final File file = oidcProperties.getJwksFile().getFile();
-            if (!file.exists()) {
-                final RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
-                final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
-                final String data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
-                FileUtils.write(file, data, StandardCharsets.UTF_8);
-                LOGGER.debug("Generated JSON web keystore at [{}]", file);
-            } else {
-                LOGGER.debug("Located JSON web keystore at [{}]", file);
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final File file = oidcProperties.getJwksFile().getFile();
+        if (!file.exists()) {
+            final RsaJsonWebKey rsaJsonWebKey = RsaJwkGenerator.generateJwk(2048);
+            final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(rsaJsonWebKey);
+            final String data = jsonWebKeySet.toJson(JsonWebKey.OutputControlLevel.INCLUDE_PRIVATE);
+            FileUtils.write(file, data, StandardCharsets.UTF_8);
+            LOGGER.debug("Generated JSON web keystore at [{}]", file);
+        } else {
+            LOGGER.debug("Located JSON web keystore at [{}]", file);
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.artifact;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -47,6 +48,7 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
     }
 
     @Override
+    @SneakyThrows
     public SamlArtifactTicket create(final String artifactId,
                                      final Authentication authentication,
                                      final TicketGrantingTicket ticketGrantingTicket, final String issuer,
@@ -61,8 +63,6 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
                 ticketGrantingTicket.getDescendantTickets().add(at.getId());
             }
             return at;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
     }
 

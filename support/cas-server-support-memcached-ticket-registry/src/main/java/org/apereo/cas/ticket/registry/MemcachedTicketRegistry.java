@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
@@ -135,12 +136,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
         return ttl;
     }
 
+    @SneakyThrows
     private MemcachedClientIF getClientFromPool() {
-        try {
-            return this.connectionPool.borrowObject();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return this.connectionPool.borrowObject();
     }
 
     private void returnClientToPool(final MemcachedClientIF clientFromPool) {

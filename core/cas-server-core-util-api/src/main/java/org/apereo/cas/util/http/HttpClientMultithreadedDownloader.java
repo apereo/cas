@@ -3,6 +3,7 @@ package org.apereo.cas.util.http;
 import com.github.axet.wget.SpeedInfo;
 import com.github.axet.wget.WGet;
 import com.github.axet.wget.info.DownloadInfo;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.springframework.core.io.Resource;
@@ -31,30 +32,28 @@ public class HttpClientMultithreadedDownloader {
     /**
      * Download.
      */
+    @SneakyThrows
     public void download() {
         final AtomicBoolean stop = new AtomicBoolean(false);
-        try {
-            final DownloadInfo info = new DownloadInfo(resourceToDownload.getURL());
-            final DownloadStatusListener status = new DownloadStatusListener(info);
+        final DownloadInfo info = new DownloadInfo(resourceToDownload.getURL());
+        final DownloadStatusListener status = new DownloadStatusListener(info);
 
-            // extract information from the web
-            info.extract(stop, status);
+        // extract information from the web
+        info.extract(stop, status);
 
-            // enable multipart download
-            info.enableMultipart();
+        // enable multipart download
+        info.enableMultipart();
 
-            // create downloader
-            final WGet w = new WGet(info, this.targetDestination);
+        // create downloader
+        final WGet w = new WGet(info, this.targetDestination);
 
-            // init speed info
-            status.speedInfo.start(0);
+        // init speed info
+        status.speedInfo.start(0);
 
-            // will blocks until download finishes
-            LOGGER.info("Starting to download resource [{}] into [{}]", this.resourceToDownload, targetDestination);
-            w.download(stop, status);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        // will blocks until download finishes
+        LOGGER.info("Starting to download resource [{}] into [{}]", this.resourceToDownload, targetDestination);
+        w.download(stop, status);
+
     }
 
     private static class DownloadStatusListener implements Runnable {
@@ -78,7 +77,7 @@ public class HttpClientMultithreadedDownloader {
                 case DONE:
                     speedInfo.end(info.getCount());
                     LOGGER.info("Download completed. [{}] average speed ([{}])", info.getState(),
-                            FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed()));
+                        FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed()));
                     break;
 
                 case RETRYING:
@@ -97,12 +96,12 @@ public class HttpClientMultithreadedDownloader {
                                 switch (p.getState()) {
                                     case DOWNLOADING:
                                         partBuilder.append(String.format("Part#%d(%.2f) ", p.getNumber(),
-                                                p.getCount() / (float) p.getLength()));
+                                            p.getCount() / (float) p.getLength()));
                                         break;
                                     case ERROR:
                                     case RETRYING:
                                         partBuilder.append(String.format("Part#%d(%s) ", p.getNumber(),
-                                                p.getException().getMessage() + " r:" + p.getRetry() + " d:" + p.getDelay()));
+                                            p.getException().getMessage() + " r:" + p.getRetry() + " d:" + p.getDelay()));
                                         break;
                                     default:
                                         break;
@@ -112,8 +111,8 @@ public class HttpClientMultithreadedDownloader {
 
                         final float p = info.getCount() / (float) info.getLength();
                         LOGGER.debug(String.format("%.2f %s (%s / %s)", p, partBuilder.toString(),
-                                FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
-                                FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));
+                            FileUtils.byteCountToDisplaySize(speedInfo.getCurrentSpeed()),
+                            FileUtils.byteCountToDisplaySize(speedInfo.getAverageSpeed())));
                     }
                     break;
 

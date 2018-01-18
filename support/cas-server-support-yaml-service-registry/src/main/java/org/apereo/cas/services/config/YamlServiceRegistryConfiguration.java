@@ -1,5 +1,6 @@
 package org.apereo.cas.services.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
@@ -35,16 +36,15 @@ public class YamlServiceRegistryConfiguration {
     @Autowired
     @Qualifier("registeredServiceReplicationStrategy")
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
-    
+
     @Bean
     @RefreshScope
+    @SneakyThrows
     public ServiceRegistryDao serviceRegistryDao() {
-        try {
-            final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-            return new YamlServiceRegistryDao(registry.getYaml().getLocation(), 
-                    registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        return new YamlServiceRegistryDao(registry.getYaml().getLocation(),
+            registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
+
     }
 }

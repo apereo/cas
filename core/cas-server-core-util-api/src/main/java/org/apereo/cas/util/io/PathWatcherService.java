@@ -1,11 +1,11 @@
 package org.apereo.cas.util.io;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
 import java.nio.file.WatchKey;
@@ -48,18 +48,15 @@ public class PathWatcherService implements Runnable, Closeable {
      * @param onModify      action triggered when a file is modified
      * @param onDelete      action triggered when a file is deleted
      */
+    @SneakyThrows
     public PathWatcherService(final Path watchablePath, final Consumer<File> onCreate,
                               final Consumer<File> onModify, final Consumer<File> onDelete) {
-        try {
-            this.onCreate = onCreate;
-            this.onModify = onModify;
-            this.onDelete = onDelete;
-            this.watcher = watchablePath.getFileSystem().newWatchService();
-            LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
-            watchablePath.register(this.watcher, KINDS);
-        } catch (final IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        this.onCreate = onCreate;
+        this.onModify = onModify;
+        this.onDelete = onDelete;
+        this.watcher = watchablePath.getFileSystem().newWatchService();
+        LOGGER.debug("Created service registry watcher for events of type [{}]", (Object[]) KINDS);
+        watchablePath.register(this.watcher, KINDS);
     }
 
     @Override
@@ -129,13 +126,10 @@ public class PathWatcherService implements Runnable, Closeable {
      *
      * @param name the name
      */
+    @SneakyThrows
     public void start(final String name) {
-        try {
-            this.thread = new Thread(this);
-            this.thread.setName(name);
-            thread.start();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        this.thread = new Thread(this);
+        this.thread.setName(name);
+        thread.start();
     }
 }
