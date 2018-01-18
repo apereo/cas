@@ -41,14 +41,18 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     @Test
     public void verifyParseTokenString() {
         final String wresult = testTokens.get(GOOD_TOKEN);
-        final Pair<Assertion, WsFederationConfiguration> result = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+        final Pair<Assertion, WsFederationConfiguration> result =
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
+                wsFederationConfigurations);
         assertNotNull("testParseTokenString() - Not null", result);
     }
 
     @Test
     public void verifyCreateCredentialFromToken() {
         final String wresult = testTokens.get(GOOD_TOKEN);
-        final Pair<Assertion, WsFederationConfiguration> assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+        final Pair<Assertion, WsFederationConfiguration> assertion =
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
+                wsFederationConfigurations);
         final WsFederationCredential expResult = new WsFederationCredential();
         expResult.setIssuedOn(ZonedDateTime.parse("2014-02-26T22:51:16.504Z"));
         expResult.setNotBefore(ZonedDateTime.parse("2014-02-26T22:51:16.474Z"));
@@ -75,7 +79,9 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     @Test
     public void verifyValidateSignatureGoodToken() {
         final String wresult = testTokens.get(GOOD_TOKEN);
-        final Pair<Assertion, WsFederationConfiguration> assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+        final Pair<Assertion, WsFederationConfiguration> assertion =
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
+                wsFederationConfigurations);
         final boolean result = wsFederationHelper.validateSignature(assertion);
         assertTrue("testValidateSignatureGoodToken() - True", result);
     }
@@ -83,7 +89,9 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
     @Test
     public void verifyValidateSignatureModifiedAttribute() {
         final String wresult = testTokens.get("badTokenModifiedAttribute");
-        final Pair<Assertion, WsFederationConfiguration> assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+        final Pair<Assertion, WsFederationConfiguration> assertion =
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
+                wsFederationConfigurations);
         final boolean result = wsFederationHelper.validateSignature(assertion);
         assertFalse("testValidateSignatureModifiedAttribute() - False", result);
     }
@@ -96,7 +104,9 @@ public class WsFederationHelperTests extends AbstractWsFederationTests {
         cfg.setSigningCertificateResources(ctx.getResource("classpath:bad-signing.crt"));
         signingWallet.addAll(cfg.getSigningWallet());
         final String wresult = testTokens.get(GOOD_TOKEN);
-        final Pair<Assertion, WsFederationConfiguration> assertion = wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult), wsFederationConfigurations);
+        final Pair<Assertion, WsFederationConfiguration> assertion =
+            wsFederationHelper.buildAndVerifyAssertion(wsFederationHelper.getRequestSecurityTokenFromResult(wresult),
+                wsFederationConfigurations);
         assertion.getValue().getSigningWallet().clear();
         assertion.getValue().getSigningWallet().addAll(signingWallet);
         final boolean result = wsFederationHelper.validateSignature(assertion);
