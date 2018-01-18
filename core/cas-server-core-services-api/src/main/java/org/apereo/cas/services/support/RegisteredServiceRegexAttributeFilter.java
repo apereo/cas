@@ -1,9 +1,9 @@
 package org.apereo.cas.services.support;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import java.util.Collection;
 import java.util.HashMap;
@@ -26,6 +26,8 @@ import lombok.NoArgsConstructor;
 @ToString
 @Setter
 @NoArgsConstructor
+@Getter
+@EqualsAndHashCode
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
@@ -42,16 +44,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
     public RegisteredServiceRegexAttributeFilter(final String regex) {
         this.pattern = Pattern.compile(regex);
     }
-
-    /**
-     * Gets the pattern.
-     *
-     * @return the pattern
-     */
-    public Pattern getPattern() {
-        return this.pattern;
-    }
-
+    
     /**
      * {@inheritDoc}
      * <p>
@@ -163,23 +156,4 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
         LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...", attributeValue, attributeName, this.pattern.pattern());
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 83).append(this.pattern).toHashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final RegisteredServiceRegexAttributeFilter rhs = (RegisteredServiceRegexAttributeFilter) obj;
-        return new EqualsBuilder().append(this.pattern.pattern(), rhs.getPattern().pattern()).isEquals();
-    }
 }

@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.util.ScriptingUtils;
@@ -20,15 +20,13 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredServiceUsernameAttributeProvider {
 
     private static final long serialVersionUID = -678554831202936052L;
 
     private String script;
-
-    public ScriptedRegisteredServiceUsernameProvider(final String script) {
-        this.script = script;
-    }
 
     @Override
     protected String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
@@ -46,23 +44,4 @@ public class ScriptedRegisteredServiceUsernameProvider extends BaseRegisteredSer
         return principal.getId();
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ScriptedRegisteredServiceUsernameProvider rhs = (ScriptedRegisteredServiceUsernameProvider) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.script, rhs.script).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(script).toHashCode();
-    }
 }
