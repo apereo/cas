@@ -13,6 +13,7 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoggingRetryPolicy;
 import com.datastax.driver.core.policies.RetryPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
@@ -28,9 +29,8 @@ import java.util.Arrays;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
 public class DefaultCassandraSessionFactory implements CassandraSessionFactory, Closeable {
-
-
     private final Cluster cluster;
     private final Session session;
 
@@ -85,11 +85,6 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
                     clusterHost.getCassandraVersion(), loadBalancingPolicy.distance(clusterHost), clusterHost.isUp()));
         }
         return cluster;
-    }
-
-    @Override
-    public Session getSession() {
-        return this.session;
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.ticket;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -15,6 +16,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@Getter
 public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 584961303690286494L;
@@ -30,9 +32,5 @@ public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
     public CasTicketGrantingTicketDestroyedEvent(final Object source, final TicketGrantingTicket ticket) {
         super(source);
         this.ticketGrantingTicket = ticket;
-    }
-
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
     }
 }

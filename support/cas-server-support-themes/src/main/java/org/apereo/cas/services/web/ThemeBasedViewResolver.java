@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -23,6 +24,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
 
     private final ThemeResolver themeResolver;
@@ -65,12 +67,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
             resolver = viewResolverFactory.create(theme);
             resolvers.put(theme, resolver);
         }
-        // return the resolver
         return resolver;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
 }
