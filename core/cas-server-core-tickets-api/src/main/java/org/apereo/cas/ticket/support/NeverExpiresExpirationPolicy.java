@@ -3,9 +3,8 @@ package org.apereo.cas.ticket.support;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.TicketState;
 import lombok.NoArgsConstructor;
 
@@ -21,6 +20,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @NoArgsConstructor
+@EqualsAndHashCode
 public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serializable Unique ID. */
@@ -43,22 +43,4 @@ public class NeverExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
         return (long) Integer.MAX_VALUE;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder().isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().toHashCode();
-    }
 }
