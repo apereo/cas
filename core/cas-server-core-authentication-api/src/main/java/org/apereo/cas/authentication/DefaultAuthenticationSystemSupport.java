@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -14,6 +15,7 @@ import java.util.stream.Stream;
  * @since 4.2.0
  */
 @Slf4j
+@Getter
 public class DefaultAuthenticationSystemSupport implements AuthenticationSystemSupport {
 
     private final AuthenticationTransactionManager authenticationTransactionManager;
@@ -23,16 +25,6 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
                                               final PrincipalElectionStrategy principalElectionStrategy) {
         this.authenticationTransactionManager = authenticationTransactionManager;
         this.principalElectionStrategy = principalElectionStrategy;
-    }
-
-    @Override
-    public AuthenticationTransactionManager getAuthenticationTransactionManager() {
-        return this.authenticationTransactionManager;
-    }
-
-    @Override
-    public PrincipalElectionStrategy getPrincipalElectionStrategy() {
-        return this.principalElectionStrategy;
     }
 
     @Override

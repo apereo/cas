@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.core.Ordered;
@@ -14,6 +15,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
 public class DefaultAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
 
     private static final long serialVersionUID = -7458940344679793681L;
@@ -30,8 +32,4 @@ public class DefaultAuthenticationServiceSelectionStrategy implements Authentica
         return true;
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
 }

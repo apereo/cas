@@ -45,9 +45,4 @@ public class BasicCredentialMetaData implements CredentialMetaData, Serializable
         this.credentialClass = credential.getClass();
     }
 
-    @Override
-    public Class<? extends Credential> getCredentialClass() {
-        return this.credentialClass;
-    }
-
 }

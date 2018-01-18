@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.view;
 
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
@@ -20,9 +21,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Slf4j
+@Getter
 public abstract class AbstractDelegatingCasView extends AbstractCasView {
-
-
     /**
      * View to delegate.
      */
@@ -66,7 +66,4 @@ public abstract class AbstractDelegatingCasView extends AbstractCasView {
     protected abstract void prepareMergedOutputModel(Map<String, Object> model, HttpServletRequest request,
                                                      HttpServletResponse response) throws Exception;
 
-    public View getView() {
-        return this.view;
-    }
 }

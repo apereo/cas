@@ -35,15 +35,7 @@ public class DistributedCacheObject<V extends Serializable> implements Serializa
         this.timestamp = timestamp;
         this.value = value;
     }
-
-    public long getTimestamp() {
-        return timestamp;
-    }
-
-    public V getValue() {
-        return value;
-    }
-
+    
     /**
      * Gets property.
      *

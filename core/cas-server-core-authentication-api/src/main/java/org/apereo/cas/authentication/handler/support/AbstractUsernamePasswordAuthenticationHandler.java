@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -38,6 +39,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@Getter
 public abstract class AbstractUsernamePasswordAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     private PasswordEncoder passwordEncoder = NoOpPasswordEncoder.getInstance();
@@ -90,10 +92,6 @@ public abstract class AbstractUsernamePasswordAuthenticationHandler extends Abst
      */
     protected abstract AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(UsernamePasswordCredential credential,
                                                                                                  String originalPassword) throws GeneralSecurityException, PreventedException;
-
-    protected PasswordPolicyConfiguration getPasswordPolicyConfiguration() {
-        return this.passwordPolicyConfiguration;
-    }
 
     @Override
     public boolean supports(final Credential credential) {

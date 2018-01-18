@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ import java.util.Map;
 @Slf4j
 @ToString
 @AllArgsConstructor
+@Getter
 public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
 
     /**
@@ -175,8 +177,4 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
         return credential.getId();
     }
 
-    @Override
-    public IPersonAttributeDao getAttributeRepository() {
-        return this.attributeRepository;
-    }
 }
