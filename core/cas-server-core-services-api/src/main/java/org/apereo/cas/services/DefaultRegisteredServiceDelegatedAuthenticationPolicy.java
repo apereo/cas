@@ -1,9 +1,11 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import lombok.ToString;
@@ -18,39 +20,13 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@Setter
+@EqualsAndHashCode
+@AllArgsConstructor
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
-
     private static final long serialVersionUID = -784106970642770923L;
 
-    private Collection<String> allowedProviders;
-
-    public DefaultRegisteredServiceDelegatedAuthenticationPolicy() {
-        this(new LinkedHashSet<>());
-    }
-
-    public DefaultRegisteredServiceDelegatedAuthenticationPolicy(final Collection<String> allowedProviders) {
-        this.allowedProviders = allowedProviders;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final DefaultRegisteredServiceDelegatedAuthenticationPolicy rhs = (DefaultRegisteredServiceDelegatedAuthenticationPolicy) obj;
-        return new EqualsBuilder().append(this.allowedProviders, rhs.allowedProviders).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(allowedProviders).toHashCode();
-    }
+    private Collection<String> allowedProviders = new LinkedHashSet<>();
 
     @Override
     @JsonIgnore

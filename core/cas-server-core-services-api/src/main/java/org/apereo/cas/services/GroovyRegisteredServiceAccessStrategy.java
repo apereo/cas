@@ -1,10 +1,9 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.EqualsAndHashCode;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.springframework.core.io.Resource;
@@ -27,6 +26,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"order", "groovyScript"})
 public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -2407494148882123062L;
@@ -71,11 +71,6 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     }
 
     @Override
-    public int getOrder() {
-        return this.order;
-    }
-
-    @Override
     @JsonIgnore
     public void setServiceAccessAllowed(final boolean enabled) {
         buildGroovyAccessStrategyInstanceIfNeeded();
@@ -95,25 +90,5 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
             final Resource groovyResource = ResourceUtils.getResourceFrom(this.groovyScript);
             this.groovyStrategyInstance = ScriptingUtils.getObjectInstanceFromGroovyResource(groovyResource, RegisteredServiceAccessStrategy.class);
         }
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GroovyRegisteredServiceAccessStrategy rhs = (GroovyRegisteredServiceAccessStrategy) obj;
-        return new EqualsBuilder().append(this.order, rhs.order).append(this.groovyScript, rhs.groovyScript).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(order).append(groovyScript).toHashCode();
     }
 }

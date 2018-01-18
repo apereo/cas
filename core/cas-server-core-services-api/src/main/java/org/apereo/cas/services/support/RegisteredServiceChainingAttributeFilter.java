@@ -1,8 +1,8 @@
 package org.apereo.cas.services.support;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.springframework.core.OrderComparator;
 import java.util.ArrayList;
@@ -23,15 +23,13 @@ import lombok.NoArgsConstructor;
 @ToString
 @Setter
 @NoArgsConstructor
+@Getter
+@EqualsAndHashCode
 public class RegisteredServiceChainingAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 903015750234610128L;
 
     private List<RegisteredServiceAttributeFilter> filters = new ArrayList<>();
-
-    public List<RegisteredServiceAttributeFilter> getFilters() {
-        return filters;
-    }
 
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
@@ -41,23 +39,4 @@ public class RegisteredServiceChainingAttributeFilter implements RegisteredServi
         return attributes;
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final RegisteredServiceChainingAttributeFilter rhs = (RegisteredServiceChainingAttributeFilter) obj;
-        return new EqualsBuilder().append(this.filters, rhs.filters).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().append(filters).toHashCode();
-    }
 }

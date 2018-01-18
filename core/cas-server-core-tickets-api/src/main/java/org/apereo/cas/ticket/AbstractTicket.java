@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import lombok.EqualsAndHashCode;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.springframework.util.Assert;
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -41,6 +41,8 @@ import lombok.NoArgsConstructor;
 @ToString
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"of"})
+@Setter
 public abstract class AbstractTicket implements Ticket, TicketState {
 
     private static final long serialVersionUID = -8506442397878267555L;
@@ -69,7 +71,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * The previous last time this ticket was used.
      */
     @Column(name = "PREVIOUS_LAST_TIME_USED")
-    private ZonedDateTime previousLastTimeUsed;
+    private ZonedDateTime previousTimeUsed;
 
     /**
      * The time the ticket was created.
@@ -102,7 +104,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public void update() {
-        this.previousLastTimeUsed = this.lastTimeUsed;
+        this.previousTimeUsed = this.lastTimeUsed;
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
         this.countOfUses++;
         if (getTicketGrantingTicket() != null && !getTicketGrantingTicket().isExpired()) {
@@ -110,27 +112,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
             state.update();
         }
     }
-
-    @Override
-    public int getCountOfUses() {
-        return this.countOfUses;
-    }
-
-    @Override
-    public ZonedDateTime getCreationTime() {
-        return this.creationTime;
-    }
-
-    @Override
-    public ZonedDateTime getLastTimeUsed() {
-        return this.lastTimeUsed;
-    }
-
-    @Override
-    public ZonedDateTime getPreviousTimeUsed() {
-        return this.previousLastTimeUsed;
-    }
-
+    
     @Override
     public boolean isExpired() {
         final TicketGrantingTicket tgt = getTicketGrantingTicket();
@@ -140,31 +122,6 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     @JsonIgnore
     protected boolean isExpiredInternal() {
         return false;
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).append(this.getId()).toHashCode();
-    }
-
-    @Override
-    public boolean equals(final Object object) {
-        if (object == null) {
-            return false;
-        }
-        if (object == this) {
-            return true;
-        }
-        if (!(object instanceof Ticket)) {
-            return false;
-        }
-        final Ticket ticket = (Ticket) object;
-        return new EqualsBuilder().append(ticket.getId(), this.getId()).isEquals();
-    }
-
-    @Override
-    public ExpirationPolicy getExpirationPolicy() {
-        return this.expirationPolicy;
     }
 
     @Override

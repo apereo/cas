@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
@@ -20,6 +21,7 @@ import java.util.Map;
  */
 @Slf4j
 @EqualsAndHashCode(callSuper = true)
+@Getter
 public class SamlServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584738964007702003L;

@@ -30,8 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
-
-
+    
     private static final long serialVersionUID = -4581238964007702423L;
 
     private final ServerManager serverManager;

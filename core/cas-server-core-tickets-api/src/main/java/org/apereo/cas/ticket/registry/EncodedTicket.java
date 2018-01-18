@@ -4,14 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -30,6 +29,7 @@ import java.time.ZonedDateTime;
 @ToString
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"of"})
 public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
@@ -115,23 +115,4 @@ public class EncodedTicket implements Ticket {
         return getId().compareTo(o.getId());
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final EncodedTicket rhs = (EncodedTicket) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 133).append(id).toHashCode();
-    }
 }

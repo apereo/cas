@@ -1,8 +1,8 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.ServicesManager;
@@ -19,9 +19,13 @@ import java.util.Map;
  * @since 4.2
  */
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
+@Getter
 public class WebApplicationServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -851233878780818494L;
+
+    private int order =  Integer.MAX_VALUE;
 
     public WebApplicationServiceResponseBuilder(final ServicesManager servicesManager) {
         super(servicesManager);
@@ -62,35 +66,7 @@ public class WebApplicationServiceResponseBuilder extends AbstractWebApplication
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder()
-            .appendSuper(super.equals(obj))
-            .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .appendSuper(super.hashCode())
-            .toHashCode();
-    }
-
-    @Override
     public boolean supports(final WebApplicationService service) {
         return true;
-    }
-
-    @Override
-    public int getOrder() {
-        return Integer.MAX_VALUE;
     }
 }
