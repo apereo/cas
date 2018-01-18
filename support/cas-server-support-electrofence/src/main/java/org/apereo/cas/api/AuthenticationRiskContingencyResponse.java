@@ -2,10 +2,8 @@ package org.apereo.cas.api;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.webflow.execution.Event;
-import lombok.ToString;
 
 /**
  * This is {@link AuthenticationRiskContingencyResponse}.
