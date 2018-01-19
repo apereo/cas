@@ -29,7 +29,7 @@ import java.time.ZonedDateTime;
 @ToString
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"of"})
+@EqualsAndHashCode(of = {"id"})
 public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
