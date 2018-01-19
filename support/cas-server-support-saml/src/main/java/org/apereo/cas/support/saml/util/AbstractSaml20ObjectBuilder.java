@@ -34,6 +34,7 @@ import org.opensaml.saml.saml2.core.SubjectConfirmation;
 import org.opensaml.saml.saml2.core.SubjectConfirmationData;
 import org.opensaml.soap.soap11.ActorBearing;
 
+import java.net.InetAddress;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -51,8 +52,6 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuilder {
-
-
     private static final int HEX_HIGH_BITS_BITWISE_FLAG = 0x0f;
     private static final long serialVersionUID = -4325127376598205277L;
 
@@ -372,9 +371,9 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
         if (StringUtils.isNotBlank(inResponseTo)) {
             data.setInResponseTo(inResponseTo);
 
-            final String ip = InetAddressUtils.getByName(inResponseTo);
-            if (StringUtils.isNotBlank(ip)) {
-                data.setAddress(ip);
+            final InetAddress ip = InetAddressUtils.getByName(inResponseTo);
+            if (ip != null) {
+                data.setAddress(ip.getHostName());
             }
 
         }

@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
-        extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
+    extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
 
 
@@ -127,9 +127,9 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final String binding) {
         return this.samlProfileSamlAssertionBuilder.build(authnRequest, request, response,
-                casAssertion, service, adaptor, binding);
+            casAssertion, service, adaptor, binding);
     }
-    
+
     /**
      * Build response response.
      *
@@ -208,7 +208,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
             if (service.isEncryptAssertions()) {
                 LOGGER.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
                 final EncryptedAssertion encryptedAssertion =
-                        this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+                    this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
                 return encryptedAssertion;
             }
             LOGGER.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());

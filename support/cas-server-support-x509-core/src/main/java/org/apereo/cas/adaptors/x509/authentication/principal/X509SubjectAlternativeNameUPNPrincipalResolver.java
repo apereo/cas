@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -28,16 +29,13 @@ import java.util.List;
  */
 @Slf4j
 @ToString(callSuper = true)
+@NoArgsConstructor
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
      * ObjectID for upn altName for windows smart card logon.
      */
     public static final String UPN_OBJECTID = "1.3.6.1.4.1.311.20.2.3";
-
-    public X509SubjectAlternativeNameUPNPrincipalResolver() {
-        super();
-    }
 
     public X509SubjectAlternativeNameUPNPrincipalResolver(final IPersonAttributeDao attributeRepository,
                                                           final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,

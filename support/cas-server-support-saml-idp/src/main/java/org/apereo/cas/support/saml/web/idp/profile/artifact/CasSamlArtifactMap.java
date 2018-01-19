@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -21,18 +22,12 @@ import java.io.IOException;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CasSamlArtifactMap extends BasicSAMLArtifactMap {
 
     private final TicketRegistry ticketRegistry;
     private final SamlArtifactTicketFactory samlArtifactTicketFactory;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    public CasSamlArtifactMap(final TicketRegistry ticketRegistry, final SamlArtifactTicketFactory samlArtifactTicketFactory,
-                              final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketRegistry = ticketRegistry;
-        this.samlArtifactTicketFactory = samlArtifactTicketFactory;
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
 
     @Override
     public void put(final String artifact, final String relyingPartyId,

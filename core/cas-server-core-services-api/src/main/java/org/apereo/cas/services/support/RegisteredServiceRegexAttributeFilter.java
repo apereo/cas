@@ -27,13 +27,14 @@ import lombok.NoArgsConstructor;
 @Setter
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode
+@EqualsAndHashCode(of={"pattern", "order"})
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
 
-    private Pattern pattern;
+    private Pattern compiledPattern;
 
+    private String pattern;
     private int order;
 
     /**
@@ -42,7 +43,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param regex the regex
      */
     public RegisteredServiceRegexAttributeFilter(final String regex) {
-        this.pattern = Pattern.compile(regex);
+        this.compiledPattern = Pattern.compile(regex);
+        this.pattern = regex;
     }
     
     /**
@@ -138,7 +140,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @return true, if successful
      */
     private boolean patternMatchesAttributeValue(final String value) {
-        return this.pattern.matcher(value).matches();
+        return this.compiledPattern.matcher(value).matches();
     }
 
     /**
@@ -148,7 +150,8 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...", attributeValue, attributeName, this.pattern.pattern());
+        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
+            attributeValue, attributeName, this.compiledPattern.pattern());
     }
 
 }

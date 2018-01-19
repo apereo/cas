@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.authn;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -20,13 +21,10 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultAuthnContextClassRefBuilder implements AuthnContextClassRefBuilder {
 
     private final CasConfigurationProperties casProperties;
-
-    public DefaultAuthnContextClassRefBuilder(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     @Override
     public String build(final Object assertion,

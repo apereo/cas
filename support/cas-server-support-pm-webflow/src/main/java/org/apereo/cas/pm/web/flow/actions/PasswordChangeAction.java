@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -22,6 +23,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class PasswordChangeAction extends AbstractAction {
 
     /**
@@ -37,12 +39,6 @@ public class PasswordChangeAction extends AbstractAction {
 
     private final PasswordManagementService passwordManagementService;
     private final PasswordValidationService passwordValidationService;
-
-    public PasswordChangeAction(final PasswordManagementService passwordManagementService,
-                                final PasswordValidationService passwordValidationService) {
-        this.passwordManagementService = passwordManagementService;
-        this.passwordValidationService = passwordValidationService;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

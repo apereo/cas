@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.swivel;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpStatus;
@@ -18,15 +19,12 @@ import lombok.NoArgsConstructor;
  */
 @Slf4j
 @NoArgsConstructor
+@AllArgsConstructor
 public class SwivelMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 498455080794156917L;
 
     private String swivelUrl;
-
-    public SwivelMultifactorAuthenticationProvider(final String swivelUrl) {
-        this.swivelUrl = swivelUrl;
-    }
 
     @Override
     protected boolean isAvailable() {

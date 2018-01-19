@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
@@ -17,11 +18,8 @@ import java.security.cert.X509Certificate;
  */
 @Slf4j
 @ToString(callSuper = true)
+@NoArgsConstructor
 public abstract class AbstractX509PrincipalResolver extends PersonDirectoryPrincipalResolver {
-
-    public AbstractX509PrincipalResolver() {
-        super();
-    }
 
     public AbstractX509PrincipalResolver(final IPersonAttributeDao attributeRepository,
                                          final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,

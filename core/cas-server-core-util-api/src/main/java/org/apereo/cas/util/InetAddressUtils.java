@@ -15,21 +15,23 @@ import java.net.URL;
 @Slf4j
 @UtilityClass
 public class InetAddressUtils {
+
     /**
      * Gets by name.
      *
      * @param urlAddr the host
      * @return the by name
      */
-    public static String getByName(final String urlAddr) {
+    public static InetAddress getByName(final String urlAddr) {
         try {
             final URL url = new URL(urlAddr);
-            return InetAddress.getByName(url.getHost()).getHostAddress();
+            return InetAddress.getByName(url.getHost());
         } catch (final Exception e) {
             LOGGER.debug("Host name could not be determined automatically.", e);
         }
         return null;
     }
+
 
     /**
      * Gets cas server host name.

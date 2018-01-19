@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.authy.web.flow;
 
 import com.authy.api.Hash;
 import com.authy.api.User;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.authy.AuthyClientInstance;
 import org.apereo.cas.authentication.principal.Principal;
@@ -17,13 +18,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class AuthyAuthenticationRegistrationWebflowAction extends AbstractAction {
-
     private final AuthyClientInstance instance;
-
-    public AuthyAuthenticationRegistrationWebflowAction(final AuthyClientInstance instance) {
-        this.instance = instance;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {

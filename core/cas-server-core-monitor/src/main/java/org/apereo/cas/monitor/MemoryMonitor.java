@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -11,6 +12,7 @@ import org.springframework.boot.actuate.health.Health;
  * @since 3.5.0
  */
 @Slf4j
+@AllArgsConstructor
 public class MemoryMonitor extends AbstractHealthIndicator {
 
     private static final int PERCENTAGE_VALUE = 100;
@@ -19,13 +21,6 @@ public class MemoryMonitor extends AbstractHealthIndicator {
      * Percent free memory below which a warning is reported.
      */
     private final long freeMemoryWarnThreshold;
-
-    public MemoryMonitor(final long threshold) {
-        if (threshold < 0) {
-            throw new IllegalArgumentException("Warning threshold must be non-negative.");
-        }
-        this.freeMemoryWarnThreshold = threshold;
-    }
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) throws Exception {

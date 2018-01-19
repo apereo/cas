@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -16,6 +17,7 @@ import org.apereo.cas.authentication.principal.Service;
 @Getter
 @EqualsAndHashCode
 @ToString
+@AllArgsConstructor
 public class ServiceContext {
 
     /** Service principal. */
@@ -24,17 +26,4 @@ public class ServiceContext {
     /** Registered service corresponding to service principal. */
     private final RegisteredService registeredService;
 
-    /**
-     * Creates a new instance with required parameters.
-     *
-     * @param service Service principal.
-     * @param registeredService Registered service corresponding to given service.
-     */
-    public ServiceContext(final Service service, final RegisteredService registeredService) {
-        this.service = service;
-        this.registeredService = registeredService;
-        if (!registeredService.matches(service)) {
-            throw new IllegalArgumentException("Registered service does not match given service.");
-        }
-    }
 }

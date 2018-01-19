@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.metadata;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
@@ -22,22 +23,11 @@ import java.nio.charset.StandardCharsets;
  */
 @Controller("samlMetadataController")
 @Slf4j
+@AllArgsConstructor
 public class SamlMetadataController {
-
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
-
     private final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
-
-    /**
-     * Instantiates a new Saml metadata controller.
-     * Required for bean initialization.
-     *
-     * @param metadataAndCertificatesGenerationService the metadata and certificates generation service
-     */
-    public SamlMetadataController(final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService) {
-        this.metadataAndCertificatesGenerationService = metadataAndCertificatesGenerationService;
-    }
 
     /**
      * Post constructor placeholder for additional
