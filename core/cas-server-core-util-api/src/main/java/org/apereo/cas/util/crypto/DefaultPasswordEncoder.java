@@ -1,5 +1,6 @@
 package org.apereo.cas.util.crypto;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -16,23 +17,10 @@ import java.nio.charset.Charset;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultPasswordEncoder implements PasswordEncoder {
-
-
-
     private final String encodingAlgorithm;
     private final String characterEncoding;
-
-    /**
-     * Instantiates a new default password encoder.
-     *
-     * @param encodingAlgorithm the encoding algorithm
-     * @param characterEncoding the character encoding
-     */
-    public DefaultPasswordEncoder(final String encodingAlgorithm, final String characterEncoding) {
-        this.encodingAlgorithm = encodingAlgorithm;
-        this.characterEncoding = characterEncoding;
-    }
 
     @Override
     public String encode(final CharSequence password) {

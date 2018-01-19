@@ -1,5 +1,6 @@
 package org.apereo.cas.util.gen;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.stream.IntStream;
@@ -13,14 +14,11 @@ import java.util.stream.IntStream;
  * @since 3.0.0
  */
 @Slf4j
+@NoArgsConstructor
 public class DefaultRandomStringGenerator extends AbstractRandomStringGenerator {
 
     /** The array of printable characters to be used in our random string. */
     private static final char[] PRINTABLE_CHARACTERS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345679".toCharArray();
-
-    public DefaultRandomStringGenerator() {
-        super();
-    }
 
     public DefaultRandomStringGenerator(final int defaultLength) {
         super(defaultLength);

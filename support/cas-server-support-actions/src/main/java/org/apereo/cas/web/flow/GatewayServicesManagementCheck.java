@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -17,19 +18,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.4.5
  */
 @Slf4j
+@AllArgsConstructor
 public class GatewayServicesManagementCheck extends AbstractAction {
-
-
-    
     private final ServicesManager servicesManager;
-
-    /**
-     * Initialize the component with an instance of the services manager.
-     * @param servicesManager the service registry instance.
-     */
-    public GatewayServicesManagementCheck(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {

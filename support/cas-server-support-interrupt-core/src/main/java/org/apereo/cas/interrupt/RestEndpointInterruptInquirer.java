@@ -2,6 +2,7 @@ package org.apereo.cas.interrupt;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.CasProtocolConstants;
@@ -21,6 +22,7 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
 
     private static final ObjectMapper MAPPER = new ObjectMapper()
@@ -29,10 +31,6 @@ public class RestEndpointInterruptInquirer extends BaseInterruptInquirer {
             .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
     private final InterruptProperties.Rest restProperties;
-
-    public RestEndpointInterruptInquirer(final InterruptProperties.Rest restProperties) {
-        this.restProperties = restProperties;
-    }
 
     @Override
     public InterruptResponse inquire(final Authentication authentication, final RegisteredService registeredService, final Service service) {

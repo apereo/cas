@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
@@ -38,16 +39,10 @@ import java.util.stream.Collectors;
  * @since 5.3.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    
-    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
     private final CipherExecutor<String, String> configurationCipherExecutor;
-
-    public DefaultCasConfigurationPropertiesSourceLocator(final CipherExecutor<String, String> configurationCipherExecutor,
-                                                          final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager) {
-        this.casConfigurationPropertiesEnvironmentManager = casConfigurationPropertiesEnvironmentManager;
-        this.configurationCipherExecutor = configurationCipherExecutor;
-    }
+    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
 
     @Override
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {

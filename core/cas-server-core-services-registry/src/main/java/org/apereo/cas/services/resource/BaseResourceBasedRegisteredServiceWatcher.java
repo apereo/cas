@@ -1,5 +1,6 @@
 package org.apereo.cas.services.resource;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 
@@ -13,9 +14,8 @@ import java.util.function.Consumer;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consumer<File> {
-
-
     /**
      * Consumer to log warnings for duplicate service defns.
      */
@@ -29,10 +29,6 @@ public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consu
      * Service registry instance.
      */
     protected AbstractResourceBasedServiceRegistryDao serviceRegistryDao;
-
-    public BaseResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistryDao serviceRegistryDao) {
-        this.serviceRegistryDao = serviceRegistryDao;
-    }
 
     @Override
     public void accept(final File file) {
