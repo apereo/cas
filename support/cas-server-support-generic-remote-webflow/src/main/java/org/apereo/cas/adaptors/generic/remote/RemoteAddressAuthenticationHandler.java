@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic.remote;
 
+import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -13,6 +14,8 @@ import javax.security.auth.login.FailedLoginException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.security.GeneralSecurityException;
+import java.util.List;
+
 import lombok.Setter;
 
 /**
@@ -104,12 +107,12 @@ public class RemoteAddressAuthenticationHandler extends AbstractAuthenticationHa
 
         if (StringUtils.isNotBlank(ipAddressRange)) {
 
-            final String[] splitAddress = ipAddressRange.split("/");
+            final List<String> splitAddress = Splitter.on("/").splitToList(ipAddressRange);
 
-            if (splitAddress.length == 2) {
+            if (splitAddress.size() == 2) {
                 // A valid ip address/netmask was supplied parse values
-                final String network = splitAddress[0].trim();
-                final String netmask = splitAddress[1].trim();
+                final String network = splitAddress.get(0).trim();
+                final String netmask = splitAddress.get(1).trim();
 
                 try {
                     this.inetNetworkRange = InetAddress.getByName(network);
