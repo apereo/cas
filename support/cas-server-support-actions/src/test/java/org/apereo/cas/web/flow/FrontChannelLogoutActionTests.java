@@ -11,7 +11,7 @@ import org.apereo.cas.logout.SamlCompliantLogoutMessageCreator;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
-import org.apereo.cas.UrlValidator;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Before;

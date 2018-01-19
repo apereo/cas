@@ -48,4 +48,14 @@ public class LdapServiceRegistryProperties extends AbstractLdapSearchProperties 
     public LdapServiceRegistryProperties() {
         setSearchFilter("(%s={0})");
     }
+
+    @Override
+    public String getSearchFilter() {
+        return String.format(this.searchFilter, getIdAttribute());
+    }
+
+    public String getLoadFilter() {
+        return String.format(this.loadFilter, getObjectClass());
+    }
+
 }

@@ -21,6 +21,7 @@ import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecut
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -83,7 +84,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas3SuccessView,
             cas3ServiceFailureView, "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan()
+            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
+            new SimpleUrlValidatorFactoryBean().getObject()
         );
     }
 

@@ -25,6 +25,7 @@ import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
+import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -122,6 +123,10 @@ public class OpenIdConfiguration {
     @Qualifier("serviceValidationAuthorizers")
     private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private UrlValidator urlValidator;
+    
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
@@ -151,8 +156,7 @@ public class OpenIdConfiguration {
     public YadisController yadisController() {
         return new YadisController();
     }
-
-
+    
     @Bean
     @RefreshScope
     public OpenIdProviderController openIdProviderController() {
@@ -180,7 +184,7 @@ public class OpenIdConfiguration {
             authenticationContextValidator, cas3ServiceJsonView,
             casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serverManager(), validationAuthorizers);
+            serverManager(), validationAuthorizers, urlValidator);
 
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));

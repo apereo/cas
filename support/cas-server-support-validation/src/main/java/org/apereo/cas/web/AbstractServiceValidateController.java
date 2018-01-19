@@ -83,24 +83,12 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    /**
-     * The proxy handler we want to use with the controller.
-     */
     private ProxyHandler proxyHandler;
 
-    /**
-     * The view to redirect to on a successful validation.
-     */
     private final View successView;
 
-    /**
-     * The view to redirect to on a validation failure.
-     */
     private final View failureView;
 
-    /**
-     * Extracts parameters from Request object.
-     */
     private final ArgumentExtractor argumentExtractor;
 
     private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -111,6 +99,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private final String authnContextAttribute;
 
+    private final UrlValidator urlValidator;
+    
     /**
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
@@ -122,7 +112,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
         final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
-        if (StringUtils.hasText(pgtUrl)) {
+        if (StringUtils.hasText(pgtUrl) && this.urlValidator.isValid(pgtUrl)) {
             try {
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 verifyRegisteredServiceProperties(registeredService, service);
