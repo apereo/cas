@@ -19,6 +19,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.UrlValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -65,6 +66,10 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Autowired
+    @Qualifier("urlValidator")
+    private UrlValidator urlValidator;
+
     @ConditionalOnMissingBean(name = "jaasPrincipalFactory")
     @Bean
     public PrincipalFactory jaasPrincipalFactory() {
@@ -75,7 +80,8 @@ public class CasCoreAuthenticationHandlersConfiguration {
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager,
             proxyPrincipalFactory(), Integer.MIN_VALUE,
-            supportsTrustStoreSslSocketFactoryHttpClient);
+            this.supportsTrustStoreSslSocketFactoryHttpClient,
+            this.urlValidator);
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
