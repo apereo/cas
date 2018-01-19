@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.ldap.services;
 
-import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
@@ -15,10 +14,10 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import lombok.ToString;
 
 /**
  * Implementation of the ServiceRegistryDao interface which stores the services in a LDAP Directory.
@@ -136,14 +135,10 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
         try {
             final Response<SearchResult> response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                response.getResult().getEntries()
-                    .stream()
-                    .map(this.ldapServiceMapper::mapToRegisteredService)
-                    .filter(Objects::nonNull)
-                    .forEach(s -> {
-                        publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
-                        list.add(s);
-                    });
+                response.getResult().getEntries().stream().map(this.ldapServiceMapper::mapToRegisteredService).filter(Objects::nonNull).forEach(s -> {
+                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                    list.add(s);
+                });
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

@@ -23,10 +23,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
-@Slf4j
-@EqualsAndHashCode
 @Entity
 @Table(name = "RegexRegisteredServiceProperty")
+@Slf4j
+@EqualsAndHashCode
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
 

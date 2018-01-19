@@ -14,6 +14,8 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.Operation;
 
+import java.util.regex.Pattern;
+
 /**
  * Peek into an LDAP server and check for the existence of an attribute
  * in order to target invocation of spnego.
@@ -24,7 +26,6 @@ import org.ldaptive.Operation;
  */
 @Slf4j
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-
     
     /**
      * The must-have attribute name.
@@ -42,7 +43,8 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param searchRequest       the search request
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute,
+    public LdapSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern,
+                                                    final String alternativeRemoteHostAttribute,
                                                     final long dnsTimeout, 
                                                     final ConnectionFactory connectionFactory, 
                                                     final SearchRequest searchRequest,

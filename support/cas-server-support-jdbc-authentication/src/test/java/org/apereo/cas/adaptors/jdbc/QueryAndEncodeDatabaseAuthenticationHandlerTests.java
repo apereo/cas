@@ -106,6 +106,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("test not found with SQL query");
+
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -115,6 +117,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql("makesNoSenseInSql"), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(PreventedException.class);
+        this.thrown.expectMessage("SQL exception while executing query for test");
+
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
     }
 
@@ -124,6 +128,8 @@ public class QueryAndEncodeDatabaseAuthenticationHandlerTests {
             buildSql(), PASSWORD_FIELD_NAME, "salt", null, null, "ops", 0, "");
 
         this.thrown.expect(FailedLoginException.class);
+        this.thrown.expectMessage("Multiple records found for user0");
+
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user0", "password0"));
     }
 

@@ -1,14 +1,12 @@
 package org.apereo.cas.util;
 
-import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.apereo.cas.util.gen.NumericGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
+import lombok.Setter;
 
 /**
  * Default implementation of {@link UniqueTicketIdGenerator}. Implementation
@@ -23,7 +21,6 @@ import org.apereo.cas.util.gen.RandomStringGenerator;
  */
 @Slf4j
 @Setter
-@Getter
 public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
 
     /**
@@ -95,8 +92,7 @@ public class DefaultUniqueTicketIdGenerator implements UniqueTicketIdGenerator {
     @Override
     public String getNewTicketId(final String prefix) {
         final String number = this.numericGenerator.getNextNumberAsString();
-        return prefix + '-' + number + '-' + this.randomStringGenerator.getNewString()
-            + StringUtils.defaultString(this.suffix, StringUtils.EMPTY);
+        return prefix + '-' + number + '-' + this.randomStringGenerator.getNewString() + this.suffix;
     }
 
     /**

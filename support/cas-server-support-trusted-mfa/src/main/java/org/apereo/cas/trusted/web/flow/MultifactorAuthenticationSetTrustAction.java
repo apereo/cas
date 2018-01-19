@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -20,19 +21,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
-
-
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
     private final TrustedDevicesMultifactorProperties trustedProperties;
 
-    public MultifactorAuthenticationSetTrustAction(final MultifactorAuthenticationTrustStorage storage,
-                                                   final TrustedDevicesMultifactorProperties trustedProperties) {
-        this.storage = storage;
-        this.trustedProperties = trustedProperties;
-    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {

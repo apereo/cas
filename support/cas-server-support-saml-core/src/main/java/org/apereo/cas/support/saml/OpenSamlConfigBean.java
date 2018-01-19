@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml;
 
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.opensaml.core.config.ConfigurationService;
@@ -22,8 +21,9 @@ import javax.annotation.PostConstruct;
  * @since 4.1
  */
 @Slf4j
-@Getter
 public class OpenSamlConfigBean {
+
+
     private final ParserPool parserPool;
 
     private XMLObjectBuilderFactory builderFactory;
@@ -39,7 +39,27 @@ public class OpenSamlConfigBean {
     public OpenSamlConfigBean(final ParserPool parserPool) {
         this.parserPool = parserPool;
     }
-    
+
+    /**
+     * Gets the configured parser pool.
+     *
+     * @return the parser pool
+     */
+    public ParserPool getParserPool() {
+        return this.parserPool;
+    }
+
+    public XMLObjectBuilderFactory getBuilderFactory() {
+        return this.builderFactory;
+    }
+
+    public MarshallerFactory getMarshallerFactory() {
+        return this.marshallerFactory;
+    }
+
+    public UnmarshallerFactory getUnmarshallerFactory() {
+        return this.unmarshallerFactory;
+    }
 
     /**
      * Initialize opensaml.

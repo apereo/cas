@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
@@ -22,6 +23,7 @@ import org.springframework.core.Ordered;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 @ToString(callSuper = true)
 public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
@@ -33,15 +35,6 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
 
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
-    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager,
-                                                               final AuthenticationServiceSelectionStrategy selectionStrategy,
-                                                               final CipherExecutor<String, String> credentialCipherExecutor,
-                                                               final SecurityTokenServiceClientBuilder clientBuilder) {
-        this.servicesManager = servicesManager;
-        this.selectionStrategy = selectionStrategy;
-        this.credentialCipherExecutor = credentialCipherExecutor;
-        this.clientBuilder = clientBuilder;
-    }
 
     private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction,
                                                     final AuthenticationBuilder builder, final WSFederationRegisteredService rp,

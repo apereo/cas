@@ -1,6 +1,5 @@
 package org.apereo.cas.ws.idp.authentication;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
@@ -19,10 +18,10 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
-@Getter
 public class WSFederationAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8035218407906419228L;
-    
+
+
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
 
@@ -73,4 +72,8 @@ public class WSFederationAuthenticationServiceSelectionStrategy implements Authe
         return Optional.empty();
     }
 
+    @Override
+    public int getOrder() {
+        return this.order;
+    }
 }

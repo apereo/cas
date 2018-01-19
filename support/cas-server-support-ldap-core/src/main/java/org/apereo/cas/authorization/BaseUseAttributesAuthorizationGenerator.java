@@ -1,5 +1,6 @@
 package org.apereo.cas.authorization;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -23,6 +24,7 @@ import org.springframework.util.Assert;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
 
@@ -34,13 +36,6 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
     private final SearchExecutor userSearchExecutor;
     private final boolean allowMultipleResults;
 
-    public BaseUseAttributesAuthorizationGenerator(final ConnectionFactory connectionFactory,
-                                                   final SearchExecutor userSearchExecutor,
-                                                   final boolean allowMultipleResults) {
-        this.connectionFactory = connectionFactory;
-        this.userSearchExecutor = userSearchExecutor;
-        this.allowMultipleResults = allowMultipleResults;
-    }
 
     /**
      * Add profile roles.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.policy;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.util.crypto.CertUtils;
@@ -16,21 +17,10 @@ import java.time.ZonedDateTime;
  * @since 3.4.6
  */
 @Slf4j
+@AllArgsConstructor
 public class ThresholdExpiredCRLRevocationPolicy implements RevocationPolicy<X509CRL> {
-
-
-    
     /** Expired threshold period in seconds after which expired CRL data is rejected. */
     private final int threshold;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param threshold Number of seconds; MUST be non-negative integer.
-     */
-    public ThresholdExpiredCRLRevocationPolicy(final int threshold) {
-        this.threshold = threshold;
-    }
 
     /**
      * {@inheritDoc}

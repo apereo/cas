@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.DenyRevocationPolicy;
@@ -25,7 +24,6 @@ import java.util.stream.Collectors;
  * @since 3.4.6
  */
 @Slf4j
-@Getter
 public abstract class AbstractCRLRevocationChecker implements RevocationChecker {
 
 
@@ -104,6 +102,14 @@ public abstract class AbstractCRLRevocationChecker implements RevocationChecker 
                 throw new RevokedCertificateException(entry);
             }
         }
+    }
+
+    public RevocationPolicy<Void> getUnavailableCRLPolicy() {
+        return this.unavailableCRLPolicy;
+    }
+
+    public RevocationPolicy<X509CRL> getExpiredCRLPolicy() {
+        return this.expiredCRLPolicy;
     }
 
     /**

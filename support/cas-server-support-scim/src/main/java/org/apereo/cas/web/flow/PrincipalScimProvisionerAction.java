@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -17,14 +18,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class PrincipalScimProvisionerAction extends AbstractAction {
-
-
     private final ScimProvisioner scimProvisioner;
-
-    public PrincipalScimProvisionerAction(final ScimProvisioner scimProvisioner) {
-        this.scimProvisioner = scimProvisioner;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

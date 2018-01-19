@@ -16,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.stream.Stream;
 
 /**
@@ -72,7 +71,7 @@ public class FileAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 throw new AccountNotFoundException(username + " not found in backing file.");
             }
             if (matches(originalPassword, passwordOnRecord)) {
-                return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+                return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), null);
             }
         } catch (final IOException e) {
             throw new PreventedException("IO error reading backing file", e);

@@ -1,7 +1,5 @@
 package org.apereo.cas.support.saml;
 
-import com.google.common.base.Splitter;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -15,7 +13,6 @@ import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,9 +22,10 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-@Getter
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
+
+
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
@@ -80,8 +78,8 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
                 final String[] query = request.getQueryString().split("&");
                 final Optional<String> paramRequest = Arrays.stream(query)
                         .map(p -> {
-                            final List<String> params = Splitter.on("=").splitToList(p);
-                            return Pair.of(params.get(0), params.get(1));
+                            final String[] params = p.split("=");
+                            return Pair.of(params[0], params[1]);
                         })
                         .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                         .map(Pair::getValue)
@@ -92,5 +90,10 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
             LOGGER.error(e.getMessage(), e);
         }
         return Optional.empty();
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 }
