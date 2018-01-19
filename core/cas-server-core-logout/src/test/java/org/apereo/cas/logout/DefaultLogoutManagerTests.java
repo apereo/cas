@@ -17,7 +17,7 @@ import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
-import org.apereo.cas.web.UrlValidator;
+import org.apereo.cas.UrlValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

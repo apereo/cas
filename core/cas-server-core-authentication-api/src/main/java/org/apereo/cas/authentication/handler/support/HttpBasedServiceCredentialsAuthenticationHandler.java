@@ -10,6 +10,7 @@ import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
+import org.apereo.cas.web.UrlValidator;
 
 import javax.security.auth.login.FailedLoginException;
 import java.net.URL;
@@ -29,6 +30,7 @@ import java.net.URL;
 @Slf4j
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
+    private final UrlValidator urlValidator;
     /**
      * Instance of Apache Commons HttpClient.
      */
@@ -42,26 +44,36 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
      * @param principalFactory the principal factory
      * @param order            the order
      * @param httpClient       the http client
+     * @param urlValidator     the url validator
      */
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name,
+                                                            final ServicesManager servicesManager,
                                                             final PrincipalFactory principalFactory,
-                                                            final Integer order, final HttpClient httpClient) {
+                                                            final Integer order, final HttpClient httpClient,
+                                                            final UrlValidator urlValidator) {
         super(name, servicesManager, principalFactory, order);
         this.httpClient = httpClient;
+        this.urlValidator = urlValidator;
     }
 
     @Override
     @SneakyThrows
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
-        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(new URL(httpCredential.getCallbackUrl()))) {
+        final String callbackUrl = httpCredential.getCallbackUrl();
+        
+        if (!this.urlValidator.isValid(httpCredential.getCallbackUrl())) {
+            throw new FailedLoginException(callbackUrl + " is not a valid callback URL");
+        }
+        
+        final URL pgtUrl = new URL(callbackUrl);
+        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(pgtUrl)) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
                 httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
         LOGGER.debug("Attempting to authenticate [{}]", httpCredential);
-        final String callbackUrl = httpCredential.getCallbackUrl();
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
             throw new FailedLoginException(callbackUrl + " sent an unacceptable response status code");
         }
