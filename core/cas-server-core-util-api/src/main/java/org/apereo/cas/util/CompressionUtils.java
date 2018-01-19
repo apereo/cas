@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.Cleanup;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -7,7 +9,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.zip.DataFormatException;
@@ -121,14 +122,12 @@ public class CompressionUtils {
      * @param zippedBase64Str the zipped base 64 str
      * @return the string, or null
      */
+    @SneakyThrows
     public static String decompress(final String zippedBase64Str) {
         final byte[] bytes = EncodingUtils.decodeBase64(zippedBase64Str);
-        try (GZIPInputStream zi = new GZIPInputStream(new ByteArrayInputStream(bytes))) {
-            return IOUtils.toString(zi, Charset.defaultCharset());
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        @Cleanup
+        final GZIPInputStream zi = new GZIPInputStream(new ByteArrayInputStream(bytes));
+        return IOUtils.toString(zi, Charset.defaultCharset());
     }
 
     /**
@@ -138,16 +137,18 @@ public class CompressionUtils {
      * @param srcTxt the src txt
      * @return the string in UTF-8 format and base64'ed, or null.
      */
+    @SneakyThrows
     public static String compress(final String srcTxt) {
-        try (ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
-             GZIPOutputStream zos = new GZIPOutputStream(rstBao)) {
-            zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
-            final byte[] bytes = rstBao.toByteArray();
-            final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
-            return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
-        } catch (final IOException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        @Cleanup
+        final ByteArrayOutputStream rstBao = new ByteArrayOutputStream();
+        @Cleanup
+        final GZIPOutputStream zos = new GZIPOutputStream(rstBao);
+        zos.write(srcTxt.getBytes(StandardCharsets.UTF_8));
+        zos.flush();
+        zos.finish();
+        final byte[] bytes = rstBao.toByteArray();
+        final String base64 = StringUtils.remove(EncodingUtils.encodeBase64(bytes), '\0');
+        return new String(StandardCharsets.UTF_8.encode(base64).array(), StandardCharsets.UTF_8);
+
     }
 }
