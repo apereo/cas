@@ -22,7 +22,7 @@ import org.json.JSONObject;
  * @since 4.2
  */
 @Slf4j
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
 
     private static final long serialVersionUID = -6690808348975271382L;
