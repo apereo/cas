@@ -1,5 +1,6 @@
 package org.apereo.cas.pm;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -24,25 +25,18 @@ import java.util.UUID;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class BasePasswordManagementService implements PasswordManagementService {
-
 
     /**
      * Password management settings.
      */
     protected final PasswordManagementProperties properties;
-
+    
     private final CipherExecutor<Serializable, String> cipherExecutor;
+
     private final String issuer;
     
-    public BasePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
-                                         final PasswordManagementProperties properties) {
-        this.cipherExecutor = cipherExecutor;
-        this.issuer = issuer;
-        this.properties = properties;
-    }
-
     @Override
     public String parseToken(final String token) {
         try {

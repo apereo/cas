@@ -43,7 +43,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     public JsonResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                                  final String issuer, final PasswordManagementProperties passwordManagementProperties,
                                                  final Resource jsonResource) {
-        super(cipherExecutor, issuer, passwordManagementProperties);
+        super(passwordManagementProperties, cipherExecutor, issuer);
         this.jsonResource = jsonResource;
         readAccountsFromJsonResource();
     }

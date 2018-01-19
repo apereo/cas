@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
@@ -18,14 +19,9 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.2
  */
 @Slf4j
+@AllArgsConstructor
 public class GoogleAccountsServiceFactory extends AbstractServiceFactory<GoogleAccountsService> {
-
-
     private final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder;
-
-    public GoogleAccountsServiceFactory(final GoogleSaml20ObjectBuilder googleSaml20ObjectBuilder) {
-        this.googleSaml20ObjectBuilder = googleSaml20ObjectBuilder;
-    }
 
     @Override
     public GoogleAccountsService createService(final HttpServletRequest request) {

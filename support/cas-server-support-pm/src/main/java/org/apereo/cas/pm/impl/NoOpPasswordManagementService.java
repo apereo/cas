@@ -21,7 +21,7 @@ public class NoOpPasswordManagementService extends BasePasswordManagementService
     public NoOpPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor, 
                                          final String issuer, 
                                          final PasswordManagementProperties passwordManagementProperties) {
-        super(cipherExecutor, issuer, passwordManagementProperties);
+        super(passwordManagementProperties, cipherExecutor, issuer);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.http.HttpStatus;
@@ -19,13 +20,10 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RestMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
 
     private final String endpoint;
-
-    public RestMultifactorAuthenticationTrustStorage(final String endpoint) {
-        this.endpoint = endpoint;
-    }
 
     @Override
     public Set<MultifactorAuthenticationTrustRecord> get(final String principal) {

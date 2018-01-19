@@ -24,7 +24,7 @@ public class NoOpCipherExecutor extends AbstractCipherExecutor<Serializable, Ser
      *
      * @return the instance
      */
-    public static CipherExecutor<Serializable, Serializable> getInstance() {
+    public static CipherExecutor getInstance() {
         if (INSTANCE == null) {
             INSTANCE = new NoOpCipherExecutor();
         }

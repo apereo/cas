@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -21,14 +22,11 @@ import java.io.PrintWriter;
  */
 @Controller("WSFederationMetadataController")
 @Slf4j
+@AllArgsConstructor
 public class WSFederationMetadataController {
     private static final long serialVersionUID = -6927484130511112872L;
 
     private final CasConfigurationProperties casProperties;
-
-    public WSFederationMetadataController(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     /**
      * Get Metadata.

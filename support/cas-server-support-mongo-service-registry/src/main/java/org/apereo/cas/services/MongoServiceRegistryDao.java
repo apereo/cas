@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -21,22 +22,11 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
 
-    private final String collectionName;
-
     private final MongoOperations mongoTemplate;
-
-    /**
-     * Ctor.
-     *
-     * @param mongoTemplate  mongoTemplate
-     * @param collectionName collectionName
-     */
-    public MongoServiceRegistryDao(final MongoOperations mongoTemplate, final String collectionName) {
-        this.mongoTemplate = mongoTemplate;
-        this.collectionName = collectionName;
-    }
+    private final String collectionName;
 
     @Override
     public boolean delete(final RegisteredService svc) {

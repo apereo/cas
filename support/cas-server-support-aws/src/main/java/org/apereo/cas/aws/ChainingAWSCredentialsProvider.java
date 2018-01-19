@@ -10,6 +10,7 @@ import com.amazonaws.auth.InstanceProfileCredentialsProvider;
 import com.amazonaws.auth.PropertiesFileCredentialsProvider;
 import com.amazonaws.auth.SystemPropertiesCredentialsProvider;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.core.io.Resource;
@@ -27,17 +28,12 @@ import java.util.stream.Stream;
  * @since 5.3.0
  */
 @Slf4j
+@AllArgsConstructor
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
-
-
     private List<AWSCredentialsProvider> chain = new ArrayList<>();
 
     public ChainingAWSCredentialsProvider(final AWSCredentialsProvider... chain) {
         this.chain = Stream.of(chain).collect(Collectors.toList());
-    }
-
-    public ChainingAWSCredentialsProvider(final List<AWSCredentialsProvider> chain) {
-        this.chain = chain;
     }
 
     /**

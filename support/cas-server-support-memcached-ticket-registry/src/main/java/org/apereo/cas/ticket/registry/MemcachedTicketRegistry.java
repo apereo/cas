@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
@@ -19,22 +20,13 @@ import java.util.Collection;
  */
 @SuppressWarnings("FutureReturnValueIgnored")
 @Slf4j
+@AllArgsConstructor
 public class MemcachedTicketRegistry extends AbstractTicketRegistry {
 
     /**
      * Memcached client.
      */
     private final ObjectPool<MemcachedClientIF> connectionPool;
-
-    /**
-     * Creates a new instance using the given memcached client instance, which is presumably configured via
-     * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
-     *
-     * @param client Memcached client.
-     */
-    public MemcachedTicketRegistry(final ObjectPool<MemcachedClientIF> client) {
-        this.connectionPool = client;
-    }
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {

@@ -35,7 +35,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
                                          final String issuer,
                                          final RestTemplate restTemplate,
                                          final PasswordManagementProperties passwordManagementProperties) {
-        super(cipherExecutor, issuer, passwordManagementProperties);
+        super(passwordManagementProperties, cipherExecutor, issuer);
         this.restTemplate = restTemplate;
     }
 
@@ -92,7 +92,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.put("username", CollectionUtils.wrap(username));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<Map> result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
-                HttpMethod.GET, entity, Map.class);
+            HttpMethod.GET, entity, Map.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();

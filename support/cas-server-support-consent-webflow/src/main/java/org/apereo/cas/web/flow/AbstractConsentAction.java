@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -25,9 +26,8 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class AbstractConsentAction extends AbstractAction {
-
-
     /**
      * CAS Settings.
      */
@@ -47,15 +47,6 @@ public abstract class AbstractConsentAction extends AbstractAction {
      * The consent engine that handles calculations.
      */
     protected final ConsentEngine consentEngine;
-
-    public AbstractConsentAction(final CasConfigurationProperties casProperties, final ServicesManager servicesManager,
-                                 final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
-                                 final ConsentEngine consentEngine) {
-        this.casProperties = casProperties;
-        this.servicesManager = servicesManager;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
-        this.consentEngine = consentEngine;
-    }
 
     /**
      * Gets registered service for consent.

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -38,34 +39,23 @@ import java.util.concurrent.Callable;
 @Controller("casConsentReviewController")
 @RequestMapping("/consentReview")
 @Slf4j
+@AllArgsConstructor
 public class CasConsentReviewController {
 
     private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
     private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
 
-    private final Config pac4jConfig;
-    private final CasConfigurationProperties casProperties;
-    
     /**
      * The consent repository.
      */
     private final ConsentRepository consentRepository;
-    
     /**
      * The consent engine.
      */
     private final ConsentEngine consentEngine;
+    private final Config pac4jConfig;
+    private final CasConfigurationProperties casProperties;
 
-    public CasConsentReviewController(final ConsentRepository consentRepository,
-            final ConsentEngine consentEngine,
-            final Config pac4jConfig,
-            final CasConfigurationProperties casProperties) {
-        this.consentRepository = consentRepository;
-        this.consentEngine = consentEngine;
-        this.pac4jConfig = pac4jConfig;
-        this.casProperties = casProperties;
-    }
-    
     /**
      * Show consent decisions.
      *

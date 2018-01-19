@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -14,14 +15,9 @@ import org.springframework.context.event.EventListener;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CasServicesRegistryStreamingEventListener {
-
-
     private final CasRegisteredServiceStreamPublisher publisher;
-
-    public CasServicesRegistryStreamingEventListener(final CasRegisteredServiceStreamPublisher publisher) {
-        this.publisher = publisher;
-    }
 
     /**
      * Handle cas registered service loaded event.
