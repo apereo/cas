@@ -3,7 +3,6 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,8 +10,6 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
-
-import java.net.URL;
 
 /**
  * A credential representing an HTTP endpoint given by a URL. Authenticating the credential usually involves
@@ -27,7 +24,6 @@ import java.net.URL;
 @Getter
 @Setter
 @NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 public class HttpBasedServiceCredential extends AbstractCredential {
 
@@ -39,7 +35,7 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     /**
      * The callbackURL to check that identifies the application.
      */
-    private URL callbackUrl;
+    private String callbackUrl;
 
     /**
      * The registered service associated with this callback.
@@ -50,13 +46,14 @@ public class HttpBasedServiceCredential extends AbstractCredential {
     @SneakyThrows
     public HttpBasedServiceCredential(@JsonProperty("callbackUrl") final String callbackUrl,
                                       @JsonProperty("service") final RegisteredService service) {
-        this.callbackUrl = new URL(callbackUrl);
+        this.callbackUrl = callbackUrl;
         this.service = service;
     }
 
     @JsonIgnore
     @Override
     public String getId() {
-        return this.callbackUrl.toExternalForm();
+        return this.callbackUrl;
     }
+    
 }
