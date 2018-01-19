@@ -19,6 +19,13 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
     private static final long serialVersionUID = 3009946735155362639L;
 
     /**
+     * User filter to use for searching.
+     * Syntax is {@code cn={user}} or {@code cn={0}}.
+     */
+    @RequiredProperty
+    protected String searchFilter;
+
+    /**
      * Whether subtree searching is allowed.
      */
     private boolean subtreeSearch = true;
@@ -28,11 +35,4 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
      */
     @RequiredProperty
     private String baseDn;
-
-    /**
-     * User filter to use for searching.
-     * Syntax is {@code cn={user}} or {@code cn={0}}.
-     */
-    @RequiredProperty
-    private String searchFilter;
 }
