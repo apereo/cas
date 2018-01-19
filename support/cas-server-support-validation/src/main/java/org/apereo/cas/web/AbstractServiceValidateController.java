@@ -152,7 +152,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication.getPrincipal());
         // No MFA auth context found
         if (!requestedContext.isPresent()) {
-            LOGGER.debug("No particular authentication context is required for this request");
+            LOGGER.debug("No authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
         }
         // Validate the requested strategy
