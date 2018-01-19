@@ -12,6 +12,7 @@ import org.springframework.dao.DataAccessException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -64,7 +65,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             if (count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");
             }
-            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }

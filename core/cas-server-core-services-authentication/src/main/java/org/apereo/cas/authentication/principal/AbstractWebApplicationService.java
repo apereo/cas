@@ -51,7 +51,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
      * The original url provided, used to reconstruct the redirect url.
      */
     @JsonProperty
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String originalUrl;
 
     @Column

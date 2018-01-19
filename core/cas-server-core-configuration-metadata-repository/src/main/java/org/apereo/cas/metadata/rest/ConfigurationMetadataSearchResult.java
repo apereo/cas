@@ -28,7 +28,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-@EqualsAndHashCode(of = {"order", "group"})
+@EqualsAndHashCode(of = {"order", "group"}, callSuper = true)
 public class ConfigurationMetadataSearchResult extends ConfigurationMetadataProperty implements Ordered, Comparable<ConfigurationMetadataSearchResult> {
 
     private static final long serialVersionUID = 7767348341760984539L;
