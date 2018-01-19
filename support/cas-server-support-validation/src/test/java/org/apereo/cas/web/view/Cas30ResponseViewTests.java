@@ -55,8 +55,6 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
-
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
