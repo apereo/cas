@@ -60,22 +60,22 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     /**
      * The unique identifier for this service.
      */
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     protected String serviceId;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String theme;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String informationUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String privacyUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String responseType;
 
     @org.springframework.data.annotation.Id
@@ -84,25 +84,25 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String description;
 
     @Lob
-    @Column(name = "expiration_policy", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "expiration_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceExpirationPolicy expirationPolicy = new DefaultRegisteredServiceExpirationPolicy();
 
     @Lob
-    @Column(name = "proxy_policy", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "proxy_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceProxyPolicy proxyPolicy = new RefuseRegisteredServiceProxyPolicy();
 
     @Column(name = "evaluation_order", nullable = false)
     private int evaluationOrder;
 
     @Lob
-    @Column(name = "username_attr", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "username_attr", length = Integer.MAX_VALUE)
     private RegisteredServiceUsernameAttributeProvider usernameAttributeProvider = new DefaultRegisteredServiceUsernameProvider();
 
-    @Column(name = "logout_type", nullable = true)
+    @Column(name = "logout_type")
     private LogoutType logoutType = LogoutType.BACK_CHANNEL;
 
     @Lob
@@ -110,25 +110,25 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     private HashSet<String> requiredHandlers = new HashSet<>();
 
     @Lob
-    @Column(name = "attribute_release", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "attribute_release", length = Integer.MAX_VALUE)
     private RegisteredServiceAttributeReleasePolicy attributeReleasePolicy = new ReturnAllowedAttributeReleasePolicy();
 
     @Lob
-    @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "mfa_policy", length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String logo;
 
     @Column(name = "logout_url")
     private URL logoutUrl;
 
     @Lob
-    @Column(name = "access_strategy", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "access_strategy", length = Integer.MAX_VALUE)
     private RegisteredServiceAccessStrategy accessStrategy = new DefaultRegisteredServiceAccessStrategy();
 
     @Lob
-    @Column(name = "public_key", nullable = true, length = Integer.MAX_VALUE)
+    @Column(name = "public_key", length = Integer.MAX_VALUE)
     private RegisteredServicePublicKey publicKey;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
