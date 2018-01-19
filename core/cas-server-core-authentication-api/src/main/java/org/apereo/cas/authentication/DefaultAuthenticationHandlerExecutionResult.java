@@ -65,7 +65,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param metaData the meta data
      */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
-        this(source, metaData, null, null);
+        this(source, metaData, null, new ArrayList<>());
     }
 
     /**
@@ -75,8 +75,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param metaData the meta data
      * @param p        the p
      */
-    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final Principal p) {
+    public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData, final Principal p) {
         this(source, metaData, p, new ArrayList<>());
     }
 
