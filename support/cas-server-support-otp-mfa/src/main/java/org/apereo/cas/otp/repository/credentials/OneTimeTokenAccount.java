@@ -47,10 +47,10 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = -1;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String secretKey;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private int validationCode;
 
     @ElementCollection
@@ -58,7 +58,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Column(updatable = true, insertable = true, nullable = false)
     private List<Integer> scratchCodes = new ArrayList<>();
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     public OneTimeTokenAccount() {

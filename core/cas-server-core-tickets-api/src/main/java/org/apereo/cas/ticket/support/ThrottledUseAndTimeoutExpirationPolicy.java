@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Setter
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /** Serialization support. */
