@@ -15,8 +15,6 @@ import org.springframework.core.io.ClassPathResource;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
-import java.net.MalformedURLException;
-import java.net.URL;
 
 import static org.junit.Assert.*;
 
@@ -35,7 +33,7 @@ public class FileAuthenticationHandlerTests {
     @Before
     public void setUp() {
         this.authenticationHandler = new FileAuthenticationHandler("", null, null, new ClassPathResource("authentication.txt"),
-                FileAuthenticationHandler.DEFAULT_SEPARATOR);
+            FileAuthenticationHandler.DEFAULT_SEPARATOR);
         final PasswordEncoderProperties p = new PasswordEncoderProperties();
         p.setType(PasswordEncoderProperties.PasswordEncoderTypes.DEFAULT.name());
         p.setEncodingAlgorithm("MD5");
@@ -54,13 +52,9 @@ public class FileAuthenticationHandlerTests {
 
     @Test
     public void verifyDoesNotSupportBadUserCredentials() {
-        try {
-            final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
-                new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
-            assertFalse(this.authenticationHandler.supports(c));
-        } catch (final MalformedURLException e) {
-            throw new AssertionError("MalformedURLException caught.");
-        }
+        final HttpBasedServiceCredential c = new HttpBasedServiceCredential(
+            "http://www.rutgers.edu", CoreAuthenticationTestUtils.getRegisteredService());
+        assertFalse(this.authenticationHandler.supports(c));
     }
 
     @Test

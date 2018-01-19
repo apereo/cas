@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -29,8 +30,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
-        Assert.notNull(ticket, "ticket cannot be null");
+    public void addTicket(@NonNull final Ticket ticket) {
         final Ticket encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);
