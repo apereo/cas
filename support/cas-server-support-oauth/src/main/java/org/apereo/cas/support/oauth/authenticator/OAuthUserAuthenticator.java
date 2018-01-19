@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -28,20 +29,11 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCredentials> {
-
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServicesManager servicesManager;
     private final ServiceFactory webApplicationServiceFactory;
-
-    public OAuthUserAuthenticator(final AuthenticationSystemSupport authenticationSystemSupport,
-                                  final ServicesManager servicesManager,
-                                  final ServiceFactory webApplicationServiceFactory) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.servicesManager = servicesManager;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-    }
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
