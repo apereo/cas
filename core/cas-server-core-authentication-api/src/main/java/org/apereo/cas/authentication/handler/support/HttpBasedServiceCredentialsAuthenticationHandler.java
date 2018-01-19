@@ -13,7 +13,6 @@ import org.apereo.cas.util.http.HttpClient;
 
 import javax.security.auth.login.FailedLoginException;
 import java.net.URL;
-import java.security.GeneralSecurityException;
 
 /**
  * Class to validate the credential presented by communicating with the web
@@ -25,15 +24,15 @@ import java.security.GeneralSecurityException;
  * a connection does the heavy process of authenticating.
  *
  * @author Scott Battaglia
-
  * @since 3.0.0
  */
 @Slf4j
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
 
-    
-    /** Instance of Apache Commons HttpClient. */
+    /**
+     * Instance of Apache Commons HttpClient.
+     */
     private final HttpClient httpClient;
 
     /**
@@ -45,7 +44,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
      * @param order            the order
      * @param httpClient       the http client
      */
-    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, 
+    public HttpBasedServiceCredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                                             final PrincipalFactory principalFactory,
                                                             final Integer order, final HttpClient httpClient) {
         super(name, servicesManager, principalFactory, order);
@@ -58,7 +57,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
         if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(new URL(httpCredential.getCallbackUrl()))) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
-                    httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
+                httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
@@ -71,7 +70,6 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     /**
-     *
      * @return true if the credential provided are not null and the credential
      * are a subclass of (or equal to) HttpBasedServiceCredential.
      */

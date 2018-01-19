@@ -47,7 +47,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -111,7 +110,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final View jsonView;
 
     private final String authnContextAttribute;
-    
 
     /**
      * Overrideable method to determine which credentials to use to grant a
@@ -128,7 +126,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             try {
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 verifyRegisteredServiceProperties(registeredService, service);
-                return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
+                return new HttpBasedServiceCredential(pgtUrl, registeredService);
             } catch (final Exception e) {
                 LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
