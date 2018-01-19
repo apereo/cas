@@ -11,8 +11,6 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
