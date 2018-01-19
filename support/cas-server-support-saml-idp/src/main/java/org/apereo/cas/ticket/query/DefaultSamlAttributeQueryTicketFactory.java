@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.query;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,6 +24,7 @@ import java.io.StringWriter;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQueryTicketFactory {
 
     /**
@@ -40,13 +42,6 @@ public class DefaultSamlAttributeQueryTicketFactory implements SamlAttributeQuer
      */
     protected final OpenSamlConfigBean configBean;
     
-    public DefaultSamlAttributeQueryTicketFactory(final ExpirationPolicy expirationPolicy, final OpenSamlConfigBean configBean,
-                                                  final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        this.expirationPolicy = expirationPolicy;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.configBean = configBean;
-    }
-
     @Override
     @SneakyThrows
     public SamlAttributeQueryTicket create(final String id, final SAMLObject samlObject,

@@ -47,7 +47,6 @@ public class RegisteredServiceRegexAttributeFilterTests {
     private RegisteredService registeredService;
 
     public RegisteredServiceRegexAttributeFilterTests() {
-
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
         this.givenAttributesMap = new HashMap<>();

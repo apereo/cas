@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.AllArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -26,6 +27,7 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLoader<SamlRegisteredService, MetadataResolver> {
 
     /**
@@ -37,15 +39,8 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
      * The Http client.
      */
     protected HttpClient httpClient;
-    private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
 
-    public SamlRegisteredServiceMetadataResolverCacheLoader(final OpenSamlConfigBean configBean,
-                                                            final HttpClient httpClient,
-                                                            final SamlRegisteredServiceMetadataResolutionPlan availableResolvers) {
-        this.configBean = configBean;
-        this.httpClient = httpClient;
-        this.metadataResolutionPlan = availableResolvers;
-    }
+    private final SamlRegisteredServiceMetadataResolutionPlan metadataResolutionPlan;
 
     @Override
     @Synchronized

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
@@ -22,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseSamlResponseEncoder {
     /**
      * The Velocity engine factory.
@@ -40,16 +42,6 @@ public abstract class BaseSamlResponseEncoder {
      * The Http request.
      */
     protected final HttpServletRequest httpRequest;
-
-    public BaseSamlResponseEncoder(final VelocityEngine velocityEngineFactory,
-                                   final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
-                                   final HttpServletResponse httpResponse,
-                                   final HttpServletRequest httpRequest) {
-        this.velocityEngineFactory = velocityEngineFactory;
-        this.adaptor = adaptor;
-        this.httpRequest = httpRequest;
-        this.httpResponse = httpResponse;
-    }
 
     /**
      * Encode.

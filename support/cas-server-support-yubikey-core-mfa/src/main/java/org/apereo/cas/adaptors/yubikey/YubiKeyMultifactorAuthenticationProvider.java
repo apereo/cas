@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
  */
 @Slf4j
 @NoArgsConstructor
+@AllArgsConstructor
 public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
@@ -26,11 +28,6 @@ public class YubiKeyMultifactorAuthenticationProvider extends AbstractMultifacto
     private YubicoClient client;
 
     private HttpClient httpClient;
-
-    public YubiKeyMultifactorAuthenticationProvider(final YubicoClient client, final HttpClient httpClient) {
-        this.client = client;
-        this.httpClient = httpClient;
-    }
 
     @Override
     protected boolean isAvailable() {

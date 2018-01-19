@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.artifact;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -23,6 +24,7 @@ import java.io.StringWriter;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFactory {
     
     /**
@@ -40,13 +42,6 @@ public class DefaultSamlArtifactTicketFactory implements SamlArtifactTicketFacto
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     
-    public DefaultSamlArtifactTicketFactory(final ExpirationPolicy expirationPolicy, final OpenSamlConfigBean configBean,
-                                            final ServiceFactory<WebApplicationService> webApplicationServiceFactory) {
-        this.expirationPolicy = expirationPolicy;
-        this.configBean = configBean;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-    }
-
     @Override
     @SneakyThrows
     public SamlArtifactTicket create(final String artifactId,

@@ -19,6 +19,7 @@ import org.opensaml.saml.saml2.core.SubjectLocality;
 import org.opensaml.saml.saml2.metadata.AssertionConsumerService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.net.InetAddress;
 import java.time.ZonedDateTime;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -101,9 +102,9 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
         final SubjectLocality subjectLocality = newSamlObject(SubjectLocality.class);
         final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
         if (acs != null && StringUtils.isNotBlank(acs.getLocation())) {
-            final String ip = InetAddressUtils.getByName(acs.getLocation());
-            if (StringUtils.isNotBlank(ip)) {
-                subjectLocality.setAddress(ip);
+            final InetAddress ip = InetAddressUtils.getByName(acs.getLocation());
+            if (ip != null) {
+                subjectLocality.setAddress(ip.getHostName());
             }
         }
         return subjectLocality;
