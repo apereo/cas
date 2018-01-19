@@ -1,15 +1,15 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.Ticket;
-import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
-import lombok.NoArgsConstructor;
 
 /**
  * Webflow action that checks whether the TGT in the request context is valid. There are three possible outcomes:
@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
  * @since 4.0.0
  */
 @Slf4j
-@NoArgsConstructor
+@AllArgsConstructor
 public class TicketGrantingTicketCheckAction extends AbstractAction {
 
     /**
@@ -42,16 +42,7 @@ public class TicketGrantingTicketCheckAction extends AbstractAction {
      **/
     public static final String VALID = "valid";
 
-    private CentralAuthenticationService centralAuthenticationService;
-
-    /**
-     * Creates a new instance with the given ticket registry.
-     *
-     * @param centralAuthenticationService the central authentication service
-     */
-    public TicketGrantingTicketCheckAction(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
+    private final CentralAuthenticationService centralAuthenticationService;
 
     /**
      * Determines whether the TGT in the flow request context is valid.

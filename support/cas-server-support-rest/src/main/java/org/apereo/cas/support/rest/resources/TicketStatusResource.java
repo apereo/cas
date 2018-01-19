@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.ticket.InvalidTicketException;
@@ -27,15 +28,9 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController("ticketStatusResourceRestController")
 @Slf4j
+@AllArgsConstructor
 public class TicketStatusResource {
-
-
-
     private final CentralAuthenticationService centralAuthenticationService;
-
-    public TicketStatusResource(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
 
     /**
      * Determine the status of a given ticket id, whether it's valid, exists, expired, etc.

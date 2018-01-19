@@ -1,5 +1,6 @@
 package org.apereo.cas.util.http;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
@@ -38,6 +39,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /**
@@ -60,20 +62,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
      * the request executor service for this client.
      */
     private final FutureRequestExecutionService requestExecutorService;
-
-    /**
-     * Instantiates a new Simple HTTP client, based on the provided inputs.
-     *
-     * @param acceptableCodes        the acceptable codes of the client
-     * @param httpClient             the HTTP client used by the client
-     * @param requestExecutorService the request executor service used by the client
-     */
-    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
-                     final FutureRequestExecutionService requestExecutorService) {
-        this.acceptableCodes = acceptableCodes.stream().sorted().collect(Collectors.toList());
-        this.wrappedHttpClient = httpClient;
-        this.requestExecutorService = requestExecutorService;
-    }
 
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {

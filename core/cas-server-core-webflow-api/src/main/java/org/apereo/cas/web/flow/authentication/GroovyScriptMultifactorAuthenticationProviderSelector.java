@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -18,14 +19,9 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class GroovyScriptMultifactorAuthenticationProviderSelector implements MultifactorAuthenticationProviderSelector {
-
-
     private final Resource groovyScript;
-
-    public GroovyScriptMultifactorAuthenticationProviderSelector(final Resource groovyScript) {
-        this.groovyScript = groovyScript;
-    }
 
     @Override
     public MultifactorAuthenticationProvider resolve(final Collection<MultifactorAuthenticationProvider> providers,

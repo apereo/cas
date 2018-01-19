@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Response;
@@ -19,14 +20,9 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RedirectToServiceAction extends AbstractAction {
-
-
     private final ResponseBuilderLocator responseBuilderLocator;
-
-    public RedirectToServiceAction(final ResponseBuilderLocator responseBuilderLocator) {
-        this.responseBuilderLocator = responseBuilderLocator;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

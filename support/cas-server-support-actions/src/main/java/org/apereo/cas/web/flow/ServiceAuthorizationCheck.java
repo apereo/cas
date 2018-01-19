@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
@@ -20,22 +21,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.5.1
  **/
 @Slf4j
+@AllArgsConstructor
 public class ServiceAuthorizationCheck extends AbstractAction {
     
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-    /**
-     * Initialize the component with an instance of the services manager.
-     *
-     * @param servicesManager                                 the service registry instance.
-     * @param authenticationRequestServiceSelectionStrategies the service selection strategy
-     */
-    public ServiceAuthorizationCheck(final ServicesManager servicesManager,
-                                     final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
-        this.servicesManager = servicesManager;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {

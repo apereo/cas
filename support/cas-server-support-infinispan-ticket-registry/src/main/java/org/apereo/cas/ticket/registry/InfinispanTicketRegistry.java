@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
 import org.infinispan.Cache;
@@ -17,20 +18,9 @@ import java.util.concurrent.TimeUnit;
  * @since 4.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class InfinispanTicketRegistry extends AbstractTicketRegistry {
-
-
     private final Cache<String, Ticket> cache;
-
-    /**
-     * Instantiates a new Infinispan ticket registry.
-     *
-     * @param cache the cache
-     */
-    public InfinispanTicketRegistry(final Cache<String, Ticket> cache) {
-        this.cache = cache;
-        LOGGER.info("Setting up Infinispan Ticket Registry...");
-    }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {

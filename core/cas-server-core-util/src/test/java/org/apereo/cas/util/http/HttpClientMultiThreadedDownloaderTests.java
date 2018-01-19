@@ -17,7 +17,7 @@ import java.io.File;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link HttpClientMultithreadedDownloaderTests}.
+ * This is {@link HttpClientMultiThreadedDownloaderTests}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
                 CasCoreUtilConfiguration.class})
 @EnableScheduling
 @Slf4j
-public class HttpClientMultithreadedDownloaderTests {
+public class HttpClientMultiThreadedDownloaderTests {
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -37,7 +37,7 @@ public class HttpClientMultithreadedDownloaderTests {
     public void verify() throws Exception {
         final Resource resource = resourceLoader.getResource("https://raw.githubusercontent.com/apereo/cas/master/NOTICE");
         final File target = File.createTempFile("notice", ".md");
-        final HttpClientMultithreadedDownloader downloader = new HttpClientMultithreadedDownloader(resource, target);
+        final HttpClientMultiThreadedDownloader downloader = new HttpClientMultiThreadedDownloader(resource, target);
         downloader.download();
         assertTrue(target.exists());
     }

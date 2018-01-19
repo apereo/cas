@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +28,7 @@ import lombok.Getter;
 @Getter
 @Setter
 @EqualsAndHashCode
+@AllArgsConstructor
 public class DefaultAuthenticationHandlerExecutionResult implements AuthenticationHandlerExecutionResult {
 
     /**
@@ -98,23 +101,6 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
                                                        final Principal p, final List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
-    }
-
-    /**
-     * Instantiates a new Default handler result.
-     *
-     * @param handlerName the handler name
-     * @param metaData    the meta data
-     * @param p           the p
-     * @param warnings    the warnings
-     */
-    public DefaultAuthenticationHandlerExecutionResult(final String handlerName, final CredentialMetaData metaData,
-                                                       final Principal p, final List<MessageDescriptor> warnings) {
-        Assert.notNull(metaData, "Credential metadata cannot be null.");
-        this.handlerName = handlerName;
-        this.credentialMetaData = metaData;
-        this.principal = p;
-        this.warnings = warnings;
     }
 
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorWarningProperties;
@@ -18,17 +19,12 @@ import java.util.stream.Collectors;
  * @since 3.5.1
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator {
-
-
     /**
      * CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-
-    public AbstractCacheHealthIndicator(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) throws Exception {

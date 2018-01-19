@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -20,14 +21,9 @@ import java.security.GeneralSecurityException;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy {
-
-
     private final TicketRegistry ticketRegistry;
-
-    public UniquePrincipalAuthenticationPolicy(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.mongo;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.dao.AbstractCasEventRepository;
 import org.apereo.cas.support.events.dao.CasEvent;
@@ -18,16 +19,11 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class MongoDbCasEventRepository extends AbstractCasEventRepository {
 
-    private final String collectionName;
-
     private final MongoOperations mongoTemplate;
-
-    public MongoDbCasEventRepository(final MongoOperations mongoTemplate, final String collectionName) {
-        this.mongoTemplate = mongoTemplate;
-        this.collectionName = collectionName;
-    }
+    private final String collectionName;
 
     @Override
     public void save(final CasEvent event) {

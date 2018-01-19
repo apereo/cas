@@ -8,6 +8,7 @@ import com.amazonaws.services.clouddirectory.model.ListObjectAttributesRequest;
 import com.amazonaws.services.clouddirectory.model.ListObjectAttributesResult;
 import com.amazonaws.services.clouddirectory.model.ObjectReference;
 import com.amazonaws.services.clouddirectory.model.TypedAttributeValue;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -25,17 +26,10 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultCloudDirectoryRepository implements CloudDirectoryRepository {
-
-    
     private final AmazonCloudDirectory amazonCloudDirectory;
     private final CloudDirectoryProperties cloudDirectoryProperties;
-
-    public DefaultCloudDirectoryRepository(final AmazonCloudDirectory amazonCloudDirectory,
-                                           final CloudDirectoryProperties cloudDirectoryProperties) {
-        this.amazonCloudDirectory = amazonCloudDirectory;
-        this.cloudDirectoryProperties = cloudDirectoryProperties;
-    }
 
     @Override
     public Map<String, Object> getUser(final String username) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractServiceFactory;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -14,13 +15,10 @@ import javax.servlet.http.HttpServletRequest;
  * @since 4.2
  */
 @Slf4j
+@AllArgsConstructor
 public class OpenIdServiceFactory extends AbstractServiceFactory<OpenIdService> {
 
     private final String openIdPrefixUrl;
-
-    public OpenIdServiceFactory(final String openIdPrefixUrl) {
-        this.openIdPrefixUrl = openIdPrefixUrl;
-    }
 
     @Override
     public OpenIdService createService(final HttpServletRequest request) {

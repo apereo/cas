@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
@@ -21,20 +22,12 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final IGoogleAuthenticator googleAuthenticator;
-
-    private final String collectionName;
-
     private final MongoOperations mongoTemplate;
-
-    public GoogleAuthenticatorMongoDbTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                               final MongoOperations mongoTemplate, final String collectionName) {
-        this.mongoTemplate = mongoTemplate;
-        this.collectionName = collectionName;
-        this.googleAuthenticator = googleAuthenticator;
-    }
+    private final String collectionName;
 
     @Override
     public OneTimeTokenAccount get(final String username) {

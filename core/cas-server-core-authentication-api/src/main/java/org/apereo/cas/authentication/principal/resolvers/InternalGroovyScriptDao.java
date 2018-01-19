@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal.resolvers;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
@@ -19,22 +20,10 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class InternalGroovyScriptDao extends BaseGroovyScriptDaoImpl {
-
-
     private final ApplicationContext applicationContext;
     private final CasConfigurationProperties casProperties;
-
-    /**
-     * Instantiates a new Internal groovy script dao.
-     *
-     * @param applicationContext the application context
-     * @param casProperties      the cas properties
-     */
-    public InternalGroovyScriptDao(final ApplicationContext applicationContext, final CasConfigurationProperties casProperties) {
-        this.applicationContext = applicationContext;
-        this.casProperties = casProperties;
-    }
 
     @Override
     public Map<String, List<Object>> getPersonAttributesFromMultivaluedAttributes(final Map<String, List<Object>> attributes) {

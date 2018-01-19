@@ -1,5 +1,6 @@
 package org.apereo.cas.web.security;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authorization.LdapUserAttributesToRolesAuthorizationGenerator;
@@ -27,15 +28,11 @@ import java.util.ArrayList;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CasLdapUserDetailsManagerConfigurer<B extends ProviderManagerBuilder<B>>
         extends SecurityConfigurerAdapter<AuthenticationManager, B> {
 
-
     private final AdminPagesSecurityProperties adminPagesSecurityProperties;
-
-    public CasLdapUserDetailsManagerConfigurer(final AdminPagesSecurityProperties securityProperties) {
-        this.adminPagesSecurityProperties = securityProperties;
-    }
 
     private AuthenticationProvider buildLdapAuthenticationProvider() {
         return new LdapAuthenticationProvider(build(), this.adminPagesSecurityProperties);

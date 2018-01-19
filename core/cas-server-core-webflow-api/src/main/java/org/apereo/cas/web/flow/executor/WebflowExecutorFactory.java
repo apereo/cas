@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.executor;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
@@ -24,18 +25,11 @@ import org.springframework.webflow.executor.FlowExecutorImpl;
  * @since 5.3.0
  */
 @Slf4j
+@AllArgsConstructor
 public class WebflowExecutorFactory {
     private final WebflowProperties webflowProperties;
     private final FlowDefinitionRegistry flowDefinitionRegistry;
     private final CipherExecutor webflowCipherExecutor;
-
-    public WebflowExecutorFactory(final WebflowProperties webflowProperties,
-                                  final FlowDefinitionRegistry flowDefinitionRegistry,
-                                  final CipherExecutor webflowCipherExecutor) {
-        this.webflowProperties = webflowProperties;
-        this.flowDefinitionRegistry = flowDefinitionRegistry;
-        this.webflowCipherExecutor = webflowCipherExecutor;
-    }
 
     /**
      * Build flow executor.

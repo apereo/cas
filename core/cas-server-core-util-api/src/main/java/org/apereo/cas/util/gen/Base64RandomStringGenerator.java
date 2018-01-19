@@ -1,5 +1,6 @@
 package org.apereo.cas.util.gen;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
 
@@ -14,11 +15,8 @@ import org.apereo.cas.util.EncodingUtils;
  * @since 5.2.0
  */
 @Slf4j
+@NoArgsConstructor
 public class Base64RandomStringGenerator extends AbstractRandomStringGenerator {
-
-    public Base64RandomStringGenerator() {
-        super();
-    }
 
     public Base64RandomStringGenerator(final int defaultLength) {
         super(defaultLength);

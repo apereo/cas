@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -20,20 +21,11 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class SendTicketGrantingTicketAction extends AbstractAction {
-
-
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final CentralAuthenticationService centralAuthenticationService;
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final SingleSignOnParticipationStrategy renewalStrategy;
-
-    public SendTicketGrantingTicketAction(final CentralAuthenticationService centralAuthenticationService,
-                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                          final SingleSignOnParticipationStrategy renewalStrategy) {
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.renewalStrategy = renewalStrategy;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {

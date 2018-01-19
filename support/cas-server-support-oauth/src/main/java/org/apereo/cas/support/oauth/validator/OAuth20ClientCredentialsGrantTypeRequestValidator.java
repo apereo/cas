@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,17 +18,10 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20ClientCredentialsGrantTypeRequestValidator implements OAuth20RequestValidator {
-
-    
     private final ServicesManager servicesManager;
     private final OAuth20Validator validator;
-
-    public OAuth20ClientCredentialsGrantTypeRequestValidator(final ServicesManager servicesManager,
-                                                             final OAuth20Validator validator) {
-        this.servicesManager = servicesManager;
-        this.validator = validator;
-    }
 
     @Override
     public boolean validate(final J2EContext context) {

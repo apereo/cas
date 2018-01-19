@@ -1,5 +1,6 @@
 package org.apereo.cas.logout;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -21,30 +22,12 @@ import java.util.stream.Stream;
  * @since 4.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultLogoutManager implements LogoutManager {
-
-
-
-    private final boolean singleLogoutCallbacksDisabled;
     private final LogoutMessageCreator logoutMessageBuilder;
     private final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler;
+    private final boolean singleLogoutCallbacksDisabled;
     private final LogoutExecutionPlan logoutExecutionPlan;
-
-    /**
-     * Build the logout manager.
-     *
-     * @param logoutMessageBuilder              the builder to construct logout messages.
-     * @param singleLogoutServiceMessageHandler who actually perform the logout request
-     * @param singleLogoutCallbacksDisabled     Set if the logout is disabled.
-     * @param logoutExecutionPlan               the logout execution plan
-     */
-    public DefaultLogoutManager(final LogoutMessageCreator logoutMessageBuilder, final SingleLogoutServiceMessageHandler singleLogoutServiceMessageHandler,
-                                final boolean singleLogoutCallbacksDisabled, final LogoutExecutionPlan logoutExecutionPlan) {
-        this.logoutMessageBuilder = logoutMessageBuilder;
-        this.singleLogoutServiceMessageHandler = singleLogoutServiceMessageHandler;
-        this.singleLogoutCallbacksDisabled = singleLogoutCallbacksDisabled;
-        this.logoutExecutionPlan = logoutExecutionPlan;
-    }
 
     /**
      * Perform a back channel logout for a given ticket granting ticket and returns all the logout requests.

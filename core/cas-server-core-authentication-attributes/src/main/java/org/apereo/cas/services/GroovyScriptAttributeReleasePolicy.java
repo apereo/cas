@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -24,15 +25,12 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class GroovyScriptAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 1703080077563402223L;
 
     private String groovyScript;
-
-    public GroovyScriptAttributeReleasePolicy(final String groovyScript) {
-        this.groovyScript = groovyScript;
-    }
 
     @Override
     public Map<String, Object> getAttributesInternal(final Principal principal, final Map<String, Object> attributes, final RegisteredService service) {

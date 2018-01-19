@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -39,24 +40,12 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController("serviceTicketResourceRestController")
 @Slf4j
+@AllArgsConstructor
 public class ServiceTicketResource {
-
-
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ServiceFactory webApplicationServiceFactory;
     private final TicketRegistrySupport ticketRegistrySupport;
+    private final ServiceFactory webApplicationServiceFactory;
     private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
-
-    public ServiceTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                 final TicketRegistrySupport ticketRegistrySupport,
-                                 final ServiceFactory webApplicationServiceFactory,
-                                 final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.serviceTicketResourceEntityResponseFactory = serviceTicketResourceEntityResponseFactory;
-    }
 
     /**
      * Create new service ticket.

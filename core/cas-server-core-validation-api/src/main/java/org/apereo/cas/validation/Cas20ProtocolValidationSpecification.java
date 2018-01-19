@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -12,16 +13,8 @@ import lombok.extern.slf4j.Slf4j;
  * @since 3.0.0
  */
 @Slf4j
+@NoArgsConstructor
 public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
-
-    
-    /**
-     * Instantiates a new cas20 protocol validation specification.
-     */
-    public Cas20ProtocolValidationSpecification() {
-        super();
-    }
-
     /**
      * Instantiates a new cas20 protocol validation specification.
      *

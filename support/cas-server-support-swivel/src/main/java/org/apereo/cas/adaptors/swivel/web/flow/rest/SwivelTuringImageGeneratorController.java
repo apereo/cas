@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.swivel.web.flow.rest;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomUtils;
@@ -23,12 +24,9 @@ import java.net.URL;
  */
 @RestController
 @Slf4j
+@AllArgsConstructor
 public class SwivelTuringImageGeneratorController {
     private final SwivelMultifactorProperties swivel;
-
-    public SwivelTuringImageGeneratorController(final SwivelMultifactorProperties swivel) {
-        this.swivel = swivel;
-    }
 
     /**
      * Generate.

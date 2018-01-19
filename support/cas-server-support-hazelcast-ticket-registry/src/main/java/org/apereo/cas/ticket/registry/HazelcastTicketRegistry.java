@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.Ticket;
@@ -27,27 +28,11 @@ import java.util.stream.Collectors;
  * @since 4.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class HazelcastTicketRegistry extends AbstractTicketRegistry implements Closeable {
-
-
     private final HazelcastInstance hazelcastInstance;
     private final TicketCatalog ticketCatalog;
     private final long pageSize;
-
-    /**
-     * Instantiates a new Hazelcast ticket ticketGrantingTicketsRegistry.
-     *
-     * @param hz       An instance of {@code HazelcastInstance}
-     * @param plan     the plan
-     * @param pageSize the page size
-     */
-    public HazelcastTicketRegistry(final HazelcastInstance hz, final TicketCatalog plan, final long pageSize) {
-        this.hazelcastInstance = hz;
-        this.pageSize = pageSize;
-        this.ticketCatalog = plan;
-
-        LOGGER.info("Setting up Hazelcast Ticket Registry instance [{}]", this.hazelcastInstance);
-    }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {

@@ -1,6 +1,7 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import com.mongodb.WriteResult;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.springframework.data.mongodb.core.MongoOperations;
@@ -19,22 +20,10 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class MongoDbMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
-    
     private final String collectionName;
     private final MongoOperations mongoTemplate;
-
-    /**
-     * Instantiates a new Mongo db multifactor authentication trust storage.
-     *
-     * @param collectionName the collection name
-     * @param mongoTemplate  the mongo template
-     */
-    public MongoDbMultifactorAuthenticationTrustStorage(final String collectionName, final MongoOperations mongoTemplate) {
-        this.collectionName = collectionName;
-        this.mongoTemplate = mongoTemplate;
-    }
 
     @Override
     public void expire(final String key) {

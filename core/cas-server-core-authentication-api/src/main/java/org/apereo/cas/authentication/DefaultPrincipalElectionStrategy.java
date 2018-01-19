@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -16,6 +17,7 @@ import java.util.Map;
  * @since 4.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrategy {
 
     private static final long serialVersionUID = 6704726217030836315L;
@@ -24,10 +26,6 @@ public class DefaultPrincipalElectionStrategy implements PrincipalElectionStrate
 
     public DefaultPrincipalElectionStrategy() {
         this(new DefaultPrincipalFactory());
-    }
-
-    public DefaultPrincipalElectionStrategy(final PrincipalFactory principalFactory) {
-        this.principalFactory = principalFactory;
     }
 
     @Override

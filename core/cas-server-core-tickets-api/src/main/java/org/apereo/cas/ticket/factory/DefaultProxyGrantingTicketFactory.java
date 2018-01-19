@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
@@ -21,9 +22,8 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
  * @since 4.2
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFactory {
-
-
     /**
      * Used to generate ids for {@link TicketGrantingTicket}s
      * created.
@@ -39,14 +39,6 @@ public class DefaultProxyGrantingTicketFactory implements ProxyGrantingTicketFac
      * The ticket cipher.
      */
     protected CipherExecutor<String, String> cipherExecutor;
-
-    public DefaultProxyGrantingTicketFactory(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-                                             final ExpirationPolicy ticketGrantingTicketExpirationPolicy,
-                                             final CipherExecutor<String, String> cipherExecutor) {
-        this.ticketGrantingTicketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-        this.ticketGrantingTicketExpirationPolicy = ticketGrantingTicketExpirationPolicy;
-        this.cipherExecutor = cipherExecutor;
-    }
 
     @Override
     public <T extends ProxyGrantingTicket> T create(final ServiceTicket serviceTicket,

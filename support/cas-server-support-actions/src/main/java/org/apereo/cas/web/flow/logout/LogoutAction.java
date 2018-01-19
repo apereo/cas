@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.logout;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -31,6 +32,7 @@ import java.util.List;
  * @since 3.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class LogoutAction extends AbstractLogoutAction {
     
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
@@ -38,14 +40,6 @@ public class LogoutAction extends AbstractLogoutAction {
     private final ServicesManager servicesManager;
 
     private final LogoutProperties logoutProperties;
-
-    public LogoutAction(final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                        final ServicesManager servicesManager,
-                        final LogoutProperties logoutProperties) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.servicesManager = servicesManager;
-        this.logoutProperties = logoutProperties;
-    }
 
     @Override
     protected Event doInternalExecute(final HttpServletRequest request, final HttpServletResponse response,

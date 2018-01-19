@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
@@ -23,18 +24,12 @@ import java.util.Map;
  * @since 3.5
  */
 @Slf4j
+@AllArgsConstructor
 public class SmartOpenIdController extends AbstractDelegateController implements Serializable {
-
     private static final long serialVersionUID = -594058549445950430L;
-
 
     private final ServerManager serverManager;
     private final View successView;
-
-    public SmartOpenIdController(final ServerManager serverManager, final View successView) {
-        this.serverManager = serverManager;
-        this.successView = successView;
-    }
 
     /**
      * Gets the association response. Determines the mode first.

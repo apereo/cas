@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
@@ -21,21 +22,13 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
 
     /**
      * The Services manager.
      */
     protected final ServicesManager servicesManager;
-
-    /**
-     * Instantiates a new Registered service authentication handler resolver.
-     *
-     * @param servicesManager the services manager
-     */
-    public RegisteredServiceAuthenticationHandlerResolver(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -32,20 +33,13 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class ServiceWarningAction extends AbstractAction {
 
     private final CentralAuthenticationService centralAuthenticationService;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final TicketRegistrySupport ticketRegistrySupport;
     private final CookieGenerator warnCookieGenerator;
-
-    public ServiceWarningAction(final CentralAuthenticationService authenticationService, final AuthenticationSystemSupport authenticationSystemSupport,
-                                final TicketRegistrySupport ticketRegistrySupport, final CookieRetrievingCookieGenerator warnCookieGenerator) {
-        centralAuthenticationService = authenticationService;
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.warnCookieGenerator = warnCookieGenerator;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {

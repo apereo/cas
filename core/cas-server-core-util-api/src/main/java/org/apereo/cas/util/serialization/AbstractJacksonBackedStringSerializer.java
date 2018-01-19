@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -41,14 +42,13 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public abstract class AbstractJacksonBackedStringSerializer<T> implements StringSerializer<T> {
     private static final long serialVersionUID = -8415599777321259365L;
 
-
-    private final PrettyPrinter prettyPrinter;
-
     private final ObjectMapper objectMapper;
-
+    private final PrettyPrinter prettyPrinter;
+    
     /**
      * Instantiates a new Registered service json serializer.
      * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
@@ -64,17 +64,6 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
      */
     public AbstractJacksonBackedStringSerializer(final PrettyPrinter prettyPrinter) {
         this.objectMapper = initializeObjectMapper();
-        this.prettyPrinter = prettyPrinter;
-    }
-
-    /**
-     * Instantiates a new Registered service json serializer.
-     *
-     * @param objectMapper  the object mapper
-     * @param prettyPrinter the pretty printer
-     */
-    public AbstractJacksonBackedStringSerializer(final ObjectMapper objectMapper, final PrettyPrinter prettyPrinter) {
-        this.objectMapper = objectMapper;
         this.prettyPrinter = prettyPrinter;
     }
 

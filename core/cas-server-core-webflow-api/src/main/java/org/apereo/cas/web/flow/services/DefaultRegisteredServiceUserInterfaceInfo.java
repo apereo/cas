@@ -21,6 +21,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     private static final int DEFAULT_IMAGE_SIZE = 32;
@@ -29,10 +30,6 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     /** the registered service. **/
     protected final RegisteredService registeredService;
-
-    public DefaultRegisteredServiceUserInterfaceInfo(final RegisteredService registeredService) {
-        this.registeredService = registeredService;
-    }
 
     /**
      * Gets description.

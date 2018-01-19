@@ -1,5 +1,6 @@
 package org.apereo.cas.web.saml2;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -24,15 +25,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller("saml2ClientMetadataController")
 @RequestMapping
 @Slf4j
+@AllArgsConstructor
 public class Saml2ClientMetadataController {
 
     private final Clients builtClients;
     private final OpenSamlConfigBean openSamlConfigBean;
-
-    public Saml2ClientMetadataController(final Clients builtClients, final OpenSamlConfigBean openSamlConfigBean) {
-        this.builtClients = builtClients;
-        this.openSamlConfigBean = openSamlConfigBean;
-    }
 
     /**
      * Gets first service provider metadata.

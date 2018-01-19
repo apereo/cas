@@ -2,6 +2,7 @@ package org.apereo.cas.otp.repository.token;
 
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -14,14 +15,9 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CachingOneTimeTokenRepository extends BaseOneTimeTokenRepository {
-
-
     private final LoadingCache<String, Collection<OneTimeToken>> storage;
-
-    public CachingOneTimeTokenRepository(final LoadingCache<String, Collection<OneTimeToken>> storage) {
-        this.storage = storage;
-    }
 
     @Override
     public void cleanInternal() {
