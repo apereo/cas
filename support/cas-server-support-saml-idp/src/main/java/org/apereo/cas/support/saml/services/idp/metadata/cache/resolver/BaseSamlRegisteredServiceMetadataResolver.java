@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -38,9 +39,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlRegisteredServiceMetadataResolver {
-
-
     /**
      * The Saml idp properties.
      */
@@ -49,11 +49,6 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
      * The config bean.
      */
     protected final OpenSamlConfigBean configBean;
-
-    public BaseSamlRegisteredServiceMetadataResolver(final SamlIdPProperties samlIdPProperties, final OpenSamlConfigBean configBean) {
-        this.samlIdPProperties = samlIdPProperties;
-        this.configBean = configBean;
-    }
 
     /**
      * Build metadata resolver from document.

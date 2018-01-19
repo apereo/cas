@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.util;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -30,18 +31,10 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcAuthorizationRequestSupport {
-
-
-
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    public OidcAuthorizationRequestSupport(final CookieRetrievingCookieGenerator tgtCookieGenerator,
-                                           final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
 
     /**
      * Gets oidc prompt from authorization request.

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.exception.TimeoutException;
 import org.apache.commons.lang3.StringUtils;
@@ -17,16 +18,13 @@ import lombok.NoArgsConstructor;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 @NoArgsConstructor
 public class RadiusMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
     private List<RadiusServer> servers;
-
-    public RadiusMultifactorAuthenticationProvider(final List<RadiusServer> servers) {
-        this.servers = servers;
-    }
 
     @Override
     public String getId() {

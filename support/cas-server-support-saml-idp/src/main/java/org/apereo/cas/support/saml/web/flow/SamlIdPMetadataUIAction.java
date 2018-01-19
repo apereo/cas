@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
@@ -26,20 +27,13 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class SamlIdPMetadataUIAction extends AbstractAction {
     private final ServicesManager servicesManager;
 
     private final SamlRegisteredServiceCachingMetadataResolver resolver;
 
     private final AuthenticationServiceSelectionPlan serviceSelectionStrategy;
-
-    public SamlIdPMetadataUIAction(final ServicesManager servicesManager,
-                                   final SamlRegisteredServiceCachingMetadataResolver resolver,
-                                   final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        this.servicesManager = servicesManager;
-        this.resolver = resolver;
-        this.serviceSelectionStrategy = serviceSelectionStrategy;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import java.security.GeneralSecurityException;
 import java.time.Instant;
@@ -17,6 +18,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public class ExpiredCRLException extends GeneralSecurityException {
 
     /** Serialization version marker. */
@@ -55,24 +57,6 @@ public class ExpiredCRLException extends GeneralSecurityException {
         this.expirationDate = (ZonedDateTime) expirationDate;
         if (leniency < 0) {
             throw new IllegalArgumentException("Leniency is negative.");
-        }
-        this.leniency = leniency;
-    }
-
-    /**
-     * Creates a new instance describing a CRL that expired on a date that is
-     * more than leniency seconds beyond its expiration date.
-     *
-     * @param identifier Identifier or name that describes CRL.
-     * @param expirationDate CRL expiration date.
-     * @param leniency Number of seconds beyond the expiration date at which
-     * the CRL is considered expired.  MUST be non-negative integer.
-     */
-    public ExpiredCRLException(final String identifier, final ZonedDateTime expirationDate, final int leniency) {
-        this.id = identifier;
-        this.expirationDate = ZonedDateTime.from(expirationDate);
-        if (leniency < 0) {
-            throw new IllegalArgumentException("Leniency must not be negative.");
         }
         this.leniency = leniency;
     }

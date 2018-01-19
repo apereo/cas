@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opensaml.saml.metadata.resolver.filter.MetadataFilterChain;
 import org.springframework.core.io.Resource;
@@ -15,14 +16,8 @@ import java.util.Map;
  * @since 4.1.0
  */
 @Slf4j
+@NoArgsConstructor
 public class StaticMetadataResolverAdapter extends AbstractMetadataResolverAdapter {
-    /**
-     * New ctor - required for serialization and job scheduling.
-     */
-    public StaticMetadataResolverAdapter() {
-        super();
-    }
-
     /**
      * Instantiates a new static metadata resolver adapter.
      *
