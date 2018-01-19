@@ -484,5 +484,6 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             LOGGER.error("[{}]: [{}]", name, msg);
             builder.addFailure(name, e);
         }
+        LOGGER.trace(e.getMessage(), e);
     }
 }

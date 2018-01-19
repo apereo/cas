@@ -42,7 +42,7 @@ import java.time.ZonedDateTime;
 @ToString
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"of"})
+@EqualsAndHashCode(of = {"id"})
 @Setter
 public abstract class AbstractTicket implements Ticket, TicketState {
 
