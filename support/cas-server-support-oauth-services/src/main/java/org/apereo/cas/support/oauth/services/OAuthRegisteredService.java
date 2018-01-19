@@ -42,13 +42,13 @@ public class OAuthRegisteredService extends RegexRegisteredService {
     private String clientId;
 
     @Column(updatable = true, insertable = true, nullable = false)
-    private boolean bypassApprovalPrompt = Boolean.FALSE;
+    private boolean bypassApprovalPrompt;
 
     @Column(updatable = true, insertable = true, nullable = false)
-    private boolean generateRefreshToken = Boolean.FALSE;
+    private boolean generateRefreshToken;
 
     @Column(updatable = true, insertable = true, nullable = false)
-    private boolean jsonFormat = Boolean.FALSE;
+    private boolean jsonFormat;
 
     @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)
