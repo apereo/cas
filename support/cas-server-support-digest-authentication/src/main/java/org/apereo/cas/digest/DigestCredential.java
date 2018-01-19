@@ -20,7 +20,7 @@ import lombok.Getter;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 @NoArgsConstructor
 public class DigestCredential extends AbstractCredential {
 

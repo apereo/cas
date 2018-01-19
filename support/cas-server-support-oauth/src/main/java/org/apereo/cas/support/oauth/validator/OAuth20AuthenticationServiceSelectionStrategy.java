@@ -1,6 +1,5 @@
 package org.apereo.cas.support.oauth.validator;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -28,9 +27,11 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
-@Getter
 public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
+
+
+
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     private final String callbackUrl;
@@ -120,5 +121,10 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
         LOGGER.debug("Authentication request is{}identified as an OAuth request",
                 BooleanUtils.toString(res, StringUtils.EMPTY, " not "));
         return res;
+    }
+
+    @Override
+    public int getOrder() {
+        return this.order;
     }
 }

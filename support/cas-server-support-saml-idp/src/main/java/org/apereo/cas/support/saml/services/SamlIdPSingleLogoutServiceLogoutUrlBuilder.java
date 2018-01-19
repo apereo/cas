@@ -65,8 +65,8 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         LOGGER.debug("Located entity id [{}]", entityID);
 
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-            SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                SamlRegisteredService.class.cast(registeredService), entityID);
+                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                        SamlRegisteredService.class.cast(registeredService), entityID);
 
         if (!adaptor.isPresent()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);

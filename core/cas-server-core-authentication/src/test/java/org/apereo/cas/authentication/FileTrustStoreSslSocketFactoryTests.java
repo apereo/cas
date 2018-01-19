@@ -11,7 +11,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import java.io.IOException;
 import java.security.KeyStore;
 
 import static org.junit.Assert.*;
@@ -25,13 +24,14 @@ import static org.junit.Assert.*;
  */
 @Slf4j
 public class FileTrustStoreSslSocketFactoryTests {
+
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
     @Test
-    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable() throws Exception {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
@@ -48,13 +48,13 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreNotFound() {
-        this.thrown.expect(IOException.class);
+        this.thrown.expect(RuntimeException.class);
         sslFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test
     public void verifyTrustStoreBadPassword() {
-        this.thrown.expect(IOException.class);
+        this.thrown.expect(RuntimeException.class);
         sslFactory(RESOURCE, "invalid");
     }
 

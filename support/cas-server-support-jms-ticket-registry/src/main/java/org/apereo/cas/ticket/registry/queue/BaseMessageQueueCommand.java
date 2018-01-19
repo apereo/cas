@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry.queue;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.registry.TicketRegistry;
@@ -17,14 +18,11 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@AllArgsConstructor
 public abstract class BaseMessageQueueCommand {
 
     private final StringBean id;
-
-    public BaseMessageQueueCommand(final StringBean id) {
-        this.id = id;
-    }
-
+    
     /**
      * Execute.
      *

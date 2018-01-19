@@ -38,7 +38,7 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
 
     private static final long serialVersionUID = 6276140828446447398L;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String relyingParty;
 
     @Column(length = 5000, updatable = true, insertable = true)
@@ -98,6 +98,11 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
     @Override
     public Authentication getAuthentication() {
         return this.ticketGrantingTicket.getAuthentication();
+    }
+
+    @Override
+    public TicketGrantingTicket getTicketGrantingTicket() {
+        return this.ticketGrantingTicket;
     }
 
     @Override

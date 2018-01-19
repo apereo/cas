@@ -8,6 +8,8 @@ import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
@@ -58,9 +60,13 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler
-            .supports(new HttpBasedServiceCredential("http://www.rutgers.edu",
-                CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
+        try {
+            assertFalse(this.authenticationHandler
+                    .supports(new HttpBasedServiceCredential(new URL(
+                            "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
+        } catch (final MalformedURLException e) {
+            throw new AssertionError("Could not resolve URL.", e);
+        }
     }
 
     @Test

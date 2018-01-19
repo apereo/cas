@@ -1,6 +1,5 @@
 package org.apereo.cas.impl.plans;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskContingencyResponse;
@@ -23,8 +22,8 @@ import java.util.Set;
  * @since 5.1.0
  */
 @Slf4j
-@Getter
 public abstract class BaseAuthenticationRiskContingencyPlan implements AuthenticationRiskContingencyPlan {
+
     
     /**
      * CAS properties.
@@ -56,6 +55,10 @@ public abstract class BaseAuthenticationRiskContingencyPlan implements Authentic
             new Thread(e, e.getClass().getSimpleName()).start();
         });
         return executeInternal(authentication, service, score, request);
+    }
+    
+    public Set<AuthenticationRiskNotifier> getNotifiers() {
+        return notifiers;
     }
     
     /**

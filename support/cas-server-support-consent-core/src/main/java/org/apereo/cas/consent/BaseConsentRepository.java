@@ -1,6 +1,5 @@
 package org.apereo.cas.consent;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -21,7 +20,6 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-@Getter
 public abstract class BaseConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 1736846688546785564L;
@@ -65,5 +63,9 @@ public abstract class BaseConsentRepository implements ConsentRepository {
     public boolean deleteConsentDecision(final long decisionId, final String principal) {
         final Collection<ConsentDecision> decisions = findConsentDecisions(principal);
         return this.consentDecisions.remove(decisions.stream().filter(d -> d.getId() == decisionId).findFirst().get());
+    }
+
+    protected Set<ConsentDecision> getConsentDecisions() {
+        return this.consentDecisions;
     }
 }

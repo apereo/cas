@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -26,7 +25,6 @@ import lombok.NoArgsConstructor;
 @DiscriminatorValue(SecurityTokenTicket.PREFIX)
 @Slf4j
 @NoArgsConstructor
-@Getter
 public class DefaultSecurityTokenTicket extends AbstractTicket implements SecurityTokenTicket {
 
     private static final long serialVersionUID = 3940671352560102114L;
@@ -41,6 +39,11 @@ public class DefaultSecurityTokenTicket extends AbstractTicket implements Securi
         super(id, expirationPolicy);
         this.ticketGrantingTicket = ticketGrantingTicket;
         this.securityToken = securityToken;
+    }
+
+    @Override
+    public TicketGrantingTicket getTicketGrantingTicket() {
+        return this.ticketGrantingTicket;
     }
 
     @Override

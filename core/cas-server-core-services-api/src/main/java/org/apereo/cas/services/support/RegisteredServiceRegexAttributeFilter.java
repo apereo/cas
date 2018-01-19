@@ -1,24 +1,19 @@
 package org.apereo.cas.services.support;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import lombok.ToString;
 import lombok.Setter;
 import lombok.NoArgsConstructor;
-import org.apereo.cas.util.RegexUtils;
-import org.springframework.data.annotation.Transient;
 
 /**
  * The regex filter that is responsible to make sure only attributes that match a certain regex pattern
@@ -32,17 +27,14 @@ import org.springframework.data.annotation.Transient;
 @Setter
 @NoArgsConstructor
 @Getter
-@EqualsAndHashCode(of = {"pattern", "order"})
+@EqualsAndHashCode
 public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 403015306984610128L;
 
-    private String pattern;
-    private int order;
+    private Pattern pattern;
 
-    @JsonIgnore
-    @Transient
-    private Pattern compiledPattern;
+    private int order;
 
     /**
      * Instantiates a new registered service regex attribute filter.
@@ -50,10 +42,9 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param regex the regex
      */
     public RegisteredServiceRegexAttributeFilter(final String regex) {
-        this.pattern = regex;
-        this.compiledPattern = RegexUtils.createPattern(regex);
+        this.pattern = Pattern.compile(regex);
     }
-
+    
     /**
      * {@inheritDoc}
      * <p>
@@ -147,7 +138,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @return true, if successful
      */
     private boolean patternMatchesAttributeValue(final String value) {
-        return RegexUtils.matches(this.compiledPattern, value);
+        return this.pattern.matcher(value).matches();
     }
 
     /**
@@ -157,8 +148,7 @@ public class RegisteredServiceRegexAttributeFilter implements RegisteredServiceA
      * @param attributeValue the attribute value
      */
     private void logReleasedAttributeEntry(final String attributeName, final String attributeValue) {
-        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...",
-            attributeValue, attributeName, this.pattern);
+        LOGGER.debug("The attribute value [{}] for attribute name [{}] matches the pattern [{}]. Releasing attribute...", attributeValue, attributeName, this.pattern.pattern());
     }
 
 }

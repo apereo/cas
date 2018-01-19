@@ -9,7 +9,6 @@ import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -27,14 +26,13 @@ import java.util.Set;
  */
 @Slf4j
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
-
+    
     /**
      * The collection of users to reject.
      */
     private final Set<String> users;
 
-    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                            final PrincipalFactory principalFactory,
+    public RejectUsersAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                             final Set<String> rejectedUsers) {
         super(name, servicesManager, principalFactory, null);
         this.users = rejectedUsers;
@@ -49,6 +47,6 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
 
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 }

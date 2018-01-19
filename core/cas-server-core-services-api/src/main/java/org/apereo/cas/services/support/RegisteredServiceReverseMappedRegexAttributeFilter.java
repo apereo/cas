@@ -21,6 +21,8 @@ public class RegisteredServiceReverseMappedRegexAttributeFilter extends Register
 
     private static final long serialVersionUID = 852145306984610128L;
 
+
+
     @Override
     protected List<Object> filterAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern) {
         return attributeValues.stream()

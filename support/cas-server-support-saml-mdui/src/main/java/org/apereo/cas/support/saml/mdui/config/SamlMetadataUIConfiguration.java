@@ -1,9 +1,11 @@
 package org.apereo.cas.support.saml.mdui.config;
 
-import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.mdui.AbstractMetadataResolverAdapter;
@@ -22,10 +24,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
+import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,6 +49,8 @@ import java.util.Map;
 @Slf4j
 public class SamlMetadataUIConfiguration {
 
+
+
     private static final String DEFAULT_SEPARATOR = "::";
 
     @Autowired
@@ -56,10 +63,28 @@ public class SamlMetadataUIConfiguration {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @Autowired(required = false)
+    @Qualifier("loginFlowRegistry")
+    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+
+    @Autowired(required = false)
+    private FlowBuilderServices flowBuilderServices;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> serviceFactory;
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
     public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter() {
-        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapList(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
+        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapSet(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
     }
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
@@ -77,9 +102,9 @@ public class SamlMetadataUIConfiguration {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-            final List<String> arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
-            final String metadataFile = arr.get(0);
-            final String signingKey = arr.size() > 1 ? arr.get(1) : null;
+            final String[] arr = entry.split(DEFAULT_SEPARATOR);
+            final String metadataFile = arr[0];
+            final String signingKey = arr.length > 1 ? arr[1] : null;
 
             final List<MetadataFilter> filters = new ArrayList<>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {

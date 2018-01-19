@@ -32,10 +32,10 @@ public class YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String publicId;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String username;
 
     public YubiKeyAccount() {

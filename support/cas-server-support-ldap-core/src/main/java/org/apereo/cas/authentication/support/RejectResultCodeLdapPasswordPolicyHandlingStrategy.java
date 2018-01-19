@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.auth.AuthenticationResponse;
@@ -15,17 +16,12 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends DefaultLdapPasswordPolicyHandlingStrategy {
-
-    
     private final List<AuthenticationResultCode> resultCodes;
 
     public RejectResultCodeLdapPasswordPolicyHandlingStrategy() {
         this(CollectionUtils.wrapList(AuthenticationResultCode.INVALID_CREDENTIAL));
-    }
-    
-    public RejectResultCodeLdapPasswordPolicyHandlingStrategy(final List<AuthenticationResultCode> resultCodes) {
-        this.resultCodes = resultCodes;
     }
 
     @Override

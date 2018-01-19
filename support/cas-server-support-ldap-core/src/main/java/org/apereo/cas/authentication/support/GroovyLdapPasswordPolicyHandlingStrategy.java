@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MessageDescriptor;
 import org.apereo.cas.util.ScriptingUtils;
@@ -15,14 +16,9 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class GroovyLdapPasswordPolicyHandlingStrategy implements LdapPasswordPolicyHandlingStrategy {
-
-
     private final Resource groovyResource;
-
-    public GroovyLdapPasswordPolicyHandlingStrategy(final Resource script) {
-        this.groovyResource = script;
-    }
 
     @Override
     public List<MessageDescriptor> handle(final AuthenticationResponse response,
