@@ -55,7 +55,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     private String sectorIdentifierUri;
 
     @Column(length = 255, updatable = true, insertable = true)
-    private String subjectType;
+    private String subjectType = OidcSubjectTypes.PUBLIC.getType();
 
     @Column(updatable = true, insertable = true)
     private boolean dynamicallyRegistered;
