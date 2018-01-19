@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
@@ -25,24 +26,13 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class SurrogateAuthenticationPostProcessor implements AuthenticationPostProcessor {
-
-
-
     private final PrincipalFactory principalFactory;
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     private final ServicesManager servicesManager;
     private final ApplicationEventPublisher applicationEventPublisher;
 
-    public SurrogateAuthenticationPostProcessor(final PrincipalFactory principalFactory,
-                                                final SurrogateAuthenticationService surrogateAuthenticationService,
-                                                final ServicesManager servicesManager,
-                                                final ApplicationEventPublisher applicationEventPublisher) {
-        this.principalFactory = principalFactory;
-        this.surrogateAuthenticationService = surrogateAuthenticationService;
-        this.servicesManager = servicesManager;
-        this.applicationEventPublisher = applicationEventPublisher;
-    }
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
