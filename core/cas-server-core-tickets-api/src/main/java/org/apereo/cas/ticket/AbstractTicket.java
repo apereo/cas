@@ -5,18 +5,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -93,9 +94,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      * @param expirationPolicy the expiration policy for the ticket.
      * @throws IllegalArgumentException if the id or expiration policy is null.
      */
-    public AbstractTicket(final String id, final ExpirationPolicy expirationPolicy) {
-        Assert.notNull(expirationPolicy, "expirationPolicy cannot be null");
-        Assert.notNull(id, "id cannot be null");
+    public AbstractTicket(@NonNull final String id, @NonNull final ExpirationPolicy expirationPolicy) {
         this.id = id;
         this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
         this.lastTimeUsed = ZonedDateTime.now(ZoneOffset.UTC);
@@ -112,7 +111,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
             state.update();
         }
     }
-    
+
     @Override
     public boolean isExpired() {
         final TicketGrantingTicket tgt = getTicketGrantingTicket();
