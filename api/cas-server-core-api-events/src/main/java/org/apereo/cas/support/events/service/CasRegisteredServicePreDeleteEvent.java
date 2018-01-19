@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.service;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import lombok.ToString;
@@ -14,7 +13,6 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-@Getter
 public class CasRegisteredServicePreDeleteEvent extends BaseCasRegisteredServiceEvent {
 
     private static final long serialVersionUID = -8964760046458085393L;
@@ -30,5 +28,9 @@ public class CasRegisteredServicePreDeleteEvent extends BaseCasRegisteredService
     public CasRegisteredServicePreDeleteEvent(final Object source, final RegisteredService registeredService) {
         super(source);
         this.registeredService = registeredService;
+    }
+
+    public RegisteredService getRegisteredService() {
+        return this.registeredService;
     }
 }

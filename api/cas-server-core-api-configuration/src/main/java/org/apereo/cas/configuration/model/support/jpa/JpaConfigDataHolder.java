@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import javax.sql.DataSource;
@@ -18,6 +19,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
+@AllArgsConstructor
 public class JpaConfigDataHolder implements Serializable {
 
     private static final long serialVersionUID = -3940423575751579622L;
@@ -34,11 +36,4 @@ public class JpaConfigDataHolder implements Serializable {
         this(jpaVendorAdapter, persistenceUnitName, packagesToScan, null);
     }
 
-    public JpaConfigDataHolder(final JpaVendorAdapter jpaVendorAdapter, final String persistenceUnitName,
-                               final List<String> packagesToScan, final DataSource dataSource) {
-        this.jpaVendorAdapter = jpaVendorAdapter;
-        this.persistenceUnitName = persistenceUnitName;
-        this.packagesToScan = packagesToScan;
-        this.dataSource = dataSource;
-    }
 }

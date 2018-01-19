@@ -44,13 +44,13 @@ public class CasEvent {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String type;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principalId;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String creationTime;
 
     @ElementCollection

@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.authentication;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -12,12 +11,12 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @since 5.0.0
  */
 @Slf4j
-@Getter
 public class CasAuthenticationTransactionCompletedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -1862538693590213844L;
 
     private final Authentication authentication;
-    
+
+
     /**
      * Instantiates a new Abstract cas sso event.
      *
@@ -27,5 +26,9 @@ public class CasAuthenticationTransactionCompletedEvent extends AbstractCasEvent
     public CasAuthenticationTransactionCompletedEvent(final Object source, final Authentication authentication) {
         super(source);
         this.authentication = authentication;
+    }
+
+    public Authentication getAuthentication() {
+        return authentication;
     }
 }
