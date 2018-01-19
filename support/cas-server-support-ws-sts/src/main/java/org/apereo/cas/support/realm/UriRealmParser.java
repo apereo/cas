@@ -1,5 +1,6 @@
 package org.apereo.cas.support.realm;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.RealmParser;
@@ -16,14 +17,10 @@ import java.util.StringTokenizer;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class UriRealmParser implements RealmParser {
 
-
     private final Map<String, RealmProperties> realmMap;
-
-    public UriRealmParser(final Map<String, RealmProperties> realmMap) {
-        this.realmMap = realmMap;
-    }
 
     @Override
     public String parseRealm(final Map<String, Object> messageContext) throws STSException {

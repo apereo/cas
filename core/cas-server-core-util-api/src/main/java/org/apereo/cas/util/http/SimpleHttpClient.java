@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 
 /**
  * Implementation of CAS {@link HttpClient}
- * which delegates requests to a {@link #httpClient} instance.
+ * which delegates requests to a {@link #wrappedHttpClient} instance.
  *
  * @author Jerome Leleu
  * @author Scott Battaglia

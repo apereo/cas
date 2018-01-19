@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -28,16 +29,11 @@ import java.util.List;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20TokenAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
 
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final ExpirationPolicy accessTokenExpirationPolicy;
-
-    public OAuth20TokenAuthorizationResponseBuilder(final OAuth20TokenGenerator accessTokenGenerator,
-                                                    final ExpirationPolicy accessTokenExpirationPolicy) {
-        this.accessTokenGenerator = accessTokenGenerator;
-        this.accessTokenExpirationPolicy = accessTokenExpirationPolicy;
-    }
 
     @Override
     @SneakyThrows

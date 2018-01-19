@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -21,18 +22,8 @@ import org.springframework.stereotype.Controller;
  */
 @Controller
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseOAuth20Controller {
-
-
-    /**
-     * Collection of CAS settings.
-     */
-    protected final CasConfigurationProperties casProperties;
-
-    /**
-     * Convert profile scopes to attributes.
-     */
-    protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
     /**
      * Services manager.
@@ -40,18 +31,15 @@ public abstract class BaseOAuth20Controller {
     protected final ServicesManager servicesManager;
 
     /**
-     * Cookie retriever.
-     */
-    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-
-    /**
      * The Ticket registry.
      */
     protected final TicketRegistry ticketRegistry;
+
     /**
      * The Validator.
      */
     protected final OAuth20Validator validator;
+
     /**
      * The Access token factory.
      */
@@ -65,37 +53,17 @@ public abstract class BaseOAuth20Controller {
      */
     protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
-
     /**
-     * Instantiates a new Base o auth 20 controller.
-     *
-     * @param servicesManager                     the services manager
-     * @param ticketRegistry                      the ticket registry
-     * @param validator                           the validator
-     * @param accessTokenFactory                  the access token factory
-     * @param principalFactory                    the principal factory
-     * @param webApplicationServiceServiceFactory the web application service service factory
-     * @param scopeToAttributesFilter             the scope to attributes filter
-     * @param casProperties                       the cas properties
-     * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
+     * Convert profile scopes to attributes.
      */
-    public BaseOAuth20Controller(final ServicesManager servicesManager,
-                                 final TicketRegistry ticketRegistry,
-                                 final OAuth20Validator validator,
-                                 final AccessTokenFactory accessTokenFactory,
-                                 final PrincipalFactory principalFactory,
-                                 final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                 final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                 final CasConfigurationProperties casProperties,
-                                 final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
-        this.validator = validator;
-        this.accessTokenFactory = accessTokenFactory;
-        this.principalFactory = principalFactory;
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
-        this.casProperties = casProperties;
-        this.scopeToAttributesFilter = scopeToAttributesFilter;
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-    }
+    protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
+    /**
+     * Collection of CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+    /**
+     * Cookie retriever.
+     */
+    protected final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
 }

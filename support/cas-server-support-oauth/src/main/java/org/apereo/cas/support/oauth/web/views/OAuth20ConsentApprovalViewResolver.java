@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -17,17 +18,13 @@ import java.util.Map;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewResolver {
-
 
     /**
      * CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-
-    public OAuth20ConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {

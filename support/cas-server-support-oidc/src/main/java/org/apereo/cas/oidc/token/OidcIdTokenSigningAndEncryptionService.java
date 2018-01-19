@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.token;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -20,21 +21,11 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcIdTokenSigningAndEncryptionService {
-
-
     private final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache;
     private final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache;
-
     private final String issuer;
-
-    public OidcIdTokenSigningAndEncryptionService(final LoadingCache<String, Optional<RsaJsonWebKey>> defaultJsonWebKeystoreCache,
-                                                  final LoadingCache<OidcRegisteredService, Optional<RsaJsonWebKey>> serviceJsonWebKeystoreCache,
-                                                  final String issuer) {
-        this.defaultJsonWebKeystoreCache = defaultJsonWebKeystoreCache;
-        this.serviceJsonWebKeystoreCache = serviceJsonWebKeystoreCache;
-        this.issuer = issuer;
-    }
 
     /**
      * Sign id token claim string.

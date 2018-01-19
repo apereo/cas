@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.discovery;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
@@ -18,12 +19,9 @@ import java.util.List;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServerDiscoverySettings> {
     private final CasConfigurationProperties casProperties;
-
-    public OidcServerDiscoverySettingsFactory(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     @Override
     public OidcServerDiscoverySettings getObject() {

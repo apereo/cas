@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.refreshtoken;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -19,6 +20,7 @@ import java.util.Collection;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
 
     /**
@@ -35,10 +37,6 @@ public class DefaultRefreshTokenFactory implements RefreshTokenFactory {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
     }
 
-    public DefaultRefreshTokenFactory(final UniqueTicketIdGenerator refreshTokenIdGenerator, final ExpirationPolicy expirationPolicy) {
-        this.refreshTokenIdGenerator = refreshTokenIdGenerator;
-        this.expirationPolicy = expirationPolicy;
-    }
 
     @Override
     public RefreshToken create(final Service service, final Authentication authentication,

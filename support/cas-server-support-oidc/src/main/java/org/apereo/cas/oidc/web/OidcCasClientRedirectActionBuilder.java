@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
@@ -17,15 +18,9 @@ import java.util.Optional;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcCasClientRedirectActionBuilder extends OAuth20DefaultCasClientRedirectActionBuilder {
-
-
-
     private final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport;
-
-    public OidcCasClientRedirectActionBuilder(final OidcAuthorizationRequestSupport oidcAuthorizationRequestSupport) {
-        this.oidcAuthorizationRequestSupport = oidcAuthorizationRequestSupport;
-    }
 
     @Override
     public RedirectAction build(final CasClient casClient, final WebContext context) {

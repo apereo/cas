@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.profile.OAuthClientProfile;
@@ -18,17 +19,12 @@ import org.pac4j.core.exception.CredentialsException;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
-
-    
     private final OAuth20Validator validator;
 
     private final ServicesManager servicesManager;
 
-    public OAuthClientAuthenticator(final OAuth20Validator validator, final ServicesManager servicesManager) {
-        this.validator = validator;
-        this.servicesManager = servicesManager;
-    }
 
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context)

@@ -25,9 +25,6 @@ public class RevokedCertificateException extends GeneralSecurityException {
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8827788431199129708L;
 
-    /** The LOGGER. */
-
-
     /** CRL revocation reason codes per RFC 3280. */
     public enum Reason {
         

@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web;
 
 import com.fasterxml.jackson.core.JsonGenerator;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.oidc.OidcConstants;
@@ -22,12 +23,9 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcAccessTokenResponseGenerator extends OAuth20AccessTokenResponseGenerator {
     private final OidcIdTokenGeneratorService idTokenGenerator;
-
-    public OidcAccessTokenResponseGenerator(final OidcIdTokenGeneratorService idTokenGenerator) {
-        this.idTokenGenerator = idTokenGenerator;
-    }
 
     @Override
     protected void generateJsonInternal(final HttpServletRequest request,

@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.jwks;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -19,14 +20,9 @@ import java.util.Optional;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcDefaultJsonWebKeystoreCacheLoader implements CacheLoader<String, Optional<RsaJsonWebKey>> {
-
-
     private final Resource jwksFile;
-
-    public OidcDefaultJsonWebKeystoreCacheLoader(final Resource jwksFile) {
-        this.jwksFile = jwksFile;
-    }
 
     @Override
     public Optional<RsaJsonWebKey> load(final String issuer) throws Exception {

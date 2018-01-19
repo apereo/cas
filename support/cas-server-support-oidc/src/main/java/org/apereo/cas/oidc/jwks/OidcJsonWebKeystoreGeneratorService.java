@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.jwks;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -20,14 +21,9 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OidcJsonWebKeystoreGeneratorService {
-
-
     private final OidcProperties oidcProperties;
-
-    public OidcJsonWebKeystoreGeneratorService(final OidcProperties oidcProperties) {
-        this.oidcProperties = oidcProperties;
-    }
 
     /**
      * Generate.
