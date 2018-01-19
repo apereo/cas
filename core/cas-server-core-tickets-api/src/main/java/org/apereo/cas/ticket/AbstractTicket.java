@@ -39,7 +39,7 @@ import java.time.ZonedDateTime;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
-@ToString
+@ToString(of = {"id"})
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})

@@ -29,7 +29,6 @@ import java.net.URL;
 @Slf4j
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
 
-
     /**
      * Instance of Apache Commons HttpClient.
      */
