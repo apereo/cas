@@ -62,7 +62,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
         final String callbackUrl = httpCredential.getCallbackUrl();
         
-        if (!this.urlValidator.isValid(httpCredential.getCallbackUrl())) {
+        if (!this.urlValidator.isValid(callbackUrl)) {
             throw new FailedLoginException(callbackUrl + " is not a valid callback URL");
         }
         

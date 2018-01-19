@@ -7,7 +7,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
-import org.apereo.cas.UrlValidator;
+import org.apereo.cas.web.UrlValidator;
 
 import java.net.URL;
 import java.util.Optional;
@@ -65,8 +65,8 @@ public class SamlIdPSingleLogoutServiceLogoutUrlBuilder extends DefaultSingleLog
         LOGGER.debug("Located entity id [{}]", entityID);
 
         final Optional<SamlRegisteredServiceServiceProviderMetadataFacade> adaptor =
-                SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-                        SamlRegisteredService.class.cast(registeredService), entityID);
+            SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
+                SamlRegisteredService.class.cast(registeredService), entityID);
 
         if (!adaptor.isPresent()) {
             LOGGER.warn("Cannot find metadata linked to [{}]", entityID);

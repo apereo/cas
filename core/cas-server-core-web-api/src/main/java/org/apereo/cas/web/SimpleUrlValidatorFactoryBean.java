@@ -23,6 +23,10 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     private final boolean allowLocalUrls;
     private final UrlValidator urlValidatorWithRegex;
 
+    public SimpleUrlValidatorFactoryBean() {
+        this(true);
+    }
+
     public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls) {
         this(allowLocalUrls, null, true);
     }

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import com.google.common.base.Splitter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
@@ -411,8 +412,8 @@ public abstract class AbstractSamlProfileHandlerController {
         casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings()
             .stream()
             .map(s -> {
-                final String[] bits = s.split("->");
-                return Pair.of(bits[0], bits[1]);
+                final List<String> bits = Splitter.on("->").splitToList(s);
+                return Pair.of(bits.get(0), bits.get(1));
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;

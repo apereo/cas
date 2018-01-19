@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml;
 
+import com.google.common.base.Splitter;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -14,6 +15,7 @@ import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -78,8 +80,8 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
                 final String[] query = request.getQueryString().split("&");
                 final Optional<String> paramRequest = Arrays.stream(query)
                         .map(p -> {
-                            final String[] params = p.split("=");
-                            return Pair.of(params[0], params[1]);
+                            final List<String> params = Splitter.on("=").splitToList(p);
+                            return Pair.of(params.get(0), params.get(1));
                         })
                         .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                         .map(Pair::getValue)

@@ -38,8 +38,7 @@ import java.util.concurrent.TimeUnit;
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
-
-
+    
     /**
      * Executor responsible for refreshing CRL data.
      */
@@ -122,6 +121,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      */
     @PostConstruct
     @SneakyThrows
+    @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;
@@ -141,7 +141,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
                 LOGGER.debug(e.getMessage(), e);
             }
         };
-
+        
         this.scheduler.scheduleAtFixedRate(
             scheduledFetcher,
             this.refreshInterval,

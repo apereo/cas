@@ -48,7 +48,7 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
             throw new AccountNotFoundException("Id is null.");
         }
         final TokenCredentials credentials = new TokenCredentials(id, getClass().getSimpleName());
-        LOGGER.debug("pac4j credentials: [{}]", credentials);
+        LOGGER.debug("Token credentials: [{}]", credentials);
         return credentials;
     }
 
