@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafView;
 import java.util.Locale;
-import lombok.ToString;
 
 /**
  * This is {@link CasProtocolView}.

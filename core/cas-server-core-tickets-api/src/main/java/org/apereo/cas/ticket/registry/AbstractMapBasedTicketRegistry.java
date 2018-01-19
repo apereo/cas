@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
-import org.springframework.util.Assert;
+
 import java.util.Collection;
 import java.util.Map;
 import lombok.NoArgsConstructor;
