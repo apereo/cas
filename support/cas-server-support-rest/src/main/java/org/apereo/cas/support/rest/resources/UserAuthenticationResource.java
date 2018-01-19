@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -38,23 +39,12 @@ import java.util.Collection;
  */
 @RestController("userAuthenticationResource")
 @Slf4j
+@AllArgsConstructor
 public class UserAuthenticationResource {
-
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ServiceFactory serviceFactory;
     private final RestHttpRequestCredentialFactory credentialFactory;
+    private final ServiceFactory serviceFactory;
     private final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory;
-
-    public UserAuthenticationResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                      final RestHttpRequestCredentialFactory credentialFactory,
-                                      final ServiceFactory serviceFactory,
-                                      final UserAuthenticationResourceEntityResponseFactory userAuthenticationResourceEntityResponseFactory) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.credentialFactory = credentialFactory;
-        this.serviceFactory = serviceFactory;
-        this.userAuthenticationResourceEntityResponseFactory = userAuthenticationResourceEntityResponseFactory;
-    }
 
     /**
      * Create new ticket granting ticket.

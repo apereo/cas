@@ -205,6 +205,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticket the ticket
      * @return the ticket
      */
+    @SneakyThrows
     protected Ticket encodeTicket(final Ticket ticket) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
@@ -217,7 +218,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
-        final Ticket encodedTicket = new EncodedTicket(ByteSource.wrap(encodedTicketObject), encodedTicketId);
+        final Ticket encodedTicket = new EncodedTicket(encodedTicketId, ByteSource.wrap(encodedTicketObject).read());
         LOGGER.debug("Created encoded ticket [{}]", encodedTicket);
         return encodedTicket;
     }

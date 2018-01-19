@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -22,14 +23,9 @@ import java.util.stream.Stream;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20Validator {
-
-
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-
-    public OAuth20Validator(final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
-    }
 
     /**
      * Check if a parameter exists.

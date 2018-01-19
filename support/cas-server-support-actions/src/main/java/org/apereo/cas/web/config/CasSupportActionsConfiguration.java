@@ -125,8 +125,8 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action authenticationViaFormAction() {
         return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy);
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy);
     }
 
     @RefreshScope
@@ -141,7 +141,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService,
-                ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
+            ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
     }
 
     @RefreshScope
@@ -164,10 +164,10 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "initialFlowSetupAction")
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
-                servicesManager,
-                authenticationRequestServiceSelectionStrategies,
-                ticketGrantingTicketCookieGenerator,
-                warnCookieGenerator, casProperties);
+            servicesManager,
+            authenticationRequestServiceSelectionStrategies,
+            ticketGrantingTicketCookieGenerator,
+            warnCookieGenerator, casProperties);
     }
 
     @RefreshScope
@@ -182,7 +182,7 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "genericSuccessViewAction")
     public Action genericSuccessViewAction() {
         return new GenericSuccessViewAction(centralAuthenticationService, servicesManager, webApplicationServiceFactory,
-                casProperties.getView().getDefaultRedirectUrl());
+            casProperties.getView().getDefaultRedirectUrl());
     }
 
     @Bean
@@ -190,10 +190,10 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "generateServiceTicketAction")
     public Action generateServiceTicketAction() {
         return new GenerateServiceTicketAction(authenticationSystemSupport,
-                centralAuthenticationService,
-                ticketRegistrySupport,
-                servicesManager,
-                authenticationRequestServiceSelectionStrategies);
+            centralAuthenticationService,
+            ticketRegistrySupport,
+            authenticationRequestServiceSelectionStrategies,
+            servicesManager);
     }
 
     @Bean
@@ -219,14 +219,14 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action terminateSessionAction() {
         return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
-                warnCookieGenerator, casProperties.getLogout());
+            warnCookieGenerator, casProperties.getLogout());
     }
 
     @Bean
     public Action logoutViewSetupAction() {
         return new LogoutViewSetupAction(casProperties);
     }
-    
+
     @Bean
     @ConditionalOnMissingBean(name = "serviceWarningAction")
     @RefreshScope

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -13,6 +14,7 @@ import org.apereo.cas.authentication.AuthenticationPolicy;
  * @since 4.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy {
 
 
@@ -33,19 +35,6 @@ public class RequiredHandlerAuthenticationPolicy implements AuthenticationPolicy
      */
     public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName) {
         this(requiredHandlerName, false);
-    }
-
-    /**
-     * Instantiates a new Required handler authentication policy.
-     *
-     * @param requiredHandlerName the required handler name
-     * @param tryAll              Sets the flag to try all credentials before the policy is satisfied.
-     *                            This flag is disabled by default such that the policy is satisfied immediately upon the first
-     *                            credential that is successfully authenticated by the required handler.
-     */
-    public RequiredHandlerAuthenticationPolicy(final String requiredHandlerName, final boolean tryAll) {
-        this.requiredHandlerName = requiredHandlerName;
-        this.tryAll = tryAll;
     }
 
     @Override

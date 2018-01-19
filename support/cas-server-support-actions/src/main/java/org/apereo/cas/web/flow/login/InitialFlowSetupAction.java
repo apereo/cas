@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -33,28 +34,15 @@ import java.util.List;
  * @since 3.1
  */
 @Slf4j
+@AllArgsConstructor
 public class InitialFlowSetupAction extends AbstractAction {
 
-    private final CasConfigurationProperties casProperties;
+    private final List<ArgumentExtractor> argumentExtractors;
     private final ServicesManager servicesManager;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    private final CookieRetrievingCookieGenerator warnCookieGenerator;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
-    private final List<ArgumentExtractor> argumentExtractors;
-
-    public InitialFlowSetupAction(final List<ArgumentExtractor> argumentExtractors,
-                                  final ServicesManager servicesManager,
-                                  final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionPlan,
-                                  final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                  final CookieRetrievingCookieGenerator warnCookieGenerator,
-                                  final CasConfigurationProperties casProperties) {
-        this.argumentExtractors = argumentExtractors;
-        this.servicesManager = servicesManager;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionPlan;
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.warnCookieGenerator = warnCookieGenerator;
-        this.casProperties = casProperties;
-    }
+    private final CookieRetrievingCookieGenerator warnCookieGenerator;
+    private final CasConfigurationProperties casProperties;
 
     @Override
     public Event doExecute(final RequestContext context) {

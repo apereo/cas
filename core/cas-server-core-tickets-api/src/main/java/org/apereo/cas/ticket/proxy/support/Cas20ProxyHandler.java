@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
@@ -24,24 +25,12 @@ import java.net.URL;
  * @since 3.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class Cas20ProxyHandler implements ProxyHandler {
-  
-
-
     private static final int BUFFER_LENGTH_ADDITIONAL_CHARGE = 15;
 
-    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
     private final HttpClient httpClient;
-
-    /**
-     * Initializes the ticket id generator to {@link DefaultUniqueTicketIdGenerator}.
-     * @param httpClient http client
-     * @param uniqueTicketIdGenerator ticket id generator
-     */
-    public Cas20ProxyHandler(final HttpClient httpClient, final UniqueTicketIdGenerator uniqueTicketIdGenerator) {
-        this.httpClient = httpClient;
-        this.uniqueTicketIdGenerator = uniqueTicketIdGenerator;
-    }
+    private final UniqueTicketIdGenerator uniqueTicketIdGenerator;
 
     @Override
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {

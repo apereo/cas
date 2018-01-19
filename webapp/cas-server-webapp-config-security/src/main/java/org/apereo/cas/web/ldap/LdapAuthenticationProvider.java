@@ -1,5 +1,6 @@
 package org.apereo.cas.web.ldap;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 
@@ -35,17 +36,10 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class LdapAuthenticationProvider implements AuthenticationProvider {
-
-
     private final AuthorizationGenerator<CommonProfile> authorizationGenerator;
     private final AdminPagesSecurityProperties adminPagesSecurityProperties;
-
-    public LdapAuthenticationProvider(final AuthorizationGenerator<CommonProfile> authorizationGenerator,
-                                      final AdminPagesSecurityProperties adminPagesSecurityProperties) {
-        this.authorizationGenerator = authorizationGenerator;
-        this.adminPagesSecurityProperties = adminPagesSecurityProperties;
-    }
 
     @Override
     public Authentication authenticate(final Authentication authentication) throws AuthenticationException {
@@ -55,7 +49,6 @@ public class LdapAuthenticationProvider implements AuthenticationProvider {
             final String password = credentials == null ? null : credentials.toString();
 
             LOGGER.debug("Preparing LDAP authentication request for user [{}]", username);
-
             final AuthenticationRequest request = new AuthenticationRequest(username, new org.ldaptive.Credential(password), ReturnAttributes.ALL.value());
             final Authenticator authenticator = LdapUtils.newLdaptiveAuthenticator(adminPagesSecurityProperties.getLdap());
             LOGGER.debug("Executing LDAP authentication request for user [{}]", username);

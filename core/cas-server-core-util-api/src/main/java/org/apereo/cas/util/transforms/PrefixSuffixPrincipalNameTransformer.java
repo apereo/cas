@@ -1,5 +1,7 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import lombok.Setter;
@@ -13,24 +15,12 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class PrefixSuffixPrincipalNameTransformer implements PrincipalNameTransformer {
 
     private String prefix;
-
     private String suffix;
-
-    /**
-     * Instantiates a new Prefix suffix principal name transformer.
-     */
-    public PrefixSuffixPrincipalNameTransformer() {
-        this.prefix = null;
-        this.suffix = null;
-    }
-
-    public PrefixSuffixPrincipalNameTransformer(final String prefix, final String suffix) {
-        this.prefix = prefix;
-        this.suffix = suffix;
-    }
 
     @Override
     public String transform(final String formUserId) {

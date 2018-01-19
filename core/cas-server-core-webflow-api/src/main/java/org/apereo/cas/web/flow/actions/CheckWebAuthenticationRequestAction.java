@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -16,15 +17,9 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CheckWebAuthenticationRequestAction extends AbstractAction {
-
-
-
     private final String contentType;
-
-    public CheckWebAuthenticationRequestAction(final String contentType) {
-        this.contentType = contentType;
-    }
 
     @Override
     protected Event doExecute(final RequestContext context) {

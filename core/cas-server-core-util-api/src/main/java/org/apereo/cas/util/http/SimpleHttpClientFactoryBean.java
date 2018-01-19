@@ -184,7 +184,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     public SimpleHttpClient getObject() {
         final CloseableHttpClient httpClient = buildHttpClient();
         final FutureRequestExecutionService requestExecutorService = buildRequestExecutorService(httpClient);
-        return new SimpleHttpClient(this.acceptableCodes, httpClient, requestExecutorService);
+        final List<Integer> codes = this.acceptableCodes.stream().sorted().collect(Collectors.toList());
+        return new SimpleHttpClient(codes, httpClient, requestExecutorService);
     }
 
     @Override

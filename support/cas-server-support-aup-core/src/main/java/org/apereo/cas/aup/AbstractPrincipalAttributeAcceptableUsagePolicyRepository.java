@@ -1,5 +1,6 @@
 package org.apereo.cas.aup;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
@@ -19,27 +20,20 @@ import java.util.Set;
  * @since 4.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class AbstractPrincipalAttributeAcceptableUsagePolicyRepository implements AcceptableUsagePolicyRepository {
     private static final long serialVersionUID = 1883808902502739L;
-
-
-
-    /**
-     * Single-valued attribute in LDAP that describes whether the policy
-     * has been accepted. Its value must match either TRUE/FALSE.
-     */
-    protected final String aupAttributeName;
 
     /**
      * Ticket registry support.
      */
     protected final TicketRegistrySupport ticketRegistrySupport;
-
-    public AbstractPrincipalAttributeAcceptableUsagePolicyRepository(final TicketRegistrySupport ticketRegistrySupport,
-                                                                     final String aupAttributeName) {
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.aupAttributeName = aupAttributeName;
-    }
+    
+    /**
+     * Single-valued attribute in LDAP that describes whether the policy
+     * has been accepted. Its value must match either TRUE/FALSE.
+     */
+    protected final String aupAttributeName;
 
     @Override
     public Pair<Boolean, Principal> verify(final RequestContext requestContext, final Credential credential) {

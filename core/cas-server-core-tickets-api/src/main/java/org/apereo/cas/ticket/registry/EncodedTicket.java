@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.io.ByteSource;
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,6 +31,7 @@ import java.time.ZonedDateTime;
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"of"})
+@AllArgsConstructor
 public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
@@ -37,19 +39,6 @@ public class EncodedTicket implements Ticket {
     private String id;
 
     private byte[] encodedTicket;
-
-    /**
-     * Creates a new encoded ticket using the given encoder to encode the given
-     * source ticket.
-     *
-     * @param encodedTicket   the encoded ticket
-     * @param encodedTicketId the encoded ticket id
-     */
-    @SneakyThrows
-    public EncodedTicket(final ByteSource encodedTicket, final String encodedTicketId) {
-        this.id = encodedTicketId;
-        this.encodedTicket = encodedTicket.read();
-    }
 
     /**
      * Instantiates a new Encoded ticket.

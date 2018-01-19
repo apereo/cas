@@ -8,7 +8,4 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 public class DefaultServicesManagerTests extends AbstractServicesManagerTests {
-    public DefaultServicesManagerTests() {
-        super();
-    }
 }
