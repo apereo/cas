@@ -55,7 +55,8 @@ public class ServiceTicketImplTests {
 
     @Test
     public void verifySerializeToJson() throws IOException {
-        final ServiceTicket stWritten = new ServiceTicketImpl(ST_ID, tgt, RegisteredServiceTestUtils.getService(), true, new NeverExpiresExpirationPolicy());
+        final ServiceTicket stWritten = new ServiceTicketImpl(ST_ID, tgt, RegisteredServiceTestUtils.getService(),
+            true, new NeverExpiresExpirationPolicy());
 
         mapper.writeValue(ST_JSON_FILE, stWritten);
         final ServiceTicketImpl stRead = mapper.readValue(ST_JSON_FILE, ServiceTicketImpl.class);
