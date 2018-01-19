@@ -133,12 +133,12 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredServiceImpl_Props")
-    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
+    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredService_Contacts")
     @OrderColumn
-    private List<RegisteredServiceContact> contacts = new ArrayList<>();
+    private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
     
     /**
      * Initializes the registered service with default values
@@ -226,4 +226,25 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     protected abstract AbstractRegisteredService newInstance();
 
+    /**
+     * Specifically put here, without lombok to avoid JPA mapping issues.
+     * @return map of properties.
+     */
+    @Override
+    public Map<String, RegisteredServiceProperty> getProperties() {
+        return (Map) this.properties;
+    }
+
+    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+        this.properties = (Map) properties;
+    }
+
+    @Override
+    public List<RegisteredServiceContact> getContacts() {
+        return (List) this.contacts;
+    }
+
+    public void setContacts(final List<RegisteredServiceContact> contacts) {
+        this.contacts = (List) contacts;
+    }
 }
