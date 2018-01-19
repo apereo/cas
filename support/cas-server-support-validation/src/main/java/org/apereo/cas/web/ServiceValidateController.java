@@ -39,12 +39,11 @@ public class ServiceValidateController extends AbstractServiceValidateController
                                      final View jsonView,
                                      final View successView, final View failureView,
                                      final String authnContextAttribute,
-                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                     final UrlValidator urlValidator) {
+                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
             successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute, urlValidator);
+            authenticationContextValidator, jsonView, authnContextAttribute);
     }
 
     /**

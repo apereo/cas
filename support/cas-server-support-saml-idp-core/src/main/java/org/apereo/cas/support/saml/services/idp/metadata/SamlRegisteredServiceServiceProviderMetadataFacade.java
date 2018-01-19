@@ -1,7 +1,6 @@
 
 package org.apereo.cas.support.saml.services.idp.metadata;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -44,7 +43,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
-@Getter
 public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
@@ -125,9 +123,17 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
         return Optional.empty();
     }
-    
+
+    public SPSSODescriptor getSsoDescriptor() {
+        return this.ssoDescriptor;
+    }
+
     public ZonedDateTime getValidUntil() {
         return DateTimeUtils.zonedDateTimeOf(this.ssoDescriptor.getValidUntil());
+    }
+
+    public EntityDescriptor getEntityDescriptor() {
+        return this.entityDescriptor;
     }
 
     public Organization getOrganization() {
@@ -248,7 +254,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     public AssertionConsumerService getAssertionConsumerServiceForArtifactBinding() {
         return getAssertionConsumerService(SAMLConstants.SAML2_ARTIFACT_BINDING_URI);
     }
-    
+
+    public MetadataResolver getMetadataResolver() {
+        return this.metadataResolver;
+    }
+
     /**
      * Contains assertion consumer services ?
      *

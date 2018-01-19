@@ -53,7 +53,6 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     private HttpClient httpClient;
 
     @Autowired
-    @Qualifier("urlValidator")
     private UrlValidator urlValidator;
 
     @Autowired
@@ -74,11 +73,11 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Bean
     public SingleLogoutServiceMessageHandler defaultSingleLogoutServiceMessageHandler() {
         return new DefaultSingleLogoutServiceMessageHandler(httpClient,
-            logoutBuilder(),
-            servicesManager,
-            singleLogoutServiceLogoutUrlBuilder(),
-            casProperties.getSlo().isAsynchronous(),
-            authenticationRequestServiceSelectionStrategies);
+                logoutBuilder(),
+                servicesManager,
+                singleLogoutServiceLogoutUrlBuilder(),
+                casProperties.getSlo().isAsynchronous(),
+                authenticationRequestServiceSelectionStrategies);
     }
 
     @ConditionalOnMissingBean(name = "logoutManager")
@@ -87,7 +86,7 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
     @Bean
     public LogoutManager logoutManager(@Qualifier("logoutExecutionPlan") final LogoutExecutionPlan logoutExecutionPlan) {
         return new DefaultLogoutManager(logoutBuilder(), defaultSingleLogoutServiceMessageHandler(),
-            casProperties.getSlo().isDisabled(), logoutExecutionPlan);
+                casProperties.getSlo().isDisabled(), logoutExecutionPlan);
     }
 
     @ConditionalOnMissingBean(name = "logoutBuilder")
@@ -114,11 +113,11 @@ public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer
         if (casProperties.getLogout().isRemoveDescendantTickets()) {
             LOGGER.debug("CAS is configured to remove descendant tickets of the ticket-granting tickets");
             plan.registerLogoutHandler(ticketGrantingTicket -> ticketGrantingTicket.getDescendantTickets()
-                .stream()
-                .forEach(t -> {
-                    LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
-                    ticketRegistry.deleteTicket(t);
-                }));
+                    .stream()
+                    .forEach(t -> {
+                        LOGGER.debug("Deleting ticket [{}] from the registry as a descendant of [{}]", t, ticketGrantingTicket.getId());
+                        ticketRegistry.deleteTicket(t);
+                    }));
         }
     }
 }

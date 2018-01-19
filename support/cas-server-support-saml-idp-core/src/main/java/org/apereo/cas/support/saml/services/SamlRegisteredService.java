@@ -40,7 +40,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 1218757374062931021L;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataLocation;
 
     /**
@@ -52,28 +52,28 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(updatable = true, insertable = true)
     private long metadataMaxValidity;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredAuthenticationContextClass;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaDirection;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaPattern;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String requiredNameIdFormat;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataSignatureLocation;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String serviceProviderNameIdQualifier;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String nameIdQualifier;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataExpirationDuration = "PT60M";
 
     @Column(updatable = true, insertable = true)
@@ -100,7 +100,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(updatable = true, insertable = true)
     private boolean encryptAssertions;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
     @Column(updatable = true, insertable = true)
@@ -109,7 +109,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column(updatable = true, insertable = true)
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String signingCredentialType;
 
     @ElementCollection

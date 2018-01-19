@@ -20,7 +20,6 @@ import org.apereo.cas.support.saml.web.view.Saml10SuccessResponseView;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
-import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,11 +94,7 @@ public class SamlConfiguration {
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
     private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
-
-    @Autowired
-    @Qualifier("urlValidator")
-    private UrlValidator urlValidator;
-    
+            
     @ConditionalOnMissingBean(name = "casSamlServiceSuccessView")
     @RefreshScope
     @Bean
@@ -146,6 +141,6 @@ public class SamlConfiguration {
                 authenticationContextValidator, cas3ServiceJsonView,
                 casSamlServiceSuccessView(), casSamlServiceFailureView(),
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
-                validationAuthorizers, urlValidator);
+                validationAuthorizers);
     }
 }

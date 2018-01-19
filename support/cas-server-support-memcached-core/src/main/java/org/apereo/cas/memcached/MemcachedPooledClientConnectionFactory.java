@@ -1,5 +1,6 @@
 package org.apereo.cas.memcached;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.ConnectionFactoryBuilder;
@@ -23,15 +24,11 @@ import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedPropert
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class MemcachedPooledClientConnectionFactory extends BasePooledObjectFactory<MemcachedClientIF> {
 
     private final BaseMemcachedProperties memcachedProperties;
     private final Transcoder transcoder;
-
-    public MemcachedPooledClientConnectionFactory(final BaseMemcachedProperties memcachedProperties, final Transcoder transcoder) {
-        this.memcachedProperties = memcachedProperties;
-        this.transcoder = transcoder;
-    }
 
     @Override
     @SneakyThrows

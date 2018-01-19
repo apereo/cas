@@ -31,7 +31,6 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -120,7 +119,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      */
     protected AuthenticationHandlerExecutionResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
         final String username = currentUser.getPrincipal().toString();
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
     }
 
     /**

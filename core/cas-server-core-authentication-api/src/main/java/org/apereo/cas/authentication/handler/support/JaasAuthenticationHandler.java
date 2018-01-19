@@ -15,7 +15,6 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.Configuration;
 import javax.security.auth.login.LoginContext;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import lombok.Setter;
@@ -127,7 +126,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         } finally {
             lc.logout();
         }
-        return createHandlerResult(credential, principal, new ArrayList<>(0));
+        return createHandlerResult(credential, principal, null);
     }
 
     /**

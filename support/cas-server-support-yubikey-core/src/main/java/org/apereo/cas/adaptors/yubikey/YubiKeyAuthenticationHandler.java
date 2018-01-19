@@ -5,7 +5,6 @@ import com.yubico.client.v2.VerificationResponse;
 import com.yubico.client.v2.YubicoClient;
 import com.yubico.client.v2.exceptions.YubicoValidationFailure;
 import com.yubico.client.v2.exceptions.YubicoVerificationException;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
@@ -34,8 +33,10 @@ import java.security.GeneralSecurityException;
  * @since 4.1
  */
 @Slf4j
-@Getter
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+
+
+
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
@@ -101,7 +102,15 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             throw new FailedLoginException("YubiKey validation failed: " + e.getMessage());
         }
     }
-    
+
+    public YubiKeyAccountRegistry getRegistry() {
+        return this.registry;
+    }
+
+    public YubicoClient getClient() {
+        return this.client;
+    }
+
     @Override
     public boolean supports(final Credential credential) {
         return YubiKeyCredential.class.isAssignableFrom(credential.getClass());

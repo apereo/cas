@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.dao;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
@@ -22,14 +23,11 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
     private static final String MEASUREMENT = "InfluxDbCasEventRepositoryCasEvents";
 
     private final InfluxDbConnectionFactory influxDbConnectionFactory;
-
-    public InfluxDbCasEventRepository(final InfluxDbConnectionFactory influxDbConnectionFactory) {
-        this.influxDbConnectionFactory = influxDbConnectionFactory;
-    }
 
     @Override
     public void save(final CasEvent event) {

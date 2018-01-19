@@ -6,6 +6,7 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
@@ -33,6 +34,7 @@ import java.util.function.Consumer;
  * @since 4.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
      * The all tickets view name.
@@ -64,13 +66,6 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     private final TicketCatalog ticketCatalog;
     private final CouchbaseClientFactory couchbase;
 
-    public CouchbaseTicketRegistry(final CouchbaseClientFactory couchbase,
-                                   final TicketCatalog ticketCatalog) {
-        this.couchbase = couchbase;
-        this.ticketCatalog = ticketCatalog;
-
-        LOGGER.info("Setting up Couchbase Ticket Registry instance with bucket [{}]", this.couchbase.getBucket().name());
-    }
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {

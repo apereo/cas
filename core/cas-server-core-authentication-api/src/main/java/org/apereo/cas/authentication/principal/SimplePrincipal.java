@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -56,8 +56,7 @@ public class SimplePrincipal implements Principal {
      * @param attributes the attributes
      */
     @JsonCreator
-    protected SimplePrincipal(@JsonProperty("id") final String id, @JsonProperty("attributes") final Map<String, Object> attributes) {
-        Assert.notNull(id, "Principal id cannot be null");
+    protected SimplePrincipal(@NonNull @JsonProperty("id") final String id, @JsonProperty("attributes") final Map<String, Object> attributes) {
         this.id = id;
         if (attributes == null) {
             this.attributes = new HashMap<>();

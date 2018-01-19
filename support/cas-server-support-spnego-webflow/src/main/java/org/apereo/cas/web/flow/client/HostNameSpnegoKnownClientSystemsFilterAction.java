@@ -17,17 +17,19 @@ import java.util.regex.Pattern;
 @Slf4j
 public class HostNameSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
 
-    
+
     private final Pattern hostNamePatternString;
 
     /**
      * Instantiates a new hostname spnego known client systems filter action.
-     * @param ipsToCheckPattern the ips to check pattern
-     * @param alternativeHost the alternative remote host attribute
-     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
+     *
+     * @param ipsToCheckPattern     the ips to check pattern
+     * @param alternativeHost       the alternative remote host attribute
+     * @param dnsTimeout            # of milliseconds to wait for a DNS request to return
      * @param hostNamePatternString the host name pattern string.
      */
-    public HostNameSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeHost, final long dnsTimeout,
+    public HostNameSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern, final String alternativeHost,
+                                                        final long dnsTimeout,
                                                         final String hostNamePatternString) {
         super(ipsToCheckPattern, alternativeHost, dnsTimeout);
         this.hostNamePatternString = Pattern.compile(hostNamePatternString);

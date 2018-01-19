@@ -69,7 +69,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      * Service that produced a proxy-granting ticket.
      */
     @Lob
-    @Column(name = "PROXIED_BY", length = Integer.MAX_VALUE)
+    @Column(name = "PROXIED_BY", nullable = true, length = Integer.MAX_VALUE)
     private Service proxiedBy;
 
     /**

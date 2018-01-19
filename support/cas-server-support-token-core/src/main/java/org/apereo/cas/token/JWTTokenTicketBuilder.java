@@ -2,6 +2,8 @@ package org.apereo.cas.token;
 
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.PlainJWT;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.minidev.json.JSONObject;
@@ -13,7 +15,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.TicketValidator;
 
@@ -29,23 +30,15 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@Getter
+@AllArgsConstructor
 public class JWTTokenTicketBuilder implements TokenTicketBuilder {
-
 
     private final TicketValidator ticketValidator;
     private final String casSeverPrefix;
     private final CipherExecutor<String, String> tokenCipherExecutor;
     private final ExpirationPolicy expirationPolicy;
-
-    public JWTTokenTicketBuilder(final AbstractUrlBasedTicketValidator ticketValidator,
-                                 final String casSeverPrefix,
-                                 final CipherExecutor<String, String> tokenCipherExecutor,
-                                 final ExpirationPolicy expirationPolicy) {
-        this.ticketValidator = ticketValidator;
-        this.casSeverPrefix = casSeverPrefix;
-        this.tokenCipherExecutor = tokenCipherExecutor;
-        this.expirationPolicy = expirationPolicy;
-    }
+    
 
     @Override
     @SneakyThrows

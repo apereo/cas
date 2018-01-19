@@ -35,20 +35,20 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String clientSecret;
 
-    @Column
+    @Column(length = 255, updatable = true, insertable = true)
     private String clientId;
 
-    @Column
-    private boolean bypassApprovalPrompt;
+    @Column(updatable = true, insertable = true, nullable = false)
+    private boolean bypassApprovalPrompt = Boolean.FALSE;
 
-    @Column
-    private boolean generateRefreshToken;
+    @Column(updatable = true, insertable = true, nullable = false)
+    private boolean generateRefreshToken = Boolean.FALSE;
 
-    @Column
-    private boolean jsonFormat;
+    @Column(updatable = true, insertable = true, nullable = false)
+    private boolean jsonFormat = Boolean.FALSE;
 
     @Lob
     @Column(name = "supported_grants", length = Integer.MAX_VALUE)

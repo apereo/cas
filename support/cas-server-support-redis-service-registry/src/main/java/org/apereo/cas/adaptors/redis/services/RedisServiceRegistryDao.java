@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.redis.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.AbstractServiceRegistryDao;
 import org.apereo.cas.services.RegisteredService;
@@ -18,15 +19,12 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private static final String CAS_SERVICE_PREFIX = RegisteredService.class.getSimpleName() + ':';
 
     private final RedisTemplate<String, RegisteredService> template;
-
-    public RedisServiceRegistryDao(final RedisTemplate<String, RegisteredService> template) {
-        this.template = template;
-    }
 
     @Override
     public RegisteredService save(final RegisteredService rs) {

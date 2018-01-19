@@ -23,7 +23,6 @@ import java.util.List;
  */
 @Slf4j
 @Getter
-@SuppressWarnings("JdkObsolete")
 public class DynamicFlowModelBuilder implements FlowModelBuilder {
     /**
      * The Flow model.

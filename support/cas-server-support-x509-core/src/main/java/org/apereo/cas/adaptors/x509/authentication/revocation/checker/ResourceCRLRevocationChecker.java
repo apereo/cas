@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
@@ -34,11 +33,11 @@ import java.util.concurrent.TimeUnit;
  * @since 3.4.7
  */
 @Slf4j
-@Getter
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
-    
+
+
     /**
      * Executor responsible for refreshing CRL data.
      */
@@ -104,6 +103,10 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         this(new ResourceCRLFetcher(), crls, DEFAULT_REFRESH_INTERVAL);
     }
 
+    public ResourceCRLRevocationChecker(final Resource... crls) {
+        this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
+    }
+
     /**
      * Instantiates a new Resource cRL revocation checker.
      *
@@ -121,7 +124,6 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      */
     @PostConstruct
     @SneakyThrows
-    @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;
@@ -141,7 +143,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
                 LOGGER.debug(e.getMessage(), e);
             }
         };
-        
+
         this.scheduler.scheduleAtFixedRate(
             scheduledFetcher,
             this.refreshInterval,
@@ -178,6 +180,17 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      */
     private void addCrls(final Collection<X509CRL> results) {
         results.forEach(entry -> addCRL(entry.getIssuerX500Principal(), entry));
+    }
+
+    /**
+     * @return Returns the CRL fetcher component.
+     */
+    protected CRLFetcher getFetcher() {
+        return this.fetcher;
+    }
+
+    protected Collection<Resource> getResources() {
+        return this.resources;
     }
 
     @Override

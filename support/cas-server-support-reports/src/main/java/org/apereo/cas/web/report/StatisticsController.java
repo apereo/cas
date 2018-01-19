@@ -4,7 +4,6 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
@@ -215,7 +214,6 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
         return new WebAsyncTask<>(timeout, asyncTask);
     }
 
-    @Getter
     private static class AuthenticationAuditSummary {
         private final long time;
         private long successes;
@@ -228,6 +226,18 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
          */
         AuthenticationAuditSummary(final long time) {
             this.time = time;
+        }
+
+        public long getTime() {
+            return time;
+        }
+
+        public long getSuccesses() {
+            return successes;
+        }
+
+        public long getFailures() {
+            return failures;
         }
 
         public void incrementSuccess() {

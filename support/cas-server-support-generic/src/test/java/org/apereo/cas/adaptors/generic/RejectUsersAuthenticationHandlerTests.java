@@ -10,6 +10,8 @@ import org.junit.rules.ExpectedException;
 
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -47,10 +49,13 @@ public class RejectUsersAuthenticationHandlerTests {
 
     @Test
     public void verifyDoesntSupportBadUserCredentials() {
-        assertFalse(this.authenticationHandler
-            .supports(new HttpBasedServiceCredential(
-                "http://www.rutgers.edu", CoreAuthenticationTestUtils.getRegisteredService())));
-
+        try {
+            assertFalse(this.authenticationHandler
+                .supports(new HttpBasedServiceCredential(new URL(
+                    "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService())));
+        } catch (final MalformedURLException e) {
+            throw new AssertionError("Could not resolve URL.");
+        }
     }
 
     @Test
@@ -83,12 +88,16 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setPassword("user");
 
         this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Username is null.");
+
         this.authenticationHandler.authenticate(c);
     }
 
     @Test
     public void verifyPassesNullUserNameAndPassword() throws Exception {
         this.thrown.expect(AccountNotFoundException.class);
+        this.thrown.expectMessage("Username is null.");
+
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }
 }

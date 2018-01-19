@@ -1,11 +1,11 @@
 package org.apereo.cas.web;
 
+import static org.junit.Assert.*;
+
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-
-import static org.junit.Assert.*;
 
 /**
  * @author swoeste
@@ -39,7 +39,7 @@ public class SimpleUrlValidatorFactoryBeanTests {
     }
     
     @Test
-    public void verifyValidationWithRegExCaseInsensitive() throws Exception {
+    public void verifyValidationWithRegExCaseInsensitiv() throws Exception {
         final UrlValidator validator = new SimpleUrlValidatorFactoryBean(false, "\\w{2}\\.\\w{4}\\.authority", false).getObject();
         assertTrue(validator.isValid("http://my.test.authority/logout"));
         assertTrue(validator.isValid("http://mY.tEST.aUTHORITY/logout"));

@@ -21,7 +21,6 @@ import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecut
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
-import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -56,6 +55,8 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
+
+
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -84,8 +85,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas3SuccessView,
             cas3ServiceFailureView, "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
-            new SimpleUrlValidatorFactoryBean().getObject()
+            new DefaultServiceTicketValidationAuthorizersExecutionPlan()
         );
     }
 

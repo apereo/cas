@@ -39,10 +39,10 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String principal;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String geography;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")

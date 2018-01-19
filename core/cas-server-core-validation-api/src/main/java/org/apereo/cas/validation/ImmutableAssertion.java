@@ -39,6 +39,7 @@ public class ImmutableAssertion implements Assertion, Serializable {
     private final List<Authentication> chainedAuthentications;
 
     /** Was this the result of a new login. */
+    @NonNull
     private final boolean fromNewLogin;
 
     /** The service we are asserting this ticket for. */

@@ -2,7 +2,6 @@ package org.apereo.cas.adaptors.radius;
 
 import java.util.List;
 
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.packet.attribute.RadiusAttribute;
 
@@ -15,7 +14,6 @@ import net.jradius.packet.attribute.RadiusAttribute;
  * @since 4.1.0
  */
 @Slf4j
-@Data
 public class RadiusResponse {
     
     /** The code. */
@@ -26,4 +24,29 @@ public class RadiusResponse {
     
     /** The attributes. */
     private final List<RadiusAttribute> attributes;
+    
+    /**
+     * Instantiates a new radius response.
+     *
+     * @param code the code
+     * @param identifier the identifier
+     * @param attributes the attributes
+     */
+    public RadiusResponse(final int code, final int identifier, final List<RadiusAttribute> attributes) {
+        this.code = code;
+        this.identifier = identifier;
+        this.attributes = attributes;
+    }
+
+    public int getCode() {
+        return this.code;
+    }
+
+    public int getIdentifier() {
+        return this.identifier;
+    }
+
+    public List<RadiusAttribute> getAttributes() {
+        return this.attributes;
+    }
 }

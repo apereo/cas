@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.MongoDbServiceRegistryConfiguration;
 import org.junit.After;
@@ -22,6 +23,7 @@ import java.util.Set;
 import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
+
 
 /**
  * This is {@link MongoServiceRegistryDaoCloudTests}.

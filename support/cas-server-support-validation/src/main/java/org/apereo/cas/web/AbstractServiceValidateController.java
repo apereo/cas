@@ -1,7 +1,6 @@
 package org.apereo.cas.web;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
@@ -47,6 +46,7 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URL;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -70,7 +70,6 @@ import java.util.Set;
 @Slf4j
 @Setter
 @AllArgsConstructor
-@Getter
 public abstract class AbstractServiceValidateController extends AbstractDelegateController {
 
     private Set<CasProtocolValidationSpecification> validationSpecifications = new LinkedHashSet<>();
@@ -83,12 +82,24 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
 
     private final CentralAuthenticationService centralAuthenticationService;
 
+    /**
+     * The proxy handler we want to use with the controller.
+     */
     private ProxyHandler proxyHandler;
 
+    /**
+     * The view to redirect to on a successful validation.
+     */
     private final View successView;
 
+    /**
+     * The view to redirect to on a validation failure.
+     */
     private final View failureView;
 
+    /**
+     * Extracts parameters from Request object.
+     */
     private final ArgumentExtractor argumentExtractor;
 
     private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -98,9 +109,8 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final View jsonView;
 
     private final String authnContextAttribute;
-
-    private final UrlValidator urlValidator;
     
+
     /**
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
@@ -112,11 +122,11 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      */
     protected Credential getServiceCredentialsFromRequest(final WebApplicationService service, final HttpServletRequest request) {
         final String pgtUrl = request.getParameter(CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL);
-        if (StringUtils.hasText(pgtUrl) && this.urlValidator.isValid(pgtUrl)) {
+        if (StringUtils.hasText(pgtUrl)) {
             try {
                 final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
                 verifyRegisteredServiceProperties(registeredService, service);
-                return new HttpBasedServiceCredential(pgtUrl, registeredService);
+                return new HttpBasedServiceCredential(new URL(pgtUrl), registeredService);
             } catch (final Exception e) {
                 LOGGER.error("Error constructing [{}]", CasProtocolConstants.PARAMETER_PROXY_CALLBACK_URL, e);
             }
@@ -142,7 +152,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication.getPrincipal());
         // No MFA auth context found
         if (!requestedContext.isPresent()) {
-            LOGGER.debug("No authentication context is required for this request");
+            LOGGER.debug("No particular authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
         }
         // Validate the requested strategy
@@ -411,7 +421,15 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, msg);
         }
     }
-    
+
+    public View getSuccessView() {
+        return successView;
+    }
+
+    public View getFailureView() {
+        return failureView;
+    }
+
     /**
      * Add validation specification.
      *

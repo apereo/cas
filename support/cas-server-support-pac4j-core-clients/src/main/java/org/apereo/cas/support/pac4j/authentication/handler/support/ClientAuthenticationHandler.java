@@ -31,6 +31,7 @@ import java.security.GeneralSecurityException;
 @SuppressWarnings("unchecked")
 @Slf4j
 public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHandler {
+
     
     private final Clients clients;
 

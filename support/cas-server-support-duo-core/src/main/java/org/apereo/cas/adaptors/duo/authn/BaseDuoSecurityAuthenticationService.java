@@ -3,6 +3,7 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -25,6 +26,7 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
@@ -43,17 +45,6 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     protected final DuoSecurityMultifactorProperties duoProperties;
 
     private final transient HttpClient httpClient;
-
-    /**
-     * Creates the duo authentication service.
-     *
-     * @param duoProperties the duo properties
-     * @param httpClient    the http client
-     */
-    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
-        this.duoProperties = duoProperties;
-        this.httpClient = httpClient;
-    }
 
     @Override
     public boolean ping() {

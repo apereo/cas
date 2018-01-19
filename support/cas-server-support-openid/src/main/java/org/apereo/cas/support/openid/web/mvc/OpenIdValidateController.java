@@ -13,7 +13,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
-import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.VerifyResponse;
@@ -47,12 +46,11 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                                     final View jsonView, final View successView, 
                                     final View failureView, final String authnContextAttribute, 
                                     final ServerManager serverManager,
-                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
-                                    final UrlValidator urlValidator) {
+                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
             successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute, urlValidator);
+            authenticationContextValidator, jsonView, authnContextAttribute);
         this.serverManager = serverManager;
     }
 

@@ -1,9 +1,8 @@
 package org.apereo.cas.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.webflow.execution.Event;
+import lombok.ToString;
 
 /**
  * This is {@link AuthenticationRiskContingencyResponse}.
@@ -12,8 +11,16 @@ import org.springframework.webflow.execution.Event;
  * @since 5.1.0
  */
 @Slf4j
-@Data
-@AllArgsConstructor
+@ToString
 public class AuthenticationRiskContingencyResponse {
-    private Event result;
+
+    private final Event result;
+
+    public AuthenticationRiskContingencyResponse(final Event result) {
+        this.result = result;
+    }
+
+    public Event getResult() {
+        return result;
+    }
 }

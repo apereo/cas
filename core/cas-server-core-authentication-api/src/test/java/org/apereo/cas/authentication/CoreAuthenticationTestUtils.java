@@ -11,6 +11,8 @@ import org.apereo.cas.services.RegisteredServiceAccessStrategy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.support.StubPersonAttributeDao;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -62,7 +64,11 @@ public class CoreAuthenticationTestUtils {
     }
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
-        return new HttpBasedServiceCredential(url, getRegisteredService(url));
+        try {
+            return new HttpBasedServiceCredential(new URL(url), getRegisteredService(url));
+        } catch (final MalformedURLException e) {
+            throw new IllegalArgumentException();
+        }
     }
 
     public static Service getService(final String id) {

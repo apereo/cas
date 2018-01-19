@@ -6,6 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.LdapUtils;
+import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.flow.SpnegoCredentialsAction;
 import org.apereo.cas.web.flow.SpnegoNegotiateCredentialsAction;
 import org.apereo.cas.web.flow.client.BaseSpnegoKnownClientSystemsFilterAction;
@@ -79,7 +80,7 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action baseSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new BaseSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(),
+        return new BaseSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis());
     }
@@ -88,7 +89,7 @@ public class SpnegoWebflowActionsConfiguration {
     @RefreshScope
     public Action hostnameSpnegoClientAction() {
         final SpnegoProperties spnegoProperties = casProperties.getAuthn().getSpnego();
-        return new HostNameSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(),
+        return new HostNameSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
             spnegoProperties.getHostNamePatternString());
@@ -104,7 +105,7 @@ public class SpnegoWebflowActionsConfiguration {
             "host", new ArrayList<>(0));
 
         final SearchRequest searchRequest = LdapUtils.newLdaptiveSearchRequest(spnegoProperties.getLdap().getBaseDn(), filter);
-        return new LdapSpnegoKnownClientSystemsFilterAction(spnegoProperties.getIpsToCheckPattern(),
+        return new LdapSpnegoKnownClientSystemsFilterAction(RegexUtils.createPattern(spnegoProperties.getIpsToCheckPattern()),
             spnegoProperties.getAlternativeRemoteHostAttribute(),
             Beans.newDuration(spnegoProperties.getDnsTimeout()).toMillis(),
             connectionFactory,

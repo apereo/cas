@@ -11,6 +11,7 @@ import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.PostConstruct;
 import javax.security.auth.login.AccountLockedException;
 import javax.security.auth.login.CredentialExpiredException;
 import javax.security.auth.login.FailedLoginException;
@@ -30,6 +31,7 @@ import java.util.Map;
  */
 @Slf4j
 public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
+    
 
     /**
      * Default mapping of special usernames to exceptions raised when that user attempts authentication.
@@ -52,10 +54,17 @@ public class SimpleTestUsernamePasswordAuthenticationHandler extends AbstractUse
     public SimpleTestUsernamePasswordAuthenticationHandler() {
         super("", null, null, null);
     }
-    
+
+    @PostConstruct
+    private void init() {
+        LOGGER.warn("[{}] is only to be used in a testing environment. NEVER enable this in a production environment.",
+                this.getClass().getName());
+    }
+
     @Override
     protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
-                                                                                        final String originalPassword) throws GeneralSecurityException, PreventedException {
+                                                                                        final String originalPassword)
+            throws GeneralSecurityException, PreventedException {
 
         final String username = credential.getUsername();
         final String password = credential.getPassword();

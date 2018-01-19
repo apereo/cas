@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
@@ -22,18 +23,11 @@ import java.util.Set;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
-
-
 
     private final MultifactorAuthenticationTrustStorage storage;
     private final TrustedDevicesMultifactorProperties trustedProperties;
-
-    public MultifactorAuthenticationVerifyTrustAction(final MultifactorAuthenticationTrustStorage storage,
-                                                      final TrustedDevicesMultifactorProperties trustedProperties) {
-        this.storage = storage;
-        this.trustedProperties = trustedProperties;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

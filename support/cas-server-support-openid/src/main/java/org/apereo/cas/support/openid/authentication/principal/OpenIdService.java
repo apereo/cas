@@ -23,12 +23,12 @@ import javax.persistence.Entity;
 @Getter
 @NoArgsConstructor
 @Setter
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode
 public class OpenIdService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 5776500133123291301L;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String identity;
 
     @JsonCreator

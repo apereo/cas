@@ -1,6 +1,5 @@
 package org.apereo.cas.logout;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
@@ -16,10 +15,14 @@ import java.net.URL;
  * @since 5.0.0
  */
 @Slf4j
-@AllArgsConstructor
 public class DefaultSingleLogoutServiceLogoutUrlBuilder implements SingleLogoutServiceLogoutUrlBuilder {
-    
-    private final UrlValidator urlValidator;
+
+
+    private final UrlValidator urlValidator; 
+
+    public DefaultSingleLogoutServiceLogoutUrlBuilder(final UrlValidator urlValidator) {
+        this.urlValidator = urlValidator;
+    }
 
     @Override
     public URL determineLogoutUrl(final RegisteredService registeredService, final WebApplicationService singleLogoutService) {

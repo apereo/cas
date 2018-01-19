@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -30,6 +31,7 @@ import lombok.Setter;
 @ToString
 @Setter
 @Getter
+@AllArgsConstructor
 public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
 
     /** Pattern of ip addresses to check. **/
@@ -52,19 +54,7 @@ public class BaseSpnegoKnownClientSystemsFilterAction extends AbstractAction {
     public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern) {
         setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
     }
-
-    /**
-     * Instantiates a new Base.
-     *
-     * @param ipsToCheckPattern the ips to check pattern
-     * @param alternativeRemoteHostAttribute the alternative remote host attribute
-     * @param dnsTimeout # of milliseconds to wait for a DNS request to return
-     */
-    public BaseSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute, final long dnsTimeout) {
-        setIpsToCheckPattern(RegexUtils.createPattern(ipsToCheckPattern));
-        this.alternativeRemoteHostAttribute = alternativeRemoteHostAttribute;
-        this.timeout = dnsTimeout;
-    }
+    
 
     /**
      * {@inheritDoc}
