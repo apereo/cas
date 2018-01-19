@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -52,18 +53,19 @@ public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAu
     }
 
     @Override
-    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
+    @SneakyThrows
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential) {
         final HttpBasedServiceCredential httpCredential = (HttpBasedServiceCredential) credential;
-        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(httpCredential.getCallbackUrl())) {
+        if (!httpCredential.getService().getProxyPolicy().isAllowedProxyCallbackUrl(new URL(httpCredential.getCallbackUrl()))) {
             LOGGER.warn("Proxy policy for service [{}] cannot authorize the requested callback url [{}].",
                     httpCredential.getService().getServiceId(), httpCredential.getCallbackUrl());
             throw new FailedLoginException(httpCredential.getCallbackUrl() + " cannot be authorized");
         }
 
         LOGGER.debug("Attempting to authenticate [{}]", httpCredential);
-        final URL callbackUrl = httpCredential.getCallbackUrl();
+        final String callbackUrl = httpCredential.getCallbackUrl();
         if (!this.httpClient.isValidEndPoint(callbackUrl)) {
-            throw new FailedLoginException(callbackUrl.toExternalForm() + " sent an unacceptable response status code");
+            throw new FailedLoginException(callbackUrl + " sent an unacceptable response status code");
         }
         return new DefaultAuthenticationHandlerExecutionResult(this, httpCredential, this.principalFactory.createPrincipal(httpCredential.getId()));
     }

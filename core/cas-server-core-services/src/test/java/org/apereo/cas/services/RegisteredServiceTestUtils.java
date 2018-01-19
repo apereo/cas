@@ -24,7 +24,6 @@ import org.apereo.cas.services.support.RegisteredServiceRegexAttributeFilter;
 import org.apereo.cas.util.RandomUtils;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -51,11 +50,7 @@ public class RegisteredServiceTestUtils {
     }
 
     public static HttpBasedServiceCredential getHttpBasedServiceCredentials(final String url) {
-        try {
-            return new HttpBasedServiceCredential(new URL(url), RegisteredServiceTestUtils.getRegisteredService(url));
-        } catch (final MalformedURLException e) {
-            throw new IllegalArgumentException();
-        }
+        return new HttpBasedServiceCredential(url, RegisteredServiceTestUtils.getRegisteredService(url));
     }
 
     public static UsernamePasswordCredential getCredentialsWithSameUsernameAndPassword(final String username) {

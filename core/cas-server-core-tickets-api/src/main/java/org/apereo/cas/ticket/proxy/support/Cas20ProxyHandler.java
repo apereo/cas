@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.proxy.support;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
@@ -44,19 +45,19 @@ public class Cas20ProxyHandler implements ProxyHandler {
     }
 
     @Override
+    @SneakyThrows
     public String handle(final Credential credential, final TicketGrantingTicket proxyGrantingTicketId) {
         final HttpBasedServiceCredential serviceCredentials = (HttpBasedServiceCredential) credential;
         final String proxyIou = this.uniqueTicketIdGenerator.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_IOU_PREFIX);
 
-        final URL callbackUrl = serviceCredentials.getCallbackUrl();
-        final String serviceCredentialsAsString = callbackUrl.toExternalForm();
-        final int bufferLength = serviceCredentialsAsString.length() + proxyIou.length()
+        final String callbackUrl = serviceCredentials.getCallbackUrl();
+        final int bufferLength = callbackUrl.length() + proxyIou.length()
                 + proxyGrantingTicketId.getId().length() + BUFFER_LENGTH_ADDITIONAL_CHARGE;
 
-        final StringBuilder stringBuffer = new StringBuilder(bufferLength)
-                .append(serviceCredentialsAsString);
+        final StringBuilder stringBuffer = new StringBuilder(bufferLength).append(callbackUrl);
 
-        if (callbackUrl.getQuery() != null) {
+        final URL url = new URL(callbackUrl);
+        if (url.getQuery() != null) {
             stringBuffer.append('&');
         } else {
             stringBuffer.append('?');
