@@ -38,7 +38,7 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
     @GenericGenerator(name = "native", strategy = "native")
     private long id;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Column
