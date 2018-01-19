@@ -1,5 +1,6 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
@@ -12,15 +13,10 @@ import org.aspectj.lang.JoinPoint;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-
 @Slf4j
+@AllArgsConstructor
 public class ThreadLocalPrincipalResolver implements PrincipalResolver {
-    
     private final AuditPrincipalIdProvider auditPrincipalIdProvider;
-
-    public ThreadLocalPrincipalResolver(final AuditPrincipalIdProvider auditPrincipalIdProvider) {
-        this.auditPrincipalIdProvider = auditPrincipalIdProvider;
-    }
 
     @Override
     public String resolveFrom(final JoinPoint auditTarget, final Object returnValue) {

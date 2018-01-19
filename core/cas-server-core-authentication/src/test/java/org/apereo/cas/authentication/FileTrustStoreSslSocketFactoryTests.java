@@ -11,6 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.KeyStore;
 
 import static org.junit.Assert.*;
@@ -48,13 +50,13 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreNotFound() {
-        this.thrown.expect(RuntimeException.class);
+        this.thrown.expect(FileNotFoundException.class);
         sslFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test
     public void verifyTrustStoreBadPassword() {
-        this.thrown.expect(RuntimeException.class);
+        this.thrown.expect(IOException.class);
         sslFactory(RESOURCE, "invalid");
     }
 

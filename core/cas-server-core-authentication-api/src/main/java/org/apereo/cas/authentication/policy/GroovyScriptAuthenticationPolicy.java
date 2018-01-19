@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -18,16 +19,10 @@ import java.util.Map;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class GroovyScriptAuthenticationPolicy implements AuthenticationPolicy {
-
-
     private final ResourceLoader resourceLoader;
     private final String script;
-
-    public GroovyScriptAuthenticationPolicy(final ResourceLoader resourceLoader, final String script) {
-        this.resourceLoader = resourceLoader;
-        this.script = script;
-    }
 
     @Override
     public boolean isSatisfiedBy(final Authentication auth) throws Exception {

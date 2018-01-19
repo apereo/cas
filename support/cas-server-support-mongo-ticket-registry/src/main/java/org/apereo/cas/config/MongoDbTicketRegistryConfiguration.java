@@ -32,8 +32,6 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class MongoDbTicketRegistryConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 

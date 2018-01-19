@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.springframework.cloud.bus.event.RefreshRemoteApplicationEvent;
@@ -13,18 +14,10 @@ import org.springframework.context.event.EventListener;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CasCloudBusConfigurationEventListener {
-
-
-    private final ApplicationContext applicationContext;
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
-
-    public CasCloudBusConfigurationEventListener(
-            final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager,
-            final ApplicationContext applicationContext) {
-        this.configurationPropertiesEnvironmentManager = configurationPropertiesEnvironmentManager;
-        this.applicationContext = applicationContext;
-    }
+    private final ApplicationContext applicationContext;
 
     /**
      * Handle refresh event when issued by the cloud bus.

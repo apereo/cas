@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.metadata;
 
+import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
@@ -19,6 +20,7 @@ import org.apereo.cas.authentication.UsernamePasswordCredential;
  */
 @Slf4j
 @ToString(callSuper = true)
+@AllArgsConstructor
 public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
 
     private final CipherExecutor<String, String> cipherExecutor;
@@ -26,10 +28,6 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
     public CacheCredentialsMetaDataPopulator() {
         this(null);
         LOGGER.warn("No cipher is specified to handle credential caching encryption");
-    }
-
-    public CacheCredentialsMetaDataPopulator(final CipherExecutor cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
     }
 
     @Override

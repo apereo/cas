@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.repository.token;
 
+import lombok.AllArgsConstructor;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 
@@ -12,12 +13,9 @@ import java.time.ZonedDateTime;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OneTimeTokenRepositoryCleaner {
     private final OneTimeTokenRepository tokenRepository;
-
-    public OneTimeTokenRepositoryCleaner(final OneTimeTokenRepository tokenRepository) {
-        this.tokenRepository = tokenRepository;
-    }
 
     /**
      * Clean the repository.
