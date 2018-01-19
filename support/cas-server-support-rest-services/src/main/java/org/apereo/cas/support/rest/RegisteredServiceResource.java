@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -44,25 +45,13 @@ import java.util.regex.Pattern;
 @RestController("registeredServiceResourceRestController")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
+@AllArgsConstructor
 public class RegisteredServiceResource {
-
-
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServiceFactory serviceFactory;
     private final ServicesManager servicesManager;
     private final String attributeName;
     private final String attributeValue;
-
-    public RegisteredServiceResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                     final ServiceFactory serviceFactory, final ServicesManager servicesManager,
-                                     final String attributeName, final String attributeValue) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.serviceFactory = serviceFactory;
-        this.servicesManager = servicesManager;
-        this.attributeName = attributeName;
-        this.attributeValue = attributeValue;
-    }
 
     /**
      * Create new service.
