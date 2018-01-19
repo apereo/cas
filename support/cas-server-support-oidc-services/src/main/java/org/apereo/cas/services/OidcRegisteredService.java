@@ -36,7 +36,7 @@ public class OidcRegisteredService extends OAuthRegisteredService {
 
     private static final long serialVersionUID = 1310899699465091444L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String jwks;
 
     @Column(updatable = true, insertable = true)
@@ -45,16 +45,16 @@ public class OidcRegisteredService extends OAuthRegisteredService {
     @Column(updatable = true, insertable = true)
     private boolean encryptIdToken;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String idTokenEncryptionAlg;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String idTokenEncryptionEncoding;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String sectorIdentifierUri;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String subjectType = OidcSubjectTypes.PUBLIC.getType();
 
     @Column(updatable = true, insertable = true)
