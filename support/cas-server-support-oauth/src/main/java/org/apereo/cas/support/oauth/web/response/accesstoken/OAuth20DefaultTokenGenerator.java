@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
@@ -23,6 +24,7 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
 
 
@@ -40,13 +42,6 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      * The Ticket registry.
      */
     protected final TicketRegistry ticketRegistry;
-
-    public OAuth20DefaultTokenGenerator(final AccessTokenFactory accessTokenFactory, final TicketRegistry ticketRegistry,
-                                        final RefreshTokenFactory refreshTokenFactory) {
-        this.accessTokenFactory = accessTokenFactory;
-        this.ticketRegistry = ticketRegistry;
-        this.refreshTokenFactory = refreshTokenFactory;
-    }
 
     @Override
     public Pair<AccessToken, RefreshToken> generate(final AccessTokenRequestDataHolder holder) {

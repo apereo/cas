@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.handler.support;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -14,20 +15,10 @@ import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguratio
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-
-/**
- * Abstract class to override supports so that we don't need to duplicate the
- * check for UsernamePasswordCredential.
- *
- * @author Scott Battaglia
- * @author Marvin S. Addison
- * @since 3.0.0
- */
-import lombok.Setter;
-
 
 /**
  * Abstract class to override supports so that we don't need to duplicate the

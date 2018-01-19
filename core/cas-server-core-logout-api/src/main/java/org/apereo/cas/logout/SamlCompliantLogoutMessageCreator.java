@@ -15,9 +15,6 @@ import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 @Slf4j
 public class SamlCompliantLogoutMessageCreator implements LogoutMessageCreator {
 
-    /** The LOGGER. */
-
-    
     /** A ticket Id generator. */
     private static final UniqueTicketIdGenerator GENERATOR = new DefaultUniqueTicketIdGenerator(18);
 

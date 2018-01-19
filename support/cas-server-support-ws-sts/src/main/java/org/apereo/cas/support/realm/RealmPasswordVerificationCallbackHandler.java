@@ -1,5 +1,6 @@
 package org.apereo.cas.support.realm;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
 
@@ -14,13 +15,10 @@ import java.util.Arrays;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RealmPasswordVerificationCallbackHandler implements CallbackHandler {
 
     private final String psw;
-
-    public RealmPasswordVerificationCallbackHandler(final String psw) {
-        this.psw = psw;
-    }
 
     @Override
     public void handle(final Callback[] callbacks) {

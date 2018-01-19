@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -20,6 +21,7 @@ import org.springframework.web.servlet.view.RedirectView;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
 
 
@@ -29,11 +31,6 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
     protected final TicketRegistry ticketRegistry;
 
     private final OAuthCodeFactory oAuthCodeFactory;
-
-    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final TicketRegistry ticketRegistry, final OAuthCodeFactory oAuthCodeFactory) {
-        this.ticketRegistry = ticketRegistry;
-        this.oAuthCodeFactory = oAuthCodeFactory;
-    }
 
     @Override
     public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
