@@ -1,6 +1,5 @@
 package org.apereo.cas.validation;
 
-import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
