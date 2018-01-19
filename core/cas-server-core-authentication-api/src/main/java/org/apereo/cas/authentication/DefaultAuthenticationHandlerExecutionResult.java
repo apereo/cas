@@ -3,12 +3,10 @@ package org.apereo.cas.authentication;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 import java.util.List;
 import lombok.ToString;
