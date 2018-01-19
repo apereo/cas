@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.util;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -61,6 +62,7 @@ import java.util.List;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@AllArgsConstructor
 public abstract class AbstractSamlObjectBuilder implements Serializable {
     /**
      * The constant DEFAULT_ELEMENT_NAME_FIELD.
@@ -83,10 +85,6 @@ public abstract class AbstractSamlObjectBuilder implements Serializable {
      * The Config bean.
      */
     protected OpenSamlConfigBean configBean;
-
-    public AbstractSamlObjectBuilder(final OpenSamlConfigBean configBean) {
-        this.configBean = configBean;
-    }
 
     /**
      * Create a new SAML object.
