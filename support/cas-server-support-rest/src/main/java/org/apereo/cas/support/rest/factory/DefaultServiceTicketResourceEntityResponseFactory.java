@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest.factory;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -15,17 +16,12 @@ import org.springframework.http.ResponseEntity;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultServiceTicketResourceEntityResponseFactory implements ServiceTicketResourceEntityResponseFactory {
-
-    
     /**
      * The central authentication service implementation.
      */
     protected final CentralAuthenticationService centralAuthenticationService;
-
-    public DefaultServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
 
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service,

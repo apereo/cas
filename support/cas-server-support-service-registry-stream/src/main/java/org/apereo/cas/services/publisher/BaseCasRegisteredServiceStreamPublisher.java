@@ -1,5 +1,6 @@
 package org.apereo.cas.services.publisher;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
@@ -16,17 +17,12 @@ import org.springframework.context.ApplicationEvent;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseCasRegisteredServiceStreamPublisher implements CasRegisteredServiceStreamPublisher {
-
-
     /**
      * Publisher id.
      */
     protected final StringBean publisherId;
-
-    public BaseCasRegisteredServiceStreamPublisher(final StringBean publisherId) {
-        this.publisherId = publisherId;
-    }
 
     @Override
     public final void publish(final RegisteredService service, final ApplicationEvent event) {

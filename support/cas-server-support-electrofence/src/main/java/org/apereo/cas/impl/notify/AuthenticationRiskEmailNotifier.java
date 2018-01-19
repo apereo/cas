@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -12,14 +13,9 @@ import org.apereo.cas.util.io.CommunicationsManager;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class AuthenticationRiskEmailNotifier extends BaseAuthenticationRiskNotifier {
-
-
     private final CommunicationsManager communicationsManager;
-
-    public AuthenticationRiskEmailNotifier(final CommunicationsManager communicationsManager) {
-        this.communicationsManager = communicationsManager;
-    }
 
     @Override
     public void publish() {

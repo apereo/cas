@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,18 +19,12 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RedisTicketRegistry extends AbstractTicketRegistry {
-
-
-    
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
     @NotNull
     private final RedisTemplate<String, Ticket> client;
-
-    public RedisTicketRegistry(final RedisTemplate<String, Ticket> client) {
-        this.client = client;
-    }
 
     @Override
     public long deleteAll() {
