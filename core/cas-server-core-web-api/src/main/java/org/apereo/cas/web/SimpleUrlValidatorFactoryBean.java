@@ -10,7 +10,7 @@ import org.springframework.beans.factory.FactoryBean;
 
 
 /**
- * The factory to build a {@link org.apereo.cas.web.UrlValidator}.
+ * The factory to build a {@link org.apereo.cas.UrlValidator}.
  *
  * @author swoeste
  * @since 5.2.0
@@ -26,20 +26,20 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls) {
         this(allowLocalUrls, null, true);
     }
-    
-    public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls, final String authorityValidationRegEx, 
-        final boolean authorityValidationRegExCaseSensitive) {
+
+    public SimpleUrlValidatorFactoryBean(final boolean allowLocalUrls, final String authorityValidationRegEx,
+                                         final boolean authorityValidationRegExCaseSensitiv) {
         this.allowLocalUrls = allowLocalUrls;
-        this.urlValidatorWithRegex = createUrlValidatorWithRegex(allowLocalUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
+        this.urlValidatorWithRegex = createUrlValidatorWithRegex(allowLocalUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitiv);
     }
 
-    private UrlValidator createUrlValidatorWithRegex(final boolean allowLocalUrls, final String authorityValidationRegEx, 
-        final boolean authorityValidationRegExCaseSensitive) {
+    private UrlValidator createUrlValidatorWithRegex(final boolean allowLocalUrls, final String authorityValidationRegEx,
+                                                     final boolean authorityValidationRegExCaseSensitiv) {
         if (StringUtils.isEmpty(authorityValidationRegEx)) {
             return null;
         }
-        
-        final RegexValidator authorityValidator = new RegexValidator(authorityValidationRegEx, authorityValidationRegExCaseSensitive);
+
+        final RegexValidator authorityValidator = new RegexValidator(authorityValidationRegEx, authorityValidationRegExCaseSensitiv);
         final long options = allowLocalUrls ? UrlValidator.ALLOW_LOCAL_URLS : 0;
         return new UrlValidator(authorityValidator, options);
     }
@@ -53,7 +53,7 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
         if (this.urlValidatorWithRegex != null) {
             return urlValidatorWithRegex;
         }
-        
+
         if (this.allowLocalUrls) {
             return URL_VALIDATOR_ALLOW_LOCAL_URLS;
         }
@@ -74,5 +74,4 @@ public class SimpleUrlValidatorFactoryBean implements FactoryBean<org.apereo.cas
     public boolean isSingleton() {
         return true;
     }
-
 }

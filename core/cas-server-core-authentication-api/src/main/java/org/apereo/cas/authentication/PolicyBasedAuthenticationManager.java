@@ -394,7 +394,8 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             proceedWithNextHandler = true;
                         }
                     } else {
-                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}]. Trying next...", handler.getName(), credential);
+                        LOGGER.debug("Authentication handler [{}] does not support the credential type [{}]. Trying next...",
+                            handler.getName(), credential);
                     }
                 }
             }

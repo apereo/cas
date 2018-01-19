@@ -5,7 +5,7 @@ import org.apache.commons.validator.routines.DomainValidator;
 import org.apache.commons.validator.routines.UrlValidator;
 
 /**
- * Implementation of CAS {@link org.apereo.cas.web.UrlValidator}
+ * Implementation of CAS {@link org.apereo.cas.UrlValidator}
  * which delegates requests to a {@link #urlValidator} instance.
  *
  * @author swoeste
