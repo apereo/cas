@@ -69,7 +69,7 @@ public class Cas20ProxyHandler implements ProxyHandler {
                 .append('&')
                 .append(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET_ID)
                 .append('=')
-                .append(proxyGrantingTicketId);
+                .append(proxyGrantingTicketId.getId());
 
         if (this.httpClient.isValidEndPoint(stringBuffer.toString())) {
             LOGGER.debug("Sent ProxyIou of [{}] for service: [{}]", proxyIou, serviceCredentials);
