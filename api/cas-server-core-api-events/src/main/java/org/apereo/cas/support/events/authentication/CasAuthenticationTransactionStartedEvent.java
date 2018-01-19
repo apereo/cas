@@ -1,6 +1,5 @@
 package org.apereo.cas.support.events.authentication;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -12,7 +11,6 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @since 5.0.0
  */
 @Slf4j
-@Getter
 public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
     private static final long serialVersionUID = -1862937393590213811L;
 
@@ -27,5 +25,9 @@ public class CasAuthenticationTransactionStartedEvent extends AbstractCasEvent {
     public CasAuthenticationTransactionStartedEvent(final Object source, final Credential c) {
         super(source);
         this.credential = c;
+    }
+
+    public Credential getCredential() {
+        return credential;
     }
 }
