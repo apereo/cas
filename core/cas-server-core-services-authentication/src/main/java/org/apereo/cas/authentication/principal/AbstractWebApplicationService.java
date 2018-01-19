@@ -54,7 +54,7 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String originalUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String artifactId;
 
     @JsonProperty

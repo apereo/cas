@@ -164,17 +164,16 @@ public class JpaServiceRegistryDaoImplTests {
         r.setName("testContacts");
         r.setServiceId("testContacts");
 
-        final List<RegisteredServiceContact> propertyMap = new ArrayList<>();
-
+        final List<RegisteredServiceContact> contacts = new ArrayList<>();
         final DefaultRegisteredServiceContact property = new DefaultRegisteredServiceContact();
         property.setDepartment("department");
         property.setId(1234);
         property.setPhone("123-456-789");
-        r.setContacts(propertyMap);
+        r.setContacts(contacts);
 
         this.serviceRegistryDao.save(r);
         final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
-        assertEquals(2, r2.getProperties().size());
+        assertEquals(1, r2.getContacts().size());
     }
     
     @Test

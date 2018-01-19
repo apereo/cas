@@ -41,13 +41,13 @@ public class DefaultRegisteredServiceContact implements RegisteredServiceContact
     @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String name;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String email;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String phone;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String department;
 
 }

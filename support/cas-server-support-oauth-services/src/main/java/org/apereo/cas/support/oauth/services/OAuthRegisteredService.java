@@ -35,19 +35,19 @@ public class OAuthRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 5318897374067731021L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String clientSecret;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String clientId;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column
     private boolean bypassApprovalPrompt;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column
     private boolean generateRefreshToken;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column
     private boolean jsonFormat;
 
     @Lob
