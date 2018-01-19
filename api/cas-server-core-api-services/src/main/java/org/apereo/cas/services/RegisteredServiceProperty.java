@@ -3,13 +3,12 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
-
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import lombok.Getter;
 
 /**
  * The {@link RegisteredServiceProperty} defines a single custom

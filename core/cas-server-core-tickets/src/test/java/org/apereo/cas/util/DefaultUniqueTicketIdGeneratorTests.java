@@ -16,6 +16,7 @@ public class DefaultUniqueTicketIdGeneratorTests {
     @Test
     public void verifyUniqueGenerationOfTicketIds() {
         final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(10);
+
         assertNotSame(generator.getNewTicketId("TEST"), generator.getNewTicketId("TEST"));
     }
 
@@ -29,9 +30,11 @@ public class DefaultUniqueTicketIdGeneratorTests {
 
     @Test
     public void verifyNullSuffix() {
-        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(12, null);
+        final String nullSuffix = null;
+        final int lengthWithoutSuffix = 23;
+        final DefaultUniqueTicketIdGenerator generator = new DefaultUniqueTicketIdGenerator(12, nullSuffix);
 
         final String ticketId = generator.getNewTicketId("test");
-        assertEquals(23, ticketId.length());
+        assertEquals(lengthWithoutSuffix, ticketId.length());
     }
 }

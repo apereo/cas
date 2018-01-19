@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
@@ -24,22 +26,14 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
 @Slf4j
+@AllArgsConstructor
+@Getter
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final IGoogleAuthenticator googleAuthenticator;
-
     private final RestTemplate restTemplate;
     private final GAuthMultifactorProperties gauth;
-
-    public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator,
-                                                            final RestTemplate restTemplate,
-                                                            final GAuthMultifactorProperties gauth) {
-        this.googleAuthenticator = googleAuthenticator;
-        this.restTemplate = restTemplate;
-        this.gauth = gauth;
-    }
 
     @Override
     public OneTimeTokenAccount get(final String username) {

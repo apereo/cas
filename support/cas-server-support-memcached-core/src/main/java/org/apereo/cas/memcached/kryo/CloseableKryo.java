@@ -3,6 +3,7 @@ package org.apereo.cas.memcached.kryo;
 import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Registration;
 import com.esotericsoftware.kryo.Serializer;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.Closeable;
@@ -15,14 +16,9 @@ import java.io.Closeable;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class CloseableKryo extends Kryo implements Closeable {
-
-    
     private final CasKryoPool kryoPool;
-
-    public CloseableKryo(final CasKryoPool autoKryoPool) {
-        this.kryoPool = autoKryoPool;
-    }
 
     @Override
     public void close() {

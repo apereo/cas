@@ -1,6 +1,5 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
@@ -19,10 +18,10 @@ import java.security.GeneralSecurityException;
  * @since 4.2.0
  */
 @Slf4j
-@Getter
 public abstract class AbstractTokenWrapperAuthenticationHandler extends
         AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
 
+    
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
@@ -48,12 +47,16 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
             throw new AccountNotFoundException("Id is null.");
         }
         final TokenCredentials credentials = new TokenCredentials(id, getClass().getSimpleName());
-        LOGGER.debug("Token credentials: [{}]", credentials);
+        LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
 
     @Override
     protected Class<BasicIdentifiableCredential> getCasCredentialsType() {
         return BasicIdentifiableCredential.class;
+    }
+
+    public PrincipalNameTransformer getPrincipalNameTransformer() {
+        return this.principalNameTransformer;
     }
 }

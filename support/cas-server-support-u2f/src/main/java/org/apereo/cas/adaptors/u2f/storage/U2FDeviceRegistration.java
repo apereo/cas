@@ -35,7 +35,7 @@ public class U2FDeviceRegistration {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(length = 255, updatable = true, insertable = true, nullable = false)
     private String username;
 
     @Lob
@@ -48,5 +48,13 @@ public class U2FDeviceRegistration {
 
     public U2FDeviceRegistration() {
         setId(System.currentTimeMillis());
+    }
+
+    public LocalDate getCreatedDate() {
+        return createdDate;
+    }
+
+    public long getId() {
+        return id;
     }
 }

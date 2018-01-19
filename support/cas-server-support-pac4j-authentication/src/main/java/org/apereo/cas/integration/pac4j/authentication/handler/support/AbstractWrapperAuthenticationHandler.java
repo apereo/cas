@@ -1,7 +1,5 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
-import lombok.Getter;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
@@ -35,17 +33,14 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-@Getter
 public abstract class AbstractWrapperAuthenticationHandler<I extends Credential, C extends Credentials> extends AbstractPac4jAuthenticationHandler {
 
     /**
      * The pac4j profile creator used for authentication.
      */
-    @NonNull
     protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
-    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager,
-                                                final PrincipalFactory principalFactory, final Integer order) {
+    public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
     }
 
@@ -56,6 +51,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+        CommonHelper.assertNotNull("profileCreator", this.profileCreator);
         final C credentials = convertToPac4jCredentials((I) credential);
         LOGGER.debug("credentials: [{}]", credentials);
         try {
@@ -110,4 +106,8 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the authenticator
      */
     protected abstract Authenticator getAuthenticator(Credential credential);
+
+    public ProfileCreator getProfileCreator() {
+        return this.profileCreator;
+    }
 }

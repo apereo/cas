@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
@@ -27,7 +26,6 @@ import lombok.Setter;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @Setter
-@Getter
 public class X509CertificateCredential extends AbstractCredential {
 
     /**
@@ -57,7 +55,11 @@ public class X509CertificateCredential extends AbstractCredential {
     public X509Certificate[] getCertificates() {
         return Arrays.copyOf(this.certificates, this.certificates.length);
     }
-    
+
+    public X509Certificate getCertificate() {
+        return this.certificate;
+    }
+
     @Override
     public String getId() {
         X509Certificate cert = null;

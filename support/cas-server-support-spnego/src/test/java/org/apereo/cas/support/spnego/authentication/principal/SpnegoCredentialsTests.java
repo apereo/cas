@@ -21,7 +21,8 @@ public class SpnegoCredentialsTests {
     @Test
     public void verifyToStringWithNoPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
-        assertTrue(credentials.getId().contains("unknown"));
+
+        assertTrue(credentials.toString().contains("unknown"));
     }
 
     @Test
@@ -29,7 +30,7 @@ public class SpnegoCredentialsTests {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
-        assertEquals("test", credentials.getId());
+        assertEquals("test", credentials.toString());
     }
 
     /**
