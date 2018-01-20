@@ -151,6 +151,12 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         return true;
     }
 
+    @JsonIgnore
+    @Override
+    public void setServiceAccessAllowed(final boolean value) {
+        this.enabled = value;
+    }
+    
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
