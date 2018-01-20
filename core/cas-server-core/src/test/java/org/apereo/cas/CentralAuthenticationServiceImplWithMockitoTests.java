@@ -244,7 +244,7 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
     @Test
     public void getTicketGrantingTicketIfTicketIdIsNull() throws InvalidTicketException {
-        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expect(NullPointerException.class);
         this.cas.getTicket(null, TicketGrantingTicket.class);
     }
 

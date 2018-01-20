@@ -128,4 +128,8 @@ public abstract class AbstractTicket implements Ticket, TicketState {
         return getId().compareTo(o.getId());
     }
     
+    @Override
+    public String toString() {
+        return this.getId();
+    }
 }

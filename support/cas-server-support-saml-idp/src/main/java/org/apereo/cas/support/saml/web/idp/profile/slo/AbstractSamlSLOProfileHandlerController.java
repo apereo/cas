@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPLogoutProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPUtils;
@@ -76,7 +77,8 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
     protected void handleSloProfileRequest(final HttpServletResponse response,
                                                final HttpServletRequest request,
                                                final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
-        if (casProperties.getAuthn().getSamlIdp().getLogout().isSingleLogoutCallbacksDisabled()) {
+        final SamlIdPLogoutProperties logout = casProperties.getAuthn().getSamlIdp().getLogout();
+        if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML IdP SLO requests is disabled");
             return;
         }
@@ -85,7 +87,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
         final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getKey());
         final MessageContext ctx = pair.getValue();
 
-        if (casProperties.getAuthn().getSamlIdp().getLogout().isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
+        if (logout.isForceSignedLogoutRequests() && !SAMLBindingSupport.isMessageSigned(ctx)) {
             throw new SAMLException("Logout request is not signed but should be.");
         }
 

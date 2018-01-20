@@ -26,9 +26,9 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
                                                                final SamlRegisteredServiceMetadataResolverCacheLoader loader) {
         this.chainingMetadataResolverCacheLoader = loader;
         this.cache = Caffeine.newBuilder()
-                .maximumSize(MAX_CACHE_SIZE)
-                .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpirationMinutes))
-                .build(this.chainingMetadataResolverCacheLoader);
+            .maximumSize(MAX_CACHE_SIZE)
+            .expireAfter(new SamlRegisteredServiceMetadataExpirationPolicy(metadataCacheExpirationMinutes))
+            .build(this.chainingMetadataResolverCacheLoader);
     }
 
     @Override
@@ -38,14 +38,11 @@ public class SamlRegisteredServiceDefaultCachingMetadataResolver implements Saml
             LOGGER.debug("Resolving metadata for [{}] at [{}].", service.getName(), service.getMetadataLocation());
             resolver = this.cache.get(service);
             return resolver;
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Metadata resolver could not be located from metadata "
-                    + service.getMetadataLocation(), e);
         } finally {
             if (resolver != null) {
                 LOGGER.debug("Loaded and cached SAML metadata [{}] from [{}]",
-                        resolver.getId(),
-                        service.getMetadataLocation());
+                    resolver.getId(),
+                    service.getMetadataLocation());
             }
         }
     }

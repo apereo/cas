@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
@@ -13,7 +14,6 @@ import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -50,18 +50,17 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "sslContext")
     @Bean
+    @SneakyThrows
     public SSLContext sslContext() {
-        try {
-            final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
-            if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-                final DefaultCasSslContext ctx =
-                    new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
-                return ctx.getSslContext();
-            }
-            return SSLContexts.createSystemDefault();
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
+
+        final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
+        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
+            final DefaultCasSslContext ctx =
+                new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+            return ctx.getSslContext();
         }
+        return SSLContexts.createSystemDefault();
+
     }
 
     @ConditionalOnMissingBean(name = "httpClient")

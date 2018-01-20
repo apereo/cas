@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.sso;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
@@ -169,11 +170,9 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
         LOGGER.debug("Determined authentication request binding is [{}], issued by [{}]", binding, authnRequest.getIssuer().getValue());
 
         LOGGER.debug("Checking metadata for [{}] to see if binding [{}] is supported", facade.getEntityId(), binding);
+        @NonNull
         final AssertionConsumerService svc = facade.getAssertionConsumerService(binding);
-        if (svc == null) {
-            throw new IllegalArgumentException("Requested binding [{}] is not supported by entity id " + facade.getEntityId());
-        }
-        LOGGER.debug("Binding [{}] is supported by [{}]", binding, facade.getEntityId());
+        LOGGER.debug("Binding [{}] is supported by [{}]", svc.getBinding(), facade.getEntityId());
         return binding;
     }
 }

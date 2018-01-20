@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.response.soap;
 
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
@@ -65,12 +66,9 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
                                      final HttpServletResponse response,
                                      final String binding) throws SamlException {
 
+        LOGGER.debug("Locating the assertion consumer service url for binding [{}]", binding);
+        @NonNull
         final AssertionConsumerService acs = adaptor.getAssertionConsumerService(binding);
-        if (acs == null) {
-            LOGGER.warn("Could not locate the assertion consumer service url for binding [{}]", binding);
-            throw new IllegalArgumentException("Failed to locate the assertion consumer service url for " + binding);
-        }
-
         LOGGER.debug("Located assertion consumer service url [{}]", acs);
         final Response ecpResponse = newEcpResponse(acs.getLocation());
         final Header header = newSoapObject(Header.class);

@@ -18,6 +18,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -35,8 +36,6 @@ import java.util.Map;
  */
 @Slf4j
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-
 
     private final String sql;
     private final String fieldPassword;
@@ -113,6 +112,6 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes), new ArrayList<>(0));
     }
 }
