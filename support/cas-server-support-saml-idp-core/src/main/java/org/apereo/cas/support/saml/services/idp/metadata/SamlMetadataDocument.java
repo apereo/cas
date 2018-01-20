@@ -35,7 +35,7 @@ public class SamlMetadataDocument {
     private long id = -1;
 
     @Indexed
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Lob

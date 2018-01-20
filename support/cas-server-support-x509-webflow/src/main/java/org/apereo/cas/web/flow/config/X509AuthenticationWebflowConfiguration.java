@@ -56,7 +56,7 @@ public class X509AuthenticationWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @ConditionalOnMissingBean(name = "x509WebflowConfigurer")
     @ConditionalOnBean(name = "defaultWebflowConfigurer")
     @Bean
@@ -69,7 +69,8 @@ public class X509AuthenticationWebflowConfiguration {
 
     @Bean
     public Action x509Check() {
-        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy);
+        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy);
     }
 }

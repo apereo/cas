@@ -34,10 +34,10 @@ public class ConsentDecision {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String principal;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String service;
 
     @Column(nullable = false)
@@ -46,10 +46,10 @@ public class ConsentDecision {
     @Column(nullable = false)
     private ConsentOptions options = ConsentOptions.ATTRIBUTE_NAME;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private Long reminder = 14L;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private ChronoUnit reminderTimeUnit = ChronoUnit.DAYS;
 
     @Lob

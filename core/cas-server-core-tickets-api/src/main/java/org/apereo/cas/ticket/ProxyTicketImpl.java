@@ -35,7 +35,7 @@ public class ProxyTicketImpl extends ServiceTicketImpl implements ProxyTicket {
      * @param policy             the expiration policy
      */
     @JsonCreator
-    public ProxyTicketImpl(@JsonProperty("id") final String id, @JsonProperty("grantingTicket") final TicketGrantingTicket ticket,
+    public ProxyTicketImpl(@JsonProperty("id") final String id, @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket ticket,
                            @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
                            @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, ticket, service, credentialProvided, policy);
