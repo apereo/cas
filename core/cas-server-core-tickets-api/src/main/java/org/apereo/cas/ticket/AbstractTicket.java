@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -15,9 +17,6 @@ import javax.persistence.Lob;
 import javax.persistence.MappedSuperclass;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import lombok.ToString;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * Abstract implementation of a ticket that handles all ticket state for
@@ -39,7 +38,6 @@ import lombok.NoArgsConstructor;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
-@ToString(of="id")
 @Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
