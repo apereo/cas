@@ -15,13 +15,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public abstract class AbstractLdapSearchProperties extends AbstractLdapProperties {
-
     private static final long serialVersionUID = 3009946735155362639L;
-
-    /**
-     * Whether subtree searching is allowed.
-     */
-    private boolean subtreeSearch = true;
 
     /**
      * User filter to use for searching.
@@ -29,6 +23,11 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
      */
     @RequiredProperty
     protected String searchFilter;
+
+    /**
+     * Whether subtree searching is allowed.
+     */
+    private boolean subtreeSearch = true;
 
     /**
      * Base DN to use.
