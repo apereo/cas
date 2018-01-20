@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.fediz.core.util.CertsUtils;
@@ -17,16 +18,17 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.jooq.lambda.Unchecked;
 import org.w3c.dom.Document;
+
 import javax.xml.stream.XMLStreamWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
 import java.util.Properties;
+
 import static org.apache.cxf.fediz.core.FedizConstants.SAML2_METADATA_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.SCHEMA_INSTANCE_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.WS_ADDRESSING_NS;
 import static org.apache.cxf.fediz.core.FedizConstants.WS_FEDERATION_NS;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link WSFederationMetadataWriter}.
@@ -88,14 +90,11 @@ public class WSFederationMetadataWriter {
         writer.writeStartElement(StringUtils.EMPTY, "KeyInfo", "http://www.w3.org/2000/09/xmldsig#");
         writer.writeStartElement(StringUtils.EMPTY, "X509Data", "http://www.w3.org/2000/09/xmldsig#");
         writer.writeStartElement(StringUtils.EMPTY, "X509Certificate", "http://www.w3.org/2000/09/xmldsig#");
-        try {
-            final String keyAlias = crypto.getDefaultX509Identifier();
-            final X509Certificate cert = CertsUtils.getX509CertificateFromCrypto(crypto, keyAlias);
-            writer.writeCharacters(Base64.encode(cert.getEncoded()));
-        } catch (final Exception ex) {
-            LOGGER.error("Failed to add certificate information to metadata. Metadata incomplete", ex);
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
+
+        final String keyAlias = crypto.getDefaultX509Identifier();
+        final X509Certificate cert = CertsUtils.getX509CertificateFromCrypto(crypto, keyAlias);
+        writer.writeCharacters(Base64.encode(cert.getEncoded()));
+
         writer.writeEndElement();
         writer.writeEndElement();
         writer.writeEndElement();

@@ -57,29 +57,22 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
      * @param encryptionKeySize   the encryption key size
      * @param cipherName          the cipher name
      */
+    @SneakyThrows
     public BaseBinaryCipherExecutor(final String encryptionSecretKey, final String signingSecretKey,
                                     final int signingKeySize, final int encryptionKeySize, final String cipherName) {
-        try {
-            this.cipherName = cipherName;
-            ensureSigningKeyExists(signingSecretKey, signingKeySize);
-            ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
-            this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
-            this.aesCipher = Cipher.getInstance("AES");
-        } catch (final Exception e) {
-            throw new RuntimeException(e);
-        }
+        this.cipherName = cipherName;
+        ensureSigningKeyExists(signingSecretKey, signingKeySize);
+        ensureEncryptionKeyExists(encryptionSecretKey, encryptionKeySize);
+        this.encryptionKey = new SecretKeySpec(this.encryptionSecretKey, this.secretKeyAlgorithm);
+        this.aesCipher = Cipher.getInstance("AES");
     }
 
     @Override
+    @SneakyThrows
     public byte[] encode(final byte[] value) {
-        try {
-            this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
-            final byte[] result = this.aesCipher.doFinal(value);
-            return sign(result);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        this.aesCipher.init(Cipher.ENCRYPT_MODE, this.encryptionKey);
+        final byte[] result = this.aesCipher.doFinal(value);
+        return sign(result);
     }
 
     @Override
@@ -91,15 +84,11 @@ public abstract class BaseBinaryCipherExecutor extends AbstractCipherExecutor<by
         return bytePlainText;
     }
 
+    @SneakyThrows
     private static String generateOctetJsonWebKeyOfSize(final int size) {
-        try {
-            final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
-            final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
-            return params.get("k").toString();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final OctetSequenceJsonWebKey octetKey = OctJwkGenerator.generateJwk(size);
+        final Map<String, Object> params = octetKey.toParams(JsonWebKey.OutputControlLevel.INCLUDE_SYMMETRIC);
+        return params.get("k").toString();
     }
 
     /**

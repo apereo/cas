@@ -118,8 +118,6 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
             }
             throw ex;
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
@@ -109,6 +110,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param remoteIp the remote ip
      * @return true/false
      */
+    @SneakyThrows
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
         final String remoteHostName = getRemoteHostName(remoteIp);
@@ -128,9 +130,6 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
                 return processSpnegoAttribute(searchResult);
             }
             throw new IllegalArgumentException("Failed to establish a connection ldap. " + searchResult.getMessage());
-        } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (connection != null) {
                 connection.close();
