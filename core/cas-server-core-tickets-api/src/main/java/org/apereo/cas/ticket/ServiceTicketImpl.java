@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.Synchronized;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,8 +19,6 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Domain object representing a Service Ticket. A service ticket grants specific
@@ -102,7 +101,6 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
     }
 
     @Override
-    @Synchronized
     public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) throws AbstractTicketException {
         if (this.grantedTicketAlready) {
             LOGGER.warn("Service ticket [{}] issued for service [{}] has already allotted a proxy-granting ticket", getId(), this.service.getId());
@@ -113,7 +111,7 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
         getTicketGrantingTicket().getProxyGrantingTickets().put(pgt.getId(), this.service);
         return pgt;
     }
-    
+
     @Override
     public Authentication getAuthentication() {
         return getTicketGrantingTicket().getAuthentication();

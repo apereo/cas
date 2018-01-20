@@ -21,7 +21,7 @@ import java.lang.reflect.Field;
  * @since 4.1.0
  */
 @Slf4j
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class GoogleSaml20ObjectBuilder extends AbstractSaml20ObjectBuilder {
     private static final long serialVersionUID = 2979638064754730668L;
 

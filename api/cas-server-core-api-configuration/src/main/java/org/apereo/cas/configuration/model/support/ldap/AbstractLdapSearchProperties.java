@@ -24,15 +24,15 @@ public abstract class AbstractLdapSearchProperties extends AbstractLdapPropertie
     private boolean subtreeSearch = true;
 
     /**
-     * Base DN to use.
-     */
-    @RequiredProperty
-    private String baseDn;
-
-    /**
      * User filter to use for searching.
      * Syntax is {@code cn={user}} or {@code cn={0}}.
      */
     @RequiredProperty
-    private String searchFilter;
+    protected String searchFilter;
+
+    /**
+     * Base DN to use.
+     */
+    @RequiredProperty
+    private String baseDn;
 }
