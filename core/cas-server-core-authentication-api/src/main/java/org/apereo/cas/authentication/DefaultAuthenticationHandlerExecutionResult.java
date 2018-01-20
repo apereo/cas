@@ -3,11 +3,13 @@ package org.apereo.cas.authentication;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 
+import java.util.ArrayList;
 import java.util.List;
 import lombok.ToString;
 import lombok.Getter;
@@ -61,7 +63,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param metaData the meta data
      */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData) {
-        this(source, metaData, null, null);
+        this(source, metaData, null, new ArrayList<>());
     }
 
     /**
@@ -73,7 +75,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
                                                        final Principal p) {
-        this(source, metaData, p, null);
+        this(source, metaData, p, new ArrayList<>());
     }
 
     /**
@@ -97,7 +99,7 @@ public class DefaultAuthenticationHandlerExecutionResult implements Authenticati
      * @param warnings the warnings
      */
     public DefaultAuthenticationHandlerExecutionResult(final AuthenticationHandler source, final CredentialMetaData metaData,
-                                                       final Principal p, final List<MessageDescriptor> warnings) {
+                                                       final Principal p, @NonNull final List<MessageDescriptor> warnings) {
         this(StringUtils.isBlank(source.getName()) ? source.getClass().getSimpleName() : source.getName(), metaData, p, warnings);
     }
 

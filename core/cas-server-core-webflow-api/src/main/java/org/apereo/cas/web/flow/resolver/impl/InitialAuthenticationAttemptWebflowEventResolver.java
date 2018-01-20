@@ -106,7 +106,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             LOGGER.debug("Locating authentication event in the request context...");
             final Authentication authn = WebUtils.getAuthentication(context);
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn, false);
+            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn,false);
         }
         return registeredService;
     }
@@ -119,8 +119,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
      * @param registeredService the registered service
      * @return the set
      */
-    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context, final Service service, final RegisteredService registeredService) {
-        return this.orderedResolvers.stream().map(resolver -> resolver.resolveSingle(context)).filter(Objects::nonNull).collect(Collectors.toSet());
+    protected Set<Event> resolveCandidateAuthenticationEvents(final RequestContext context,
+                                                              final Service service, final RegisteredService registeredService) {
+        return this.orderedResolvers.stream()
+            .map(resolver -> resolver.resolveSingle(context))
+            .filter(Objects::nonNull)
+            .collect(Collectors.toSet());
     }
 
     @Override

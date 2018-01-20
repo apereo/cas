@@ -16,9 +16,6 @@ import org.w3c.dom.Element;
  */
 @Slf4j
 public class X509TokenDelegationHandler implements TokenDelegationHandler {
-
-
-
     @Override
     public boolean canHandleToken(final ReceivedToken delegateTarget) {
         final Object token = delegateTarget.getToken();
