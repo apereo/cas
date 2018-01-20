@@ -1,16 +1,18 @@
 package org.apereo.cas.web.support;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apache.http.HttpStatus;
 import org.springframework.http.HttpMethod;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lombok.ToString;
-import lombok.Getter;
 
 /**
  * Abstract implementation of the handler that has all of the logic.  Encapsulates the logic in case we get it wrong!
@@ -21,6 +23,7 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
+@RequiredArgsConstructor
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter extends HandlerInterceptorAdapter implements ThrottledSubmissionHandlerInterceptor {
 
     private final int failureThreshold;
@@ -31,11 +34,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private double thresholdRate;
 
-    public AbstractThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds, final String usernameParameter) {
-        this.failureThreshold = failureThreshold;
-        this.failureRangeInSeconds = failureRangeInSeconds;
-        this.usernameParameter = usernameParameter;
-    }
 
     /**
      * Configure the threshold rate.
@@ -74,18 +72,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             LOGGER.debug("Recording submission failure for [{}]", request.getRequestURI());
             recordSubmissionFailure(request);
         }
-    }
-
-    protected double getThresholdRate() {
-        return this.thresholdRate;
-    }
-
-    protected int getFailureThreshold() {
-        return this.failureThreshold;
-    }
-
-    protected int getFailureRangeInSeconds() {
-        return this.failureRangeInSeconds;
     }
 
     /**

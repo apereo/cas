@@ -5,6 +5,8 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,9 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -181,16 +180,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         path = StringUtils.substringBefore(path, ";");
         path = StringUtils.substringBefore(path, "#");
         return path;
-    }
-
-    /**
-     * Gets an new map with the service ticket and services accessed by this ticket-granting ticket.
-     *
-     * @return a map of service ticket and services accessed by this ticket-granting ticket.
-     */
-    @Override
-    public synchronized Map<String, Service> getServices() {
-        return new HashMap<>(this.services);
     }
 
     /**

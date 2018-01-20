@@ -49,12 +49,4 @@ public class U2FDeviceRegistration {
     public U2FDeviceRegistration() {
         setId(System.currentTimeMillis());
     }
-
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public long getId() {
-        return id;
-    }
 }
