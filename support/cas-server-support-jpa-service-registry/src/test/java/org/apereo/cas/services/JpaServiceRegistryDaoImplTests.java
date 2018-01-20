@@ -131,7 +131,7 @@ public class JpaServiceRegistryDaoImplTests {
         r.setTheme("theme");
         r.setDescription("description");
 
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
+        final Map propertyMap = new HashMap<>();
 
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
@@ -164,19 +164,19 @@ public class JpaServiceRegistryDaoImplTests {
         r.setName("testContacts");
         r.setServiceId("testContacts");
 
-        final List<RegisteredServiceContact> propertyMap = new ArrayList<>();
-
-        final DefaultRegisteredServiceContact property = new DefaultRegisteredServiceContact();
-        property.setDepartment("department");
-        property.setId(1234);
-        property.setPhone("123-456-789");
-        r.setContacts(propertyMap);
+        final List contacts = new ArrayList<>();
+        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        contact.setDepartment("department");
+        contact.setId(1234);
+        contact.setPhone("123-456-789");
+        contacts.add(contact);
+        r.setContacts(contacts);
 
         this.serviceRegistryDao.save(r);
         final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
         assertEquals(2, r2.getProperties().size());
     }
-    
+
     @Test
     public void verifyOAuthServices() {
         final OAuthRegisteredService r = new OAuthRegisteredService();
