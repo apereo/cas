@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -103,19 +104,10 @@ public class CasRestAuthenticationConfiguration {
         };
     }
 
+    @AllArgsConstructor
     private static class HttpComponentsClientHttpRequestFactoryBasicAuth extends HttpComponentsClientHttpRequestFactory {
 
         private final HttpHost host;
-
-        /**
-         * Instantiates a new Http components client http request factory basic auth.
-         *
-         * @param host the host
-         */
-        HttpComponentsClientHttpRequestFactoryBasicAuth(final HttpHost host) {
-            super();
-            this.host = host;
-        }
 
         @Override
         protected HttpContext createHttpContext(final HttpMethod httpMethod, final URI uri) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.AllArgsConstructor;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -27,6 +28,7 @@ import java.util.regex.Pattern;
  */
 @Slf4j
 @ToString(callSuper = true)
+@AllArgsConstructor
 public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver {
 
     /**
@@ -76,11 +78,6 @@ public class X509SubjectPrincipalResolver extends AbstractX509PrincipalResolver 
                                         final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                         final String principalAttributeName, final String descriptor) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
-        this.descriptor = descriptor;
-    }
-
-    public X509SubjectPrincipalResolver(final String descriptor) {
-        super();
         this.descriptor = descriptor;
     }
 

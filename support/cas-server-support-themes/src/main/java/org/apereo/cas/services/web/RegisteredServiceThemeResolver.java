@@ -69,7 +69,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                                           final AuthenticationServiceSelectionPlan serviceSelectionStrategies,
                                           final ResourceLoader resourceLoader,
                                           final CasConfigurationProperties casProperties) {
-        super();
         this.servicesManager = servicesManager;
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategies;
         this.resourceLoader = resourceLoader;

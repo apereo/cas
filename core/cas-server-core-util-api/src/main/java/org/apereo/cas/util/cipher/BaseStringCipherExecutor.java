@@ -78,7 +78,6 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
      * @param encryptionEnabled                    the encryption enabled
      */
     public BaseStringCipherExecutor(final String secretKeyEncryption, final String secretKeySigning, final String contentEncryptionAlgorithmIdentifier, final boolean encryptionEnabled) {
-        super();
         this.encryptionEnabled = encryptionEnabled;
         if (this.encryptionEnabled) {
             configureEncryptionParameters(secretKeyEncryption, contentEncryptionAlgorithmIdentifier);
