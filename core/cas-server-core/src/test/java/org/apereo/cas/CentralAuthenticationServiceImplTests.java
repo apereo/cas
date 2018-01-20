@@ -126,7 +126,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             getService("TestServiceAttributeForAuthzFails"));
 
         this.thrown.expect(PrincipalException.class);
-        this.thrown.expectMessage("screen.service.error.message");
+
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService("TestServiceAttributeForAuthzFails"), ctx);

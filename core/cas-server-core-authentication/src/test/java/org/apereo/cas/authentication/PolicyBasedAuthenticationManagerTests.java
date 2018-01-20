@@ -87,7 +87,7 @@ public class PolicyBasedAuthenticationManagerTests {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), mockServicesManager());
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("2 errors, 0 successes");
+
 
         manager.authenticate(transaction);
 
@@ -119,7 +119,7 @@ public class PolicyBasedAuthenticationManagerTests {
                 new AllAuthenticationPolicy());
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("2 errors, 0 successes");
+
 
         manager.authenticate(transaction);
 
