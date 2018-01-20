@@ -41,8 +41,4 @@ public class YubiKeyAccount {
     public YubiKeyAccount() {
         this.id = System.currentTimeMillis();
     }
-
-    public long getId() {
-        return id;
-    }
 }

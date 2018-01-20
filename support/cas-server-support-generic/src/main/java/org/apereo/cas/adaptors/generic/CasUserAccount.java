@@ -54,11 +54,4 @@ public class CasUserAccount implements Serializable {
 
     private LocalDate expirationDate;
 
-    public AccountStatus getStatus() {
-        return status;
-    }
-
-    public LocalDate getExpirationDate() {
-        return expirationDate;
-    }
 }

@@ -85,14 +85,7 @@ public class ExpiredCRLException extends GeneralSecurityException {
     public ZonedDateTime getExpirationDate() {
         return this.expirationDate == null ? null : ZonedDateTime.from(this.expirationDate);
     }
-
-    /**
-     * @return Returns the leniency.
-     */
-    public int getLeniency() {
-        return this.leniency;
-    }
-
+    
     @Override
     public String getMessage() {
         if (this.leniency > 0) {

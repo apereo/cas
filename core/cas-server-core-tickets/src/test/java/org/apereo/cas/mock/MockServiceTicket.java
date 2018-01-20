@@ -48,11 +48,6 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     }
 
     @Override
-    public Service getService() {
-        return service;
-    }
-
-    @Override
     public boolean isFromNewLogin() {
         return false;
     }

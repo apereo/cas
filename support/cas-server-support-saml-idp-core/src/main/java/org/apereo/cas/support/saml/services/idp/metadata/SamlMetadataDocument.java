@@ -49,8 +49,4 @@ public class SamlMetadataDocument {
     public SamlMetadataDocument() {
         setId(System.currentTimeMillis());
     }
-
-    public long getId() {
-        return id;
-    }
 }

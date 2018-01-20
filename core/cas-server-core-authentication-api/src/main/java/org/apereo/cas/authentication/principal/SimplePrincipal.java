@@ -56,7 +56,8 @@ public class SimplePrincipal implements Principal {
      * @param attributes the attributes
      */
     @JsonCreator
-    protected SimplePrincipal(@NonNull @JsonProperty("id") final String id, @JsonProperty("attributes") final Map<String, Object> attributes) {
+    protected SimplePrincipal(@NonNull @JsonProperty("id") final String id,
+                              @NonNull @JsonProperty("attributes") final Map<String, Object> attributes) {
         this.id = id;
         if (attributes == null) {
             this.attributes = new HashMap<>();

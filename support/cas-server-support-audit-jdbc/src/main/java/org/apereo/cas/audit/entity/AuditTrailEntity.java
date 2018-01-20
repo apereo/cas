@@ -52,17 +52,9 @@ public class AuditTrailEntity {
     private String applicationCode;
 
     @Column(name = "AUD_DATE", nullable = false, columnDefinition = "TIMESTAMP")
-    private ZonedDateTime date;
+    private ZonedDateTime recordDate;
 
     public AuditTrailEntity() {
         this.id = System.currentTimeMillis();
-    }
-
-    public long getId() {
-        return this.id;
-    }
-
-    public ZonedDateTime getDate() {
-        return this.date;
     }
 }

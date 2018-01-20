@@ -74,11 +74,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public Authentication getAuthentication() {
-        return authentication;
-    }
-
-    @Override
     public void update() {
         usageCount++;
     }
