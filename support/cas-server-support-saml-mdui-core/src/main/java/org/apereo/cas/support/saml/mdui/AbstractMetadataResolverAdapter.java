@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui;
 
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -14,6 +15,7 @@ import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.springframework.core.io.Resource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,6 +24,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import lombok.Setter;
 
 /**
@@ -87,14 +90,11 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
     }
 
     @Override
+    @SneakyThrows
     public EntityDescriptor getEntityDescriptorForEntityId(final String entityId) {
-        try {
-            final CriteriaSet criterions = new CriteriaSet(new EntityIdCriterion(entityId));
-            if (this.metadataResolver != null) {
-                return this.metadataResolver.resolveSingle(criterions);
-            }
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
+        final CriteriaSet criterions = new CriteriaSet(new EntityIdCriterion(entityId));
+        if (this.metadataResolver != null) {
+            return this.metadataResolver.resolveSingle(criterions);
         }
         return null;
     }
@@ -113,25 +113,22 @@ public abstract class AbstractMetadataResolverAdapter implements MetadataResolve
      * @param entityId the entity id
      */
     @Synchronized
+    @SneakyThrows
     public void buildMetadataResolverAggregate(final String entityId) {
-        try {
-            LOGGER.debug("Building metadata resolver aggregate");
-            this.metadataResolver = new ChainingMetadataResolver();
-            final List<MetadataResolver> resolvers = new ArrayList<>();
-            final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
-            entries.forEach(entry -> {
-                final Resource resource = entry.getKey();
-                LOGGER.debug("Loading [{}]", resource.getFilename());
-                resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
-            });
-            this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-            this.metadataResolver.setResolvers(resolvers);
-            LOGGER.info("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
-            this.metadataResolver.initialize();
-            LOGGER.info("Metadata aggregate initialized successfully.");
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
-        }
+        LOGGER.debug("Building metadata resolver aggregate");
+        this.metadataResolver = new ChainingMetadataResolver();
+        final List<MetadataResolver> resolvers = new ArrayList<>();
+        final Set<Map.Entry<Resource, MetadataFilterChain>> entries = this.metadataResources.entrySet();
+        entries.forEach(entry -> {
+            final Resource resource = entry.getKey();
+            LOGGER.debug("Loading [{}]", resource.getFilename());
+            resolvers.addAll(loadMetadataFromResource(entry.getValue(), resource, entityId));
+        });
+        this.metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+        this.metadataResolver.setResolvers(resolvers);
+        LOGGER.info("Collected metadata from [{}] resolvers(s). Initializing aggregate resolver...", resolvers.size());
+        this.metadataResolver.initialize();
+        LOGGER.info("Metadata aggregate initialized successfully.");
     }
 
     /**
