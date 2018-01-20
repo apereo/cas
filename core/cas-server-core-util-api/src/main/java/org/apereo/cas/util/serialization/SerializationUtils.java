@@ -7,7 +7,6 @@ import org.apereo.cas.CipherExecutor;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -76,10 +75,9 @@ public class SerializationUtils {
      * @return the object
      * @since 5.0.0
      */
+    @SneakyThrows
     public static <T> T deserialize(final InputStream inputStream, final Class<T> clazz) {
-        ObjectInputStream in = null;
-        try {
-            in = new ObjectInputStream(inputStream);
+        try (ObjectInputStream in = new ObjectInputStream(inputStream)) {
             final Object obj = in.readObject();
 
             if (!clazz.isAssignableFrom(obj.getClass())) {
@@ -88,16 +86,6 @@ public class SerializationUtils {
                     + " when we were expecting " + clazz);
             }
             return (T) obj;
-        } catch (final ClassNotFoundException | IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (final IOException e) {
-                    LOGGER.error("Unable to serialize", e);
-                }
-            }
         }
     }
 

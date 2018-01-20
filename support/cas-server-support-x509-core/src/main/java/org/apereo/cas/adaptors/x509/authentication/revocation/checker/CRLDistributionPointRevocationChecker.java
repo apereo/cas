@@ -173,20 +173,16 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     }
 
     @Override
+    @SneakyThrows
     protected boolean addCRL(final Object id, final X509CRL crl) {
-        try {
-            if (crl == null) {
-                LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
-                return this.crlCache.remove(id);
-            }
-
-            this.crlCache.put(new Element(id, crl.getEncoded()));
-            return this.crlCache.get(id) != null;
-
-        } catch (final Exception e) {
-            LOGGER.warn("Failed to add the crl entry [{}] to the cache", crl);
-            throw new RuntimeException(e.getMessage(), e);
+        if (crl == null) {
+            LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
+            return this.crlCache.remove(id);
         }
+
+        this.crlCache.put(new Element(id, crl.getEncoded()));
+        return this.crlCache.get(id) != null;
+
     }
 
 

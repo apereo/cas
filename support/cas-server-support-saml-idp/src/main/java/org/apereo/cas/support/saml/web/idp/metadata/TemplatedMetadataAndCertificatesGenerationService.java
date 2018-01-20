@@ -71,30 +71,26 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
     }
 
     @Override
+    @SneakyThrows
     public File performGenerationSteps() {
-        try {
-            final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-            LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
-            if (isMetadataMissing()) {
-                LOGGER.info("Metadata does not exist at [{}]. Creating...", idp.getMetadata().getMetadataFile());
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
+        if (isMetadataMissing()) {
+            LOGGER.info("Metadata does not exist at [{}]. Creating...", idp.getMetadata().getMetadataFile());
 
-                LOGGER.info("Creating self-sign certificate for signing...");
-                buildSelfSignedSigningCert();
+            LOGGER.info("Creating self-sign certificate for signing...");
+            buildSelfSignedSigningCert();
 
-                LOGGER.info("Creating self-sign certificate for encryption...");
-                buildSelfSignedEncryptionCert();
+            LOGGER.info("Creating self-sign certificate for encryption...");
+            buildSelfSignedEncryptionCert();
 
-                LOGGER.info("Creating metadata...");
-                buildMetadataGeneratorParameters();
-            }
-
-            LOGGER.info("Metadata is available at [{}]", idp.getMetadata().getMetadataFile());
-
-            return idp.getMetadata().getMetadataFile();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+            LOGGER.info("Creating metadata...");
+            buildMetadataGeneratorParameters();
         }
+
+        LOGGER.info("Metadata is available at [{}]", idp.getMetadata().getMetadataFile());
+
+        return idp.getMetadata().getMetadataFile();
     }
 
     private String getIdPEndpointUrl() {
