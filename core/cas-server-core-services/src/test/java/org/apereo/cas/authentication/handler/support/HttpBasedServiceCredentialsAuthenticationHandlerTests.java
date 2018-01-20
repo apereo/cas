@@ -50,7 +50,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     @Test
     public void verifyRejectsInProperCertificateCredentials() throws Exception {
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("https://clearinghouse.ja-sig.org sent an unacceptable response status code");
+
 
         this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clearinghouse.ja-sig.org"));
     }
@@ -63,7 +63,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
     @Test
     public void verifyNoAcceptableStatusCode() throws Exception {
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("https://clue.acs.rutgers.edu sent an unacceptable response status code");
+
 
         this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://clue.acs.rutgers.edu"));
     }
@@ -76,7 +76,7 @@ public class HttpBasedServiceCredentialsAuthenticationHandlerTests {
         this.authenticationHandler = new HttpBasedServiceCredentialsAuthenticationHandler("", null, null, null, httpClient);
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("https://www.ja-sig.org sent an unacceptable response status code");
+
 
         this.authenticationHandler.authenticate(RegisteredServiceTestUtils.getHttpBasedServiceCredentials("https://www.ja-sig.org"));
     }

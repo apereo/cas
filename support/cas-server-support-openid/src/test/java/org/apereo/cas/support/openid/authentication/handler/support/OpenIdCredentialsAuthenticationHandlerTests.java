@@ -61,7 +61,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         t.markTicketExpired();
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("TGT is null or expired.");
+
 
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
@@ -73,7 +73,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         this.ticketRegistry.addTicket(t);
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Principal ID mismatch");
+
 
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
