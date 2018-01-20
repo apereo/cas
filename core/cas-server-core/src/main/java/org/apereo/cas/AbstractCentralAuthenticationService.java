@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -28,7 +29,6 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.Assert;
 import org.springframework.util.StringUtils;
 import java.io.Serializable;
 import java.util.Collection;
@@ -115,8 +115,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
     @Override
-    public Ticket getTicket(final String ticketId) throws InvalidTicketException {
-        Assert.notNull(ticketId, "ticketId cannot be null");
+    public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
         verifyTicketState(ticket, ticketId, null);
         return ticket;
@@ -135,8 +134,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     @Metered(name = "GET_TICKET_METER")
     @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) throws InvalidTicketException {
-        Assert.notNull(ticketId, "ticketId cannot be null");
+    public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
         verifyTicketState(ticket, ticketId, clazz);
         return (T) ticket;

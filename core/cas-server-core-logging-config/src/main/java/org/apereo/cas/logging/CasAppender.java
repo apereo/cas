@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Appender;
@@ -13,7 +14,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link CasAppender}.
@@ -36,11 +36,8 @@ public class CasAppender extends AbstractAppender {
      * @param config      the config
      * @param appenderRef the appender ref
      */
-    public CasAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
+    public CasAppender(final String name, @NonNull final Configuration config, @NonNull final AppenderRef appenderRef) {
         super(name, null, PatternLayout.createDefaultLayout());
-        Assert.notNull(config, "Log configuration cannot be null");
-        Assert.notNull(config, "Appender reference configuration cannot be null");
-
         this.config = config;
         this.appenderRef = appenderRef;
     }
