@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.datasource.AbstractDataSource;
 
@@ -25,14 +26,11 @@ import org.springframework.jdbc.datasource.AbstractDataSource;
  * @since 5.1
  */
 @Slf4j
+@AllArgsConstructor
 public class DataSourceProxy extends AbstractDataSource {
 
     private final DataSource dataSource;
-    
-    public DataSourceProxy(final DataSource dataSource) {
-        super();
-        this.dataSource = dataSource;
-    }
+
 
     @Override
     public Connection getConnection() throws SQLException {

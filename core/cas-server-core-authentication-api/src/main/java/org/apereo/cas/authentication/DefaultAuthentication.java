@@ -4,12 +4,11 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -38,14 +37,14 @@ public class DefaultAuthentication implements Authentication {
     private ZonedDateTime authenticationDate;
 
     /**
-     * List of metadata about credentials presented at authentication.
-     */
-    private List<CredentialMetaData> credentials;
-
-    /**
      * Authenticated principal.
      */
     private Principal principal;
+
+    /**
+     * List of metadata about credentials presented at authentication.
+     */
+    private List<CredentialMetaData> credentials;
 
     /**
      * Authentication metadata attributes.
@@ -61,7 +60,7 @@ public class DefaultAuthentication implements Authentication {
      * Map of handler name to handler authentication failure cause.
      */
     private Map<String, Throwable> failures;
-    
+
 
     /**
      * Creates a new instance with the given data.
@@ -72,15 +71,10 @@ public class DefaultAuthentication implements Authentication {
      * @param successes  Non-null map of authentication successes containing at least one entry.
      */
     public DefaultAuthentication(
-            final ZonedDateTime date,
-            final Principal principal,
-            final Map<String, Object> attributes,
-            final Map<String, AuthenticationHandlerExecutionResult> successes) {
-
-        Assert.notNull(date, "Date cannot be null");
-        Assert.notNull(principal, "Principal cannot be null");
-        Assert.notNull(successes, "Successes cannot be null");
-        Assert.notEmpty(successes, "Successes cannot be empty");
+        @NonNull final ZonedDateTime date,
+        @NonNull final Principal principal,
+        @NonNull final Map<String, Object> attributes,
+        @NonNull final Map<String, AuthenticationHandlerExecutionResult> successes) {
 
         this.authenticationDate = date;
         this.principal = principal;
@@ -101,22 +95,18 @@ public class DefaultAuthentication implements Authentication {
      * @param failures    Nullable map of authentication failures.
      */
     public DefaultAuthentication(
-            final ZonedDateTime date,
-            final List<CredentialMetaData> credentials,
-            final Principal principal,
-            final Map<String, Object> attributes,
-            final Map<String, AuthenticationHandlerExecutionResult> successes,
-            final Map<String, Throwable> failures) {
+        @NonNull final ZonedDateTime date,
+        @NonNull final List<CredentialMetaData> credentials,
+        @NonNull final Principal principal,
+        @NonNull final Map<String, Object> attributes,
+        @NonNull final Map<String, AuthenticationHandlerExecutionResult> successes,
+        @NonNull final Map<String, Throwable> failures) {
 
         this(date, principal, attributes, successes);
-
-        Assert.notNull(credentials, "Credential cannot be null");
-        Assert.notEmpty(credentials, "Credential cannot be empty");
-
         this.credentials = credentials;
-        this.failures = failures.isEmpty() ? new HashMap<>(0) : failures;
+        this.failures = failures;
     }
-    
+
     @Override
     public void update(final Authentication authn) {
         this.attributes.putAll(authn.getAttributes());
