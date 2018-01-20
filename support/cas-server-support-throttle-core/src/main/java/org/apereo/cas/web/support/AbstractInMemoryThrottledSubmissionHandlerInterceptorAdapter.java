@@ -21,14 +21,13 @@ import java.util.concurrent.ConcurrentMap;
 @Slf4j
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
         implements InMemoryThrottledSubmissionHandlerInterceptor {
-
-
     
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
     private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
-    public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold, final int failureRangeInSeconds,
+    public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
+                                                                        final int failureRangeInSeconds,
                                                                         final String usernameParameter) {
         super(failureThreshold, failureRangeInSeconds, usernameParameter);
     }

@@ -65,12 +65,8 @@ public class HttpMessage implements Serializable {
      */
     public HttpMessage(final URL url, final String message, final boolean async) {
         this.url = url;
-        this.message = message;
+        this.message = formatOutputMessageInternal(message);
         this.asynchronous = async;
-    }
-
-    public String getMessage() {
-        return this.formatOutputMessageInternal(this.message);
     }
 
     /**
@@ -83,7 +79,7 @@ public class HttpMessage implements Serializable {
         try {
             return EncodingUtils.urlEncode(message);
         } catch (final Exception e) {
-            LOGGER.warn("Unable to encode URL", e);
+            LOGGER.warn("Unable to encode URL " + message, e);
         }
         return message;
     }
