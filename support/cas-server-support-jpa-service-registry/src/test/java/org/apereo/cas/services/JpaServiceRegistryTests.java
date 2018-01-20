@@ -171,7 +171,6 @@ public class JpaServiceRegistryTests {
         final List contacts = new ArrayList<>();
         final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
         contact.setDepartment("department");
-        contact.setId(1234);
         contact.setName("ContactName");
         contact.setPhone("123-456-789");
         contacts.add(contact);
