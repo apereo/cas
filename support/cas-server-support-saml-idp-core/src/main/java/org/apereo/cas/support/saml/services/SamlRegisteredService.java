@@ -40,7 +40,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
 
     private static final long serialVersionUID = 1218757374062931021L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String metadataLocation;
 
     /**
@@ -49,67 +49,67 @@ public class SamlRegisteredService extends RegexRegisteredService {
      * A maximum validity interval of less than 1 means that
      * no restriction is placed on the metadata's validUntil attribute.
      */
-    @Column(updatable = true, insertable = true)
+    @Column
     private long metadataMaxValidity;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String requiredAuthenticationContextClass;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String metadataCriteriaDirection;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String metadataCriteriaPattern;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String requiredNameIdFormat;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String metadataSignatureLocation;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String serviceProviderNameIdQualifier;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String nameIdQualifier;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String metadataExpirationDuration = "PT60M";
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean signAssertions;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean skipGeneratingAssertionNameId;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean skipGeneratingSubjectConfirmationInResponseTo;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean skipGeneratingSubjectConfirmationNotOnOrAfter;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean skipGeneratingSubjectConfirmationRecipient;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean skipGeneratingSubjectConfirmationNotBefore = true;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean signResponses = true;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean encryptAssertions;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String metadataCriteriaRoles = SPSSODescriptor.DEFAULT_ELEMENT_LOCAL_NAME;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean metadataCriteriaRemoveEmptyEntitiesDescriptors = true;
 
-    @Column(updatable = true, insertable = true)
+    @Column
     private boolean metadataCriteriaRemoveRolelessEntityDescriptors = true;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String signingCredentialType;
 
     @ElementCollection

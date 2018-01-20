@@ -22,8 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
 public abstract class AbstractNonInteractiveCredentialsAction extends AbstractAuthenticationAction {
     private static final String BAD_X509_CREDENTIALS_MSG_CODE = "error.x509.credentials.bad";
 
-
-
     public AbstractNonInteractiveCredentialsAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                    final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
                                                    final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {

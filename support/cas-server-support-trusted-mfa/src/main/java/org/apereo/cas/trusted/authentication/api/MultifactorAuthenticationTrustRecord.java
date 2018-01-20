@@ -39,20 +39,20 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String principal;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String geography;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate recordDate;
 
-    @Column(length = 500, updatable = true, insertable = true, nullable = false)
+    @Column(length = 500, nullable = false)
     private String recordKey;
 
-    @Column(length = 500, updatable = true, insertable = true, nullable = false)
+    @Column(length = 500, nullable = false)
     private String name;
 
     public MultifactorAuthenticationTrustRecord() {

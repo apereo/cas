@@ -38,7 +38,6 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
 
-
     /**
      * Instantiates a new Abstract saml profile handler controller.
      *

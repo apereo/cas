@@ -36,20 +36,20 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
 
     private static final long serialVersionUID = 6276140828446447398L;
 
-    @Column(length = 500, updatable = true, insertable = true)
+    @Column(length = 500)
     private String issuer;
 
-    @Column(length = 500, updatable = true, insertable = true)
+    @Column(length = 500)
     private String relyingPartyId;
 
-    @Column(length = 5000, updatable = true, insertable = true)
+    @Column(length = 10_000)
     private String object;
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
-    @JsonProperty("grantingTicket")
+    @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**

@@ -60,22 +60,22 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     /**
      * The unique identifier for this service.
      */
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     protected String serviceId;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String theme;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String informationUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String privacyUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String responseType;
 
     @org.springframework.data.annotation.Id
@@ -84,7 +84,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String description;
 
     @Lob
@@ -117,7 +117,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String logo;
 
     @Column(name = "logout_url")

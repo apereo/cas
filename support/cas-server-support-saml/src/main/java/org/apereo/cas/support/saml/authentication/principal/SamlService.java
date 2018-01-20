@@ -32,7 +32,7 @@ public class SamlService extends AbstractWebApplicationService {
      */
     private static final long serialVersionUID = -6867572626767140223L;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String requestId;
 
     /**

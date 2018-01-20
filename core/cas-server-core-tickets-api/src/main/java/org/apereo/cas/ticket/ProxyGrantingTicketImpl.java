@@ -57,10 +57,10 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
      */
     @JsonCreator
     public ProxyGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
-                                   @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+                                   @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
                                    @JsonProperty("authentication") final Authentication authentication,
-                                   @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
-        super(id, proxiedBy, parentTicketGrantingTicket, authentication, policy);
+                                   @JsonProperty("expirationPolicy") final ExpirationPolicy expirationPolicy) {
+        super(id, proxiedBy, parentTicketGrantingTicket, authentication, expirationPolicy);
     }
 
     @Override

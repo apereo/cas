@@ -35,7 +35,7 @@ public class U2FDeviceRegistration {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     @Lob

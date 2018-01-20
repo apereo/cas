@@ -28,10 +28,10 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String relayState;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String requestId;
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
@@ -43,8 +44,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      * OID for KeyUsage X.509v3 extension field.
      */
     private static final String KEY_USAGE_OID = "2.5.29.15";
-
-
 
     /**
      * The compiled pattern supplied by the deployer.
@@ -103,7 +102,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
     public X509CredentialsAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                                 final Pattern regExTrustedIssuerDnPattern, final int maxPathLength,
                                                 final boolean maxPathLengthAllowUnspecified, final boolean checkKeyUsage, final boolean requireKeyUsage,
-                                                final Pattern regExSubjectDnPattern, final RevocationChecker revocationChecker) {
+                                                final Pattern regExSubjectDnPattern, @NonNull final RevocationChecker revocationChecker) {
         super(name, servicesManager, principalFactory, null);
         this.regExTrustedIssuerDnPattern = regExTrustedIssuerDnPattern;
         this.maxPathLength = maxPathLength;
@@ -111,9 +110,6 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         this.checkKeyUsage = checkKeyUsage;
         this.requireKeyUsage = requireKeyUsage;
         this.regExSubjectDnPattern = regExSubjectDnPattern;
-        if (revocationChecker == null) {
-            throw new IllegalArgumentException("Revocation checker is not configured");
-        }
         this.revocationChecker = revocationChecker;
     }
 
@@ -125,9 +121,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                                                 final boolean maxPathLengthAllowUnspecified,
                                                 final Pattern regExSubjectDnPattern) {
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
-                Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
-                false, regExSubjectDnPattern,
-                new NoOpRevocationChecker());
+            Integer.MAX_VALUE, maxPathLengthAllowUnspecified, false,
+            false, regExSubjectDnPattern,
+            new NoOpRevocationChecker());
     }
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern,
@@ -135,15 +131,15 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
                                                 final boolean checkKeyUsage,
                                                 final boolean requireKeyUsage) {
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern,
-                Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
-                checkKeyUsage, requireKeyUsage, null,
-                new NoOpRevocationChecker());
+            Integer.MAX_VALUE, maxPathLengthAllowUnspecified,
+            checkKeyUsage, requireKeyUsage, null,
+            new NoOpRevocationChecker());
     }
 
     public X509CredentialsAuthenticationHandler(final Pattern regExTrustedIssuerDnPattern, final RevocationChecker revocationChecker) {
         this(StringUtils.EMPTY, null, null, regExTrustedIssuerDnPattern, Integer.MAX_VALUE, false,
-                false, false, null,
-                revocationChecker);
+            false, false, null,
+            revocationChecker);
     }
 
     @Override
@@ -181,7 +177,8 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         }
         if (hasTrustedIssuer && clientCert != null) {
             x509Credential.setCertificate(clientCert);
-            return new DefaultAuthenticationHandlerExecutionResult(this, x509Credential, this.principalFactory.createPrincipal(x509Credential.getId()));
+            return new DefaultAuthenticationHandlerExecutionResult(this, x509Credential,
+                this.principalFactory.createPrincipal(x509Credential.getId()));
         }
         LOGGER.warn("Either client certificate could not be determined, or a trusted issuer could not be located");
         throw new FailedLoginException();
@@ -200,12 +197,10 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
         final int pathLength = cert.getBasicConstraints();
         if (pathLength < 0) {
             if (!isCertificateAllowed(cert)) {
-                throw new FailedLoginException(
-                        "Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern());
+                throw new FailedLoginException("Certificate subject does not match pattern " + this.regExSubjectDnPattern.pattern());
             }
             if (this.checkKeyUsage && !isValidKeyUsage(cert)) {
-                throw new FailedLoginException(
-                        "Certificate keyUsage constraint forbids SSL client authentication.");
+                throw new FailedLoginException("Certificate keyUsage constraint forbids SSL client authentication.");
             }
         } else {
             // Check pathLength for CA cert
@@ -214,7 +209,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             }
             if (pathLength > this.maxPathLength && pathLength < Integer.MAX_VALUE) {
                 throw new FailedLoginException(String.format(
-                        "Certificate path length %s exceeds maximum value %s.", pathLength, this.maxPathLength));
+                    "Certificate path length %s exceeds maximum value %s.", pathLength, this.maxPathLength));
             }
         }
     }
@@ -241,8 +236,7 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
             LOGGER.debug("KeyUsage extension is marked critical or required by configuration.");
             valid = keyUsage[0];
         } else {
-            LOGGER.debug(
-                    "KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
+            LOGGER.debug("KeyUsage digitalSignature=%s, Returning true since keyUsage validation not required by configuration.");
             valid = true;
         }
         return valid;
@@ -257,11 +251,9 @@ public class X509CredentialsAuthenticationHandler extends AbstractPreAndPostProc
      */
     private static boolean isCritical(final X509Certificate certificate, final String extensionOid) {
         final Set<String> criticalOids = certificate.getCriticalExtensionOIDs();
-
         if (criticalOids == null || criticalOids.isEmpty()) {
             return false;
         }
-
         return criticalOids.contains(extensionOid);
     }
 

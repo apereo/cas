@@ -38,17 +38,17 @@ public class SamlAttributeQueryTicketImpl extends AbstractTicket implements Saml
 
     private static final long serialVersionUID = 6276140828446447398L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String relyingParty;
 
-    @Column(length = 5000, updatable = true, insertable = true)
+    @Column(length = 5000)
     private String object;
 
     /**
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
-    @JsonProperty("grantingTicket")
+    @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**

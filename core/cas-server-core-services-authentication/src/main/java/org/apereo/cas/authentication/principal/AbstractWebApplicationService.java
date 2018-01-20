@@ -37,7 +37,6 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode
 public abstract class AbstractWebApplicationService implements WebApplicationService {
-
     private static final long serialVersionUID = 610105280927740076L;
 
     /**
@@ -51,19 +50,19 @@ public abstract class AbstractWebApplicationService implements WebApplicationSer
      * The original url provided, used to reconstruct the redirect url.
      */
     @JsonProperty
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String originalUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String artifactId;
 
     @JsonProperty
     private String principal;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column
     private boolean loggedOutAlready;
 
-    @Column(updatable = true, insertable = true, nullable = false)
+    @Column
     private ValidationResponseType format = ValidationResponseType.XML;
 
     /**

@@ -39,10 +39,10 @@ import lombok.NoArgsConstructor;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
-@ToString
+@ToString(of="id")
 @Getter
 @NoArgsConstructor
-@EqualsAndHashCode(of = {"of"})
+@EqualsAndHashCode(of = {"id"})
 @Setter
 public abstract class AbstractTicket implements Ticket, TicketState {
 
@@ -127,4 +127,5 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }
+    
 }
