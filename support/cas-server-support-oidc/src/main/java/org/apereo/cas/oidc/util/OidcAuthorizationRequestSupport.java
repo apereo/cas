@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.util;
 
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -16,7 +17,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -42,8 +42,7 @@ public class OidcAuthorizationRequestSupport {
      * @param url the url
      * @return the oidc prompt from authorization request
      */
-    public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
-        Assert.notNull(url, "URL cannot be null");
+    public static Set<String> getOidcPromptFromAuthorizationRequest(@NonNull final String url) {
         return new URIBuilder(url).getQueryParams().stream()
                 .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
                 .map(param -> param.getValue().split(" "))

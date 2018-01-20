@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -27,7 +28,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -57,6 +57,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     private static final String FILE_PARAM = "file";
     private static final String FILE_PATTERN_PARAM = "filePattern";
 
+    @NonNull
     private LoggerContext loggerContext;
 
     private final AuditTrailExecutionPlan auditTrailManager;
@@ -118,8 +119,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
-
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
         responseMap.put("activeLoggers", loggers.values());
@@ -140,8 +139,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
-
-        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -235,8 +232,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
                                   final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
-
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
             filter(cfg -> cfg.getName().equals(loggerName))
@@ -258,7 +253,6 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @ResponseBody
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        Assert.notNull(this.loggerContext, "loggerContext cannot be null");
         final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }

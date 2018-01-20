@@ -5,11 +5,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -112,12 +113,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @JsonCreator
     public TicketGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
                                     @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
-                                    @JsonProperty("authentication") final Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
+                                    @NonNull @JsonProperty("authentication") final Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
         }
-        Assert.notNull(authentication, "authentication cannot be null");
         this.ticketGrantingTicket = parentTicketGrantingTicket;
         this.authentication = authentication;
         this.proxiedBy = proxiedBy;

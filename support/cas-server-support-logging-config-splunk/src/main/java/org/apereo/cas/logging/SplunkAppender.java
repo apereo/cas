@@ -1,5 +1,6 @@
 package org.apereo.cas.logging;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.logging.log4j.core.Appender;
@@ -13,7 +14,6 @@ import org.apache.logging.log4j.core.config.plugins.PluginConfiguration;
 import org.apache.logging.log4j.core.config.plugins.PluginElement;
 import org.apache.logging.log4j.core.config.plugins.PluginFactory;
 import org.apache.logging.log4j.core.layout.PatternLayout;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link SplunkAppender}.
@@ -29,11 +29,8 @@ public class SplunkAppender extends AbstractAppender {
     private final Configuration config;
     private final AppenderRef appenderRef;
 
-    public SplunkAppender(final String name, final Configuration config, final AppenderRef appenderRef) {
+    public SplunkAppender(final String name, @NonNull final Configuration config, @NonNull final AppenderRef appenderRef) {
         super(name, null, PatternLayout.createDefaultLayout());
-        Assert.notNull(config, "Log configuration cannot be null");
-        Assert.notNull(config, "Appender reference configuration cannot be null");
-
         this.config = config;
         this.appenderRef = appenderRef;
     }
