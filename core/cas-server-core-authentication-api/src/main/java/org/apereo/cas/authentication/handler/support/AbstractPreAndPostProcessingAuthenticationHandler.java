@@ -16,6 +16,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -69,5 +70,21 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
                                                                        @NonNull final Principal principal,
                                                                        final List<MessageDescriptor> warnings) {
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+    }
+
+    /**
+     * Helper method to construct a handler result
+     * on successful authentication events.
+     *
+     * @param credential the credential on which the authentication was successfully performed.
+     *                   Note that this credential instance may be different from what was originally provided
+     *                   as transformation of the username may have occurred, if one is in fact defined.
+     * @param principal  the resolved principal
+     * @return the constructed handler result
+     */
+    protected AuthenticationHandlerExecutionResult createHandlerResult(@NonNull final Credential credential,
+                                                                       @NonNull final Principal principal) {
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
+            principal, new ArrayList<>(0));
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.StringUtils;
@@ -111,14 +112,14 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
         String shire = CommonUtils.safeGetParameter(request, SamlIdPConstants.SHIRE);
         final SamlRegisteredServiceServiceProviderMetadataFacade facade = adaptor.get();
         if (StringUtils.isBlank(shire)) {
+            LOGGER.warn("Resolving service provider assertion consumer service URL for [{}] and binding [{}]",
+                providerId, SAMLConstants.SAML2_POST_BINDING_URI);
+            @NonNull
             final AssertionConsumerService acs = facade.getAssertionConsumerService(SAMLConstants.SAML2_POST_BINDING_URI);
-            if (acs == null) {
-                throw new MessageDecodingException("Unable to resolve SP ACS URL");
-            }
             shire = acs.getLocation();
         }
         if (StringUtils.isBlank(shire)) {
-            LOGGER.warn("Unable to resolve SP ACS URL for AuthnRequest construction for entityID: [{}]", providerId);
+            LOGGER.warn("Unable to resolve service provider assertion consumer service URL for AuthnRequest construction for entityID: [{}]", providerId);
             throw new MessageDecodingException("Unable to resolve SP ACS URL for AuthnRequest construction");
         }
 

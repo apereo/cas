@@ -79,12 +79,12 @@ public class UrlResourceMetadataResolver extends BaseSamlRegisteredServiceMetada
         }
         try {
             FileUtils.forceMkdir(backupDirectory);
-            return backupFile;
         } catch (final Exception e) {
-            LOGGER.warn("Unable to create metadata backup directory [{}] to store downloaded metadata from [{}]. "
+            LOGGER.error("Unable to create metadata backup directory [{}] to store downloaded metadata from [{}]. "
                 + "This is likely due to a permission issue", backupDirectory, metadataResource);
-            throw new IOException(e.getMessage(), e);
+            LOGGER.debug(e.getMessage(), e);
         }
+        return backupFile;
     }
 
     @Override

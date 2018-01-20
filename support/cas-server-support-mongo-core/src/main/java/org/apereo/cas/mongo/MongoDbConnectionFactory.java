@@ -7,6 +7,7 @@ import com.mongodb.MongoClientURI;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.WriteConcern;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.mongo.BaseMongoDbProperties;
@@ -215,51 +216,46 @@ public class MongoDbConnectionFactory {
             : PropertyNameFieldNamingStrategy.INSTANCE;
     }
 
+    @SneakyThrows
     private MongoClientOptionsFactoryBean buildMongoDbClientOptionsFactoryBean(final BaseMongoDbProperties mongo) {
-        try {
-            final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
-            bean.setHeartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-            bean.setHeartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-            bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
-            bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
-            bean.setMaxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis());
-            bean.setConnectionsPerHost(mongo.getConns().getPerHost());
-            bean.setSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-            bean.setConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
-            if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
-                bean.setRequiredReplicaSetName(mongo.getReplicaSet());
-            }
-            bean.setSsl(mongo.isSslEnabled());
-            if (mongo.isSslEnabled()) {
-                bean.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
-            }
-            bean.afterPropertiesSet();
-            return bean;
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
+
+        final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
+        bean.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
+        bean.setHeartbeatConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
+        bean.setHeartbeatSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
+        bean.setMaxConnectionLifeTime(mongo.getConns().getLifetime());
+        bean.setSocketKeepAlive(mongo.isSocketKeepAlive());
+        bean.setMaxConnectionIdleTime((int) Beans.newDuration(mongo.getIdleTimeout()).toMillis());
+        bean.setConnectionsPerHost(mongo.getConns().getPerHost());
+        bean.setSocketTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
+        bean.setConnectTimeout((int) Beans.newDuration(mongo.getTimeout()).toMillis());
+        if (StringUtils.isNotBlank(mongo.getReplicaSet())) {
+            bean.setRequiredReplicaSetName(mongo.getReplicaSet());
         }
+        bean.setSsl(mongo.isSslEnabled());
+        if (mongo.isSslEnabled()) {
+            bean.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
+        }
+        bean.afterPropertiesSet();
+        return bean;
+
     }
 
+    @SneakyThrows
     private MongoClientOptions buildMongoDbClientOptions(final BaseMongoDbProperties mongo) {
-        try {
-            return buildMongoDbClientOptionsFactoryBean(mongo).getObject();
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
+        return buildMongoDbClientOptionsFactoryBean(mongo).getObject();
     }
 
+    @SneakyThrows
     private MongoClientOptions buildMongoDbClientOptions() {
-        try {
-            final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
-            bean.setSocketTimeout(TIMEOUT);
-            bean.setConnectTimeout(TIMEOUT);
-            bean.setMaxWaitTime(TIMEOUT);
-            bean.afterPropertiesSet();
-            return bean.getObject();
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
+
+        final MongoClientOptionsFactoryBean bean = new MongoClientOptionsFactoryBean();
+        bean.setSocketTimeout(TIMEOUT);
+        bean.setConnectTimeout(TIMEOUT);
+        bean.setMaxWaitTime(TIMEOUT);
+        bean.afterPropertiesSet();
+        return bean.getObject();
+
     }
 
     private Mongo buildMongoDbClient(final BaseMongoDbProperties mongo) {

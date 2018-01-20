@@ -10,6 +10,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.profile.UserProfile;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
+
 import lombok.Setter;
 
 /**
@@ -54,6 +56,6 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         credentials.setTypedIdUsed(isTypedIdUsed);
         final Principal principal = this.principalFactory.createPrincipal(id, profile.getAttributes());
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
-        return createHandlerResult(credentials, principal, null);
+        return createHandlerResult(credentials, principal, new ArrayList<>(0));
     }
 }
