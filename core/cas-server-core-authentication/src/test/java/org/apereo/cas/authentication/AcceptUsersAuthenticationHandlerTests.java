@@ -91,7 +91,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(RUTGERS);
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing map.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -115,7 +115,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(null);
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -128,7 +128,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(null);
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Password is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }
