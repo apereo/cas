@@ -95,7 +95,8 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
      */
     public JaasAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
         super(name, servicesManager, principalFactory, order);
-        Assert.notNull(Configuration.getConfiguration(), "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
+        Assert.notNull(Configuration.getConfiguration(),
+            "Static Configuration cannot be null. Did you remember to specify \"java.security.auth.login.config\"?");
     }
 
     @Override

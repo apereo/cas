@@ -1,5 +1,6 @@
 package org.apereo.cas.web.support;
 
+import lombok.NonNull;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -323,8 +324,7 @@ public class WebUtils {
      * @param clazz   the clazz
      * @return the credential
      */
-    public static <T extends Credential> T getCredential(final RequestContext context, final Class<T> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+    public static <T extends Credential> T getCredential(final RequestContext context, @NonNull final Class<T> clazz) {
         final Credential credential = getCredential(context);
         if (credential == null) {
             return null;

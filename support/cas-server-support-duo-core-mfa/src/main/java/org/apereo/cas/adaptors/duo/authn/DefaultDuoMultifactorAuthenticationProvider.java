@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.duo.authn;
 
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -33,6 +34,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     private final String registrationUrl;
 
+    @NonNull
     private final DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
@@ -48,7 +50,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     @Override
     protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
-        Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }

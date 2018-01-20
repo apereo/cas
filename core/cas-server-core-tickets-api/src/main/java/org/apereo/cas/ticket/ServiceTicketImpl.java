@@ -4,12 +4,13 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -77,12 +78,10 @@ public class ServiceTicketImpl extends AbstractTicket implements ServiceTicket {
      * @throws IllegalArgumentException if the TicketGrantingTicket or the Service are null.
      */
     @JsonCreator
-    public ServiceTicketImpl(@JsonProperty("id") final String id, @JsonProperty("grantingTicket") final TicketGrantingTicket ticket,
-                             @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
+    public ServiceTicketImpl(@JsonProperty("id") final String id, @NonNull @JsonProperty("grantingTicket") final TicketGrantingTicket ticket,
+                             @NonNull @JsonProperty("service") final Service service, @JsonProperty("credentialProvided") final boolean credentialProvided,
                              @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
-        Assert.notNull(service, "service cannot be null");
-        Assert.notNull(ticket, "ticket cannot be null");
         this.ticketGrantingTicket = ticket;
         this.service = service;
         this.fromNewLogin = credentialProvided || ticket.getCountOfUses() == 0;

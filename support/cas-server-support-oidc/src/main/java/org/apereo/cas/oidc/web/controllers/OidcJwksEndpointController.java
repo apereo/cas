@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -27,7 +28,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
-import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +47,7 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
     @Autowired
     private ResourceLoader resourceLoader;
 
+    @NonNull
     private final Resource jwksFile;
 
     public OidcJwksEndpointController(final ServicesManager servicesManager,
@@ -76,9 +77,6 @@ public class OidcJwksEndpointController extends BaseOAuth20Controller {
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response,
                                                         final Model model) {
-
-        Assert.notNull(this.jwksFile, "JWKS file cannot be undefined or null.");
-
         try {
             final String jsonJwks = IOUtils.toString(this.jwksFile.getInputStream(), StandardCharsets.UTF_8);
             final JsonWebKeySet jsonWebKeySet = new JsonWebKeySet(jsonJwks);

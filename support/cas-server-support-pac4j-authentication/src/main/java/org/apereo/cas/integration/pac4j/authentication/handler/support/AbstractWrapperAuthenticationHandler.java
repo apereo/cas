@@ -1,9 +1,9 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -16,7 +16,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
-import org.pac4j.core.util.CommonHelper;
 import org.pac4j.core.util.InitializableObject;
 import org.pac4j.core.util.InitializableWebObject;
 import javax.security.auth.login.FailedLoginException;
@@ -38,6 +37,7 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     /**
      * The pac4j profile creator used for authentication.
      */
+    @NonNull
     protected ProfileCreator profileCreator = AuthenticatorProfileCreator.INSTANCE;
 
     public AbstractWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory, final Integer order) {
@@ -50,11 +50,11 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        CommonHelper.assertNotNull("profileCreator", this.profileCreator);
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         final C credentials = convertToPac4jCredentials((I) credential);
         LOGGER.debug("credentials: [{}]", credentials);
         try {
+            @NonNull
             final Authenticator authenticator = getAuthenticator(credential);
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
@@ -62,7 +62,6 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             if (authenticator instanceof InitializableWebObject) {
                 ((InitializableWebObject) authenticator).init(getWebContext());
             }
-            CommonHelper.assertNotNull("authenticator", authenticator);
             authenticator.validate(credentials, getWebContext());
             final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
@@ -106,8 +105,4 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the authenticator
      */
     protected abstract Authenticator getAuthenticator(Credential credential);
-
-    public ProfileCreator getProfileCreator() {
-        return this.profileCreator;
-    }
 }

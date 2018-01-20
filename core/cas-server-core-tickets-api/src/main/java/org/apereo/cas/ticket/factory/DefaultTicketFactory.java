@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.factory;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
@@ -11,7 +12,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
-import org.springframework.util.Assert;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -27,16 +27,11 @@ public class DefaultTicketFactory implements TicketFactory {
 
     private final Map<String, Object> factoryMap;
 
-    public DefaultTicketFactory(final ProxyGrantingTicketFactory pgtFactory, final TicketGrantingTicketFactory tgtFactory, final ServiceTicketFactory stFactory,
-                                final ProxyTicketFactory proxyTicketFactory) {
-
-        Assert.notNull(tgtFactory, "ticketGrantingTicketFactory cannot be null");
-        Assert.notNull(pgtFactory, "proxyGrantingTicketFactory cannot be null");
-        Assert.notNull(stFactory, "serviceTicketFactory cannot be null");
-        Assert.notNull(proxyTicketFactory, "proxyTicketFactory cannot be null");
+    public DefaultTicketFactory(@NonNull final ProxyGrantingTicketFactory pgtFactory, @NonNull final TicketGrantingTicketFactory tgtFactory,
+                                @NonNull final ServiceTicketFactory stFactory,
+                                @NonNull final ProxyTicketFactory proxyTicketFactory) {
 
         this.factoryMap = new HashMap<>();
-
         this.factoryMap.put(ProxyGrantingTicket.class.getCanonicalName(), pgtFactory);
         this.factoryMap.put(TicketGrantingTicket.class.getCanonicalName(), tgtFactory);
         this.factoryMap.put(ServiceTicket.class.getCanonicalName(), stFactory);

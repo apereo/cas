@@ -5,11 +5,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -73,8 +73,7 @@ public class SpnegoCredential implements Credential, Serializable {
      *
      * @param initToken the init token
      */
-    public SpnegoCredential(final byte[] initToken) {
-        Assert.notNull(initToken, "The initToken cannot be null.");
+    public SpnegoCredential(@NonNull final byte[] initToken) {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }

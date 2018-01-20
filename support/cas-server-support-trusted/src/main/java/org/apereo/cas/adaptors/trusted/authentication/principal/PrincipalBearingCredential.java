@@ -4,10 +4,10 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 /**
  * Credential that bear the fully resolved and authenticated Principal, or an
@@ -39,8 +39,7 @@ public class PrincipalBearingCredential extends AbstractCredential {
      * @param principal the principal
      */
     @JsonCreator
-    public PrincipalBearingCredential(@JsonProperty("principal") final Principal principal) {
-        Assert.notNull(principal, "principal cannot be null");
+    public PrincipalBearingCredential(@NonNull @JsonProperty("principal") final Principal principal) {
         this.principal = principal;
     }
     

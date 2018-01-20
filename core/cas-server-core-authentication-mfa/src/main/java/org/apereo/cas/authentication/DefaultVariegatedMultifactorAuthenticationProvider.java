@@ -2,11 +2,11 @@ package org.apereo.cas.authentication;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -69,8 +69,8 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
-    public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, final Class<T> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+    public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, @NonNull final Class<T> clazz) {
+
         final MultifactorAuthenticationProvider provider = findProvider(identifier);
         if (provider == null) {
             return null;
