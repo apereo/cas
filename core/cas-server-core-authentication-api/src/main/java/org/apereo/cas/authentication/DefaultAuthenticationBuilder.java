@@ -1,9 +1,10 @@
 package org.apereo.cas.authentication;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.util.Assert;
+
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,6 +12,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
+
 import lombok.Getter;
 
 /**
@@ -25,22 +27,34 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     private static final long serialVersionUID = -8504842011648432398L;
 
-    /** Authenticated principal. */
+    /**
+     * Authenticated principal.
+     */
     private Principal principal;
 
-    /** Credential metadata. */
+    /**
+     * Credential metadata.
+     */
     private final List<CredentialMetaData> credentials = new ArrayList<>();
 
-    /** Authentication metadata attributes. */
+    /**
+     * Authentication metadata attributes.
+     */
     private final Map<String, Object> attributes = new LinkedHashMap<>();
 
-    /** Map of handler names to authentication successes. */
+    /**
+     * Map of handler names to authentication successes.
+     */
     private final Map<String, AuthenticationHandlerExecutionResult> successes = new LinkedHashMap<>();
 
-    /** Map of handler names to authentication failures. */
+    /**
+     * Map of handler names to authentication failures.
+     */
     private final Map<String, Throwable> failures = new LinkedHashMap<>();
 
-    /** Authentication date. */
+    /**
+     * Authentication date.
+     */
     private ZonedDateTime authenticationDate;
 
     /**
@@ -65,7 +79,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Sets the authentication date and returns this instance.
      *
      * @param d Authentication date.
-     *
      * @return This builder instance.
      */
     @Override
@@ -84,7 +97,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Sets the principal returns this instance.
      *
      * @param p Authenticated principal.
-     *
      * @return This builder instance.
      */
     @Override
@@ -97,11 +109,9 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Sets the list of metadata about credentials presented for authentication.
      *
      * @param credentials Non-null list of credential metadata.
-     *
      * @return This builder instance.
      */
-    public AuthenticationBuilder setCredentials(final List<CredentialMetaData> credentials) {
-        Assert.notNull(credentials, "Credential cannot be null");
+    public AuthenticationBuilder setCredentials(@NonNull final List<CredentialMetaData> credentials) {
         this.credentials.clear();
         this.credentials.addAll(credentials);
         return this;
@@ -111,7 +121,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Adds metadata about a credential presented for authentication.
      *
      * @param credential Credential metadata.
-     *
      * @return This builder instance.
      */
     @Override
@@ -124,7 +133,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Sets the authentication metadata attributes.
      *
      * @param attributes Non-null map of authentication metadata attributes.
-     *
      * @return This builder instance.
      */
     @Override
@@ -158,9 +166,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /**
      * Adds an authentication metadata attribute key-value pair.
      *
-     * @param key Authentication attribute key.
+     * @param key   Authentication attribute key.
      * @param value Authentication attribute value.
-     *
      * @return This builder instance.
      */
     @Override
@@ -173,12 +180,10 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Sets the authentication handler success map.
      *
      * @param successes Non-null map of handler names to successful handler authentication results.
-     *
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
-        Assert.notNull(successes, "Successes cannot be null");
+    public AuthenticationBuilder setSuccesses(@NonNull final Map<String, AuthenticationHandlerExecutionResult> successes) {
         this.successes.clear();
         return addSuccesses(successes);
     }
@@ -192,9 +197,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /**
      * Adds an authentication success to the map of handler names to successful authentication handler results.
      *
-     * @param key Authentication handler name.
+     * @param key   Authentication handler name.
      * @param value Successful authentication handler result produced by handler of given name.
-     *
      * @return This builder instance.
      */
     @Override
@@ -211,12 +215,10 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Sets the authentication handler failure map.
      *
      * @param failures Non-null map of handler name to authentication failures.
-     *
      * @return This builder instance.
      */
     @Override
-    public AuthenticationBuilder setFailures(final Map<String, Throwable> failures) {
-        Assert.notNull(failures, "Failures cannot be null");
+    public AuthenticationBuilder setFailures(@NonNull final Map<String, Throwable> failures) {
         this.failures.clear();
         return addFailures(failures);
     }
@@ -230,9 +232,8 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     /**
      * Adds an authentication failure to the map of handler names to the authentication handler failures.
      *
-     * @param key Authentication handler name.
+     * @param key   Authentication handler name.
      * @param value Exception raised on handler failure to authenticate credential.
-     *
      * @return This builder instance.
      */
     @Override
@@ -259,7 +260,6 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
      * Creates a new builder initialized with data from the given authentication source.
      *
      * @param source Authentication source.
-     *
      * @return New builder instance initialized with all fields in the given authentication source.
      */
     public static AuthenticationBuilder newInstance(final Authentication source) {

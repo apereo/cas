@@ -1,5 +1,6 @@
 package org.apereo.cas.configuration;
 
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.configuration2.Configuration;
@@ -12,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.util.Assert;
 
 import java.io.File;
 import java.util.Map;
@@ -90,9 +90,8 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @param binder             the binder
      * @param applicationContext the application context
      */
-    public static void rebindCasConfigurationProperties(final ConfigurationPropertiesBindingPostProcessor binder,
+    public static void rebindCasConfigurationProperties(@NonNull final ConfigurationPropertiesBindingPostProcessor binder,
                                                         final ApplicationContext applicationContext) {
-        Assert.notNull(binder, "Configuration binder cannot be null");
 
         final Map<String, CasConfigurationProperties> map = applicationContext.getBeansOfType(CasConfigurationProperties.class);
         final String name = map.keySet().iterator().next();

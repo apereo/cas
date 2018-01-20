@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import com.google.common.io.ByteSource;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -51,8 +51,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      *                                  class.
      */
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+    public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
         final Ticket ticket = this.getTicket(ticketId);
         if (ticket == null) {
             return null;
