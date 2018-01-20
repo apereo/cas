@@ -119,7 +119,7 @@ public class ShiroAuthenticationHandler extends AbstractUsernamePasswordAuthenti
      */
     protected AuthenticationHandlerExecutionResult createAuthenticatedSubjectResult(final Credential credential, final Subject currentUser) {
         final String username = currentUser.getPrincipal().toString();
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username));
     }
 
     /**

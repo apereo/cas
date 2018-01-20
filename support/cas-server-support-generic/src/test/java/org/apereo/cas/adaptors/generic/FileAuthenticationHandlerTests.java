@@ -81,7 +81,7 @@ public class FileAuthenticationHandlerTests {
         c.setPassword("rutgers");
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing file.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -130,7 +130,7 @@ public class FileAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword("rutgers");
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing file.");
+
         this.authenticationHandler.authenticate(c);
     }
 
@@ -156,7 +156,7 @@ public class FileAuthenticationHandlerTests {
         c.setPassword("rutgers");
 
         this.thrown.expect(PreventedException.class);
-        this.thrown.expectMessage("IO error reading backing file");
+
 
         this.authenticationHandler.authenticate(c);
     }

@@ -95,7 +95,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("hello not found with SQL query.");
+
 
         this.handler.authenticate(c);
     }

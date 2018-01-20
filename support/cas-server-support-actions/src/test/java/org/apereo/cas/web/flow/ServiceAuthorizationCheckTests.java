@@ -84,7 +84,7 @@ public class ServiceAuthorizationCheckTests {
         mockRequestContext.getFlowScope().put("service", this.unauthorizedService);
 
         this.thrown.expect(UnauthorizedServiceException.class);
-        this.thrown.expectMessage("Service Management: Unauthorized Service Access. Service [null] is not allowed access via the service registry.");
+
 
         this.serviceAuthorizationCheck.doExecute(mockRequestContext);
         fail("Should have thrown UnauthorizedServiceException");
@@ -96,7 +96,7 @@ public class ServiceAuthorizationCheckTests {
         mockRequestContext.getFlowScope().put("service", this.undefinedService);
 
         this.thrown.expect(UnauthorizedServiceException.class);
-        this.thrown.expectMessage("Service Management: missing service. Service [null] is not found in service registry.");
+
 
         this.serviceAuthorizationCheck.doExecute(mockRequestContext);
         throw new AssertionError("Should have thrown UnauthorizedServiceException");
