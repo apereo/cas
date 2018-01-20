@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.response;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.jasig.cas.client.util.CommonUtils;
@@ -19,17 +20,14 @@ public class OAuth20DefaultCasClientRedirectActionBuilder implements OAuth20CasC
 
 
     @Override
+    @SneakyThrows
     public RedirectAction build(final CasClient casClient, final WebContext context) {
-        try {
-            final CasConfiguration casConfiguration = casClient.getConfiguration();
-            final String redirectionUrl = CommonUtils.constructRedirectUrl(casConfiguration.getLoginUrl(),
-                    CasProtocolConstants.PARAMETER_SERVICE,
-                    casClient.computeFinalCallbackUrl(context),
-                    casConfiguration.isRenew(), casConfiguration.isGateway());
-            LOGGER.debug("Final redirect url is [{}]", redirectionUrl);
-            return RedirectAction.redirect(redirectionUrl);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        final CasConfiguration casConfiguration = casClient.getConfiguration();
+        final String redirectionUrl = CommonUtils.constructRedirectUrl(casConfiguration.getLoginUrl(),
+            CasProtocolConstants.PARAMETER_SERVICE,
+            casClient.computeFinalCallbackUrl(context),
+            casConfiguration.isRenew(), casConfiguration.isGateway());
+        LOGGER.debug("Final redirect url is [{}]", redirectionUrl);
+        return RedirectAction.redirect(redirectionUrl);
     }
 }

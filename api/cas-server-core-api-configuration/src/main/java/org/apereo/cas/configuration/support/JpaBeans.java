@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.support;
 
 import com.zaxxer.hikari.HikariDataSource;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -26,6 +27,7 @@ import java.util.Properties;
 @Slf4j
 @UtilityClass
 public class JpaBeans {
+
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
      * of Hikari pool.
@@ -47,6 +49,7 @@ public class JpaBeans {
      * @param jpaProperties the jpa properties
      * @return the data source
      */
+    @SneakyThrows
     public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
         final String dataSourceName = jpaProperties.getDataSourceName();
         final boolean proxyDataSource = jpaProperties.isDataSourceProxy();
@@ -66,30 +69,25 @@ public class JpaBeans {
             }
         }
 
-        try {
-            final HikariDataSource bean = new HikariDataSource();
-            if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
-                bean.setDriverClassName(jpaProperties.getDriverClass());
-            }
-            bean.setJdbcUrl(jpaProperties.getUrl());
-            bean.setUsername(jpaProperties.getUser());
-            bean.setPassword(jpaProperties.getPassword());
-            bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).toMillis());
-            bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
-            bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
-            bean.setIdleTimeout((int) Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
-            bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
-            bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
-            bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
-            bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
-            bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
-            bean.setAutoCommit(jpaProperties.isAutocommit());
-            bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
-            return bean;
-        } catch (final Exception e) {
-            LOGGER.error("Error creating data source: [{}]", e.getMessage());
-            throw new IllegalArgumentException(e);
+        final HikariDataSource bean = new HikariDataSource();
+        if (StringUtils.isNotBlank(jpaProperties.getDriverClass())) {
+            bean.setDriverClassName(jpaProperties.getDriverClass());
         }
+        bean.setJdbcUrl(jpaProperties.getUrl());
+        bean.setUsername(jpaProperties.getUser());
+        bean.setPassword(jpaProperties.getPassword());
+        bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).toMillis());
+        bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
+        bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
+        bean.setIdleTimeout((int) Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
+        bean.setLeakDetectionThreshold(jpaProperties.getLeakThreshold());
+        bean.setInitializationFailTimeout(jpaProperties.getFailFastTimeout());
+        bean.setIsolateInternalQueries(jpaProperties.isIsolateInternalQueries());
+        bean.setConnectionTestQuery(jpaProperties.getHealthQuery());
+        bean.setAllowPoolSuspension(jpaProperties.getPool().isSuspension());
+        bean.setAutoCommit(jpaProperties.isAutocommit());
+        bean.setValidationTimeout(jpaProperties.getPool().getTimeoutMillis());
+        return bean;
     }
 
     /**

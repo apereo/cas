@@ -1,5 +1,6 @@
 package org.apereo.cas.services.resource;
 
+import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
@@ -198,22 +199,21 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     }
 
     @Override
+    @SneakyThrows
     public synchronized boolean delete(final RegisteredService service) {
-        try {
-            final File f = getRegisteredServiceFileName(service);
-            publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-            final boolean result = f.exists() ? f.delete() : true;
-            if (!result) {
-                LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
-            } else {
-                removeRegisteredService(service);
-                LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
-            }
-            publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
-            return result;
-        } catch (final IOException e) {
-            throw new IllegalArgumentException(e);
+
+        final File f = getRegisteredServiceFileName(service);
+        publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
+        final boolean result = f.exists() ? f.delete() : true;
+        if (!result) {
+            LOGGER.warn("Failed to delete service definition file [{}]", f.getCanonicalPath());
+        } else {
+            removeRegisteredService(service);
+            LOGGER.debug("Successfully deleted service definition file [{}]", f.getCanonicalPath());
         }
+        publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
+        return result;
+
     }
 
     /**
@@ -260,9 +260,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
         }
         if (!RegexUtils.matches(this.serviceFileNamePattern, file.getName())) {
             LOGGER.warn("[{}] does not match the recommended pattern [{}]. "
-                + "While CAS tries to be forgiving as much as possible, it's recommended "
-                + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
-                + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
+                    + "While CAS tries to be forgiving as much as possible, it's recommended "
+                    + "that you rename the file to match the requested pattern to avoid issues with duplicate service loading. "
+                    + "Future CAS versions may try to strictly force the naming syntax, refusing to load the file.",
                 file.getName(), this.serviceFileNamePattern.pattern());
         }
         try (BufferedInputStream in = new BufferedInputStream(new FileInputStream(file))) {
@@ -339,16 +339,14 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @return file in service registry directory.
      * @throws IllegalArgumentException if file name is invalid
      */
+    @SneakyThrows
     protected File getRegisteredServiceFileName(final RegisteredService service) {
         final String fileName = StringUtils.remove(buildServiceDefinitionFileName(service), " ");
-        try {
-            final File svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
-            LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
-            return svcFile;
-        } catch (final Exception e) {
-            LOGGER.warn("Service file name [{}] is invalid; Examine for illegal characters in the name.", fileName);
-            throw new IllegalArgumentException(e);
-        }
+
+        final File svcFile = new File(this.serviceRegistryDirectory.toFile(), fileName);
+        LOGGER.debug("Using [{}] as the service definition file", svcFile.getCanonicalPath());
+        return svcFile;
+
     }
 
     private String buildServiceDefinitionFileName(final RegisteredService service) {

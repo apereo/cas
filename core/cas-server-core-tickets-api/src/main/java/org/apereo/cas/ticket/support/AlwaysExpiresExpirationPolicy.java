@@ -17,7 +17,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class AlwaysExpiresExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**

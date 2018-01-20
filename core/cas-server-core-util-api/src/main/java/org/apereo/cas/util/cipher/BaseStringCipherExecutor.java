@@ -1,5 +1,6 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
@@ -9,10 +10,10 @@ import org.apereo.cas.util.crypto.PublicKeyFactoryBean;
 import org.jose4j.jwe.KeyManagementAlgorithmIdentifiers;
 import org.jose4j.keys.RsaKeyUtil;
 import org.springframework.core.io.Resource;
+
 import java.io.Serializable;
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
-import lombok.NoArgsConstructor;
 
 /**
  * The {@link BaseStringCipherExecutor} is the default
@@ -142,16 +143,14 @@ public abstract class BaseStringCipherExecutor extends AbstractCipherExecutor<Se
 
     @Override
     public String decode(final Serializable value) {
-        try {
-            final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
-            if (encoded != null && encoded.length > 0) {
-                final String encodedObj = new String(encoded, StandardCharsets.UTF_8);
-                return this.encryptionEnabled ? EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj) : encodedObj;
-            }
-            return null;
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+
+        final byte[] encoded = verifySignature(value.toString().getBytes(StandardCharsets.UTF_8));
+        if (encoded != null && encoded.length > 0) {
+            final String encodedObj = new String(encoded, StandardCharsets.UTF_8);
+            return this.encryptionEnabled ? EncodingUtils.decryptJwtValue(this.secretKeyEncryptionKey, encodedObj) : encodedObj;
         }
+        return null;
+
     }
 
     /**

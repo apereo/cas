@@ -127,7 +127,7 @@ public class JaasAuthenticationHandler extends AbstractUsernamePasswordAuthentic
         } finally {
             lc.logout();
         }
-        return createHandlerResult(credential, principal, null);
+        return createHandlerResult(credential, principal);
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.ext.spring.resource.ResourceHelper;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,6 @@ import org.apereo.cas.support.saml.web.idp.metadata.TemplatedMetadataAndCertific
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,11 +49,11 @@ import java.util.Map;
 @Slf4j
 public class SamlIdPMetadataConfiguration {
 
-    
+
     @Autowired
     @Qualifier("noRedirectHttpClient")
     private HttpClient httpClient;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -67,19 +67,16 @@ public class SamlIdPMetadataConfiguration {
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @DependsOn("shibbolethIdpMetadataAndCertificatesGenerationService")
+    @SneakyThrows
     public MetadataResolver casSamlIdPMetadataResolver() {
-        try {
-            final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-            final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
-                    ResourceHelper.of(new FileSystemResource(idp.getMetadata().getMetadataFile())));
-            resolver.setParserPool(this.openSamlConfigBean.getParserPool());
-            resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
-            resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
-            resolver.setId(idp.getEntityId());
-            return resolver;
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
+        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
+        final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
+            ResourceHelper.of(new FileSystemResource(idp.getMetadata().getMetadataFile())));
+        resolver.setParserPool(this.openSamlConfigBean.getParserPool());
+        resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
+        resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
+        resolver.setId(idp.getEntityId());
+        return resolver;
     }
 
     @Bean
@@ -99,8 +96,8 @@ public class SamlIdPMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceMetadataResolverCacheLoader chainingMetadataResolverCacheLoader() {
         return new SamlRegisteredServiceMetadataResolverCacheLoader(
-                openSamlConfigBean, httpClient,
-                samlRegisteredServiceMetadataResolvers());
+            openSamlConfigBean, httpClient,
+            samlRegisteredServiceMetadataResolvers());
     }
 
     @ConditionalOnMissingBean(name = "samlRegisteredServiceMetadataResolvers")
@@ -117,7 +114,7 @@ public class SamlIdPMetadataConfiguration {
 
         final Map<String, SamlRegisteredServiceMetadataResolutionPlanConfigurator> configurers =
             this.applicationContext.getBeansOfType(SamlRegisteredServiceMetadataResolutionPlanConfigurator.class, false, true);
-        
+
         configurers.values().forEach(c -> {
             final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
             LOGGER.debug("Configuring saml metadata resolution plan [{}]", name);
@@ -131,8 +128,8 @@ public class SamlIdPMetadataConfiguration {
     @RefreshScope
     public SamlRegisteredServiceCachingMetadataResolver defaultSamlRegisteredServiceCachingMetadataResolver() {
         return new SamlRegisteredServiceDefaultCachingMetadataResolver(
-                casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
-                chainingMetadataResolverCacheLoader()
+            casProperties.getAuthn().getSamlIdp().getMetadata().getCacheExpirationMinutes(),
+            chainingMetadataResolverCacheLoader()
         );
     }
 

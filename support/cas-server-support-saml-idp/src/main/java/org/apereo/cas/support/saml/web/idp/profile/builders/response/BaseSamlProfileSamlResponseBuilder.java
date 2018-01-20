@@ -204,17 +204,15 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                           final HttpServletRequest request, final HttpServletResponse response,
                                           final SamlRegisteredService service,
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
-        try {
-            if (service.isEncryptAssertions()) {
-                LOGGER.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
-                final EncryptedAssertion encryptedAssertion =
-                    this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
-                return encryptedAssertion;
-            }
-            LOGGER.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
-            return assertion;
-        } catch (final Exception e) {
-            throw new SamlException("Unable to marshall assertion for encryption", e);
+
+        if (service.isEncryptAssertions()) {
+            LOGGER.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
+            final EncryptedAssertion encryptedAssertion =
+                this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
+            return encryptedAssertion;
         }
+        LOGGER.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
+        return assertion;
+
     }
 }

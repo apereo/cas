@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import com.google.common.collect.Sets;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
@@ -230,8 +231,9 @@ public class SamlObjectSignatureValidator {
         validator.validate(signature);
         LOGGER.debug("Successfully validated profile signature for [{}].", profileRequest.getIssuer());
 
+        @NonNull
         final Set<Credential> credentials = getSigningCredential(roleDescriptorResolver, profileRequest);
-        if (credentials == null || credentials.isEmpty()) {
+        if (credentials.isEmpty()) {
             throw new SamlException("Signing credentials for validation could not be resolved based on the provided signature");
         }
 

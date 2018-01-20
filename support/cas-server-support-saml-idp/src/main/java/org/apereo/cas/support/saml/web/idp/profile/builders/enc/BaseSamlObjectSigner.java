@@ -1,6 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.enc;
 
 import com.google.common.collect.Sets;
+import lombok.NonNull;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
@@ -110,24 +112,23 @@ public class BaseSamlObjectSigner {
      * @return the t
      * @throws SamlException the saml exception
      */
+    @SneakyThrows
     public <T extends SAMLObject> T encode(final T samlObject,
                                            final SamlRegisteredService service,
                                            final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                            final HttpServletResponse response,
                                            final HttpServletRequest request,
                                            final String binding) throws SamlException {
-        try {
-            LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
-            final MessageContext<T> outboundContext = new MessageContext<>();
-            prepareOutboundContext(samlObject, adaptor, outboundContext, binding);
-            prepareSecurityParametersContext(adaptor, outboundContext, service);
-            prepareEndpointURLSchemeSecurityHandler(outboundContext);
-            prepareSamlOutboundDestinationHandler(outboundContext);
-            prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
-            return samlObject;
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
-        }
+
+        LOGGER.debug("Attempting to encode [{}] for [{}]", samlObject.getClass().getName(), adaptor.getEntityId());
+        final MessageContext<T> outboundContext = new MessageContext<>();
+        prepareOutboundContext(samlObject, adaptor, outboundContext, binding);
+        prepareSecurityParametersContext(adaptor, outboundContext, service);
+        prepareEndpointURLSchemeSecurityHandler(outboundContext);
+        prepareSamlOutboundDestinationHandler(outboundContext);
+        prepareSamlOutboundProtocolMessageSigningHandler(outboundContext);
+        return samlObject;
+
     }
 
     /**
@@ -183,10 +184,8 @@ public class BaseSamlObjectSigner {
     protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                            final MessageContext<T> outboundContext,
                                                                            final SamlRegisteredService service) throws SAMLException {
+        @NonNull
         final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
-        if (secParametersContext == null) {
-            throw new IllegalArgumentException("No signature signing parameters could be determined");
-        }
         final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
         final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(roleDesc, service);
         secParametersContext.setSignatureSigningParameters(signingParameters);
@@ -220,32 +219,26 @@ public class BaseSamlObjectSigner {
      * @return the signature signing parameters
      * @throws SAMLException the saml exception
      */
+    @SneakyThrows
     protected SignatureSigningParameters buildSignatureSigningParameters(final RoleDescriptor descriptor,
                                                                          final SamlRegisteredService service) throws SAMLException {
-        try {
-            final CriteriaSet criteria = new CriteriaSet();
-            final SignatureSigningConfiguration signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
-            criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
-            criteria.add(new RoleDescriptorCriterion(descriptor));
-            final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
-            LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
+        final CriteriaSet criteria = new CriteriaSet();
+        final SignatureSigningConfiguration signatureSigningConfiguration = getSignatureSigningConfiguration(descriptor, service);
+        criteria.add(new SignatureSigningConfigurationCriterion(signatureSigningConfiguration));
+        criteria.add(new RoleDescriptorCriterion(descriptor));
+        final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
+        LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
+        @NonNull
+        final SignatureSigningParameters params = resolver.resolveSingle(criteria);
+        LOGGER.debug("Created signature signing parameters."
+                + "\nSignature algorithm: [{}]"
+                + "\nSignature canonicalization algorithm: [{}]"
+                + "\nSignature reference digest methods: [{}]",
+            params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
+            params.getSignatureReferenceDigestMethod());
 
-            final SignatureSigningParameters params = resolver.resolveSingle(criteria);
-            if (params == null) {
-                throw new SAMLException("No signature signing parameter is available");
-            }
+        return params;
 
-            LOGGER.debug("Created signature signing parameters."
-                            + "\nSignature algorithm: [{}]"
-                            + "\nSignature canonicalization algorithm: [{}]"
-                            + "\nSignature reference digest methods: [{}]",
-                    params.getSignatureAlgorithm(), params.getSignatureCanonicalizationAlgorithm(),
-                    params.getSignatureReferenceDigestMethod());
-
-            return params;
-        } catch (final Exception e) {
-            throw new SAMLException(e.getMessage(), e);
-        }
     }
 
     /**
@@ -259,11 +252,11 @@ public class BaseSamlObjectSigner {
     protected SignatureSigningConfiguration getSignatureSigningConfiguration(final RoleDescriptor roleDescriptor,
                                                                              final SamlRegisteredService service) throws Exception {
         final BasicSignatureSigningConfiguration config =
-                DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
+            DefaultSecurityConfigurationBootstrap.buildDefaultSignatureSigningConfiguration();
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
 
         if (this.overrideBlackListedSignatureAlgorithms != null
-                && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
+            && !samlIdp.getAlgs().getOverrideBlackListedSignatureSigningAlgorithms().isEmpty()) {
             config.setBlacklistedAlgorithms(this.overrideBlackListedSignatureAlgorithms);
         }
 
@@ -293,7 +286,7 @@ public class BaseSamlObjectSigner {
 
         final MetadataCredentialResolver kekCredentialResolver = new MetadataCredentialResolver();
         kekCredentialResolver.setRoleDescriptorResolver(SamlIdPUtils.getRoleDescriptorResolver(casSamlIdPMetadataResolver,
-                idp.getMetadata().isRequireValidMetadata()));
+            idp.getMetadata().isRequireValidMetadata()));
         kekCredentialResolver.setKeyInfoCredentialResolver(DefaultSecurityConfigurationBootstrap.buildBasicInlineKeyInfoCredentialResolver());
         kekCredentialResolver.initialize();
         final CriteriaSet criteriaSet = new CriteriaSet();
@@ -324,7 +317,7 @@ public class BaseSamlObjectSigner {
 
         try {
             final SamlIdPResponseProperties.SignatureCredentialTypes credType = SamlIdPResponseProperties.SignatureCredentialTypes.valueOf(
-                    StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
+                StringUtils.defaultIfBlank(service.getSigningCredentialType(), samlIdp.getResponse().getCredentialType().name()).toUpperCase());
             LOGGER.debug("Requested credential type [{}] is found for service [{}]", credType, service);
 
             switch (credType) {

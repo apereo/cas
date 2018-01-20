@@ -26,7 +26,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @RequiredArgsConstructor
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 

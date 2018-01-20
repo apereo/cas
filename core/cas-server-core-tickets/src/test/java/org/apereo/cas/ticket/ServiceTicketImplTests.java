@@ -65,16 +65,12 @@ public class ServiceTicketImplTests {
     @Test
     public void verifyNoService() {
         this.thrown.expect(Exception.class);
-        this.thrown.expectMessage("service cannot be null");
-
         new ServiceTicketImpl(ST_ID, tgt, null, false, new NeverExpiresExpirationPolicy());
     }
 
     @Test
     public void verifyNoTicket() {
-        this.thrown.expect(Exception.class);
-        this.thrown.expectMessage("ticket cannot be null");
-
+        this.thrown.expect(NullPointerException.class);
         new ServiceTicketImpl(ST_ID, null, CoreAuthenticationTestUtils.getService(), false, new NeverExpiresExpirationPolicy());
     }
 

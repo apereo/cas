@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -215,12 +216,9 @@ public class OAuth20Utils {
      * @param map the map
      * @return the string
      */
+    @SneakyThrows
     public static String jsonify(final Map map) {
-        try {
-            return WRITER.writeValueAsString(map);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        return WRITER.writeValueAsString(map);
     }
 
     /**

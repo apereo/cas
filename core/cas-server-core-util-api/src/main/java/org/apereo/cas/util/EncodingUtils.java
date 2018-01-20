@@ -267,16 +267,13 @@ public class EncodingUtils {
      * @param secret the secret
      * @return the key
      */
+    @SneakyThrows
     public static Key generateJsonWebKey(final String secret) {
-        try {
-            final Map<String, Object> keys = new HashMap<>(2);
-            keys.put("kty", "oct");
-            keys.put(EncodingUtils.JSON_WEB_KEY, secret);
-            final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
-            return jwk.getKey();
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        final Map<String, Object> keys = new HashMap<>(2);
+        keys.put("kty", "oct");
+        keys.put(EncodingUtils.JSON_WEB_KEY, secret);
+        final JsonWebKey jwk = JsonWebKey.Factory.newJwk(keys);
+        return jwk.getKey();
     }
 
     /**

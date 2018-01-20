@@ -25,7 +25,6 @@ import java.util.Set;
  */
 @Slf4j
 public class ResourceCRLFetcher implements CRLFetcher {
-
     
     @Override
     public Collection<X509CRL> fetch(final Collection<Resource> crls) throws IOException, CRLException {

@@ -2,6 +2,7 @@ package org.apereo.cas.support.saml.services.idp.metadata.cache;
 
 import com.github.benmanes.caffeine.cache.CacheLoader;
 import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
@@ -44,31 +45,30 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
 
     @Override
     @Synchronized
+    @SneakyThrows
     public ChainingMetadataResolver load(final SamlRegisteredService service) {
-        try {
-            final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
-            final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
-            final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
-            availableResolvers.stream()
-                .filter(r -> r.supports(service))
-                .map(r -> r.resolve(service))
-                .forEach(metadataResolvers::addAll);
+        final ChainingMetadataResolver metadataResolver = new ChainingMetadataResolver();
+        final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
-            if (metadataResolvers.isEmpty()) {
-                throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
-                    + " with metadata location " + service.getMetadataLocation());
-            }
+        final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
+        availableResolvers.stream()
+            .filter(r -> r.supports(service))
+            .map(r -> r.resolve(service))
+            .forEach(metadataResolvers::addAll);
 
-
-            metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
-            metadataResolver.setResolvers(metadataResolvers);
-            metadataResolver.initialize();
-
-            return metadataResolver;
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
+        if (metadataResolvers.isEmpty()) {
+            throw new SamlException("No metadata resolvers could be configured for service " + service.getName()
+                + " with metadata location " + service.getMetadataLocation());
         }
+
+
+        metadataResolver.setId(ChainingMetadataResolver.class.getCanonicalName());
+        metadataResolver.setResolvers(metadataResolvers);
+        metadataResolver.initialize();
+
+        return metadataResolver;
+
     }
 }
 

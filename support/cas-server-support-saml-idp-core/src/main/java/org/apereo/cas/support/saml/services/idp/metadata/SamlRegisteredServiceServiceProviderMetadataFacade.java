@@ -2,6 +2,7 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
@@ -77,34 +78,33 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return get(resolver, registeredService, SamlIdPUtils.getIssuerFromSamlRequest(request));
     }
 
+    @SneakyThrows
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                     final SamlRegisteredService registeredService,
                                                                                     final String entityID,
                                                                                     final CriteriaSet criterions) {
         LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
-        try {
-            criterions.add(new EntityIdCriterion(entityID), true);
-            LOGGER.info("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
-            final MetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
-            LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
-                registeredService.getServiceId(), entityID);
 
-            final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
-            if (entityDescriptor == null) {
-                LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
-                return Optional.empty();
-            }
-            LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
+        criterions.add(new EntityIdCriterion(entityID), true);
+        LOGGER.info("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
+        final MetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
+        LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
+            registeredService.getServiceId(), entityID);
 
-            if (entityDescriptor.getValidUntil() != null && entityDescriptor.getValidUntil().isBeforeNow()) {
-                LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
-                return Optional.empty();
-            }
-
-            return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+        final EntityDescriptor entityDescriptor = chainingMetadataResolver.resolveSingle(criterions);
+        if (entityDescriptor == null) {
+            LOGGER.warn("Cannot find entity [{}] in metadata provider Ensure the metadata is valid and has not expired.", entityID);
+            return Optional.empty();
         }
+        LOGGER.debug("Located entity descriptor in metadata for [{}]", entityID);
+
+        if (entityDescriptor.getValidUntil() != null && entityDescriptor.getValidUntil().isBeforeNow()) {
+            LOGGER.warn("Entity descriptor in the metadata has expired at [{}]", entityDescriptor.getValidUntil());
+            return Optional.empty();
+        }
+
+        return getServiceProviderSsoDescriptor(entityID, chainingMetadataResolver, entityDescriptor);
+
     }
 
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getServiceProviderSsoDescriptor(final String entityID,
@@ -118,7 +118,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
                 LOGGER.warn("SP SSODescriptor in the metadata has expired at [{}]", ssoDescriptor.getValidUntil());
                 return Optional.empty();
             }
-            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor, chainingMetadataResolver));
+            return Optional.of(new SamlRegisteredServiceServiceProviderMetadataFacade(ssoDescriptor, entityDescriptor,
+                chainingMetadataResolver));
         }
         LOGGER.warn("Could not locate SP SSODescriptor in the metadata for [{}]", entityID);
         return Optional.empty();

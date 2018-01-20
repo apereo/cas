@@ -36,9 +36,9 @@ import java.util.stream.Collectors;
 /**
  * Generic class to serialize objects to/from JSON based on jackson.
  *
+ * @param <T> the type parameter
  * @author Misagh Moayyed
- *  @param <T> the type parameter
- *  @since 4.1
+ * @since 4.1
  */
 @Slf4j
 @Getter
@@ -48,7 +48,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
 
     private final ObjectMapper objectMapper;
     private final PrettyPrinter prettyPrinter;
-    
+
     /**
      * Instantiates a new Registered service json serializer.
      * Uses the {@link com.fasterxml.jackson.core.util.DefaultPrettyPrinter} for formatting.
@@ -72,39 +72,28 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    @SneakyThrows
     public T from(final String json) {
-        try {
-            final String jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
-            return readObjectFromJson(jsonString);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        final String jsonString = isJsonFormat() ? JsonValue.readHjson(json).toString() : json;
+        return readObjectFromJson(jsonString);
     }
 
     @Override
+    @SneakyThrows
     public T from(final File json) {
-        try {
-            final String jsonString = isJsonFormat()
-                ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
-                : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
-
-            return readObjectFromJson(jsonString);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        final String jsonString = isJsonFormat()
+            ? JsonValue.readHjson(FileUtils.readFileToString(json, StandardCharsets.UTF_8)).toString()
+            : FileUtils.readFileToString(json, StandardCharsets.UTF_8);
+        return readObjectFromJson(jsonString);
     }
 
     @Override
+    @SneakyThrows
     public T from(final Reader json) {
-        try {
-            final String jsonString = isJsonFormat()
-                ? JsonValue.readHjson(json).toString()
-                : IOUtils.readLines(json).stream().collect(Collectors.joining());
-
-            return readObjectFromJson(jsonString);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        final String jsonString = isJsonFormat()
+            ? JsonValue.readHjson(json).toString()
+            : IOUtils.readLines(json).stream().collect(Collectors.joining());
+        return readObjectFromJson(jsonString);
     }
 
     @Override
@@ -113,13 +102,10 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    @SneakyThrows
     public T from(final InputStream json) {
-        try {
-            final String jsonString = readJsonFrom(json);
-            return readObjectFromJson(jsonString);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        final String jsonString = readJsonFrom(json);
+        return readObjectFromJson(jsonString);
     }
 
     /**
@@ -136,6 +122,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    @SneakyThrows
     public void to(final OutputStream out, final T object) {
         try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
@@ -143,12 +130,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
                 ? JsonValue.readHjson(writer.toString()).toString(Stringify.HJSON)
                 : writer.toString();
             IOUtils.write(hjsonString, out, StandardCharsets.UTF_8);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
         }
     }
 
     @Override
+    @SneakyThrows
     public void to(final Writer out, final T object) {
         try (StringWriter writer = new StringWriter()) {
             this.objectMapper.writer(this.prettyPrinter).writeValue(writer, object);
@@ -159,9 +145,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             } else {
                 IOUtils.write(writer.toString(), out);
             }
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
-        }
+        } 
     }
 
     @Override
@@ -183,12 +167,11 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
     }
 
     @Override
+    @SneakyThrows
     public String toString(final T object) {
         try (StringWriter writer = new StringWriter()) {
             to(writer, object);
             return writer.toString();
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e);
         }
     }
 

@@ -50,7 +50,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.Subject;
 import org.opensaml.saml.saml2.ecp.Response;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -155,14 +154,10 @@ public class SamlIdPConfiguration {
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
     @RefreshScope
     public SAMLArtifactMap samlArtifactMap() {
-        try {
-            final CasSamlArtifactMap map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
-                ticketGrantingTicketCookieGenerator);
-            map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
-            return map;
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
-        }
+        final CasSamlArtifactMap map = new CasSamlArtifactMap(ticketRegistry, samlArtifactTicketFactory(),
+            ticketGrantingTicketCookieGenerator);
+        map.setArtifactLifetime(TimeUnit.SECONDS.toMillis(samlArtifactTicketExpirationPolicy().getTimeToLive()));
+        return map;
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlSubjectBuilder")

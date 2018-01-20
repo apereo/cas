@@ -21,6 +21,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Map;
 
 /**
@@ -147,7 +148,7 @@ public class QueryAndEncodeDatabaseAuthenticationHandler extends AbstractJdbcUse
                     throw new AccountDisabledException("Account has been disabled");
                 }
             }
-            return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), null);
+            return createHandlerResult(transformedCredential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
 
         } catch (final IncorrectResultSizeDataAccessException e) {
             if (e.getActualSize() == 0) {
