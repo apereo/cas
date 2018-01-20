@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.web.idp.profile.artifact;
 
-import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;

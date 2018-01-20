@@ -47,7 +47,7 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
 
         final SamlIdPMetadataProperties md = samlIdPProperties.getMetadata();
         final FunctionDrivenDynamicHTTPMetadataResolver resolver =
-                new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
+            new FunctionDrivenDynamicHTTPMetadataResolver(this.httpClient.getWrappedHttpClient());
         resolver.setMinCacheDuration(TimeUnit.MILLISECONDS.convert(md.getCacheExpirationMinutes(), TimeUnit.MINUTES));
         resolver.setRequireValidMetadata(md.isRequireValidMetadata());
 
@@ -62,16 +62,12 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
             @Nullable
             @Override
             public String apply(@Nullable final String input) {
-                try {
-                    if (StringUtils.isNotBlank(input)) {
-                        final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
-                        LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
-                        return metadataLocation;
-                    }
-                    return null;
-                } catch (final Exception e) {
-                    throw new IllegalArgumentException(e.getMessage(), e);
+                if (StringUtils.isNotBlank(input)) {
+                    final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
+                    LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
+                    return metadataLocation;
                 }
+                return null;
             }
         });
         try {

@@ -1,7 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import com.google.common.base.Splitter;
-import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -307,16 +307,12 @@ public abstract class AbstractSamlProfileHandlerController {
         decoder.decode();
 
         final MessageContext messageContext = decoder.getMessageContext();
+        LOGGER.debug("Locating SAML object from message context...");
+        @NonNull
         final SignableSAMLObject object = (SignableSAMLObject) messageContext.getMessage();
-
-        if (object == null) {
-            throw new SAMLException("No " + clazz.getName() + " could be found in this request context. Decoder has failed.");
-        }
-
         if (!clazz.isAssignableFrom(object.getClass())) {
             throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
         }
-
         LOGGER.debug("Decoded SAML object [{}] from http request", object.getElementQName());
         return Pair.of(object, messageContext);
 
@@ -424,6 +420,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @return the string
      * @throws SamlException the saml exception
      */
+    @SneakyThrows
     protected String constructServiceUrl(final HttpServletRequest request,
                                          final HttpServletResponse response,
                                          final Pair<? extends SignableSAMLObject, MessageContext> pair) throws SamlException {
@@ -450,8 +447,6 @@ public abstract class AbstractSamlProfileHandlerController {
                 url, casProperties.getServer().getName(),
                 CasProtocolConstants.PARAMETER_SERVICE,
                 CasProtocolConstants.PARAMETER_TICKET, false);
-        } catch (final Exception e) {
-            throw new SamlException(e.getMessage(), e);
         }
     }
 

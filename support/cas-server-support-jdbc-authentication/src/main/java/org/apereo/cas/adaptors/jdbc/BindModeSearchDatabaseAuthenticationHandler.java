@@ -13,6 +13,7 @@ import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * This class attempts to authenticate the user by opening a connection to the
@@ -47,7 +48,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             final String username = credential.getUsername();
             final String password = credential.getPassword();
             connection = this.getDataSource().getConnection(username, password);
-            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {

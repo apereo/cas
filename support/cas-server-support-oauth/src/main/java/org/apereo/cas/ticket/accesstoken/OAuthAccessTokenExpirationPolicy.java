@@ -21,7 +21,7 @@ import lombok.NoArgsConstructor;
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
 @NoArgsConstructor
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
     private static final long serialVersionUID = -8383186650682727360L;
