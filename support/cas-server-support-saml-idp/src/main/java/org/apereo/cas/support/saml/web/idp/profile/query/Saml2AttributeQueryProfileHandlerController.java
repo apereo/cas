@@ -71,7 +71,6 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.samlAttributeQueryTicketFactory = samlAttributeQueryTicketFactory;
-        this.casProperties = casProperties;
         this.samlFaultResponseBuilder = samlFaultResponseBuilder;
     }
 

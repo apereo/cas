@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
+import com.google.common.base.Splitter;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.net.URLBuilder;
@@ -80,100 +83,62 @@ import java.util.TreeMap;
  */
 @Controller
 @Slf4j
+@RequiredArgsConstructor
 public abstract class AbstractSamlProfileHandlerController {
-
-
-    /**
-     * Authentication support to handle credentials and authn subsystem calls.
-     */
-    protected AuthenticationSystemSupport authenticationSystemSupport;
-
     /**
      * The Saml object signer.
      */
-    protected BaseSamlObjectSigner samlObjectSigner;
-
-    /**
-     * Signature validator.
-     */
-    protected SamlObjectSignatureValidator samlObjectSignatureValidator;
-
+    protected final BaseSamlObjectSigner samlObjectSigner;
     /**
      * The Parser pool.
      */
-    protected ParserPool parserPool;
+    protected final ParserPool parserPool;
+    
+    /**
+     * Authentication support to handle credentials and authn subsystem calls.
+     */
+    protected final AuthenticationSystemSupport authenticationSystemSupport;
+
+    /**
+     * The Services manager.
+     */
+    protected final ServicesManager servicesManager;
+
+    /**
+     * The Web application service factory.
+     */
+    protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     /**
      * Callback service.
      */
     protected Service callbackService;
-
-    /**
-     * The Services manager.
-     */
-    protected ServicesManager servicesManager;
-
-    /**
-     * The Web application service factory.
-     */
-    protected ServiceFactory<WebApplicationService> webApplicationServiceFactory;
-
+    
     /**
      * The Saml registered service caching metadata resolver.
      */
-    protected SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
+    protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
 
     /**
      * The Config bean.
      */
-    protected OpenSamlConfigBean configBean;
+    protected final OpenSamlConfigBean configBean;
 
     /**
      * The Response builder.
      */
-    protected SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
+    protected final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder;
 
     /**
      * The cas properties.
      */
-    protected CasConfigurationProperties casProperties;
+    protected final CasConfigurationProperties casProperties;
 
     /**
-     * Instantiates a new Abstract saml profile handler controller.
-     *
-     * @param samlObjectSigner                             the saml object signer
-     * @param parserPool                                   the parser pool
-     * @param authenticationSystemSupport                  the authentication system support
-     * @param servicesManager                              the services manager
-     * @param webApplicationServiceFactory                 the web application service factory
-     * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
-     * @param configBean                                   the config bean
-     * @param responseBuilder                              the response builder
-     * @param casProperties                                the cas properties
-     * @param samlObjectSignatureValidator                 the saml object signature validator
+     * Signature validator.
      */
-    public AbstractSamlProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
-                                                final ParserPool parserPool,
-                                                final AuthenticationSystemSupport authenticationSystemSupport,
-                                                final ServicesManager servicesManager,
-                                                final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
-                                                final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver,
-                                                final OpenSamlConfigBean configBean,
-                                                final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
-                                                final CasConfigurationProperties casProperties,
-                                                final SamlObjectSignatureValidator samlObjectSignatureValidator) {
-        this.samlObjectSigner = samlObjectSigner;
-        this.parserPool = parserPool;
-        this.servicesManager = servicesManager;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.samlRegisteredServiceCachingMetadataResolver = samlRegisteredServiceCachingMetadataResolver;
-        this.configBean = configBean;
-        this.responseBuilder = responseBuilder;
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.samlObjectSignatureValidator = samlObjectSignatureValidator;
-        this.casProperties = casProperties;
-    }
-
+    protected final SamlObjectSignatureValidator samlObjectSignatureValidator;
+    
     /**
      * Post constructor placeholder for additional
      * extensions. This method is called after
@@ -206,8 +171,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
                                                                                                     final String entityId) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade
-            .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
+        return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
     }
 
     /**
@@ -225,8 +189,7 @@ public abstract class AbstractSamlProfileHandlerController {
         final RegisteredService registeredService =
             this.servicesManager.findServiceBy(this.webApplicationServiceFactory.createService(serviceId));
         if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-            LOGGER.warn("[{}] is not found in the registry or service access is denied. Ensure service is registered in service registry",
-                serviceId);
+            LOGGER.warn("[{}] is not found in the registry or service access is denied. Ensure service is registered in service registry", serviceId);
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
         }
 
@@ -411,8 +374,8 @@ public abstract class AbstractSamlProfileHandlerController {
         casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings()
             .stream()
             .map(s -> {
-                final String[] bits = s.split("->");
-                return Pair.of(bits[0], bits[1]);
+                final List<String> bits = Splitter.on("->").splitToList(s);
+                return Pair.of(bits.get(0), bits.get(1));
             })
             .forEach(p -> mappings.put(p.getKey(), p.getValue()));
         return mappings;
