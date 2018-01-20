@@ -39,7 +39,6 @@ public class CachingPrincipalAttributesRepository extends AbstractPrincipalAttri
      * Used for serialization only.
      */
     private CachingPrincipalAttributesRepository() {
-        super();
         this.cache = Caffeine.newBuilder().maximumSize(this.maxCacheSize)
                 .expireAfterWrite(getExpiration(), TimeUnit.valueOf(getTimeUnit())).build(this.cacheLoader);
     }
