@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.core.OrderComparator;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -16,12 +16,9 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultAuthenticationServiceSelectionPlan implements AuthenticationServiceSelectionPlan {
     private final List<AuthenticationServiceSelectionStrategy> strategies;
-
-    public DefaultAuthenticationServiceSelectionPlan() {
-        this.strategies = new ArrayList<>();
-    }
 
     public DefaultAuthenticationServiceSelectionPlan(final AuthenticationServiceSelectionStrategy... strategies) {
         this.strategies = Arrays.stream(strategies).collect(Collectors.toList());
