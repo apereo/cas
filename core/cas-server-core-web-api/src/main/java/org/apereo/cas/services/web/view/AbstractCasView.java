@@ -363,6 +363,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param value the value
      */
     protected void putIntoModel(final Map<String, Object> model, final String key, final Object value) {
+        LOGGER.trace("Adding attribute [{}] into the view model for [{}] with value [{}]", key, getClass().getSimpleName(), value);
         model.put(key, value);
     }
 
