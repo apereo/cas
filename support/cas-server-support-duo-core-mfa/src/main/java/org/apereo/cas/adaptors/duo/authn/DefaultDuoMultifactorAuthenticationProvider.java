@@ -1,8 +1,11 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
@@ -14,8 +17,6 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
@@ -27,15 +28,16 @@ import lombok.Setter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-@RequiredArgsConstructor
+@AllArgsConstructor
+@NoArgsConstructor
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148634156909L;
 
-    private final String registrationUrl;
+    private String registrationUrl;
 
     @NonNull
-    private final DuoSecurityAuthenticationService duoAuthenticationService;
+    private DuoSecurityAuthenticationService duoAuthenticationService;
 
     @Override
     protected boolean isAvailable() {
