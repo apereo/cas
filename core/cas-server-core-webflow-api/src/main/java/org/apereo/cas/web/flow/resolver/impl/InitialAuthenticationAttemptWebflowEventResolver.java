@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.resolver.impl;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -24,13 +25,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Setter;
 
 /**
  * This is {@link InitialAuthenticationAttemptWebflowEventResolver},
