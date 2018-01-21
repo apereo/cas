@@ -11,6 +11,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
+import org.apereo.cas.web.flow.InitializeLogoutViewAction;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
@@ -217,6 +218,12 @@ public class CasSupportActionsConfiguration {
     public Action terminateSessionAction() {
         return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
                 warnCookieGenerator, casProperties.getLogout());
+    }
+
+    @Bean
+    @RefreshScope
+    public Action initializeLogoutViewAction() {
+        return new InitializeLogoutViewAction(casProperties);
     }
 
     @Bean
