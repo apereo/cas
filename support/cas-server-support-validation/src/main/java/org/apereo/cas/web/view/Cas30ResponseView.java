@@ -32,7 +32,6 @@ import java.util.Set;
  */
 @Slf4j
 public class Cas30ResponseView extends Cas20ResponseView {
-
     
     private final boolean releaseProtocolAttributes;
 
@@ -62,12 +61,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
         attributes.putAll(principalAttributes);
 
-        LOGGER.debug("Processed response principal attributes from the output model to be [{}]", principalAttributes.keySet());
+        LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
             LOGGER.debug("CAS is configured to release protocol-level attributes. Processing...");
             final Map<String, Object> protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
             attributes.putAll(protocolAttributes);
-            LOGGER.debug("Processed response protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
+            LOGGER.debug("Processed protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
         }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
@@ -92,17 +91,10 @@ public class Cas30ResponseView extends Cas20ResponseView {
             return new LinkedHashMap<>(0);
         }
 
-        // Authentication Attributes
         final Map<String, Object> filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
                 .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
 
-        // CAS 3.0 specific protocol attributes
-        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
-                CollectionUtils.wrap(getAuthenticationDate(model)));
-        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                CollectionUtils.wrap(isAssertionBackedByNewLogin(model)));
-        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                CollectionUtils.wrap(isRememberMeAuthentication(model)));
+        filterCasProtocolAttributes(model, filteredAuthenticationAttributes);
 
         final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
@@ -110,6 +102,15 @@ public class Cas30ResponseView extends Cas20ResponseView {
         }        
 
         return filteredAuthenticationAttributes;
+    }
+
+    private void filterCasProtocolAttributes(final Map<String, Object> model, final Map<String, Object> filteredAuthenticationAttributes) {
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
+                CollectionUtils.wrap(getAuthenticationDate(model)));
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
+                CollectionUtils.wrap(isAssertionBackedByNewLogin(model)));
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+                CollectionUtils.wrap(isRememberMeAuthentication(model)));
     }
 
     /**
