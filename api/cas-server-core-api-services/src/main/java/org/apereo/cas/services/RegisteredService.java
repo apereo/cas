@@ -112,6 +112,12 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
     void setEvaluationOrder(int evaluationOrder);
 
     /**
+     * Sets the identifer for this service. Use {@link #INITIAL_IDENTIFIER_VALUE} to indicate a branch new service definition.
+     * @param id the numeric identifier for the service.
+     */
+    void setId(long id);
+
+    /**
      * Get the name of the attribute this service prefers to consume as username.
      *
      * @return an instance of {@link RegisteredServiceUsernameAttributeProvider}
@@ -256,6 +262,7 @@ public interface RegisteredService extends Cloneable, Serializable, Comparable<R
      * Gets friendly name of this service.
      * Typically describes the purpose of this service
      * and the return value is usually used for display purposes.
+     *
      * @return the friendly name
      */
     @JsonIgnore
