@@ -18,8 +18,17 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
+
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    /**
+     * To facilitate unit testing.
+     * @param casProperties this is cas config props
+     */
+    public void setCasProperties(CasConfigurationProperties casProperties) {
+        this.casProperties = casProperties;
+    }
 
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
