@@ -22,14 +22,6 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    /**
-     * To facilitate unit testing.
-     * @param casProperties this is cas config props
-     */
-    public void setCasProperties(CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
-
     @Override
     protected void buildAndRegisterServiceTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("serviceTicketsCache");
