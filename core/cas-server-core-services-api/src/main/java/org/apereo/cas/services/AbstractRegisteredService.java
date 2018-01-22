@@ -310,6 +310,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     public abstract void setServiceId(String id);
 
+    @Override
     public void setId(final long id) {
         this.id = id;
     }
