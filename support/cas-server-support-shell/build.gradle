@@ -28,6 +28,7 @@ dependencies {
     compile libraries.springbootconfigmetadata
     compile libraries.metrics
     compile libraries.pac4j
+    compile libraries.opensaml
 }
 
 springBoot {
