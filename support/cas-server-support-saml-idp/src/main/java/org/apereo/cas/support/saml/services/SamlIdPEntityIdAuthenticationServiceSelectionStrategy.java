@@ -19,9 +19,6 @@ import java.util.Optional;
 @Slf4j
 public class SamlIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
-
-
-
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
     private final String casServiceUrlPattern;

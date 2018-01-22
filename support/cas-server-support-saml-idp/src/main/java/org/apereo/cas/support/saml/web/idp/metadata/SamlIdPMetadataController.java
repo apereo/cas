@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
+import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataGenerator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -15,19 +16,19 @@ import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
 /**
- * The {@link SamlMetadataController} will attempt
+ * The {@link SamlIdPMetadataController} will attempt
  * to produce saml metadata for CAS as an identity provider.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Controller("samlMetadataController")
+@Controller("samlIdPMetadataController")
 @Slf4j
 @AllArgsConstructor
-public class SamlMetadataController {
+public class SamlIdPMetadataController {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
-    private final SamlIdpMetadataAndCertificatesGenerationService metadataAndCertificatesGenerationService;
+    private final SamlIdPMetadataGenerator metadataAndCertificatesGenerationService;
 
     /**
      * Post constructor placeholder for additional
@@ -36,7 +37,7 @@ public class SamlMetadataController {
      */
     @PostConstruct
     public void postConstruct() {
-        this.metadataAndCertificatesGenerationService.performGenerationSteps();
+        this.metadataAndCertificatesGenerationService.generate();
     }
 
     /**
@@ -48,7 +49,7 @@ public class SamlMetadataController {
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
-        final File metadataFile = this.metadataAndCertificatesGenerationService.performGenerationSteps();
+        final File metadataFile = this.metadataAndCertificatesGenerationService.generate();
         final String contents = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
