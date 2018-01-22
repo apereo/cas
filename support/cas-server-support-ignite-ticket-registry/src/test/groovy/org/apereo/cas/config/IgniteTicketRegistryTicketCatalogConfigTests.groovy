@@ -6,10 +6,10 @@ import org.apereo.cas.ticket.TicketCatalogConfigurer
 /**
  * @author Dmitriy Kopylenko
  */
-class HzTicketRegistryTicketCatalogConfigTests extends AbstractCommonCacheBasedStorageNaming {
+class IgniteTicketRegistryTicketCatalogConfigTests extends AbstractCommonCacheBasedStorageNaming {
 
     @Override
     TicketCatalogConfigurer ticketCatalogConfigurerUnderTest() {
-        new HazelcastTicketRegistryTicketCatalogConfiguration(casProperties: new CasConfigurationProperties())
+        new IgniteTicketRegistryTicketCatalogConfiguration(casProperties: new CasConfigurationProperties())
     }
 }
