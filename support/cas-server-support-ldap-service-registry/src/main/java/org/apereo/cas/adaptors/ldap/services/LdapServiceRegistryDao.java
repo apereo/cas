@@ -60,6 +60,15 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
             if (rs.getId() != RegisteredService.INITIAL_IDENTIFIER_VALUE) {
                 return update(rs);
             }
+            insert(rs);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return rs;
+    }
+
+    private RegisteredService insert(final RegisteredService rs) {
+        try {
             final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeAddOperation(this.connectionFactory, entry);
         } catch (final Exception e) {
@@ -67,7 +76,7 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
         }
         return rs;
     }
-
+    
     /**
      * Update the ldap entry with the given registered service.
      *
@@ -88,6 +97,9 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
             LOGGER.debug("Updating registered service at [{}]", currentDn);
             final LdapEntry entry = this.ldapServiceMapper.mapFromRegisteredService(this.baseDn, rs);
             LdapUtils.executeModifyOperation(currentDn, this.connectionFactory, entry);
+        } else {
+            LOGGER.debug("Failed to locate DN for registered service by id [{}]. Attempting to save the service anew", rs.getId());
+            insert(rs);
         }
         return rs;
     }
