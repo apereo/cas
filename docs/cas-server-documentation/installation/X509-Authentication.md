@@ -14,6 +14,7 @@ certificate presented in the SSL handshake be accessible to the servlet containe
 directly at the servlet container and when using `Apache/mod_jk`; for other architectures it may be necessary to do
 additional work.
 
+CAS can be configured to extract an X509 certificate from a header created by a proxy running in front of CAS.
 ## Overview
 
 Certificates are exchanged as part of the SSL (also called TLS) initialization that occurs when any browser connects to an `https` website.
