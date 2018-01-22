@@ -1,15 +1,15 @@
 package org.apereo.cas.config
 
 import org.apereo.cas.ticket.*
+import spock.lang.Shared
 import spock.lang.Specification
+
 /**
  * @author Dmitriy Kopylenko
  */
 abstract class AbstractTicketRegistryTicketCatalogConfigTests extends Specification {
 
-    def ticketCatalogConfigurer = ticketCatalogConfigurerUnderTest()
-
-    def ticketCatalog = new DefaultTicketCatalog()
+    @Shared TicketCatalog ticketCatalog = new DefaultTicketCatalog()
 
     static TGT_TICKET = new TicketGrantingTicketImpl(id: 'TGT-1976')
 
@@ -29,8 +29,8 @@ abstract class AbstractTicketRegistryTicketCatalogConfigTests extends Specificat
 
     abstract PT_storageNameForConcreteTicketRegistry()
 
-    def setup() {
-        this.ticketCatalogConfigurer.configureTicketCatalog(ticketCatalog)
+    def setupSpec() {
+        ticketCatalogConfigurerUnderTest().configureTicketCatalog(ticketCatalog)
     }
 
     def "should configure correctly TGT ticket definition"() {
