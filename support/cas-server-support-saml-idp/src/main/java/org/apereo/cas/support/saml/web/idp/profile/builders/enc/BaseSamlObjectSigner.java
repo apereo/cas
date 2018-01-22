@@ -331,7 +331,7 @@ public class BaseSamlObjectSigner {
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return new BasicX509Credential(certificate, privateKey);
                     }
-                    final Resource signingCert = samlIdp.getMetadata().getSigningCertFile();
+                    final Resource signingCert = SamlIdPUtils.getIdPSigningCertFile(samlIdp.getMetadata().getLocation().getFile());
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     final X509Certificate certificate = SamlUtils.readCertificate(signingCert);
                     return new BasicX509Credential(certificate, privateKey);
@@ -350,8 +350,9 @@ public class BaseSamlObjectSigner {
      */
     protected X509Certificate getSigningCertificate() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
-        LOGGER.debug("Locating signature signing certificate file from [{}]", samlIdp.getMetadata().getSigningCertFile());
-        return SamlUtils.readCertificate(new FileSystemResource(samlIdp.getMetadata().getSigningCertFile().getFile()));
+        final Resource signingCert = SamlIdPUtils.getIdPSigningCertFile(samlIdp.getMetadata().getLocation().getFile());
+        LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
+        return SamlUtils.readCertificate(new FileSystemResource(signingCert.getFile()));
     }
 
     /**
@@ -362,11 +363,12 @@ public class BaseSamlObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
+        final Resource signingKey = SamlIdPUtils.getIdPSigningKeyFile(samlIdp.getMetadata().getLocation().getFile());
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
-        privateKeyFactoryBean.setLocation(new FileSystemResource(samlIdp.getMetadata().getSigningKeyFile().getFile()));
+        privateKeyFactoryBean.setLocation(new FileSystemResource(signingKey.getFile()));
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());
         privateKeyFactoryBean.setSingleton(false);
-        LOGGER.debug("Locating signature signing key file from [{}]", samlIdp.getMetadata().getSigningKeyFile());
+        LOGGER.debug("Locating signature signing key file from [{}]", signingKey);
         return privateKeyFactoryBean.getObject();
     }
 }

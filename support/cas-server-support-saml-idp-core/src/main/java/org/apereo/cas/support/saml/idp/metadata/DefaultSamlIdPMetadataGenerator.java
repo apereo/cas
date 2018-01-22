@@ -1,15 +1,14 @@
-package org.apereo.cas.support.saml.web.idp.metadata;
+package org.apereo.cas.support.saml.idp.metadata;
 
+import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.security.SelfSignedCertificateGenerator;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
+import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
@@ -26,18 +25,18 @@ import java.nio.charset.StandardCharsets;
  * @since 5.0.0
  */
 @Slf4j
-public class TemplatedMetadataAndCertificatesGenerationService implements SamlIdpMetadataAndCertificatesGenerationService {
+@RequiredArgsConstructor
+public class DefaultSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator {
     private static final String URI_SUBJECT_ALTNAME_POSTFIX = "/idp/metadata";
 
     private static final String BEGIN_CERTIFICATE = "-----BEGIN CERTIFICATE-----";
     private static final String END_CERTIFICATE = "-----END CERTIFICATE-----";
 
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
-    private ResourceLoader resourceLoader;
+    private final File metadataLocation;
+    private final String entityId;
+    private final ResourceLoader resourceLoader;
+    private final String casServerPrefix;
+    private final String scope;
 
     /**
      * Initializes a new Generate saml metadata.
@@ -45,18 +44,15 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
     @PostConstruct
     @SneakyThrows
     public void initialize() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        final Resource metadataLocation = idp.getMetadata().getLocation();
-
         if (!metadataLocation.exists()) {
             LOGGER.debug("Metadata directory [{}] does not exist. Creating...", metadataLocation);
-            if (!metadataLocation.getFile().mkdir()) {
+            if (!metadataLocation.mkdir()) {
                 throw new IllegalArgumentException("Metadata directory location " + metadataLocation + " cannot be located/created");
             }
         }
-        LOGGER.info("Metadata directory location is at [{}] with entityID [{}]", metadataLocation, idp.getEntityId());
+        LOGGER.info("Metadata directory location is at [{}] with entity id [{}]", metadataLocation, this.entityId);
 
-        performGenerationSteps();
+        generate();
     }
 
     /**
@@ -66,17 +62,16 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
      */
     @SneakyThrows
     public boolean isMetadataMissing() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return !idp.getMetadata().getMetadataFile().exists();
+        return !SamlIdPUtils.getIdPMetadataFile(metadataLocation).exists();
     }
 
     @Override
     @SneakyThrows
-    public File performGenerationSteps() {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        LOGGER.debug("Preparing to generate metadata for entityId [{}]", idp.getEntityId());
+    public File generate() {
+        LOGGER.debug("Preparing to generate metadata for entityId [{}]", this.entityId);
+        final File metadataFile = SamlIdPUtils.getIdPMetadataFile(metadataLocation);
         if (isMetadataMissing()) {
-            LOGGER.info("Metadata does not exist at [{}]. Creating...", idp.getMetadata().getMetadataFile());
+            LOGGER.info("Metadata does not exist at [{}]. Creating...", metadataFile);
 
             LOGGER.info("Creating self-sign certificate for signing...");
             buildSelfSignedSigningCert();
@@ -87,19 +82,17 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
             LOGGER.info("Creating metadata...");
             buildMetadataGeneratorParameters();
         }
-
-        LOGGER.info("Metadata is available at [{}]", idp.getMetadata().getMetadataFile());
-
-        return idp.getMetadata().getMetadataFile();
+        LOGGER.info("Metadata is available at [{}]", metadataFile);
+        return metadataFile;
     }
 
     private String getIdPEndpointUrl() {
-        return casProperties.getServer().getPrefix().concat("/idp");
+        return this.casServerPrefix.concat("/idp");
     }
 
     @SneakyThrows
     private String getIdPHostName() {
-        final URL url = new URL(casProperties.getServer().getPrefix());
+        final URL url = new URL(this.casServerPrefix);
         return url.getHost();
     }
 
@@ -109,15 +102,14 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
      * @throws Exception the exception
      */
     protected void buildSelfSignedEncryptionCert() throws Exception {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
         generator.setHostName(getIdPHostName());
-        final File encCert = idp.getMetadata().getEncryptionCertFile().getFile();
+        final File encCert = SamlIdPUtils.getIdPEncryptionCertFile(this.metadataLocation).getFile();
         if (encCert.exists()) {
             FileUtils.forceDelete(encCert);
         }
         generator.setCertificateFile(encCert);
-        final File encKey = idp.getMetadata().getEncryptionKeyFile().getFile();
+        final File encKey = SamlIdPUtils.getIdPEncryptionKeyFile(this.metadataLocation).getFile();
         if (encKey.exists()) {
             FileUtils.forceDelete(encKey);
         }
@@ -132,16 +124,15 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
      * @throws Exception the exception
      */
     protected void buildSelfSignedSigningCert() throws Exception {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final SelfSignedCertificateGenerator generator = new SelfSignedCertificateGenerator();
         generator.setHostName(getIdPHostName());
-        final File signingCert = idp.getMetadata().getSigningCertFile().getFile();
+        final File signingCert = SamlIdPUtils.getIdPSigningCertFile(this.metadataLocation).getFile();
         if (signingCert.exists()) {
             FileUtils.forceDelete(signingCert);
         }
 
         generator.setCertificateFile(signingCert);
-        final File signingKey = idp.getMetadata().getSigningKeyFile().getFile();
+        final File signingKey =SamlIdPUtils.getIdPSigningKeyFile(this.metadataLocation).getFile();
         if (signingKey.exists()) {
             FileUtils.forceDelete(signingKey);
         }
@@ -157,26 +148,25 @@ public class TemplatedMetadataAndCertificatesGenerationService implements SamlId
      * @throws Exception Thrown if cert files are missing, or metadata file inaccessible.
      */
     protected void buildMetadataGeneratorParameters() throws Exception {
-        final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final Resource template = this.resourceLoader.getResource("classpath:/template-idp-metadata.xml");
 
-        String signingKey = FileUtils.readFileToString(idp.getMetadata().getSigningCertFile().getFile(), StandardCharsets.UTF_8);
-        signingKey = StringUtils.remove(signingKey, BEGIN_CERTIFICATE);
-        signingKey = StringUtils.remove(signingKey, END_CERTIFICATE).trim();
+        String signingCert = FileUtils.readFileToString(SamlIdPUtils.getIdPSigningCertFile(this.metadataLocation).getFile(), StandardCharsets.UTF_8);
+        signingCert = StringUtils.remove(signingCert, BEGIN_CERTIFICATE);
+        signingCert = StringUtils.remove(signingCert, END_CERTIFICATE).trim();
 
-        String encryptionKey = FileUtils.readFileToString(idp.getMetadata().getEncryptionCertFile().getFile(), StandardCharsets.UTF_8);
-        encryptionKey = StringUtils.remove(encryptionKey, BEGIN_CERTIFICATE);
-        encryptionKey = StringUtils.remove(encryptionKey, END_CERTIFICATE).trim();
+        String encryptionCert = FileUtils.readFileToString(SamlIdPUtils.getIdPEncryptionCertFile(this.metadataLocation).getFile(), StandardCharsets.UTF_8);
+        encryptionCert = StringUtils.remove(encryptionCert, BEGIN_CERTIFICATE);
+        encryptionCert = StringUtils.remove(encryptionCert, END_CERTIFICATE).trim();
 
         try (StringWriter writer = new StringWriter()) {
             IOUtils.copy(template.getInputStream(), writer, StandardCharsets.UTF_8);
             final String metadata = writer.toString()
-                .replace("${entityId}", idp.getEntityId())
-                .replace("${scope}", idp.getScope())
+                .replace("${entityId}", this.entityId)
+                .replace("${scope}", this.scope)
                 .replace("${idpEndpointUrl}", getIdPEndpointUrl())
-                .replace("${encryptionKey}", encryptionKey)
-                .replace("${signingKey}", signingKey);
-            FileUtils.write(idp.getMetadata().getMetadataFile(), metadata, StandardCharsets.UTF_8);
+                .replace("${encryptionKey}", encryptionCert)
+                .replace("${signingKey}", signingCert);
+            FileUtils.write(SamlIdPUtils.getIdPMetadataFile(this.metadataLocation), metadata, StandardCharsets.UTF_8);
         }
     }
 }
