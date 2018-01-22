@@ -1,35 +1,31 @@
 package org.apereo.cas.config
 
-import org.apereo.cas.configuration.CasConfigurationProperties
 import org.apereo.cas.ticket.TicketCatalogConfigurer
 
-/**
- * @author Dmitriy Kopylenko
- */
-class HzTicketRegistryTicketCatalogConfigTests extends AbstractTicketRegistryTicketCatalogConfigTests {
+class CoreTicketCatalogConfigTests extends AbstractTicketRegistryTicketCatalogConfigTests {
 
     @Override
     TicketCatalogConfigurer ticketCatalogConfigurerUnderTest() {
-        new HazelcastTicketRegistryTicketCatalogConfiguration(casProperties: new CasConfigurationProperties())
+        new CasCoreTicketCatalogConfiguration()
     }
 
     @Override
     def TGT_storageNameForConcreteTicketRegistry() {
-        'ticketGrantingTicketsCache'
+        null
     }
 
     @Override
     def ST_storageNameForConcreteTicketRegistry() {
-        'serviceTicketsCache'
+        null
     }
 
     @Override
     def PGT_storageNameForConcreteTicketRegistry() {
-        'proxyGrantingTicketsCache'
+        null
     }
 
     @Override
     def PT_storageNameForConcreteTicketRegistry() {
-        'proxyTicketsCache'
+        null
     }
 }
