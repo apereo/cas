@@ -136,6 +136,9 @@ The following plugins may prove useful during development:
 - [FindBugs](https://plugins.jetbrains.com/plugin/3847-findbugs-idea)
 - [Lombok](https://github.com/mplushnikov/lombok-intellij-plugin)
 
+Once you have installed the Lombok plugin, you will also need to ensure Annotation Processing is turned on. You may need to restart IDEA in order for changes to take full effect.
+![image](https://user-images.githubusercontent.com/1205228/35231112-287f625a-ffad-11e7-8c1a-af23ff33918d.png)
+
 ### Eclipse
 
 For Eclipse, execute the following commands:
