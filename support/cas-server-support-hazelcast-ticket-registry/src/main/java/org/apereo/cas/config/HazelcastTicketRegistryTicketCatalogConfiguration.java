@@ -18,8 +18,6 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -34,7 +32,7 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("proxyTicketsCache");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getPt().getTimeToKillInSeconds());
-        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+        super.buildAndRegisterProxyTicketDefinition(plan, metadata);
     }
 
     @Override

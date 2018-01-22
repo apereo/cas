@@ -30,7 +30,7 @@ public class GenerateSamlIdPMetadataCommand implements CommandMarker {
      * @param entityId         the entity id
      * @param serverPrefix     the server prefix
      * @param scope            the scope
-     * @param force            the force
+     * @param force            force generation of metadata
      */
     @CliCommand(value = "generate-idp-metadata", help = "Generate SAML2 IdP Metadata")
     public void generate(
