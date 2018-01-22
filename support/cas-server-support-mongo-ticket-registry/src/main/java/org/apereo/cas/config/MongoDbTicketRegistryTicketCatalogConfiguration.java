@@ -34,7 +34,7 @@ public class MongoDbTicketRegistryTicketCatalogConfiguration extends CasCoreTick
     protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("proxyTicketsCollection");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getSt().getTimeToKillInSeconds());
-        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+        super.buildAndRegisterProxyTicketDefinition(plan, metadata);
     }
 
     @Override
