@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration.model.support.saml.idp.metadata;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
@@ -7,13 +9,10 @@ import org.springframework.boot.context.properties.NestedConfigurationProperty;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link SamlIdPMetadataProperties}.
@@ -84,53 +83,4 @@ public class SamlIdPMetadataProperties implements Serializable {
      */
     private List<String> supportedContentTypes = new ArrayList<>();
 
-    /**
-     * Gets full location of signing cert file.
-     *
-     * @return the signing cert file
-     * @throws Exception the exception
-     */
-    public Resource getSigningCertFile() throws Exception {
-        return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.crt"));
-    }
-
-    /**
-     * Gets signing key file.
-     *
-     * @return the signing key file
-     * @throws Exception the exception
-     */
-    public Resource getSigningKeyFile() throws Exception {
-        return new FileSystemResource(new File(this.location.getFile(), "/idp-signing.key"));
-    }
-
-    /**
-     * Gets idp metadata file.
-     *
-     * @return the metadata file
-     * @throws Exception the exception
-     */
-    public File getMetadataFile() throws Exception {
-        return new File(this.location.getFile(), "idp-metadata.xml");
-    }
-
-    /**
-     * Gets encryption cert file.
-     *
-     * @return the encryption cert file
-     * @throws Exception the exception
-     */
-    public Resource getEncryptionCertFile() throws Exception {
-        return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.crt"));
-    }
-
-    /**
-     * Gets encryption key file.
-     *
-     * @return the encryption key file
-     * @throws Exception the exception
-     */
-    public Resource getEncryptionKeyFile() throws Exception {
-        return new FileSystemResource(new File(this.location.getFile(), "/idp-encryption.key"));
-    }
 }
