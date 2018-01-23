@@ -97,8 +97,6 @@ public class MongoDbConnectionFactory {
      * @return the mongo template
      */
     public MongoTemplate buildMongoTemplate(final String clientUri) {
-        // Wrap the client uri in a properties object so that we can create
-        // the template with the CAS default property settings.
         return buildMongoTemplate(new ClientUriMongoDbProperties(clientUri));
     }
 
@@ -206,14 +204,29 @@ public class MongoDbConnectionFactory {
     }
 
     /**
-     * Create a MongoClientOptions object. The idea here is that the user may
-     * either provide a bunch of individual property settings, or a MongoDb
-     * client connection string (uri), or some combination of the two.
-     *
-     * This is unfortunately tricky because the default values provided by the
-     * CAS code in BaseMongoDbProperties.java are not the same as the default
-     * values for the corresponding options provided by the MongoDb Java driver
-     * when it creates a MongoClientOptions object.
+     * Create a MongoClientOptions object.
+     * <p>
+     * The object will be created from a collection of individual property
+     * settings, or a MongoDb client connection string (uri), or some
+     * combination of the two.
+     * <p>
+     * This is complicated by the fact that the default values provided by
+     * the CAS code in BaseMongoDbProperties.java are not the same as the
+     * default values for the corresponding options provided by the MongoDb
+     * Java driver when it creates a MongoClientOptions object.
+     * <p>
+     * To ensure predictable results in all cases, we initialize the client
+     * options from the individual property settings (even if just the CAS
+     * default values), and then use those values as the starting point to
+     * process the client uri (if one is provided). This way, any options
+     * in the uri will override the earlier ones, but any options missing
+     * from the uri will have the values (default or user-provided) from
+     * the individual property settings.
+     * <p>
+     * This behavior matches the comment in BaseMongoDbProperties.java for
+     * the clientUri property: "If not specified, will fallback onto other
+     * individual settings. If specified, takes over all other settings
+     * where applicable."
      *
      * @param mongo the property setttings (including, perhaps, a client uri)
      * @return a bean containing the MongoClientOptions object
@@ -222,8 +235,6 @@ public class MongoDbConnectionFactory {
         try {
             final MongoClientOptionsFactoryBean bean1 = new MongoClientOptionsFactoryBean();
 
-            // First, create a MongoClientOptions object with values from the
-            // individual property settings.
             bean1.setWriteConcern(WriteConcern.valueOf(mongo.getWriteConcern()));
             bean1.setHeartbeatConnectTimeout((int) mongo.getTimeout());
             bean1.setHeartbeatSocketTimeout((int) mongo.getTimeout());
@@ -241,26 +252,14 @@ public class MongoDbConnectionFactory {
                 bean1.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
             }
 
-            // Initialize the bean. We have to do this here because it's
-            // needed to create the MongoClientURI below.
             bean1.afterPropertiesSet();
 
-            // Next, if a connection string (uri) was provided, create another
-            // MongoClientOptions object that starts with the values set above
-            // and then overrides them with the parameters passed in the
-            // connection string.
             if (StringUtils.isNotBlank(mongo.getClientUri())) {
                 final MongoClientOptionsFactoryBean bean2 = new MongoClientOptionsFactoryBean();
 
-                // Create a MongoClientURI object using the connection string
-                // with the options just set above in bean1 as the starting
-                // point. This will parse the string and set the options per
-                // whatever parameters it contains.
                 final MongoClientURI uri = buildMongoClientURI(mongo.getClientUri(), bean1.getObject());
                 final MongoClientOptions opts = uri.getOptions();
 
-                // Now copy the options set in the MongoClientUri back into
-                // the second MongoClientOptions object.
                 bean2.setWriteConcern(opts.getWriteConcern());
                 bean2.setHeartbeatConnectTimeout(opts.getHeartbeatConnectTimeout());
                 bean2.setHeartbeatSocketTimeout(opts.getHeartbeatSocketTimeout());
@@ -277,7 +276,6 @@ public class MongoDbConnectionFactory {
                     bean2.setSslSocketFactory((SSLSocketFactory) SSLSocketFactory.getDefault());
                 }
 
-                // Initialize the "revised"  bean to replace the first one.
                 bean2.afterPropertiesSet();
                 bean1.destroy();
 
