@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
