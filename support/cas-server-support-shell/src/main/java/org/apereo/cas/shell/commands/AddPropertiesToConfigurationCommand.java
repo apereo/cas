@@ -37,8 +37,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class AddPropertiesToConfigurationCommand implements CommandMarker {
-
-
     /**
      * Add properties to configuration.
      *
