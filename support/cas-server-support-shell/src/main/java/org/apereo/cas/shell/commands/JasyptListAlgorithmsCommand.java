@@ -14,20 +14,20 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
 /**
- * This is {@link EncryptListAlgorithmsCommand}.
+ * This is {@link JasyptListAlgorithmsCommand}.
  *
  * @author Hal Deadman
  * @since 5.3.0
  */
 @Slf4j
 @Service
-public class EncryptListAlgorithmsCommand implements CommandMarker {
+public class JasyptListAlgorithmsCommand implements CommandMarker {
 
     /**
      * List algorithms you can use Jasypt.
      * @param includeBC      whether to include the BouncyCastle provider
      */
-    @CliCommand(value = "encrypt-list-algorithms", help = "List alogrithms you can use wit Jasypt for property encryption")
+    @CliCommand(value = "jasypt-list-algorithms", help = "List alogrithms you can use with Jasypt for property encryption")
     public void listAlgorithms(@CliOption(key = { "includeBC" }, 
                                 mandatory = false, 
                                 help = "Include Bouncy Castle provider",  
@@ -43,13 +43,12 @@ public class EncryptListAlgorithmsCommand implements CommandMarker {
         final Provider[] providers = Security.getProviders();
         LOGGER.info("Loaded providers: ");
         for (final Provider provider : providers) {
-            LOGGER.info("Provider: {} {}", provider.getName(), provider.getClass().getName());
+            LOGGER.info("Provider: [{}] [{}]", provider.getName(), provider.getClass().getName());
         }
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        for (Iterator<String> iterator = pbeAlgos.iterator(); iterator.hasNext();) {
-            final Object object = (Object) iterator.next();
-            LOGGER.info(object.toString());
+        for (String pbeAlgo : pbeAlgos) {
+            LOGGER.info(pbeAlgo);
         }
     }
 }

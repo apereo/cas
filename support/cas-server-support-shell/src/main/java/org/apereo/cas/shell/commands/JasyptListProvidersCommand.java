@@ -5,6 +5,7 @@ import java.security.Security;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -14,20 +15,20 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
 /**
- * This is {@link EncryptListProvidersCommand}.
+ * This is {@link JasyptListProvidersCommand}.
  *
  * @author Hal Deadman
  * @since 5.3.0
  */
 @Slf4j
 @Service
-public class EncryptListProvidersCommand implements CommandMarker {
+public class JasyptListProvidersCommand implements CommandMarker {
 
     /**
      * List providers you can use Jasypt.
      * @param includeBC      whether to include the BouncyCastle provider
      */
-    @CliCommand(value = "encrypt-list-providers", help = "List encryption providers with PBE Ciphers you can use with Jasypt")
+    @CliCommand(value = "jasypt-list-providers", help = "List encryption providers with PBE Ciphers you can use with Jasypt")
     public void listAlgorithms(@CliOption(key = { "includeBC" }, 
                                 mandatory = false, 
                                 help = "Include Bouncy Castle provider",  
@@ -44,16 +45,15 @@ public class EncryptListProvidersCommand implements CommandMarker {
         final Provider[] providers = Security.getProviders();
         for (final Provider provider : providers) {
             final Set<Provider.Service> services = provider.getServices();
-            final List<String> algorithms = new ArrayList<>();
-            for (final Provider.Service service : services) {
-                if (service.getType().equals("Cipher") && service.getAlgorithm().contains("PBE")) {
-                    algorithms.add(service.getAlgorithm());
-                }
-            }
+            final List<String> algorithms = 
+            	services.stream()
+            	        .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
+            	        .map(service -> service.getAlgorithm())
+            	        .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
-                LOGGER.info("Provider: Name: {} Class: {}", provider.getName(), provider.getClass().getName());
+                LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
                 for (final String algorithm : algorithms) {
-                    LOGGER.info(" - Algorithm: {}", algorithm);                    
+                    LOGGER.info(" - Algorithm: [{}]", algorithm);                    
                 }
             }
         }

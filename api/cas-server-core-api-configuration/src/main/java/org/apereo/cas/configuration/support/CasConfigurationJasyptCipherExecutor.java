@@ -165,7 +165,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String encryptValue(final String value) {
         try {
-            return encryptValue2(value);
+            return encryptValuePropigateExceptions(value);
         } catch (final Exception e) {
             LOGGER.error("Could not encrypt value [{}]", e);
         }
@@ -178,7 +178,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public String encryptValue2(final String value) {
+    public String encryptValuePropigateExceptions(final String value) {
         initializeJasyptInstanceIfNecessary();
         return ENCRYPTED_VALUE_PREFIX + this.jasyptInstance.encrypt(value);
     }
@@ -191,7 +191,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      */
     public String decryptValue(final String value) {
         try {
-            return decryptValue2(value);
+            return decryptValuePropigateExceptions(value);
         } catch (final Exception e) {
             LOGGER.error("Could not decrypt value [{}]", e);
         }
@@ -204,7 +204,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
      * @param value the value
      * @return the string
      */
-    public String decryptValue2(final String value) {
+    public String decryptValuePropigateExceptions(final String value) {
         if (StringUtils.isNotBlank(value) && value.startsWith(ENCRYPTED_VALUE_PREFIX)) {
             initializeJasyptInstanceIfNecessary();
 

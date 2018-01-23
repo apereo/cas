@@ -18,14 +18,14 @@ import org.springframework.shell.core.annotation.CliOption;
 import org.springframework.stereotype.Service;
 
 /**
- * This is {@link EncryptTestAlgorithmsCommand}.
+ * This is {@link JasyptTestAlgorithmsCommand}.
  *
  * @author Hal Deadman
  * @since 5.3.0
  */
 @Slf4j
 @Service
-public class EncryptTestAlgorithmsCommand implements CommandMarker {
+public class JasyptTestAlgorithmsCommand implements CommandMarker {
 
     @Autowired
     private Environment environment;
@@ -34,7 +34,7 @@ public class EncryptTestAlgorithmsCommand implements CommandMarker {
      * List algorithms you can use Jasypt.
      * @param includeBC      whether to include the BouncyCastle provider
      */
-    @CliCommand(value = "encrypt-test-algorithms", help = "Test encryption alogrithms you can use wit Jasypt to make sure encryption and decryption both work")
+    @CliCommand(value = "jasypt-test-algorithms", help = "Test encryption alogrithms you can use with Jasypt to make sure encryption and decryption both work")
     public void testAlgorithms(@CliOption(key = { "includeBC" },
                                 mandatory = false,
                                 help = "Include Bouncy Castle provider",
@@ -57,33 +57,32 @@ public class EncryptTestAlgorithmsCommand implements CommandMarker {
                 
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         for (final String provider : providers) {
-            for (Iterator<String> iterator = pbeAlgos.iterator(); iterator.hasNext();) {
+        	for (final String algorithm : pbeAlgos) {
                 final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");
-                final String algorithm = iterator.next();
                 cipher.setAlgorithm(algorithm);
                 cipher.setProviderName(provider);
                 try {
                     final String encryptedValue;
                     try {
-                        encryptedValue = cipher.encryptValue2(value);
+                        encryptedValue = cipher.encryptValuePropigateExceptions(value);
                     } catch (final EncryptionInitializationException e) {
                         // encryption doesn't work for this algorithm/provider combo
                         continue;
                     }
-                    LOGGER.info("Provider: {} Algorithm: {}", provider, algorithm);
+                    LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithm);
                     try {
-                        cipher.decryptValue2(encryptedValue);
-                        LOGGER.info("Encrypted Value: {} Decryption Succeeded", encryptedValue);
+                        cipher.decryptValuePropigateExceptions(encryptedValue);
+                        LOGGER.info("Encrypted Value: [{}] Decryption Succeeded", encryptedValue);
                     } catch (final Exception e) {
-                        LOGGER.info("Encrypted Value: {} Decryption Failed", encryptedValue);
+                        LOGGER.info("Encrypted Value: [{}] Decryption Failed", encryptedValue);
                     }
                 } catch (final EncryptionInitializationException e) {
                     if (e.getCause() instanceof NoSuchAlgorithmException) {
-                        LOGGER.info("Provider: {} does not support Algorithm: {}", provider, algorithm);
+                        LOGGER.info("Provider: [{}] does not support Algorithm: [{}]", provider, algorithm);
                     } else { 
-                        LOGGER.info("Error encrypting using provider: {} and algorithm: {}, Message: {}", provider, algorithm, e.getMessage());
+                        LOGGER.info("Error encrypting using provider: [{}] and algorithm: [{}], Message: {}", provider, algorithm, e.getMessage());
                     }
                 }
             }
