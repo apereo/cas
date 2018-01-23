@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.Security;
-import java.util.Iterator;
 import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
@@ -57,7 +56,7 @@ public class JasyptTestAlgorithmsCommand implements CommandMarker {
                 
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         for (final String provider : providers) {
-        	for (final String algorithm : pbeAlgos) {
+            for (final String algorithm : pbeAlgos) {
                 final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
                 cipher.setPassword(password);
                 cipher.setKeyObtentionIterations("1");

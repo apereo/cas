@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands;
 
 import java.security.Provider;
 import java.security.Security;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -46,10 +45,10 @@ public class JasyptListProvidersCommand implements CommandMarker {
         for (final Provider provider : providers) {
             final Set<Provider.Service> services = provider.getServices();
             final List<String> algorithms = 
-            	services.stream()
-            	        .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
-            	        .map(service -> service.getAlgorithm())
-            	        .collect(Collectors.toList());
+                services.stream()
+                        .filter(service -> "Cipher".equals(service.getType()) && service.getAlgorithm().contains("PBE"))
+                        .map(service -> service.getAlgorithm())
+                        .collect(Collectors.toList());
             if (!algorithms.isEmpty()) {
                 LOGGER.info("Provider: Name: [{}] Class: [{}]", provider.getName(), provider.getClass().getName());
                 for (final String algorithm : algorithms) {

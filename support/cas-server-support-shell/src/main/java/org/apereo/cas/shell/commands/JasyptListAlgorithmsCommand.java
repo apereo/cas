@@ -2,7 +2,6 @@ package org.apereo.cas.shell.commands;
 
 import java.security.Provider;
 import java.security.Security;
-import java.util.Iterator;
 import java.util.Set;
 
 import lombok.extern.slf4j.Slf4j;
@@ -47,7 +46,7 @@ public class JasyptListAlgorithmsCommand implements CommandMarker {
         }
         final Set<String> pbeAlgos = AlgorithmRegistry.getAllPBEAlgorithms();
         LOGGER.info("==== JASYPT Password Based Encryption Algorithms ====\n");
-        for (String pbeAlgo : pbeAlgos) {
+        for (final String pbeAlgo : pbeAlgos) {
             LOGGER.info(pbeAlgo);
         }
     }

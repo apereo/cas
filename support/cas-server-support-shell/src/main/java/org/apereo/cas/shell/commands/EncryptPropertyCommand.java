@@ -35,6 +35,7 @@ public class EncryptPropertyCommand implements CommandMarker {
      * @param provider   the provider
      * @param password   the password
      * @param iterations the iterations
+     * @param includeBC  include BouncyCastle provider
      */
     @CliCommand(value = "encrypt-value", help = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
@@ -70,7 +71,7 @@ public class EncryptPropertyCommand implements CommandMarker {
         final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
-        if (includeBC) {
+        if (includeBC || BouncyCastleProvider.PROVIDER_NAME.equals(provider)) {
             if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
                 Security.addProvider(new BouncyCastleProvider());
             }
