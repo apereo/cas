@@ -244,11 +244,10 @@ Attribute name formats can be specified per relying party in the service registr
 You may also have the option to define attributes and their relevant name format globally
 via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
-### Attribute Friendly Names
+### Attribute Names
 
-Attribute friendly names can be specified per relying party in the service registry. If there is no friendly name defined for the attribute, the 
-attribute name will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider,
-specially if the original attribute is *mapped* to a different name.
+Attribute names can be specified per relying party in the service registry. If there is no name defined for the attribute, the 
+attribute name known to CAS will be used instead in its place. Note that the name of the attribute is one that is designed to be released to the service provider. In any case, the attribute name known to CAS will be used as the attribute's friendly name.
 
 ```json
 {
@@ -257,12 +256,15 @@ specially if the original attribute is *mapped* to a different name.
   "name": "SAML Service",
   "metadataLocation" : "../../sp-metadata.xml",
   "id": 100001,
-  "attributeFriendlyNames": {
+  "attributeNames": {
     "@class": "java.util.HashMap",
-    "urn:oid:2.5.4.42": "friendly-name-to-use"
+    "cn": "urn:oid:2.5.4.42"
   }
 }
 ```
+
+You also have the option to define attribute names globally
+via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
 
 ### Attribute Release
 
