@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -73,9 +74,11 @@ public class CasConsentReviewController {
      * @return the view where json data will be rendered
      */
     @GetMapping
-    public String showConsent(final HttpServletRequest request,
+    public ModelAndView showConsent(final HttpServletRequest request,
                                         final HttpServletResponse response) {
-        return CONSENT_REVIEW_VIEW;
+        final ModelAndView view = new ModelAndView(CONSENT_REVIEW_VIEW);
+        view.getModel().put("principal", Pac4jUtils.getPac4jAuthenticatedUsername());
+        return view;
     }
 
     /**
