@@ -24,10 +24,11 @@ dependencies {
     compile project(":support:cas-server-support-saml-idp-core")
     compile project(":support:cas-server-support-ws-idp-api")
     compile project(":support:cas-server-support-saml-idp-core")
-    
     compile libraries.springbootconfigmetadata
     compile libraries.metrics
     compile libraries.pac4j
+    compile libraries.jasypt
+    compile libraries.bouncycastle
     compile libraries.opensaml
 }
 
