@@ -65,14 +65,14 @@ public class JasyptTestAlgorithmsCommand implements CommandMarker {
                 try {
                     final String encryptedValue;
                     try {
-                        encryptedValue = cipher.encryptValuePropigateExceptions(value);
+                        encryptedValue = cipher.encryptValuePropagateExceptions(value);
                     } catch (final EncryptionInitializationException e) {
                         // encryption doesn't work for this algorithm/provider combo
                         continue;
                     }
                     LOGGER.info("Provider: [{}] Algorithm: [{}]", provider, algorithm);
                     try {
-                        cipher.decryptValuePropigateExceptions(encryptedValue);
+                        cipher.decryptValuePropagateExceptions(encryptedValue);
                         LOGGER.info("Encrypted Value: [{}] Decryption Succeeded", encryptedValue);
                     } catch (final Exception e) {
                         LOGGER.info("Encrypted Value: [{}] Decryption Failed", encryptedValue);

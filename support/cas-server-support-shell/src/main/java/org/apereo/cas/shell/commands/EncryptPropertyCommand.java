@@ -35,7 +35,6 @@ public class EncryptPropertyCommand implements CommandMarker {
      * @param provider   the provider
      * @param password   the password
      * @param iterations the iterations
-     * @param includeBC  include BouncyCastle provider
      */
     @CliCommand(value = "encrypt-value", help = "Encrypt a CAS property value/setting via Jasypt")
     public void encryptValue(
@@ -61,22 +60,13 @@ public class EncryptPropertyCommand implements CommandMarker {
              help = "Key obtention iterations to encrypt",
              optionContext = "Key obtention iterations to encrypt",
              specifiedDefaultValue = StringUtils.EMPTY,
-             unspecifiedDefaultValue = StringUtils.EMPTY) final String iterations,
-         @CliOption(key = { "includeBC" },
-             mandatory = false,
-             help = "Include Bouncy Castle provider",
-             specifiedDefaultValue = "true",
-             unspecifiedDefaultValue = "false") final boolean includeBC) {
+             unspecifiedDefaultValue = StringUtils.EMPTY) final String iterations) {
 
         final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
-        if (includeBC || BouncyCastleProvider.PROVIDER_NAME.equals(provider)) {
-            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-                Security.addProvider(new BouncyCastleProvider());
-            }
-        } else {
-            Security.removeProvider(BouncyCastleProvider.PROVIDER_NAME);
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
         }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
