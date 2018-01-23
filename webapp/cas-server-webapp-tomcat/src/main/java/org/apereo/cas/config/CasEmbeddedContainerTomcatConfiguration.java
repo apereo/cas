@@ -239,7 +239,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
      * Add SSLValve which reads X509 certificate from HTTP header.
      * SSLValve javadoc says it should be an engine valve but it doesn't work
      * so adding to context instead.
-     * @param tomcat
+     * @param tomcat tomcat container factory
      */
     private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getSslValve();
