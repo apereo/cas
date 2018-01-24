@@ -23,8 +23,6 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredService, MetadataResolver> {
-
-    
     private final long defaultExpiration;
     
     public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
@@ -35,8 +33,6 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
     public long expireAfterCreate(@Nonnull final SamlRegisteredService service, 
                                   @Nonnull final MetadataResolver chainingMetadataResolver, 
                                   final long currentTime) {
-        
-        
         final long duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
             return duration;

@@ -67,6 +67,7 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
         metadataResolver.setResolvers(metadataResolvers);
         metadataResolver.initialize();
 
+        LOGGER.debug("Metadata resolvers active for this request are [{}]", metadataResolver);
         return metadataResolver;
 
     }
