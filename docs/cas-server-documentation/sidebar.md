@@ -134,6 +134,7 @@ layout: null
     *   [Access Strategy](/$version/installation/Configuring-Service-Access-Strategy.html)
     *   [Proxy Policy](/$version/installation/Configuring-Service-Proxy-Policy.html)
     *   [Custom Properties](/$version/installation/Configuring-Service-Custom-Properties.html)
+    *   [HTTP Security Headers](/$version/installation/Configuring-Service-Http-Security-Headers.html)
     *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
     *   [Required Authentication](/$version/installation/Configuring-Service-Required-AuthN.html)

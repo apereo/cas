@@ -13,4 +13,5 @@ dependencies {
     implementation libraries.pac4j
     implementation libraries.thymeleaf
     implementation libraries.oshi
+    implementation libraries.cassecurityfilter
 }

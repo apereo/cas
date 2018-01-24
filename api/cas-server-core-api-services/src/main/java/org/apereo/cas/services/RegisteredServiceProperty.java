@@ -31,34 +31,68 @@ public interface RegisteredServiceProperty extends Serializable {
         /**
          * using when delegating authentication to ADFS to indicate the relying party identifier.
          */
-        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY), /**
+        WSFED_RELYING_PARTY_ID("wsfed.relyingPartyIdentifier", StringUtils.EMPTY),
+        /**
          * Produce a JWT as a response when generating service tickets.
          *
          * @deprecated Use {@link #TOKEN_AS_SERVICE_TICKET} instead.
          **/
         @Deprecated
-        TOKEN_AS_RESPONSE("jwtAsResponse", "true"), /**
+        TOKEN_AS_RESPONSE("jwtAsResponse", "true"),
+        /**
          * Produce a JWT as a response when generating service tickets.
          **/
-        TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"), /**
+        TOKEN_AS_SERVICE_TICKET("jwtAsServiceTicket", "false"),
+        /**
          * Jwt signing secret defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY), /**
+        TOKEN_SECRET_SIGNING("jwtSigningSecret", StringUtils.EMPTY),
+        /**
          * Jwt signing secret alg defined for a given service.
          **/
-        TOKEN_SECRET_SIGNING_ALG("jwtSigningSecretAlg", "HS256"), /**
+        TOKEN_SECRET_SIGNING_ALG("jwtSigningSecretAlg", "HS256"),
+        /**
          * Jwt encryption secret defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", StringUtils.EMPTY), /**
+        TOKEN_SECRET_ENCRYPTION("jwtEncryptionSecret", StringUtils.EMPTY),
+        /**
          * Jwt encryption secret alg defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", StringUtils.EMPTY), /**
+        TOKEN_SECRET_ENCRYPTION_ALG("jwtEncryptionSecretAlg", StringUtils.EMPTY),
+        /**
          * Jwt encryption secret method defined for a given service.
          **/
-        TOKEN_SECRET_ENCRYPTION_METHOD("jwtEncryptionSecretMethod", "A192CBC-HS384"), /**
+        TOKEN_SECRET_ENCRYPTION_METHOD("jwtEncryptionSecretMethod", "A192CBC-HS384"),
+        /**
          * Secrets are Base64 encoded.
          **/
-        TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false");
+        TOKEN_SECRETS_ARE_BASE64_ENCODED("jwtSecretsAreBase64Encoded", "false"),
+
+        /**
+         * Whether CAS should inject cache control headers into the response when this service is in process.
+         */
+        HTTP_HEADER_ENABLE_CACHE_CONTROL("httpHeaderEnableCacheControl", "true"),
+        /**
+         * Whether CAS should inject xcontent options headers into the response when this service is in process.
+         */
+        HTTP_HEADER_ENABLE_XCONTENT_OPTIONS("httpHeaderEnableXContentOptions", "true"),
+        /**
+         * Whether CAS should inject strict transport security headers into the response when this service is in process.
+         */
+        HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY("httpHeaderEnableStrictTransportSecurity", "true"),
+        /**
+         * Whether CAS should inject xframe options headers into the response when this service is in process.
+         */
+        HTTP_HEADER_ENABLE_XFRAME_OPTIONS("httpHeaderEnableXFrameOptions", "true"),
+        /**
+         * Whether CAS should inject content security policy headers into the response when this service is in process.
+         */
+        HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY("httpHeaderEnableContentSecurityPolicy", "true"),
+        /**
+         * Whether CAS should inject xss protection headers into the response when this service is in process.
+         */
+        HTTP_HEADER_ENABLE_XSS_PROTECTION("httpHeaderEnableXSSProtection", "true");
+        
 
         private final String propertyName;
         private final String defaultValue;
