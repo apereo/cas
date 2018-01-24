@@ -21,7 +21,6 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-
 @Slf4j
 public class TicketValidationResourceResolver extends TicketAsFirstParameterResourceResolver {
     
