@@ -1,6 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;

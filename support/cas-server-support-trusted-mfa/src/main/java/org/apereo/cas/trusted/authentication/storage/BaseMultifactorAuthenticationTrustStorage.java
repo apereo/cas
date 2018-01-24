@@ -30,7 +30,9 @@ public abstract class BaseMultifactorAuthenticationTrustStorage implements Multi
 
     private CipherExecutor<Serializable, String> cipherExecutor;
 
-    @Audit(action = "TRUSTED_AUTHENTICATION", actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER", resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
+    @Audit(action = "TRUSTED_AUTHENTICATION",
+        actionResolverName = "TRUSTED_AUTHENTICATION_ACTION_RESOLVER",
+        resourceResolverName = "TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public MultifactorAuthenticationTrustRecord set(final MultifactorAuthenticationTrustRecord record) {
         LOGGER.debug("Stored authentication trust record for [{}]", record);

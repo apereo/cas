@@ -33,9 +33,7 @@ import org.springframework.webflow.execution.Action;
 @ConditionalOnBean(name = "consentRepository")
 @Slf4j
 public class CasConsentWebflowConfiguration {
-
-
-
+    
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;

@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
@@ -15,6 +17,8 @@ import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,12 +37,18 @@ import org.springframework.core.io.Resource;
 @Configuration("casConsentCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasConsentCoreConfiguration {
-
-
+public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    @Qualifier("authenticationActionResolver")
+    private AuditActionResolver authenticationActionResolver;
+
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private AuditResourceResolver returnValueResourceResolver;
 
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
@@ -74,7 +84,7 @@ public class CasConsentCoreConfiguration {
         final Resource location = casProperties.getConsent().getJson().getLocation();
         if (location != null) {
             LOGGER.warn("Storing consent records in [{}]. This MAY NOT be appropriate in production. "
-                    + "Consider choosing an alternative repository format for storing consent decisions", location);
+                + "Consider choosing an alternative repository format for storing consent decisions", location);
             return new JsonConsentRepository(location);
         }
 
@@ -82,8 +92,14 @@ public class CasConsentCoreConfiguration {
         if (groovy != null) {
             return new GroovyConsentRepository(groovy);
         }
-        
+
         LOGGER.warn("Storing consent records in memory. This option is ONLY relevant for demos and testing purposes.");
         return new InMemoryConsentRepository();
+    }
+
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", this.authenticationActionResolver);
+        plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", this.returnValueResourceResolver);
     }
 }
