@@ -1,12 +1,12 @@
 
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.ObjectUtils;
-import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.util.DateTimeUtils;
@@ -44,6 +44,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @RequiredArgsConstructor
+@Getter
 public class SamlRegisteredServiceServiceProviderMetadataFacade {
 
     private final SPSSODescriptor ssoDescriptor;
@@ -125,16 +126,8 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
         return Optional.empty();
     }
 
-    public SPSSODescriptor getSsoDescriptor() {
-        return this.ssoDescriptor;
-    }
-
     public ZonedDateTime getValidUntil() {
         return DateTimeUtils.zonedDateTimeOf(this.ssoDescriptor.getValidUntil());
-    }
-
-    public EntityDescriptor getEntityDescriptor() {
-        return this.entityDescriptor;
     }
 
     public Organization getOrganization() {
