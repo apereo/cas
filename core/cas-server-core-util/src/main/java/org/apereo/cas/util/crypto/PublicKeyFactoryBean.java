@@ -30,7 +30,7 @@ public class PublicKeyFactoryBean extends AbstractFactoryBean<PublicKey> {
                 this.resource.getFilename(), this.algorithm);
 
         try(InputStream pubKey = this.resource.getInputStream()) {
-            final byte[] bytes = new byte[pubKey.available()];
+            final byte[] bytes = new byte[(int) this.resource.contentLength()];
             pubKey.read(bytes);
             final X509EncodedKeySpec pubSpec = new X509EncodedKeySpec(bytes);
             final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
