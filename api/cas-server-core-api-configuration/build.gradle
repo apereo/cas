@@ -8,7 +8,8 @@ dependencies {
     implementation libraries.bouncycastle
 
     optional libraries.springbootconfigmetadata
-    
+
+    api project(":api:cas-server-core-api-configuration-model")
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-authentication")
     api project(":api:cas-server-core-api-webflow")
@@ -23,7 +24,7 @@ task generateConfigurationMetadata(type: JavaExec) {
     }
     main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
     classpath = sourceSets.main.runtimeClasspath
-    args buildDir, projectDir.canonicalPath
+    args buildDir, projectDir.canonicalPath+"-model"
 }
 
 compileJava.dependsOn(processResources)

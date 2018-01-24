@@ -63,6 +63,7 @@ allprojects {
     apply plugin: "signing"
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
+    apply plugin: "maven-publish"
 
     if (!rootProject.publishSnapshots) {
         apply plugin: "nebula.lint"
