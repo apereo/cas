@@ -29,50 +29,62 @@ public class RegisteredServiceResponseHeadersEnforcementFilter extends ResponseH
     private final ArgumentExtractor argumentExtractor;
 
     @Override
-    protected void insertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertContentSecurityPolicyHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_CONTENT_SECURITY_POLICY)) {
             super.insertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
+        } else {
+            super.decideInsertContentSecurityPolicyHeader(httpServletResponse, httpServletRequest);
         }
     }
 
     @Override
-    protected void insertXSSProtectionHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertXSSProtectionHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_XSS_PROTECTION)) {
             super.insertXSSProtectionHeader(httpServletResponse, httpServletRequest);
+        } else {
+            super.decideInsertXSSProtectionHeader(httpServletResponse, httpServletRequest);
         }
     }
 
     @Override
-    protected void insertXFrameOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertXFrameOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_XFRAME_OPTIONS)) {
             super.insertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
+        } else {
+            super.decideInsertXFrameOptionsHeader(httpServletResponse, httpServletRequest);
         }
     }
 
     @Override
-    protected void insertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertXContentTypeOptionsHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_XCONTENT_OPTIONS)) {
             super.insertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
+        } else {
+            super.decideInsertXContentTypeOptionsHeader(httpServletResponse, httpServletRequest);
         }
     }
 
     @Override
-    protected void insertCacheControlHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertCacheControlHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_CACHE_CONTROL)) {
             super.insertCacheControlHeader(httpServletResponse, httpServletRequest);
+        } else {
+            super.decideInsertCacheControlHeader(httpServletResponse, httpServletRequest);
         }
     }
 
     @Override
-    protected void insertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
+    protected void decideInsertStrictTransportSecurityHeader(final HttpServletResponse httpServletResponse, final HttpServletRequest httpServletRequest) {
         if (shouldHttpHeaderBeInjectedIntoResponse(httpServletRequest,
             RegisteredServiceProperty.RegisteredServiceProperties.HTTP_HEADER_ENABLE_STRICT_TRANSPORT_SECURITY)) {
             super.insertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
+        } else {
+            super.decideInsertStrictTransportSecurityHeader(httpServletResponse, httpServletRequest);
         }
     }
 
