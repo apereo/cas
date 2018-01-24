@@ -63,7 +63,7 @@ public class PrivateKeyFactoryBean extends AbstractFactoryBean<PrivateKey> {
     private PrivateKey readDERPrivateKey() {
         LOGGER.debug("Attempting to read key as DER [{}]", this.location);
         try (InputStream privKey = this.location.getInputStream()) {
-            final byte[] bytes = new byte[privKey.available()];
+            final byte[] bytes = new byte[(int) this.location.contentLength()];
             privKey.read(bytes);
             final PKCS8EncodedKeySpec privSpec = new PKCS8EncodedKeySpec(bytes);
             final KeyFactory factory = KeyFactory.getInstance(this.algorithm);
