@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
