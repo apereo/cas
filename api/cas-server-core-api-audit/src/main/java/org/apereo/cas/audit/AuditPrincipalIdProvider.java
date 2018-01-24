@@ -1,4 +1,4 @@
-package org.apereo.cas.audit.spi;
+package org.apereo.cas.audit;
 
 import org.apereo.cas.authentication.Authentication;
 
