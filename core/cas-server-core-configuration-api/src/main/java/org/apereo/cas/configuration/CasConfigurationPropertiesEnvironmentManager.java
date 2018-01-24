@@ -40,7 +40,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration directory
      */
     public File getStandaloneProfileConfigurationDirectory() {
-        return environment.getProperty("cas.standalone.config", File.class, new File("/etc/cas/config"));
+        return environment.getProperty("cas.standalone.configurationDirectory", File.class, new File("/etc/cas/config"));
     }
 
     /**
@@ -49,7 +49,7 @@ public class CasConfigurationPropertiesEnvironmentManager {
      * @return the standalone profile configuration file
      */
     public File getStandaloneProfileConfigurationFile() {
-        return environment.getProperty("cas.standalone.config.file", File.class);
+        return environment.getProperty("cas.standalone.configurationFile", File.class);
     }
 
     public String getApplicationName() {
