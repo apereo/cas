@@ -17,6 +17,7 @@ import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.core.slo.SloProperties;
 import org.apereo.cas.configuration.model.core.sso.SsoProperties;
+import org.apereo.cas.configuration.model.core.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
@@ -319,4 +320,10 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private WebflowProperties webflow = new WebflowProperties();
+
+    /**
+     * Standalone configuration settings.
+     */
+    @NestedConfigurationProperty
+    private StandaloneConfigurationProperties standalone = new StandaloneConfigurationProperties();
 }

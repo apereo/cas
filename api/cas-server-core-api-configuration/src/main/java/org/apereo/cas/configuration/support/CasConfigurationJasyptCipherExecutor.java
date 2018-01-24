@@ -33,19 +33,19 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         /**
          * Jasypt algorithm name to use.
          */
-        ALGORITHM("cas.standalone.config.security.alg", "PBEWithMD5AndTripleDES"),
+        ALGORITHM("cas.standalone.configurationSecurity.alg", "PBEWithMD5AndTripleDES"),
         /**
          * Jasypt provider name to use.
          */
-        PROVIDER("cas.standalone.config.security.provider", null),
+        PROVIDER("cas.standalone.configurationSecurity.provider", null),
         /**
          * Jasypt number of iterations to use.
          */
-        ITERATIONS("cas.standalone.config.security.iteration", null),
+        ITERATIONS("cas.standalone.configurationSecurity.iteration", null),
         /**
          * Jasypt password to use.
          */
-        PASSWORD("cas.standalone.config.security.psw", null);
+        PASSWORD("cas.standalone.configurationSecurity.psw", null);
 
         /**
          * The Name.
