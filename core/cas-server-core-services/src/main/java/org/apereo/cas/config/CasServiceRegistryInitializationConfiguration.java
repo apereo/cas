@@ -58,7 +58,7 @@ public class CasServiceRegistryInitializationConfiguration {
 
         if (serviceRegistry.isInitFromJson()) {
             LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
-                serviceRegistryDao.toString(),
+                serviceRegistryDao.getName(),
                 getServiceRegistryInitializerServicesDirectoryResource());
         }
         initializer.initServiceRegistryIfNecessary();

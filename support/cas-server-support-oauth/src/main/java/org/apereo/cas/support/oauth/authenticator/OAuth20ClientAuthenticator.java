@@ -22,10 +22,8 @@ import org.pac4j.core.exception.CredentialsException;
 @AllArgsConstructor
 public class OAuthClientAuthenticator implements Authenticator<UsernamePasswordCredentials> {
     private final OAuth20Validator validator;
-
     private final ServicesManager servicesManager;
-
-
+    
     @Override
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context)
             throws CredentialsException {

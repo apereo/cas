@@ -232,7 +232,7 @@ public abstract class AbstractJacksonBackedStringSerializer<T> implements String
             return this.objectMapper.readValue(jsonString, getTypeToSerialize());
         } catch (final Exception e) {
             LOGGER.error("Cannot read/parse [{}] to deserialize into type [{}]. This may be caused "
-                    + "in the absence of a configuration/support module that knows how to interpret the JSON fragment, "
+                    + "in the absence of a configuration/support module that knows how to interpret the fragment, "
                     + "specially if the fragment describes a CAS registered service definition. "
                     + "Internal parsing error is [{}]",
                 DigestUtils.abbreviate(jsonString), getTypeToSerialize(), e.getMessage());
