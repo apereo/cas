@@ -1,4 +1,18 @@
-<div id="cookiesDisabled" class="alert alert-info" style="display:none;">
-    <h2 th:utext="#{screen.cookies.disabled.title}"></h2>
-    <p th:utext="#{screen.cookies.disabled.message}"></p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>XXX Fragment</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+</head>
+<body>
+
+<div th:fragment="cookiesDisabled" id="cookiesDisabled" class="card text-white bg-info mb-3" >
+    <div class="card-body">
+        <h5 class="card-title" th:utext="#{screen.cookies.disabled.title}"></h5>
+        <p class="card-text" th:utext="#{screen.cookies.disabled.message}"></p>
+    </div>
 </div>
+</body>
+</html>

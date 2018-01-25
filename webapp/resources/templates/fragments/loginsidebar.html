@@ -1,6 +1,16 @@
-<div id="sidebar">
-    <div class="sidebar-content">
-        <p th:utext="#{screen.welcome.security}"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login Sidebar Fragment</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+</head>
+<body>
+    <div th:fragment="loginsidebar" id="sidebar">
+        <div class="sidebar-content">
+            <p th:utext="#{screen.welcome.security}">screen.welcome.security</p>
+        </div>
     </div>
-</div>
-
+</body>
+</html>
