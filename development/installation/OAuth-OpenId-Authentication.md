@@ -198,9 +198,11 @@ public class MyOAuthConfiguration {
 
 ## Throttling
 
-Authentication throttling maybe enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to (turn on authentication 
-throttling)(Configuring-Authentication-Throttling.md) support. Once support is, OAuth throttling may be taught to CAS via settings. To see the relevant list of 
-CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
+Authentication throttling may be enabled for the `/oauth2.0/accessToken` provided support is included in the overlay to [turn on authentication 
+throttling](Configuring-Authentication-Throttling.md) support. The throttling mechanism that handles the usual CAS server endpoints for authentication
+and ticket validation, etc is then activated for the OAuth endpoints that are supported for throttling. 
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#oauth2).
 
 ## Server Configuration
 
