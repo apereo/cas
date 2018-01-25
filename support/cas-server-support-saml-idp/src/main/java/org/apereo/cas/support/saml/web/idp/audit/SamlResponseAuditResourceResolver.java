@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.support.saml.web.idp.audit;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;

@@ -11,10 +11,11 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPAlgorithmsProp
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.SamlResponseAuditPrincipalIdProvider;
-import org.apereo.cas.support.saml.SamlResponseAuditResourceResolver;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
+import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
+import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMap;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilder;
@@ -339,9 +340,12 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
-        plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER",
-            new SamlResponseAuditResourceResolver());
+        plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
         plan.registerAuditActionResolver("SAML2_RESPONSE_ACTION_RESOLVER",
+            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+
+        plan.registerAuditResourceResolver("SAML2_REQUEST_RESOURCE_RESOLVER", new SamlRequestAuditResourceResolver());
+        plan.registerAuditActionResolver("SAML2_REQUEST_ACTION_RESOLVER",
             new DefaultAuditActionResolver("_CREATED", "_FAILED"));
     }
 

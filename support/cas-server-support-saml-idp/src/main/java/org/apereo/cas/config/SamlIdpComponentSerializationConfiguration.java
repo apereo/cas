@@ -19,11 +19,9 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class SamlIdpComponentSerializationConfiguration implements ComponentSerializationPlanConfigurator {
-
     @Override
     public void configureComponentSerializationPlan(final ComponentSerializationPlan plan) {
         plan.registerSerializableClass(SamlArtifactTicketExpirationPolicy.class);
         plan.registerSerializableClass(SamlAttributeQueryTicketExpirationPolicy.class);
     }
-
 }
