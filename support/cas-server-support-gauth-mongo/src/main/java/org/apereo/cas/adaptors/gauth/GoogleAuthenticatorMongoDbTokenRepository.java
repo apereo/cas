@@ -47,7 +47,7 @@ public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenR
     protected void cleanInternal() {
         try {
             final Query query = new Query();
-            query.addCriteria(Criteria.where("issuedDateTime").gte(LocalDateTime.now().minusSeconds(this.expireTokensInSeconds)));
+            query.addCriteria(Criteria.where("issuedDateTime").lte(LocalDateTime.now().minusSeconds(this.expireTokensInSeconds)));
             this.mongoTemplate.remove(query, GoogleAuthenticatorToken.class, this.collectionName);
         } catch (final Exception e) {
             LOGGER.warn(e.getMessage(), e);
