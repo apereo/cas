@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.audit.AuditTrailExecutionPlanConfigurer;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.audit.spi.ChainingAuditPrincipalIdProvider;
 import org.apereo.cas.audit.spi.CredentialsAsFirstParameterResourceResolver;
 import org.apereo.cas.audit.spi.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.DefaultAuditTrailRecordResolutionPlan;
@@ -33,6 +34,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
@@ -58,6 +60,9 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Bean
     public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager,
@@ -205,8 +210,10 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     @ConditionalOnMissingBean(name = "auditPrincipalIdProvider")
     @Bean
     public AuditPrincipalIdProvider auditPrincipalIdProvider() {
-        return new AuditPrincipalIdProvider() {
-        };
+        final ChainingAuditPrincipalIdProvider chain = new ChainingAuditPrincipalIdProvider();
+        final Map<String, AuditPrincipalIdProvider> resolvers = applicationContext.getBeansOfType(AuditPrincipalIdProvider.class, false, true);
+        resolvers.values().forEach(chain::addProvider);
+        return chain;
     }
 
     @Override
@@ -216,12 +223,14 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         slf4j.setUseSingleLine(audit.isUseSingleLine());
         slf4j.setEntrySeparator(audit.getSinglelineSeparator());
         slf4j.setAuditFormat(audit.getAuditFormat());
-
         plan.registerAuditTrailManager(slf4j);
     }
 
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        /*
+            Add audit action resolvers here.
+         */
         final AuditActionResolver resolver = authenticationActionResolver();
         plan.registerAuditActionResolver("AUTHENTICATION_RESOLVER", resolver);
         plan.registerAuditActionResolver("SAVE_SERVICE_ACTION_RESOLVER", resolver);
@@ -261,7 +270,7 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         plan.registerAuditResourceResolver("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
 
         /*
-        Add custom resolvers here.
+            Add custom resolvers here.
          */
         plan.registerAuditActionResolvers(customAuditActionResolverMap());
         plan.registerAuditResourceResolvers(customAuditResourceResolverMap());
