@@ -33,9 +33,4 @@ public class RestProperties implements Serializable {
      */
     private String attributeValue;
 
-    /**
-     * The bean id of the throttler component whose job is to control rest authentication requests
-     * an throttle requests per define policy.
-     */
-    private String throttler = "neverThrottle";
 }

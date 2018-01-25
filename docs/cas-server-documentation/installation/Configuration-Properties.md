@@ -2584,7 +2584,6 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
-# cas.authn.oauth.throttler=neverThrottle|authenticationThrottle
 ```
 
 ## Localization
@@ -3525,7 +3524,6 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 ```properties
 # cas.rest.attributeName=
 # cas.rest.attributeValue=
-# cas.rest.throttler=neverThrottle|authenticationThrottle
 ```
 
 ## Metrics
