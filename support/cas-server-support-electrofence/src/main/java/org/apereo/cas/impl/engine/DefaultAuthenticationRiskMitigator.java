@@ -28,7 +28,8 @@ public class DefaultAuthenticationRiskMitigator implements AuthenticationRiskMit
         return this.contingencyPlan;
     }
 
-    @Audit(action = "MITIGATE_RISKY_AUTHENTICATION", actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
+    @Audit(action = "MITIGATE_RISKY_AUTHENTICATION",
+        actionResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER",
             resourceResolverName = "ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER")
     @Override
     public AuthenticationRiskContingencyResponse mitigate(final Authentication authentication, final RegisteredService service,

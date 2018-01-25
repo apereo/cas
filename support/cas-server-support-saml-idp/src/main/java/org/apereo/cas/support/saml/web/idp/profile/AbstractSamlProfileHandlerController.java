@@ -315,7 +315,6 @@ public abstract class AbstractSamlProfileHandlerController {
         }
         LOGGER.debug("Decoded SAML object [{}] from http request", object.getElementQName());
         return Pair.of(object, messageContext);
-
     }
 
     /**
@@ -357,7 +356,6 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
-
     }
 
     /**
