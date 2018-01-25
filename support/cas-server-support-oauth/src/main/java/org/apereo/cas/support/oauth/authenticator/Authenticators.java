@@ -11,7 +11,6 @@ public interface Authenticators {
      * Generic oauth clients.
      */
     String CAS_OAUTH_CLIENT = "CasOAuthClient";
-
     /**
      * OAuth authn for basic authn.
      */
