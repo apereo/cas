@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.input.Tailer;
 import org.apache.commons.io.input.TailerListenerAdapter;
 import org.apache.commons.lang3.tuple.Pair;
@@ -29,8 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
-import static java.nio.charset.StandardCharsets.UTF_8;
-
 /**
  * Log files tailing service which acts as apache.common.io <code>Tailer</code> listener
  * and publishes each received log output line of text to websocket-based in-memory STOMP broker destination.
@@ -39,6 +38,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class LoggingOutputTailingService extends TailerListenerAdapter {
 
     private static final String LOG_OUTPUT_STOMP_DESTINATION = "/topic/logs";
@@ -106,11 +106,11 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
 
     @Override
     public void handle(String line) {
-        this.stompMessagingTemplate.convertAndSend(LOG_OUTPUT_STOMP_DESTINATION, line.getBytes(UTF_8));
+        this.stompMessagingTemplate.convertAndSend(LOG_OUTPUT_STOMP_DESTINATION, line);
     }
 
     @Override
     public void handle(Exception ex) {
-        super.handle(ex.getMessage());
+        handle(ex.getMessage());
     }
 }
