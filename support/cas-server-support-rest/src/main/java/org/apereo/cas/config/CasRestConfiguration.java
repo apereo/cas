@@ -124,20 +124,21 @@ public class CasRestConfiguration implements RestHttpRequestCredentialFactoryCon
      * @author Misagh Moayyed
      * @since 5.3.0
      */
-    @ConditionalOnBean(name = "authenticationThrottle")
     @Configuration("casRestThrottlingConfiguration")
     @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
     @Slf4j
     public static class CasRestThrottlingConfiguration extends WebMvcConfigurerAdapter {
 
-        @Autowired
+        @Autowired(required = false)
         @Qualifier("authenticationThrottle")
         private ThrottledSubmissionHandlerInterceptor handlerInterceptor;
 
         @Override
         public void addInterceptors(final InterceptorRegistry registry) {
-            LOGGER.debug("Activating authentication throttling for REST endpoints...");
-            registry.addInterceptor(handlerInterceptor).addPathPatterns("/v1/**");
+            if (handlerInterceptor != null) {
+                LOGGER.debug("Activating authentication throttling for REST endpoints...");
+                registry.addInterceptor(handlerInterceptor).addPathPatterns("/v1/**");
+            }
         }
     }
 }
