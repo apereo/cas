@@ -17,11 +17,11 @@ function setConnected(connected) {
 
 function connect() {
     $('#logoutputarea').empty();
-    var socket = new SockJS(urls.logOutput);
+    var socket = new SockJS(urls.reportsWebsocket);
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
         setConnected(true);
-        stompClient.subscribe('/logs/logoutput', function (msg) {
+        stompClient.subscribe(urls.logsTopic, function (msg) {
             if (msg != null && msg.body != '') {
                 showLogs(msg.body);
             }
@@ -39,10 +39,6 @@ function disconnect() {
     setConnected(false);
 }
 
-function getLogs() {
-    stompClient.send(urls.logOutput, {}, {});
-}
-
 function showLogs(message) {
     if (message != '') {
         $('#logoutputarea').val($('#logoutputarea').val() + '\n' + message);
@@ -53,7 +49,6 @@ function showLogs(message) {
 disconnect();
 connect();
 setInterval(function () {
-    getLogs();
 }, 100);
 
 /*************
