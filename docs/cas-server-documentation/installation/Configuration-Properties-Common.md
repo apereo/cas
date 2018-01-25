@@ -48,14 +48,9 @@ in each case to learn the exact unit of measure.
 
 ## Authentication Throttling
 
-Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more generic authentication throttling functionality applied during the login flow and authentication attempts. To activate throttling functionality for a support module, the following strategies are supported in CAS setting.
-
-The following parameters are passed:
-
-| Value            | Description
-|------------------|-------------------------------------------
-| `neverThrottle`  | Disable throttling for the feature.
-| `authenticationThrottle` | Enable throttling for the feature.
+Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) 
+or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
+generic authentication throttling functionality applied during the login flow and authentication attempts.
 
 To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
 

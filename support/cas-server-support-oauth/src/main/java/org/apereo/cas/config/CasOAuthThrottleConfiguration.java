@@ -55,10 +55,16 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
     }
 
-    private class OAuth20ThrottledHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
+    /**
+     * This is {@link OAuth20ThrottledHandlerInterceptorAdapter} that acts as a wrapper around existing interceptors.
+     *
+     * @author Misagh Moayyed
+     * @since 5.3.0
+     */
+    public class OAuth20ThrottledHandlerInterceptorAdapter extends HandlerInterceptorAdapter {
         private final Pattern pattern;
 
-        private OAuth20ThrottledHandlerInterceptorAdapter() {
+        public OAuth20ThrottledHandlerInterceptorAdapter() {
             final String throttledUrl = OAuth20Constants.BASE_OAUTH20_URL.concat("/")
                 .concat(OAuth20Constants.ACCESS_TOKEN_URL + "|" + OAuth20Constants.TOKEN_URL);
             this.pattern = RegexUtils.createPattern(throttledUrl);
