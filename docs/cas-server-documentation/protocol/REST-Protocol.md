@@ -258,7 +258,14 @@ client.destroyTicketGrantingTicket(context, profile);
 
 ## Throttling
 
-To understand how to throttling works in CAS, please review [the available options](../installation/Configuring-Authentication-Throttling.html). By default, throttling REST requests is turned off. To activate this functionality, you will need to choose an appropriate throttler and instruct CAS to use it via CAS settings. To see the relevant options, [please review this guide](https://apereo.github.io/cas/development/installation/Configuration-Properties.html#rest-api).
+To understand how to throttling works in CAS, 
+please review [the available options](../installation/Configuring-Authentication-Throttling.html). 
+By default, throttling REST requests is turned off. 
+To activate this functionality, you will need to choose an appropriate throttler and activate it by declaring the relevant module. 
+The same throttling mechanism that handles the usual CAS server endpoints for authentication
+and ticket validation, etc is then activated for the REST endpoints that are supported for throttling. 
+
+To see the relevant options, [please review this guide](https://apereo.github.io/cas/development/installation/Configuration-Properties.html#rest-api).
 
 ## Swagger API
 
