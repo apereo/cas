@@ -1,5 +1,4 @@
 /* global logConfigFileLocation, SockJS, Stomp */
-showLogs('');
 var stompClient = null;
 
 function setConnected(connected) {
@@ -19,9 +18,9 @@ function connect() {
     $('#logoutputarea').empty();
     var socket = new SockJS(urls.reportsWebsocket);
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function () {
+    stompClient.connect({}, function (frame) {
         setConnected(true);
-        stompClient.subscribe(urls.logsTopic, function (msg) {
+        stompClient.subscribe("/topic/logs", function (msg) {
             if (msg != null && msg.body != '') {
                 showLogs(msg.body);
             }
