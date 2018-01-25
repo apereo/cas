@@ -1,8 +1,8 @@
-
 description = "Apereo CAS OAuth Webflow Support"
 dependencies {
     implementation libraries.pac4j
-    
+
+    api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api-webflow")
     
     implementation project(":core:cas-server-core-webflow")
