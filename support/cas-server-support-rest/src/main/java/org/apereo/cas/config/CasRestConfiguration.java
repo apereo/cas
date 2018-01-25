@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -21,20 +20,17 @@ import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.support.rest.resources.TicketStatusResource;
 import org.apereo.cas.support.rest.resources.UserAuthenticationResource;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 /**
@@ -46,14 +42,11 @@ import java.util.List;
 @Configuration("casRestConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasRestConfiguration extends WebMvcConfigurerAdapter implements RestHttpRequestCredentialFactoryConfigurer {
+public class CasRestConfiguration implements RestHttpRequestCredentialFactoryConfigurer {
 
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
 
     @Autowired(required = false)
     @Qualifier("defaultAuthenticationSystemSupport")
@@ -66,14 +59,6 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter implements Res
     @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-
-    @Autowired
-    private ConfigurableApplicationContext applicationContext;
-
-    @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(restAuthenticationThrottle()).addPathPatterns("/v1/**");
-    }
 
     @Bean
     public TicketStatusResource ticketStatusResource() {
@@ -120,23 +105,6 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter implements Res
             webApplicationServiceFactory, userAuthenticationResourceEntityResponseFactory());
     }
 
-    @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
-    @Bean
-    public HandlerInterceptor restAuthenticationThrottle() {
-        final String throttler = casProperties.getRest().getThrottler();
-        if (StringUtils.isNotBlank(throttler) && this.applicationContext.containsBean(throttler)) {
-            return this.applicationContext.getBean(throttler, HandlerInterceptor.class);
-        }
-        return new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(final HttpServletRequest request,
-                                     final HttpServletResponse response,
-                                     final Object handler) {
-                return true;
-            }
-        };
-    }
-
     @Autowired
     @Bean
     public RestHttpRequestCredentialFactory restHttpRequestCredentialFactory(final List<RestHttpRequestCredentialFactoryConfigurer> configurers) {
@@ -148,5 +116,28 @@ public class CasRestConfiguration extends WebMvcConfigurerAdapter implements Res
     @Override
     public void registerCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
         factory.registerCredentialFactory(new UsernamePasswordRestHttpRequestCredentialFactory());
+    }
+
+    /**
+     * This is {@link CasRestThrottlingConfiguration}.
+     *
+     * @author Misagh Moayyed
+     * @since 5.3.0
+     */
+    @ConditionalOnBean(name = "authenticationThrottle")
+    @Configuration("casRestThrottlingConfiguration")
+    @ConditionalOnMissingBean(name = "restAuthenticationThrottle")
+    @Slf4j
+    public static class CasRestThrottlingConfiguration extends WebMvcConfigurerAdapter {
+
+        @Autowired
+        @Qualifier("authenticationThrottle")
+        private ThrottledSubmissionHandlerInterceptor handlerInterceptor;
+
+        @Override
+        public void addInterceptors(final InterceptorRegistry registry) {
+            LOGGER.debug("Activating authentication throttling for REST endpoints...");
+            registry.addInterceptor(handlerInterceptor).addPathPatterns("/v1/**");
+        }
     }
 }
