@@ -30,7 +30,7 @@ import java.util.Map;
  */
 @Slf4j
 @AllArgsConstructor
-public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCredentials> {
+public class OAuth20UserAuthenticator implements Authenticator<UsernamePasswordCredentials> {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final ServicesManager servicesManager;
     private final ServiceFactory webApplicationServiceFactory;
@@ -39,14 +39,13 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
     public void validate(final UsernamePasswordCredentials credentials, final WebContext context) throws CredentialsException {
         final UsernamePasswordCredential casCredential = new UsernamePasswordCredential(credentials.getUsername(), credentials.getPassword());
         try {
-
             final String clientId = context.getRequestParameter(OAuth20Constants.CLIENT_ID);
             final Service service = this.webApplicationServiceFactory.createService(clientId);
             final RegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(registeredService);
 
             final AuthenticationResult authenticationResult = this.authenticationSystemSupport
-                    .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
+                .handleAndFinalizeSingleAuthenticationTransaction(null, casCredential);
             final Authentication authentication = authenticationResult.getAuthentication();
             final Principal principal = authentication.getPrincipal();
 
@@ -55,11 +54,9 @@ public class OAuthUserAuthenticator implements Authenticator<UsernamePasswordCre
             LOGGER.debug("Created profile id [{}]", id);
 
             profile.setId(id);
-            final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy()
-                    .getAttributes(principal, service, registeredService);
+            final Map<String, Object> attributes = registeredService.getAttributeReleasePolicy().getAttributes(principal, service, registeredService);
             profile.addAttributes(attributes);
             LOGGER.debug("Authenticated user profile [{}]", profile);
-
             credentials.setUserProfile(profile);
         } catch (final Exception e) {
             throw new CredentialsException("Cannot login user using CAS internal authentication", e);
