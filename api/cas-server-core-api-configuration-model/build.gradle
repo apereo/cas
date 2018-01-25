@@ -1,17 +1,13 @@
 description = "Apereo CAS Core Configuration Model"
 
 dependencies {
-  //  implementation libraries.springsecurity
-  //  implementation libraries.mongo
     implementation libraries.jasypt
-  //  implementation libraries.groovy
     implementation libraries.bouncycastle
 
-  //  optional libraries.springbootconfigmetadata
+    optional libraries.springbootconfigmetadata
     
     api project(":api:cas-server-core-api-util")
     api project(":api:cas-server-core-api-protocol")
-  //  api project(":api:cas-server-core-api-webflow")
 }
 
 

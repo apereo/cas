@@ -23,8 +23,8 @@ task generateConfigurationMetadata(type: JavaExec) {
                 "at [$buildDir] for the CAS configuration module at [$projectDir.canonicalPath].\n"
     }
     main = "org.apereo.cas.configuration.metadata.ConfigurationMetadataGenerator"
-    classpath = sourceSets.main.runtimeClasspath
-    args buildDir, projectDir.canonicalPath
+    classpath = sourceSets.main.compileClasspath
+    args buildDir, project(":api:cas-server-core-api-configuration-model").getProjectDir()
 }
 
 compileJava.dependsOn(processResources)
