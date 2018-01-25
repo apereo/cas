@@ -1,5 +1,7 @@
 description = "Apereo CAS JDBC Authentication Throttling"
 dependencies {
+    api project(":api:cas-server-core-api-throttle")
+    
     implementation project(":support:cas-server-support-audit-jdbc")
     implementation project(":core:cas-server-core-audit")
     implementation project(":support:cas-server-support-throttle")

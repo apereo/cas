@@ -46,24 +46,8 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfileHandlerController {
 
-
     private final AbstractUrlBasedTicketValidator ticketValidator;
 
-    /**
-     * Instantiates a new idp-sso post saml profile handler controller.
-     *
-     * @param samlObjectSigner                             the saml object signer
-     * @param parserPool                                   the parser pool
-     * @param authenticationSystemSupport                  the authentication system support
-     * @param servicesManager                              the services manager
-     * @param webApplicationServiceFactory                 the web application service factory
-     * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
-     * @param configBean                                   the config bean
-     * @param responseBuilder                              the response builder
-     * @param casProperties                                the cas properties
-     * @param samlObjectSignatureValidator                 the saml object signature validator
-     * @param ticketValidator                              the ticket validator
-     */
     public SSOSamlProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                                    final ParserPool parserPool,
                                                    final AuthenticationSystemSupport authenticationSystemSupport,

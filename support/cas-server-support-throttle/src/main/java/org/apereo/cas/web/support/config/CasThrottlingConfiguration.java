@@ -30,16 +30,15 @@ import org.springframework.context.annotation.Lazy;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
+@Conditional(AuthenticationThrottlingCondition.class)
 public class CasThrottlingConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottle")
-    @Conditional(AuthenticationThrottlingCondition.class)
     @Bean
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
-
         final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
         if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
             LOGGER.debug("Activating authentication throttling based on IP address and username...");
@@ -53,6 +52,7 @@ public class CasThrottlingConfiguration {
 
     @Lazy
     @Bean
+    @Conditional(AuthenticationThrottlingCondition.class)
     public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottle") final ThrottledSubmissionHandlerInterceptor adapter) {
         return new InMemoryThrottledSubmissionCleaner(adapter);
     }

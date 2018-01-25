@@ -224,20 +224,21 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new SecurityInterceptor(oauthSecConfig(), clients);
     }
 
-    @ConditionalOnMissingBean(name = "oauthInterceptor")
-    @Bean
-    public HandlerInterceptorAdapter oauthInterceptor() {
-        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
-            requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
+//    @ConditionalOnMissingBean(name = "oauthInterceptor")
+//    @Bean
+//    public HandlerInterceptorAdapter oauthInterceptor() {
+//        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
+//        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
+//            requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
+//
+//        if ("neverThrottle".equalsIgnoreCase(throttler)) {
+//            LOGGER.debug("Authentication throttling is disabled for OAuth");
+//            return oAuth20HandlerInterceptorAdapter;
+//        }
+//        return getHandlerInterceptorForThrottling(oAuth20HandlerInterceptorAdapter);
+//    }
 
-        if ("neverThrottle".equalsIgnoreCase(throttler)) {
-            LOGGER.debug("Authentication throttling is disabled for OAuth");
-            return oAuth20HandlerInterceptorAdapter;
-        }
-        return getHandlerInterceptorForThrottling(oAuth20HandlerInterceptorAdapter);
-    }
-
+    /*
     private HandlerInterceptorAdapter getHandlerInterceptorForThrottling(final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter) {
         final String throttler = casProperties.getAuthn().getOauth().getThrottler();
         LOGGER.debug("Locating authentication throttler instance [{}] for OAuth", throttler);
@@ -269,10 +270,10 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         };
         return throttledInterceptorAdapter;
     }
-
+     */
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(oauthInterceptor()).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
+        //registry.addInterceptor(oauthInterceptor()).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
     }
 
     @Bean
@@ -443,8 +444,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             this.applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
         return new HashSet<>(builders.values());
     }
-
-
+    
     @ConditionalOnMissingBean(name = "oauthRequestValidators")
     @Bean
     @RefreshScope
