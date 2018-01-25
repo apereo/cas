@@ -36,7 +36,6 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
 
-
     /**
      * The Saml object encoder.
      */
