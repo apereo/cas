@@ -74,7 +74,7 @@ public class SamlProfileSaml2ResponseBuilder extends BaseSamlProfileSamlResponse
     }
 
     @Override
-    protected Response buildResponse(final Assertion assertion,
+    public Response buildResponse(final Assertion assertion,
                                      final Object casAssertion,
                                      final RequestAbstractType authnRequest,
                                      final SamlRegisteredService service,
