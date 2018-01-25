@@ -19,6 +19,7 @@ import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerCon
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
+import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.opensaml.messaging.context.MessageContext;
 import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
@@ -38,6 +39,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSamlProfileHandlerController {
+    private final SSOSamlHttpRequestExtractor samlHttpRequestExtractor;
 
     /**
      * Instantiates a new Abstract saml profile handler controller.
@@ -61,9 +63,11 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
                                                    final OpenSamlConfigBean configBean,
                                                    final SamlProfileObjectBuilder<? extends SAMLObject> responseBuilder,
                                                    final CasConfigurationProperties casProperties,
-                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+                                                   final SamlObjectSignatureValidator samlObjectSignatureValidator,
+                                                   final SSOSamlHttpRequestExtractor samlHttpRequestExtractor) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager, webApplicationServiceFactory,
-                samlRegisteredServiceCachingMetadataResolver, configBean, responseBuilder, casProperties, samlObjectSignatureValidator);
+            samlRegisteredServiceCachingMetadataResolver, configBean, responseBuilder, casProperties, samlObjectSignatureValidator);
+        this.samlHttpRequestExtractor = samlHttpRequestExtractor;
     }
 
     /**
@@ -75,15 +79,16 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
      * @throws Exception the exception
      */
     protected void handleSloProfileRequest(final HttpServletResponse response,
-                                               final HttpServletRequest request,
-                                               final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
+                                           final HttpServletRequest request,
+                                           final BaseHttpServletRequestXMLMessageDecoder decoder) throws Exception {
         final SamlIdPLogoutProperties logout = casProperties.getAuthn().getSamlIdp().getLogout();
         if (logout.isSingleLogoutCallbacksDisabled()) {
             LOGGER.info("Processing SAML IdP SLO requests is disabled");
             return;
         }
 
-        final Pair<? extends SignableSAMLObject, MessageContext> pair = decodeSamlContextFromHttpRequest(request, decoder, LogoutRequest.class);
+        final Pair<? extends SignableSAMLObject, MessageContext> pair =
+            this.samlHttpRequestExtractor.extract(request, decoder, LogoutRequest.class);
         final LogoutRequest logoutRequest = LogoutRequest.class.cast(pair.getKey());
         final MessageContext ctx = pair.getValue();
 
@@ -95,7 +100,7 @@ public abstract class AbstractSamlSLOProfileHandlerController extends AbstractSa
             final String entityId = SamlIdPUtils.getIssuerFromSamlRequest(logoutRequest);
             final SamlRegisteredService registeredService = this.servicesManager.findServiceBy(entityId, SamlRegisteredService.class);
             final SamlRegisteredServiceServiceProviderMetadataFacade facade = SamlRegisteredServiceServiceProviderMetadataFacade
-                    .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
+                .get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId).get();
             this.samlObjectSignatureValidator.verifySamlProfileRequestIfNeeded(logoutRequest, facade, request, ctx);
         }
         SamlUtils.logSamlObject(this.configBean, logoutRequest);
