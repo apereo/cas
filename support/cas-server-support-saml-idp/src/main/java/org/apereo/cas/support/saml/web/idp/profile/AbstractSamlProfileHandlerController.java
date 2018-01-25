@@ -1,7 +1,6 @@
 package org.apereo.cas.support.saml.web.idp.profile;
 
 import com.google.common.base.Splitter;
-import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -45,7 +44,6 @@ import org.jasig.cas.client.validation.Assertion;
 import org.jasig.cas.client.validation.AssertionImpl;
 import org.opensaml.core.xml.util.XMLObjectSupport;
 import org.opensaml.messaging.context.MessageContext;
-import org.opensaml.messaging.decoder.servlet.BaseHttpServletRequestXMLMessageDecoder;
 import org.opensaml.saml.common.SAMLException;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.common.SignableSAMLObject;
@@ -93,7 +91,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * The Parser pool.
      */
     protected final ParserPool parserPool;
-    
+
     /**
      * Authentication support to handle credentials and authn subsystem calls.
      */
@@ -113,7 +111,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * Callback service.
      */
     protected Service callbackService;
-    
+
     /**
      * The Saml registered service caching metadata resolver.
      */
@@ -138,7 +136,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * Signature validator.
      */
     protected final SamlObjectSignatureValidator samlObjectSignatureValidator;
-    
+
     /**
      * Post constructor placeholder for additional
      * extensions. This method is called after
@@ -158,8 +156,7 @@ public abstract class AbstractSamlProfileHandlerController {
      */
     protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
                                                                                                     final RequestAbstractType authnRequest) {
-        return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver,
-            registeredService, authnRequest);
+        return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, authnRequest);
     }
 
     /**
@@ -169,8 +166,8 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param entityId          the entity id
      * @return the saml metadata adaptor for service
      */
-    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(final SamlRegisteredService registeredService,
-                                                                                                    final String entityId) {
+    protected Optional<SamlRegisteredServiceServiceProviderMetadataFacade> getSamlMetadataFacadeFor(
+        final SamlRegisteredService registeredService, final String entityId) {
         return SamlRegisteredServiceServiceProviderMetadataFacade.get(this.samlRegisteredServiceCachingMetadataResolver, registeredService, entityId);
     }
 
@@ -287,46 +284,16 @@ public abstract class AbstractSamlProfileHandlerController {
             null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
     }
 
-    /**
-     * Decode authentication request saml object.
-     *
-     * @param request the request
-     * @param decoder the decoder
-     * @param clazz   the clazz
-     * @return the saml object
-     */
-    @SneakyThrows
-    protected Pair<? extends SignableSAMLObject, MessageContext> decodeSamlContextFromHttpRequest(final HttpServletRequest request,
-                                                                                                  final BaseHttpServletRequestXMLMessageDecoder decoder,
-                                                                                                  final Class<? extends SignableSAMLObject> clazz) {
-        LOGGER.info("Received SAML profile request [{}]", request.getRequestURI());
-
-        decoder.setHttpServletRequest(request);
-        decoder.setParserPool(this.parserPool);
-        decoder.initialize();
-        decoder.decode();
-
-        final MessageContext messageContext = decoder.getMessageContext();
-        LOGGER.debug("Locating SAML object from message context...");
-        @NonNull
-        final SignableSAMLObject object = (SignableSAMLObject) messageContext.getMessage();
-        if (!clazz.isAssignableFrom(object.getClass())) {
-            throw new ClassCastException("SAML object [" + object.getClass().getName() + " type does not match " + clazz);
-        }
-        LOGGER.debug("Decoded SAML object [{}] from http request", object.getElementQName());
-        return Pair.of(object, messageContext);
-
-    }
-
+    
     /**
      * Log cas validation assertion.
      *
      * @param assertion the assertion
      */
     protected void logCasValidationAssertion(final Assertion assertion) {
-        LOGGER.info("CAS Assertion Valid: [{}]", assertion.isValid());
+        LOGGER.debug("CAS Assertion Valid: [{}]", assertion.isValid());
         LOGGER.debug("CAS Assertion Principal: [{}]", assertion.getPrincipal().getName());
-        LOGGER.debug("CAS Assertion AuthN Date: [{}]", assertion.getAuthenticationDate());
+        LOGGER.debug("CAS Assertion authentication Date: [{}]", assertion.getAuthenticationDate());
         LOGGER.debug("CAS Assertion ValidFrom Date: [{}]", assertion.getValidFromDate());
         LOGGER.debug("CAS Assertion ValidUntil Date: [{}]", assertion.getValidUntilDate());
         LOGGER.debug("CAS Assertion Attributes: [{}]", assertion.getAttributes());
@@ -357,7 +324,6 @@ public abstract class AbstractSamlProfileHandlerController {
         LOGGER.debug("Redirecting SAML authN request to [{}]", urlToRedirectTo);
         final AuthenticationRedirectStrategy authenticationRedirectStrategy = new DefaultAuthenticationRedirectStrategy();
         authenticationRedirectStrategy.redirect(request, response, urlToRedirectTo);
-
     }
 
     /**
@@ -385,8 +351,7 @@ public abstract class AbstractSamlProfileHandlerController {
      * @param request      the request
      * @return the redirect url
      */
-    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest,
-                                                             final HttpServletRequest request) {
+    protected String buildRedirectUrlByRequestedAuthnContext(final String initialUrl, final AuthnRequest authnRequest, final HttpServletRequest request) {
         final List<String> authenticationContextClassMappings = this.casProperties.getAuthn().getSamlIdp().getAuthenticationContextClassMappings();
         if (authnRequest.getRequestedAuthnContext() == null || authenticationContextClassMappings == null || authenticationContextClassMappings.isEmpty()) {
             return initialUrl;

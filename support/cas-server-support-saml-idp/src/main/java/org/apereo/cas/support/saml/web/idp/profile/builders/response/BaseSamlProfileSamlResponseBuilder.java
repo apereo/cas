@@ -12,6 +12,7 @@ import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.saml.common.SAMLObject;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -34,7 +35,6 @@ import javax.servlet.http.HttpServletResponse;
 public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     extends AbstractSaml20ObjectBuilder implements SamlProfileObjectBuilder {
     private static final long serialVersionUID = -1891703354216174875L;
-
 
     /**
      * The Saml object encoder.
@@ -68,6 +68,10 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
         this.samlObjectEncrypter = samlObjectEncrypter;
     }
 
+    @Audit(
+        action = "SAML2_RESPONSE",
+        actionResolverName = "SAML2_RESPONSE_ACTION_RESOLVER",
+        resourceResolverName = "SAML2_RESPONSE_RESOURCE_RESOLVER")
     @Override
     public T build(final RequestAbstractType authnRequest,
                    final HttpServletRequest request,

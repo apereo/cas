@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.velocity.app.VelocityEngine;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,6 +13,9 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
+import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
+import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditPrincipalIdProvider;
+import org.apereo.cas.support.saml.web.idp.audit.SamlResponseAuditResourceResolver;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.CasSamlArtifactMap;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.assertion.SamlProfileSamlAssertionBuilder;
@@ -41,6 +46,7 @@ import org.apereo.cas.ticket.query.SamlAttributeQueryTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.UrlValidator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.opensaml.saml.common.binding.artifact.SAMLArtifactMap;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.core.Assertion;
@@ -69,7 +75,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration("samlIdPConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SamlIdPConfiguration {
+public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
@@ -330,5 +336,21 @@ public class SamlIdPConfiguration {
     @Bean
     public ExpirationPolicy samlAttributeQueryTicketExpirationPolicy() {
         return new SamlAttributeQueryTicketExpirationPolicy(casProperties.getTicket().getSt().getTimeToKillInSeconds());
+    }
+
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditResourceResolver("SAML2_RESPONSE_RESOURCE_RESOLVER", new SamlResponseAuditResourceResolver());
+        plan.registerAuditActionResolver("SAML2_RESPONSE_ACTION_RESOLVER",
+            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+
+        plan.registerAuditResourceResolver("SAML2_REQUEST_RESOURCE_RESOLVER", new SamlRequestAuditResourceResolver());
+        plan.registerAuditActionResolver("SAML2_REQUEST_ACTION_RESOLVER",
+            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+    }
+
+    @Bean
+    public SamlResponseAuditPrincipalIdProvider samlResponseAuditPrincipalIdProvider() {
+        return new SamlResponseAuditPrincipalIdProvider();
     }
 }
