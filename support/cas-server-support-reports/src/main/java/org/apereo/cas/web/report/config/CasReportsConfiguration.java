@@ -23,7 +23,7 @@ import org.apereo.cas.web.report.CasServerDiscoveryProfileController;
 import org.apereo.cas.web.report.ConfigurationStateController;
 import org.apereo.cas.web.report.DashboardController;
 import org.apereo.cas.web.report.LoggingConfigController;
-import org.apereo.cas.web.report.LoggingOutputSocketMessagingController;
+import org.apereo.cas.web.report.LoggingOutputTailingService;
 import org.apereo.cas.web.report.MetricsController;
 import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
 import org.apereo.cas.web.report.RegisteredServicesReportController;
@@ -46,7 +46,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.task.TaskExecutor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
+import org.springframework.messaging.simp.config.TaskExecutorRegistration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.web.servlet.View;
 import org.springframework.web.socket.config.annotation.AbstractWebSocketMessageBrokerConfigurer;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -195,14 +199,23 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         return new MetricsController(casProperties);
     }
 
-    @Bean
-    public LoggingOutputSocketMessagingController loggingOutputController() {
-        return new LoggingOutputSocketMessagingController();
-    }
 
     @Bean
     public InfoContributor casInfoEndpointContributor() {
         return new CasInfoEndpointContributor();
+    }
+
+    @Bean
+    public TaskExecutor logTailingTaskExecutor() {
+        final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(5);
+        executor.setQueueCapacity(25);
+        return executor;
+    }
+
+    @Bean
+    public LoggingOutputTailingService loggingOutputTailingService(final SimpMessagingTemplate simpMessagingTemplate) {
+        return new LoggingOutputTailingService(logTailingTaskExecutor(), simpMessagingTemplate);
     }
 
     /**
@@ -249,7 +262,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
-        config.enableSimpleBroker("/logs");
+        config.enableSimpleBroker("/topic");
         if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
             config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
         }
@@ -257,7 +270,7 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
     @Override
     public void registerStompEndpoints(final StompEndpointRegistry registry) {
-        registry.addEndpoint("/logoutput")
+        registry.addEndpoint("/reports-websocket")
             .addInterceptors(new HttpSessionHandshakeInterceptor())
             .withSockJS();
     }
