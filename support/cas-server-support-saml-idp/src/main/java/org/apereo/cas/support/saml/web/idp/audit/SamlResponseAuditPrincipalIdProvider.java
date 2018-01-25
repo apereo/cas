@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml;
+package org.apereo.cas.support.saml.web.idp.audit;
 
 import org.apereo.cas.audit.spi.DefaultAuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
