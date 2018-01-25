@@ -53,8 +53,6 @@ import java.util.Set;
  */
 @Slf4j
 public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
-
-
     /**
      * The code factory instance.
      */

@@ -67,7 +67,6 @@ public class ServiceTicketResource {
                 throw new InvalidTicketException(serviceId);
             }
             final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
-
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
