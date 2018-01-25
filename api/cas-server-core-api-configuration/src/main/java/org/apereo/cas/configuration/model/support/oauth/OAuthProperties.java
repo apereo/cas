@@ -61,14 +61,4 @@ public class OAuthProperties implements Serializable {
      * once an access token is "validated". 
      */
     private UserProfileViewTypes userProfileViewType = UserProfileViewTypes.NESTED;
-
-    /**
-     * Name of the oauth throttling bean, assuming authentication throttling is turned on. Acceptable values are:
-     * 
-     * <ul>
-     *     <li>{@code neverThrottle}: Disable throttling</li>
-     *     <li>{@code authenticationThrottle}: Enable authentication throttling.</li>
-     * </ul>
-     */
-    private String throttler = "neverThrottle";
 }
