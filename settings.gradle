@@ -14,6 +14,7 @@ include "api:cas-server-core-api-audit"
 include "api:cas-server-core-api"
 include "api:cas-server-core-api-protocol"
 include "api:cas-server-core-api-events"
+include "api:cas-server-core-api-throttle"
 include "api:cas-server-core-api-webflow"
 
 include "core:cas-server-core-util-api"
