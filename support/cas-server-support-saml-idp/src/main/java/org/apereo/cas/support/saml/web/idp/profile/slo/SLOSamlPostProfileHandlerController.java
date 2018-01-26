@@ -32,20 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SLOSamlPostProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
 
-    /**
-     * Instantiates a new slo saml profile handler controller.
-     *
-     * @param samlObjectSigner                             the saml object signer
-     * @param parserPool                                   the parser pool
-     * @param authenticationSystemSupport                  the authentication system support
-     * @param servicesManager                              the services manager
-     * @param webApplicationServiceFactory                 the web application service factory
-     * @param samlRegisteredServiceCachingMetadataResolver the saml registered service caching metadata resolver
-     * @param configBean                                   the config bean
-     * @param responseBuilder                              the response builder
-     * @param casProperties                                the cas properties
-     * @param samlObjectSignatureValidator                 the saml object signature validator
-     */
     public SLOSamlPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
                                                final ParserPool parserPool,
                                                final AuthenticationSystemSupport authenticationSystemSupport,

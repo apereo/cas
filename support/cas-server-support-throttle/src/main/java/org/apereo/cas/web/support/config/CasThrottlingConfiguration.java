@@ -16,6 +16,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 
@@ -29,10 +30,8 @@ import org.springframework.context.annotation.Lazy;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
 @Slf4j
+@Conditional(AuthenticationThrottlingCondition.class)
 public class CasThrottlingConfiguration {
-
-
-
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -41,25 +40,21 @@ public class CasThrottlingConfiguration {
     @Bean
     public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
         final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
-        if (throttle.getFailure().getThreshold() > 0
-                && throttle.getFailure().getRangeSeconds() > 0) {
-            if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
-                return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
-                        throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
-            }
-            return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
-                    throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
+        if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
+            LOGGER.debug("Activating authentication throttling based on IP address and username...");
+            return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
+                throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
         }
-        return neverThrottle();
+        LOGGER.debug("Activating authentication throttling based on IP address...");
+        return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
+            throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
     }
 
     @Lazy
     @Bean
+    @Conditional(AuthenticationThrottlingCondition.class)
     public Runnable throttleSubmissionCleaner(@Qualifier("authenticationThrottle") final ThrottledSubmissionHandlerInterceptor adapter) {
         return new InMemoryThrottledSubmissionCleaner(adapter);
     }
 
-    private static ThrottledSubmissionHandlerInterceptor neverThrottle() {
-        return () -> LOGGER.debug("Throttling is turned off. No cleanup will take place");
-    }
 }
