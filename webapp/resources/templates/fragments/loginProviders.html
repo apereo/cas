@@ -52,8 +52,8 @@
         <div class="card-body">
             <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}"/>
             <div class="card-text">
-                <ul class="list-group">
-                    <li th:each="entry: ${wsfedUrls}" class="list-group-item">
+                <ul>
+                    <li th:each="entry: ${wsfedUrls}">
                         <a class="btn btn-block btn-social"
                            th:classappend="btn-sm"
                            th:href="${entry.redirectUrl}"
