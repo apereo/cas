@@ -5,9 +5,20 @@
 // override this with their own colors.  This is use as a fallback for unknown social types.
 .btn-social {
   background-color: slategray;
+  text-transform: capitalize;
 }
 
 @import "../vendor/bootstrap-social/bootstrap-social";
+
+// social-button overrides
+.btn-social, .btn-social-icon {
+  padding-left: 50px;
+}
+.btn-social > :first-child, .btn-social-icon > :first-child {
+  line-height: 38px;
+  width: 40px;
+}
+
 
 /**
  * Add in our own custom social colors.
@@ -34,6 +45,21 @@
 .btn-oidc {
   @include btn-social(#f7931e);
 }
+.btn-google2 {
+  @include btn-social(#DD4B39);
+}
+.btn-windows {
+  @include btn-social(#2672EC);
+}
+.btn-wordpress {
+  @include btn-social(#eeeeee, #000);
+}
+
+// Specific provider overrides
+a.btn.btn-wordpress {
+  color: #000!important;
+}
+
 
 // Success appears as green
 .btn-restart {
