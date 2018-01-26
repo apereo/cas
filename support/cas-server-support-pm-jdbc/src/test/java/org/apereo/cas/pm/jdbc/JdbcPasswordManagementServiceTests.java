@@ -52,6 +52,7 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
