@@ -12,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link ControllerUtils}.
@@ -42,7 +43,8 @@ public class ControllerUtils {
      * @return the logger context
      */
     @SneakyThrows
-    public static Pair<Resource, LoggerContext> buildLoggerContext(final Environment environment, final ResourceLoader resourceLoader) {
+    public static Optional<Pair<Resource, LoggerContext>> buildLoggerContext(final Environment environment, final ResourceLoader
+            resourceLoader) {
         final String logFile = environment.getProperty("logging.config", "classpath:/log4j2.xml");
         LOGGER.debug("Located logging configuration reference in the environment as [{}]", logFile);
 
@@ -52,9 +54,9 @@ public class ControllerUtils {
             final LoggerContext loggerContext = Configurator.initialize("CAS", null, logConfigurationFile.getURI());
             LOGGER.debug("Installing log configuration listener to detect changes and update");
             loggerContext.getConfiguration().addListener(reconfigurable -> loggerContext.updateLoggers(reconfigurable.reconfigure()));
-            return Pair.of(logConfigurationFile, loggerContext);
+            return Optional.of(Pair.of(logConfigurationFile, loggerContext));
         }
         LOGGER.warn("Logging configuration cannot be found in the environment settings");
-        return null;
+        return Optional.empty();
     }
 }
