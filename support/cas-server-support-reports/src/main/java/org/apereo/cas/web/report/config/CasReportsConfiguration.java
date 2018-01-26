@@ -70,7 +70,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocketMessageBroker
 @Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
-
+    private static final int LOG_TAILING_CORE_POOL_SIZE =5;
+    private static final int LOG_TAILING_QUEUE_CAPACITY = 25;
+    
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -207,8 +209,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Bean
     public TaskExecutor logTailingTaskExecutor() {
         final ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(5);
-        executor.setQueueCapacity(25);
+        executor.setCorePoolSize(LOG_TAILING_CORE_POOL_SIZE);
+        executor.setQueueCapacity(LOG_TAILING_QUEUE_CAPACITY);
         return executor;
     }
 

@@ -84,6 +84,9 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
 
     }
 
+    /**
+     * Clean up.
+     */
     @PreDestroy
     public void cleanUp() {
         this.tailers.forEach(Tailer::stop);

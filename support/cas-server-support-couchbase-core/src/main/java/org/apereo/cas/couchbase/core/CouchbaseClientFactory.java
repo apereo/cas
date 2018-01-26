@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CouchbaseClientFactory {
     private static final int DEFAULT_TIMEOUT = 5;
-    private static Cluster cluster;
+    private Cluster cluster;
 
     private Bucket bucket;
     private final Collection<View> views;
