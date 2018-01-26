@@ -18,9 +18,9 @@ function connect() {
     $('#logoutputarea').empty();
     var socket = new SockJS(urls.reportsWebsocket);
     stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame) {
+    stompClient.connect({}, function () {
         setConnected(true);
-        stompClient.subscribe("/topic/logs", function (msg) {
+        stompClient.subscribe('/topic/logs', function (msg) {
             if (msg != null && msg.body != '') {
                 showLogs(msg.body);
             }
