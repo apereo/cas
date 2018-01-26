@@ -42,6 +42,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -82,11 +83,11 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @PostConstruct
     public void initialize() {
-        final Pair<Resource, LoggerContext> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
-        if (pair != null) {
-            this.logConfigurationFile = pair.getKey();
-            this.loggerContext = pair.getValue();
-        }
+        final Optional<Pair<Resource, LoggerContext>> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
+        pair.ifPresent(it -> {
+            this.logConfigurationFile = it.getKey();
+            this.loggerContext = it.getValue();
+        });
     }
 
     /**
