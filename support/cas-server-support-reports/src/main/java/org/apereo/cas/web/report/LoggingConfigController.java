@@ -84,7 +84,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
     @PostConstruct
     public void initialize() {
         final Optional<Pair<Resource, LoggerContext>> pair = ControllerUtils.buildLoggerContext(environment, resourceLoader);
-        pair.ifPresent( it -> {
+        pair.ifPresent(it -> {
             this.logConfigurationFile = it.getKey();
             this.loggerContext = it.getValue();
         });

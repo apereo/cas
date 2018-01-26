@@ -43,10 +43,19 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
 
     private static final String LOG_OUTPUT_STOMP_DESTINATION = "/topic/logs";
 
+    /**
+     * This is a Task Executor.
+     */
     private final TaskExecutor taskExecutor;
 
+    /**
+     * This is a Stomp messaging template.
+     */
     private final SimpMessagingTemplate stompMessagingTemplate;
 
+    /**
+     * This is a list of file tailers.
+     */
     private final List<Tailer> tailers = new ArrayList<>();
 
     @Autowired
@@ -105,12 +114,12 @@ public class LoggingOutputTailingService extends TailerListenerAdapter {
     }
 
     @Override
-    public void handle(String line) {
+    public void handle(final String line) {
         this.stompMessagingTemplate.convertAndSend(LOG_OUTPUT_STOMP_DESTINATION, line);
     }
 
     @Override
-    public void handle(Exception ex) {
+    public void handle(final Exception ex) {
         handle(ex.getMessage());
     }
 }
