@@ -84,6 +84,7 @@ import static org.junit.Assert.*;
     CasCookieConfiguration.class,
     CasEventsInMemoryRepositoryConfiguration.class,
     CasCoreUtilConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreEventsConfiguration.class})
 @TestPropertySource(properties = "cas.authn.adaptive.risk.dateTime.enabled=true")
 @DirtiesContext

@@ -13,7 +13,8 @@ dependencies {
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")
     
     implementation libraries.pac4j
-    
+
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":core:cas-server-core-tickets")
