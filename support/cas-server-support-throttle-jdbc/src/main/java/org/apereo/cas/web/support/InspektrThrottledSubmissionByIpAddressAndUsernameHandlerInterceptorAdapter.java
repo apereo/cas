@@ -31,7 +31,6 @@ import java.util.List;
 @Slf4j
 public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter {
 
-
     private static final double NUMBER_OF_MILLISECONDS_IN_SECOND = 1000.0;
 
     private static final String INSPEKTR_ACTION_THROTTLED = "THROTTLED_LOGIN_ATTEMPT";
@@ -41,8 +40,7 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
     private final String applicationCode;
     private final String authenticationFailureCode;
     private final String sqlQueryAudit;
-
-    private JdbcTemplate jdbcTemplate;
+    private final JdbcTemplate jdbcTemplate;
 
     /**
      * Instantiates a new inspektr throttled submission by ip address and username handler interceptor adapter.
@@ -68,37 +66,38 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         this.applicationCode = appCode;
         this.sqlQueryAudit = sqlQueryAudit;
         this.authenticationFailureCode = authenticationFailureCode;
-
-        if (this.dataSource != null) {
-            this.jdbcTemplate = new JdbcTemplate(this.dataSource);
-        } else {
-            LOGGER.warn("No data source is defined for [{}]. Ignoring the construction of JDBC template", this.getName());
-        }
+        this.jdbcTemplate = new JdbcTemplate(this.dataSource);
     }
 
     @Override
     public boolean exceedsThreshold(final HttpServletRequest request) {
-        if (this.dataSource != null && this.jdbcTemplate != null) {
-            final String userToUse = constructUsername(request, getUsernameParameter());
-            final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
+        final String userToUse = constructUsername(request, getUsernameParameter());
+        final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
 
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            final String remoteAddress = clientInfo.getClientIpAddress();
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final String remoteAddress = clientInfo.getClientIpAddress();
 
-            final List<Timestamp> failures = this.jdbcTemplate.query(
-                this.sqlQueryAudit,
-                new Object[]{
-                    remoteAddress, userToUse, this.authenticationFailureCode,
-                    this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
-                new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
-                (resultSet, i) -> resultSet.getTimestamp(1));
-            if (failures.size() < 2) {
-                return false;
-            }
-            // Compute rate in submissions/sec between last two authn failures and compare with threshold
-            return NUMBER_OF_MILLISECONDS_IN_SECOND / (failures.get(0).getTime() - failures.get(1).getTime()) > getThresholdRate();
+        final List<Timestamp> failures = this.jdbcTemplate.query(
+            this.sqlQueryAudit,
+            new Object[]{
+                remoteAddress, userToUse, this.authenticationFailureCode,
+                this.applicationCode, DateTimeUtils.timestampOf(cutoff)},
+            new int[]{Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.VARCHAR, Types.TIMESTAMP},
+            (resultSet, i) -> resultSet.getTimestamp(1));
+        if (failures.size() < 2) {
+            return false;
         }
-        LOGGER.warn("No data source is defined for [{}]. Ignoring threshold checking", this.getName());
+        // Compute rate in submissions/sec between last two authn failures and compare with threshold
+        final long lastTime = failures.get(0).getTime();
+        final long secondToLastTime = failures.get(1).getTime();
+        final long difference = lastTime - secondToLastTime;
+        final double rate = NUMBER_OF_MILLISECONDS_IN_SECOND / difference;
+        LOGGER.debug("Last attempt was at [{}] and the one before that was at [{}]. Difference is [{}] calculated as rate of [{}]",
+            lastTime, secondToLastTime, difference, rate);
+        if (rate > getThresholdRate()) {
+            LOGGER.warn("Authentication throttling rate [{}] exceeds the defined threshold [{}]", rate, getThresholdRate());
+            return true;
+        }
         return false;
     }
 
@@ -122,21 +121,17 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
      * @param methodName Name of the method where the action occurred.
      */
     protected void recordAnyAction(final HttpServletRequest request, final String actionName, final String methodName) {
-        if (this.dataSource != null && this.jdbcTemplate != null) {
-            final String userToUse = constructUsername(request, getUsernameParameter());
-            final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
-            final AuditActionContext context = new AuditActionContext(
-                userToUse,
-                userToUse,
-                actionName,
-                this.applicationCode,
-                DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
-                clientInfo.getClientIpAddress(),
-                clientInfo.getServerIpAddress());
-            this.auditTrailManager.record(context);
-        } else {
-            LOGGER.warn("No data source is defined for [{}]. Ignoring audit record-keeping", this.getName());
-        }
+        final String userToUse = constructUsername(request, getUsernameParameter());
+        final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
+        final AuditActionContext context = new AuditActionContext(
+            userToUse,
+            userToUse,
+            actionName,
+            this.applicationCode,
+            DateTimeUtils.dateOf(ZonedDateTime.now(ZoneOffset.UTC)),
+            clientInfo.getClientIpAddress(),
+            clientInfo.getServerIpAddress());
+        this.auditTrailManager.record(context);
     }
 
     /**
