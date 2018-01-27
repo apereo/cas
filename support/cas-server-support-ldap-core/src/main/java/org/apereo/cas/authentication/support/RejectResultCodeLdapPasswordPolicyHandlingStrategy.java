@@ -32,16 +32,17 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends DefaultL
         }
         
         if (!response.getResult()) {
-            LOGGER.debug("Unable to support authentication response [{}] with a negative/false result");
+            LOGGER.debug("Unable to support authentication response [{}] with a negative/false result", response);
             return false;
         }
         
         if (this.resultCodes.contains(response.getAuthenticationResultCode())) {
-            LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]", 
+            LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]",
+                    response,
                     response.getAuthenticationResultCode());
             return false;
         }
-        LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", getClass().getSimpleName());
+        LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", response, getClass().getSimpleName());
         return true;
     }
 }

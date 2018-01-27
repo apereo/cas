@@ -117,7 +117,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     /**
      * Calculate threshold rate and compare boolean.
-     *
+     * Compute rate in submissions/sec between last two authn failures and compare with threshold.
      * @param failures the failures
      * @return the boolean
      */
@@ -125,7 +125,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
         if (failures.size() < 2) {
             return false;
         }
-        // Compute rate in submissions/sec between last two authn failures and compare with threshold
         final long lastTime = failures.get(0).getTime();
         final long secondToLastTime = failures.get(1).getTime();
         final long difference = lastTime - secondToLastTime;

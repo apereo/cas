@@ -167,7 +167,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         try {
             return encryptValuePropagateExceptions(value);
         } catch (final Exception e) {
-            LOGGER.error("Could not encrypt value [{}]", e);
+            LOGGER.error("Could not encrypt value [{}]", value, e);
         }
         return null;
     }
@@ -193,7 +193,7 @@ public class CasConfigurationJasyptCipherExecutor implements CipherExecutor<Stri
         try {
             return decryptValuePropagateExceptions(value);
         } catch (final Exception e) {
-            LOGGER.error("Could not decrypt value [{}]", e);
+            LOGGER.error("Could not decrypt value [{}]", value, e);
         }
         return null;
     }

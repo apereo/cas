@@ -35,7 +35,7 @@ public class RegisteredServiceMutantRegexAttributeFilter extends RegisteredServi
             final String attributeName = entry.getKey();
             if (getPatterns().containsKey(attributeName)) {
                 final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
-                LOGGER.debug("Found attribute [{}] in pattern definitions with value(s)", attributeName, attributeValues);
+                LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
                 final Collection<Pair<Pattern, String>> patterns = createPatternsAndReturnValue(attributeName);
                 final List<Object> finalValues = patterns.stream().map(patternDefn -> {
                     final Pattern pattern = patternDefn.getLeft();

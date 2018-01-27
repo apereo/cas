@@ -57,7 +57,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
             final String attributeName = entry.getKey();
             if (patterns.containsKey(attributeName)) {
                 final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
-                LOGGER.debug("Found attribute [{}] in pattern definitions with value(s)", attributeName, attributeValues);
+                LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
                 final Collection<Pattern> patterns = createPatternForMappedAttribute(attributeName);
                 patterns.forEach(pattern -> {
                     LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());

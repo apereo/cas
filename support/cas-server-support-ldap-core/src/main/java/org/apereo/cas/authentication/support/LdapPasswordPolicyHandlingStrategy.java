@@ -37,7 +37,7 @@ public interface LdapPasswordPolicyHandlingStrategy {
      */
     default boolean supports(final AuthenticationResponse response) {
         if (response != null) {
-            LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", getClass().getSimpleName());
+            LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", response, getClass().getSimpleName());
             return true;
         }
         return false;
