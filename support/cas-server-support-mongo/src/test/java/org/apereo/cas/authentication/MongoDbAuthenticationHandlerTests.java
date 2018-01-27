@@ -35,7 +35,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import static org.junit.Assert.*;
 
 /**
- * Test cases for {@link MongoAuthenticationHandler}.
+ * Test cases for {@link MongoDbAuthenticationHandler}.
  *
  * @author Misagh Moayyed
  * @since 4.2
@@ -63,7 +63,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @TestPropertySource(locations={"classpath:/mongo.properties"})
 @Slf4j
-public class MongoAuthenticationHandlerTests {
+public class MongoDbAuthenticationHandlerTests {
 
     @Autowired
     @Qualifier("mongoAuthenticationHandler")

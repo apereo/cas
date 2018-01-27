@@ -46,7 +46,7 @@ import org.springframework.webflow.test.MockRequestContext;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * Unit test for {@link InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter}.
+ * Unit test for {@link JdbcThrottledSubmissionHandlerInterceptorAdapter}.
  *
  * @author Marvin S. Addison
  * @since 3.0.0
@@ -77,7 +77,7 @@ import javax.servlet.http.HttpServletResponse;
 @ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
 @TestPropertySource(locations = {"classpath:/casthrottle.properties"})
 @Slf4j
-public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapterTests extends
+public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
         AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired

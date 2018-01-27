@@ -15,10 +15,8 @@ import java.io.Closeable;
  * @since 4.2.0
  */
 @Slf4j
-public class MongoAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler implements Closeable {
-
-    
-    public MongoAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
+public class MongoDbAuthenticationHandler extends UsernamePasswordWrapperAuthenticationHandler implements Closeable {
+    public MongoDbAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {
         super(name, servicesManager, principalFactory, null);
     }
 
