@@ -97,7 +97,6 @@ public class InspektrThrottledSubmissionByIpAddressAndUsernameHandlerInterceptor
         request.setAttribute("flowRequestContext", context);
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-
         throttle.preHandle(request, response, null);
 
         try {
