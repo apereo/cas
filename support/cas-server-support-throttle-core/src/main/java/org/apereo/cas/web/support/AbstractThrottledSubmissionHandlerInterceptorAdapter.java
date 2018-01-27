@@ -34,7 +34,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private double thresholdRate;
 
-
     /**
      * Configure the threshold rate.
      */
