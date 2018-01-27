@@ -327,7 +327,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
             final String serviceName = matcher.group(1);
             return findServiceByExactServiceName(serviceName);
         }
-        LOGGER.warn("Provided file [{}} does not match the recommended service definition file pattern [{}]", this.serviceFileNamePattern.pattern());
+        LOGGER.warn("Provided file [{}} does not match the recommended service definition file pattern [{}]",
+            file.getName(),
+            this.serviceFileNamePattern.pattern());
         return null;
     }
 

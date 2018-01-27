@@ -140,7 +140,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     private void updateServiceRegistryWithMatchingService(final List<RegisteredService> services, final RegisteredService cachedService,
                                                           final RegisteredService matchingService, final ServiceRegistryDao serviceRegistryDao) {
-        LOGGER.debug("Found corresponding service definition [{}] locally", matchingService, distributedCacheManager.getName());
+        LOGGER.debug("Found corresponding service definition [{}] locally via cache manager [{}]", matchingService, distributedCacheManager.getName());
         if (matchingService.equals(cachedService)) {
             LOGGER.debug("Service definition cache entry [{}] is the same as service definition found locally [{}]", cachedService, matchingService);
         } else {
