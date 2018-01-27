@@ -70,7 +70,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
         // Ticket has been used, check maxTimeToLive (hard window)
         ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
-            LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time", expirationTime, currentSystemTime);
+            LOGGER.debug("Ticket is expired because the time since creation [{}] is greater than current system time [{}]", expirationTime, currentSystemTime);
             return true;
         }
         expirationTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);

@@ -324,7 +324,7 @@ public class ScriptingUtils {
                                                             final Class<T> expectedType) {
         try {
             if (resource == null) {
-                LOGGER.debug("No groovy script is defined", resource);
+                LOGGER.debug("No groovy script is defined");
                 return null;
             }
 

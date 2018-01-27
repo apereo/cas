@@ -34,7 +34,7 @@ public class AddTicketMessageQueueCommand extends BaseMessageQueueCommand {
 
     @Override
     public void execute(final TicketRegistry registry) {
-        LOGGER.debug("Executing queue command on ticket registry id [{}] to add ticket [{}]", ticket);
+        LOGGER.debug("Executing queue command on ticket registry id [{}] to add ticket [{}]", getId().getId(), ticket);
         registry.addTicket(ticket);
     }
 }
