@@ -2,6 +2,7 @@ package org.apereo.cas.web.support.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.throttle.ThrottleProperties;
@@ -38,16 +39,25 @@ public class CasThrottlingConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "authenticationThrottle")
     @Bean
-    public ThrottledSubmissionHandlerInterceptor authenticationThrottle() {
+    @Autowired
+    public ThrottledSubmissionHandlerInterceptor authenticationThrottle(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan) {
         final ThrottleProperties throttle = casProperties.getAuthn().getThrottle();
         if (StringUtils.isNotBlank(throttle.getUsernameParameter())) {
             LOGGER.debug("Activating authentication throttling based on IP address and username...");
             return new InMemoryThrottledSubmissionByIpAddressAndUsernameHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
-                throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
+                throttle.getFailure().getRangeSeconds(),
+                throttle.getUsernameParameter(),
+                throttle.getFailure().getCode(),
+                auditTrailExecutionPlan,
+                throttle.getAppcode());
         }
         LOGGER.debug("Activating authentication throttling based on IP address...");
         return new InMemoryThrottledSubmissionByIpAddressHandlerInterceptorAdapter(throttle.getFailure().getThreshold(),
-            throttle.getFailure().getRangeSeconds(), throttle.getUsernameParameter());
+            throttle.getFailure().getRangeSeconds(),
+            throttle.getUsernameParameter(),
+            throttle.getFailure().getCode(),
+            auditTrailExecutionPlan,
+            throttle.getAppcode());
     }
 
     @Lazy

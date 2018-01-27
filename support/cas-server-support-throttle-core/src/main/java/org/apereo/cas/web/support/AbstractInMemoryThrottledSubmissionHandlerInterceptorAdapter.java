@@ -1,6 +1,7 @@
 package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditTrailExecutionPlan;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.ZoneOffset;
@@ -20,16 +21,20 @@ import java.util.concurrent.ConcurrentMap;
  */
 @Slf4j
 public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter extends AbstractThrottledSubmissionHandlerInterceptorAdapter
-        implements InMemoryThrottledSubmissionHandlerInterceptor {
-    
+    implements InMemoryThrottledSubmissionHandlerInterceptor {
+
     private static final double SUBMISSION_RATE_DIVIDEND = 1000.0;
 
     private final ConcurrentMap<String, ZonedDateTime> ipMap = new ConcurrentHashMap<>();
 
     public AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapter(final int failureThreshold,
                                                                         final int failureRangeInSeconds,
-                                                                        final String usernameParameter) {
-        super(failureThreshold, failureRangeInSeconds, usernameParameter);
+                                                                        final String usernameParameter,
+                                                                        final String authenticationFailureCode,
+                                                                        final AuditTrailExecutionPlan auditTrailExecutionPlan,
+                                                                        final String applicationCode) {
+        super(failureThreshold, failureRangeInSeconds, usernameParameter,
+            authenticationFailureCode, auditTrailExecutionPlan, applicationCode);
     }
 
     @Override
@@ -42,7 +47,7 @@ public abstract class AbstractInMemoryThrottledSubmissionHandlerInterceptorAdapt
     public void recordSubmissionFailure(final HttpServletRequest request) {
         this.ipMap.put(constructKey(request), ZonedDateTime.now(ZoneOffset.UTC));
     }
-    
+
     /**
      * This class relies on an external configuration to clean it up.
      * It ignores the threshold data in the parent class.
