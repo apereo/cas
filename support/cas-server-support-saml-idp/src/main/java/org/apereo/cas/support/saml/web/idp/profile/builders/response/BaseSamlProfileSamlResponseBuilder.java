@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.opensaml.core.xml.XMLObject;
@@ -39,7 +39,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     /**
      * The Saml object encoder.
      */
-    protected BaseSamlObjectSigner samlObjectSigner;
+    protected SamlIdPObjectSigner samlObjectSigner;
 
     /**
      * The Velocity engine factory.
@@ -57,7 +57,7 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
     private final SamlObjectEncrypter samlObjectEncrypter;
 
     public BaseSamlProfileSamlResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                              final BaseSamlObjectSigner samlObjectSigner,
+                                              final SamlIdPObjectSigner samlObjectSigner,
                                               final VelocityEngine velocityEngineFactory,
                                               final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                               final SamlObjectEncrypter samlObjectEncrypter) {

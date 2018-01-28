@@ -12,7 +12,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredSer
 import org.apereo.cas.support.saml.web.idp.profile.IdPInitiatedProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.artifact.Saml1ArtifactResolutionProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.ecp.ECPProfileHandlerController;
@@ -88,7 +88,7 @@ public class SamlIdPEndpointsConfiguration {
 
     @Autowired
     @Qualifier("samlObjectSigner")
-    private BaseSamlObjectSigner samlObjectSigner;
+    private SamlIdPObjectSigner samlObjectSigner;
 
     @Autowired
     @Qualifier("ticketGrantingTicketCookieGenerator")
