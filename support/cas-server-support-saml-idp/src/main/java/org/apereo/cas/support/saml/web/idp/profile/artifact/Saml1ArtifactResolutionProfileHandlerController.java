@@ -16,7 +16,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicket;
 import org.apereo.cas.ticket.artifact.SamlArtifactTicketFactory;
@@ -46,7 +46,7 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
     private final SamlArtifactTicketFactory artifactTicketFactory;
     private final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder;
 
-    public Saml1ArtifactResolutionProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+    public Saml1ArtifactResolutionProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                            final ParserPool parserPool,
                                                            final AuthenticationSystemSupport authenticationSystemSupport,
                                                            final ServicesManager servicesManager,

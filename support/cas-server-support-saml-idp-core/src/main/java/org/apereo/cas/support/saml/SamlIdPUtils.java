@@ -29,10 +29,7 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 
-import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -214,57 +211,6 @@ public class SamlIdPUtils {
         roleDescriptorResolver.setRequireValidMetadata(requireValidMetadata);
         roleDescriptorResolver.initialize();
         return roleDescriptorResolver;
-    }
-
-
-    /**
-     * Gets full location of signing cert file.
-     *
-     * @param metadataLocation the metadata location
-     * @return the signing cert file
-     */
-    public static Resource getIdPSigningCertFile(final File metadataLocation) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
-    }
-
-    /**
-     * Gets signing key file.
-     *
-     * @param metadataLocation the metadata location
-     * @return the signing key file
-     */
-    public static Resource getIdPSigningKeyFile(final File metadataLocation) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
-    }
-
-    /**
-     * Gets idp metadata file.
-     *
-     * @param metadataLocation the metadata location
-     * @return the metadata file
-     */
-    public static File getIdPMetadataFile(final File metadataLocation) {
-        return new File(metadataLocation, "idp-metadata.xml");
-    }
-
-    /**
-     * Gets encryption cert file.
-     *
-     * @param metadataLocation the metadata location
-     * @return the encryption cert file
-     */
-    public static Resource getIdPEncryptionCertFile(final File metadataLocation) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
-    }
-
-    /**
-     * Gets encryption key file.
-     *
-     * @param metadataLocation the metadata location
-     * @return the encryption key file
-     */
-    public static Resource getIdPEncryptionKeyFile(final File metadataLocation) {
-        return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
     }
 }
 

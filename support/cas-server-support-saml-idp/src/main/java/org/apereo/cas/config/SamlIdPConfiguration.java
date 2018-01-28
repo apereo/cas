@@ -11,6 +11,7 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPAlgorithmsProp
 import org.apereo.cas.logout.SingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlIdPSingleLogoutServiceLogoutUrlBuilder;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.audit.SamlRequestAuditResourceResolver;
@@ -24,8 +25,8 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.authn.AuthnContextCl
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.DefaultAuthnContextClassRefBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.authn.SamlProfileSamlAuthNStatementBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.conditions.SamlProfileSamlConditionsBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlAttributeEncoder;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.nameid.SamlProfileSamlNameIdBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.SamlProfileSaml2ResponseBuilder;
@@ -119,6 +120,10 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @Autowired
     @Qualifier("urlValidator")
     private UrlValidator urlValidator;
+
+    @Autowired
+    @Qualifier("samlMetadataLocator")
+    private SamlIdPMetadataLocator samlMetadataLocator;
 
     @Bean
     public SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder() {
@@ -288,14 +293,16 @@ public class SamlIdPConfiguration implements AuditTrailRecordResolutionPlanConfi
     @ConditionalOnMissingBean(name = "samlObjectSigner")
     @Bean
     @RefreshScope
-    public BaseSamlObjectSigner samlObjectSigner() {
+    public SamlIdPObjectSigner samlObjectSigner() {
         final SamlIdPAlgorithmsProperties algs = casProperties.getAuthn().getSamlIdp().getAlgs();
-        return new BaseSamlObjectSigner(
+        return new SamlIdPObjectSigner(
             algs.getOverrideSignatureReferenceDigestMethods(),
             algs.getOverrideSignatureAlgorithms(),
             algs.getOverrideBlackListedSignatureSigningAlgorithms(),
             algs.getOverrideWhiteListedSignatureSigningAlgorithms(),
-            casSamlIdPMetadataResolver);
+            this.casSamlIdPMetadataResolver,
+            casProperties,
+            this.samlMetadataLocator);
     }
 
     @ConditionalOnMissingBean(name = "samlProfileSamlAttributeQueryFaultResponseBuilder")

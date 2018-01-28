@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.BaseSamlProfileSamlResponseBuilder;
 import org.opensaml.messaging.context.MessageContext;
@@ -47,7 +47,7 @@ public class SamlProfileSamlSoap11ResponseBuilder extends BaseSamlProfileSamlRes
 
     public SamlProfileSamlSoap11ResponseBuilder(
         final OpenSamlConfigBean openSamlConfigBean,
-        final BaseSamlObjectSigner samlObjectSigner,
+        final SamlIdPObjectSigner samlObjectSigner,
         final VelocityEngine velocityEngineFactory,
         final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
         final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,

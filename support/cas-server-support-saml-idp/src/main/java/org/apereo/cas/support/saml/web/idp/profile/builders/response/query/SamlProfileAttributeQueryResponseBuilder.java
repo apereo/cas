@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectEncrypter;
 import org.apereo.cas.support.saml.web.idp.profile.builders.response.soap.SamlProfileSamlSoap11ResponseBuilder;
 import org.opensaml.saml.common.SAMLObject;
@@ -35,7 +35,7 @@ public class SamlProfileAttributeQueryResponseBuilder extends SamlProfileSamlSoa
     private static final long serialVersionUID = -5582616946993706815L;
 
     public SamlProfileAttributeQueryResponseBuilder(final OpenSamlConfigBean openSamlConfigBean,
-                                                    final BaseSamlObjectSigner samlObjectSigner,
+                                                    final SamlIdPObjectSigner samlObjectSigner,
                                                     final VelocityEngine velocityEngineFactory,
                                                     final SamlProfileObjectBuilder<Assertion> samlProfileSamlAssertionBuilder,
                                                     final SamlProfileObjectBuilder<? extends SAMLObject> saml2ResponseBuilder,
