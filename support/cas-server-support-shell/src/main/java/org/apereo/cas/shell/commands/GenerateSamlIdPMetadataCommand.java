@@ -2,6 +2,7 @@ package org.apereo.cas.shell.commands;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.idp.metadata.DefaultSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.DefaultSamlIdPMetadataLocator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.shell.core.CommandMarker;
@@ -60,8 +61,8 @@ public class GenerateSamlIdPMetadataCommand implements CommandMarker {
             help = "Force metadata generation, disregarding anything that might already be available at the specified location",
             optionContext = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
-        final DefaultSamlIdPMetadataGenerator generator = new DefaultSamlIdPMetadataGenerator(new File(metadataLocation),
-            entityId, this.resourceLoader, serverPrefix, scope);
+        final DefaultSamlIdPMetadataGenerator generator = new DefaultSamlIdPMetadataGenerator(entityId, this.resourceLoader,
+            serverPrefix, scope, new DefaultSamlIdPMetadataLocator(new File(metadataLocation)));
 
         boolean generateMetadata = true;
         if (!generator.isMetadataMissing()) {

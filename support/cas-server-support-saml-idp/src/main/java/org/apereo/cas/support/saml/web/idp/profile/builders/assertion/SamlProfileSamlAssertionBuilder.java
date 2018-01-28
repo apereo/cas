@@ -8,7 +8,7 @@ import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.support.saml.util.AbstractSaml20ObjectBuilder;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.util.RandomUtils;
 import org.opensaml.saml.saml2.core.Assertion;
 import org.opensaml.saml.saml2.core.AttributeStatement;
@@ -48,14 +48,14 @@ public class SamlProfileSamlAssertionBuilder extends AbstractSaml20ObjectBuilder
 
     private final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder;
 
-    private final BaseSamlObjectSigner samlObjectSigner;
+    private final SamlIdPObjectSigner samlObjectSigner;
 
     public SamlProfileSamlAssertionBuilder(final OpenSamlConfigBean configBean,
                                            final SamlProfileObjectBuilder<AuthnStatement> samlProfileSamlAuthNStatementBuilder,
                                            final SamlProfileObjectBuilder<AttributeStatement> samlProfileSamlAttributeStatementBuilder,
                                            final SamlProfileObjectBuilder<Subject> samlProfileSamlSubjectBuilder,
                                            final SamlProfileObjectBuilder<Conditions> samlProfileSamlConditionsBuilder,
-                                           final BaseSamlObjectSigner samlObjectSigner) {
+                                           final SamlIdPObjectSigner samlObjectSigner) {
         super(configBean);
         this.samlProfileSamlAuthNStatementBuilder = samlProfileSamlAuthNStatementBuilder;
         this.samlProfileSamlAttributeStatementBuilder = samlProfileSamlAttributeStatementBuilder;

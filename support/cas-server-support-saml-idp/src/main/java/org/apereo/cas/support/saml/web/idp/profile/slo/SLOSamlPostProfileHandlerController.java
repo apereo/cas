@@ -12,7 +12,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.support.saml.web.idp.profile.sso.request.SSOSamlHttpRequestExtractor;
 import org.opensaml.saml.saml2.binding.decoding.impl.HTTPPostDecoder;
@@ -32,7 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 @Slf4j
 public class SLOSamlPostProfileHandlerController extends AbstractSamlSLOProfileHandlerController {
 
-    public SLOSamlPostProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+    public SLOSamlPostProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                final ParserPool parserPool,
                                                final AuthenticationSystemSupport authenticationSystemSupport,
                                                final ServicesManager servicesManager,
