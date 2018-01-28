@@ -23,7 +23,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.Pac4jUtils;
 import org.jasig.cas.client.validation.Assertion;
@@ -73,7 +73,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
      * @param casProperties                                the cas properties
      * @param samlObjectSignatureValidator                 the saml object signature validator
      */
-    public ECPProfileHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+    public ECPProfileHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                        final ParserPool parserPool,
                                        final AuthenticationSystemSupport authenticationSystemSupport,
                                        final ServicesManager servicesManager,

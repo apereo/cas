@@ -19,7 +19,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceSe
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.web.idp.profile.AbstractSamlProfileHandlerController;
 import org.apereo.cas.support.saml.web.idp.profile.builders.SamlProfileObjectBuilder;
-import org.apereo.cas.support.saml.web.idp.profile.builders.enc.BaseSamlObjectSigner;
+import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSigner;
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.jasig.cas.client.util.CommonUtils;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -48,7 +48,7 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
 
     private final AbstractUrlBasedTicketValidator ticketValidator;
 
-    public SSOSamlProfileCallbackHandlerController(final BaseSamlObjectSigner samlObjectSigner,
+    public SSOSamlProfileCallbackHandlerController(final SamlIdPObjectSigner samlObjectSigner,
                                                    final ParserPool parserPool,
                                                    final AuthenticationSystemSupport authenticationSystemSupport,
                                                    final ServicesManager servicesManager,
