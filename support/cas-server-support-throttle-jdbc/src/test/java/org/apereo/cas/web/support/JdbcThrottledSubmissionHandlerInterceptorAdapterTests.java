@@ -20,12 +20,13 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
+import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.web.support.config.CasJdbcThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -37,7 +38,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.execution.Event;
@@ -53,32 +53,32 @@ import javax.servlet.http.HttpServletResponse;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {CasJdbcThrottlingConfiguration.class,
-        CasCoreAuditConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasSupportJdbcAuditConfiguration.class,
-        CasCoreWebConfiguration.class, 
-        CasWebApplicationServiceFactoryConfiguration.class})
-@ContextConfiguration(locations = {"classpath:/jdbc-audit-context.xml"})
+    CasCoreAuditConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasSupportJdbcAuditConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
 @TestPropertySource(locations = {"classpath:/casthrottle.properties"})
 @Slf4j
 public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
-        AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
+    AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
 
     @Autowired
     @Qualifier("casAuthenticationManager")
