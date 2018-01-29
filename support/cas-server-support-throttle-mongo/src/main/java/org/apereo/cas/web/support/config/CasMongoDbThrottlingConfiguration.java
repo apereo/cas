@@ -17,7 +17,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 /**
- * This is {@link CasJdbcThrottlingConfiguration}.
+ * This is {@link CasMongoDbThrottlingConfiguration}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
