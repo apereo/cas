@@ -123,13 +123,14 @@ public class DefaultSamlIdPMetadataGenerator implements SamlIdPMetadataGenerator
         if (signingCert.exists()) {
             FileUtils.forceDelete(signingCert);
         }
-
         generator.setCertificateFile(signingCert);
+
         final File signingKey = this.samlIdPMetadataLocator.getIdPSigningKeyFile().getFile();
         if (signingKey.exists()) {
             FileUtils.forceDelete(signingKey);
         }
         generator.setPrivateKeyFile(signingKey);
+
         generator.setURISubjectAltNames(CollectionUtils.wrap(getIdPHostName().concat(URI_SUBJECT_ALTNAME_POSTFIX)));
         generator.generate();
     }
