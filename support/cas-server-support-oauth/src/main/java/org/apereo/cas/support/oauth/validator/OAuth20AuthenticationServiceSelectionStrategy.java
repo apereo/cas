@@ -59,7 +59,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 String id = null;
                 final String grantValue = grantType.get().getValue();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
-                    LOGGER.debug("Located grant type [{}]; checking for service headers");
+                    LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
                     final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
                 }

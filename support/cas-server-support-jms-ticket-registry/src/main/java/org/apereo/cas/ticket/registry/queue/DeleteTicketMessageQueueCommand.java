@@ -30,7 +30,7 @@ public class DeleteTicketMessageQueueCommand extends BaseMessageQueueCommand {
 
     @Override
     public void execute(final TicketRegistry registry) {
-        LOGGER.debug("Executing queue command on ticket registry id [{}] to delete ticket [{}]", ticketId);
+        LOGGER.debug("Executing queue command on ticket registry id [{}] to delete ticket [{}]", getId().getId(), ticketId);
         registry.deleteTicket(this.ticketId);
     }
 }

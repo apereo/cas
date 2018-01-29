@@ -28,8 +28,8 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CouchbaseClientFactory {
     private static final int DEFAULT_TIMEOUT = 5;
-
     private Cluster cluster;
+
     private Bucket bucket;
     private final Collection<View> views;
     private final Set<String> nodes;
@@ -63,7 +63,9 @@ public class CouchbaseClientFactory {
         this.bucketPassword = bucketPassword;
         this.timeout = timeout;
 
-        this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
+        if (this.cluster == null) {
+            this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
+        }
 
         this.designDocument = documentName;
         this.views = views;

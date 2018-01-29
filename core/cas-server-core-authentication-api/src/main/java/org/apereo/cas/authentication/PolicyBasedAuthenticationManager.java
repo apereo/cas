@@ -284,7 +284,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         if (principal == null) {
-            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.");
+            LOGGER.warn("Principal resolution for authentication by [{}] produced a null principal.", handler.getName());
         } else {
             builder.setPrincipal(principal);
         }

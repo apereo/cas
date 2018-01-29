@@ -44,7 +44,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocationChecker {
 
-
     private final Cache crlCache;
     private final CRLFetcher fetcher;
     private final boolean throwOnFetchFailure;
@@ -110,26 +109,11 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
     @Override
     @SneakyThrows
     protected List<X509CRL> getCRLs(final X509Certificate cert) {
-
-        if (this.crlCache == null) {
-            throw new IllegalArgumentException("CRL cache is not defined");
-        }
-        if (this.fetcher == null) {
-            throw new IllegalArgumentException("CRL fetcher is not defined");
-        }
-        if (getExpiredCRLPolicy() == null) {
-            throw new IllegalArgumentException("Expiration CRL policy is not defined");
-        }
-        if (getUnavailableCRLPolicy() == null) {
-            throw new IllegalArgumentException("Unavailable CRL policy is not defined");
-        }
-
         final URI[] urls = getDistributionPoints(cert);
         LOGGER.debug("Distribution points for [{}]: [{}].", CertUtils.toString(cert), CollectionUtils.wrap(urls));
         final List<X509CRL> listOfLocations = new ArrayList<>(urls.length);
         boolean stopFetching = false;
-
-
+        
         for (int index = 0; !stopFetching && index < urls.length; index++) {
             final URI url = urls[index];
             final Element item = this.crlCache.get(url);
@@ -179,7 +163,7 @@ public class CRLDistributionPointRevocationChecker extends AbstractCRLRevocation
             LOGGER.debug("No CRL was passed. Removing [{}] from cache...", id);
             return this.crlCache.remove(id);
         }
-
+        
         this.crlCache.put(new Element(id, crl.getEncoded()));
         return this.crlCache.get(id) != null;
 

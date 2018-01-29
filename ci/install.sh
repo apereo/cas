@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew $@"
 gradleBuild="assemble"
-gradleBuildOptions="--stacktrace "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --scan "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -32,11 +32,26 @@ fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
 echo $tasks
+
+waitRetVal=-1
+if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
+    waitloop="while sleep 9m; do echo '=====[ $SECONDS seconds...Gradle build is still running ]====='; done &"
+    eval $waitloop
+    waitRetVal=$?
+fi
+
 eval $tasks
 retVal=$?
+
 echo -e "******************************************************************"
 echo -e "Gradle build finished at `date` with exit code $retVal"
 echo -e "******************************************************************"
+
+if [ $waitRetVal != -1 ]; then
+    echo "Killing background sleep loop process at PID $waitRetVal"
+    kill $waitRetVal
+fi
+
 if [ $retVal == 0 ]; then
     echo "Gradle build finished successfully."
 else

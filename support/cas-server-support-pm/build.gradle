@@ -8,6 +8,8 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
     implementation libraries.pac4j
+
+    testImplementation project(":core:cas-server-core-audit")
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-tickets")

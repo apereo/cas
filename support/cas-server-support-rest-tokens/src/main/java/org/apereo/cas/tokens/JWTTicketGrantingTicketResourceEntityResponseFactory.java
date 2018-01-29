@@ -44,7 +44,7 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
         }
         
         final String jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
-        LOGGER.debug("Generated JWT [{}] for service [{}]", jwt);
+        LOGGER.debug("Generated JWT [{}]", jwt);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);
