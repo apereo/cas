@@ -68,7 +68,7 @@ public class PasswordEncoderUtils {
                     return new BCryptPasswordEncoder(properties.getStrength());
                 }
                 LOGGER.debug("Creating BCRYPT encoder with secret");
-                return new BCryptPasswordEncoder(properties.getStrength(), RandomUtils.getInstanceNative());
+                return new BCryptPasswordEncoder(properties.getStrength(), RandomUtils.getNativeInstance());
             case SCRYPT:
                 LOGGER.debug("Creating SCRYPT encoder");
                 return new SCryptPasswordEncoder();

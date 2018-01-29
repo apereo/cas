@@ -188,7 +188,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
      */
     @Test
     public void verifyBCryptFail() throws Exception {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, RandomUtils.getInstanceNative());
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc1") + "' password");
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
                 null, null, new HashMap<>(0));
@@ -203,7 +203,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
      */
     @Test
     public void verifyBCryptSuccess() throws Exception {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, RandomUtils.getInstanceNative());
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc2") + "' password");
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
                 null, null, new HashMap<>(0));

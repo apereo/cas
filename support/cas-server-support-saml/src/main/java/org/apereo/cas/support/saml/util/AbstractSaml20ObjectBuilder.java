@@ -396,7 +396,7 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
 
     @Override
     public String generateSecureRandomId() {
-        final SecureRandom generator = RandomUtils.getInstanceNative();
+        final SecureRandom generator = RandomUtils.getNativeInstance();
         final char[] charMappings = {
             'a', 'b', 'c', 'd', 'e', 'f', 'g',
             'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o',

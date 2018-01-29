@@ -213,7 +213,7 @@ public abstract class AbstractSamlProfileHandlerController {
             LOGGER.debug("Initializing callback service [{}]", callbackService);
 
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getInstanceNative().nextLong()));
+            service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("SAML Authentication Request");

@@ -175,7 +175,8 @@ public class SamlIdPObjectSigner {
     protected <T extends SAMLObject> void prepareSecurityParametersContext(final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                                                                            final MessageContext<T> outboundContext,
                                                                            final SamlRegisteredService service) throws SAMLException {
-        @NonNull final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
+        @NonNull
+        final SecurityParametersContext secParametersContext = outboundContext.getSubcontext(SecurityParametersContext.class, true);
         final RoleDescriptor roleDesc = adaptor.getSsoDescriptor();
         final SignatureSigningParameters signingParameters = buildSignatureSigningParameters(roleDesc, service);
         secParametersContext.setSignatureSigningParameters(signingParameters);
@@ -218,7 +219,8 @@ public class SamlIdPObjectSigner {
         criteria.add(new RoleDescriptorCriterion(descriptor));
         final SAMLMetadataSignatureSigningParametersResolver resolver = new SAMLMetadataSignatureSigningParametersResolver();
         LOGGER.debug("Resolving signature signing parameters for [{}]", descriptor.getElementQName().getLocalPart());
-        @NonNull final SignatureSigningParameters params = resolver.resolveSingle(criteria);
+        @NonNull
+        final SignatureSigningParameters params = resolver.resolveSingle(criteria);
         LOGGER.debug("Created signature signing parameters."
                 + "\nSignature algorithm: [{}]"
                 + "\nSignature canonicalization algorithm: [{}]"

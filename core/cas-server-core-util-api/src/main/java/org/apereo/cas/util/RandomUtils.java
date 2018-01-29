@@ -23,7 +23,7 @@ public class RandomUtils {
      *
      * @return the strong instance
      */
-    public static SecureRandom getInstanceNative() {
+    public static SecureRandom getNativeInstance() {
         try {
             return SecureRandom.getInstance("NativePRNGNonBlocking");
         } catch (final NoSuchAlgorithmException e) {

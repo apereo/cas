@@ -93,10 +93,10 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         public CacheReplicator ticketRMISynchronousCacheReplicator() {
-            return new NOPCacheReplicator();
+            return new NoOpCacheReplicator();
         }
 
-        private static class NOPCacheReplicator implements CacheReplicator {
+        private static class NoOpCacheReplicator implements CacheReplicator {
             @Override
             public boolean isReplicateUpdatesViaCopy() {
                 return false;
