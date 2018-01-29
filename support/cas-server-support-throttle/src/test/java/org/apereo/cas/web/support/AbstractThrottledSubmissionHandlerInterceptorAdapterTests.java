@@ -2,6 +2,7 @@ package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.web.support.config.CasThrottlingConfiguration;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -31,10 +32,11 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, 
-        CasCoreUtilConfiguration.class,
-        AopAutoConfiguration.class, 
-        CasThrottlingConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    AopAutoConfiguration.class,
+    CasThrottlingConfiguration.class})
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @EnableScheduling
@@ -42,11 +44,11 @@ import static org.junit.Assert.*;
 public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests {
     protected static final String IP_ADDRESS = "1.2.3.4";
 
-    
+
     @Autowired
     @Qualifier("authenticationThrottle")
     protected ThrottledSubmissionHandlerInterceptor throttle;
-    
+
     @Before
     public void setUp() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
@@ -82,7 +84,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
         for (int i = 0; i < trials; i++) {
             LOGGER.debug("Waiting for [{}] ms", period);
             Thread.sleep(period);
-            
+
             final MockHttpServletResponse status = loginUnsuccessfully("mog", "1.2.3.4");
             assertEquals(expected, status.getStatus());
         }
@@ -90,5 +92,5 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapterTests 
 
 
     protected abstract MockHttpServletResponse loginUnsuccessfully(String username, String fromAddress) throws Exception;
-    
+
 }
