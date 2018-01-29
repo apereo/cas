@@ -35,7 +35,7 @@ echo $tasks
 
 waitRetVal=-1
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
-    waitloop="while sleep 30s; do echo '=====[ $SECONDS seconds...Gradle build is still running ]====='; done &"
+    waitloop="while sleep 9m; do echo '=====[ $SECONDS seconds...Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
 fi
