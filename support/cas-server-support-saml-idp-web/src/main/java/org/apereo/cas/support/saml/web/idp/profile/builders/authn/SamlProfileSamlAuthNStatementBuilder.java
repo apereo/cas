@@ -74,7 +74,7 @@ public class SamlProfileSamlAuthNStatementBuilder extends AbstractSaml20ObjectBu
 
         final Assertion assertion = Assertion.class.cast(casAssertion);
         final String authenticationMethod = this.authnContextClassRefBuilder.build(assertion, authnRequest, adaptor, service);
-        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceNative().nextLong()));
+        final String id = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         final AuthnStatement statement = newAuthnStatement(authenticationMethod, DateTimeUtils.zonedDateTimeOf(assertion.getAuthenticationDate()), id);
         if (assertion.getValidUntilDate() != null) {
             final ZonedDateTime dt = DateTimeUtils.zonedDateTimeOf(assertion.getValidUntilDate());
