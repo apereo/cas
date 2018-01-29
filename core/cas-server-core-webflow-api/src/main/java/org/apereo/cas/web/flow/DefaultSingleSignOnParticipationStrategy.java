@@ -25,9 +25,9 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
 
     @Override
     public boolean isParticipating(final RequestContext ctx) {
-        
         if (ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
-            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.", CasProtocolConstants.PARAMETER_RENEW);
+            LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
+                CasProtocolConstants.PARAMETER_RENEW);
             return this.createSsoSessionCookieOnRenewAuthentications;
         }
 
@@ -41,7 +41,7 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
                     AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
                     final boolean isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
                     LOGGER.debug("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
-                            registeredService.getServiceId(), isAllowedForSso);
+                        registeredService.getServiceId(), isAllowedForSso);
                     return isAllowedForSso;
                 } finally {
                     AuthenticationCredentialsLocalBinder.bindCurrent(ca);
