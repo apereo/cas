@@ -52,7 +52,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private final String usernameParameter;
 
-    private double thresholdRate;
+    private double thresholdRate = -1;
 
     private final String authenticationFailureCode;
 
@@ -65,9 +65,10 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
      */
     @PostConstruct
     public void afterPropertiesSet() {
-        this.thresholdRate = this.failureThreshold / (double) this.failureRangeInSeconds;
+        this.thresholdRate = this.failureThreshold / this.failureRangeInSeconds;
         LOGGER.debug("Calculated threshold rate as [{}]", this.thresholdRate);
     }
+
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object o) throws Exception {
@@ -156,15 +157,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
     protected Date getFailureInRangeCutOffDate() {
         final ZonedDateTime cutoff = ZonedDateTime.now(ZoneOffset.UTC).minusSeconds(getFailureRangeInSeconds());
         return DateTimeUtils.timestampOf(cutoff);
-    }
-
-    /**
-     * Record audit action.
-     *
-     * @param request the request
-     */
-    protected void recordAuditAction(final HttpServletRequest request) {
-        recordAuditAction(request, getAuthenticationFailureCode());
     }
 
     /**
