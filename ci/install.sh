@@ -10,6 +10,10 @@ gradleBuild="assemble"
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --scan "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
+    gradle="travis_wait $gradle"
+fi
+
+if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
     gradleBuild="$gradleBuild checkstyleMain"
     
