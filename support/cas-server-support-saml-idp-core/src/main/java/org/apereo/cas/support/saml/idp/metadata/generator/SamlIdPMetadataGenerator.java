@@ -1,6 +1,4 @@
-package org.apereo.cas.support.saml.idp.metadata;
-
-import java.io.File;
+package org.apereo.cas.support.saml.idp.metadata.generator;
 
 /**
  * This is {@link SamlIdPMetadataGenerator},
@@ -14,8 +12,6 @@ public interface SamlIdPMetadataGenerator {
 
     /**
      * Perform the metadata generation steps.
-     *
-     * @return the metadata file
      */
-    File generate();
+    void generate();
 }
