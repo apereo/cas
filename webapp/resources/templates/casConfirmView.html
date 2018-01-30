@@ -2,29 +2,41 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.confirmation.message}"></title>
+    <title th:text="#{screen.confirmation.message}">Confirm View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content" class="confirmView">
-    <div class="alert alert-info">
-        <h4 th:text="#{screen.confirmation.message}"/>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" class="confirmView">
+        <div class="alert alert-info">
+            <h4 th:text="#{screen.confirmation.message}">You asked to be warned before logging into applications. Please
+                proceed.</h4>
 
-        <form method="post" id="form" class="fm-v clearfix">
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            
-            <input id="ignorewarn"
-                   name="ignorewarn"
-                   value="true"
-                   tabindex="1"
-                   type="checkbox" />
-            <label for="ignorewarn" th:utext="#{screen.welcome.label.warnremove}"/>
-            <br/><br/>
-            <input class="btn btn-submit" name="_eventId_success" accesskey="l"
-                   th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
-        </form>
+            <form method="post" id="form" class="fm-v clearfix">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
 
+                <div class="form-group">
+                    <div class="form-check">
+                        <input id="ignorewarn"
+                               class="form-check-input"
+                               name="ignorewarn"
+                               value="true"
+                               tabindex="1"
+                               type="checkbox"/>
+                        <label for="ignorewarn" class="form-check-label" th:utext="#{screen.welcome.label.warnremove}">Do
+                            not warn me again</label>
+                    </div>
+                </div>
+
+                <input class="btn btn-success" name="_eventId_success" accesskey="l"
+                       th:value="#{screen.button.continue}" tabindex="4" type="submit" value="Continue"/>
+            </form>
+
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>
