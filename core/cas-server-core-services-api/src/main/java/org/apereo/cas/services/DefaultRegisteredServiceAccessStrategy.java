@@ -42,52 +42,52 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * The sorting/execution order of this strategy.
      */
-    private int order;
+    protected int order;
 
     /**
      * Is the service allowed at all?
      */
-    private boolean enabled = true;
+    protected boolean enabled = true;
 
     /**
      * Is the service allowed to use SSO?
      */
-    private boolean ssoEnabled = true;
+    protected boolean ssoEnabled = true;
 
     /**
      * The Unauthorized redirect url.
      */
-    private URI unauthorizedRedirectUrl;
+    protected URI unauthorizedRedirectUrl;
 
     /**
      * The delegated authn policy.
      */
-    private RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy;
+    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy;
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
      * Default requires that all attributes be present and match the principal's.
      */
-    private boolean requireAllAttributes = true;
+    protected boolean requireAllAttributes = true;
 
     /**
      * Collection of required attributes
      * for this service to proceed.
      */
-    private Map<String, Set<String>> requiredAttributes = new HashMap<>();
+    protected Map<String, Set<String>> requiredAttributes = new HashMap<>();
 
     /**
      * Collection of attributes
      * that will be rejected which will cause this
      * policy to refuse access.
      */
-    private Map<String, Set<String>> rejectedAttributes = new HashMap<>();
+    protected Map<String, Set<String>> rejectedAttributes = new HashMap<>();
 
     /**
      * Indicates whether matching on required attribute values
      * should be done in a case-insensitive manner.
      */
-    private boolean caseInsensitive;
+    protected boolean caseInsensitive;
 
     /**
      * Instantiates a new Default registered service authorization strategy.
@@ -156,7 +156,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     public void setServiceAccessAllowed(final boolean value) {
         this.enabled = value;
     }
-    
+
     @Override
     public boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> principalAttributes) {
         if (this.rejectedAttributes.isEmpty() && this.requiredAttributes.isEmpty()) {
@@ -199,7 +199,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param principalAttributes the principal attributes
      * @return the boolean
      */
-    private boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
+    protected boolean doRejectedAttributesRefusePrincipalAccess(final Map<String, Object> principalAttributes) {
         LOGGER.debug("These rejected attributes [{}] are examined against [{}] before service can proceed.", rejectedAttributes, principalAttributes);
         if (rejectedAttributes.isEmpty()) {
             return false;
@@ -255,7 +255,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
      * @param attributes          the attributes
      * @return the boolean
      */
-    private boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
+    protected boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
         final Set<String> difference = attributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
         if (this.requireAllAttributes && difference.size() < attributes.size()) {
             return false;
