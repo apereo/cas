@@ -2,15 +2,20 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.badhours.heading}"></title>
+    <title th:text="#{screen.badhours.heading}">Bad Hours View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
 <body id="cas">
-<div layout:fragment="content">
-    <div class="alert alert-danger">
-        <h2 th:utext="#{screen.badhours.heading}"/>
-        <p th:utext="#{screen.badhours.message}"/>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-danger">
+            <h2 th:utext="#{screen.badhours.heading}">Your account is forbidden to login at this time.</h2>
+            <p th:utext="#{screen.badhours.message}">Please try again later.</p>
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>
