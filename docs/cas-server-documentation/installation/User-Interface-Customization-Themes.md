@@ -38,6 +38,16 @@ admin.custom.css.file=/themes/[theme-name]/css/admin.css
 
 CAS can also utilize a service's associated theme to selectively choose which set of UI views will be used to generate the standard views (`casLoginView.html`, etc). This is specially useful in cases where the set of pages for a theme that are targeted for a different type of audience are entirely different structurally that simply using a simple theme is not practical to augment the default views. In such cases, new view pages may be required.
 
+Support is enabled by including the following dependency in the WAR overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-themes</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
 Views associated with a particular theme by default are expected to be found at: `src/main/resources/templates/<theme-id>`
 
 ### Configuration
@@ -45,6 +55,7 @@ Views associated with a particular theme by default are expected to be found at:
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. Contents of this file should match the following:
 
 ```properties
+# must have a least one line to active the theme
 standard.custom.css.file=/themes/[theme_name]/css/cas.css
 cas.javascript.file=/themes/[theme_name]/js/cas.js
 admin.custom.css.file=/themes/[theme-name]/css/admin.css
@@ -52,6 +63,8 @@ admin.custom.css.file=/themes/[theme-name]/css/admin.css
 
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
 - Specify the name of your theme for the service definition under the `theme` property.
+
+PS: The file `[theme_name].properties` will activate the theme in CAS, so it has to exist in order for the theme view to be functional.
 
 ## Groovy Themes
 
