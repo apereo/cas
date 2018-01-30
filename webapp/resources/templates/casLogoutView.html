@@ -2,16 +2,22 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.logout.header}"></title>
+    <title th:text="#{screen.logout.header}">CAS Logout</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-      <div class="alert alert-success">
-          <h2 th:utext="#{screen.logout.header}"/>
-          <p th:utext="#{screen.logout.success}"/>
-          <p th:utext="#{screen.logout.security}" />
-      </div>
-</div>
+<body>
+    <main role="main" class="container mt-3 mb-3">
+        <div layout:fragment="content">
+            <div class="alert alert-success">
+                <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
+                <p th:utext="#{screen.logout.success}">You have successfully logged out of the Central Authentication Service.
+                    You may <a href="login">log in</a> again.</p>
+                <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+            </div>
+        </div>
+    </main>
 </body>
 </html>
