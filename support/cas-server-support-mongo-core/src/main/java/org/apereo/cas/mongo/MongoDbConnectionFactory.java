@@ -136,7 +136,8 @@ public class MongoDbConnectionFactory {
     }
 
     private MongoDbFactory mongoDbFactory(final Mongo mongo, final BaseMongoDbProperties props) {
-        final String dbName, authDbName;
+        final String dbName;
+        final String authDbName;
 
         if (StringUtils.isNotBlank(props.getClientUri())) {
             final MongoClientURI uri = buildMongoClientURI(props.getClientUri(), buildMongoDbClientOptions(props));
@@ -362,7 +363,7 @@ public class MongoDbConnectionFactory {
     private static class ClientUriMongoDbProperties extends BaseMongoDbProperties {
         private static final long serialVersionUID = -9182480568666563805L;
 
-        public ClientUriMongoDbProperties(final String clientUri) {
+        ClientUriMongoDbProperties(final String clientUri) {
             setClientUri(clientUri);
         }
     }
