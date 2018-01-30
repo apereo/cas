@@ -47,11 +47,6 @@ echo -e "******************************************************************"
 echo -e "Gradle build finished at `date` with exit code $retVal"
 echo -e "******************************************************************"
 
-if [ $waitRetVal != -1 ]; then
-    echo "Killing background sleep loop process at PID $waitRetVal"
-    kill $waitRetVal
-fi
-
 if [ $retVal == 0 ]; then
     echo "Gradle build finished successfully."
 else
