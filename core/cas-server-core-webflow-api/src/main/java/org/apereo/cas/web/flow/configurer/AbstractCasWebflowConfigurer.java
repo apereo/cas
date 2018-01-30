@@ -110,12 +110,22 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     protected final FlowBuilderServices flowBuilderServices;
 
     public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry, final ApplicationContext applicationContext,
+                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                        final ApplicationContext applicationContext,
                                         final CasConfigurationProperties casProperties) {
         this.flowBuilderServices = flowBuilderServices;
         this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
         this.applicationContext = applicationContext;
         this.casProperties = casProperties;
+    }
+
+    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                        final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+                                        final ApplicationContext applicationContext,
+                                        final CasConfigurationProperties casProperties) {
+        this(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        this.logoutFlowDefinitionRegistry = logoutFlowDefinitionRegistry;
     }
 
     @Override
