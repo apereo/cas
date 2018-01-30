@@ -14,35 +14,35 @@ public interface SamlIdPMetadataLocator {
      *
      * @return the signing cert file
      */
-    Resource getIdPSigningCertFile();
+    Resource getSigningCertificate();
 
     /**
      * Gets signing key file.
      *
      * @return the signing key file
      */
-    Resource getIdPSigningKeyFile();
+    Resource getSigningKey();
 
     /**
      * Gets idp metadata file.
      *
      * @return the metadata file
      */
-    Resource getIdPMetadataFile();
+    Resource getMetadata();
 
     /**
      * Gets encryption cert file.
      *
      * @return the encryption cert file
      */
-    Resource getIdPEncryptionCertFile();
+    Resource getEncryptionCertificate();
 
     /**
      * Gets encryption key file.
      *
      * @return the encryption key file
      */
-    Resource getIdPEncryptionKeyFile();
+    Resource getEncryptionKey();
 
     /**
      * Initialize.

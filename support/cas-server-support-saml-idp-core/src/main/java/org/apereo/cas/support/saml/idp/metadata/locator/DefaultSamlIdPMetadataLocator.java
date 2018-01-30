@@ -25,27 +25,27 @@ public class DefaultSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
     }
 
     @Override
-    public Resource getIdPSigningCertFile() {
+    public Resource getSigningCertificate() {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
     }
 
     @Override
-    public Resource getIdPSigningKeyFile() {
+    public Resource getSigningKey() {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
     }
 
     @Override
-    public Resource getIdPMetadataFile() {
+    public Resource getMetadata() {
         return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
     }
 
     @Override
-    public Resource getIdPEncryptionCertFile() {
+    public Resource getEncryptionCertificate() {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
     }
 
     @Override
-    public Resource getIdPEncryptionKeyFile() {
+    public Resource getEncryptionKey() {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
     }
 
@@ -62,6 +62,6 @@ public class DefaultSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
 
     @Override
     public boolean exists() {
-        return getIdPMetadataFile().exists();
+        return getMetadata().exists();
     }
 }
