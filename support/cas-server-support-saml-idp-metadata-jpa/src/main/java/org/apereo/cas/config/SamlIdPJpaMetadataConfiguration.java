@@ -100,6 +100,5 @@ public class SamlIdPJpaMetadataConfiguration implements SamlRegisteredServiceMet
         mgmr.setEntityManagerFactory(emf);
         return mgmr;
     }
-
-
+    
 }
