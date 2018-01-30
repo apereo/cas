@@ -52,7 +52,7 @@ public class SamlIdPMetadataController {
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
         this.metadataAndCertificatesGenerationService.generate();
-        final InputStream md = this.samlIdPMetadataLocator.getIdPMetadataFile().getInputStream();
+        final InputStream md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
         final String contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
