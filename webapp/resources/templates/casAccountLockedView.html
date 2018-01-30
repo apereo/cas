@@ -2,15 +2,21 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.accountlocked.heading}"></title>
+    <title th:text="#{screen.accountlocked.heading}">Account Locked View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="alert alert-danger">
-        <h2 th:utext="#{screen.accountlocked.heading}"/>
-        <p th:utext="#{screen.accountlocked.message}"/>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-danger">
+            <h2 th:utext="#{screen.accountlocked.heading}">This account has been locked.</h2>
+            <p th:utext="#{screen.accountlocked.message}">Please contact the system administrator to regain access.</p>
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>
