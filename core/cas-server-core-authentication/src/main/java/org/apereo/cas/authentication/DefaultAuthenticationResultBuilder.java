@@ -158,6 +158,6 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
      * when composing the authentication chain for the caller.
      */
     private Principal getPrimaryPrincipal(final Set<Authentication> authentications, final Map<String, Object> principalAttributes) {
-        return this.principalElectionStrategy.nominate(Collections.unmodifiableSet(authentications), principalAttributes);
+        return this.principalElectionStrategy.nominate(new LinkedHashSet<>(authentications), principalAttributes);
     }
 }

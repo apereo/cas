@@ -20,8 +20,7 @@ public class CacheCredentialsCipherExecutor extends BaseStringCipherExecutor {
                                           final String secretKeySigning) {
         super(secretKeyEncryption, secretKeySigning);
     }
-
-
+    
     @Override
     public String getName() {
         return "Credential Caching & Clearpass";

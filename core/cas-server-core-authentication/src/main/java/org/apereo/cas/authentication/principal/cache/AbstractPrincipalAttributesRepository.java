@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalAttributesRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -18,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.io.Closeable;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -173,7 +175,7 @@ public abstract class AbstractPrincipalAttributesRepository implements Principal
             if (values instanceof List) {
                 convertedAttributes.put(key, (List) values);
             } else {
-                convertedAttributes.put(key, Collections.singletonList(values));
+                convertedAttributes.put(key, new ArrayList<>(CollectionUtils.toCollection(values)));
             }
         });
         return convertedAttributes;

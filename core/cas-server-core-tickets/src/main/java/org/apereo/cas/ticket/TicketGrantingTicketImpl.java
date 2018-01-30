@@ -23,7 +23,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -278,11 +277,11 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         list.add(getAuthentication());
 
         if (getGrantingTicket() == null) {
-            return Collections.unmodifiableList(list);
+            return new ArrayList<>(list);
         }
 
         list.addAll(getGrantingTicket().getChainedAuthentications());
-        return Collections.unmodifiableList(list);
+        return new ArrayList<>(list);
     }
 
     @Override

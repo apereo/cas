@@ -37,6 +37,7 @@ import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -315,7 +316,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     }
 
     public List<Integer> getAcceptableCodes() {
-        return Collections.unmodifiableList(this.acceptableCodes);
+        return new ArrayList<>(this.acceptableCodes);
     }
 
     public void setAcceptableCodes(final int[] acceptableCodes) {

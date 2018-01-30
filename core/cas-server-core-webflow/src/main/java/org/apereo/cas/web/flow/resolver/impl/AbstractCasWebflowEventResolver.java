@@ -22,6 +22,7 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.WebUtils;
@@ -386,7 +387,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
                         final String id = provider.getId();
                         final Event event = validateEventIdForMatchingTransitionInContext(id, context,
                                 buildEventAttributeMap(principal, service, provider));
-                        return Collections.singleton(event);
+                        return CollectionUtils.wrapSet(event);
                     }
                     LOGGER.debug("Provider [{}] could not be verified", provider);
                 } else {
