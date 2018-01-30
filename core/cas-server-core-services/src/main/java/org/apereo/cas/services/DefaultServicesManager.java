@@ -16,8 +16,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 
 import javax.annotation.PostConstruct;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -109,7 +109,7 @@ public class DefaultServicesManager implements ServicesManager, Serializable {
 
     @Override
     public Collection<RegisteredService> getAllServices() {
-        return Collections.unmodifiableCollection(orderedServices);
+        return new ArrayList<>(orderedServices);
     }
 
     @Override

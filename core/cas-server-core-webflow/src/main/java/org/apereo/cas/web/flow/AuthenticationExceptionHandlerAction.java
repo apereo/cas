@@ -22,7 +22,6 @@ import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.net.URI;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
@@ -135,7 +134,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
     }
 
     public Set<Class<? extends Exception>> getErrors() {
-        return Collections.unmodifiableSet(this.errors);
+        return new LinkedHashSet<>(this.errors);
     }
 
     /**

@@ -8,6 +8,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -141,7 +142,7 @@ public class DefaultAuthentication implements Authentication {
 
     @Override
     public List<CredentialMetaData> getCredentials() {
-        return Collections.unmodifiableList(this.credentials);
+        return new ArrayList<>(this.credentials);
     }
 
     @Override
