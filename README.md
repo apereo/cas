@@ -38,7 +38,7 @@ If you have already identified an enhancement or a bug, it is STRONGLY recommend
 
 The following features are supported by the CAS project:
 
-* CAS v1, v2 and v3 Protocol
+* CAS v1, v2 and v3 Protocols
 * SAML v1 and v2 Protocol
 * OAuth Protocol
 * OpenID & OpenID Connect Protocol
