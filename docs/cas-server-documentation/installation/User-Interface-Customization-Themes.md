@@ -45,6 +45,7 @@ Views associated with a particular theme by default are expected to be found at:
 - Add a `[theme_name].properties` placed to the root of `src/main/resources` folder. Contents of this file should match the following:
 
 ```properties
+# must have a least one line to active the theme
 standard.custom.css.file=/themes/[theme_name]/css/cas.css
 cas.javascript.file=/themes/[theme_name]/js/cas.js
 admin.custom.css.file=/themes/[theme-name]/css/admin.css
@@ -52,6 +53,8 @@ admin.custom.css.file=/themes/[theme-name]/css/admin.css
 
 - Clone the default set of view pages into a new directory based on the theme id (i.e. `src/main/resources/templates/<theme-id>`).
 - Specify the name of your theme for the service definition under the `theme` property.
+
+PS: The file `[theme_name].properties` will activate the theme in CAS, so it has to exist in order for the theme view to be functional.
 
 ## Groovy Themes
 
