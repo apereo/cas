@@ -1,13 +1,12 @@
 package org.apereo.cas.validation;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.springframework.util.Assert;
+
+import java.io.Serializable;
+import java.util.List;
 
 /**
  * An immutable, serializable ticket validation assertion.
@@ -68,7 +67,7 @@ public class ImmutableAssertion implements Assertion, Serializable {
 
     @Override
     public List<Authentication> getChainedAuthentications() {
-        return new ArrayList<>(this.chainedAuthentications);
+        return this.chainedAuthentications;
     }
 
     @Override
