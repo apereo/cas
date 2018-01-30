@@ -3,16 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <title>staticAuthentication Fragment</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 <body>
+<main role="main" class="container mt-3 mb-3">
     <div th:fragment="staticAuthentication" class="card text-white bg-info mb-3" th:if="${staticAuthentication}">
         <div class="card-body">
-            <h5 class="card-title" th:utext="#{screen.defaultauthn.title}">screen.defaultauthn.title</h5>
-            <p class="card-text" th:utext="#{screen.defaultauthn.heading}">screen.defaultauthn.heading</p>
+            <h5 class="card-title" th:utext="#{screen.defaultauthn.title}">screen.defaultauthn.title text</h5>
+            <p class="card-text" th:utext="#{screen.defaultauthn.heading}">screen.defaultauthn.heading text</p>
         </div>
     </div>
+</main>
 </body>
 </html>
 
