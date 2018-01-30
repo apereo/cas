@@ -1,8 +1,6 @@
-package org.apereo.cas.support.saml.idp.metadata;
+package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import org.springframework.core.io.Resource;
-
-import java.io.File;
 
 /**
  * This is {@link SamlIdPMetadataLocator}.
@@ -30,7 +28,7 @@ public interface SamlIdPMetadataLocator {
      *
      * @return the metadata file
      */
-    File getIdPMetadataFile();
+    Resource getIdPMetadataFile();
 
     /**
      * Gets encryption cert file.
@@ -47,14 +45,14 @@ public interface SamlIdPMetadataLocator {
     Resource getIdPEncryptionKeyFile();
 
     /**
-     * Gets configuration location.
-     *
-     * @return the configuration location
-     */
-    File getConfigurationLocation();
-
-    /**
      * Initialize.
      */
     void initialize();
+
+    /**
+     * Metadata exists?
+     *
+     * @return the boolean
+     */
+    boolean exists();
 }
