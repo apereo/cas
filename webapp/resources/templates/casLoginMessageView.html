@@ -2,35 +2,40 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.authentication.warning}"></title>
+    <title th:text="#{screen.authentication.warning}">CAS Login Message View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
+<body>
+<main role="main" class="container mt-3 mb-3">
 <div layout:fragment="content" class="loginMessageView">
     <div class="alert alert-warning">
-        <h2 th:text="#{screen.authentication.warning}"/>
+        <h2 th:text="#{screen.authentication.warning}">Authentication Succeeded with Warnings</h2>
         <div th:each="message : ${messages}">
-            <p class="message" th:utext="${message.text}"/>
+            <p class="message" th:utext="${message.text}">message.text</p>
         </div>
-        <section class="row btn-row">
+        <section class="row">
             <div class="col-sm-3">
                 <form method="post" id="form" class="fm-v clearfix" th:action="@{/login}" >
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     <input type="hidden" name="_eventId" value="proceed"/>
-                    <input class="btn btn-submit" name="continue" accesskey="l"
-                           th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+                    <input class="btn btn-success" name="continue" accesskey="l"
+                           th:value="#{screen.button.continue}" tabindex="4" type="submit" value="Continue"/>
                 </form>
             </div>
             <div class="col-sm-3" th:if="${passwordManagementEnabled}">
                 <form method="post" id="changePasswordForm" class="fm-v clearfix" th:action="@{/login}" >
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                     <input type="hidden" name="_eventId" value="changePassword"/>
-                    <input class="btn btn-submit" name="changePassword" accesskey="l"
-                           th:value="#{screen.button.changePassword}" tabindex="5" type="submit"/>
+                    <input class="btn btn-success" name="changePassword" accesskey="l"
+                           th:value="#{screen.button.changePassword}" tabindex="5" type="submit" value="Change Password"/>
                 </form>
             </div>
         </section>
     </div>
 </div>
+</main>
 </body>
 </html>
