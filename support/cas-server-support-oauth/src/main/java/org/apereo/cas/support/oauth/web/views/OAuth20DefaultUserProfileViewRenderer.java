@@ -5,11 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static org.apereo.cas.support.oauth.web.audit.Oauth2Audits.USER_PROFILE_AUDIT_ACTION;
+import static org.apereo.cas.support.oauth.web.audit.Oauth2Audits.USER_PROFILE_AUDIT_ACTION_RESOLVER_NAME;
+import static org.apereo.cas.support.oauth.web.audit.Oauth2Audits.USER_PROFILE_AUDIT_RESOURCE_RESOLVER_NAME;
 
 /**
  * This is {@link OAuth20DefaultUserProfileViewRenderer}.
@@ -22,6 +27,9 @@ import java.util.Map;
 public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfileViewRenderer {
     private final OAuthProperties oauthProperties;
 
+    @Audit(action = USER_PROFILE_AUDIT_ACTION,
+        actionResolverName = USER_PROFILE_AUDIT_ACTION_RESOLVER_NAME,
+        resourceResolverName = USER_PROFILE_AUDIT_RESOURCE_RESOLVER_NAME)
     @Override
     public String render(final Map<String, Object> model, final AccessToken accessToken) {
         final String value;
