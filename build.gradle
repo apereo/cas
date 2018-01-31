@@ -139,6 +139,7 @@ subprojects {
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
         exclude "**/*Abstract*.*"
+        maxParallelForks = 1
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
             events = ["FAILED", "STANDARD_OUT"]
