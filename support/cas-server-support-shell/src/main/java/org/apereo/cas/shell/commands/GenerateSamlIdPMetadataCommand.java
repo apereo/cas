@@ -76,7 +76,7 @@ public class GenerateSamlIdPMetadataCommand implements CommandMarker {
         if (generateMetadata) {
             generator.initialize();
             generator.generate();
-            LOGGER.info("Generated metadata is available at [{}]", locator.getIdPMetadataFile());
+            LOGGER.info("Generated metadata is available at [{}]", locator.getMetadata());
         } else {
             LOGGER.info("No metadata was generated; it might already exist at the specified path");
         }
