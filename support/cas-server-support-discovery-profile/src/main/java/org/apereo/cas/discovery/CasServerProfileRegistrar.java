@@ -14,6 +14,7 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -49,6 +50,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
     private final Clients clients;
+    private final IPersonAttributeDao attributeRepository;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
         return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext)
@@ -122,6 +124,13 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         return clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
     }
 
+    private Set<String> locateAvailableAttributes() {
+        if (attributeRepository == null) {
+            return new LinkedHashSet<>(0);
+        }
+        return attributeRepository.getPossibleUserAttributeNames();
+    }
+
     /**
      * Gets profile.
      *
@@ -135,6 +144,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypes(locateMultifactorAuthenticationProviderTypesActive());
         profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setDelegatedClientTypes(locateDelegatedClientTypes());
+        profile.setAvailableAttributes(locateAvailableAttributes());
         return profile;
     }
 }

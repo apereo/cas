@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -37,8 +38,12 @@ public class CasDiscoveryProfileConfiguration {
     @Qualifier("builtClients")
     private Clients builtClients;
 
+    @Autowired
+    @Qualifier("attributeRepository")
+    public IPersonAttributeDao attributeRepository;
+
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(this.servicesManager, casProperties, this.builtClients);
+        return new CasServerProfileRegistrar(this.servicesManager, casProperties, this.builtClients, this.attributeRepository);
     }
 }
