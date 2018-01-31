@@ -40,7 +40,7 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     @Qualifier("attributeRepository")
-    public IPersonAttributeDao attributeRepository;
+    private IPersonAttributeDao attributeRepository;
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
