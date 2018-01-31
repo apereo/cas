@@ -2,49 +2,57 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.pac4j.unauthz.pagetitle}"></title>
+    <title th:text="#{screen.pac4j.unauthz.pagetitle}">Pac4j Stop Webflow View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="alert alert-danger">
-        <h2 th:utext="#{screen.pac4j.unauthz.heading}"/>
-        <p th:utext="#{screen.pac4j.unauthz.message}"/>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-danger">
+            <h2 th:utext="#{screen.pac4j.unauthz.heading}">Unauthorized Access</h2>
+            <p th:utext="#{screen.pac4j.unauthz.message}">Either the authentication request was rejected/cancelled, or
+                the authentication provider denied access due to permissions, etc. Review logs to find the root cause of
+                the issue.</p>
 
-        <div>
-            <p/>
-            <table th:if="${error != null or reason != null or code != null or description != null}" 
-                   class="table table-bordered table-hover table-responsive">
-                <thead>
-                <tr>
-                    <th>Error</th>
-                    <th>Reason</th>
-                    <th>Code</th>
-                    <th>Description</th>
-                    <th>Provider</th>
-                    <th>Destination</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr class="active">
-                    <td th:text="${error}"/>
-                    <td th:text="${reason}" />
-                    <td th:text="${code}" />
-                    <td th:text="${description}" />
-                    <td th:text="${client}" />
-                    <td>
-                        <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}"/>
-                    </td>
+            <div>
+                <p/>
+                <table th:if="${error != null or reason != null or code != null or description != null}"
+                       class="table table-bordered table-hover table-responsive">
+                    <thead>
+                    <tr>
+                        <th>Error</th>
+                        <th>Reason</th>
+                        <th>Code</th>
+                        <th>Description</th>
+                        <th>Provider</th>
+                        <th>Destination</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr class="active">
+                        <td th:text="${error}">Error</td>
+                        <td th:text="${reason}">reason</td>
+                        <td th:text="${code}">code</td>
+                        <td th:text="${description}">description</td>
+                        <td th:text="${client}">client</td>
+                        <td>
+                            <a th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto Application</a>
+                        </td>
 
-                </tr>
-                </tbody>
-            </table>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
+        <p>
+            <a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}">Back to CAS</a>
+            <a class="btn btn-success" th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}">Goto
+                Application</a>
+        </p>
     </div>
-    <p>
-        <a class="btn btn-success" th:href="@{/login}" th:text="#{screen.pac4j.unauthz.login}"/>
-        <a class="btn btn-success" th:href="${service}" th:text="#{screen.pac4j.unauthz.gotoapp}"/>
-    </p>
-</div>
+</main>
 </body>
 </html>
