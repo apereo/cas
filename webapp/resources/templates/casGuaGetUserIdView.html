@@ -2,17 +2,19 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.login.pagetitle}"></title>
+    <title th:text="#{cas.login.pagetitle}">Gua Get User Id View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="box fl-panel" id="login">
-
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix">
-            <div class="row fl-controls-left">
-                <label for="username" th:utext="#{screen.welcome.label.netid}"/>
-                <input class="required"
+            <div class="form-group">
+                <label for="username" th:utext="#{screen.welcome.label.netid}"><span class="accesskey">U</span>sername:</label>
+                <input class="required form-control"
                        type="password"
                        id="username"
                        name="username"
@@ -23,15 +25,12 @@
                 <div>
                     <p/>
                 </div>
-                <input class="btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
+                <input class="btn btn-success" name="_eventId_submit" accesskey="l"
+                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit" value="LOGIN"/>
             </div>
-            <div class="row btn-row">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            </div>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
     </div>
-</div>
+</main>
 </body>
-
 </html>
