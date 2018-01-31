@@ -21,6 +21,8 @@ import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
@@ -223,6 +225,7 @@ public class CloseableKryoFactory implements KryoFactory {
 
         kryo.register(SimpleWebApplicationServiceImpl.class, new SimpleWebApplicationServiceSerializer());
         kryo.register(BasicCredentialMetaData.class);
+        kryo.register(RememberMeUsernamePasswordCredential.class);
         kryo.register(BasicIdentifiableCredential.class);
         kryo.register(DefaultHandlerResult.class);
         kryo.register(DefaultAuthentication.class);
