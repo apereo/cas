@@ -24,6 +24,7 @@ import org.apereo.cas.authentication.DefaultAuthentication;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginLocationException;
 import org.apereo.cas.authentication.exceptions.InvalidLoginTimeException;
@@ -188,6 +189,7 @@ public class CloseableKryoFactory implements KryoFactory {
         kryo.register(DefaultAuthenticationHandlerExecutionResult.class);
         kryo.register(DefaultAuthentication.class);
         kryo.register(UsernamePasswordCredential.class);
+        kryo.register(RememberMeUsernamePasswordCredential.class);
         kryo.register(SimplePrincipal.class);
         kryo.register(PublicKeyFactoryBean.class);
         kryo.register(ReturnAllowedAttributeReleasePolicy.class);
