@@ -138,6 +138,7 @@ public class KryoTranscoder implements Transcoder<Object> {
         this.kryo.register(unmodifiedMap.getClass());
         this.kryo.register(DefaultHandlerResult.class);
         this.kryo.register(DefaultAuthentication.class);
+        this.kryo.register(UsernamePasswordCredential.class);
         this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.class);
         this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy.class);
         this.kryo.register(MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy.class);
