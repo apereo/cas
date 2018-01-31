@@ -13,7 +13,7 @@ import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPResponseProper
 import org.apereo.cas.support.saml.SamlException;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlUtils;
-import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.support.saml.services.idp.metadata.SamlRegisteredServiceServiceProviderMetadataFacade;
 import org.apereo.cas.util.crypto.CertUtils;
@@ -322,7 +322,7 @@ public class SamlIdPObjectSigner {
                         LOGGER.debug("Locating signature signing certificate from credential [{}]", CertUtils.toString(certificate));
                         return new BasicX509Credential(certificate, privateKey);
                     }
-                    final Resource signingCert = samlIdPMetadataLocator.getIdPSigningCertFile();
+                    final Resource signingCert = samlIdPMetadataLocator.getSigningCertificate();
                     LOGGER.debug("Locating signature signing certificate file from [{}]", signingCert);
                     final X509Certificate certificate = SamlUtils.readCertificate(signingCert);
                     return new BasicX509Credential(certificate, privateKey);
@@ -341,7 +341,7 @@ public class SamlIdPObjectSigner {
      */
     protected PrivateKey getSigningPrivateKey() throws Exception {
         final SamlIdPProperties samlIdp = casProperties.getAuthn().getSamlIdp();
-        final Resource signingKey = samlIdPMetadataLocator.getIdPSigningKeyFile();
+        final Resource signingKey = samlIdPMetadataLocator.getSigningKey();
         final PrivateKeyFactoryBean privateKeyFactoryBean = new PrivateKeyFactoryBean();
         privateKeyFactoryBean.setLocation(new FileSystemResource(signingKey.getFile()));
         privateKeyFactoryBean.setAlgorithm(samlIdp.getMetadata().getPrivateKeyAlgName());

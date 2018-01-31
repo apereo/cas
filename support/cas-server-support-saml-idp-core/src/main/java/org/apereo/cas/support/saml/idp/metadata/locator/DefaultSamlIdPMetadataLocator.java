@@ -1,4 +1,4 @@
-package org.apereo.cas.support.saml.idp.metadata;
+package org.apereo.cas.support.saml.idp.metadata.locator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -25,42 +25,43 @@ public class DefaultSamlIdPMetadataLocator implements SamlIdPMetadataLocator {
     }
 
     @Override
-    public Resource getIdPSigningCertFile() {
+    public Resource getSigningCertificate() {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.crt"));
     }
 
     @Override
-    public Resource getIdPSigningKeyFile() {
+    public Resource getSigningKey() {
         return new FileSystemResource(new File(metadataLocation, "/idp-signing.key"));
     }
 
     @Override
-    public File getIdPMetadataFile() {
-        return new File(metadataLocation, "idp-metadata.xml");
+    public Resource getMetadata() {
+        return new FileSystemResource(new File(metadataLocation, "idp-metadata.xml"));
     }
 
     @Override
-    public Resource getIdPEncryptionCertFile() {
+    public Resource getEncryptionCertificate() {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.crt"));
     }
 
     @Override
-    public Resource getIdPEncryptionKeyFile() {
+    public Resource getEncryptionKey() {
         return new FileSystemResource(new File(metadataLocation, "/idp-encryption.key"));
     }
 
     @Override
-    public File getConfigurationLocation() {
-        return this.metadataLocation;
+    public void initialize() {
+        if (!this.metadataLocation.exists()) {
+            LOGGER.debug("Metadata directory [{}] does not exist. Creating...", this.metadataLocation);
+            if (!this.metadataLocation.mkdir()) {
+                throw new IllegalArgumentException("Metadata directory location " + this.metadataLocation + " cannot be located/created");
+            }
+        }
+        LOGGER.info("Metadata directory location is at [{}]", this.metadataLocation);
     }
 
     @Override
-    public void initialize() {
-        if (!getConfigurationLocation().exists()) {
-            LOGGER.debug("Metadata directory [{}] does not exist. Creating...", getConfigurationLocation());
-            if (!getConfigurationLocation().mkdir()) {
-                throw new IllegalArgumentException("Metadata directory location " + getConfigurationLocation() + " cannot be located/created");
-            }
-        }
+    public boolean exists() {
+        return getMetadata().exists();
     }
 }

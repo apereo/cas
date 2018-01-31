@@ -1,8 +1,10 @@
 package org.apereo.cas.shell.commands;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.support.saml.idp.metadata.DefaultSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.shell.core.CommandMarker;
@@ -61,18 +63,20 @@ public class GenerateSamlIdPMetadataCommand implements CommandMarker {
             help = "Force metadata generation, disregarding anything that might already be available at the specified location",
             optionContext = "Force metadata generation, disregarding anything that might already be available at the specified location") final boolean force) {
 
-        final DefaultSamlIdPMetadataGenerator generator = new DefaultSamlIdPMetadataGenerator(entityId, this.resourceLoader,
-            serverPrefix, scope, new DefaultSamlIdPMetadataLocator(new File(metadataLocation)));
+        final SamlIdPMetadataLocator locator = new DefaultSamlIdPMetadataLocator(new File(metadataLocation));
+        final DefaultSamlIdPCertificateAndKeyWriter writer = new DefaultSamlIdPCertificateAndKeyWriter();
+        final FileSystemSamlIdPMetadataGenerator generator = new FileSystemSamlIdPMetadataGenerator(entityId, this.resourceLoader,
+            serverPrefix, scope, locator, writer);
 
         boolean generateMetadata = true;
-        if (!generator.isMetadataMissing()) {
+        if (!locator.exists()) {
             LOGGER.warn("Metadata artifacts are available at the specified location: [{}]", metadataLocation);
             generateMetadata = force;
         }
         if (generateMetadata) {
             generator.initialize();
-            final File file = generator.generate();
-            LOGGER.info("Generated metadata is available at [{}]", file);
+            generator.generate();
+            LOGGER.info("Generated metadata is available at [{}]", locator.getMetadata());
         } else {
             LOGGER.info("No metadata was generated; it might already exist at the specified path");
         }

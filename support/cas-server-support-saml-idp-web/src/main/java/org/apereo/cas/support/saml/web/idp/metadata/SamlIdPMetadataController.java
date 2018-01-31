@@ -2,16 +2,17 @@ package org.apereo.cas.support.saml.web.idp.metadata;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apereo.cas.support.saml.SamlIdPConstants;
-import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletResponse;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
 
@@ -29,6 +30,7 @@ public class SamlIdPMetadataController {
     private static final String CONTENT_TYPE = "text/xml;charset=UTF-8";
 
     private final SamlIdPMetadataGenerator metadataAndCertificatesGenerationService;
+    private final SamlIdPMetadataLocator samlIdPMetadataLocator;
 
     /**
      * Post constructor placeholder for additional
@@ -49,8 +51,9 @@ public class SamlIdPMetadataController {
      */
     @GetMapping(path = SamlIdPConstants.ENDPOINT_IDP_METADATA)
     public void generateMetadataForIdp(final HttpServletResponse response) throws IOException {
-        final File metadataFile = this.metadataAndCertificatesGenerationService.generate();
-        final String contents = FileUtils.readFileToString(metadataFile, StandardCharsets.UTF_8);
+        this.metadataAndCertificatesGenerationService.generate();
+        final InputStream md = this.samlIdPMetadataLocator.getMetadata().getInputStream();
+        final String contents = IOUtils.toString(md, StandardCharsets.UTF_8);
         response.setContentType(CONTENT_TYPE);
         response.setStatus(HttpServletResponse.SC_OK);
         try (PrintWriter writer = response.getWriter()) {

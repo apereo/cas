@@ -7,10 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.idp.SamlIdPProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.support.saml.idp.metadata.DefaultSamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.DefaultSamlIdPMetadataLocator;
-import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataGenerator;
-import org.apereo.cas.support.saml.idp.metadata.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.generator.FileSystemSamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.generator.SamlIdPMetadataGenerator;
+import org.apereo.cas.support.saml.idp.metadata.locator.DefaultSamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.locator.SamlIdPMetadataLocator;
+import org.apereo.cas.support.saml.idp.metadata.writer.DefaultSamlIdPCertificateAndKeyWriter;
+import org.apereo.cas.support.saml.idp.metadata.writer.SamlIdPCertificateAndKeyWriter;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceDefaultCachingMetadataResolver;
 import org.apereo.cas.support.saml.services.idp.metadata.cache.SamlRegisteredServiceMetadataResolverCacheLoader;
@@ -23,6 +25,7 @@ import org.apereo.cas.support.saml.services.idp.metadata.plan.DefaultSamlRegiste
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlan;
 import org.apereo.cas.support.saml.services.idp.metadata.plan.SamlRegisteredServiceMetadataResolutionPlanConfigurator;
 import org.apereo.cas.support.saml.web.idp.metadata.SamlIdPMetadataController;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.ResourceBackedMetadataResolver;
@@ -36,10 +39,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.ResourceLoader;
 
-import java.io.File;
+import java.net.URL;
 import java.util.Map;
 
 /**
@@ -72,15 +74,13 @@ public class SamlIdPMetadataConfiguration {
 
     @Lazy
     @Bean(initMethod = "initialize", destroyMethod = "destroy")
-    @DependsOn("shibbolethIdpMetadataAndCertificatesGenerationService")
+    @DependsOn("samlIdPMetadataGenerator")
     @SneakyThrows
     @Autowired
-    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator")
-                                                           final SamlIdPMetadataLocator samlMetadataLocator) {
+    public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        final File idpMetadata = samlMetadataLocator.getIdPMetadataFile();
         final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
-            ResourceHelper.of(new FileSystemResource(idpMetadata)));
+            ResourceHelper.of(samlMetadataLocator.getMetadata()));
         resolver.setParserPool(this.openSamlConfigBean.getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
@@ -91,17 +91,29 @@ public class SamlIdPMetadataConfiguration {
     @Bean
     @RefreshScope
     public SamlIdPMetadataController samlIdPMetadataController() {
-        return new SamlIdPMetadataController(shibbolethIdpMetadataAndCertificatesGenerationService());
+        return new SamlIdPMetadataController(samlIdPMetadataGenerator(),
+            samlMetadataLocator());
     }
 
-    @ConditionalOnMissingBean(name = "shibbolethIdpMetadataAndCertificatesGenerationService")
+    @ConditionalOnMissingBean(name = "samlIdPMetadataGenerator")
     @Bean
     @SneakyThrows
-    public SamlIdPMetadataGenerator shibbolethIdpMetadataAndCertificatesGenerationService() {
+    public SamlIdPMetadataGenerator samlIdPMetadataGenerator() {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
-        return new DefaultSamlIdPMetadataGenerator(idp.getEntityId(), this.resourceLoader,
+        return new FileSystemSamlIdPMetadataGenerator(idp.getEntityId(), this.resourceLoader,
             casProperties.getServer().getPrefix(), idp.getScope(),
-            samlMetadataLocator());
+            samlMetadataLocator(), samlSelfSignedCertificateWriter());
+    }
+
+    @ConditionalOnMissingBean(name = "samlSelfSignedCertificateWriter")
+    @Bean
+    @SneakyThrows
+    public SamlIdPCertificateAndKeyWriter samlSelfSignedCertificateWriter() {
+        final URL url = new URL(casProperties.getServer().getPrefix());
+        final DefaultSamlIdPCertificateAndKeyWriter generator = new DefaultSamlIdPCertificateAndKeyWriter();
+        generator.setHostname(url.getHost());
+        generator.setUriSubjectAltNames(CollectionUtils.wrap(url.getHost().concat("/idp/metadata")));
+        return generator;
     }
 
     @ConditionalOnMissingBean(name = "samlMetadataLocator")
