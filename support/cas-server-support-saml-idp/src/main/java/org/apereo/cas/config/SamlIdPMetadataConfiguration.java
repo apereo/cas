@@ -80,7 +80,7 @@ public class SamlIdPMetadataConfiguration {
     public MetadataResolver casSamlIdPMetadataResolver(@Qualifier("samlMetadataLocator") final SamlIdPMetadataLocator samlMetadataLocator) {
         final SamlIdPProperties idp = casProperties.getAuthn().getSamlIdp();
         final ResourceBackedMetadataResolver resolver = new ResourceBackedMetadataResolver(
-            ResourceHelper.of(samlMetadataLocator.getIdPMetadataFile()));
+            ResourceHelper.of(samlMetadataLocator.getMetadata()));
         resolver.setParserPool(this.openSamlConfigBean.getParserPool());
         resolver.setFailFastInitialization(idp.getMetadata().isFailFast());
         resolver.setRequireValidMetadata(idp.getMetadata().isRequireValidMetadata());
