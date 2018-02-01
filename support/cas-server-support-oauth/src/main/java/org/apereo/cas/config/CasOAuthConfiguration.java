@@ -32,10 +32,12 @@ import org.apereo.cas.support.oauth.validator.OAuth20TokenResponseTypeRequestVal
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
+import org.apereo.cas.support.oauth.web.endpoints.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
+import org.apereo.cas.support.oauth.web.endpoints.OAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -363,6 +365,12 @@ public class CasOAuthConfiguration {
         return new OAuth20DefaultUserProfileViewRenderer(casProperties.getAuthn().getOauth());
     }
 
+    @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
+    @Bean
+    public OAuth2UserProfileDataCreator oAuth2UserProfileDataCreator() {
+        return new DefaultOAuth2UserProfileDataCreator(servicesManager, profileScopeToAttributesFilter());
+    }
+
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
     public OAuth20UserProfileEndpointController profileController() {
@@ -371,7 +379,7 @@ public class CasOAuthConfiguration {
             oauthPrincipalFactory(), webApplicationServiceFactory,
             profileScopeToAttributesFilter(), casProperties,
             ticketGrantingTicketCookieGenerator,
-            oauthUserProfileViewRenderer());
+            oauthUserProfileViewRenderer(), oAuth2UserProfileDataCreator());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")

@@ -21,5 +21,5 @@ public interface OAuth2UserProfileDataCreator {
      * @param j2EContext request context
      * @return Map representing profile data
      */
-    Map<String, Object> createProfileDataFrom(AccessToken accessToken, J2EContext j2EContext);
+    Map<String, Object> createFrom(AccessToken accessToken, J2EContext j2EContext);
 }
