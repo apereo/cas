@@ -2,26 +2,28 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title>Error Page Not Found</title>
-    <style>
-        <link rel="stylesheet" th:href="@{#{webjars.fontawesome.css}}" />
-        .prompt {
-            font-family: Verdana, sans-serif;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.error.page.title.pagenotfound}">Error - Page Not Found</title>
+    <link rel="stylesheet" th:href="@{#{webjars.fontawesome.css}}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="alert alert-info">
-        <h2 class="prompt" th:utext="#{screen.error.page.notfound}" />
-        <div class="prompt">
-            <p/>
-            <p th:utext="#{screen.error.page.doesnotexist}" />
-            <br/>
-            <p><a class="btn btn-success btn-lg" th:href="@{/login}" th:utext="#{screen.error.page.loginagain}" /></p>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-info">
+            <h2 th:utext="#{screen.error.page.notfound}">Page Not Found</h2>
+            <p th:utext="#{screen.error.page.doesnotexist}">The page you are attempting to access does not exist at the
+                moment.</p>
+            <a class="btn btn-success" th:href="@{/login}" th:utext="#{screen.error.page.loginagain}">Login
+                Again</a>
         </div>
     </div>
-</div>
+</main>
 </body>
 </html>
