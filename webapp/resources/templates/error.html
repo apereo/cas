@@ -2,7 +2,11 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.unavailable.header}"></title>
+    <title th:text="#{screen.unavailable.header}">CAS Error View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -16,12 +20,13 @@
     </script>
 </head>
 
-<body id="cas">
+<body>
+<main role="main" class="container mt-3 mb-3">
 <div layout:fragment="content">
     <div class="alert alert-danger">
-        <h2 th:utext="#{screen.unavailable.heading(${status},${error})}"/>
-        <p th:utext="#{screen.unavailable.message}"/>
-        <pre id="errorMsg" style="white-space: pre-wrap;" th:text="${'Error: ' + message}"/>
+        <h2 th:utext="#{screen.unavailable.heading(${status},${error})}">CAS is unable to process this request: "{0}:{1}"</h2>
+        <div th:utext="#{screen.unavailable.message}">screen.unavailable.message would go here</div>
+        <pre id="errorMsg" class="mt-4" style="white-space: pre-wrap;" th:text="${'Error: ' + message}">error message would go here</pre>
         <p id="errorDetails">
             <button type="button" class="btn btn-shutdown"
                     onclick="showErrorDetails();">View Details
@@ -29,5 +34,6 @@
         </p>
     </div>
 </div>
+</main>
 </body>
 </html>

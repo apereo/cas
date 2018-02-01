@@ -2,16 +2,22 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.service.error.header}"></title>
+    <title th:text="#{screen.service.error.header}">Service Error View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}"/>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="alert alert-danger">
-        <h1 th:utext="#{screen.service.error.header}"/>
-        <p th:if="${rootCauseException != null and rootCauseException.code != null}"
-           th:utext="#{${rootCauseException.code}}"/>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-danger">
+            <h2 th:utext="#{screen.service.error.header}">Application Not Authorized to Use CAS</h2>
+            <p th:if="${rootCauseException != null and rootCauseException.code != null}"
+               th:utext="#{${rootCauseException.code}}">rootCauseException.code</p>
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>
