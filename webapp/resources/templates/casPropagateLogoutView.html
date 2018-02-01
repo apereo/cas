@@ -2,34 +2,51 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.logout.header}"></title>
+    <title th:text="#{screen.logout.header}">Propagate Logout View</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
 
+    <script th:src="@{#{webjars.poppermin.js}}"></script>
+
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip();
+        });
+    </script>
     <script th:inline="javascript">
         /*<![CDATA[*/
         function redirectToApp() {
-            window.location = [[${logoutRedirectUrl}]] ;
+            window.location = [[${logoutRedirectUrl}]];
         }
-        
+
         function handleCallback(index, status) {
             if (status == 200) {
-                $("#service" + index).addClass("fa-check").removeClass("fa-question");
-                $("#service" + index).prop('title', 'Logout request was successfully received.');
+                $('#service' + index).addClass('fa-check').removeClass('fa-question');
+                $('#service' + index).prop('title', 'Logout request was successfully received.');
             } else {
-                $("#service" + index).addClass("fa-warning").removeClass("fa-question");
-                $("#service" + index).prop('title', 'Logout notification could not be sent.');
+                $('#service' + index).addClass('fa-warning').removeClass('fa-question');
+                $('#service' + index).prop('title', 'Logout notification could not be sent.');
             }
         }
+
         /*]]>*/
     </script>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="alert alert-success">
-        <h2 th:utext="#{screen.logout.header}"/>
-        <p th:utext="#{screen.logout.fc.success}"/>
-        <br/><br/>
-        <div>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-success">
+            <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
+            <p th:utext="#{screen.logout.fc.success}">You have successfully logged out of the Central Authentication
+                Service. Given single logout is enabled with CAS, \
+                the following list of applications are <strong> only notified</strong> to log you out and destroy your
+                user session. Remember that this \
+                is just a notification, not a guarantee. It is up the application itself to honor these notifications
+                and properly take action to log you \
+                out.</p>
             <ol start="a">
                 <li th:each="entry,iterStat : ${logoutUrls}">
                     <script type="text/javascript" th:inline="javascript">
@@ -51,22 +68,23 @@
                         });
                         /*]]>*/
                     </script>
+
                     <p>
-                        <i data-toggle="tooltip" data-placement="top" class="fa fa-question" th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
-                        <kbd th:text="${entry.key.service.id}"/>
+                        <i data-toggle="tooltip" data-placement="top" class="fa fa-question"
+                           th:id="${'service'+iterStat.index}" title="Logout request pending..."> </i>
+                        <kbd th:text="${entry.key.service.id}">entry.key.service.id</kbd>
                     </p>
                 </li>
             </ol>
 
-            
-        </div>
-        <p th:utext="#{screen.logout.security}"/>
-        <br/>
-        <input type="button" th:if="${logoutRedirectUrl}"
-                class="btn btn-primary btn-success" onclick="redirectToApp();"
-                th:value="${'Go to ' + logoutRedirectUrl}"/>
+            <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
 
+            <input type="button" th:if="${logoutRedirectUrl}"
+                   class="btn btn-primary btn-success" onclick="redirectToApp();"
+                   th:value="${'Go to ' + logoutRedirectUrl}" value="Go to...">
+
+        </div>
     </div>
-</div>
+</main>
 </body>
 </html>
