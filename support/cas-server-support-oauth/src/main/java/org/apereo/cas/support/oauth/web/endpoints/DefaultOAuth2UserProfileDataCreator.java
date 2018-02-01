@@ -47,8 +47,10 @@ public class DefaultOAuth2UserProfileDataCreator implements OAuth2UserProfileDat
     public Map<String, Object> createFrom(final AccessToken accessToken, final J2EContext context) {
         final Principal principal = getAccessTokenAuthenticationPrincipal(accessToken, context);
         final Map<String, Object> map = new HashMap<>();
+
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ID, principal.getId());
         map.put(OAuth20UserProfileViewRenderer.MODEL_ATTRIBUTE_ATTRIBUTES, principal.getAttributes());
+
         return map;
     }
 
@@ -62,6 +64,7 @@ public class DefaultOAuth2UserProfileDataCreator implements OAuth2UserProfileDat
         final Principal principal = this.scopeToAttributesFilter.filter(accessToken.getService(), currentPrincipal,
                 registeredService, context, accessToken);
         LOGGER.debug("Created CAS principal [{}] based on requested/authorized scopes", principal);
+
         return principal;
     }
 }
