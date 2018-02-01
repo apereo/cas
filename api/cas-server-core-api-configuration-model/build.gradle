@@ -1,0 +1,13 @@
+description = "Apereo CAS Core Configuration Model"
+
+dependencies {
+    implementation libraries.jasypt
+    implementation libraries.bouncycastle
+
+    optional libraries.springbootconfigmetadata
+    
+    api project(":api:cas-server-core-api-util")
+    api project(":api:cas-server-core-api-protocol")
+}
+
+
