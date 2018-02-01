@@ -1,9 +1,9 @@
 ---
 layout: default
-title: CAS - Apache Cassandra Authentication
+title: CAS - Couchbase Authentication
 ---
 
-# Apache Cassandra Authentication
+# Couchbase Authentication
 
 Verify and authenticate credentials using [Couchbase](http://www.couchbase.com/).
 
