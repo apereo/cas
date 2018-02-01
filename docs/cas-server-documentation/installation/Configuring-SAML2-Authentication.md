@@ -280,7 +280,7 @@ that value will then be used to construct the Name ID along with the right forma
 
 In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
 provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
-To learn more, please [review this guide](../integration/Configuring-SAML2-DynamicMetadata.html).
+To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
 
 ## SP Integrations
 
