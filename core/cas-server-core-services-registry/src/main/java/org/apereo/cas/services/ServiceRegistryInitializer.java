@@ -1,7 +1,7 @@
 package org.apereo.cas.services;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 
@@ -14,24 +14,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class ServiceRegistryInitializer {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceRegistryInitializer.class);
-
-    private final ServiceRegistryDao serviceRegistryDao;
     private final ServiceRegistryDao jsonServiceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
     private final ServicesManager servicesManager;
     private final boolean initFromJson;
-
-    public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
-                                      final ServiceRegistryDao serviceRegistryDao,
-                                      final ServicesManager servicesManager,
-                                      final boolean initFromJson) {
-        this.jsonServiceRegistryDao = jsonServiceRegistryDao;
-        this.serviceRegistryDao = serviceRegistryDao;
-        this.servicesManager = servicesManager;
-        this.initFromJson = initFromJson;
-    }
 
     /**
      * Init service registry if necessary.

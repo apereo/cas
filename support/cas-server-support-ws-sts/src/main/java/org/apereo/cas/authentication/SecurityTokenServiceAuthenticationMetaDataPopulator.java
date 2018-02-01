@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.cxf.rt.security.SecurityConstants;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CipherExecutor;
@@ -12,8 +14,6 @@ import org.apereo.cas.services.UnauthorizedSsoServiceException;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 /**
@@ -22,33 +22,26 @@ import org.springframework.core.Ordered;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
+@ToString(callSuper = true)
 public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SecurityTokenServiceAuthenticationMetaDataPopulator.class);
 
     private final ServicesManager servicesManager;
+
     private final AuthenticationServiceSelectionStrategy selectionStrategy;
+
     private final CipherExecutor<String, String> credentialCipherExecutor;
+
     private final SecurityTokenServiceClientBuilder clientBuilder;
 
-    public SecurityTokenServiceAuthenticationMetaDataPopulator(final ServicesManager servicesManager,
-                                                               final AuthenticationServiceSelectionStrategy selectionStrategy,
-                                                               final CipherExecutor<String, String> credentialCipherExecutor,
-                                                               final SecurityTokenServiceClientBuilder clientBuilder) {
-        this.servicesManager = servicesManager;
-        this.selectionStrategy = selectionStrategy;
-        this.credentialCipherExecutor = credentialCipherExecutor;
-        this.clientBuilder = clientBuilder;
-    }
 
-    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction, final AuthenticationBuilder builder,
-                                                    final WSFederationRegisteredService rp, final SecurityTokenServiceClient sts) {
+    private void invokeSecurityTokenServiceForToken(final AuthenticationTransaction transaction,
+                                                    final AuthenticationBuilder builder, final WSFederationRegisteredService rp,
+                                                    final SecurityTokenServiceClient sts) {
         final UsernamePasswordCredential up = transaction.getCredentials()
-                .stream()
-                .filter(UsernamePasswordCredential.class::isInstance)
-                .map(UsernamePasswordCredential.class::cast)
-                .findFirst()
-                .orElse(null);
-
+            .stream().filter(UsernamePasswordCredential.class::isInstance)
+            .map(UsernamePasswordCredential.class::cast).findFirst().orElse(null);
         if (up != null) {
             try {
                 sts.getProperties().put(SecurityConstants.USERNAME, up.getUsername());
@@ -80,7 +73,6 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
                 LOGGER.warn("Service [{}] is not allowed to use SSO.", rp);
                 throw new UnauthorizedSsoServiceException();
             }
-
             final SecurityTokenServiceClient sts = clientBuilder.buildClientForSecurityTokenRequests(rp);
             invokeSecurityTokenServiceForToken(transaction, builder, rp, sts);
         }
@@ -89,13 +81,5 @@ public class SecurityTokenServiceAuthenticationMetaDataPopulator extends BaseAut
     @Override
     public boolean supports(final Credential credential) {
         return true;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

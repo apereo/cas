@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "principalAttributeRegisteredServiceUsernameProvider.json");
@@ -33,7 +35,7 @@ public class PrincipalAttributeRegisteredServiceUsernameProviderTests {
         final PrincipalAttributeRegisteredServiceUsernameProvider provider =
             new PrincipalAttributeRegisteredServiceUsernameProvider("email");
 
-        final Multimap<String, String> allowedAttributes = ArrayListMultimap.create();
+        final Multimap<String, Object> allowedAttributes = ArrayListMultimap.create();
         final String mappedAttribute = "urn:oid:0.9.2342.19200300.100.1.3";
         allowedAttributes.put("email", mappedAttribute);
         final ReturnMappedAttributeReleasePolicy policy = new ReturnMappedAttributeReleasePolicy(CollectionUtils.wrap(allowedAttributes));

@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml;
 
+import com.google.common.base.Splitter;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.NameValuePair;
@@ -8,12 +11,11 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -22,20 +24,15 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = -2059445756475980894L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy.class);
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;
     private final String idpServerPrefix;
 
-    public ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy(final ServiceFactory webApplicationServiceFactory,
-                                                                       final String idpServerPrefix) {
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.idpServerPrefix = idpServerPrefix;
-    }
 
     @Override
     public Service resolveServiceFrom(final Service service) {
@@ -78,8 +75,8 @@ public class ShibbolethIdPEntityIdAuthenticationServiceSelectionStrategy impleme
                 final String[] query = request.getQueryString().split("&");
                 final Optional<String> paramRequest = Arrays.stream(query)
                         .map(p -> {
-                            final String[] params = p.split("=");
-                            return Pair.of(params[0], params[1]);
+                            final List<String> params = Splitter.on("=").splitToList(p);
+                            return Pair.of(params.get(0), params.get(1));
                         })
                         .filter(p -> p.getKey().equals(SamlProtocolConstants.PARAMETER_ENTITY_ID))
                         .map(Pair::getValue)

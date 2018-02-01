@@ -28,6 +28,8 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api-services")
     api project(":api:cas-server-core-api-web")
+
+    implementation libraries.pac4j
     
     testImplementation project(":core:cas-server-core-services")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -21,5 +22,6 @@ import org.springframework.core.Ordered;
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class CasEmbeddedContainerJettyConfiguration {
 }

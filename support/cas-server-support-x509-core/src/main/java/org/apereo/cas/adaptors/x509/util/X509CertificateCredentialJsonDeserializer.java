@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.ObjectCodec;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.crypto.CertUtils;
@@ -22,6 +23,7 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class X509CertificateCredentialJsonDeserializer extends JsonDeserializer<X509CertificateCredential> {
 
     @Override

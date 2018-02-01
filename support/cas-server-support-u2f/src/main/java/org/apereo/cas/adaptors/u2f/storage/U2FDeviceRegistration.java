@@ -2,8 +2,8 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link U2FDeviceRegistration}.
@@ -22,14 +24,18 @@ import java.time.LocalDate;
 @Entity
 @Table(name = "U2FDeviceRegistration")
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@Getter
+@Setter
 public class U2FDeviceRegistration {
+
     @org.springframework.data.annotation.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     @Lob
@@ -42,37 +48,5 @@ public class U2FDeviceRegistration {
 
     public U2FDeviceRegistration() {
         setId(System.currentTimeMillis());
-    }
-
-    public String getRecord() {
-        return record;
-    }
-
-    public void setRecord(final String record) {
-        this.record = record;
-    }
-
-    public LocalDate getCreatedDate() {
-        return createdDate;
-    }
-
-    public void setCreatedDate(final LocalDate createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
     }
 }

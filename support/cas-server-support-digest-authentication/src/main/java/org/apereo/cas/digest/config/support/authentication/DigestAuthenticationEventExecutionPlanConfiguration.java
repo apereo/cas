@@ -1,5 +1,6 @@
 package org.apereo.cas.digest.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("digestAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class DigestAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")

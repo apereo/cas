@@ -1,5 +1,7 @@
 package org.apereo.cas.logout;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -24,6 +26,7 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
 
     @Test
@@ -70,7 +73,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
         assertEquals(url, new URL("https://localhost/logout?p=v"));
     }
-    
+
     @Test
     public void verifyLocalLogoutUrlWithValidRegExValidationAndLocalUrlNotAllowed() throws Exception {
         final AbstractRegisteredService svc = getRegisteredService(".+");
@@ -97,30 +100,28 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         final URL url = builder.determineLogoutUrl(svc, getService("https://localhost/logout?p=v"));
         assertNull(url);
     }
- 
+
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls) throws Exception {
         return createDefaultSingleLogoutServiceLogoutUrlBuilder(allowLocalLogoutUrls, null, true);
     }
-    
-    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls, 
-            final String authorityValidationRegEx, final boolean authorityValidationRegExCaseSensitiv) throws Exception{
-        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, 
-            authorityValidationRegExCaseSensitiv).getObject();
+
+    private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
+                                                                                                        final String authorityValidationRegEx,
+                                                                                                        final boolean authorityValidationRegExCaseSensitive) {
+        final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
+            authorityValidationRegExCaseSensitive).getObject();
         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
     }
 
+    @SneakyThrows
     public static AbstractRegisteredService getRegisteredService(final String id) {
-        try {
-            final RegexRegisteredService s = new RegexRegisteredService();
-            s.setServiceId(id);
-            s.setName("Test service " + id);
-            s.setDescription("Registered service description");
-            s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-            s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
-            return s;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final RegexRegisteredService s = new RegexRegisteredService();
+        s.setServiceId(id);
+        s.setName("Test service " + id);
+        s.setDescription("Registered service description");
+        s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
+        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
+        return s;
     }
 
     public static AbstractWebApplicationService getService(final String url) {

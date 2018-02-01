@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
+@Slf4j
 public class SendTicketGrantingTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";

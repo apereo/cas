@@ -1,5 +1,8 @@
 package org.apereo.cas.oidc.util;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -14,9 +17,6 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
 import java.util.Arrays;
@@ -30,18 +30,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OidcAuthorizationRequestSupport {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizationRequestSupport.class);
-
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    public OidcAuthorizationRequestSupport(final CookieRetrievingCookieGenerator tgtCookieGenerator,
-                                           final TicketRegistrySupport ticketRegistrySupport) {
-        this.ticketGrantingTicketCookieGenerator = tgtCookieGenerator;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
 
     /**
      * Gets oidc prompt from authorization request.
@@ -49,8 +42,7 @@ public class OidcAuthorizationRequestSupport {
      * @param url the url
      * @return the oidc prompt from authorization request
      */
-    public static Set<String> getOidcPromptFromAuthorizationRequest(final String url) {
-        Assert.notNull(url, "URL cannot be null");
+    public static Set<String> getOidcPromptFromAuthorizationRequest(@NonNull final String url) {
         return new URIBuilder(url).getQueryParams().stream()
                 .filter(p -> OidcConstants.PROMPT.equals(p.getName()))
                 .map(param -> param.getValue().split(" "))

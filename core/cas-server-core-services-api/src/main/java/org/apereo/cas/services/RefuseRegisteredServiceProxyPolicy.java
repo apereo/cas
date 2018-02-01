@@ -1,7 +1,8 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.URL;
 
@@ -10,6 +11,8 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@EqualsAndHashCode
 public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProxyPolicy {
 
     private static final long serialVersionUID = -5718445151129901484L;
@@ -26,22 +29,4 @@ public class RefuseRegisteredServiceProxyPolicy implements RegisteredServiceProx
         return false;
     }
 
-    @Override
-    public boolean equals(final Object o) {
-        if (o == null) {
-            return false;
-        }
-
-        if (this == o) {
-            return true;
-        }
-
-        return o instanceof RefuseRegisteredServiceProxyPolicy;
-    }
-
-    @Override
-    public int hashCode() {
-        final HashCodeBuilder bldr = new HashCodeBuilder(13, 133);
-        return bldr.appendSuper(super.hashCode()).toHashCode();
-    }
 }

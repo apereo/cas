@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
@@ -10,6 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.KeyStore;
 
 import static org.junit.Assert.*;
@@ -21,6 +24,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
@@ -46,13 +50,13 @@ public class FileTrustStoreSslSocketFactoryTests {
 
     @Test
     public void verifyTrustStoreNotFound() {
-        this.thrown.expect(RuntimeException.class);
+        this.thrown.expect(FileNotFoundException.class);
         sslFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test
     public void verifyTrustStoreBadPassword() {
-        this.thrown.expect(RuntimeException.class);
+        this.thrown.expect(IOException.class);
         sslFactory(RESOURCE, "invalid");
     }
 

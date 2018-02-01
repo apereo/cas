@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Slf4j
 public class SimplePrincipalFactoryTests {
     @Test
     public void checkPrincipalCreation() {

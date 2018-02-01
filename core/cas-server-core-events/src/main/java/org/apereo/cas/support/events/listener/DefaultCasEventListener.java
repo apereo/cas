@@ -1,5 +1,8 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -15,8 +18,6 @@ import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 
@@ -28,14 +29,12 @@ import org.springframework.context.event.EventListener;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
+@Getter
 public class DefaultCasEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasEventListener.class);
-    
+
     private final CasEventRepository casEventRepository;
-    
-    public DefaultCasEventListener(final CasEventRepository casEventRepository) {
-        this.casEventRepository = casEventRepository;
-    }
 
     /**
      * Handle application ready event.
@@ -57,7 +56,7 @@ public class DefaultCasEventListener {
     public void handleCasTicketGrantingTicketCreatedEvent(final CasTicketGrantingTicketCreatedEvent event) {
         if (this.casEventRepository != null) {
             final CasEvent dto = prepareCasEvent(event);
-            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime());
+            dto.setCreationTime(event.getTicketGrantingTicket().getCreationTime().toString());
             dto.putId(TicketIdSanitizationUtils.sanitize(event.getTicketGrantingTicket().getId()));
             dto.setPrincipalId(event.getTicketGrantingTicket().getAuthentication().getPrincipal().getId());
             this.casEventRepository.save(dto);
@@ -113,7 +112,7 @@ public class DefaultCasEventListener {
         final CasEvent dto = new CasEvent();
         dto.setType(event.getClass().getCanonicalName());
         dto.putTimestamp(event.getTimestamp());
-        dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()));
+        dto.setCreationTime(DateTimeUtils.zonedDateTimeOf(event.getTimestamp()).toString());
 
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         dto.putClientIpAddress(clientInfo.getClientIpAddress());
@@ -125,9 +124,5 @@ public class DefaultCasEventListener {
             dto.putGeoLocation(location);
         }
         return dto;
-    }
-
-    public CasEventRepository getCasEventRepository() {
-        return casEventRepository;
     }
 }

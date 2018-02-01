@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
@@ -21,10 +23,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
-
 import java.io.Serializable;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+import lombok.Getter;
 
 /**
  * This is {@link CasMetricsRepositoryConfiguration}.
@@ -34,7 +36,10 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casMetricsRepositoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
+@Getter
 public class CasMetricsRepositoryConfiguration {
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -73,12 +78,8 @@ public class CasMetricsRepositoryConfiguration {
         final MetricsProperties.InfluxDb influxDb = casProperties.getMetrics().getInfluxDb();
         final InfluxDbConnectionFactory factory = new InfluxDbConnectionFactory(influxDb);
         return value -> {
-            final Point point = Point.measurement(value.getName())
-                    .time(value.getTimestamp().getTime(), TimeUnit.MILLISECONDS)
-                    .addField("value", value.getValue())
-                    .addField("name", value.getName())
-                    .tag("type", value.getClass().getSimpleName())
-                    .build();
+            final Point point = Point.measurement(value.getName()).time(value.getTimestamp().getTime(), TimeUnit.MILLISECONDS)
+                .addField("value", value.getValue()).addField("name", value.getName()).tag("type", value.getClass().getSimpleName()).build();
             factory.write(point, influxDb.getDatabase());
         };
     }
@@ -97,29 +98,22 @@ public class CasMetricsRepositoryConfiguration {
     }
 
     @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+    @Getter
+    @ToString
     private static class MongoDbMetric implements Serializable {
+
         private static final long serialVersionUID = 8587687286389110789L;
 
         private final String name;
+
         private final Number value;
+
         private final Date timestamp;
 
         MongoDbMetric(final Metric metric) {
             this.name = metric.getName();
             this.value = metric.getValue();
             this.timestamp = metric.getTimestamp();
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Number getValue() {
-            return value;
-        }
-
-        public Date getTimestamp() {
-            return timestamp;
         }
     }
 }

@@ -2,14 +2,14 @@ package org.apereo.cas.ticket;
 
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.EncodedTicket;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.StringWriter;
 import java.util.Map;
@@ -22,8 +22,9 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseTicketSerializers {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseTicketSerializers.class);
+
     private static final Map<String, Class> TICKET_TYPE_CACHE = new ConcurrentHashMap<>();
     private static final PrettyPrinter MINIMAL_PRETTY_PRINTER = new MinimalPrettyPrinter();
 
@@ -130,22 +131,19 @@ public abstract class BaseTicketSerializers {
      * @param type          the type
      * @return the ticket instance.
      */
+    @SneakyThrows
     public static Ticket deserializeTicket(final String ticketContent, final String type) {
         if (StringUtils.isBlank(type)) {
             throw new InvalidTicketException("Invalid ticket type [blank] specified");
         }
-        try {
-            final Class clazz;
-            if (TICKET_TYPE_CACHE.containsKey(type)) {
-                clazz = TICKET_TYPE_CACHE.get(type);
-            } else {
-                clazz = Class.forName(type);
-                TICKET_TYPE_CACHE.put(type, clazz);
-            }
-            return deserializeTicket(ticketContent, clazz);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final Class clazz;
+        if (TICKET_TYPE_CACHE.containsKey(type)) {
+            clazz = TICKET_TYPE_CACHE.get(type);
+        } else {
+            clazz = Class.forName(type);
+            TICKET_TYPE_CACHE.put(type, clazz);
         }
+        return deserializeTicket(ticketContent, clazz);
     }
 
     /**

@@ -1,11 +1,16 @@
 package org.apereo.cas.ticket;
 
+import lombok.extern.slf4j.Slf4j;
+import lombok.Getter;
+
 /**
  * AbstractTicketException to alert that a Ticket was not found or that it is expired.
  *
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
+@Getter
 public class InvalidTicketException extends AbstractTicketException {
 
     private static final long serialVersionUID = 9141891414482490L;
@@ -34,15 +39,5 @@ public class InvalidTicketException extends AbstractTicketException {
     public InvalidTicketException(final Throwable throwable, final String ticketId) {
         super(CODE, throwable);
         this.ticketId = ticketId;
-    }
-
-    /**
-     * Returns the ticket id that causes this exception.
-     * @return the ticket id
-     * @see InvalidTicketException#ticketId
-     */
-    @Override
-    public String getMessage() {
-        return this.ticketId;
     }
 }

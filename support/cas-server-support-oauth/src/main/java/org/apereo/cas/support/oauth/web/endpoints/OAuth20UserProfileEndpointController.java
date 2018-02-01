@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Principal;
@@ -25,8 +26,6 @@ import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.J2EContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +44,9 @@ import java.util.Map;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
 public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20UserProfileEndpointController.class);
+
 
     /**
      * View renderer for the final profile.
@@ -94,7 +94,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
 
-        final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getGrantingTicket();
+        final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
         if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
             LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
             this.ticketRegistry.deleteTicket(accessToken);

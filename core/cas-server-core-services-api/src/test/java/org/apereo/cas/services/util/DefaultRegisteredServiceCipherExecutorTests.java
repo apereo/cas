@@ -1,5 +1,6 @@
 package org.apereo.cas.services.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultRegisteredServiceCipherExecutorTests {
 
     @Rule

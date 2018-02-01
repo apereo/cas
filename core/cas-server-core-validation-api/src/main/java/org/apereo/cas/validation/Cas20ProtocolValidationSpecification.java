@@ -1,7 +1,7 @@
 package org.apereo.cas.validation;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Validation specification for the CAS 2.0 protocol. This specification extends
@@ -12,16 +12,9 @@ import org.slf4j.LoggerFactory;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
+@NoArgsConstructor
 public class Cas20ProtocolValidationSpecification extends AbstractCasProtocolValidationSpecification {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ProtocolValidationSpecification.class);
-    
-    /**
-     * Instantiates a new cas20 protocol validation specification.
-     */
-    public Cas20ProtocolValidationSpecification() {
-        super();
-    }
-
     /**
      * Instantiates a new cas20 protocol validation specification.
      *

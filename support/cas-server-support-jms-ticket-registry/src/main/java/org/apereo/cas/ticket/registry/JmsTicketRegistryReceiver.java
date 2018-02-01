@@ -1,9 +1,9 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.registry.queue.BaseMessageQueueCommand;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.jms.annotation.JmsListener;
 
 /**
@@ -12,16 +12,11 @@ import org.springframework.jms.annotation.JmsListener;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class JmsTicketRegistryReceiver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JmsTicketRegistryReceiver.class);
-    
     private final TicketRegistry ticketRegistry;
     private final StringBean ticketRegistryId;
-
-    public JmsTicketRegistryReceiver(final TicketRegistry ticketRegistry, final StringBean ticketRegistryId) {
-        this.ticketRegistry = ticketRegistry;
-        this.ticketRegistryId = ticketRegistryId;
-    }
 
     /**
      * Receive.

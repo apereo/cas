@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.security.GeneralSecurityException;
 
@@ -20,14 +20,10 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class UniquePrincipalAuthenticationPolicy implements AuthenticationPolicy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(UniquePrincipalAuthenticationPolicy.class);
-
     private final TicketRegistry ticketRegistry;
-
-    public UniquePrincipalAuthenticationPolicy(final TicketRegistry ticketRegistry) {
-        this.ticketRegistry = ticketRegistry;
-    }
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {

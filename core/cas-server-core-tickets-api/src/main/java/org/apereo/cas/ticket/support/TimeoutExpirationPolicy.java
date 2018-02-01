@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.TicketState;
 
 import java.time.ZoneOffset;
@@ -25,6 +26,9 @@ import java.time.temporal.ChronoUnit;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use=JsonTypeInfo.Id.CLASS, include= JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
 
     /**
@@ -35,15 +39,7 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     /**
      * The time to kill in seconds.
      */
-    private final long timeToKillInSeconds;
-
-
-    /**
-     * No-arg constructor for serialization support.
-     */
-    public TimeoutExpirationPolicy() {
-        this.timeToKillInSeconds = 0;
-    }
+    private long timeToKillInSeconds;
 
     /**
      * Instantiates a new timeout expiration policy.
@@ -78,27 +74,4 @@ public class TimeoutExpirationPolicy extends AbstractCasExpirationPolicy {
     }
 
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final TimeoutExpirationPolicy rhs = (TimeoutExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(timeToKillInSeconds)
-                .toHashCode();
-    }
 }

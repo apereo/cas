@@ -1,5 +1,6 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.openid.authentication.principal.OpenIdService;
@@ -21,6 +22,7 @@ import java.util.Collection;
  */
 @Configuration("openIdUniqueTicketIdGeneratorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OpenIdUniqueTicketIdGeneratorConfiguration implements UniqueTicketIdGeneratorConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;

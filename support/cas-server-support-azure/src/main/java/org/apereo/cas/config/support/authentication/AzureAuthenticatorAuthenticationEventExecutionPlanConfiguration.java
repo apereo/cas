@@ -1,5 +1,7 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.phonefactor.pfsdk.PFAuth;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
@@ -18,7 +20,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -40,6 +41,7 @@ import java.io.FileNotFoundException;
  */
 @Configuration("azureAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
@@ -50,38 +52,35 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     private ServicesManager servicesManager;
 
     @Bean
+    @SneakyThrows
     public PFAuth azureAuthenticatorInstance() {
-        try {
-            final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
-            final File cfg = new File(azure.getConfigDir());
-            if (!cfg.exists() || !cfg.isDirectory()) {
-                throw new FileNotFoundException(cfg.getAbsolutePath() + " does not exist or is not a directory");
-            }
-            final PFAuth pf = new PFAuth();
-            pf.setDebug(true);
-            pf.setAllowInternationalCalls(azure.isAllowInternationalCalls());
-
-            final String dir = StringUtils.appendIfMissing(azure.getConfigDir(), "/");
-            pf.initialize(dir, azure.getPrivateKeyPassword());
-            return pf;
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
+        final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
+        final File cfg = new File(azure.getConfigDir());
+        if (!cfg.exists() || !cfg.isDirectory()) {
+            throw new FileNotFoundException(cfg.getAbsolutePath() + " does not exist or is not a directory");
         }
+        final PFAuth pf = new PFAuth();
+        pf.setDebug(true);
+        pf.setAllowInternationalCalls(azure.isAllowInternationalCalls());
+
+        final String dir = StringUtils.appendIfMissing(azure.getConfigDir(), "/");
+        pf.initialize(dir, azure.getPrivateKeyPassword());
+        return pf;
     }
 
     @Bean
     public AzureAuthenticatorAuthenticationRequestBuilder azureAuthenticationRequestBuilder() {
         final AzureMultifactorProperties azure = casProperties.getAuthn().getMfa().getAzure();
         return new AzureAuthenticatorAuthenticationRequestBuilder(
-                azure.getPhoneAttributeName(),
-                azure.getMode());
+            azure.getPhoneAttributeName(),
+            azure.getMode());
     }
 
     @Bean
     @RefreshScope
     public AuthenticationHandler azureAuthenticatorAuthenticationHandler() {
         return new AzureAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getAzure().getName(),
-                servicesManager, azurePrincipalFactory(), azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
+            servicesManager, azurePrincipalFactory(), azureAuthenticatorInstance(), azureAuthenticationRequestBuilder());
     }
 
     @Bean
@@ -106,9 +105,9 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator azureAuthenticatorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                azureAuthenticatorAuthenticationHandler(),
-                azureAuthenticatorAuthenticationProvider()
+            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            azureAuthenticatorAuthenticationHandler(),
+            azureAuthenticatorAuthenticationProvider()
         );
     }
 

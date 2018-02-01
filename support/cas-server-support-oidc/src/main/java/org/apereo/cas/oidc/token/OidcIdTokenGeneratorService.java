@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.token;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -21,8 +22,6 @@ import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.http.HttpServletRequest;
@@ -39,8 +38,9 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcIdTokenGeneratorService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcIdTokenGeneratorService.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

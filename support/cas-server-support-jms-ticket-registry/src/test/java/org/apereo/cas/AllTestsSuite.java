@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.registry.queue.AddTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommandTests;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommandTests;
@@ -18,6 +19,7 @@ import org.junit.runners.Suite;
         DeleteTicketsMessageQueueCommandTests.class,
         DeleteTicketMessageQueueCommandTests.class,
         UpdateTicketMessageQueueCommandTests.class})
+@Slf4j
 public class AllTestsSuite {
 }
 

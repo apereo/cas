@@ -1,7 +1,6 @@
 package org.apereo.cas.logout;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
@@ -14,8 +13,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultLogoutExecutionPlan implements LogoutExecutionPlan {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultLogoutExecutionPlan.class);
+
 
     private final List<LogoutHandler> handlers = new ArrayList<>();
 

@@ -1,5 +1,7 @@
 package org.apereo.cas.configuration;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOCase;
 import org.apache.commons.io.filefilter.RegexFileFilter;
@@ -7,8 +9,6 @@ import org.apache.commons.io.filefilter.TrueFileFilter;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.api.CasConfigurationPropertiesSourceLocator;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.core.env.CompositePropertySource;
@@ -38,17 +38,11 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultCasConfigurationPropertiesSourceLocator implements CasConfigurationPropertiesSourceLocator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasConfigurationPropertiesSourceLocator.class);
-
-    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
     private final CipherExecutor<String, String> configurationCipherExecutor;
-
-    public DefaultCasConfigurationPropertiesSourceLocator(final CipherExecutor<String, String> configurationCipherExecutor,
-                                                          final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager) {
-        this.casConfigurationPropertiesEnvironmentManager = casConfigurationPropertiesEnvironmentManager;
-        this.configurationCipherExecutor = configurationCipherExecutor;
-    }
+    private final CasConfigurationPropertiesEnvironmentManager casConfigurationPropertiesEnvironmentManager;
 
     @Override
     public PropertySource<?> locate(final Environment environment, final ResourceLoader resourceLoader) {

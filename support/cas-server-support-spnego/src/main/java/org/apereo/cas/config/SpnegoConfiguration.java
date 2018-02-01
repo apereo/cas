@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import jcifs.spnego.Authentication;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -10,6 +11,7 @@ import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.spnego.SpnegoProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsConfig;
 import org.apereo.cas.support.spnego.authentication.handler.support.JcifsSpnegoAuthenticationHandler;
@@ -33,6 +35,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("spnegoConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SpnegoConfiguration {
 
     @Autowired
@@ -64,7 +67,7 @@ public class SpnegoConfiguration {
         c.setJcifsPassword(spnego.getJcifsPassword());
         c.setJcifsServicePassword(spnego.getJcifsServicePassword());
         c.setJcifsServicePrincipal(spnego.getJcifsServicePrincipal());
-        c.setJcifsSocketTimeout(spnego.getTimeout());
+        c.setJcifsSocketTimeout(Beans.newDuration(spnego.getTimeout()).toMillis());
         c.setJcifsUsername(spnego.getJcifsUsername());
         c.setKerberosConf(spnego.getKerberosConf());
         c.setKerberosDebug(spnego.getKerberosDebug());

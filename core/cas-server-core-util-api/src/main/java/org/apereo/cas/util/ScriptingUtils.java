@@ -4,11 +4,11 @@ import groovy.lang.Binding;
 import groovy.lang.GroovyClassLoader;
 import groovy.lang.GroovyObject;
 import groovy.lang.GroovyShell;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.groovy.control.CompilerConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 
@@ -33,7 +33,10 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-public final class ScriptingUtils {
+
+@Slf4j
+@UtilityClass
+public class ScriptingUtils {
     /**
      * Pattern indicating groovy script is inlined.
      */
@@ -43,11 +46,6 @@ public final class ScriptingUtils {
      * Pattern indicating groovy script is a file/resource.
      */
     private static final Pattern FILE_GROOVY_PATTERN = RegexUtils.createPattern("file:(.+\\.groovy)");
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScriptingUtils.class);
-
-    private ScriptingUtils() {
-    }
 
     /**
      * Is inline groovy script ?.
@@ -212,9 +210,8 @@ public final class ScriptingUtils {
                     throw new ClassCastException("Result [" + result + " is of type " + result.getClass() + " when we were expecting " + clazz);
                 }
                 return (T) result;
-            } else {
-                LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
             }
+            LOGGER.trace("Groovy script at [{}] does not exist", groovyScript);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -327,7 +324,7 @@ public final class ScriptingUtils {
                                                             final Class<T> expectedType) {
         try {
             if (resource == null) {
-                LOGGER.debug("No groovy script is defined", resource);
+                LOGGER.debug("No groovy script is defined");
                 return null;
             }
 

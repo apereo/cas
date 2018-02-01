@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
@@ -17,8 +18,6 @@ import org.openid4java.message.Message;
 import org.openid4java.message.MessageException;
 import org.openid4java.message.ParameterList;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -29,9 +28,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class OpenIdServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdServiceResponseBuilder.class);
-
+    
     private static final long serialVersionUID = -4581238964007702423L;
 
     private final ServerManager serverManager;

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -20,6 +21,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class RejectUsersAuthenticationHandlerTests {
 
     @Rule
@@ -52,7 +54,7 @@ public class RejectUsersAuthenticationHandlerTests {
                 .supports(new HttpBasedServiceCredential(new URL(
                     "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService())));
         } catch (final MalformedURLException e) {
-            fail("Could not resolve URL.");
+            throw new AssertionError("Could not resolve URL.");
         }
     }
 
@@ -86,7 +88,7 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setPassword("user");
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -94,7 +96,7 @@ public class RejectUsersAuthenticationHandlerTests {
     @Test
     public void verifyPassesNullUserNameAndPassword() throws Exception {
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }

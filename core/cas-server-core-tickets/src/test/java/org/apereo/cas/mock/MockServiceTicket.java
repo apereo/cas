@@ -1,5 +1,7 @@
 package org.apereo.cas.mock;
 
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -9,9 +11,10 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Mock service ticket.
@@ -19,6 +22,10 @@ import java.time.ZonedDateTime;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
+@Getter
+@Setter
+@EqualsAndHashCode(of ={"id"})
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;
@@ -28,9 +35,9 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     private final ZonedDateTime created;
 
     private final Service service;
-    
+
     private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
-    
+
     private final TicketGrantingTicket parent;
 
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
@@ -38,11 +45,6 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
         this.id = id;
         this.parent = parent;
         created = ZonedDateTime.now(ZoneOffset.UTC);
-    }
-
-    @Override
-    public Service getService() {
-        return service;
     }
 
     @Override
@@ -56,10 +58,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     }
 
     @Override
-    public ProxyGrantingTicket grantProxyGrantingTicket(
-            final String id,
-            final Authentication authentication,
-            final ExpirationPolicy expirationPolicy) {
+    public ProxyGrantingTicket grantProxyGrantingTicket(final String id, final Authentication authentication, final ExpirationPolicy expirationPolicy) {
         return null;
     }
 
@@ -74,17 +73,12 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
     public boolean isExpired() {
         return this.expiration.isExpired(this);
     }
 
     @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         return parent;
     }
 
@@ -117,23 +111,8 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
         return ZonedDateTime.now();
     }
 
-
     @Override
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return compareTo((Ticket) obj) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
-    }
-
-    public void setExpiration(final ExpirationPolicy expiration) {
-        this.expiration = expiration;
     }
 }

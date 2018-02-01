@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -51,6 +53,7 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationSupportConfiguration.class,
     CasCoreAuthenticationHandlersConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreHttpConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -64,6 +67,7 @@ import static org.junit.Assert.*;
     JdbcPasswordManagementConfiguration.class,
     PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})
+@Slf4j
 public class JdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
@@ -96,6 +100,12 @@ public class JdbcPasswordManagementServiceTests {
     public void verifyUserEmailCanBeFound() {
         final String email = passwordChangeService.findEmail("casuser");
         assertEquals("casuser@example.org", email);
+    }
+
+    @Test
+    public void verifyNullReturnedIfUserEmailCannotBeFound() {
+        final String email = passwordChangeService.findEmail("unknown");
+        assertNull(email);
     }
 
     @Test

@@ -58,14 +58,14 @@ public interface CipherExecutor<I, O> {
                     LOGGER.debug("Decrypted key [{}] successfully", key);
                     decrypted.put(key, result);
                 }
-            } catch(final ClassCastException e) {
+            } catch (final ClassCastException e) {
                 LOGGER.debug("Value of key {}, is not the correct type, not decrypting, but using value as-is.", key);
                 decrypted.put(key, value);
             }
         });
         return decrypted;
     }
-    
+
     /**
      * Supports encryption of values.
      *
@@ -80,5 +80,7 @@ public interface CipherExecutor<I, O> {
      *
      * @return the name.
      */
-    String getName();
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

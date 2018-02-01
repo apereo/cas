@@ -1,5 +1,6 @@
 package org.apereo.cas.digest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -13,6 +14,7 @@ import static org.junit.Assert.*;
  * @author David Rodriguez
  * @since 5.1.0
  */
+@Slf4j
 public class DefaultDigestHashedCredentialRetrieverTests {
 
     @Rule
@@ -36,7 +38,7 @@ public class DefaultDigestHashedCredentialRetrieverTests {
                 Collections.singletonMap("anotherUsername", "password"));
 
         thrown.expect(AccountNotFoundException.class);
-        thrown.expectMessage("Could not locate user account for " + username);
+
 
         credentialRetriever.findCredential(username, "ignored");
     }

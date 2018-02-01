@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
@@ -12,6 +14,8 @@ import org.springframework.boot.actuate.health.Health;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Slf4j
+@AllArgsConstructor
 public class SessionMonitor extends AbstractHealthIndicator {
 
     /**
@@ -20,23 +24,17 @@ public class SessionMonitor extends AbstractHealthIndicator {
     private final TicketRegistry registryState;
 
     /**
-     * Threshold above which warnings are issued for session count.
-     */
-    private int sessionCountWarnThreshold = -1;
-
-    /**
      * Threshold above which warnings are issued for service ticket count.
      */
     private int serviceTicketCountWarnThreshold = -1;
 
-    public SessionMonitor(final TicketRegistry ticketRegistry, final int stCountThreshold, final int sessionCountWarnThreshold) {
-        this.registryState = ticketRegistry;
-        this.serviceTicketCountWarnThreshold = stCountThreshold;
-        this.sessionCountWarnThreshold = sessionCountWarnThreshold;
-    }
+    /**
+     * Threshold above which warnings are issued for session count.
+     */
+    private int sessionCountWarnThreshold = -1;
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
 
         final long sessionCount = this.registryState.sessionCount();
         final long ticketCount = this.registryState.serviceTicketCount();

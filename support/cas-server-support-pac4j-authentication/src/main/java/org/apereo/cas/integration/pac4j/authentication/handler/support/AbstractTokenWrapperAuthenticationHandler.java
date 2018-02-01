@@ -1,12 +1,11 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.pac4j.core.credentials.TokenCredentials;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountNotFoundException;
 import java.security.GeneralSecurityException;
@@ -18,9 +17,10 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public abstract class AbstractTokenWrapperAuthenticationHandler extends
         AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractTokenWrapperAuthenticationHandler.class);
+
     
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.

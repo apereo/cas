@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -40,6 +41,7 @@ import java.nio.charset.StandardCharsets;
  */
 @Configuration("samlConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlConfiguration {
 
     @Autowired

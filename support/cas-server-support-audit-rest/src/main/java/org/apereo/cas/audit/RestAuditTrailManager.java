@@ -2,6 +2,8 @@ package org.apereo.cas.audit;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -10,8 +12,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.HttpUtils;
 import org.apereo.inspektr.audit.AuditActionContext;
 import org.apereo.inspektr.audit.AuditTrailManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 
 import java.nio.charset.StandardCharsets;
@@ -27,26 +27,24 @@ import java.util.concurrent.Executors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class RestAuditTrailManager implements AuditTrailManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestAuditTrailManager.class);
-
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    @Setter
     private boolean asynchronous = true;
+    
     private final AuditActionContextJsonSerializer serializer;
     private final AuditRestProperties properties;
 
     public RestAuditTrailManager(final AuditRestProperties properties) {
         this.serializer = new AuditActionContextJsonSerializer();
         this.properties = properties;
-        Assert.notNull(properties.getUrl());
+        Assert.notNull(properties.getUrl(), "REST endpoint url cannot be null");
     }
-
-    public void setAsynchronous(final boolean asynchronous) {
-        this.asynchronous = asynchronous;
-    }
-
+    
     @Override
     public void record(final AuditActionContext audit) {
         final Runnable task = () -> {

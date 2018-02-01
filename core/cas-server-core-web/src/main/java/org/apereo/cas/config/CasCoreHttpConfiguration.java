@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.conn.ssl.DefaultHostnameVerifier;
 import org.apache.http.conn.ssl.NoopHostnameVerifier;
@@ -8,10 +10,10 @@ import org.apache.http.ssl.SSLContexts;
 import org.apereo.cas.authentication.DefaultCasSslContext;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.FactoryBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -34,6 +36,7 @@ import java.security.KeyStore;
 @Configuration("casCoreHttpConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Order(value = Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class CasCoreHttpConfiguration {
 
     @Autowired
@@ -47,26 +50,26 @@ public class CasCoreHttpConfiguration {
 
     @ConditionalOnMissingBean(name = "sslContext")
     @Bean
+    @SneakyThrows
     public SSLContext sslContext() {
-        try {
-            final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
-            if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
-                final DefaultCasSslContext ctx =
-                        new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
-                return ctx.getSslContext();
-            }
-            return SSLContexts.createSystemDefault();
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
+
+        final HttpClientProperties.Truststore client = casProperties.getHttpClient().getTruststore();
+        if (client.getFile() != null && client.getFile().exists() && StringUtils.isNotBlank(client.getPsw())) {
+            final DefaultCasSslContext ctx =
+                new DefaultCasSslContext(client.getFile(), client.getPsw(), KeyStore.getDefaultType());
+            return ctx.getSslContext();
         }
+        return SSLContexts.createSystemDefault();
+
     }
 
     @ConditionalOnMissingBean(name = "httpClient")
     @Bean
     public FactoryBean<SimpleHttpClient> httpClient() {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout((int) casProperties.getHttpClient().getReadTimeout());
+        final HttpClientProperties httpClient = casProperties.getHttpClient();
+        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
+        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
         return c;
     }
 
@@ -93,8 +96,9 @@ public class CasCoreHttpConfiguration {
 
     private HttpClient getHttpClient(final boolean redirectEnabled) throws Exception {
         final SimpleHttpClientFactoryBean.DefaultHttpClient c = new SimpleHttpClientFactoryBean.DefaultHttpClient();
-        c.setConnectionTimeout(casProperties.getHttpClient().getConnectionTimeout());
-        c.setReadTimeout((int) casProperties.getHttpClient().getReadTimeout());
+        final HttpClientProperties httpClient = casProperties.getHttpClient();
+        c.setConnectionTimeout(Beans.newDuration(httpClient.getConnectionTimeout()).toMillis());
+        c.setReadTimeout((int) Beans.newDuration(httpClient.getReadTimeout()).toMillis());
         c.setRedirectsEnabled(redirectEnabled);
         c.setCircularRedirectsAllowed(redirectEnabled);
         c.setSslSocketFactory(trustStoreSslSocketFactory());

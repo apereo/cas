@@ -1,11 +1,11 @@
 package org.apereo.cas.support.rest.factory;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -15,17 +15,13 @@ import org.springframework.http.ResponseEntity;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultServiceTicketResourceEntityResponseFactory implements ServiceTicketResourceEntityResponseFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultServiceTicketResourceEntityResponseFactory.class);
-    
     /**
      * The central authentication service implementation.
      */
     protected final CentralAuthenticationService centralAuthenticationService;
-
-    public DefaultServiceTicketResourceEntityResponseFactory(final CentralAuthenticationService centralAuthenticationService) {
-        this.centralAuthenticationService = centralAuthenticationService;
-    }
 
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service,

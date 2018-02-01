@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -9,6 +10,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -19,6 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class GenericSuccessViewActionTests {
 
     @Test

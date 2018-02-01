@@ -1,11 +1,10 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.registry.BaseYubiKeyAccountRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -16,8 +15,9 @@ import org.springframework.data.mongodb.core.query.Query;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbYubiKeyAccountRegistry.class);
+
     
     private final String collectionName;
     private final MongoOperations mongoTemplate;

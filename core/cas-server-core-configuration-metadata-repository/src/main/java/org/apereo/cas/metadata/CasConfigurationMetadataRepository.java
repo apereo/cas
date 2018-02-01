@@ -1,10 +1,11 @@
 package org.apereo.cas.metadata;
 
+import lombok.Getter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepository;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataRepositoryJsonBuilder;
@@ -21,10 +22,10 @@ import java.util.Arrays;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
+@Slf4j
+@Getter
 public class CasConfigurationMetadataRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationMetadataRepository.class);
-
-    private final ConfigurationMetadataRepository configMetadataRepo;
+    private final ConfigurationMetadataRepository repository;
 
     public CasConfigurationMetadataRepository() {
         this("classpath*:META-INF/spring-configuration-metadata.json");
@@ -37,25 +38,18 @@ public class CasConfigurationMetadataRepository {
      *
      * @param resource the resource
      */
+    @SneakyThrows
     public CasConfigurationMetadataRepository(final String resource) {
-        try {
-            final Resource[] resources = new PathMatchingResourcePatternResolver().getResources(resource);
-            final ConfigurationMetadataRepositoryJsonBuilder builder = ConfigurationMetadataRepositoryJsonBuilder.create();
-            Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
-                try (InputStream in = r.getInputStream()) {
-                    builder.withJsonResource(in);
-                }
-            }));
-            configMetadataRepo = builder.build();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final Resource[] resources = new PathMatchingResourcePatternResolver().getResources(resource);
+        final ConfigurationMetadataRepositoryJsonBuilder builder = ConfigurationMetadataRepositoryJsonBuilder.create();
+        Arrays.stream(resources).forEach(Unchecked.consumer(r -> {
+            try (InputStream in = r.getInputStream()) {
+                builder.withJsonResource(in);
+            }
+        }));
+        repository = builder.build();
     }
-
-    public ConfigurationMetadataRepository getRepository() {
-        return configMetadataRepo;
-    }
-
+    
     /**
      * Gets property group id.
      *

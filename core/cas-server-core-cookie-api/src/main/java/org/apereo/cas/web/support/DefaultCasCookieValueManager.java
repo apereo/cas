@@ -1,13 +1,13 @@
 package org.apereo.cas.web.support;
 
 import com.google.common.base.Splitter;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -21,9 +21,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultCasCookieValueManager implements CookieValueManager {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCasCookieValueManager.class);
     private static final char COOKIE_FIELD_SEPARATOR = '@';
     private static final int COOKIE_FIELDS_LENGTH = 3;
 
@@ -31,15 +31,6 @@ public class DefaultCasCookieValueManager implements CookieValueManager {
      * The cipher exec that is responsible for encryption and signing of the cookie.
      */
     private final CipherExecutor<Serializable, Serializable> cipherExecutor;
-
-    /**
-     * Instantiates a new Cas cookie value manager.
-     *
-     * @param cipherExecutor the cipher executor
-     */
-    public DefaultCasCookieValueManager(final CipherExecutor cipherExecutor) {
-        this.cipherExecutor = cipherExecutor;
-    }
 
     @Override
     public String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {

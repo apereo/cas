@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -25,6 +26,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.2.1
  */
+@Slf4j
 public class RememberMeDelegatingExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "rememberMeDelegatingExpirationPolicy.json");

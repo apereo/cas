@@ -1,9 +1,9 @@
 package org.apereo.cas.support.spnego.authentication.handler.support;
 
 import jcifs.Config;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -19,6 +19,7 @@ import java.net.URL;
  * @author Scott Battaglia
  * @since 4.2.0
  */
+@Slf4j
 public class JcifsConfig {
 
     private static final String DEFAULT_LOGIN_CONFIG = "/login.conf";
@@ -61,10 +62,9 @@ public class JcifsConfig {
      */
     private static final String JCIFS_PROP_SERVICE_PASSWORD = "jcifs.spnego.servicePassword";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JcifsConfig.class);
 
     private String loginConf;
-    
+
     @Autowired
     private ResourceLoader resourceLoader;
 
@@ -87,35 +87,34 @@ public class JcifsConfig {
     /**
      * Configure jaas login config location and set it as a system property.
      */
+    @SneakyThrows
     protected void configureJaasLoginConfig() {
-        try {
-            final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
-            if (StringUtils.isNotBlank(propValue)) {
-                LOGGER.info("Found login config [{}] in system property [{}]", propValue, SYS_PROP_LOGIN_CONF);
-                if (StringUtils.isNotBlank(this.loginConf)) {
-                    LOGGER.warn("Configured login config for CAS under [{}] will be ignored", this.loginConf);
-                }
-            } else {
-                final String loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
-                LOGGER.debug("Attempting to load login config from [{}]", loginConf);
 
-                final Resource res = this.resourceLoader.getResource(loginConf);
-                if (res != null && res.exists()) {
-                    final String urlPath = res.getURL().toExternalForm();
-                    LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, SYS_PROP_LOGIN_CONF);
-                    System.setProperty(SYS_PROP_LOGIN_CONF, urlPath);
-                } else {
-                    final URL url = getClass().getResource("/jcifs/http/login.conf");
-                    if (url != null) {
-                        LOGGER.debug("Falling back unto default login config [{}] under [{}]", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
-                        System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
-                    }
-                }
-                LOGGER.debug("configured login configuration path : [{}]", propValue);
+        final String propValue = System.getProperty(SYS_PROP_LOGIN_CONF);
+        if (StringUtils.isNotBlank(propValue)) {
+            LOGGER.info("Found login config [{}] in system property [{}]", propValue, SYS_PROP_LOGIN_CONF);
+            if (StringUtils.isNotBlank(this.loginConf)) {
+                LOGGER.warn("Configured login config for CAS under [{}] will be ignored", this.loginConf);
             }
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        } else {
+            final String loginConf = StringUtils.isBlank(this.loginConf) ? DEFAULT_LOGIN_CONFIG : this.loginConf;
+            LOGGER.debug("Attempting to load login config from [{}]", loginConf);
+
+            final Resource res = this.resourceLoader.getResource(loginConf);
+            if (res != null && res.exists()) {
+                final String urlPath = res.getURL().toExternalForm();
+                LOGGER.debug("Located login config [{}] and configured it under [{}]", urlPath, SYS_PROP_LOGIN_CONF);
+                System.setProperty(SYS_PROP_LOGIN_CONF, urlPath);
+            } else {
+                final URL url = getClass().getResource("/jcifs/http/login.conf");
+                if (url != null) {
+                    LOGGER.debug("Falling back unto default login config [{}] under [{}]", url.toExternalForm(), SYS_PROP_LOGIN_CONF);
+                    System.setProperty(SYS_PROP_LOGIN_CONF, url.toExternalForm());
+                }
+            }
+            LOGGER.debug("configured login configuration path : [{}]", propValue);
         }
+
     }
 
     /**
@@ -178,7 +177,7 @@ public class JcifsConfig {
             System.setProperty(SYS_PROP_KERBEROS_REALM, kerberosRealm);
         }
     }
-    
+
     public void setLoginConf(final String loginConf) {
         this.loginConf = loginConf;
     }

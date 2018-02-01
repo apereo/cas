@@ -1,17 +1,17 @@
 package org.apereo.cas.util.cipher;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
 import org.jose4j.keys.AesKey;
 import org.jose4j.keys.RsaKeyUtil;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
+import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 /**
  * Abstract cipher to provide common operations around signing objects.
@@ -19,16 +19,12 @@ import java.security.Key;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
+@Setter
+@NoArgsConstructor
 public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, R> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractCipherExecutor.class);
 
     private Key signingKey;
-
-    /**
-     * Instantiates a new cipher executor.
-     */
-    protected AbstractCipherExecutor() {
-    }
 
     /**
      * Instantiates a new cipher executor.
@@ -36,9 +32,8 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      * @param signingSecretKey the signing key
      */
     public AbstractCipherExecutor(final String signingSecretKey) {
-        setSigningKey(signingSecretKey);
+        configureSigningKey(signingSecretKey);
     }
-
 
     /**
      * Sign the array by first turning it into a base64 encoded string.
@@ -57,12 +52,11 @@ public abstract class AbstractCipherExecutor<T, R> implements CipherExecutor<T, 
      *
      * @param signingSecretKey the signing secret key
      */
-    public void setSigningKey(final String signingSecretKey) {
+    public void configureSigningKey(final String signingSecretKey) {
         try {
             if (ResourceUtils.isFile(signingSecretKey) && ResourceUtils.doesResourceExist(signingSecretKey)) {
                 final Resource resource = ResourceUtils.getResourceFrom(signingSecretKey);
                 LOGGER.debug("Located signing key resource [{}]. Attempting to extract private key...", resource);
-
                 final PrivateKeyFactoryBean factory = new PrivateKeyFactoryBean();
                 factory.setAlgorithm(RsaKeyUtil.RSA);
                 factory.setLocation(resource);

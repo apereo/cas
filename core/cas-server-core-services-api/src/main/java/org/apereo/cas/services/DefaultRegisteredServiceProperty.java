@@ -1,8 +1,8 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.Column;
@@ -25,6 +25,8 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "RegexRegisteredServiceProperty")
+@Slf4j
+@EqualsAndHashCode
 public class DefaultRegisteredServiceProperty implements RegisteredServiceProperty {
     private static final long serialVersionUID = 1349556364689133211L;
 
@@ -37,7 +39,6 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
     @Lob
     @Column(name = "property_values")
     private HashSet<String> values = new HashSet<>();
-
     
     @Override
     public Set<String> getValues() {
@@ -83,27 +84,4 @@ public class DefaultRegisteredServiceProperty implements RegisteredServiceProper
         getValues().add(value);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final DefaultRegisteredServiceProperty rhs = (DefaultRegisteredServiceProperty) obj;
-        return new EqualsBuilder()
-                .append(this.values, rhs.values)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(this.values)
-                .toHashCode();
-    }
 }

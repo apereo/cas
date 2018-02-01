@@ -1,5 +1,6 @@
 package org.apereo.cas.support.wsfederation.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @author John Gasper
  * @since 4.2.0
  */
+@Slf4j
 public class WsFederationAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
 
     public WsFederationAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory) {

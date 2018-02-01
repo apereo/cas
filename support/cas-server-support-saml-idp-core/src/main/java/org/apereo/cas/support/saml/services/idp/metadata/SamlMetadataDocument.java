@@ -1,16 +1,18 @@
 package org.apereo.cas.support.saml.services.idp.metadata;
 
+import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is {@link SamlMetadataDocument}.
@@ -21,7 +23,11 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "SamlMetadataDocument")
 @Document
+@Slf4j
+@Getter
+@Setter
 public class SamlMetadataDocument {
+
     @javax.persistence.Id
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO, generator = "native")
@@ -29,7 +35,7 @@ public class SamlMetadataDocument {
     private long id = -1;
 
     @Indexed
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     @Lob
@@ -42,37 +48,5 @@ public class SamlMetadataDocument {
 
     public SamlMetadataDocument() {
         setId(System.currentTimeMillis());
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getValue() {
-        return value;
-    }
-
-    public void setValue(final String value) {
-        this.value = value;
-    }
-
-    public String getSignature() {
-        return signature;
-    }
-
-    public void setSignature(final String signature) {
-        this.signature = signature;
     }
 }

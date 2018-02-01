@@ -1,12 +1,12 @@
 package org.apereo.cas.services.util;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.crypto.Cipher;
 import java.nio.charset.StandardCharsets;
@@ -19,14 +19,14 @@ import java.security.Security;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class DefaultRegisteredServiceCipherExecutor implements RegisteredServiceCipherExecutor {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceCipherExecutor.class);
 
     static {
         Security.addProvider(new BouncyCastleProvider());
     }
-    
+
     /**
      * Encrypt using the given cipher associated with the service,
      * and encode the data in base 64.
@@ -60,16 +60,13 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
      * @param registeredService the registered service
      * @return a byte[] that contains the encrypted result
      */
+    @SneakyThrows
     protected static byte[] encodeInternal(final String data, final PublicKey publicKey,
                                            final RegisteredService registeredService) {
-        try {
-            final Cipher cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
-            if (cipher != null) {
-                LOGGER.debug("Initialized cipher successfully. Proceeding to finalize...");
-                return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
-            }
-        } catch (final Exception e) {
-            throw new RuntimeException("Unable to encode data for service " + registeredService.getServiceId(), e);
+        final Cipher cipher = initializeCipherBasedOnServicePublicKey(publicKey, registeredService);
+        if (cipher != null) {
+            LOGGER.debug("Initialized cipher successfully. Proceeding to finalize...");
+            return cipher.doFinal(data.getBytes(StandardCharsets.UTF_8));
         }
         return null;
     }
@@ -106,16 +103,16 @@ public class DefaultRegisteredServiceCipherExecutor implements RegisteredService
                                                                   final RegisteredService registeredService) {
         try {
             LOGGER.debug("Using service [{}] public key [{}] to initialize the cipher", registeredService.getServiceId(),
-                    registeredService.getPublicKey());
+                registeredService.getPublicKey());
 
             final Cipher cipher = Cipher.getInstance(publicKey.getAlgorithm());
             cipher.init(Cipher.ENCRYPT_MODE, publicKey);
-            LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}] for service [{}]", 
-                    publicKey.getAlgorithm(), registeredService.getServiceId());
+            LOGGER.debug("Initialized cipher in encrypt-mode via the public key algorithm [{}] for service [{}]",
+                publicKey.getAlgorithm(), registeredService.getServiceId());
             return cipher;
         } catch (final Exception e) {
             LOGGER.warn("Cipher could not be initialized for service [{}]. Error [{}]",
-                    registeredService, e.getMessage());
+                registeredService, e.getMessage());
         }
         return null;
     }

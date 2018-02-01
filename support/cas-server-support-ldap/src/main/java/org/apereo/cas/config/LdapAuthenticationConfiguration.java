@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -31,8 +32,6 @@ import org.ldaptive.auth.ext.EDirectoryAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.FreeIPAAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordExpirationAuthenticationResponseHandler;
 import org.ldaptive.auth.ext.PasswordPolicyAuthenticationResponseHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -60,8 +59,9 @@ import java.util.function.Predicate;
  */
 @Configuration("ldapAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class LdapAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapAuthenticationConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -88,7 +88,7 @@ public class LdapAuthenticationConfiguration {
                 .stream()
                 .filter(ldapInstanceConfigurationPredicate())
                 .forEach(l -> {
-                    final Multimap<String, String> multiMapAttributes = 
+                    final Multimap<String, Object> multiMapAttributes =
                             CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(l.getPrincipalAttributeList());
                     LOGGER.debug("Created and mapped principal attributes [{}] for [{}]...", multiMapAttributes, l.getLdapUrl());
 
@@ -137,7 +137,7 @@ public class LdapAuthenticationConfiguration {
                         handler.setPasswordPolicyConfiguration(cfg);
                     }
 
-                    final Map<String, Collection<String>> attributes = CollectionUtils.wrap(multiMapAttributes);
+                    final Map<String, Object> attributes = CollectionUtils.wrap(multiMapAttributes);
                     handler.setPrincipalAttributeMap(attributes);
 
                     LOGGER.debug("Initializing LDAP authentication handler for [{}]", l.getLdapUrl());
@@ -180,7 +180,7 @@ public class LdapAuthenticationConfiguration {
 
     private LdapPasswordPolicyConfiguration createLdapPasswordPolicyConfiguration(final LdapAuthenticationProperties l,
                                                                                   final Authenticator authenticator,
-                                                                                  final Multimap<String, String> attributes) {
+                                                                                  final Multimap<String, Object> attributes) {
         final LdapPasswordPolicyConfiguration cfg =
             new LdapPasswordPolicyConfiguration(l.getPasswordPolicy());
         final Set<AuthenticationResponseHandler> handlers = new HashSet<>();

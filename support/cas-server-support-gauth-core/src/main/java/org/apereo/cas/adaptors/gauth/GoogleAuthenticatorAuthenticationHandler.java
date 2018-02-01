@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.authentication.Authentication;
@@ -14,8 +16,6 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepositor
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.AccountExpiredException;
 import javax.security.auth.login.AccountNotFoundException;
@@ -29,9 +29,10 @@ import java.security.GeneralSecurityException;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorAuthenticationHandler.class);
 
+@Slf4j
+public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
+    
     private final IGoogleAuthenticator googleAuthenticatorInstance;
     private final OneTimeTokenRepository tokenRepository;
     private final OneTimeTokenCredentialRepository credentialRepository;
@@ -58,11 +59,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.debug("Received OTP [{}]", otp);
-        
+
+        @NonNull
         final Authentication authentication = WebUtils.getInProgressAuthentication();
-        if (authentication == null) {
-            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-        }
         final String uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]", uid);

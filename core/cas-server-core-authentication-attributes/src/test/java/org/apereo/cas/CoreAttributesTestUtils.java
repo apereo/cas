@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
@@ -16,13 +17,11 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public final class CoreAttributesTestUtils {
+@Slf4j
+public class CoreAttributesTestUtils {
 
     public static final String CONST_USERNAME = "test";
     private static final String CONST_TEST_URL = "https://google.com";
-    
-    private CoreAttributesTestUtils() {
-    }
 
     public static Principal getPrincipal(final String name, final Map<String, Object> attributes) {
         return new DefaultPrincipalFactory().createPrincipal(name, attributes);

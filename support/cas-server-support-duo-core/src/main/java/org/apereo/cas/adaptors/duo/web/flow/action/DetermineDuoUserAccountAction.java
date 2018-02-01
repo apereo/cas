@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
@@ -24,12 +26,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DetermineDuoUserAccountAction extends AbstractAction {
     private final VariegatedMultifactorAuthenticationProvider provider;
-
-    public DetermineDuoUserAccountAction(final VariegatedMultifactorAuthenticationProvider provider) {
-        this.provider = provider;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.web.flow.actions;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.authentication.adaptive.UnauthorizedAuthenticationException;
@@ -23,19 +25,13 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public abstract class AbstractAuthenticationAction extends AbstractAction {
 
     private final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
-    private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
     private final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver;
-
-    public AbstractAuthenticationAction(final CasDelegatingWebflowEventResolver delegatingWebflowEventResolver,
-                                        final CasWebflowEventResolver webflowEventResolver,
-                                        final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy) {
-        this.initialAuthenticationAttemptWebflowEventResolver = delegatingWebflowEventResolver;
-        this.serviceTicketRequestWebflowEventResolver = webflowEventResolver;
-        this.adaptiveAuthenticationPolicy = adaptiveAuthenticationPolicy;
-    }
+    private final AdaptiveAuthenticationPolicy adaptiveAuthenticationPolicy;
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

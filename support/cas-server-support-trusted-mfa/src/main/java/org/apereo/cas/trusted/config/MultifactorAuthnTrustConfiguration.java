@@ -2,7 +2,10 @@ package org.apereo.cas.trusted.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -19,8 +22,8 @@ import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustController;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -42,12 +45,18 @@ import org.springframework.webflow.execution.Action;
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
-public class MultifactorAuthnTrustConfiguration {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
-
+@Slf4j
+public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
+
+    @Autowired
+    @Qualifier("ticketCreationActionResolver")
+    private AuditActionResolver ticketCreationActionResolver;
+    
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private AuditResourceResolver returnValueResourceResolver;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -125,5 +134,11 @@ public class MultifactorAuthnTrustConfiguration {
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), storage);
+    }
+
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", this.returnValueResourceResolver);
+        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", this.ticketCreationActionResolver);
     }
 }

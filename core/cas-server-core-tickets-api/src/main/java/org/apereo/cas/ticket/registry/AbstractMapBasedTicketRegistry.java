@@ -1,14 +1,14 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ticket.Ticket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.Map;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link AbstractMapBasedTicketRegistry}.
@@ -16,11 +16,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@NoArgsConstructor
 public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMapBasedTicketRegistry.class);
-
-    public AbstractMapBasedTicketRegistry() {
-    }
 
     /**
      * Creates a new, empty registry with the cipher.
@@ -32,8 +30,7 @@ public abstract class AbstractMapBasedTicketRegistry extends AbstractTicketRegis
     }
 
     @Override
-    public void addTicket(final Ticket ticket) {
-        Assert.notNull(ticket, "ticket cannot be null");
+    public void addTicket(@NonNull final Ticket ticket) {
         final Ticket encTicket = encodeTicket(ticket);
         LOGGER.debug("Added ticket [{}] to registry.", ticket.getId());
         getMapInstance().put(encTicket.getId(), encTicket);

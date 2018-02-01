@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
@@ -8,8 +8,8 @@ import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.io.Resource;
-
 import java.nio.file.Path;
+import lombok.Getter;
 
 /**
  * Implementation of {@code ServiceRegistryDao} that reads services definition from JSON
@@ -23,6 +23,8 @@ import java.nio.file.Path;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@Getter
 public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
 
     /**
@@ -40,11 +42,10 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher,
-                                  final ApplicationEventPublisher eventPublisher,
+    public JsonServiceRegistryDao(final Path configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
-        super(configDirectory, new DefaultRegisteredServiceJsonSerializer(),
-            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+        super(configDirectory, new DefaultRegisteredServiceJsonSerializer(), enableWatcher,
+            eventPublisher, registeredServiceReplicationStrategy);
     }
 
     /**
@@ -58,15 +59,10 @@ public class JsonServiceRegistryDao extends AbstractResourceBasedServiceRegistry
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @throws Exception the IO exception
      */
-    public JsonServiceRegistryDao(final Resource configDirectory,
-                                  final boolean enableWatcher,
-                                  final ApplicationEventPublisher eventPublisher,
+    public JsonServiceRegistryDao(final Resource configDirectory, final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
-        super(configDirectory,
-            CollectionUtils.wrapList(
-                new CasAddonsRegisteredServicesJsonSerializer(),
-                new DefaultRegisteredServiceJsonSerializer()),
-            enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
+        super(configDirectory, CollectionUtils.wrapList(new CasAddonsRegisteredServicesJsonSerializer(),
+            new DefaultRegisteredServiceJsonSerializer()), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
     @Override

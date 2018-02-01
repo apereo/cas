@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -7,16 +8,17 @@ import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oauth.OAuthAccessTokenProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
-import org.apereo.cas.support.oauth.authenticator.OAuthClientAuthenticator;
-import org.apereo.cas.support.oauth.authenticator.OAuthUserAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticator;
+import org.apereo.cas.support.oauth.authenticator.OAuth20UserAuthenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
@@ -70,7 +72,6 @@ import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
-import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
@@ -81,8 +82,6 @@ import org.pac4j.core.http.UrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -91,20 +90,13 @@ import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.HandlerInterceptor;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
 import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -121,9 +113,8 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.CLIENT_SECRET;
  */
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasOAuthConfiguration.class);
-
+@Slf4j
+public class CasOAuthConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -165,7 +156,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20CasClientRedirectActionBuilder oauthCasClientRedirectActionBuilder() {
         return new OAuth20DefaultCasClientRedirectActionBuilder();
     }
-    
+
     @Bean
     public UrlResolver casCallbackUrlResolver() {
         return new OAuth20CasCallbackUrlResolver(OAuth20Utils.casOAuthCallbackUrl(casProperties.getServer().getPrefix()));
@@ -222,56 +213,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new SecurityInterceptor(oauthSecConfig(), clients);
     }
 
-    @ConditionalOnMissingBean(name = "oauthInterceptor")
-    @Bean
-    public HandlerInterceptorAdapter oauthInterceptor() {
-        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter = new OAuth20HandlerInterceptorAdapter(
-            requiresAuthenticationAccessTokenInterceptor(), requiresAuthenticationAuthorizeInterceptor(), accessTokenGrantRequestExtractors());
-
-        if ("neverThrottle".equalsIgnoreCase(throttler)) {
-            LOGGER.debug("Authentication throttling is disabled for OAuth");
-            return oAuth20HandlerInterceptorAdapter;
-        }
-        return getHandlerInterceptorForThrottling(oAuth20HandlerInterceptorAdapter);
-    }
-
-    private HandlerInterceptorAdapter getHandlerInterceptorForThrottling(final OAuth20HandlerInterceptorAdapter oAuth20HandlerInterceptorAdapter) {
-        final String throttler = casProperties.getAuthn().getOauth().getThrottler();
-        LOGGER.debug("Locating authentication throttler instance [{}] for OAuth", throttler);
-        final HandlerInterceptor throttledInterceptor = this.applicationContext.getBean(throttler, HandlerInterceptor.class);
-
-        final String throttledUrl = OAuth20Constants.BASE_OAUTH20_URL.concat("/")
-            .concat(OAuth20Constants.ACCESS_TOKEN_URL + "|" + OAuth20Constants.TOKEN_URL);
-        final Pattern pattern = RegexUtils.createPattern(throttledUrl);
-        LOGGER.debug("Authentication throttler instance for OAuth shall intercept the URL pattern [{}]", pattern.pattern());
-
-        final HandlerInterceptorAdapter throttledInterceptorAdapter = new HandlerInterceptorAdapter() {
-            @Override
-            public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
-                if (RegexUtils.matches(pattern, request.getServletPath()) && !throttledInterceptor.preHandle(request, response, handler)) {
-                    LOGGER.trace("OAuth authentication throttler prevented the request at [{}]", request.getServletPath());
-                    return false;
-                }
-                return oAuth20HandlerInterceptorAdapter.preHandle(request, response, handler);
-            }
-
-            @Override
-            public void postHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler,
-                                   final ModelAndView modelAndView) throws Exception {
-                if (RegexUtils.matches(pattern, request.getServletPath())) {
-                    LOGGER.trace("OAuth authentication throttler post-processing the request at [{}]", request.getServletPath());
-                    throttledInterceptor.postHandle(request, response, handler, modelAndView);
-                }
-            }
-        };
-        return throttledInterceptorAdapter;
-    }
-
-    @Override
-    public void addInterceptors(final InterceptorRegistry registry) {
-        registry.addInterceptor(oauthInterceptor()).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
-    }
 
     @Bean
     public OAuth20CasClientRedirectActionBuilder defaultOAuthCasClientRedirectActionBuilder() {
@@ -281,13 +222,13 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "oAuthClientAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthClientAuthenticator() {
-        return new OAuthClientAuthenticator(oAuthValidator(), this.servicesManager);
+        return new OAuth20ClientAuthenticator(oAuthValidator(), this.servicesManager);
     }
 
     @ConditionalOnMissingBean(name = "oAuthUserAuthenticator")
     @Bean
     public Authenticator<UsernamePasswordCredentials> oAuthUserAuthenticator() {
-        return new OAuthUserAuthenticator(authenticationSystemSupport, servicesManager, webApplicationServiceFactory);
+        return new OAuth20UserAuthenticator(authenticationSystemSupport, servicesManager, webApplicationServiceFactory);
     }
 
     @ConditionalOnMissingBean(name = "oAuthValidator")
@@ -313,10 +254,10 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @ConditionalOnMissingBean(name = "accessTokenExpirationPolicy")
     public ExpirationPolicy accessTokenExpirationPolicy() {
-        final OAuthProperties oauth = casProperties.getAuthn().getOauth();
+        final OAuthAccessTokenProperties oauth = casProperties.getAuthn().getOauth().getAccessToken();
         return new OAuthAccessTokenExpirationPolicy(
-            oauth.getAccessToken().getMaxTimeToLiveInSeconds(),
-            oauth.getAccessToken().getTimeToKillInSeconds()
+            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toMillis(),
+            Beans.newDuration(oauth.getTimeToKillInSeconds()).toMillis()
         );
     }
 
@@ -367,7 +308,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     @RefreshScope
     public OAuth20TokenGenerator oauthTokenGenerator() {
-        return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(), ticketRegistry, defaultRefreshTokenFactory());
+        return new OAuth20DefaultTokenGenerator(defaultAccessTokenFactory(), defaultRefreshTokenFactory(), ticketRegistry);
     }
 
     @Bean
@@ -441,7 +382,6 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
             this.applicationContext.getBeansOfType(OAuth20AuthorizationResponseBuilder.class, false, true);
         return new HashSet<>(builders.values());
     }
-
 
     @ConditionalOnMissingBean(name = "oauthRequestValidators")
     @Bean
@@ -552,7 +492,8 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
     }
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
-        return new OAuthRefreshTokenExpirationPolicy(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
+        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).toMillis();
+        return new OAuthRefreshTokenExpirationPolicy(timeout);
     }
 
     @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")
@@ -570,6 +511,15 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
         return new DefaultUniqueTicketIdGenerator();
     }
 
+    @ConditionalOnMissingBean(name = "oauthHandlerInterceptorAdapter")
+    @Bean
+    public HandlerInterceptorAdapter oauthHandlerInterceptorAdapter() {
+        return new OAuth20HandlerInterceptorAdapter(
+            requiresAuthenticationAccessTokenInterceptor(),
+            requiresAuthenticationAuthorizeInterceptor(),
+            accessTokenGrantRequestExtractors());
+    }
+
     @PostConstruct
     public void initializeServletApplicationContext() {
         final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL_DEFINITION;
@@ -579,7 +529,7 @@ public class CasOAuthConfiguration extends WebMvcConfigurerAdapter {
 
         if (svc == null || !svc.getServiceId().equals(oAuthCallbackUrl)) {
             final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getInstanceNative().nextLong()));
+            service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
             service.setEvaluationOrder(0);
             service.setName(service.getClass().getSimpleName());
             service.setDescription("OAuth Authentication Callback Request URL");

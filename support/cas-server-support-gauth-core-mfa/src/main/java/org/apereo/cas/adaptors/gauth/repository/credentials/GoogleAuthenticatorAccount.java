@@ -2,6 +2,8 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 
 import javax.persistence.Entity;
@@ -16,13 +18,10 @@ import java.util.List;
  */
 @Entity
 @Table(name = "GoogleAuthenticatorRegistrationRecord")
+@Slf4j
+@NoArgsConstructor
 public class GoogleAuthenticatorAccount extends OneTimeTokenAccount {
-
     private static final long serialVersionUID = 2441775052626253711L;
-
-    public GoogleAuthenticatorAccount() {
-        super();
-    }
 
     /**
      * Instantiates a new Google authenticator account.

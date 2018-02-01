@@ -2,6 +2,9 @@ package org.apereo.cas.support.oauth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apache.http.HttpStatus;
@@ -15,8 +18,6 @@ import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
@@ -45,13 +46,10 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
  * @author Jerome Leleu
  * @since 3.5.0
  */
-public final class OAuth20Utils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Utils.class);
+@Slf4j
+@UtilityClass
+public class OAuth20Utils {
     private static final ObjectWriter WRITER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
-
-    private OAuth20Utils() {
-    }
 
     /**
      * Write to the output this error text and return a null view.
@@ -218,12 +216,9 @@ public final class OAuth20Utils {
      * @param map the map
      * @return the string
      */
+    @SneakyThrows
     public static String jsonify(final Map map) {
-        try {
-            return WRITER.writeValueAsString(map);
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
-        }
+        return WRITER.writeValueAsString(map);
     }
 
     /**

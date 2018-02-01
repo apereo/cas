@@ -2,6 +2,7 @@ package org.apereo.cas.otp.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -17,8 +18,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,14 +41,13 @@ import java.util.concurrent.TimeUnit;
 @Configuration("oneTimeTokenAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
+@Slf4j
 public class OneTimeTokenAuthenticationConfiguration {
     private static final int EXPIRE_TOKENS_IN_SECONDS = 30;
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OneTimeTokenAuthenticationConfiguration.class);
-
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;

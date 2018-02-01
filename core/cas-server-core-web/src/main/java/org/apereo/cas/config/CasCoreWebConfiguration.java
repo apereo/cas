@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
@@ -34,6 +36,7 @@ import java.util.Properties;
  */
 @Configuration("casCoreWebConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreWebConfiguration {
 
     @Autowired
@@ -89,9 +92,10 @@ public class CasCoreWebConfiguration {
 
     @Bean
     public FactoryBean<UrlValidator> urlValidator() {
-        final boolean allowLocalLogoutUrls = this.casProperties.getHttpClient().isAllowLocalLogoutUrls();
-        final String authorityValidationRegEx = this.casProperties.getHttpClient().getAuthorityValidationRegEx();
-        final boolean authorityValidationRegExCaseSensitiv = this.casProperties.getHttpClient().isAuthorityValidationRegExCaseSensitiv();
-        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitiv);
+        final HttpClientProperties httpClient = this.casProperties.getHttpClient();
+        final boolean allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
+        final String authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
+        final boolean authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
+        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -25,8 +27,6 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.CollectionUtils;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -41,18 +41,15 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20CasAuthenticationBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20CasAuthenticationBuilder.class);
-
-    /**
-     * Collection of CAS settings.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     /**
      * The Principal factory.
      */
     protected final PrincipalFactory principalFactory;
+
     /**
      * The Web application service service factory.
      */
@@ -63,16 +60,11 @@ public class OAuth20CasAuthenticationBuilder {
      */
     protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
-    public OAuth20CasAuthenticationBuilder(final PrincipalFactory principalFactory,
-                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                           final CasConfigurationProperties casProperties) {
-        this.principalFactory = principalFactory;
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
-        this.scopeToAttributesFilter = scopeToAttributesFilter;
-        this.casProperties = casProperties;
-    }
-
+    /**
+     * Collection of CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+    
     /**
      * Build service.
      *

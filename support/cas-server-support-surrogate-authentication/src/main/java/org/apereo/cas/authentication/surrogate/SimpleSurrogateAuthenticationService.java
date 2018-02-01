@@ -1,10 +1,9 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Map;
@@ -16,8 +15,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SimpleSurrogateAuthenticationService extends BaseSurrogateAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleSurrogateAuthenticationService.class);
+
     
     private final Map<String, Set> eligibleAccounts;
 

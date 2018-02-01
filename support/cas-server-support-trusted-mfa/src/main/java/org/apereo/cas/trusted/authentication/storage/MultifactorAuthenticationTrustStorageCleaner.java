@@ -1,10 +1,11 @@
 package org.apereo.cas.trusted.authentication.storage;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,18 +21,13 @@ import java.time.LocalDate;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "transactionManagerU2f")
+@Slf4j
+@AllArgsConstructor
+@Getter
 public class MultifactorAuthenticationTrustStorageCleaner {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationTrustStorageCleaner.class);
-
     private final TrustedDevicesMultifactorProperties trustedProperties;
     private final MultifactorAuthenticationTrustStorage storage;
 
-    public MultifactorAuthenticationTrustStorageCleaner(final TrustedDevicesMultifactorProperties trustedProperties,
-                                                        final MultifactorAuthenticationTrustStorage storage) {
-        this.trustedProperties = trustedProperties;
-        this.storage = storage;
-    }
 
     /**
      * Clean up expired records.

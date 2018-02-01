@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -23,8 +24,6 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.J2EContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -41,9 +40,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthorizeEndpointController.class);
+
 
     public OidcAuthorizeEndpointController(final ServicesManager servicesManager,
                                            final TicketRegistry ticketRegistry,

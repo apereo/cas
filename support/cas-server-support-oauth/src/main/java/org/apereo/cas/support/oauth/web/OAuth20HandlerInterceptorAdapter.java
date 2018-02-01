@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.web.response.accesstoken.ext.BaseAccessTokenGrantRequestExtractor;
@@ -16,6 +18,8 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter {
     /**
      * Access token interceptor.
@@ -29,13 +33,6 @@ public class OAuth20HandlerInterceptorAdapter extends HandlerInterceptorAdapter 
 
     private final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors;
 
-    public OAuth20HandlerInterceptorAdapter(final HandlerInterceptorAdapter requiresAuthenticationAccessTokenInterceptor,
-                                            final HandlerInterceptorAdapter requiresAuthenticationAuthorizeInterceptor,
-                                            final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
-        this.requiresAuthenticationAccessTokenInterceptor = requiresAuthenticationAccessTokenInterceptor;
-        this.requiresAuthenticationAuthorizeInterceptor = requiresAuthenticationAuthorizeInterceptor;
-        this.accessTokenGrantRequestExtractors = accessTokenGrantRequestExtractors;
-    }
 
     @Override
     public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response,

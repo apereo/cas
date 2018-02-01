@@ -1,10 +1,10 @@
 package org.apereo.cas.adaptors.gauth;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.otp.repository.token.BaseOneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeToken;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -18,20 +18,12 @@ import java.time.LocalDateTime;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class GoogleAuthenticatorMongoDbTokenRepository extends BaseOneTimeTokenRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAuthenticatorMongoDbTokenRepository.class);
-
-    private final long expireTokensInSeconds;
-    private final String collectionName;
     private final MongoOperations mongoTemplate;
-
-    public GoogleAuthenticatorMongoDbTokenRepository(final MongoOperations mongoTemplate,
-                                                     final String collectionName,
-                                                     final long expireTokensInSeconds) {
-        this.mongoTemplate = mongoTemplate;
-        this.collectionName = collectionName;
-        this.expireTokensInSeconds = expireTokensInSeconds;
-    }
+    private final String collectionName;
+    private final long expireTokensInSeconds;
 
     @Override
     public void store(final OneTimeToken token) {

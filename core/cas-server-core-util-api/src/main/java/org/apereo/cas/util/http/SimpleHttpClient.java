@@ -1,5 +1,8 @@
 package org.apereo.cas.util.http;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
@@ -14,8 +17,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.FutureRequestExecutionService;
 import org.apache.http.impl.client.HttpRequestFutureTask;
 import org.apache.http.util.EntityUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 
 import java.io.Serializable;
@@ -25,17 +26,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of CAS {@link HttpClient}
- * which delegates requests to a {@link #httpClient} instance.
+ * which delegates requests to a {@link #wrappedHttpClient} instance.
  *
  * @author Jerome Leleu
  * @author Scott Battaglia
  * @author Misagh Moayyed
  * @since 3.1
  */
+@Slf4j
+@Getter
+@AllArgsConstructor
 public class SimpleHttpClient implements HttpClient, Serializable, DisposableBean {
 
     /**
@@ -43,7 +46,6 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
      */
     private static final long serialVersionUID = -4949380008568071855L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SimpleHttpClient.class);
 
     /**
      * the acceptable codes supported by this client.
@@ -53,26 +55,12 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     /**
      * the HTTP client for this client.
      */
-    private final transient CloseableHttpClient httpClient;
+    private final transient CloseableHttpClient wrappedHttpClient;
 
     /**
      * the request executor service for this client.
      */
     private final FutureRequestExecutionService requestExecutorService;
-
-    /**
-     * Instantiates a new Simple HTTP client, based on the provided inputs.
-     *
-     * @param acceptableCodes        the acceptable codes of the client
-     * @param httpClient             the HTTP client used by the client
-     * @param requestExecutorService the request executor service used by the client
-     */
-    SimpleHttpClient(final List<Integer> acceptableCodes, final CloseableHttpClient httpClient,
-                     final FutureRequestExecutionService requestExecutorService) {
-        this.acceptableCodes = acceptableCodes.stream().sorted().collect(Collectors.toList());
-        this.httpClient = httpClient;
-        this.requestExecutorService = requestExecutorService;
-    }
 
     @Override
     public boolean sendMessageToEndPoint(final HttpMessage message) {
@@ -103,7 +91,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public HttpMessage sendMessageToEndPoint(final URL url) {
         HttpEntity entity = null;
 
-        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             for (final int acceptableCode : this.acceptableCodes) {
@@ -144,7 +132,7 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public boolean isValidEndPoint(final URL url) {
         HttpEntity entity = null;
 
-        try (CloseableHttpResponse response = this.httpClient.execute(new HttpGet(url.toURI()))) {
+        try (CloseableHttpResponse response = this.wrappedHttpClient.execute(new HttpGet(url.toURI()))) {
             final int responseCode = response.getStatusLine().getStatusCode();
 
             final int idx = Collections.binarySearch(this.acceptableCodes, responseCode);
@@ -176,9 +164,5 @@ public class SimpleHttpClient implements HttpClient, Serializable, DisposableBea
     public void destroy() {
         IOUtils.closeQuietly(this.requestExecutorService);
     }
-
-    @Override
-    public org.apache.http.client.HttpClient getWrappedHttpClient() {
-        return this.httpClient;
-    }
+    
 }

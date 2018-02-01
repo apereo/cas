@@ -1,5 +1,7 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.interrupt.InterruptInquirer;
@@ -17,12 +19,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class InquireInterruptAction extends AbstractAction {
     private final InterruptInquirer interruptInquirer;
-
-    public InquireInterruptAction(final InterruptInquirer interruptInquirer) {
-        this.interruptInquirer = interruptInquirer;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

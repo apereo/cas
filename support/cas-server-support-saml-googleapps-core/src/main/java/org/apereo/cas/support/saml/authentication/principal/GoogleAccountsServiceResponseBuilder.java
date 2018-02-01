@@ -1,8 +1,11 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationServiceResponseBuilder;
 import org.apereo.cas.authentication.principal.Principal;
@@ -24,8 +27,6 @@ import org.opensaml.saml.saml2.core.Conditions;
 import org.opensaml.saml.saml2.core.NameID;
 import org.opensaml.saml.saml2.core.StatusCode;
 import org.opensaml.saml.saml2.core.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.util.ResourceUtils;
@@ -43,11 +44,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
+@Getter
+@Setter
+@EqualsAndHashCode(callSuper = true,
+    of = {"publicKeyLocation", "privateKeyLocation", "keyAlgorithm", "samlObjectBuilder", "skewAllowance"})
 public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplicationServiceResponseBuilder {
 
     private static final long serialVersionUID = -4584732364007702423L;
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleAccountsServiceResponseBuilder.class);
 
     private PrivateKey privateKey;
 
@@ -65,6 +69,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
     private String casServerPrefix;
 
+    @SneakyThrows
     public GoogleAccountsServiceResponseBuilder(final String privateKeyLocation,
                                                 final String publicKeyLocation, final String keyAlgorithm,
                                                 final ServicesManager servicesManager,
@@ -78,12 +83,8 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         this.samlObjectBuilder = samlObjectBuilder;
         this.casServerPrefix = casServerPrefix;
 
-        try {
-            createGoogleAppsPrivateKey();
-            createGoogleAppsPublicKey();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        createGoogleAppsPrivateKey();
+        createGoogleAppsPublicKey();
 
     }
 
@@ -124,7 +125,7 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
             this.samlObjectBuilder.generateSecureRandomId(), currentDateTime, null, service);
         response.setStatus(this.samlObjectBuilder.newStatus(StatusCode.SUCCESS, null));
 
-        final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getInstanceNative().nextLong()));
+        final String sessionIndex = '_' + String.valueOf(Math.abs(RandomUtils.getNativeInstance().nextLong()));
         final AuthnStatement authnStatement = this.samlObjectBuilder.newAuthnStatement(AuthnContext.PASSWORD_AUTHN_CTX, currentDateTime, sessionIndex);
         final Assertion assertion = this.samlObjectBuilder.newAssertion(authnStatement, casServerPrefix,
             notBeforeIssueInstant, this.samlObjectBuilder.generateSecureRandomId());
@@ -142,20 +143,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         final String result = SamlUtils.transformSamlObject(this.samlObjectBuilder.getConfigBean(), response, true).toString();
         LOGGER.debug("Generated Google SAML response: [{}]", result);
         return result;
-    }
-
-    /**
-     * Sets the allowance for time skew in seconds
-     * between CAS and the client server.  Default 0s.
-     * This value will be subtracted from the current time when setting the SAML
-     * {@code NotBeforeDate} attribute, thereby allowing for the
-     * CAS server to be ahead of the client by as much as the value defined here.
-     *
-     * @param skewAllowance Number of seconds to allow for variance.
-     */
-    public void setSkewAllowance(final int skewAllowance) {
-        LOGGER.debug("Using [{}] seconds as skew allowance.", skewAllowance);
-        this.skewAllowance = skewAllowance;
     }
 
     /**
@@ -200,11 +187,11 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
 
         final PublicKeyFactoryBean bean = new PublicKeyFactoryBean();
         if (this.publicKeyLocation.startsWith(ResourceUtils.CLASSPATH_URL_PREFIX)) {
-            bean.setLocation(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
+            bean.setResource(new ClassPathResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.CLASSPATH_URL_PREFIX)));
         } else if (this.publicKeyLocation.startsWith(ResourceUtils.FILE_URL_PREFIX)) {
-            bean.setLocation(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
+            bean.setResource(new FileSystemResource(StringUtils.removeStart(this.publicKeyLocation, ResourceUtils.FILE_URL_PREFIX)));
         } else {
-            bean.setLocation(new FileSystemResource(this.publicKeyLocation));
+            bean.setResource(new FileSystemResource(this.publicKeyLocation));
         }
 
         bean.setAlgorithm(this.keyAlgorithm);
@@ -219,41 +206,6 @@ public class GoogleAccountsServiceResponseBuilder extends AbstractWebApplication
         return StringUtils.isNotBlank(this.privateKeyLocation)
             || StringUtils.isNotBlank(this.publicKeyLocation)
             || StringUtils.isNotBlank(this.keyAlgorithm);
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GoogleAccountsServiceResponseBuilder rhs = (GoogleAccountsServiceResponseBuilder) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        return builder
-            .appendSuper(super.equals(obj))
-            .append(this.publicKeyLocation, rhs.publicKeyLocation)
-            .append(this.privateKeyLocation, rhs.privateKeyLocation)
-            .append(this.keyAlgorithm, rhs.keyAlgorithm)
-            .append(this.samlObjectBuilder, rhs.samlObjectBuilder)
-            .append(this.skewAllowance, rhs.skewAllowance)
-            .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .appendSuper(super.hashCode())
-            .append(publicKeyLocation)
-            .append(privateKeyLocation)
-            .append(keyAlgorithm)
-            .append(skewAllowance)
-            .append(samlObjectBuilder)
-            .toHashCode();
     }
 
     @Override

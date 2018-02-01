@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication.principal;
 
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.4.4
  */
+@Slf4j
 public class ResponseTests {
 
     private static final String TICKET_PARAM = "ticket";

@@ -1,7 +1,8 @@
 package org.apereo.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetAddress;
 import java.net.URL;
@@ -12,11 +13,9 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class InetAddressUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(InetAddressUtils.class);
-
-    private InetAddressUtils() {
-    }
+@Slf4j
+@UtilityClass
+public class InetAddressUtils {
 
     /**
      * Gets by name.
@@ -24,31 +23,29 @@ public final class InetAddressUtils {
      * @param urlAddr the host
      * @return the by name
      */
-    public static String getByName(final String urlAddr) {
+    public static InetAddress getByName(final String urlAddr) {
         try {
             final URL url = new URL(urlAddr);
-            return InetAddress.getByName(url.getHost()).getHostAddress();
+            return InetAddress.getByName(url.getHost());
         } catch (final Exception e) {
             LOGGER.debug("Host name could not be determined automatically.", e);
         }
         return null;
     }
 
+
     /**
      * Gets cas server host name.
      *
      * @return the cas server host name
      */
+    @SneakyThrows
     public static String getCasServerHostName() {
-        try {
-            final String hostName = InetAddress.getLocalHost().getHostName();
-            final int index = hostName.indexOf('.');
-            if (index > 0) {
-                return hostName.substring(0, index);
-            }
-            return hostName;
-        } catch (final Exception e) {
-            throw new IllegalArgumentException("Host name could not be determined automatically.", e);
+        final String hostName = InetAddress.getLocalHost().getHostName();
+        final int index = hostName.indexOf('.');
+        if (index > 0) {
+            return hostName.substring(0, index);
         }
+        return hostName;
     }
 }

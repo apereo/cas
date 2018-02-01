@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.monitor.config.LdapMonitorConfiguration;
 import org.junit.Test;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
     CasCoreUtilConfiguration.class,
     RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/ldapmonitor.properties"})
+@Slf4j
 public class PooledConnectionFactoryHealthIndicatorTests {
 
     @Autowired

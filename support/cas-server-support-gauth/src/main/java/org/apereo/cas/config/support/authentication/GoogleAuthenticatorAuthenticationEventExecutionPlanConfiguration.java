@@ -4,6 +4,7 @@ import com.warrenstrange.googleauth.GoogleAuthenticator;
 import com.warrenstrange.googleauth.GoogleAuthenticatorConfig;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
@@ -51,6 +52,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("googleAuthenticatorAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
 
     @Lazy

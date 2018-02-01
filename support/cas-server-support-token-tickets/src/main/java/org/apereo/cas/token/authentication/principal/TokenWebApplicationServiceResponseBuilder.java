@@ -1,5 +1,7 @@
 package org.apereo.cas.token.authentication.principal;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -18,6 +20,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class TokenWebApplicationServiceResponseBuilder extends WebApplicationServiceResponseBuilder {
     private static final long serialVersionUID = -2863268279032438778L;
 
@@ -55,12 +58,9 @@ public class TokenWebApplicationServiceResponseBuilder extends WebApplicationSer
      * @param parameters the parameters
      * @return the jwt
      */
+    @SneakyThrows
     protected String generateToken(final Service service, final Map<String, String> parameters) {
-        try {
-            final String ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
-            return this.tokenTicketBuilder.build(ticketId, service);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final String ticketId = parameters.get(CasProtocolConstants.PARAMETER_TICKET);
+        return this.tokenTicketBuilder.build(ticketId, service);
     }
 }

@@ -1,24 +1,27 @@
 package org.apereo.cas.util.http;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.EncodingUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
-
 import java.io.Serializable;
 import java.net.URL;
+import lombok.ToString;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
- * Abstraction for a message that is sent to an http endpoint.
+ * This is {@link HttpMessage}.
  *
  * @author Misagh Moayyed
- * @since 4.1.0
+ * @since 5.0.0
  */
+@Slf4j
+@ToString
+@Getter
+@Setter
 public class HttpMessage implements Serializable {
-    private static final long serialVersionUID = 2015460875654586133L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HttpMessage.class);
+    private static final long serialVersionUID = 2015460875654586133L;
 
     /**
      * The default asynchronous callbacks enabled.
@@ -26,7 +29,9 @@ public class HttpMessage implements Serializable {
     private static final boolean DEFAULT_ASYNCHRONOUS_CALLBACKS_ENABLED = true;
 
     private final URL url;
+
     private final String message;
+
     private int responseCode;
 
     /**
@@ -60,32 +65,8 @@ public class HttpMessage implements Serializable {
      */
     public HttpMessage(final URL url, final String message, final boolean async) {
         this.url = url;
-        this.message = message;
+        this.message = formatOutputMessageInternal(message);
         this.asynchronous = async;
-    }
-
-    public boolean isAsynchronous() {
-        return this.asynchronous;
-    }
-
-    public URL getUrl() {
-        return this.url;
-    }
-
-    public String getMessage() {
-        return this.formatOutputMessageInternal(this.message);
-    }
-
-    public String getContentType() {
-        return this.contentType;
-    }
-
-    public void setContentType(final String type) {
-        this.contentType = type;
-    }
-
-    public int getResponseCode() {
-        return this.responseCode;
     }
 
     /**
@@ -98,23 +79,8 @@ public class HttpMessage implements Serializable {
         try {
             return EncodingUtils.urlEncode(message);
         } catch (final Exception e) {
-            LOGGER.warn("Unable to encode URL", e);
+            LOGGER.warn("Unable to encode URL " + message, e);
         }
         return message;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("url", this.url)
-                .append("message", this.message)
-                .append("asynchronous", this.asynchronous)
-                .append("contentType", this.contentType)
-                .append("responseCode", this.responseCode)
-                .toString();
-    }
-
-    public void setResponseCode(final int responseCode) {
-        this.responseCode = responseCode;
     }
 }

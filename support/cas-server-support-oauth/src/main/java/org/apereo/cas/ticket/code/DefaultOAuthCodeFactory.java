@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.code;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -17,6 +19,8 @@ import java.util.Collection;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
 
     /**
@@ -33,10 +37,6 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
     }
 
-    public DefaultOAuthCodeFactory(final UniqueTicketIdGenerator refreshTokenIdGenerator, final ExpirationPolicy expirationPolicy) {
-        this.oAuthCodeIdGenerator = refreshTokenIdGenerator;
-        this.expirationPolicy = expirationPolicy;
-    }
 
     @Override
     public OAuthCode create(final Service service, final Authentication authentication,

@@ -1,10 +1,10 @@
 package org.apereo.cas.authentication.support;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.ldaptive.auth.AuthenticationResponse;
 import org.ldaptive.auth.AuthenticationResultCode;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -15,17 +15,13 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends DefaultLdapPasswordPolicyHandlingStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RejectResultCodeLdapPasswordPolicyHandlingStrategy.class);
-    
     private final List<AuthenticationResultCode> resultCodes;
 
     public RejectResultCodeLdapPasswordPolicyHandlingStrategy() {
         this(CollectionUtils.wrapList(AuthenticationResultCode.INVALID_CREDENTIAL));
-    }
-    
-    public RejectResultCodeLdapPasswordPolicyHandlingStrategy(final List<AuthenticationResultCode> resultCodes) {
-        this.resultCodes = resultCodes;
     }
 
     @Override
@@ -36,16 +32,17 @@ public class RejectResultCodeLdapPasswordPolicyHandlingStrategy extends DefaultL
         }
         
         if (!response.getResult()) {
-            LOGGER.debug("Unable to support authentication response [{}] with a negative/false result");
+            LOGGER.debug("Unable to support authentication response [{}] with a negative/false result", response);
             return false;
         }
         
         if (this.resultCodes.contains(response.getAuthenticationResultCode())) {
-            LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]", 
+            LOGGER.debug("Unable to support authentication response [{}] with a blacklisted authentication result code [{}]",
+                    response,
                     response.getAuthenticationResultCode());
             return false;
         }
-        LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", getClass().getSimpleName());
+        LOGGER.debug("Authentication response [{}] is supported by password policy handling strategy [{}]", response, getClass().getSimpleName());
         return true;
     }
 }

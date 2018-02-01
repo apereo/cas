@@ -1,5 +1,7 @@
 package org.apereo.cas.tokens;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.ServicesManager;
@@ -7,8 +9,6 @@ import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEn
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.TokenTicketBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,20 +22,15 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class JWTTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
-    private static final Logger LOGGER = LoggerFactory.getLogger(JWTTicketGrantingTicketResourceEntityResponseFactory.class);
-    
     private final ServicesManager servicesManager;
 
     /**
      * The ticket builder that produces tokens.
      */
     private final TokenTicketBuilder tokenTicketBuilder;
-    
-    public JWTTicketGrantingTicketResourceEntityResponseFactory(final ServicesManager servicesManager, final TokenTicketBuilder tokenTicketBuilder) {
-        this.servicesManager = servicesManager;
-        this.tokenTicketBuilder = tokenTicketBuilder;
-    }
 
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
@@ -49,7 +44,7 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
         }
         
         final String jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
-        LOGGER.debug("Generated JWT [{}] for service [{}]", jwt);
+        LOGGER.debug("Generated JWT [{}]", jwt);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);

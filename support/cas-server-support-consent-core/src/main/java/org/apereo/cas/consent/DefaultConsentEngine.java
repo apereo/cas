@@ -1,12 +1,12 @@
 package org.apereo.cas.consent;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -18,19 +18,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConsentEngine.class);
+
     private final ConsentRepository consentRepository;
     private final ConsentDecisionBuilder consentDecisionBuilder;
-
-    public DefaultConsentEngine(final ConsentRepository consentRepository,
-                                final ConsentDecisionBuilder consentDecisionBuilder) {
-        this.consentRepository = consentRepository;
-        this.consentDecisionBuilder = consentDecisionBuilder;
-    }
-
 
     @Override
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,

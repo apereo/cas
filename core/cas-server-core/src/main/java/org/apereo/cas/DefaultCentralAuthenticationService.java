@@ -3,6 +3,7 @@ package org.apereo.cas;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
@@ -48,8 +49,7 @@ import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
@@ -69,35 +69,20 @@ import java.util.Map;
  * @since 3.0.0
  */
 @Transactional(transactionManager = "ticketTransactionManager")
+@Slf4j
 public class DefaultCentralAuthenticationService extends AbstractCentralAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCentralAuthenticationService.class);
+
 
     private static final long serialVersionUID = -8943828074939533986L;
 
-    /**
-     * Build the central authentication service implementation.
-     *
-     * @param ticketRegistry              the tickets registry.
-     * @param ticketFactory               the ticket factory
-     * @param servicesManager             the services manager.
-     * @param logoutManager               the logout manager.
-     * @param selectionStrategies         The service selection strategy during validation events.
-     * @param authenticationPolicyFactory Authentication policy that uses a service context to
-     *                                    produce stateful security policies to apply when authenticating credentials.
-     * @param principalFactory            principal factory to create principal objects
-     * @param cipherExecutor              Cipher executor to handle ticket validation.
-     */
-    public DefaultCentralAuthenticationService(final TicketRegistry ticketRegistry,
-                                               final TicketFactory ticketFactory,
-                                               final ServicesManager servicesManager,
-                                               final LogoutManager logoutManager,
-                                               final AuthenticationServiceSelectionPlan selectionStrategies,
-                                               final ContextualAuthenticationPolicyFactory<ServiceContext> authenticationPolicyFactory,
-                                               final PrincipalFactory principalFactory,
-                                               final CipherExecutor<String, String> cipherExecutor) {
-        super(ticketRegistry, ticketFactory, servicesManager, logoutManager,
-            selectionStrategies, authenticationPolicyFactory,
-            principalFactory, cipherExecutor);
+    public DefaultCentralAuthenticationService(final ApplicationEventPublisher applicationEventPublisher,
+                                               final TicketRegistry ticketRegistry, final ServicesManager servicesManager,
+                                               final LogoutManager logoutManager, final TicketFactory ticketFactory,
+                                               final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies,
+                                               final ContextualAuthenticationPolicyFactory<ServiceContext> serviceContextAuthenticationPolicyFactory,
+                                               final PrincipalFactory principalFactory, final CipherExecutor<String, String> cipherExecutor) {
+        super(applicationEventPublisher, ticketRegistry, servicesManager, logoutManager, ticketFactory,
+            authenticationRequestServiceSelectionStrategies, serviceContextAuthenticationPolicyFactory, principalFactory, cipherExecutor);
     }
 
     @Audit(
@@ -302,7 +287,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Located registered service definition [{}] from [{}] to handle validation request", registeredService, selectedService);
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(selectedService, registeredService);
 
-            final TicketGrantingTicket root = serviceTicket.getGrantingTicket().getRoot();
+            final TicketGrantingTicket root = serviceTicket.getTicketGrantingTicket().getRoot();
             final Authentication authentication = getAuthenticationSatisfiedByPolicy(root.getAuthentication(),
                 new ServiceContext(selectedService, registeredService));
             final Principal principal = authentication.getPrincipal();
@@ -330,7 +315,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             final Assertion assertion = new DefaultAssertionBuilder(finalAuthentication)
                 .with(selectedService)
-                .with(serviceTicket.getGrantingTicket().getChainedAuthentications())
+                .with(serviceTicket.getTicketGrantingTicket().getChainedAuthentications())
                 .with(serviceTicket.isFromNewLogin())
                 .build();
             doPublishEvent(new CasServiceTicketValidatedEvent(this, serviceTicket, assertion));

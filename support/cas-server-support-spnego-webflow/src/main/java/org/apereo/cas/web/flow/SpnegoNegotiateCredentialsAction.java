@@ -1,10 +1,9 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.spnego.util.SpnegoConstants;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -31,9 +30,10 @@ import java.util.List;
  * @see <a href="http://ietfreport.isoc.org/idref/rfc4559/#page-2">RFC 4559</a>
  * @since 3.1
  */
+@Slf4j
 public class SpnegoNegotiateCredentialsAction extends AbstractAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SpnegoNegotiateCredentialsAction.class);
+
 
     /** Whether this is using the NTLM protocol or not. */
     private final boolean ntlm;
@@ -79,8 +79,6 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
      * @since 4.1
      */
     public SpnegoNegotiateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
-        super();
-
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
         this.mixedModeAuthentication = mixedModeAuthenticationEnabled;

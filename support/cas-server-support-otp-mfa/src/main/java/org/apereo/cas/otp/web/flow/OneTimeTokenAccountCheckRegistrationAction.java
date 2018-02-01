@@ -1,11 +1,11 @@
 package org.apereo.cas.otp.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
@@ -17,21 +17,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OneTimeTokenAccountCheckRegistrationAction extends AbstractAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OneTimeTokenAccountCheckRegistrationAction.class);
-
     private final OneTimeTokenCredentialRepository repository;
     private final String label;
     private final String issuer;
 
-    public OneTimeTokenAccountCheckRegistrationAction(final OneTimeTokenCredentialRepository repository,
-                                                      final String label,
-                                                      final String issuer) {
-        this.repository = repository;
-        this.label = label;
-        this.issuer = issuer;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

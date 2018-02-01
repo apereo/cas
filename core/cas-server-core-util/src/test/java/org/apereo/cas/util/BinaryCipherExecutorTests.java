@@ -1,5 +1,6 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.util.cipher.BaseBinaryCipherExecutor;
 import org.junit.Rule;
@@ -7,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 
 import static org.junit.Assert.*;
 
@@ -16,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class BinaryCipherExecutorTests {
 
     @Rule
@@ -40,7 +43,7 @@ public class BinaryCipherExecutorTests {
                 "1234", 512, 16) {
         };
 
-        this.thrown.expect(RuntimeException.class);
+        this.thrown.expect(InvalidKeyException.class);
         cc.encode(value.getBytes(StandardCharsets.UTF_8));
     }
 

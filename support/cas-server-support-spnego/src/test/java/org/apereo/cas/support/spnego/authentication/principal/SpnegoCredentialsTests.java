@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
@@ -14,13 +15,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Slf4j
 public class SpnegoCredentialsTests {
 
     @Test
     public void verifyToStringWithNoPrincipal() {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
-
-        assertTrue(credentials.toString().contains("unknown"));
+        assertTrue(credentials.getId().contains("unknown"));
     }
 
     @Test
@@ -28,7 +29,7 @@ public class SpnegoCredentialsTests {
         final SpnegoCredential credentials = new SpnegoCredential(new byte[] {});
         final Principal principal = new DefaultPrincipalFactory().createPrincipal("test");
         credentials.setPrincipal(principal);
-        assertEquals("test", credentials.toString());
+        assertEquals("test", credentials.getId());
     }
 
     /**
@@ -41,7 +42,7 @@ public class SpnegoCredentialsTests {
         try {
             set.add(credential);
         } catch(final Exception e) {
-            fail(e.getMessage());
+            throw new AssertionError(e.getMessage());
         }
     }
 

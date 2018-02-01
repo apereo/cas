@@ -1,5 +1,7 @@
 package org.apereo.cas.monitor;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 
@@ -15,6 +17,8 @@ import java.util.concurrent.TimeoutException;
  * @author Marvin S. Addison
  * @since 3.5.0
  */
+@Slf4j
+@AllArgsConstructor
 public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicator {
 
     /**
@@ -26,19 +30,6 @@ public abstract class AbstractPoolHealthIndicator extends AbstractHealthIndicato
      * Executor that performs pool resource validation.
      */
     private final ExecutorService executor;
-
-    /**
-     * Creates a new instance.
-     *
-     * @param executorService executor service responsible for pool resource validation.
-     * @param maxWait         Set the maximum amount of time wait while validating pool resources.
-     *                        If the pool defines a maximum time to wait for a resource, this property
-     *                        should be set less than that value.
-     */
-    public AbstractPoolHealthIndicator(final long maxWait, final ExecutorService executorService) {
-        this.maxWait = maxWait;
-        this.executor = executorService;
-    }
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) {

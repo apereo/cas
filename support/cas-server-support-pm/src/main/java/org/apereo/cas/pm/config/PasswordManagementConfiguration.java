@@ -1,6 +1,9 @@
 package org.apereo.cas.pm.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
@@ -11,8 +14,8 @@ import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -32,9 +35,15 @@ import javax.annotation.PostConstruct;
  */
 @Configuration("passwordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class PasswordManagementConfiguration {
+@Slf4j
+public class PasswordManagementConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private AuditResourceResolver returnValueResourceResolver;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PasswordManagementConfiguration.class);
+    @Autowired
+    @Qualifier("authenticationActionResolver")
+    private AuditActionResolver authenticationActionResolver;
     
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,11 +72,9 @@ public class PasswordManagementConfiguration {
     @Bean
     public PasswordValidationService passwordValidationService() {
         final String policyPattern = casProperties.getAuthn().getPm().getPolicyPattern();
-        return (credential, bean) -> {
-            return StringUtils.hasText(bean.getPassword())
-                && bean.getPassword().equals(bean.getConfirmedPassword())
-                && bean.getPassword().matches(policyPattern);
-        };
+        return (credential, bean) -> StringUtils.hasText(bean.getPassword())
+            && bean.getPassword().equals(bean.getConfirmedPassword())
+            && bean.getPassword().matches(policyPattern);
     }
     
     @ConditionalOnMissingBean(name = "passwordChangeService")
@@ -106,6 +113,12 @@ public class PasswordManagementConfiguration {
                 LOGGER.warn("CAS is unable to send password-reset sms messages given no settings are defined to account for sms providers, etc");
             }
         }
+    }
+
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditActionResolver("CHANGE_PASSWORD_ACTION_RESOLVER", this.authenticationActionResolver);
+        plan.registerAuditResourceResolver("CHANGE_PASSWORD_RESOURCE_RESOLVER", returnValueResourceResolver);
     }
 }
 

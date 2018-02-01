@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
@@ -20,9 +22,8 @@ import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomca
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatHttpProxyProperties;
 import org.apereo.cas.configuration.model.core.web.tomcat.CasEmbeddedApacheTomcatSslValveProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.util.ResourceUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -55,9 +56,9 @@ import java.nio.charset.StandardCharsets;
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
 @AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-public class CasEmbeddedContainerTomcatConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasEmbeddedContainerTomcatConfiguration.class);
 
+@Slf4j
+public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
     private ServerProperties serverProperties;
 
@@ -107,17 +108,16 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final Resource res = casProperties.getServer().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
             LOGGER.debug("Configuring rewrite valve at [{}]", res);
-
+                         
             final RewriteValve valve = new RewriteValve() {
                 @Override
+                @SneakyThrows
                 protected synchronized void startInternal() throws LifecycleException {
                     super.startInternal();
                     try (InputStream is = res.getInputStream();
                          InputStreamReader isr = new InputStreamReader(is, StandardCharsets.UTF_8);
                          BufferedReader buffer = new BufferedReader(isr)) {
                         parse(buffer);
-                    } catch (final Exception e) {
-                        throw new RuntimeException(e.getMessage(), e);
                     }
                 }
             };
@@ -214,7 +214,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
             ajpConnector.setScheme(ajp.getScheme());
-            ajpConnector.setAsyncTimeout(ajp.getAsyncTimeout());
+            ajpConnector.setAsyncTimeout(Beans.newDuration(ajp.getAsyncTimeout()).toMillis());
             ajpConnector.setEnableLookups(ajp.isEnableLookups());
             ajpConnector.setMaxPostSize(ajp.getMaxPostSize());
             ajpConnector.addUpgradeProtocol(new Http2Protocol());
@@ -235,17 +235,23 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
+    /**
+     * Add SSLValve which reads X509 certificate from HTTP header.
+     * SSLValve javadoc says it should be an engine valve but it doesn't work
+     * so adding to context instead.
+     * @param tomcat tomcat container factory
+     */
     private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
         final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getSslValve();
 
         if (valveConfig.isEnabled()) {
-            LOGGER.debug("Adding SSLValve to engine of the embedded tomcat container...");
+            LOGGER.debug("Adding SSLValve to context of the embedded tomcat container...");
             final SSLValve valve = new SSLValve();
             valve.setSslCipherHeader(valveConfig.getSslCipherHeader());
             valve.setSslCipherUserKeySizeHeader(valveConfig.getSslCipherUserKeySizeHeader());
             valve.setSslClientCertHeader(valveConfig.getSslClientCertHeader());
             valve.setSslSessionIdHeader(valveConfig.getSslSessionIdHeader());
-            tomcat.addEngineValves(valve);
+            tomcat.addContextValves(valve);
         }
     }
 

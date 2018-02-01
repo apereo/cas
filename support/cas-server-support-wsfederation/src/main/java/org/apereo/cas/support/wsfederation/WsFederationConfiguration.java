@@ -1,15 +1,13 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
-
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
@@ -17,6 +15,8 @@ import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This class gathers configuration information for the WS Federation Identity Provider.
@@ -25,25 +25,26 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
+@Getter
+@Setter
 public class WsFederationConfiguration implements Serializable {
-    private static final long serialVersionUID = 2310859477512242659L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WsFederationConfiguration.class);
+    private static final long serialVersionUID = 2310859477512242659L;
 
     /**
      * Describes how the WS-FED principal resolution machinery
      * should process attributes from WS-FED.
      */
     public enum WsFedPrincipalResolutionAttributesType {
+
         /**
          * Cas ws fed principal resolution attributes type.
          */
-        CAS,
-        /**
+        CAS, /**
          * Wsfed ws fed principal resolution attributes type.
          */
-        WSFED,
-        /**
+        WSFED, /**
          * Both ws fed principal resolution attributes type.
          */
         BOTH
@@ -81,95 +82,16 @@ public class WsFederationConfiguration implements Serializable {
         return StringUtils.isBlank(this.name) ? getClass().getSimpleName() : this.name;
     }
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
     public void initialize() {
-        this.signingCertificateResources
-                .stream()
-                .forEach(Unchecked.consumer(r -> {
-                    try {
-                        final FileWatcherService watcher = new FileWatcherService(r.getFile(),
-                            file -> createSigningWallet(this.signingCertificateResources));
-                        watcher.start(getClass().getSimpleName());
-                    } catch (final Exception e) {
-                        LOGGER.trace(e.getMessage(), e);
-                    }
-                }));
+        this.signingCertificateResources.stream().forEach(Unchecked.consumer(r -> {
+            try {
+                final FileWatcherService watcher = new FileWatcherService(r.getFile(), file -> createSigningWallet(this.signingCertificateResources));
+                watcher.start(getClass().getSimpleName());
+            } catch (final Exception e) {
+                LOGGER.trace(e.getMessage(), e);
+            }
+        }));
         createSigningWallet(this.signingCertificateResources);
-    }
-
-    /**
-     * gets the identity of the IdP.
-     *
-     * @return the identity
-     */
-    public String getIdentityAttribute() {
-        return this.identityAttribute;
-    }
-
-    /**
-     * sets the identity of the IdP.
-     *
-     * @param identityAttribute the identity
-     */
-    public void setIdentityAttribute(final String identityAttribute) {
-        this.identityAttribute = identityAttribute;
-    }
-
-    /**
-     * gets the identity provider identifier.
-     *
-     * @return the identifier
-     */
-    public String getIdentityProviderIdentifier() {
-        return this.identityProviderIdentifier;
-    }
-
-    /**
-     * sets the identity provider identifier.
-     *
-     * @param identityProviderIdentifier the identifier.
-     */
-    public void setIdentityProviderIdentifier(final String identityProviderIdentifier) {
-        this.identityProviderIdentifier = identityProviderIdentifier;
-    }
-
-    /**
-     * gets the identity provider url.
-     *
-     * @return the url
-     */
-    public String getIdentityProviderUrl() {
-        return this.identityProviderUrl;
-    }
-
-    /**
-     * sets the identity provider url.
-     *
-     * @param identityProviderUrl the url
-     */
-    public void setIdentityProviderUrl(final String identityProviderUrl) {
-        this.identityProviderUrl = identityProviderUrl;
-    }
-
-    /**
-     * gets the relying part identifier.
-     *
-     * @return the identifier
-     */
-    public String getRelyingPartyIdentifier() {
-        return this.relyingPartyIdentifier;
-    }
-
-    /**
-     * sets the relying party identifier.
-     *
-     * @param relyingPartyIdentifier the identifier
-     */
-    public void setRelyingPartyIdentifier(final String relyingPartyIdentifier) {
-        this.relyingPartyIdentifier = relyingPartyIdentifier;
     }
 
     /**
@@ -185,15 +107,6 @@ public class WsFederationConfiguration implements Serializable {
     }
 
     /**
-     * gets the list of signing certificate files.
-     *
-     * @return the list of files
-     */
-    public List<Resource> getSigningCertificateResources() {
-        return this.signingCertificateResources;
-    }
-
-    /**
      * sets the signing certs.
      *
      * @param signingCertificateResources a list of certificate files to read in.
@@ -203,88 +116,8 @@ public class WsFederationConfiguration implements Serializable {
         createSigningWallet(this.signingCertificateResources);
     }
 
-    public void setSigningCertificateResources(final List<Resource> signingCertificateResources) {
-        this.signingCertificateResources = signingCertificateResources;
-    }
-
-    public boolean isAutoRedirect() {
-        return autoRedirect;
-    }
-
-    public void setAutoRedirect(final boolean autoRedirect) {
-        this.autoRedirect = autoRedirect;
-    }
-
     private void createSigningWallet(final List<Resource> signingCertificateFiles) {
         this.signingWallet = signingCertificateFiles.stream().map(WsFederationConfiguration::getSigningCredential).collect(Collectors.toList());
-    }
-
-    /**
-     * gets the tolerance.
-     *
-     * @return the tolerance in milliseconds
-     */
-    public long getTolerance() {
-        return this.tolerance;
-    }
-
-    /**
-     * sets the tolerance of the validity of the timestamp token.
-     *
-     * @param tolerance the tolerance in milliseconds
-     */
-    public void setTolerance(final long tolerance) {
-        this.tolerance = tolerance;
-    }
-
-    /**
-     * gets the attributeMutator.
-     *
-     * @return an attributeMutator
-     */
-    public WsFederationAttributeMutator getAttributeMutator() {
-        return this.attributeMutator;
-    }
-
-    /**
-     * sets the attributeMutator.
-     *
-     * @param attributeMutator an attributeMutator
-     */
-    public void setAttributeMutator(final WsFederationAttributeMutator attributeMutator) {
-        this.attributeMutator = attributeMutator;
-    }
-
-    public WsFedPrincipalResolutionAttributesType getAttributesType() {
-        return this.attributesType;
-    }
-
-    public void setAttributesType(final WsFedPrincipalResolutionAttributesType attributesType) {
-        this.attributesType = attributesType;
-    }
-
-    public Resource getEncryptionPrivateKey() {
-        return encryptionPrivateKey;
-    }
-
-    public void setEncryptionPrivateKey(final Resource encryptionPrivateKey) {
-        this.encryptionPrivateKey = encryptionPrivateKey;
-    }
-
-    public Resource getEncryptionCertificate() {
-        return encryptionCertificate;
-    }
-
-    public void setEncryptionCertificate(final Resource encryptionCertificate) {
-        this.encryptionCertificate = encryptionCertificate;
-    }
-
-    public String getEncryptionPrivateKeyPassword() {
-        return encryptionPrivateKeyPassword;
-    }
-
-    public void setEncryptionPrivateKeyPassword(final String encryptionPrivateKeyPassword) {
-        this.encryptionPrivateKeyPassword = encryptionPrivateKeyPassword;
     }
 
     /**

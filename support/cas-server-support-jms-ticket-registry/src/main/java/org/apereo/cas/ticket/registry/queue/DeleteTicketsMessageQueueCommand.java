@@ -3,10 +3,9 @@ package org.apereo.cas.ticket.registry.queue;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link DeleteTicketsMessageQueueCommand}.
@@ -15,8 +14,9 @@ import org.slf4j.LoggerFactory;
  * @since 5.2.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
 public class DeleteTicketsMessageQueueCommand extends BaseMessageQueueCommand {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DeleteTicketsMessageQueueCommand.class);
+
 
     @JsonCreator
     public DeleteTicketsMessageQueueCommand(@JsonProperty("id") final StringBean id) {
@@ -26,7 +26,7 @@ public class DeleteTicketsMessageQueueCommand extends BaseMessageQueueCommand {
 
     @Override
     public void execute(final TicketRegistry registry) {
-        LOGGER.debug("Executing queue command on ticket registry id [{}] to delete tickets");
+        LOGGER.debug("Executing queue command on ticket registry id [{}] to delete tickets", getId().getId());
         registry.deleteAll();
     }
 }

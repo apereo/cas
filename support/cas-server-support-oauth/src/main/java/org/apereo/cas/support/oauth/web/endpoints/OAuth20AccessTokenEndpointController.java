@@ -1,6 +1,8 @@
 package org.apereo.cas.support.oauth.web.endpoints;
 
 import com.google.common.base.Supplier;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -29,8 +31,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,8 +50,9 @@ import java.util.Optional;
  * @author Jerome Leleu
  * @since 3.5.0
  */
+@Slf4j
 public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AccessTokenEndpointController.class);
+
 
     private final OAuth20TokenGenerator accessTokenGenerator;
     private final AccessTokenResponseGenerator accessTokenResponseGenerator;
@@ -73,8 +74,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
                                                 final ExpirationPolicy accessTokenExpirationPolicy,
                                                 final Collection<BaseAccessTokenGrantRequestExtractor> accessTokenGrantRequestExtractors) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory,
-                principalFactory, webApplicationServiceServiceFactory,
-                scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
+            principalFactory, webApplicationServiceServiceFactory,
+            scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator);
         this.accessTokenGenerator = accessTokenGenerator;
         this.accessTokenResponseGenerator = accessTokenResponseGenerator;
         this.accessTokenExpirationPolicy = accessTokenExpirationPolicy;
@@ -89,36 +90,32 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      * @throws Exception the exception
      */
     @PostMapping(path = {OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
-            OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
+        OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
+    @SneakyThrows
     public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        try {
-            response.setContentType(MediaType.TEXT_PLAIN_VALUE);
+        response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 
-            if (!verifyAccessTokenRequest(request, response)) {
-                LOGGER.error("Access token request verification failed");
-                OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
-                return;
-            }
-
-            final AccessTokenRequestDataHolder responseHolder;
-            try {
-                responseHolder = examineAndExtractAccessTokenGrantRequest(request, response);
-                LOGGER.debug("Creating access token for [{}]", responseHolder);
-            } catch (final Exception e) {
-                LOGGER.error("Could not identify and extract access token request", e);
-                OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
-                return;
-            }
-
-            final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-            final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(responseHolder);
-            LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
-            generateAccessTokenResponse(request, response, responseHolder, context, accessToken.getKey(), accessToken.getValue());
-            response.setStatus(HttpServletResponse.SC_OK);
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
+        if (!verifyAccessTokenRequest(request, response)) {
+            LOGGER.error("Access token request verification failed");
+            OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
+            return;
         }
+
+        final AccessTokenRequestDataHolder responseHolder;
+        try {
+            responseHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+            LOGGER.debug("Creating access token for [{}]", responseHolder);
+        } catch (final Exception e) {
+            LOGGER.error("Could not identify and extract access token request", e);
+            OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
+            return;
+        }
+
+        final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(responseHolder);
+        LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
+        generateAccessTokenResponse(request, response, responseHolder, context, accessToken.getKey(), accessToken.getValue());
+        response.setStatus(HttpServletResponse.SC_OK);
     }
 
     /**
@@ -129,7 +126,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
      * @throws Exception the exception
      */
     @GetMapping(path = {OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.ACCESS_TOKEN_URL,
-            OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
+        OAuth20Constants.BASE_OAUTH20_URL + '/' + OAuth20Constants.TOKEN_URL})
     public void handleGetRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         handleRequest(request, response);
     }
@@ -145,19 +142,19 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         LOGGER.debug("Located response type as [{}]", type);
 
         this.accessTokenResponseGenerator.generate(request, response,
-                responseHolder.getRegisteredService(),
-                responseHolder.getService(),
-                accessToken, refreshToken,
-                accessTokenExpirationPolicy.getTimeToLive(), type);
+            responseHolder.getRegisteredService(),
+            responseHolder.getService(),
+            accessToken, refreshToken,
+            accessTokenExpirationPolicy.getTimeToLive(), type);
     }
 
     private AccessTokenRequestDataHolder examineAndExtractAccessTokenGrantRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
         return this.accessTokenGrantRequestExtractors.stream()
-                .filter(ext -> ext.supports(request))
-                .findFirst()
-                .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Request is not supported"))
-                .extract(request, response);
+            .filter(ext -> ext.supports(request))
+            .findFirst()
+            .orElseThrow((Supplier<RuntimeException>) () -> new UnsupportedOperationException("Request is not supported"))
+            .extract(request, response);
     }
 
     /**
@@ -210,7 +207,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         LOGGER.debug("Received grant type [{}] with client id [{}]", grantType, clientId);
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
         return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
-                && this.validator.checkServiceValid(registeredService);
+            && this.validator.checkServiceValid(registeredService);
     }
 
     private boolean verifyAccessForGrantPassword(final HttpServletRequest request, final String grantType, final UserProfile uProfile) {
@@ -219,13 +216,13 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByClientId(this.servicesManager, clientId);
 
         return this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
-                && this.validator.checkServiceValid(registeredService);
+            && this.validator.checkServiceValid(registeredService);
     }
 
     private boolean verifyAccessForGrantRefreshToken(final HttpServletRequest request, final UserProfile uProfile) {
         if (!this.validator.checkParameterExist(request, OAuth20Constants.REFRESH_TOKEN)
-                || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
-                || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
+            || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_ID)
+            || !this.validator.checkParameterExist(request, OAuth20Constants.CLIENT_SECRET)) {
             return false;
         }
         final String token = request.getParameter(OAuth20Constants.REFRESH_TOKEN);
@@ -253,8 +250,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         LOGGER.debug("Received grant type [{}] with client id [{}] and redirect URI [{}]", grantType, clientId, redirectUri);
 
         return this.validator.checkParameterExist(request, OAuth20Constants.REDIRECT_URI)
-                && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
-                && this.validator.checkCallbackValid(registeredService, redirectUri);
+            && this.validator.checkParameterExist(request, OAuth20Constants.CODE)
+            && this.validator.checkCallbackValid(registeredService, redirectUri);
     }
 
     /**

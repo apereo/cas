@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
@@ -8,8 +10,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -20,19 +20,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationSetTrustAction.class);
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
     private final TrustedDevicesMultifactorProperties trustedProperties;
 
-    public MultifactorAuthenticationSetTrustAction(final MultifactorAuthenticationTrustStorage storage,
-                                                   final TrustedDevicesMultifactorProperties trustedProperties) {
-        this.storage = storage;
-        this.trustedProperties = trustedProperties;
-    }
 
     @Override
     public Event doExecute(final RequestContext requestContext) {

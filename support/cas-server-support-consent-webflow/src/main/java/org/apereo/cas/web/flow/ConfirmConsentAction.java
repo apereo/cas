@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
@@ -22,6 +23,7 @@ import java.time.temporal.ChronoUnit;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class ConfirmConsentAction extends AbstractConsentAction {
 
     public ConfirmConsentAction(final ServicesManager servicesManager,

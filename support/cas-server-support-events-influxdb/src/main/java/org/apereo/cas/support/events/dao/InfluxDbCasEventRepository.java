@@ -1,5 +1,8 @@
 package org.apereo.cas.support.events.dao;
 
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.influxdb.InfluxDbConnectionFactory;
 import org.influxdb.dto.Point;
 import org.influxdb.dto.QueryResult;
@@ -19,14 +22,12 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
     private static final String MEASUREMENT = "InfluxDbCasEventRepositoryCasEvents";
 
     private final InfluxDbConnectionFactory influxDbConnectionFactory;
-
-    public InfluxDbCasEventRepository(final InfluxDbConnectionFactory influxDbConnectionFactory) {
-        this.influxDbConnectionFactory = influxDbConnectionFactory;
-    }
 
     @Override
     public void save(final CasEvent event) {
@@ -88,12 +89,11 @@ public class InfluxDbCasEventRepository extends AbstractCasEventRepository {
      * Stops the database client.
      */
     @PreDestroy
+    @SneakyThrows
     public void destroy() {
-        try {
-            LOGGER.debug("Shutting down Couchbase");
-            this.influxDbConnectionFactory.close();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        LOGGER.debug("Shutting down Couchbase");
+        this.influxDbConnectionFactory.close();
+
     }
 }

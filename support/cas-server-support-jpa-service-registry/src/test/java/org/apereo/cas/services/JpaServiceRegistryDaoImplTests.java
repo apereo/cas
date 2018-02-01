@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
@@ -21,6 +22,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -45,6 +47,7 @@ import static org.junit.Assert.*;
     JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
     CasCoreServicesConfiguration.class})
 @DirtiesContext
+@Slf4j
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
@@ -128,7 +131,7 @@ public class JpaServiceRegistryDaoImplTests {
         r.setTheme("theme");
         r.setDescription("description");
 
-        final Map<String, RegisteredServiceProperty> propertyMap = new HashMap<>();
+        final Map propertyMap = new HashMap<>();
 
         final DefaultRegisteredServiceProperty property = new DefaultRegisteredServiceProperty();
         final Set<String> values = new HashSet<>();
@@ -152,6 +155,27 @@ public class JpaServiceRegistryDaoImplTests {
         final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
         assertEquals(2, r2.getProperties().size());
 
+    }
+
+
+    @Test
+    public void verifyRegisteredServiceContacts() {
+        final RegexRegisteredService r = new RegexRegisteredService();
+        r.setName("testContacts");
+        r.setServiceId("testContacts");
+
+        final List contacts = new ArrayList<>();
+        final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
+        contact.setDepartment("department");
+        contact.setId(1234);
+        contact.setName("ContactName");
+        contact.setPhone("123-456-789");
+        contacts.add(contact);
+        r.setContacts(contacts);
+
+        this.serviceRegistryDao.save(r);
+        final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
+        assertEquals(1, r2.getContacts().size());
     }
 
     @Test

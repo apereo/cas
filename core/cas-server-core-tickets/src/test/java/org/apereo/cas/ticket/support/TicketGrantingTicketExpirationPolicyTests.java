@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
@@ -27,6 +28,7 @@ import static org.junit.Assert.*;
  */
 @RunWith(JUnit4.class)
 @DirtiesContext
+@Slf4j
 public class TicketGrantingTicketExpirationPolicyTests {
 
     private static final long HARD_TIMEOUT = 2;

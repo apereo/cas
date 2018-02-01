@@ -1,8 +1,10 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.services.ServicesManager;
+import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -18,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casDiscoveryProfileConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasDiscoveryProfileConfiguration {
 
     @Autowired
@@ -29,9 +32,13 @@ public class CasDiscoveryProfileConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
+    @Autowired(required = false)
+    @Qualifier("builtClients")
+    private Clients builtClients;
+
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(this.servicesManager);
+        return new CasServerProfileRegistrar(this.servicesManager, casProperties, this.builtClients);
     }
 }

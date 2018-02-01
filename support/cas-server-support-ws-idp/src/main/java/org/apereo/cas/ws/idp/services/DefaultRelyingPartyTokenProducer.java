@@ -1,5 +1,8 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.cxf.binding.soap.SoapFault;
 import org.apache.cxf.fediz.core.exception.ProcessingException;
@@ -15,14 +18,11 @@ import org.apereo.cas.ws.idp.WSFederationClaims;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.web.WSFederationRequest;
 import org.jasig.cas.client.validation.Assertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
@@ -35,17 +35,11 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRelyingPartyTokenProducer.class);
-
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
-
-    public DefaultRelyingPartyTokenProducer(final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
-                                            final CipherExecutor<String, String> credentialCipherExecutor) {
-        this.clientBuilder = securityTokenServiceClientBuilder;
-        this.credentialCipherExecutor = credentialCipherExecutor;
-    }
 
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
@@ -57,16 +51,13 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         return serializeRelyingPartyToken(rpToken);
     }
 
+    @SneakyThrows
     private static String serializeRelyingPartyToken(final Element rpToken) {
-        try {
-            final StringWriter sw = new StringWriter();
-            final Transformer t = TransformerFactory.newInstance().newTransformer();
-            t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
-            t.transform(new DOMSource(rpToken), new StreamResult(sw));
-            return sw.toString();
-        } catch (final TransformerException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final StringWriter sw = new StringWriter();
+        final Transformer t = TransformerFactory.newInstance().newTransformer();
+        t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, BooleanUtils.toStringYesNo(Boolean.TRUE));
+        t.transform(new DOMSource(rpToken), new StreamResult(sw));
+        return sw.toString();
     }
 
     private static void mapAttributesToRequestedClaims(final WSFederationRegisteredService service, final SecurityTokenServiceClient sts,
@@ -112,7 +103,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-
+    @SneakyThrows
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
                                                  final Assertion assertion) {
@@ -127,8 +118,6 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
             }
             throw ex;
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 }

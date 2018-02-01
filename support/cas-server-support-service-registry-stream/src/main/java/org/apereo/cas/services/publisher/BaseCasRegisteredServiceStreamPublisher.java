@@ -1,13 +1,13 @@
 package org.apereo.cas.services.publisher;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 
 /**
@@ -16,17 +16,13 @@ import org.springframework.context.ApplicationEvent;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public abstract class BaseCasRegisteredServiceStreamPublisher implements CasRegisteredServiceStreamPublisher {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseCasRegisteredServiceStreamPublisher.class);
-
     /**
      * Publisher id.
      */
     protected final StringBean publisherId;
-
-    public BaseCasRegisteredServiceStreamPublisher(final StringBean publisherId) {
-        this.publisherId = publisherId;
-    }
 
     @Override
     public final void publish(final RegisteredService service, final ApplicationEvent event) {

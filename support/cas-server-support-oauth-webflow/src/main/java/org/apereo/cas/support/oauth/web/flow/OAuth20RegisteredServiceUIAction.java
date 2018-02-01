@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -20,17 +22,13 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20RegisteredServiceUIAction extends AbstractAction implements Serializable {
     private static final long serialVersionUID = 5588216693657081923L;
     private final ServicesManager servicesManager;
 
     private final AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
-
-    public OAuth20RegisteredServiceUIAction(final ServicesManager servicesManager,
-                                            final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
-        this.servicesManager = servicesManager;
-        this.serviceSelectionStrategy = serviceSelectionStrategy;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

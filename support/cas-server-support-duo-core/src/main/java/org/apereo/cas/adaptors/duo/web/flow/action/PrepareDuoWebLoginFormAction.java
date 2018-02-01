@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.duo.web.flow.action;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.duo.authn.DuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DuoCredential;
 import org.apereo.cas.adaptors.duo.authn.DuoMultifactorAuthenticationProvider;
@@ -20,13 +22,10 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class PrepareDuoWebLoginFormAction extends AbstractAction {
-
     private final VariegatedMultifactorAuthenticationProvider provider;
-
-    public PrepareDuoWebLoginFormAction(final VariegatedMultifactorAuthenticationProvider provider) {
-        this.provider = provider;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

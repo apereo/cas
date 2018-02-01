@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -10,8 +11,6 @@ import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeExcepti
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.IncorrectResultSizeDataAccessException;
 
@@ -19,6 +18,7 @@ import javax.security.auth.login.AccountNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -34,21 +34,20 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(QueryDatabaseAuthenticationHandler.class);
 
     private final String sql;
     private final String fieldPassword;
     private final String fieldExpired;
     private final String fieldDisabled;
-    private final Map<String, Collection<String>> principalAttributeMap;
+    private final Map<String, Object> principalAttributeMap;
 
     public QueryDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager,
                                               final PrincipalFactory principalFactory,
                                               final Integer order, final DataSource dataSource, final String sql,
                                               final String fieldPassword, final String fieldExpired, final String fieldDisabled,
-                                              final Map<String, Collection<String>> attributes) {
+                                              final Map<String, Object> attributes) {
         super(name, servicesManager, principalFactory, order, dataSource);
         this.sql = sql;
         this.fieldPassword = fieldPassword;
@@ -89,11 +88,12 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
                     throw new AccountPasswordMustChangeException("Password has expired");
                 }
             }
-            this.principalAttributeMap.forEach((key, attributeNames) -> {
+            this.principalAttributeMap.forEach((key, names) -> {
                 final Object attribute = dbFields.get(key);
 
                 if (attribute != null) {
                     LOGGER.debug("Found attribute [{}] from the query results", key);
+                    final Collection<String> attributeNames = (Collection<String>) names;
                     attributeNames.forEach(s -> {
                         LOGGER.debug("Principal attribute [{}] is virtually remapped/renamed to [{}]", key, s);
                         attributes.put(s, CollectionUtils.wrap(attribute.toString()));
@@ -112,6 +112,6 @@ public class QueryDatabaseAuthenticationHandler extends AbstractJdbcUsernamePass
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username, attributes), new ArrayList<>(0));
     }
 }

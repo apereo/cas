@@ -1,19 +1,18 @@
 package org.apereo.cas.services.web;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-
 import javax.annotation.Nullable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import lombok.Setter;
 
 /**
  * {@link ThemeBasedViewResolver} is a View Resolver that takes the active theme into account to selectively choose
@@ -22,18 +21,19 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Daniel Frett
  * @since 5.2.0
  */
+@Slf4j
+@Setter
 public class ThemeBasedViewResolver implements ViewResolver, Ordered {
-    private static final Logger LOGGER = LoggerFactory.getLogger(ThemeBasedViewResolver.class);
 
     private final ThemeResolver themeResolver;
+
     private final ThemeViewResolverFactory viewResolverFactory;
 
     private final Map<String, ViewResolver> resolvers = new ConcurrentHashMap<>();
 
     private int order = LOWEST_PRECEDENCE;
 
-    public ThemeBasedViewResolver(final ThemeResolver themeResolver,
-                                  final ThemeViewResolverFactory viewResolverFactory) {
+    public ThemeBasedViewResolver(final ThemeResolver themeResolver, final ThemeViewResolverFactory viewResolverFactory) {
         this.themeResolver = themeResolver;
         this.viewResolverFactory = viewResolverFactory;
     }
@@ -43,9 +43,7 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
     public View resolveViewName(final String viewName, final Locale locale) {
         final Optional<String> theme = Optional.of(RequestContextHolder.currentRequestAttributes())
             .filter(ServletRequestAttributes.class::isInstance).map(ServletRequestAttributes.class::cast)
-            .map(ServletRequestAttributes::getRequest)
-            .map(themeResolver::resolveThemeName);
-
+            .map(ServletRequestAttributes::getRequest).map(themeResolver::resolveThemeName);
         try {
             final Optional<ViewResolver> delegate = theme.map(this::getViewResolver);
             if (delegate.isPresent()) {
@@ -54,7 +52,6 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         } catch (final Exception e) {
             LOGGER.debug("error resolving view '{}' for theme '{}'", viewName, theme.orElse(null), e);
         }
-
         // default to not resolving any view
         return null;
     }
@@ -68,13 +65,8 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
             resolver = viewResolverFactory.create(theme);
             resolvers.put(theme, resolver);
         }
-
         // return the resolver
         return resolver;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
     }
 
     @Override

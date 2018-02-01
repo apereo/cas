@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
 import com.google.common.collect.Multimap;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -47,6 +48,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
+@Slf4j
 public class QueryDatabaseAuthenticationHandlerTests {
 
     private static final String SQL = "SELECT * FROM casusers where username=?";
@@ -148,7 +150,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
 
     @Test
     public void verifySuccess() throws Exception {
-        final Multimap<String, String> map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
+        final Multimap<String, Object> map = CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(Arrays.asList("phone:phoneNumber"));
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null,
                 this.dataSource, SQL, PASSWORD_FIELD,
                 null, null,
@@ -166,7 +168,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
                 "expired", null, new HashMap<>(0));
         this.thrown.expect(AccountPasswordMustChangeException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user20", "psw20"));
-        fail("Shouldn't get here");
+        throw new AssertionError("Shouldn't get here");
     }
 
     @Test
@@ -175,7 +177,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
                 null, "disabled", new HashMap<>(0));
         this.thrown.expect(AccountDisabledException.class);
         q.authenticate(CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("user21", "psw21"));
-        fail("Shouldn't get here");
+        throw new AssertionError("Shouldn't get here");
     }
 
     /**
@@ -186,7 +188,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
      */
     @Test
     public void verifyBCryptFail() throws Exception {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, RandomUtils.getInstanceNative());
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(8, RandomUtils.getNativeInstance());
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc1") + "' password");
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
                 null, null, new HashMap<>(0));
@@ -201,7 +203,7 @@ public class QueryDatabaseAuthenticationHandlerTests {
      */
     @Test
     public void verifyBCryptSuccess() throws Exception {
-        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, RandomUtils.getInstanceNative());
+        final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder(6, RandomUtils.getNativeInstance());
         final String sql = SQL.replace("*", "'" + encoder.encode("pswbc2") + "' password");
         final QueryDatabaseAuthenticationHandler q = new QueryDatabaseAuthenticationHandler("", null, null, null, this.dataSource, sql, PASSWORD_FIELD,
                 null, null, new HashMap<>(0));

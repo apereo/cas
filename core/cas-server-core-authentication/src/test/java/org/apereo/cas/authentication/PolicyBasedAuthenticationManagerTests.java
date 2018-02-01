@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
@@ -31,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@Slf4j
 public class PolicyBasedAuthenticationManagerTests {
 
     private static final String HANDLER_A = "HandlerA";
@@ -85,11 +87,11 @@ public class PolicyBasedAuthenticationManagerTests {
         final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), mockServicesManager());
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("2 errors, 0 successes");
+
 
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -117,11 +119,11 @@ public class PolicyBasedAuthenticationManagerTests {
                 new AllAuthenticationPolicy());
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("2 errors, 0 successes");
+
 
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -149,7 +151,7 @@ public class PolicyBasedAuthenticationManagerTests {
 
         this.thrown.expect(AuthenticationException.class);
         manager.authenticate(transaction);
-        fail("Should have thrown AuthenticationException");
+        throw new AssertionError("Should have thrown AuthenticationException");
     }
 
     @Test

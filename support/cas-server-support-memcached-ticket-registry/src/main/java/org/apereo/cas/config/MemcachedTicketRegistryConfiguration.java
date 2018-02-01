@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ComponentSerializationPlan;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class MemcachedTicketRegistryConfiguration {
 
     @Autowired

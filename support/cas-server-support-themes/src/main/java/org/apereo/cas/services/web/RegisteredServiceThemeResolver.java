@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpResponse;
@@ -15,8 +16,6 @@ import org.apereo.cas.util.HttpUtils;
 import org.apereo.cas.util.ResourceUtils;
 import org.apereo.cas.util.ScriptingUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
@@ -45,10 +44,8 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceThemeResolver.class);
-
     private final ServicesManager servicesManager;
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -69,7 +66,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                                           final AuthenticationServiceSelectionPlan serviceSelectionStrategies,
                                           final ResourceLoader resourceLoader,
                                           final CasConfigurationProperties casProperties) {
-        super();
         this.servicesManager = servicesManager;
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategies;
         this.resourceLoader = resourceLoader;
@@ -157,7 +153,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             messageSource.setBasename(rService.getTheme());
             if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
                 LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
-                request.getSession().setAttribute("myTheme", "Testing");
                 return rService.getTheme();
             }
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);

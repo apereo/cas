@@ -1,5 +1,7 @@
 package org.apereo.cas.web.view;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.support.WebUtils;
@@ -16,12 +18,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
+@AllArgsConstructor
 public class ThemeFileTemplateResolver extends FileTemplateResolver {
     private final CasConfigurationProperties casProperties;
-
-    public ThemeFileTemplateResolver(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     @Override
     protected ITemplateResource computeTemplateResource(final IEngineConfiguration configuration, final String ownerTemplate,

@@ -1,19 +1,22 @@
 package org.apereo.cas.authentication;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 
-import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.*;
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
+import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
 
 /**
  * The {@link AbstractMultifactorAuthenticationProvider} is responsible for
@@ -22,11 +25,15 @@ import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.Failure
  * @author Misagh Moayyed
  * @since 4.3
  */
+@Slf4j
+@ToString
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode(of = {"order", "id"})
 public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractMultifactorAuthenticationProvider.class);
 
     private MultifactorAuthenticationProviderBypass bypassEvaluator;
 
@@ -36,50 +43,20 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
 
     private int order;
 
-    public AbstractMultifactorAuthenticationProvider() {
-    }
-
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public int getOrder() {
-        return this.order;
-    }
-
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public void setGlobalFailureMode(final String globalFailureMode) {
-        this.globalFailureMode = globalFailureMode;
-    }
-
-    @Override
-    public final boolean supports(final Event event, final Authentication authentication,
-                                  final RegisteredService registeredService, final HttpServletRequest request) {
+    public final boolean supports(final Event event, final Authentication authentication, final RegisteredService registeredService, final HttpServletRequest request) {
         if (event == null || !event.getId().matches(getId())) {
             LOGGER.debug("Provided event id [{}] is not applicable to this provider identified by [{}]", event, getId());
             return false;
         }
-
-        if (bypassEvaluator != null
-                && !bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, this, request)) {
+        if (bypassEvaluator != null && !bypassEvaluator.shouldMultifactorAuthenticationProviderExecute(authentication, registeredService, this, request)) {
             LOGGER.debug("Request cannot be supported by provider [{}] as it's configured for bypass", getId());
             return false;
         }
-
         if (supportsInternal(event, authentication, registeredService)) {
             LOGGER.debug("[{}] voted to support this authentication request", getClass().getSimpleName());
             return true;
         }
-
         LOGGER.debug("[{}] voted does not support this authentication request", getClass().getSimpleName());
         return false;
     }
@@ -100,12 +77,10 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
     @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
         RegisteredServiceMultifactorPolicy.FailureModes failureMode = CLOSED;
-        
         if (StringUtils.isNotBlank(this.globalFailureMode)) {
             failureMode = RegisteredServiceMultifactorPolicy.FailureModes.valueOf(this.globalFailureMode);
             LOGGER.debug("Using global multi-factor failure mode for [{}] defined as [{}]", service, failureMode);
         }
-        
         if (service != null) {
             LOGGER.debug("Evaluating multifactor authentication policy for service [{}}", service);
             final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
@@ -114,7 +89,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                 LOGGER.debug("Multi-factor failure mode for [{}] is defined as [{}]", service.getServiceId(), failureMode);
             }
         }
-
         if (failureMode != RegisteredServiceMultifactorPolicy.FailureModes.NONE) {
             if (isAvailable()) {
                 return true;
@@ -124,10 +98,8 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
                 LOGGER.warn("[{}] could not be reached. Authentication shall fail for [{}]", providerName, service);
                 throw new AuthenticationException();
             }
-
             LOGGER.warn("[{}] could not be reached. Since the authentication provider is configured for the "
-                            + "failure mode of [{}] authentication will proceed without [{}] for service [{}]",
-                    providerName, failureMode, providerName, service);
+                + "failure mode of [{}] authentication will proceed without [{}] for service [{}]", providerName, failureMode, providerName, service);
             return false;
         }
         LOGGER.debug("Failure mode is set to [{}]. Assuming the provider is available.", failureMode);
@@ -141,41 +113,6 @@ public abstract class AbstractMultifactorAuthenticationProvider implements Multi
      */
     protected boolean isAvailable() {
         return true;
-    }
-
-    public void setBypassEvaluator(final MultifactorAuthenticationProviderBypass bypassEvaluator) {
-        this.bypassEvaluator = bypassEvaluator;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final MultifactorAuthenticationProvider rhs = (MultifactorAuthenticationProvider) obj;
-        return new EqualsBuilder()
-                .append(this.getOrder(), rhs.getOrder())
-                .append(this.getId(), rhs.getId())
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(getOrder())
-                .append(getId())
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
     }
 
     @Override

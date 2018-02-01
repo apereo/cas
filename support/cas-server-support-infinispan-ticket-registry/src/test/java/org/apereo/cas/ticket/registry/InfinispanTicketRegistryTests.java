@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import java.util.Arrays;
 import java.util.Collection;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.registry.config.InfinispanTicketRegistryConfiguration;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -18,6 +19,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class, InfinispanTicketRegistryConfiguration.class})
+@Slf4j
 public class InfinispanTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -27,6 +28,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
@@ -55,7 +57,7 @@ public class YubiKeyAuthenticationHandlerTests {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
+
 
         handler.authenticate(new YubiKeyCredential(OTP));
     }
@@ -65,8 +67,6 @@ public class YubiKeyAuthenticationHandlerTests {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("OTP format is invalid");
-
         handler.authenticate(new YubiKeyCredential("casuser"));
     }
 

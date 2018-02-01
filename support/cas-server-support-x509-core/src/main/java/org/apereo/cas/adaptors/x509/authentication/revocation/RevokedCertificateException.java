@@ -1,8 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigInteger;
 import java.security.GeneralSecurityException;
@@ -17,6 +17,8 @@ import java.time.ZonedDateTime;
  * @since 3.4.6
  *
  */
+@Slf4j
+@AllArgsConstructor
 public class RevokedCertificateException extends GeneralSecurityException {
 
     /** OID for reasonCode CRL extension. */
@@ -24,9 +26,6 @@ public class RevokedCertificateException extends GeneralSecurityException {
 
     /** The Constant serialVersionUID. */
     private static final long serialVersionUID = 8827788431199129708L;
-
-    /** The LOGGER. */
-    private static final Logger LOGGER = LoggerFactory.getLogger(RevokedCertificateException.class);
 
     /** CRL revocation reason codes per RFC 3280. */
     public enum Reason {
@@ -96,19 +95,6 @@ public class RevokedCertificateException extends GeneralSecurityException {
      */
     public RevokedCertificateException(final ZonedDateTime revoked, final BigInteger serial) {
         this(revoked, serial, null);
-    }
-
-    /**
-     * Instantiates a new revoked certificate exception.
-     *
-     * @param revoked the revoked
-     * @param serial the serial
-     * @param reason the reason
-     */
-    public RevokedCertificateException(final ZonedDateTime revoked, final BigInteger serial, final Reason reason) {
-        this.revocationDate = ZonedDateTime.from(revoked);
-        this.serial = serial;
-        this.reason = reason;
     }
 
     /**

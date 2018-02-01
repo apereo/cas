@@ -6,10 +6,10 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -24,8 +24,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public final class RestResourceUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RestResourceUtils.class);
+@Slf4j
+@UtilityClass
+public class RestResourceUtils {
+
     private static ObjectMapper MAPPER;
 
     static {
@@ -35,9 +37,6 @@ public final class RestResourceUtils {
             .configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false)
             .setSerializationInclusion(JsonInclude.Include.NON_EMPTY)
             .enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);
-    }
-
-    private RestResourceUtils() {
     }
 
     /**

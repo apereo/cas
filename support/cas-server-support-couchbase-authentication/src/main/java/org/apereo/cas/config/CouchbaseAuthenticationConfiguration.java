@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CouchbaseAuthenticationHandler;
@@ -32,6 +33,7 @@ import java.util.Set;
  */
 @Configuration("couchbaseAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CouchbaseAuthenticationConfiguration {
 
     @Autowired

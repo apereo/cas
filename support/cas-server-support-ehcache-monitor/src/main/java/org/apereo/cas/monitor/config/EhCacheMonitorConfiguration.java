@@ -1,5 +1,6 @@
 package org.apereo.cas.monitor.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.CacheManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.monitor.EhCacheHealthIndicator;
@@ -18,6 +19,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("ehcacheMonitorConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class EhCacheMonitorConfiguration {
 
     @Autowired

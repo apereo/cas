@@ -1,9 +1,11 @@
 package org.apereo.cas.shell.commands;
 
+import java.security.Security;
+
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.support.CasConfigurationJasyptCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.shell.core.CommandMarker;
@@ -18,8 +20,9 @@ import org.springframework.stereotype.Service;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class EncryptPropertyCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EncryptPropertyCommand.class);
+
 
     @Autowired
     private Environment environment;
@@ -46,7 +49,7 @@ public class EncryptPropertyCommand implements CommandMarker {
              unspecifiedDefaultValue = StringUtils.EMPTY) final String alg,
          @CliOption(key = {"provider"},
              help = "Security provider to use to encrypt",
-             optionContext = "Security provider to use to encrypt",
+             optionContext = "Security provider to use to encrypt (Enter BC for BouncyCastle)",
              specifiedDefaultValue = StringUtils.EMPTY,
              unspecifiedDefaultValue = StringUtils.EMPTY) final String provider,
          @CliOption(key = {"password"},
@@ -62,9 +65,17 @@ public class EncryptPropertyCommand implements CommandMarker {
         final CasConfigurationJasyptCipherExecutor cipher = new CasConfigurationJasyptCipherExecutor(this.environment);
         cipher.setAlgorithm(alg);
         cipher.setPassword(password);
+        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+            Security.addProvider(new BouncyCastleProvider());
+        }
         cipher.setProviderName(provider);
         cipher.setKeyObtentionIterations(iterations);
-        final String encrypted = CasConfigurationJasyptCipherExecutor.ENCRYPTED_VALUE_PREFIX + cipher.encryptValue(value);
+        final String encrypted = cipher.encryptValue(value);
         LOGGER.info("==== Encrypted Value ====\n{}", encrypted);
+        try {
+            cipher.decryptValue(encrypted);
+        } catch (final Exception e) {
+            LOGGER.error("Decryption failed for value: {}", encrypted, e);
+        }
     }
 }

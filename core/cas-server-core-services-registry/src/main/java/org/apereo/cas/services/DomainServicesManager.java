@@ -1,9 +1,8 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEventPublisher;
 
 import java.util.ArrayList;
@@ -23,8 +22,9 @@ import java.util.stream.Collectors;
  * @author Travis Schmidt
  * @since 5.2.0
  */
+@Slf4j
 public class DomainServicesManager extends AbstractServicesManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DomainServicesManager.class);
+
 
     private static final long serialVersionUID = -8581398063126547772L;
 

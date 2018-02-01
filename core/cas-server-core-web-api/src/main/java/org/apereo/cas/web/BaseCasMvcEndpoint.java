@@ -1,10 +1,9 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.context.ApplicationContext;
@@ -20,9 +19,11 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+
+@Slf4j
 public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseCasMvcEndpoint.class);
+
     private static final Boolean DEFAULT_SENSITIVE_VALUE = Boolean.TRUE;
 
     /**
@@ -59,9 +60,9 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
     private void setEndpointSensitivity(final MonitorProperties.BaseEndpoint endpoint,
                                         final CasConfigurationProperties casProperties) {
         final String endpointName = endpoint.getClass().getSimpleName();
-        if (endpoint.isSensitive() == null) {
+        if (endpoint.getSensitive() == null) {
             LOGGER.trace("Sensitivity for endpoint [{}] is undefined. Checking defaults...", endpointName);
-            final Boolean defaultSensitive = casProperties.getMonitor().getEndpoints().isSensitive();
+            final Boolean defaultSensitive = casProperties.getMonitor().getEndpoints().getSensitive();
             if (defaultSensitive != null) {
                 final boolean s = BooleanUtils.toBoolean(defaultSensitive);
                 setSensitive(s);
@@ -71,7 +72,7 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
                 setSensitive(DEFAULT_SENSITIVE_VALUE);
             }
         } else {
-            final boolean s = BooleanUtils.toBoolean(endpoint.isSensitive());
+            final boolean s = BooleanUtils.toBoolean(endpoint.getSensitive());
             setSensitive(s);
             LOGGER.trace("Explicitly marking endpoint [{}] sensitivity as [{}]", endpointName, s);
         }
@@ -87,9 +88,9 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
     protected static boolean isEndpointCapable(final MonitorProperties.BaseEndpoint endpoint,
                                                final CasConfigurationProperties casProperties) {
         final String endpointName = endpoint.getClass().getSimpleName();
-        if (endpoint.isEnabled() == null) {
+        if (endpoint.getEnabled() == null) {
             LOGGER.trace("Capability for endpoint [{}] is undefined. Checking defaults...", endpointName);
-            final Boolean defaultEnabled = casProperties.getMonitor().getEndpoints().isEnabled();
+            final Boolean defaultEnabled = casProperties.getMonitor().getEndpoints().getEnabled();
             if (defaultEnabled != null) {
                 final boolean s = BooleanUtils.toBoolean(defaultEnabled);
                 LOGGER.trace("Default capability for endpoint [{}] is set to [{}]", endpointName, s);
@@ -99,7 +100,7 @@ public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
             return false;
 
         }
-        final boolean s = BooleanUtils.toBoolean(endpoint.isEnabled());
+        final boolean s = BooleanUtils.toBoolean(endpoint.getEnabled());
         LOGGER.trace("Explicitly marking endpoint [{}] capability as [{}]", endpointName, s);
         return s;
     }

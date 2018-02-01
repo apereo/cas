@@ -1,5 +1,7 @@
 package org.apereo.cas.logging.web;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -26,16 +28,12 @@ import java.util.Enumeration;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport,
-                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /**
      * Does nothing.

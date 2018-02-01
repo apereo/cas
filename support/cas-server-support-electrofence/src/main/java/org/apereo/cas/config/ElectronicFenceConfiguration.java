@@ -1,11 +1,14 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.api.AuthenticationRequestRiskCalculator;
 import org.apereo.cas.api.AuthenticationRiskContingencyPlan;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskMitigator;
 import org.apereo.cas.api.AuthenticationRiskNotifier;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.RiskBasedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.email.EmailProperties;
@@ -23,8 +26,8 @@ import org.apereo.cas.impl.plans.BlockAuthenticationContingencyPlan;
 import org.apereo.cas.impl.plans.MultifactorAuthenticationContingencyPlan;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.util.io.CommunicationsManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -46,21 +49,24 @@ import java.util.Set;
 @Configuration("electronicFenceConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
-public class ElectronicFenceConfiguration {
+@Slf4j
+public class ElectronicFenceConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ElectronicFenceConfiguration.class);
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private AuditResourceResolver returnValueResourceResolver;
 
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
-    
+
     @Autowired
     @Qualifier("casEventRepository")
     private CasEventRepository casEventRepository;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @ConditionalOnMissingBean(name = "authenticationRiskEmailNotifier")
     @Bean
     @RefreshScope
@@ -122,7 +128,7 @@ public class ElectronicFenceConfiguration {
     @RefreshScope
     public AuthenticationRequestRiskCalculator dateTimeAuthenticationRequestRiskCalculator() {
         return new DateTimeAuthenticationRequestRiskCalculator(this.casEventRepository,
-                casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours());
+            casProperties.getAuthn().getAdaptive().getRisk().getDateTime().getWindowInHours());
     }
 
     @ConditionalOnMissingBean(name = "geoLocationAuthenticationRequestRiskCalculator")
@@ -169,5 +175,11 @@ public class ElectronicFenceConfiguration {
         if (StringUtils.isNotBlank(sms.getText()) && StringUtils.isNotBlank(sms.getFrom())) {
             b.getNotifiers().add(authenticationRiskSmsNotifier());
         }
+    }
+
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditActionResolver("ADAPTIVE_RISKY_AUTHENTICATION_ACTION_RESOLVER", new DefaultAuditActionResolver());
+        plan.registerAuditResourceResolver("ADAPTIVE_RISKY_AUTHENTICATION_RESOURCE_RESOLVER", returnValueResourceResolver);
     }
 }

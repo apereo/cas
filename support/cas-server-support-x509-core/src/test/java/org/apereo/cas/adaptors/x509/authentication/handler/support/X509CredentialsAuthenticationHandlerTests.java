@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.adaptors.x509.authentication.revocation.RevokedCertificateException;
@@ -36,6 +38,8 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(Parameterized.class)
+@Slf4j
+@AllArgsConstructor
 public class X509CredentialsAuthenticationHandlerTests {
 
     private static final String USER_VALID_CRT = "user-valid.crt";
@@ -59,23 +63,6 @@ public class X509CredentialsAuthenticationHandlerTests {
      */
     private final Object expectedResult;
 
-
-    /**
-     * Creates a new test class instance with the given parameters.
-     *
-     * @param handler    Test authentication handler.
-     * @param credential Test credential.
-     * @param supports   Expected result of supports test.
-     * @param result     Expected result of authentication test.
-     */
-    public X509CredentialsAuthenticationHandlerTests(final X509CredentialsAuthenticationHandler handler, final Credential credential, final boolean supports,
-                                                     final Object result) {
-
-        this.handler = handler;
-        this.credential = credential;
-        this.expectedSupports = supports;
-        this.expectedResult = result;
-    }
 
     /**
      * Gets the unit test parameters.
@@ -224,14 +211,14 @@ public class X509CredentialsAuthenticationHandlerTests {
                 if (this.expectedResult instanceof DefaultAuthenticationHandlerExecutionResult) {
                     assertEquals(this.expectedResult, result);
                 } else {
-                    fail("Authentication succeeded when it should have failed with " + this.expectedResult);
+                    throw new AssertionError("Authentication succeeded when it should have failed with " + this.expectedResult);
                 }
             }
         } catch (final Exception e) {
             if (this.expectedResult instanceof Exception) {
                 assertEquals(this.expectedResult.getClass(), e.getClass());
             } else {
-                fail("Authentication failed when it should have succeeded: " + e.getMessage());
+                throw new AssertionError("Authentication failed when it should have succeeded: " + e.getMessage());
             }
         }
     }

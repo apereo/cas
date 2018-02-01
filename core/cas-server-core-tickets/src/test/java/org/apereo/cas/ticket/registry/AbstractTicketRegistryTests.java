@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -37,6 +38,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public abstract class AbstractTicketRegistryTests {
 
     @ClassRule
@@ -291,7 +293,9 @@ public abstract class AbstractTicketRegistryTests {
 
 
             tickets.stream().filter(ticket -> !ticketRegistryTickets.contains(ticket))
-                .forEach(ticket -> fail("Ticket " + ticket + " was not found in retrieval of collection of all tickets."));
+                .forEach(ticket -> {
+                    throw new AssertionError("Ticket " + ticket + " was not found in retrieval of collection of all tickets.");
+                });
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);
         }
@@ -375,7 +379,7 @@ public abstract class AbstractTicketRegistryTests {
         this.ticketRegistry.addTicket(pgt);
         this.ticketRegistry.updateTicket(tgt);
         this.ticketRegistry.updateTicket(st1);
-        assertEquals(pgt.getGrantingTicket(), tgt);
+        assertEquals(pgt.getTicketGrantingTicket(), tgt);
         assertNotNull(this.ticketRegistry.getTicket(PGT_1_ID, ProxyGrantingTicket.class));
         assertEquals(a, pgt.getAuthentication());
         assertNotNull(this.ticketRegistry.getTicket(ST_1_ID, ServiceTicket.class));

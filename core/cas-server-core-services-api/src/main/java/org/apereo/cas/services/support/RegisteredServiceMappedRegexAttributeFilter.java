@@ -1,12 +1,13 @@
 package org.apereo.cas.services.support;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredServiceAttributeFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,19 +26,25 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@Getter
+@Setter
+@NoArgsConstructor
+@EqualsAndHashCode
 public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredServiceAttributeFilter {
 
     private static final long serialVersionUID = 852145306984610128L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceMappedRegexAttributeFilter.class);
     private Map<String, Object> patterns;
+
     private boolean excludeUnmappedAttributes;
+
     private boolean caseInsensitive = true;
+
     private boolean completeMatch;
+
     private int order;
 
-    public RegisteredServiceMappedRegexAttributeFilter() {
-    }
 
     public RegisteredServiceMappedRegexAttributeFilter(final Map<String, Object> patterns) {
         this.patterns = patterns;
@@ -46,30 +53,26 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
     @Override
     public Map<String, Object> filter(final Map<String, Object> givenAttributes) {
         final Map<String, Object> attributesToRelease = new HashMap<>();
-        givenAttributes.entrySet()
-            .stream()
-            .filter(filterProvidedGivenAttributes())
-            .forEach(entry -> {
-                final String attributeName = entry.getKey();
-                if (patterns.containsKey(attributeName)) {
-                    final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
-                    LOGGER.debug("Found attribute [{}] in pattern definitions with value(s)", attributeName, attributeValues);
-                    final Collection<Pattern> patterns = createPatternForMappedAttribute(attributeName);
-                    patterns.forEach(pattern -> {
-                        LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
-                        final List<Object> filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
-                        LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
-
-                        if (filteredValues.isEmpty()) {
-                            LOGGER.debug("Attribute [{}] has no values remaining and shall be excluded", attributeName);
-                        } else {
-                            collectAttributeWithFilteredValues(attributesToRelease, attributeName, filteredValues);
-                        }
-                    });
-                } else {
-                    handleUnmappedAttribute(attributesToRelease, entry.getKey(), entry.getValue());
-                }
-            });
+        givenAttributes.entrySet().stream().filter(filterProvidedGivenAttributes()).forEach(entry -> {
+            final String attributeName = entry.getKey();
+            if (patterns.containsKey(attributeName)) {
+                final Set<Object> attributeValues = CollectionUtils.toCollection(entry.getValue());
+                LOGGER.debug("Found attribute [{}] in pattern definitions with value(s) [{}]", attributeName, attributeValues);
+                final Collection<Pattern> patterns = createPatternForMappedAttribute(attributeName);
+                patterns.forEach(pattern -> {
+                    LOGGER.debug("Found attribute [{}] in the pattern definitions. Processing pattern [{}]", attributeName, pattern.pattern());
+                    final List<Object> filteredValues = filterAttributeValuesByPattern(attributeValues, pattern);
+                    LOGGER.debug("Filtered attribute values for [{}] are [{}]", attributeName, filteredValues);
+                    if (filteredValues.isEmpty()) {
+                        LOGGER.debug("Attribute [{}] has no values remaining and shall be excluded", attributeName);
+                    } else {
+                        collectAttributeWithFilteredValues(attributesToRelease, attributeName, filteredValues);
+                    }
+                });
+            } else {
+                handleUnmappedAttribute(attributesToRelease, entry.getKey(), entry.getValue());
+            }
+        });
         LOGGER.debug("Received [{}] attributes. Filtered and released [{}]", givenAttributes.size(), attributesToRelease.size());
         return attributesToRelease;
     }
@@ -81,8 +84,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @param attributeName       the attribute name
      * @param attributeValue      the attribute value
      */
-    protected void handleUnmappedAttribute(final Map<String, Object> attributesToRelease,
-                                           final String attributeName, final Object attributeValue) {
+    protected void handleUnmappedAttribute(final Map<String, Object> attributesToRelease, final String attributeName, final Object attributeValue) {
         LOGGER.debug("Found attribute [{}] that is not defined in pattern definitions", attributeName);
         if (excludeUnmappedAttributes) {
             LOGGER.debug("Excluding attribute [{}] given unmatched attributes are to be excluded", attributeName);
@@ -112,8 +114,8 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @param attributeName       the attribute name
      * @param filteredValues      the filtered values
      */
-    protected void collectAttributeWithFilteredValues(final Map<String, Object> attributesToRelease,
-                                                      final String attributeName, final List<Object> filteredValues) {
+    protected void collectAttributeWithFilteredValues(final Map<String, Object> attributesToRelease, final String attributeName,
+                                                      final List<Object> filteredValues) {
         attributesToRelease.put(attributeName, filteredValues);
     }
 
@@ -139,82 +141,7 @@ public class RegisteredServiceMappedRegexAttributeFilter implements RegisteredSe
      * @return the list
      */
     protected List<Object> filterAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern) {
-        return attributeValues
-            .stream()
-            .filter(v -> RegexUtils.matches(pattern, v.toString(), completeMatch))
-            .collect(Collectors.toList());
+        return attributeValues.stream().filter(v -> RegexUtils.matches(pattern, v.toString(), completeMatch)).collect(Collectors.toList());
     }
 
-    @Override
-    public int getOrder() {
-        return order;
-    }
-
-    public void setOrder(final int order) {
-        this.order = order;
-    }
-
-    public Map<String, Object> getPatterns() {
-        return patterns;
-    }
-
-    public void setPatterns(final Map<String, Object> patterns) {
-        this.patterns = patterns;
-    }
-
-    public boolean isExcludeUnmappedAttributes() {
-        return excludeUnmappedAttributes;
-    }
-
-    public boolean isCompleteMatch() {
-        return completeMatch;
-    }
-
-    public void setCompleteMatch(final boolean completeMatch) {
-        this.completeMatch = completeMatch;
-    }
-
-    public void setExcludeUnmappedAttributes(final boolean excludeUnmappedAttributes) {
-        this.excludeUnmappedAttributes = excludeUnmappedAttributes;
-    }
-
-    public boolean isCaseInsensitive() {
-        return caseInsensitive;
-    }
-
-    public void setCaseInsensitive(final boolean caseInsensitive) {
-        this.caseInsensitive = caseInsensitive;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final RegisteredServiceMappedRegexAttributeFilter rhs = (RegisteredServiceMappedRegexAttributeFilter) obj;
-        return new EqualsBuilder()
-            .append(this.patterns, rhs.patterns)
-            .append(this.excludeUnmappedAttributes, rhs.excludeUnmappedAttributes)
-            .append(this.completeMatch, rhs.completeMatch)
-            .append(this.caseInsensitive, rhs.caseInsensitive)
-            .append(this.order, rhs.order)
-            .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-            .append(patterns)
-            .append(excludeUnmappedAttributes)
-            .append(completeMatch)
-            .append(caseInsensitive)
-            .append(order)
-            .toHashCode();
-    }
 }

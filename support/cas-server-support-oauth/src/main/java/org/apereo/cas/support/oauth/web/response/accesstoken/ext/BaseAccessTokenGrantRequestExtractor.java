@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -19,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 @EnableTransactionManagement(proxyTargetClass = true)
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Slf4j
+@AllArgsConstructor
 public abstract class BaseAccessTokenGrantRequestExtractor {
     /**
      * The Services manager.
@@ -30,24 +34,15 @@ public abstract class BaseAccessTokenGrantRequestExtractor {
     protected final TicketRegistry ticketRegistry;
 
     /**
-     * OAuth settings.
-     */
-    protected final OAuthProperties oAuthProperties;
-
-    /**
      * The Services manager.
      */
     protected final CentralAuthenticationService centralAuthenticationService;
 
-    public BaseAccessTokenGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                final CentralAuthenticationService centralAuthenticationService,
-                                                final OAuthProperties oAuthProperties) {
-        this.servicesManager = servicesManager;
-        this.ticketRegistry = ticketRegistry;
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.oAuthProperties = oAuthProperties;
-    }
-
+    /**
+     * OAuth settings.
+     */
+    protected final OAuthProperties oAuthProperties;
+    
     /**
      * Extract access token request for grant.
      *

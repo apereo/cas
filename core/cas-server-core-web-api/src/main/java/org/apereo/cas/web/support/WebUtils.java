@@ -1,5 +1,8 @@
 package org.apereo.cas.web.support;
 
+import lombok.NonNull;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -21,8 +24,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.flow.CasWebflowConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.CookieGenerator;
@@ -48,7 +49,10 @@ import java.util.Map;
  * @author Scott Battaglia
  * @since 3.1
  */
-public final class WebUtils {
+
+@Slf4j
+@UtilityClass
+public class WebUtils {
 
     /**
      * Request attribute that contains message key describing details of authorization failure.
@@ -59,9 +63,7 @@ public final class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebUtils.class);
-
+    
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -73,12 +75,6 @@ public final class WebUtils {
     private static final String PARAMETER_SERVICE_TICKET_ID = "serviceTicketId";
     private static final String PARAMETER_LOGOUT_REQUESTS = "logoutRequests";
     private static final String PARAMETER_SERVICE_UI_METADATA = "serviceUIMetadata";
-
-    /**
-     * Instantiates a new web utils instance.
-     */
-    private WebUtils() {
-    }
 
     /**
      * Gets the http servlet request from the context.
@@ -328,8 +324,7 @@ public final class WebUtils {
      * @param clazz   the clazz
      * @return the credential
      */
-    public static <T extends Credential> T getCredential(final RequestContext context, final Class<T> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+    public static <T extends Credential> T getCredential(final RequestContext context, @NonNull final Class<T> clazz) {
         final Credential credential = getCredential(context);
         if (credential == null) {
             return null;

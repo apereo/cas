@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.ldap;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -13,8 +15,6 @@ import org.ldaptive.Response;
 import org.ldaptive.ResultCode;
 import org.ldaptive.SearchExecutor;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 
@@ -31,34 +31,21 @@ import java.security.cert.X509CRL;
  * @author Daniel Fisher
  * @since 4.1
  */
+@Slf4j
+@AllArgsConstructor
 public class LdaptiveResourceCRLFetcher extends ResourceCRLFetcher {
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdaptiveResourceCRLFetcher.class);
-    /**
-     * Search exec that looks for the attribute.
-     */
-    private final SearchExecutor searchExecutor;
 
     /**
      * The connection config to prep for connections.
      **/
     private final ConnectionConfig connectionConfig;
-    
-    private final String certificateAttribute;
 
     /**
-     * Instantiates a new Ldap resource cRL fetcher.
-     *
-     * @param connectionConfig the connection configuration
-     * @param searchExecutor   the search executor
-     * @param attributeName    the attribute name
+     * Search exec that looks for the attribute.
      */
-    public LdaptiveResourceCRLFetcher(final ConnectionConfig connectionConfig, 
-                                      final SearchExecutor searchExecutor,
-                                      final String attributeName) {
-        this.connectionConfig = connectionConfig;
-        this.searchExecutor = searchExecutor;
-        this.certificateAttribute = attributeName;
-    }
+    private final SearchExecutor searchExecutor;
+
+    private final String certificateAttribute;
 
     @Override
     public X509CRL fetch(final Resource crl) throws IOException, CRLException, CertificateException {

@@ -2,6 +2,7 @@ package org.apereo.cas.support.pac4j.config.support.authentication;
 
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
@@ -41,8 +42,6 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.client.SAML2ClientConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -67,8 +66,9 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 @Configuration("pac4jAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class Pac4jAuthenticationEventExecutionPlanConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jAuthenticationEventExecutionPlanConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -263,7 +263,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
                 && StringUtils.isNotBlank(saml.getServiceProviderEntityId())
                 && StringUtils.isNotBlank(saml.getServiceProviderMetadataPath()))
             .forEach(saml -> {
-                final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(), saml.getKeystorePassword(),
+                final SAML2ClientConfiguration cfg = new SAML2ClientConfiguration(saml.getKeystorePath(),
+                    saml.getKeystorePassword(),
                     saml.getPrivateKeyPassword(), saml.getIdentityProviderMetadataPath());
                 cfg.setMaximumAuthenticationLifetime(saml.getMaximumAuthenticationLifetime());
                 cfg.setServiceProviderEntityId(saml.getServiceProviderEntityId());

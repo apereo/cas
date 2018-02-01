@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 
 
@@ -10,12 +12,9 @@ import org.aspectj.lang.JoinPoint;
  * @since 3.4
  *
  */
-public final class AopUtils {
-
-    /**
-     * Instantiates a new aop utils.
-     */
-    private AopUtils() {}
+@Slf4j
+@UtilityClass
+public class AopUtils {
 
     /**
      * Unwraps a join point that may be nested due to layered proxies.

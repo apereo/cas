@@ -1,6 +1,7 @@
 package org.apereo.cas.services.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
@@ -29,6 +30,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.0.0
  */
+@Slf4j
 public class RegisteredServiceRegexAttributeFilterTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "registeredServiceRegexAttributeFilter.json");
@@ -45,7 +47,6 @@ public class RegisteredServiceRegexAttributeFilterTests {
     private RegisteredService registeredService;
 
     public RegisteredServiceRegexAttributeFilterTests() {
-
         this.filter = new RegisteredServiceRegexAttributeFilter("^.{5,}$");
 
         this.givenAttributesMap = new HashMap<>();

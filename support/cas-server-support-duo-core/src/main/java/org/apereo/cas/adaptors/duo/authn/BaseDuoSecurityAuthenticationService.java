@@ -3,6 +3,9 @@ package org.apereo.cas.adaptors.duo.authn;
 import com.duosecurity.client.Http;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
@@ -10,8 +13,6 @@ import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.HttpMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpMethod;
 
 import java.net.URL;
@@ -24,6 +25,8 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurityAuthenticationService {
     private static final long serialVersionUID = -8044100706027708789L;
 
@@ -35,26 +38,13 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
     private static final String RESULT_KEY_STATUS_MESSAGE = "status_msg";
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseDuoSecurityAuthenticationService.class);
-
+    
     /**
      * Duo Properties.
      */
     protected final DuoSecurityMultifactorProperties duoProperties;
 
     private final transient HttpClient httpClient;
-
-    /**
-     * Creates the duo authentication service.
-     *
-     * @param duoProperties the duo properties
-     * @param httpClient    the http client
-     */
-    public BaseDuoSecurityAuthenticationService(final DuoSecurityMultifactorProperties duoProperties, final HttpClient httpClient) {
-        this.duoProperties = duoProperties;
-        this.httpClient = httpClient;
-    }
 
     @Override
     public boolean ping() {
@@ -69,8 +59,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
                 final JsonNode result = MAPPER.readTree(response);
                 if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                        && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
-                        && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+                    && result.get(RESULT_KEY_RESPONSE).asText().equalsIgnoreCase("pong")
+                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
                     return true;
                 }
                 LOGGER.warn("Could not reach/ping Duo. Response returned is [{}]", result);
@@ -99,21 +89,21 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
         }
         final BaseDuoSecurityAuthenticationService rhs = (BaseDuoSecurityAuthenticationService) obj;
         return new EqualsBuilder()
-                .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
-                .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())
-                .append(this.duoProperties.getDuoIntegrationKey(), rhs.duoProperties.getDuoIntegrationKey())
-                .append(this.duoProperties.getDuoSecretKey(), rhs.duoProperties.getDuoSecretKey())
-                .isEquals();
+            .append(this.duoProperties.getDuoApiHost(), rhs.duoProperties.getDuoApiHost())
+            .append(this.duoProperties.getDuoApplicationKey(), rhs.duoProperties.getDuoApplicationKey())
+            .append(this.duoProperties.getDuoIntegrationKey(), rhs.duoProperties.getDuoIntegrationKey())
+            .append(this.duoProperties.getDuoSecretKey(), rhs.duoProperties.getDuoSecretKey())
+            .isEquals();
     }
 
     @Override
     public int hashCode() {
         return new HashCodeBuilder()
-                .append(this.duoProperties.getDuoApiHost())
-                .append(this.duoProperties.getDuoApplicationKey())
-                .append(this.duoProperties.getDuoIntegrationKey())
-                .append(this.duoProperties.getDuoSecretKey())
-                .toHashCode();
+            .append(this.duoProperties.getDuoApiHost())
+            .append(this.duoProperties.getDuoApplicationKey())
+            .append(this.duoProperties.getDuoIntegrationKey())
+            .append(this.duoProperties.getDuoSecretKey())
+            .toHashCode();
     }
 
     @Override
@@ -131,7 +121,7 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
 
             final JsonNode result = MAPPER.readTree(jsonResponse);
             if (result.has(RESULT_KEY_RESPONSE) && result.has(RESULT_KEY_STAT)
-                    && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
+                && result.get(RESULT_KEY_STAT).asText().equalsIgnoreCase("OK")) {
 
                 final JsonNode response = result.get(RESULT_KEY_RESPONSE);
                 final String authResult = response.get(RESULT_KEY_RESULT).asText().toUpperCase();
@@ -164,8 +154,8 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     protected Http buildHttpPostAuthRequest() {
         return new Http(HttpMethod.POST.name(),
-                duoProperties.getDuoApiHost(),
-                String.format("/auth/v%s/auth", AUTH_API_VERSION));
+            duoProperties.getDuoApiHost(),
+            String.format("/auth/v%s/auth", AUTH_API_VERSION));
     }
 
     /**
@@ -176,11 +166,12 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      */
     protected Http buildHttpPostUserPreAuthRequest(final String username) {
         final Http usersRequest = new Http(HttpMethod.POST.name(),
-                duoProperties.getDuoApiHost(),
-                String.format("/auth/v%s/preauth", AUTH_API_VERSION));
+            duoProperties.getDuoApiHost(),
+            String.format("/auth/v%s/preauth", AUTH_API_VERSION));
         usersRequest.addParam("username", username);
         return usersRequest;
     }
+
 
     /**
      * Sign http request.
@@ -189,18 +180,15 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param id      the id
      * @return the http
      */
+    @SneakyThrows
     protected Http signHttpAuthRequest(final Http request, final String id) {
-        try {
-            request.addParam("username", id);
-            request.addParam("factor", "auto");
-            request.addParam("device", "auto");
-            request.signRequest(
-                    duoProperties.getDuoIntegrationKey(),
-                    duoProperties.getDuoSecretKey());
-            return request;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        request.addParam("username", id);
+        request.addParam("factor", "auto");
+        request.addParam("device", "auto");
+        request.signRequest(
+            duoProperties.getDuoIntegrationKey(),
+            duoProperties.getDuoSecretKey());
+        return request;
     }
 
     /**
@@ -209,14 +197,11 @@ public abstract class BaseDuoSecurityAuthenticationService implements DuoSecurit
      * @param request the request
      * @return the http
      */
+    @SneakyThrows
     protected Http signHttpUserPreAuthRequest(final Http request) {
-        try {
-            request.signRequest(
-                    duoProperties.getDuoIntegrationKey(),
-                    duoProperties.getDuoSecretKey());
-            return request;
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        request.signRequest(
+            duoProperties.getDuoIntegrationKey(),
+            duoProperties.getDuoSecretKey());
+        return request;
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
@@ -8,6 +9,7 @@ import org.apereo.cas.services.ServicesManager;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.Set;
 
 /**
@@ -23,6 +25,7 @@ import java.util.Set;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
     
     /**
@@ -45,6 +48,6 @@ public class RejectUsersAuthenticationHandler extends AbstractUsernamePasswordAu
             throw new FailedLoginException();
         }
 
-        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+        return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
     }
 }

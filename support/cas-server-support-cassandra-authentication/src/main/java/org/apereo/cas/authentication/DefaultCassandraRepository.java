@@ -4,11 +4,10 @@ import com.datastax.driver.core.BoundStatement;
 import com.datastax.driver.core.PreparedStatement;
 import com.datastax.driver.core.Row;
 import com.datastax.driver.core.Session;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.cassandra.CassandraSessionFactory;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.CassandraAuthenticationProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,8 +18,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultCassandraRepository implements CassandraRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCassandraRepository.class);
+
     private static final String SELECT_USER_BY_UID_QUERY = "SELECT * FROM %s WHERE %s = ?";
 
     private final Session session;

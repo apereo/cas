@@ -1,12 +1,12 @@
 package org.apereo.cas.services.config;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.YamlServiceRegistryDao;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -23,8 +23,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("yamlServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class YamlServiceRegistryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(YamlServiceRegistryConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -35,16 +36,15 @@ public class YamlServiceRegistryConfiguration {
     @Autowired
     @Qualifier("registeredServiceReplicationStrategy")
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
-    
+
     @Bean
     @RefreshScope
+    @SneakyThrows
     public ServiceRegistryDao serviceRegistryDao() {
-        try {
-            final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-            return new YamlServiceRegistryDao(registry.getYaml().getLocation(), 
-                    registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
+        return new YamlServiceRegistryDao(registry.getYaml().getLocation(),
+            registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
+
     }
 }

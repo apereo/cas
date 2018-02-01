@@ -1,6 +1,8 @@
 
 package org.apereo.cas.config;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -9,8 +11,6 @@ import org.apereo.cas.support.events.config.CasConfigurationDeletedEvent;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
 import org.apereo.cas.util.function.ComposableFunction;
 import org.apereo.cas.util.io.PathWatcherService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -31,9 +31,9 @@ import java.util.function.Consumer;
  */
 @Configuration("casConfigurationSupportUtilitiesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasConfigurationSupportUtilitiesConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationSupportUtilitiesConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -63,22 +63,21 @@ public class CasConfigurationSupportUtilitiesConfiguration {
             runNativeConfigurationDirectoryPathWatchService();
         }
 
+        @SneakyThrows
         public void runNativeConfigurationDirectoryPathWatchService() {
-            try {
-                final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
-                if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
-                    LOGGER.debug("Starting to watch configuration directory [{}]", config);
-                    final PathWatcherService watcher = new PathWatcherService(config.toPath(),
-                            createConfigurationCreatedEvent.andNext(publish),
-                            createConfigurationModifiedEvent.andNext(publish),
-                            createConfigurationDeletedEvent.andNext(publish));
-                    watcher.start(config.getName());
-                } else {
-                    LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
-                }
-            } catch (final Exception e) {
-                throw new RuntimeException(e.getMessage(), e);
+
+            final File config = configurationPropertiesEnvironmentManager.getStandaloneProfileConfigurationDirectory();
+            if (casProperties.getEvents().isTrackConfigurationModifications() && config.exists()) {
+                LOGGER.debug("Starting to watch configuration directory [{}]", config);
+                final PathWatcherService watcher = new PathWatcherService(config.toPath(),
+                    createConfigurationCreatedEvent.andNext(publish),
+                    createConfigurationModifiedEvent.andNext(publish),
+                    createConfigurationDeletedEvent.andNext(publish));
+                watcher.start(config.getName());
+            } else {
+                LOGGER.info("CAS is configured to NOT watch configuration directory [{}]. Changes require manual reloads/restarts.", config);
             }
+
         }
     }
 }

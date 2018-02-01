@@ -1,11 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.cache.AbstractPrincipalAttributesRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Map;
 
@@ -16,10 +14,12 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
+@ToString
+@EqualsAndHashCode(callSuper = true)
 public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttributesRepository {
-    private static final long serialVersionUID = -4535358847021241725L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultPrincipalAttributesRepository.class);
+    private static final long serialVersionUID = -4535358847021241725L;
 
     @Override
     protected void addPrincipalAttributes(final String id, final Map<String, Object> attributes) {
@@ -29,35 +29,8 @@ public class DefaultPrincipalAttributesRepository extends AbstractPrincipalAttri
     @Override
     protected Map<String, Object> getPrincipalAttributes(final Principal p) {
         LOGGER.debug("[{}] will return the collection of attributes directly associated with the principal object which are [{}]",
-                this.getClass().getSimpleName(), p.getAttributes());
+            this.getClass().getSimpleName(), p.getAttributes());
         return p.getAttributes();
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).toString();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(13, 133).toHashCode();
     }
 
     @Override

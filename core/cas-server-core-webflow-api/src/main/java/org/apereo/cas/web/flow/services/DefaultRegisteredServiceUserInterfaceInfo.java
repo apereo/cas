@@ -1,13 +1,17 @@
 package org.apereo.cas.web.flow.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.util.StringUtils;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
+import lombok.Getter;
 
 /**
  * This is {@link DefaultRegisteredServiceUserInterfaceInfo}.
@@ -15,19 +19,17 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@Getter
+@AllArgsConstructor
 public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
 
     private static final int DEFAULT_IMAGE_SIZE = 32;
+
     private static final long serialVersionUID = -2416684486715358748L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceUserInterfaceInfo.class);
-    
     /** the registered service. **/
     protected final RegisteredService registeredService;
-
-    public DefaultRegisteredServiceUserInterfaceInfo(final RegisteredService registeredService) {
-        this.registeredService = registeredService;
-    }
 
     /**
      * Gets description.
@@ -89,7 +91,6 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     public Collection<String> getInformationURLs() {
         return new ArrayList<>(0);
     }
-
 
     /**
      * Gets privacy statement uRL.
@@ -176,45 +177,20 @@ public class DefaultRegisteredServiceUserInterfaceInfo implements Serializable {
     /**
      * The Logo wrapper class for services UI.
      */
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Getter
+    @Setter
+    @EqualsAndHashCode
+    @ToString
     public static class Logo implements Serializable {
 
         private static final long serialVersionUID = -1434231982864628179L;
 
         private String url;
+
         private long height = DEFAULT_IMAGE_SIZE;
+
         private long width = DEFAULT_IMAGE_SIZE;
-
-        public Logo() {
-        }
-
-        public Logo(final String url, final long height, final long width) {
-            this.url = url;
-            this.height = height;
-            this.width = width;
-        }
-
-        public long getHeight() {
-            return height;
-        }
-
-        public void setHeight(final long height) {
-            this.height = height;
-        }
-
-        public long getWidth() {
-            return width;
-        }
-
-        public void setWidth(final long width) {
-            this.width = width;
-        }
-
-        public String getUrl() {
-            return url;
-        }
-
-        public void setUrl(final String url) {
-            this.url = url;
-        }
     }
 }

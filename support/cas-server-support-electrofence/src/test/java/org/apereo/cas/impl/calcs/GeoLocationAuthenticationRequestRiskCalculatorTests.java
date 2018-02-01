@@ -1,7 +1,9 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.api.AuthenticationRiskEvaluator;
 import org.apereo.cas.api.AuthenticationRiskScore;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -15,20 +17,20 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.ElectronicFenceConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.impl.mock.MockTicketGrantingTicketCreatedEventProducer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.config.CasCoreEventsConfiguration;
 import org.apereo.cas.support.events.config.CasEventsInMemoryRepositoryConfiguration;
 import org.apereo.cas.support.geo.config.GoogleMapsGeoCodingConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
@@ -59,35 +61,37 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        ElectronicFenceConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        GoogleMapsGeoCodingConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasEventsInMemoryRepositoryConfiguration.class,
-        CasCoreEventsConfiguration.class})
+    ElectronicFenceConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    GoogleMapsGeoCodingConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    CasEventsInMemoryRepositoryConfiguration.class,
+    CasCoreEventsConfiguration.class})
 @TestPropertySource(properties = "cas.authn.adaptive.risk.geoLocation.enabled=true")
 @DirtiesContext
 @EnableScheduling
 @IfProfileValue(name = "geoLocationEnabled", value = "true")
+@Slf4j
 public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("casEventRepository")
@@ -96,7 +100,7 @@ public class GeoLocationAuthenticationRequestRiskCalculatorTests {
     @Autowired
     @Qualifier("authenticationRiskEvaluator")
     private AuthenticationRiskEvaluator authenticationRiskEvaluator;
-    
+
     @Before
     public void prepTest() {
         MockTicketGrantingTicketCreatedEventProducer.createEvents(this.casEventRepository);

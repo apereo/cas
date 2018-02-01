@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.util.CollectionUtils;
@@ -19,6 +20,7 @@ import java.nio.charset.Charset;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RestAuthenticationApi {
 
     private final RestTemplate restTemplate;

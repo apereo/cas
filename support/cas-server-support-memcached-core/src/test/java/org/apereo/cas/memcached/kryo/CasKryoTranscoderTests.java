@@ -1,6 +1,7 @@
 package org.apereo.cas.memcached.kryo;
 
 import com.esotericsoftware.kryo.KryoException;
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.CachedData;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationBuilder;
@@ -44,6 +45,7 @@ import static org.junit.Assert.*;
  * @since 3.0.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class CasKryoTranscoderTests {
 
     private static final String ST_ID = "ST-1234567890ABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890ABCDEFGHIJK";
@@ -259,10 +261,10 @@ public class CasKryoTranscoderTests {
         expectedST.setExpiration(step);
         try {
             transcoder.encode(expectedST);
-            fail("Unregistered class is not allowed by Kryo");
+            throw new AssertionError("Unregistered class is not allowed by Kryo");
         } catch (final KryoException e) {
         } catch (final Exception e) {
-            fail("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
+            throw new AssertionError("Unexpected exception due to not resetting Kryo between de-serializations with unregistered class.");
         }
     }
 }

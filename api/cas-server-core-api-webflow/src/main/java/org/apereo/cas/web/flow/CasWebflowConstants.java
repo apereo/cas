@@ -12,18 +12,40 @@ public interface CasWebflowConstants {
      */
     String TRANSITION_ID_SUCCESS = "success";
 
-    /** Proceed transition id. */
+    /**
+     * Propagate transition id.
+     */
+    String TRANSITION_ID_PROPAGATE = "propagate";
+
+    /**
+     * Finish transition id.
+     */
+    String TRANSITION_ID_FINISH = "finish";
+
+    /**
+     * Front transition id.
+     */
+    String TRANSITION_ID_FRONT = "front";
+    /**
+     * Proceed transition id.
+     */
     String TRANSITION_ID_PROCEED = "proceed";
 
-    /** Confirm transition id. */
+    /**
+     * Confirm transition id.
+     */
     String TRANSITION_ID_CONFIRM = "confirm";
 
-    /** Cancel transition id. */
+    /**
+     * Cancel transition id.
+     */
     String TRANSITION_ID_CANCEL = "cancel";
 
-    /** Enroll transition id. */
+    /**
+     * Enroll transition id.
+     */
     String TRANSITION_ID_ENROLL = "enroll";
-    
+
     /**
      * The state id 'success'.
      */
@@ -48,7 +70,7 @@ public interface CasWebflowConstants {
      * The state 'realSubmit'.
      */
     String STATE_ID_REAL_SUBMIT = "realSubmit";
-    
+
 
     /**
      * The transition state 'successWithWarnings'.
@@ -59,6 +81,11 @@ public interface CasWebflowConstants {
      * The decision state 'checkRegistrationRequired'.
      */
     String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
+
+    /**
+     * The decision state 'finishLogout'.
+     */
+    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
      * The transition state 'yes'.
@@ -83,7 +110,7 @@ public interface CasWebflowConstants {
      * The transition state 'gateway'.
      */
     String TRANSITION_ID_GATEWAY = "gateway";
-    
+
     /**
      * The view state 'error'.
      */
@@ -295,7 +322,7 @@ public interface CasWebflowConstants {
      * View id 'casExpiredPassView'.
      */
     String VIEW_ID_EXPIRED_PASSWORD = "casExpiredPassView";
-    
+
     /**
      * View id 'casResetPasswordSentInstructions'.
      */
@@ -312,9 +339,29 @@ public interface CasWebflowConstants {
     String STATE_ID_DO_LOGOUT = "doLogout";
 
     /**
+     * State id 'propagateLogoutRequests'.
+     */
+    String STATE_ID_PROPAGATE_LOGOUT_REQUESTS = "propagateLogoutRequests";
+
+    /**
+     * State id 'logoutView'.
+     */
+    String STATE_ID_LOGOUT_VIEW = "logoutView";
+
+    /**
      * State id 'finishLogout'.
      */
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
+
+    /**
+     * State id 'frontLogout'.
+     */
+    String STATE_ID_FRONT_LOGOUT = "frontLogout";
+
+    /**
+     * State id 'confirmLogoutView'.
+     */
+    String STATE_ID_CONFIRM_LOGOUT_VIEW = "confirmLogoutView";
 
     /**
      * State id 'casPasswordUpdateSuccess'.
@@ -347,20 +394,20 @@ public interface CasWebflowConstants {
     String ACTION_ID_TERMINATE_SESSION = "terminateSessionAction";
 
     /**
+     * Action id 'logoutViewSetupAction'.
+     */
+    String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
+    
+    /**
      * Action id 'authenticationExceptionHandler'.
      */
     String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
-    
+
     /**
      * Action id 'sendTicketGrantingTicketAction'.
      */
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
     
-    /**
-     * Transition id 'changePassword'.
-     */
-    String TRANSITION_ID_CHANGE_PASSWORD = "changePassword";
-
     /**
      * State id 'proceedFromAuthenticationWarningView'.
      */
@@ -389,7 +436,7 @@ public interface CasWebflowConstants {
     /**
      * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
      */
-    String STATE_ID_PSWD_CHANGE_CHECK_POST_LOGIN = "postLoginPswdChangeCheck";
+    String STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK = "postLoginPswdChangeCheck";
 
     /**
      * State id to check for do change password manual flag "checkDoChangePassword".

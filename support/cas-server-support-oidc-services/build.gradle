@@ -1,5 +1,7 @@
 description = "Apereo CAS Server OpenID Connect Support Services"
 dependencies {
+    api project(":api:cas-server-core-api-throttle")
+    
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":core:cas-server-core-services-api")
     implementation project(":core:cas-server-core-services-authentication")

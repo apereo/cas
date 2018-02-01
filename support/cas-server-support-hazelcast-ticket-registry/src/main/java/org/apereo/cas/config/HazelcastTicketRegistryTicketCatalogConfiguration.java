@@ -1,10 +1,9 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -17,8 +16,8 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("hazelcastTicketRegistryTicketMetadataCatalogConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTicketCatalogConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistryTicketCatalogConfiguration.class);
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -34,7 +33,7 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     protected void buildAndRegisterProxyTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("proxyTicketsCache");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getPt().getTimeToKillInSeconds());
-        super.buildAndRegisterServiceTicketDefinition(plan, metadata);
+        super.buildAndRegisterProxyTicketDefinition(plan, metadata);
     }
 
     @Override

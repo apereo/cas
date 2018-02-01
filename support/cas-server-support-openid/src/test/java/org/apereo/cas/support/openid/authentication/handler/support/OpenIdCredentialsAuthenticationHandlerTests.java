@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
@@ -21,6 +22,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdTests {
 
     private static final String TGT_ID = "test";
@@ -59,7 +61,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         t.markTicketExpired();
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("TGT is null or expired.");
+
 
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
@@ -71,7 +73,7 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         this.ticketRegistry.addTicket(t);
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Principal ID mismatch");
+
 
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }

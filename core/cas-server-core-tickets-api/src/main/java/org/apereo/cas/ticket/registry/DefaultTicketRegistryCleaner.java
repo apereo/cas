@@ -1,12 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.Serializable;
@@ -18,21 +18,14 @@ import java.io.Serializable;
  * @since 5.0.0
  */
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Slf4j
+@AllArgsConstructor
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Serializable {
     private static final long serialVersionUID = -8581398063126547772L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultTicketRegistryCleaner.class);
 
+    private final LockingStrategy lockingStrategy;
     private final LogoutManager logoutManager;
     private final TicketRegistry ticketRegistry;
-    private final LockingStrategy lockingStrategy;
-
-    public DefaultTicketRegistryCleaner(final LockingStrategy lockingStrategy,
-                                        final LogoutManager logoutManager,
-                                        final TicketRegistry ticketRegistry) {
-        this.lockingStrategy = lockingStrategy;
-        this.logoutManager = logoutManager;
-        this.ticketRegistry = ticketRegistry;
-    }
 
     @Override
     public void clean() {

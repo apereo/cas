@@ -1,12 +1,13 @@
 package org.apereo.cas.util;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.io.input.ReaderInputStream;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
@@ -28,7 +29,8 @@ import java.util.Enumeration;
 import java.util.jar.JarFile;
 import java.util.zip.ZipEntry;
 
-import static org.springframework.util.ResourceUtils.*;
+import static org.springframework.util.ResourceUtils.CLASSPATH_URL_PREFIX;
+import static org.springframework.util.ResourceUtils.FILE_URL_PREFIX;
 
 /**
  * Utility class to assist with resource operations.
@@ -36,15 +38,10 @@ import static org.springframework.util.ResourceUtils.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class ResourceUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceUtils.class);
-
-    // This constant covers both http and https
+@Slf4j
+@UtilityClass
+public class ResourceUtils {
     private static final String HTTP_URL_PREFIX = "http";
-
-    private ResourceUtils() {
-    }
 
     /**
      * Gets resource from a String location.
@@ -161,58 +158,56 @@ public final class ResourceUtils {
      * @param containsName the resource name pattern
      * @return the file
      */
+    @SneakyThrows
     public static Resource prepareClasspathResourceIfNeeded(final Resource resource,
                                                             final boolean isDirectory,
                                                             final String containsName) {
-        try {
-            if (resource == null) {
-                LOGGER.debug("No resource defined to prepare. Returning null");
-                return null;
-            }
+        if (resource == null) {
+            LOGGER.debug("No resource defined to prepare. Returning null");
+            return null;
+        }
 
-            if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
-                return resource;
-            }
-            if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
-                return resource;
-            }
+        if (!ClassUtils.isAssignable(resource.getClass(), ClassPathResource.class)) {
+            return resource;
+        }
+        if (org.springframework.util.ResourceUtils.isFileURL(resource.getURL())) {
+            return resource;
+        }
 
-            final URL url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
-            final File file = org.springframework.util.ResourceUtils.getFile(url);
+        final URL url = org.springframework.util.ResourceUtils.extractArchiveURL(resource.getURL());
+        final File file = org.springframework.util.ResourceUtils.getFile(url);
 
-            final File casDirectory = new File(FileUtils.getTempDirectory(), "cas");
-            final File destination = new File(casDirectory, resource.getFilename());
-            if (isDirectory) {
-                FileUtils.forceMkdir(destination);
-                FileUtils.cleanDirectory(destination);
-            } else if (destination.exists()) {
-                FileUtils.forceDelete(destination);
-            }
+        final File casDirectory = new File(FileUtils.getTempDirectory(), "cas");
+        final File destination = new File(casDirectory, resource.getFilename());
+        if (isDirectory) {
+            FileUtils.forceMkdir(destination);
+            FileUtils.cleanDirectory(destination);
+        } else if (destination.exists()) {
+            FileUtils.forceDelete(destination);
+        }
 
-            try (JarFile jFile = new JarFile(file)) {
-                final Enumeration e = jFile.entries();
-                while (e.hasMoreElements()) {
-                    final ZipEntry entry = (ZipEntry) e.nextElement();
-                    if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
-                        try (InputStream stream = jFile.getInputStream(entry)) {
-                            File copyDestination = destination;
-                            if (isDirectory) {
-                                final File entryFileName = new File(entry.getName());
-                                copyDestination = new File(destination, entryFileName.getName());
-                            }
+        try (JarFile jFile = new JarFile(file)) {
+            final Enumeration e = jFile.entries();
+            while (e.hasMoreElements()) {
+                final ZipEntry entry = (ZipEntry) e.nextElement();
+                if (entry.getName().contains(resource.getFilename()) && entry.getName().contains(containsName)) {
+                    try (InputStream stream = jFile.getInputStream(entry)) {
+                        File copyDestination = destination;
+                        if (isDirectory) {
+                            final File entryFileName = new File(entry.getName());
+                            copyDestination = new File(destination, entryFileName.getName());
+                        }
 
-                            try (Writer writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
-                                IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
-                            }
+                        try (Writer writer = Files.newBufferedWriter(copyDestination.toPath(), StandardCharsets.UTF_8)) {
+                            IOUtils.copy(stream, writer, StandardCharsets.UTF_8);
                         }
                     }
                 }
             }
-            return new FileSystemResource(destination);
-        } catch (final IOException e) {
-            throw new RuntimeException(e.getMessage(), e);
         }
+        return new FileSystemResource(destination);
     }
+    
 
     /**
      * Build input stream resource from string value.
@@ -226,7 +221,7 @@ public final class ResourceUtils {
         final InputStream is = new ReaderInputStream(reader, StandardCharsets.UTF_8);
         return new InputStreamResource(is, description);
     }
-    
+
     /**
      * Is the resource a file?
      *

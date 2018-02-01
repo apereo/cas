@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import java.util.List;
@@ -10,12 +12,10 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DynamoDbServiceRegistryDao extends AbstractServiceRegistryDao {
     private final DynamoDbServiceRegistryFacilitator dbTableService;
-
-    public DynamoDbServiceRegistryDao(final DynamoDbServiceRegistryFacilitator dbTableService) {
-        this.dbTableService = dbTableService;
-    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {

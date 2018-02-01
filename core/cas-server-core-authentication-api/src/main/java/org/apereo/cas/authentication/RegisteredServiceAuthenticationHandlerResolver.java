@@ -1,12 +1,12 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedSsoServiceException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -21,21 +21,14 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class RegisteredServiceAuthenticationHandlerResolver implements AuthenticationHandlerResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceAuthenticationHandlerResolver.class);
+
     /**
      * The Services manager.
      */
     protected final ServicesManager servicesManager;
-
-    /**
-     * Instantiates a new Registered service authentication handler resolver.
-     *
-     * @param servicesManager the services manager
-     */
-    public RegisteredServiceAuthenticationHandlerResolver(final ServicesManager servicesManager) {
-        this.servicesManager = servicesManager;
-    }
 
     @Override
     public Set<AuthenticationHandler> resolve(final Set<AuthenticationHandler> candidateHandlers,

@@ -3,16 +3,14 @@ package org.apereo.cas.ticket.accesstoken;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link OAuthAccessTokenExpirationPolicy}.
@@ -21,10 +19,12 @@ import java.time.temporal.ChronoUnit;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolicy {
-    private static final long serialVersionUID = -8383186650682727360L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthAccessTokenExpirationPolicy.class);
+    private static final long serialVersionUID = -8383186650682727360L;
 
     /**
      * Maximum time this token is valid.
@@ -36,9 +36,6 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      */
     private long timeToKillInSeconds;
 
-    public OAuthAccessTokenExpirationPolicy() {
-    }
-
     /**
      * Instantiates a new OAuth access token expiration policy.
      *
@@ -46,8 +43,7 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
      * @param timeToKill    the time to kill
      */
     @JsonCreator
-    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive,
-                                            @JsonProperty("timeToIdle") final long timeToKill) {
+    public OAuthAccessTokenExpirationPolicy(@JsonProperty("timeToLive") final long maxTimeToLive, @JsonProperty("timeToIdle") final long timeToKill) {
         this.maxTimeToLiveInSeconds = maxTimeToLive;
         this.timeToKillInSeconds = timeToKill;
     }
@@ -56,21 +52,18 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
     public boolean isExpired(final TicketState ticketState) {
         final ZonedDateTime currentSystemTime = ZonedDateTime.now(ZoneOffset.UTC);
         final ZonedDateTime creationTime = ticketState.getCreationTime();
-
         // token has been used, check maxTimeToLive (hard window)
         ZonedDateTime expirationTime = creationTime.plus(this.maxTimeToLiveInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since creation is greater than maxTimeToLiveInSeconds");
             return true;
         }
-
         // token is within hard window, check timeToKill (sliding window)
         expirationTime = ticketState.getLastTimeUsed().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (currentSystemTime.isAfter(expirationTime)) {
             LOGGER.debug("Access token is expired because the time since last use is greater than timeToKillInSeconds");
             return true;
         }
-
         return false;
     }
 
@@ -84,30 +77,4 @@ public class OAuthAccessTokenExpirationPolicy extends AbstractCasExpirationPolic
         return this.timeToKillInSeconds;
     }
 
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final OAuthAccessTokenExpirationPolicy rhs = (OAuthAccessTokenExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.maxTimeToLiveInSeconds, rhs.maxTimeToLiveInSeconds)
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(maxTimeToLiveInSeconds)
-                .append(timeToKillInSeconds)
-                .toHashCode();
-    }
 }

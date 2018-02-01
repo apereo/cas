@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
@@ -48,6 +49,7 @@ import java.util.Set;
 @Configuration("casThemesConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Import(ThymeleafAutoConfiguration.class)
+@Slf4j
 public class CasThemesConfiguration {
 
     @Autowired

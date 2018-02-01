@@ -2,6 +2,9 @@ package org.apereo.cas.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.vdurmont.semver4j.Semver;
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -21,13 +24,12 @@ import java.util.Properties;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public final class SystemUtils {
+@Slf4j
+@UtilityClass
+public class SystemUtils {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private static final String UPDATE_CHECK_MAVEN_URL = "https://search.maven.org/solrsearch/select?q=g:%22org.apereo.cas%22%20AND%20a:%22cas-server%22";
-
-    private SystemUtils() {
-    }
 
     /**
      * Gets system info.
@@ -65,46 +67,41 @@ public final class SystemUtils {
         return info;
     }
 
+    @SneakyThrows
     private static void injectUpdateInfoIntoBannerIfNeeded(final Map<String, Object> info) {
-        try {
-            final Properties properties = System.getProperties();
-            if (!properties.containsKey("CAS_UPDATE_CHECK_ENABLED")) {
-                return;
-            }
-
-            final URL url = new URL(UPDATE_CHECK_MAVEN_URL);
-            final Map results = MAPPER.readValue(url, Map.class);
-            if (!results.containsKey("response")) {
-                return;
-            }
-            final Map response = (Map) results.get("response");
-            if (!response.containsKey("numFound") && (int) response.get("numFound") != 1) {
-                return;
-            }
-
-            final List docs = (List) response.get("docs");
-            if (docs.isEmpty()) {
-                return;
-            }
-
-            final Map entry = (Map) docs.get(0);
-            final String latestVersion = (String) entry.get("latestVersion");
-            if (StringUtils.isNotBlank(latestVersion)) {
-                final String currentVersion = CasVersion.getVersion();
-                final Semver latestSem = new Semver(latestVersion);
-                final Semver currentSem = new Semver(currentVersion);
-
-                if (currentSem.isLowerThan(latestSem)) {
-                    final String updateString = String.format("[Latest Version: %s / Stable: %s]", latestVersion,
-                        StringUtils.capitalize(BooleanUtils.toStringYesNo(latestSem.isStable())));
-                    info.put("Update Availability", updateString);
-                }
-            }
-
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+        final Properties properties = System.getProperties();
+        if (!properties.containsKey("CAS_UPDATE_CHECK_ENABLED")) {
+            return;
         }
 
+        final URL url = new URL(UPDATE_CHECK_MAVEN_URL);
+        final Map results = MAPPER.readValue(url, Map.class);
+        if (!results.containsKey("response")) {
+            return;
+        }
+        final Map response = (Map) results.get("response");
+        if (!response.containsKey("numFound") && (int) response.get("numFound") != 1) {
+            return;
+        }
+
+        final List docs = (List) response.get("docs");
+        if (docs.isEmpty()) {
+            return;
+        }
+
+        final Map entry = (Map) docs.get(0);
+        final String latestVersion = (String) entry.get("latestVersion");
+        if (StringUtils.isNotBlank(latestVersion)) {
+            final String currentVersion = CasVersion.getVersion();
+            final Semver latestSem = new Semver(latestVersion);
+            final Semver currentSem = new Semver(currentVersion);
+
+            if (currentSem.isLowerThan(latestSem)) {
+                final String updateString = String.format("[Latest Version: %s / Stable: %s]", latestVersion,
+                    StringUtils.capitalize(BooleanUtils.toStringYesNo(latestSem.isStable())));
+                info.put("Update Availability", updateString);
+            }
+        }
     }
 
 }

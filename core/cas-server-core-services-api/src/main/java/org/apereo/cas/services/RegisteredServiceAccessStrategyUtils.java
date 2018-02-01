@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -8,8 +10,6 @@ import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -25,12 +25,9 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
-public final class RegisteredServiceAccessStrategyUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceAccessStrategyUtils.class);
-
-    private RegisteredServiceAccessStrategyUtils() {
-    }
+@Slf4j
+@UtilityClass
+public class RegisteredServiceAccessStrategyUtils {
 
     /**
      * Ensure service access is allowed.

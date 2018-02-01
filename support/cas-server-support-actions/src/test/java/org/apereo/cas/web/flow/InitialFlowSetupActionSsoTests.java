@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -11,13 +12,13 @@ import org.apereo.cas.config.CasCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
 import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
-import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
@@ -49,43 +50,42 @@ import org.springframework.webflow.test.MockRequestContext;
 
 import javax.annotation.PostConstruct;
 
-import static org.hamcrest.Matchers.startsWith;
-
 /**
  * @author Scott Battaglia
  * @since 3.0.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(
-        classes = {
-                InitialFlowSetupActionSsoTests.CasTestConfiguration.class,
-                CasSupportActionsConfiguration.class,
-                CasCoreWebflowConfiguration.class,
-                CasCoreWebConfiguration.class,
-                CasCoreConfiguration.class,
-                CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-                CasCoreTicketsConfiguration.class,
-                CasRegisteredServicesTestConfiguration.class,
-                CasCoreTicketCatalogConfiguration.class,
-                CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-                CasCoreTicketIdGeneratorsConfiguration.class,
-                CasWebApplicationServiceFactoryConfiguration.class,
-                CasCoreLogoutConfiguration.class,
-                CasCoreAuthenticationConfiguration.class, 
-                CasCoreServicesAuthenticationConfiguration.class,
-                CasCoreAuthenticationPrincipalConfiguration.class,
-                CasCoreAuthenticationPolicyConfiguration.class,
-                CasCoreAuthenticationMetadataConfiguration.class,
-                CasCoreAuthenticationSupportConfiguration.class,
-                CasCoreAuthenticationHandlersConfiguration.class,
-                CasCoreHttpConfiguration.class,
-                CasPersonDirectoryConfiguration.class,
-                CasCoreUtilConfiguration.class,
-                CasCookieConfiguration.class,
-                RefreshAutoConfiguration.class,
-                CasCoreServicesConfiguration.class})
+    classes = {
+        InitialFlowSetupActionSsoTests.CasTestConfiguration.class,
+        CasSupportActionsConfiguration.class,
+        CasCoreWebflowConfiguration.class,
+        CasCoreWebConfiguration.class,
+        CasCoreConfiguration.class,
+        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+        CasCoreTicketsConfiguration.class,
+        CasRegisteredServicesTestConfiguration.class,
+        CasCoreTicketCatalogConfiguration.class,
+        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+        CasCoreTicketIdGeneratorsConfiguration.class,
+        CasWebApplicationServiceFactoryConfiguration.class,
+        CasCoreLogoutConfiguration.class,
+        CasCoreAuthenticationConfiguration.class,
+        CasCoreServicesAuthenticationConfiguration.class,
+        CasCoreAuthenticationPrincipalConfiguration.class,
+        CasCoreAuthenticationPolicyConfiguration.class,
+        CasCoreAuthenticationMetadataConfiguration.class,
+        CasCoreAuthenticationSupportConfiguration.class,
+        CasCoreAuthenticationHandlersConfiguration.class,
+        CasCoreHttpConfiguration.class,
+        CasPersonDirectoryConfiguration.class,
+        CasCoreUtilConfiguration.class,
+        CasCookieConfiguration.class,
+        RefreshAutoConfiguration.class,
+        CasCoreServicesConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @TestPropertySource(properties = "cas.sso.missingService=false")
+@Slf4j
 public class InitialFlowSetupActionSsoTests {
 
     @TestConfiguration
@@ -98,7 +98,7 @@ public class InitialFlowSetupActionSsoTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -113,7 +113,7 @@ public class InitialFlowSetupActionSsoTests {
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
 
         this.thrown.expect(NoSuchFlowExecutionException.class);
-        this.thrown.expectMessage(startsWith("No flow execution could be found with key 'null'"));
+
 
         this.action.execute(context);
     }

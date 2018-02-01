@@ -4,6 +4,6 @@ dependencies {
     implementation project(":core:cas-server-core-configuration-api")
     implementation project(":core:cas-server-core-authentication-api")
     api libraries.ldaptive
-    implementation libraries.shiro
+
     implementation libraries.pac4j
 }

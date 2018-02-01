@@ -4,9 +4,11 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheckRegistry;
 import com.codahale.metrics.servlets.HealthCheckServlet;
 import com.codahale.metrics.servlets.MetricsServlet;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailExecutionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.DateTimeUtils;
@@ -42,6 +44,7 @@ import java.util.stream.Collectors;
  * @author Scott Battaglia
  * @since 3.3.5
  */
+@Slf4j
 public class StatisticsController extends BaseCasMvcEndpoint implements ServletContextAware {
     private static final int NUMBER_OF_BYTES_IN_A_KILOBYTE = 1024;
     private static final String MONITORING_VIEW_STATISTICS = "monitoring/viewStatistics";
@@ -207,7 +210,8 @@ public class StatisticsController extends BaseCasMvcEndpoint implements ServletC
             final Collection<AuthenticationAuditSummary> values = summary.values();
             return values;
         };
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        return new WebAsyncTask<>(timeout, asyncTask);
     }
 
     private static class AuthenticationAuditSummary {

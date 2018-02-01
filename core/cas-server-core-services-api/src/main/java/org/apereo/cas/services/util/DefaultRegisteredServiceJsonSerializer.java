@@ -3,14 +3,13 @@ package org.apereo.cas.services.util;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.PrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.util.serialization.AbstractJacksonBackedStringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.File;
 import java.nio.charset.StandardCharsets;
+import lombok.NoArgsConstructor;
 
 /**
  * Serializes registered services to JSON based on the Jackson JSON library.
@@ -18,13 +17,11 @@ import java.nio.charset.StandardCharsets;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@NoArgsConstructor
 public class DefaultRegisteredServiceJsonSerializer extends AbstractJacksonBackedStringSerializer<RegisteredService> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceJsonSerializer.class);
 
     private static final long serialVersionUID = 7645698151115635245L;
-
-    public DefaultRegisteredServiceJsonSerializer() {
-    }
 
     public DefaultRegisteredServiceJsonSerializer(final PrettyPrinter prettyPrinter) {
         super(prettyPrinter);

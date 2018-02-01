@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -8,10 +9,13 @@ import org.apereo.cas.configuration.model.core.web.security.HttpHeadersRequestPr
 import org.apereo.cas.configuration.model.core.web.security.HttpWebRequestProperties;
 import org.apereo.cas.security.AddResponseHeadersFilter;
 import org.apereo.cas.security.RequestParameterPolicyEnforcementFilter;
-import org.apereo.cas.security.ResponseHeadersEnforcementFilter;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.AuthenticationCredentialsLocalBinderClearingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
@@ -35,10 +39,19 @@ import java.util.Map;
  */
 @Configuration("casFiltersConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasFiltersConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
+    
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ArgumentExtractor argumentExtractor;
 
     @RefreshScope
     @Bean
@@ -108,7 +121,7 @@ public class CasFiltersConfiguration {
             initParams.put("contentSecurityPolicy", header.getContentSecurityPolicy());
         }
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new ResponseHeadersEnforcementFilter());
+        bean.setFilter(new RegisteredServiceResponseHeadersEnforcementFilter(servicesManager, argumentExtractor));
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setInitParameters(initParams);
         bean.setName("responseHeadersSecurityFilter");

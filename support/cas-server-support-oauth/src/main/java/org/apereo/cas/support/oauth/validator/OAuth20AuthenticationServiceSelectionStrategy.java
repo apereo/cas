@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.NameValuePair;
@@ -14,8 +15,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.util.HttpRequestUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,10 +26,11 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OAuth20AuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8517547235465666978L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthenticationServiceSelectionStrategy.class);
+
 
     private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
@@ -59,7 +59,7 @@ public class OAuth20AuthenticationServiceSelectionStrategy implements Authentica
                 String id = null;
                 final String grantValue = grantType.get().getValue();
                 if (OAuth20Utils.isGrantType(grantValue, OAuth20GrantTypes.CLIENT_CREDENTIALS)) {
-                    LOGGER.debug("Located grant type [{}]; checking for service headers");
+                    LOGGER.debug("Located grant type [{}]; checking for service headers", grantValue);
                     final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
                     id = OAuth20Utils.getServiceRequestHeaderIfAny(request);
                 }

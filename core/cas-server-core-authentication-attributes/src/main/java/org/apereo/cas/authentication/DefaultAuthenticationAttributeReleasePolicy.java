@@ -1,11 +1,13 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import lombok.Setter;
 
 /**
  * Default AuthenticationAttributeReleasePolicy implementation.
@@ -13,19 +15,14 @@ import java.util.Set;
  * @author Daniel Frett
  * @since 5.2.0
  */
+@Slf4j
+@Setter
 public class DefaultAuthenticationAttributeReleasePolicy implements AuthenticationAttributeReleasePolicy {
+
     private Collection<String> attributesToRelease;
 
     @Nonnull
     private Set<String> attributesToNeverRelease = new HashSet<>();
-
-    public void setAttributesToRelease(final Collection<String> attrs) {
-        attributesToRelease = attrs;
-    }
-
-    public void setAttributesToNeverRelease(final Collection<String> attrs) {
-        attributesToNeverRelease = attrs != null ? new HashSet<>(attrs) : new HashSet<>();
-    }
 
     /**
      * Add additional attributes that should never be released in a validation response.
@@ -47,15 +44,12 @@ public class DefaultAuthenticationAttributeReleasePolicy implements Authenticati
     @Override
     public Map<String, Object> getAuthenticationAttributesForRelease(@Nonnull final Authentication authentication) {
         final HashMap<String, Object> attrs = new HashMap<>(authentication.getAttributes());
-
         // remove any attributes explicitly prohibited
         attrs.keySet().removeAll(attributesToNeverRelease);
-
         // only apply whitelist if it contains attributes
         if (attributesToRelease != null && !attributesToRelease.isEmpty()) {
             attrs.keySet().retainAll(attributesToRelease);
         }
-
         return attrs;
     }
 }

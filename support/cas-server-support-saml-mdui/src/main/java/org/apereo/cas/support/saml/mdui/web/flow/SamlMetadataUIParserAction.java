@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -11,8 +13,6 @@ import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.MetadataUIUtils;
 import org.apereo.cas.support.saml.mdui.SamlMetadataUIInfo;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -31,31 +31,14 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class SamlMetadataUIParserAction extends AbstractAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlMetadataUIParserAction.class);
 
     private final String entityIdParameterName;
     private final MetadataResolverAdapter metadataAdapter;
-
-    private final ServicesManager servicesManager;
     private final ServiceFactory<WebApplicationService> serviceFactory;
-
-    /**
-     * Instantiates a new SAML MDUI parser action.
-     *
-     * @param entityIdParameterName the entity id parameter name
-     * @param metadataAdapter       the metadata adapter
-     * @param serviceFactory        the service factory
-     * @param servicesManager       the service manager
-     */
-    public SamlMetadataUIParserAction(final String entityIdParameterName, final MetadataResolverAdapter metadataAdapter,
-                                      final ServiceFactory<WebApplicationService> serviceFactory, final ServicesManager servicesManager) {
-        this.entityIdParameterName = entityIdParameterName;
-        this.metadataAdapter = metadataAdapter;
-        this.serviceFactory = serviceFactory;
-        this.servicesManager = servicesManager;
-    }
+    private final ServicesManager servicesManager;
 
     @Override
     public Event doExecute(final RequestContext requestContext) {

@@ -34,9 +34,9 @@ A number of CAS configuration options equally apply to a number of modules and f
 ### Standalone
 
 CAS by default will attempt to locate settings and properties inside a given directory indicated 
-under the setting name `cas.standalone.config` and otherwise falls back to using `/etc/cas/config`.
+under the setting name `cas.standalone.configurationDirectory` and otherwise falls back to using `/etc/cas/config`.
 
-There also exists a `cas.standalone.config.file` which can be used to directly feed a collection of properties
+There also exists a `cas.standalone.configurationFile` which can be used to directly feed a collection of properties
 to CAS in form of a file or classpath resource. This is specially useful in cases where a bare CAS server is deployed in the cloud without the extra ceremony of a configuration server or an external directory for that matter and the deployer wishes to avoid overriding embedded configuration files.
 
 ### Spring Cloud
@@ -173,10 +173,10 @@ secured, [please review this guide](Configuration-Properties-Security.html).
 ### Standalone
 
 ```properties
-# cas.standalone.config.security.alg=PBEWithMD5AndTripleDES
-# cas.standalone.config.security.provider=BC
-# cas.standalone.config.security.iterations=
-# cas.standalone.config.security.psw=
+# cas.standalone.configurationSecurity.alg=PBEWithMD5AndTripleDES
+# cas.standalone.configurationSecurity.provider=BC
+# cas.standalone.configurationSecurity.iterations=
+# cas.standalone.configurationSecurity.psw=
 ```
 
 The above settings may be passed to CAS using any of the [strategies outline here](Configuration-Management.html#overview),
@@ -988,7 +988,7 @@ Satisfied if and only if the requesting principal has not already authenticated 
 Otherwise the authentication event is blocked, preventing multiple logins. 
 
 <div class="alert alert-warning"><strong>Usage Warning</strong><p>Activating this policy is not without cost,
-as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established a authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
+as CAS needs to query the ticket registry and all tickets present to determine whether the current user has established an authentication session anywhere. This will surely add a performance burden to the deployment. Use with care.</p></div>
 
 ```properties
 # cas.authn.policy.uniquePrincipal.enabled=true
@@ -2584,7 +2584,6 @@ To learn more about this topic, [please review this guide](OAuth-OpenId-Authenti
 # cas.authn.oauth.grants.resourceOwner.requireServiceHeader=true
 
 # cas.authn.oauth.userProfileViewType=NESTED|FLAT
-# cas.authn.oauth.throttler=neverThrottle|authenticationThrottle
 ```
 
 ## Localization
@@ -2909,7 +2908,7 @@ a local truststore is provided by CAS to improve portability of configuration ac
 # cas.httpClient.hostnameVerifier=NONE|DEFAULT
 # cas.httpClient.allowLocalLogoutUrls=false
 # cas.httpClient.authorityValidationRegEx=
-# cas.httpClient.authorityValidationRegExCaseSensitiv=true
+# cas.httpClient.authorityValidationRegExCaseSensitive=true
 
 # cas.httpClient.truststore.psw=changeit
 # cas.httpClient.truststore.file=classpath:/truststore.jks
@@ -3525,7 +3524,6 @@ To learn more about this topic, [please review this guide](../protocol/REST-Prot
 ```properties
 # cas.rest.attributeName=
 # cas.rest.attributeValue=
-# cas.rest.throttler=neverThrottle|authenticationThrottle
 ```
 
 ## Metrics

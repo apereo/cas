@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.After;
@@ -35,6 +36,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 @ContextConfiguration(locations = {"classpath:/jpaTestApplicationContext.xml"})
+@Slf4j
 public class SearchModeSearchDatabaseAuthenticationHandlerTests {
 
     @Rule
@@ -93,7 +95,7 @@ public class SearchModeSearchDatabaseAuthenticationHandlerTests {
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("hello", "world");
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("hello not found with SQL query.");
+
 
         this.handler.authenticate(c);
     }

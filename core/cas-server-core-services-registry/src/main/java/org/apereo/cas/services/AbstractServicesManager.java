@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -10,8 +11,6 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServicesLoadedEvent;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -35,9 +34,9 @@ import java.util.stream.Stream;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public abstract class AbstractServicesManager implements ServicesManager {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AbstractServicesManager.class);
-
+    
     private static final long serialVersionUID = -8581398063126547772L;
 
     private final ServiceRegistryDao serviceRegistryDao;
@@ -198,7 +197,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
-        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao);
+        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao.getName());
     }
 
     private void evaluateExpiredServiceDefinitions() {

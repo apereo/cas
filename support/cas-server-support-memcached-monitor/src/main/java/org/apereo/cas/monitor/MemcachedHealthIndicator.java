@@ -1,10 +1,9 @@
 package org.apereo.cas.monitor;
 
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
 
 import java.net.InetSocketAddress;
@@ -19,8 +18,9 @@ import java.util.List;
  * @author Marvin S. Addison
  * @since 3.5.1
  */
+@Slf4j
 public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedHealthIndicator.class);
+
 
     private final ObjectPool<MemcachedClientIF> connectionPool;
 

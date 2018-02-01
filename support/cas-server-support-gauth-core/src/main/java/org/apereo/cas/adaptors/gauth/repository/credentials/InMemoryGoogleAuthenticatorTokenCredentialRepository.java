@@ -2,6 +2,9 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.otp.repository.credentials.BaseInMemoryOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 
@@ -11,18 +14,11 @@ import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
+@Getter
 public class InMemoryGoogleAuthenticatorTokenCredentialRepository extends BaseInMemoryOneTimeTokenCredentialRepository {
-
     private final IGoogleAuthenticator googleAuthenticator;
-
-    /**
-     * Instantiates a new In memory google authenticator account registry.
-     *
-     * @param googleAuthenticator the google authenticator
-     */
-    public InMemoryGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
-        this.googleAuthenticator = googleAuthenticator;
-    }
 
     @Override
     public OneTimeTokenAccount create(final String username) {

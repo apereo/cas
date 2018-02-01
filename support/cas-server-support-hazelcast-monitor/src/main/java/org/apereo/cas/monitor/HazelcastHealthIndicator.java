@@ -4,10 +4,10 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,8 +18,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastHealthIndicator.class);
 
     public HazelcastHealthIndicator(final CasConfigurationProperties casProperties) {
         super(casProperties);
@@ -31,7 +32,6 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
         LOGGER.debug("Locating hazelcast instance [{}]...", hz.getCluster().getInstanceName());
         final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(hz.getCluster().getInstanceName());
-
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
             final IMap map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
@@ -44,9 +44,11 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
      * The type Hazelcast statistics.
      */
     public static class HazelcastStatistics implements CacheStatistics {
+
         private static final int PERCENTAGE_VALUE = 100;
 
         private final IMap map;
+
         private final int clusterSize;
 
         protected HazelcastStatistics(final IMap map, final int clusterSize) {
@@ -89,60 +91,23 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         @Override
         public void toString(final StringBuilder builder) {
             final LocalMapStats localMapStats = map.getLocalMapStats();
-
-            builder.append("Creation time: ")
-                    .append(localMapStats.getCreationTime())
-                    .append(", ")
-                    .append("Cluster size: ")
-                    .append(clusterSize)
-                    .append(", ")
-                    .append("Owned entry count: ")
-                    .append(localMapStats.getOwnedEntryCount())
-                    .append(", ")
-                    .append("Backup entry count: ")
-                    .append(localMapStats.getBackupEntryCount())
-                    .append(", ")
-                    .append("Backup count: ")
-                    .append(localMapStats.getBackupCount())
-                    .append(", ")
-                    .append("Hits count: ")
-                    .append(localMapStats.getHits())
-                    .append(", ")
-                    .append("Last update time: ")
-                    .append(localMapStats.getLastUpdateTime())
-                    .append(", ")
-                    .append("Last access time: ")
-                    .append(localMapStats.getLastAccessTime())
-                    .append(", ")
-                    .append("Locked entry count: ")
-                    .append(localMapStats.getLockedEntryCount())
-                    .append(", ")
-                    .append("Dirty entry count: ")
-                    .append(localMapStats.getDirtyEntryCount())
-                    .append(", ")
-                    .append("Total get latency: ")
-                    .append(localMapStats.getMaxGetLatency())
-                    .append(", ")
-                    .append("Total put latency: ")
-                    .append(localMapStats.getTotalPutLatency())
-                    .append(", ")
-                    .append("Total remove latency: ")
-                    .append(localMapStats.getTotalRemoveLatency())
-                    .append(", ")
-                    .append("Heap cost: ")
-                    .append(localMapStats.getHeapCost());
-
+            builder.append("Creation time: ").append(localMapStats.getCreationTime()).append(", ")
+                .append("Cluster size: ").append(clusterSize).append(", ").append("Owned entry count: ")
+                .append(localMapStats.getOwnedEntryCount()).append(", ").append("Backup entry count: ")
+                .append(localMapStats.getBackupEntryCount()).append(", ").append("Backup count: ")
+                .append(localMapStats.getBackupCount()).append(", ").append("Hits count: ")
+                .append(localMapStats.getHits()).append(", ").append("Last update time: ")
+                .append(localMapStats.getLastUpdateTime()).append(", ").append("Last access time: ")
+                .append(localMapStats.getLastAccessTime()).append(", ").append("Locked entry count: ")
+                .append(localMapStats.getLockedEntryCount()).append(", ").append("Dirty entry count: ")
+                .append(localMapStats.getDirtyEntryCount()).append(", ").append("Total get latency: ")
+                .append(localMapStats.getMaxGetLatency()).append(", ").append("Total put latency: ")
+                .append(localMapStats.getTotalPutLatency()).append(", ").append("Total remove latency: ")
+                .append(localMapStats.getTotalRemoveLatency()).append(", ").append("Heap cost: ")
+                .append(localMapStats.getHeapCost());
             if (localMapStats.getNearCacheStats() != null) {
-                builder.append(", Misses: ")
-                        .append(localMapStats.getNearCacheStats().getMisses());
+                builder.append(", Misses: ").append(localMapStats.getNearCacheStats().getMisses());
             }
-        }
-
-        @Override
-        public String toString() {
-            final StringBuilder builder = new StringBuilder();
-            this.toString(builder);
-            return builder.toString();
         }
     }
 }

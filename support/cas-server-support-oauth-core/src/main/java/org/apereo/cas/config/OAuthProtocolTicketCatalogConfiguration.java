@@ -1,6 +1,8 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -10,8 +12,6 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.code.OAuthCodeImpl;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
@@ -24,8 +24,9 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("oauthProtocolTicketMetadataRegistrationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuthProtocolTicketCatalogConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -41,13 +42,15 @@ public class OAuthProtocolTicketCatalogConfiguration extends BaseTicketCatalogCo
 
     protected void buildAndRegisterAccessTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthAccessTokensCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds());
+        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getAccessToken().getMaxTimeToLiveInSeconds()).toMillis();
+        metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }
 
     protected void buildAndRegisterRefreshTokenDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("oauthRefreshTokensCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds());
+        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).toMillis();
+        metadata.getProperties().setStorageTimeout(timeout);
         registerTicketDefinition(plan, metadata);
     }
 

@@ -3,10 +3,10 @@ package org.apereo.cas.memcached.kryo;
 import com.esotericsoftware.kryo.KryoException;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.CachedData;
 import net.spy.memcached.transcoders.Transcoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,14 +30,10 @@ import java.io.ByteArrayOutputStream;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class CasKryoTranscoder implements Transcoder<Object> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasKryoTranscoder.class);
-    
     private final CasKryoPool kryoPool;
-
-    public CasKryoTranscoder(final CasKryoPool kryoPool) {
-        this.kryoPool = kryoPool;
-    }
 
     /**
      * Asynchronous decoding is not supported.

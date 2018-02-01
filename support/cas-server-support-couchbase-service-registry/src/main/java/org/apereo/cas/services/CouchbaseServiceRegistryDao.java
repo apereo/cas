@@ -6,12 +6,12 @@ import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.StringSerializer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
@@ -32,8 +32,9 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
-    
+
     /**
      * The utils document.
      */
@@ -43,16 +44,15 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
      * All services view.
      */
     public static final View ALL_SERVICES_VIEW = DefaultView.create(
-            "all_services",
-            "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
-    
+        "all_services",
+        "function(d,m) {if (!isNaN(m.id)) {emit(m.id);}}");
+
     /**
      * All views.
      */
     public static final Collection<View> ALL_VIEWS = CollectionUtils.wrap(ALL_SERVICES_VIEW);
-    
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseServiceRegistryDao.class);
-    
+
+
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
@@ -83,9 +83,9 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
         this.registeredServiceJsonSerializer.to(stringWriter, service);
 
         this.couchbase.getBucket().upsert(
-                RawJsonDocument.create(
-                        String.valueOf(service.getId()),
-                        0, stringWriter.toString()));
+            RawJsonDocument.create(
+                String.valueOf(service.getId()),
+                0, stringWriter.toString()));
         return service;
     }
 
@@ -151,12 +151,9 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
      * Stops the couchbase client and cancels the initialization task if uncompleted.
      */
     @PreDestroy
+    @SneakyThrows
     public void destroy() {
-        try {
-            this.couchbase.shutdown();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        this.couchbase.shutdown();
     }
 
     @Override

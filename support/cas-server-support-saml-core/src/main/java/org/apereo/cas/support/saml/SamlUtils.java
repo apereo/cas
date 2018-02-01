@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +20,6 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -45,14 +45,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class SamlUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
+@Slf4j
+@UtilityClass
+public class SamlUtils {
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
     private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
-
-    private SamlUtils() {
-    }
 
     /**
      * Read certificate x 509 certificate.

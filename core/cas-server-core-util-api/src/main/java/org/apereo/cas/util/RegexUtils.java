@@ -1,7 +1,7 @@
 package org.apereo.cas.util;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.regex.Matcher;
@@ -15,17 +15,15 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class RegexUtils {
+
+@Slf4j
+@UtilityClass
+public class RegexUtils {
 
     /**
      * A pattern match that does not match anything.
      */
     public static final Pattern MATCH_NOTHING_PATTERN = Pattern.compile("a^");
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegexUtils.class);
-
-    private RegexUtils() {
-    }
 
     /**
      * Check to see if the specified pattern is a valid regular expression.

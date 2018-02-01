@@ -1,5 +1,8 @@
 package org.apereo.cas.util;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.http.server.ServletServerHttpResponse;
@@ -13,26 +16,21 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1
  */
-public final class JsonUtils {
-
-    /** Private constructor. */
-    private JsonUtils() {}
-
+@Slf4j
+@UtilityClass
+public class JsonUtils {
     /**
      * Render model and view.
      *
-     * @param model the model
+     * @param model    the model
      * @param response the response
      */
+    @SneakyThrows
     public static void render(final Object model, final HttpServletResponse response) {
-        try {
-            final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
-            jsonConverter.setPrettyPrint(true);
-            final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
-            jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final MappingJackson2HttpMessageConverter jsonConverter = new MappingJackson2HttpMessageConverter();
+        jsonConverter.setPrettyPrint(true);
+        final MediaType jsonMimeType = MediaType.APPLICATION_JSON;
+        jsonConverter.write(model, jsonMimeType, new ServletServerHttpResponse(response));
     }
 
     /**
@@ -40,22 +38,18 @@ public final class JsonUtils {
      *
      * @param response the response
      */
+    @SneakyThrows
     public static void render(final HttpServletResponse response) {
-        try {
-            final Map<String, Object> map = new HashMap<>();
-            response.setStatus(HttpServletResponse.SC_OK);
-            render(map, response);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
-
+        final Map<String, Object> map = new HashMap<>();
+        response.setStatus(HttpServletResponse.SC_OK);
+        render(map, response);
     }
 
     /**
      * Render exceptions. Adds error messages and the stack trace to the json model
      * and sets the response status accordingly to note bad requests.
      *
-     * @param ex the ex
+     * @param ex       the ex
      * @param response the response
      */
     public static void renderException(final Exception ex, final HttpServletResponse response) {
@@ -68,7 +62,7 @@ public final class JsonUtils {
     /**
      * Render exceptions. Sets the response status accordingly to note bad requests.
      *
-     * @param model the model
+     * @param model    the model
      * @param response the response
      */
     private static void renderException(final Map model, final HttpServletResponse response) {

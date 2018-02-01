@@ -1,5 +1,7 @@
 package org.apereo.cas.support.rest.resources;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
@@ -12,8 +14,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.support.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -39,24 +39,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 4.1.0
  */
 @RestController("serviceTicketResourceRestController")
+@Slf4j
+@AllArgsConstructor
 public class ServiceTicketResource {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ServiceTicketResource.class);
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
-    private final ServiceFactory webApplicationServiceFactory;
     private final TicketRegistrySupport ticketRegistrySupport;
+    private final ServiceFactory webApplicationServiceFactory;
     private final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory;
-
-    public ServiceTicketResource(final AuthenticationSystemSupport authenticationSystemSupport,
-                                 final TicketRegistrySupport ticketRegistrySupport,
-                                 final ServiceFactory webApplicationServiceFactory,
-                                 final ServiceTicketResourceEntityResponseFactory serviceTicketResourceEntityResponseFactory) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.webApplicationServiceFactory = webApplicationServiceFactory;
-        this.serviceTicketResourceEntityResponseFactory = serviceTicketResourceEntityResponseFactory;
-    }
 
     /**
      * Create new service ticket.
@@ -78,7 +67,6 @@ public class ServiceTicketResource {
                 throw new InvalidTicketException(serviceId);
             }
             final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
-
             final Service service = this.webApplicationServiceFactory.createService(serviceId);
             final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);

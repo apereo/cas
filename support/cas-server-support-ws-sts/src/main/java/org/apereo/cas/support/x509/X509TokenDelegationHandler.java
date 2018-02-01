@@ -1,12 +1,11 @@
 package org.apereo.cas.support.x509;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.cxf.sts.request.ReceivedToken;
 import org.apache.cxf.sts.token.delegation.TokenDelegationHandler;
 import org.apache.cxf.sts.token.delegation.TokenDelegationParameters;
 import org.apache.cxf.sts.token.delegation.TokenDelegationResponse;
 import org.apache.wss4j.dom.WSConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 
 /**
@@ -15,10 +14,8 @@ import org.w3c.dom.Element;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class X509TokenDelegationHandler implements TokenDelegationHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509TokenDelegationHandler.class);
-
     @Override
     public boolean canHandleToken(final ReceivedToken delegateTarget) {
         final Object token = delegateTarget.getToken();

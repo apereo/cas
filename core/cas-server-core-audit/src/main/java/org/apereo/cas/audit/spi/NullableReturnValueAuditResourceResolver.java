@@ -1,5 +1,7 @@
 package org.apereo.cas.audit.spi;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -14,12 +16,10 @@ import java.util.Date;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class NullableReturnValueAuditResourceResolver implements AuditResourceResolver {
     private final AuditResourceResolver delegate;
-
-    public NullableReturnValueAuditResourceResolver(final AuditResourceResolver delegate) {
-        this.delegate = delegate;
-    }
 
     @Override
     public String[] resolveFrom(final JoinPoint joinPoint, final Object o) {

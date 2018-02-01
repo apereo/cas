@@ -1,12 +1,13 @@
 package org.apereo.cas.logout;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URL;
 
@@ -17,39 +18,16 @@ import java.net.URL;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@Getter
+@AllArgsConstructor
 public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutServiceMessageHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultSingleLogoutServiceMessageHandler.class);
-
-    private final ServicesManager servicesManager;
     private final HttpClient httpClient;
-    private boolean asynchronous = true;
     private final LogoutMessageCreator logoutMessageBuilder;
+    private final ServicesManager servicesManager;
     private final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder;
+    private boolean asynchronous = true;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-    /**
-     * Instantiates a new Single logout service message handler.
-     *
-     * @param httpClient                                      to send the requests
-     * @param logoutMessageCreator                            creates the message
-     * @param servicesManager                                 finds services to logout from
-     * @param singleLogoutServiceLogoutUrlBuilder             creates the URL
-     * @param asyncCallbacks                                  if messages are sent in an asynchronous fashion.
-     * @param authenticationRequestServiceSelectionStrategies the authentication request service selection strategies
-     */
-    public DefaultSingleLogoutServiceMessageHandler(final HttpClient httpClient, final LogoutMessageCreator logoutMessageCreator,
-                                                    final ServicesManager servicesManager,
-                                                    final SingleLogoutServiceLogoutUrlBuilder singleLogoutServiceLogoutUrlBuilder,
-                                                    final boolean asyncCallbacks,
-                                                    final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
-        this.httpClient = httpClient;
-        this.logoutMessageBuilder = logoutMessageCreator;
-        this.servicesManager = servicesManager;
-        this.singleLogoutServiceLogoutUrlBuilder = singleLogoutServiceLogoutUrlBuilder;
-        this.asynchronous = asyncCallbacks;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
-    }
 
     /**
      * Handle logout for slo service.
@@ -144,9 +122,5 @@ public class DefaultSingleLogoutServiceMessageHandler implements SingleLogoutSer
         return registeredService != null
                 && registeredService.getAccessStrategy().isServiceAccessAllowed()
                 && registeredService.getLogoutType() != RegisteredService.LogoutType.NONE;
-    }
-
-    public ServicesManager getServicesManager() {
-        return this.servicesManager;
     }
 }

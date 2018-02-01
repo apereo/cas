@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -29,6 +30,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.View;
@@ -41,8 +43,12 @@ import org.springframework.web.servlet.View;
  */
 @Configuration("casValidationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasValidationConfiguration {
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -181,8 +187,8 @@ public class CasValidationConfiguration {
     @Bean
     @ConditionalOnMissingBean(name = "proxyController")
     public ProxyController proxyController() {
-        return new ProxyController(centralAuthenticationService, webApplicationServiceFactory,
-            cas2ProxySuccessView, cas2ProxyFailureView);
+        return new ProxyController(cas2ProxySuccessView, cas2ProxyFailureView,
+            centralAuthenticationService, webApplicationServiceFactory, applicationContext);
     }
 
     @Autowired

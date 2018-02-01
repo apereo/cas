@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket.support;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.ExpirationPolicy;
-
 import java.util.UUID;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * This is an {@link AbstractCasExpirationPolicy}
@@ -15,6 +16,10 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
+@Getter
+@Setter
+@EqualsAndHashCode
 public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
 
     private static final long serialVersionUID = 8042104336580063690L;
@@ -25,37 +30,4 @@ public abstract class AbstractCasExpirationPolicy implements ExpirationPolicy {
         this.name = this.getClass().getSimpleName() + "-" + UUID.randomUUID().toString();
     }
 
-    @Override
-    public String getName() {
-        return this.name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final AbstractCasExpirationPolicy rhs = (AbstractCasExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.name, rhs.name)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(name)
-                .toHashCode();
-    }
 }

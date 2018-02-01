@@ -1,11 +1,11 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.pac4j.core.context.J2EContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.HashMap;
@@ -17,17 +17,14 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20ConsentApprovalViewResolver.class);
 
     /**
      * CAS settings.
      */
     protected final CasConfigurationProperties casProperties;
-
-    public OAuth20ConsentApprovalViewResolver(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {

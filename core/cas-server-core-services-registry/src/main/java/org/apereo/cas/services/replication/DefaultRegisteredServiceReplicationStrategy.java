@@ -1,5 +1,7 @@
 package org.apereo.cas.services.replication;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.configuration.model.support.services.stream.StreamingServiceRegistryProperties;
@@ -7,8 +9,6 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.support.events.service.BaseCasRegisteredServiceEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.Collection;
@@ -22,19 +22,12 @@ import java.util.function.Predicate;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultRegisteredServiceReplicationStrategy.class);
-
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
     private final StreamingServiceRegistryProperties properties;
-
-    public DefaultRegisteredServiceReplicationStrategy(
-        final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager,
-        final StreamingServiceRegistryProperties properties) {
-        this.distributedCacheManager = distributedCacheManager;
-        this.properties = properties;
-    }
-
+    
     /**
      * Destroy the watch service thread.
      *
@@ -147,7 +140,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     private void updateServiceRegistryWithMatchingService(final List<RegisteredService> services, final RegisteredService cachedService,
                                                           final RegisteredService matchingService, final ServiceRegistryDao serviceRegistryDao) {
-        LOGGER.debug("Found corresponding service definition [{}] locally", matchingService, distributedCacheManager.getName());
+        LOGGER.debug("Found corresponding service definition [{}] locally via cache manager [{}]", matchingService, distributedCacheManager.getName());
         if (matchingService.equals(cachedService)) {
             LOGGER.debug("Service definition cache entry [{}] is the same as service definition found locally [{}]", cachedService, matchingService);
         } else {

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class AcceptUsersAuthenticationHandlerTests {
 
     private static final String SCOTT = "scott";
@@ -89,7 +91,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(RUTGERS);
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing map.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -113,7 +115,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(null);
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -126,7 +128,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(null);
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Password is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }

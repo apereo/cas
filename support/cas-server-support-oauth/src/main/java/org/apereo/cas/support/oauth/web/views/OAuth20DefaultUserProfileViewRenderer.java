@@ -1,12 +1,12 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -17,13 +17,10 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfileViewRenderer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20DefaultUserProfileViewRenderer.class);
     private final OAuthProperties oauthProperties;
-
-    public OAuth20DefaultUserProfileViewRenderer(final OAuthProperties oauthProperties) {
-        this.oauthProperties = oauthProperties;
-    }
 
     @Override
     public String render(final Map<String, Object> model, final AccessToken accessToken) {

@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -7,8 +9,6 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustS
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -22,18 +22,12 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationVerifyTrustAction.class);
 
     private final MultifactorAuthenticationTrustStorage storage;
     private final TrustedDevicesMultifactorProperties trustedProperties;
-
-    public MultifactorAuthenticationVerifyTrustAction(final MultifactorAuthenticationTrustStorage storage,
-                                                      final TrustedDevicesMultifactorProperties trustedProperties) {
-        this.storage = storage;
-        this.trustedProperties = trustedProperties;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

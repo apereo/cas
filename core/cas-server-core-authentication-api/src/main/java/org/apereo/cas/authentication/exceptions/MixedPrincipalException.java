@@ -1,5 +1,7 @@
 package org.apereo.cas.authentication.exceptions;
 
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.Principal;
@@ -11,6 +13,8 @@ import org.apereo.cas.authentication.principal.Principal;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
+@Getter
 public class MixedPrincipalException extends PrincipalException {
 
     /** Serialization version marker. */
@@ -36,21 +40,4 @@ public class MixedPrincipalException extends PrincipalException {
         this.second = b;
     }
 
-    /**
-     * Gets the first resolved principal.
-     *
-     * @return First resolved principal.
-     */
-    public Principal getFirst() {
-        return this.first;
-    }
-
-    /**
-     * Gets the second resolved principal.
-     *
-     * @return Second resolved principal.
-     */
-    public Principal getSecond() {
-        return this.second;
-    }
 }

@@ -1,11 +1,11 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.publisher.CasRegisteredServiceStreamPublisher;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.support.events.service.CasRegisteredServiceSavedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.event.EventListener;
 
 /**
@@ -14,14 +14,10 @@ import org.springframework.context.event.EventListener;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class CasServicesRegistryStreamingEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasServicesRegistryStreamingEventListener.class);
-
     private final CasRegisteredServiceStreamPublisher publisher;
-
-    public CasServicesRegistryStreamingEventListener(final CasRegisteredServiceStreamPublisher publisher) {
-        this.publisher = publisher;
-    }
 
     /**
      * Handle cas registered service loaded event.

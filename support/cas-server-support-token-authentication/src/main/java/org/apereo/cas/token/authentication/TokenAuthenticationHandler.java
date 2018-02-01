@@ -5,6 +5,7 @@ import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.util.Base64;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
@@ -22,8 +23,6 @@ import org.pac4j.core.credentials.authenticator.Authenticator;
 import org.pac4j.jwt.config.encryption.SecretEncryptionConfiguration;
 import org.pac4j.jwt.config.signature.SecretSignatureConfiguration;
 import org.pac4j.jwt.credentials.authenticator.JwtAuthenticator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -38,8 +37,9 @@ import static java.nio.charset.StandardCharsets.UTF_8;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class TokenAuthenticationHandler extends AbstractTokenWrapperAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(TokenAuthenticationHandler.class);
+
 
     public TokenAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
                                       final PrincipalNameTransformer principalNameTransformer) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.generic;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.HttpBasedServiceCredential;
 import org.apereo.cas.authentication.PreventedException;
@@ -23,6 +24,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class FileAuthenticationHandlerTests {
 
     @Rule
@@ -57,7 +59,7 @@ public class FileAuthenticationHandlerTests {
                 new URL("http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService());
             assertFalse(this.authenticationHandler.supports(c));
         } catch (final MalformedURLException e) {
-            fail("MalformedURLException caught.");
+            throw new AssertionError("MalformedURLException caught.");
         }
     }
 
@@ -79,7 +81,7 @@ public class FileAuthenticationHandlerTests {
         c.setPassword("rutgers");
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing file.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -128,7 +130,7 @@ public class FileAuthenticationHandlerTests {
         c.setUsername("fds");
         c.setPassword("rutgers");
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing file.");
+
         this.authenticationHandler.authenticate(c);
     }
 
@@ -154,7 +156,7 @@ public class FileAuthenticationHandlerTests {
         c.setPassword("rutgers");
 
         this.thrown.expect(PreventedException.class);
-        this.thrown.expectMessage("IO error reading backing file");
+
 
         this.authenticationHandler.authenticate(c);
     }
