@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
+import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.junit.Before;
 import org.junit.Test;

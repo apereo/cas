@@ -45,20 +45,16 @@ public class SingleLogoutPreparationAction extends AbstractAction {
     }
 
 
-    @SuppressWarnings({ "rawtypes", "unchecked" })
     @Override
     protected Event doExecute(final RequestContext rc) throws Exception {
-        // Get the TGT first. For logout, we need to get the cookie's value, most likely the TGT will not be in the scope anymore.
         String tgtId = WebUtils.getTicketGrantingTicketId(rc);
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(rc);
         if (tgtId == null) {
             tgtId = ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
         }
 
-        // Retrieve the user profile previously stored to the long-term storage in PAC4J DelegatedClientAuthenticationAction.
         final CommonProfile profile = (tgtId == null) ? null : profileStore.get(tgtId);
 
-        // And save the profile into the PAC4J Profile Manager for this request + session.
         if (profile != null) {
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(rc);
             final WebContext webContext = new J2EContext(request, response);

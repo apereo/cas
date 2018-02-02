@@ -31,7 +31,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.store.Store;
 import org.springframework.http.HttpStatus;
-import org.springframework.util.Assert;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.context.ExternalContext;
@@ -110,28 +109,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     private final ServicesManager servicesManager;
 
-/*
-    public DelegatedClientAuthenticationAction(final Clients clients, final AuthenticationSystemSupport authenticationSystemSupport,
-                                               final CentralAuthenticationService centralAuthenticationService, final String themeParamName,
-                                               final String localParamName, final boolean autoRedirect, final ServicesManager servicesManager,
-                                               final Store<String, CommonProfile> profileStore) {
-        Assert.notNull(clients, "The clients cannot be null.");
-        Assert.notNull(authenticationSystemSupport, "The authentication system support cannot be null.");
-        Assert.notNull(centralAuthenticationService, "The central authentication service cannot be null.");
-        Assert.notNull(themeParamName, "The theme parameter name cannot be null.");
-        Assert.notNull(localParamName, "The local parameter name cannot be null.");
-        Assert.notNull(servicesManager, "The services manager cannot be null.");
-        Assert.notNull(profileStore, "The profile store cannot be null.");
-        this.clients = clients;
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.themeParamName = themeParamName;
-        this.localParamName = localParamName;
-        this.autoRedirect = autoRedirect;
-        this.servicesManager = servicesManager;
-        this.profileStore = profileStore;
-    }
-*/
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);

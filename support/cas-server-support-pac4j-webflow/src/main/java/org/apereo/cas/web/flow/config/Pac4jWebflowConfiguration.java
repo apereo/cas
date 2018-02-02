@@ -6,7 +6,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
 import org.apereo.cas.web.flow.Pac4jWebflowConfigurer;
-import org.apereo.cas.web.flow.TerminateSessionAction;
+import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
