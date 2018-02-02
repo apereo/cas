@@ -125,10 +125,22 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     }
 
     private Set<String> locateAvailableAttributes() {
-        if (attributeRepository == null) {
-            return new LinkedHashSet<>(0);
+        final LinkedHashSet<String> attributes = new LinkedHashSet<>(0);
+        if (attributeRepository != null) {
+            attributes.addAll(attributeRepository.getPossibleUserAttributeNames());
         }
-        return attributeRepository.getPossibleUserAttributeNames();
+        if (casProperties.getAuthn().getLdap() != null) {
+            casProperties.getAuthn().getLdap().stream()
+                    .forEach(ldap -> {
+                        attributes.addAll(ldap.getPrincipalAttributeList());
+                        attributes.addAll(ldap.getAdditionalAttributes());
+                    });
+        }
+        if (casProperties.getAuthn().getJdbc() != null) {
+            casProperties.getAuthn().getJdbc().getQuery().stream()
+                    .forEach(jdbc -> attributes.addAll(jdbc.getPrincipalAttributeList()));
+        }
+        return attributes;
     }
 
     /**
