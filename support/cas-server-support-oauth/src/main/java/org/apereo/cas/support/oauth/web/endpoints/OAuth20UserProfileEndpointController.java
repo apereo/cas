@@ -2,17 +2,13 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
-import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
-import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -109,20 +105,9 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         updateAccessTokenUsage(accessTokenTicket);
 
         final Map<String, Object> map = this.userProfileDataCreator.createFrom(accessTokenTicket, context);
-        finalizeProfileResponse(accessTokenTicket, map);
 
         final String value = this.userProfileViewRenderer.render(map, accessTokenTicket);
         return new ResponseEntity<>(value, HttpStatus.OK);
-    }
-
-    private void finalizeProfileResponse(final AccessToken accessTokenTicket, final Map<String, Object> map) {
-        final Service service = accessTokenTicket.getService();
-        final RegisteredService registeredService = servicesManager.findServiceBy(service);
-        if (registeredService instanceof OAuthRegisteredService) {
-            final OAuthRegisteredService oauth = (OAuthRegisteredService) registeredService;
-            map.put(OAuth20Constants.CLIENT_ID, oauth.getClientId());
-            map.put(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-        }
     }
 
     private void updateAccessTokenUsage(final AccessToken accessTokenTicket) {
