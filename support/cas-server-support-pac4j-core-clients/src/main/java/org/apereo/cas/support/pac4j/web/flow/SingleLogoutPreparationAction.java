@@ -11,11 +11,11 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.store.Store;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -30,9 +30,8 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * @since 5.3.0
  */
+@Slf4j
 public class SingleLogoutPreparationAction extends AbstractAction {
-
-    private static final Logger LOGGER2 = LoggerFactory.getLogger(SingleLogoutPreparationAction.class);
 
     private final Store<String, CommonProfile> profileStore;
     private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
@@ -66,9 +65,9 @@ public class SingleLogoutPreparationAction extends AbstractAction {
             final ProfileManager pm = Pac4jUtils.getPac4jProfileManager(webContext);
             pm.save(true, profile, false);
             profileStore.remove(tgtId);
-            LOGGER2.debug("User profile restored from a long-term storage and saved in PAC4J Profile Manager.");
+            LOGGER.debug("User profile restored from a long-term storage and saved in PAC4J Profile Manager.");
         } else {
-            LOGGER2.debug("No user profile restored from a long-term storage. SAML Single Logout may not work properly."
+            LOGGER.debug("No user profile restored from a long-term storage. SAML Single Logout may not work properly."
                     + " This is normal for non-SAML clients.");
         }
 

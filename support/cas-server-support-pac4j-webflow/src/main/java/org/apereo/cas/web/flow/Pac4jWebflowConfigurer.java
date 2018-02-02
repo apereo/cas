@@ -5,8 +5,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -36,8 +34,6 @@ import java.util.Optional;
 @Slf4j
 public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Pac4jWebflowConfigurer.class);
-    
     private final Action saml2ClientLogoutAction;
     private final Action ignoreServiceRedirectForSamlSloAction;
     private final TerminateSessionAction terminateSessionAction;

@@ -7,13 +7,13 @@ import javax.servlet.http.HttpSession;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.profile.ProfileManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
 import com.google.common.base.Throwables;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -36,10 +36,8 @@ import com.google.common.base.Throwables;
  * 
  * @since 5.3.0
  */
+@Slf4j
 public class LimitedTerminateSessionAction extends AbstractAction {
-
-    private static final Logger LOGGER2 = LoggerFactory.getLogger(LimitedTerminateSessionAction.class);
-
 
     @Override
     protected Event doExecute(final RequestContext context) {
@@ -59,7 +57,7 @@ public class LimitedTerminateSessionAction extends AbstractAction {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
             destroyApplicationSession(request, response);
-            LOGGER2.debug("Terminated the application session successfully.");
+            LOGGER.debug("Terminated the application session successfully.");
         } catch (final Exception e) {
             throw Throwables.propagate(e);
         }
@@ -75,7 +73,7 @@ public class LimitedTerminateSessionAction extends AbstractAction {
      *            The HTTP response.
      */
     protected void destroyApplicationSession(final HttpServletRequest request, final HttpServletResponse response) {
-        LOGGER2.debug("Destroying application session");
+        LOGGER.debug("Destroying application session");
         final ProfileManager<?> manager = Pac4jUtils.getPac4jProfileManager(request, response);
         manager.logout();
 

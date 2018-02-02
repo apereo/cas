@@ -466,7 +466,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
         final Pac4jProperties pac4j = casProperties.getAuthn().getPac4j();
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
                 clientPrincipalFactory(), clients);
-            clientPrincipalFactory(), builtClients());
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }

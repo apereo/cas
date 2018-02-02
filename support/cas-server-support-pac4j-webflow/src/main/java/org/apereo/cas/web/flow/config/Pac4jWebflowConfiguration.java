@@ -77,7 +77,6 @@ public class Pac4jWebflowConfiguration {
         final CasWebflowConfigurer w = new Pac4jWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 logoutFlowDefinitionRegistry, saml2ClientLogoutAction, ignoreServiceRedirectForSamlSloAction, terminateSessionAction,
                 limitedTerminateSessionAction, applicationContext, casProperties);
-            logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
         w.initialize();
         return w;
     }

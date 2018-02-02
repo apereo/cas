@@ -15,11 +15,11 @@ import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.context.SAML2MessageContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
+import lombok.extern.slf4j.Slf4j;
 
 
 /**
@@ -36,6 +36,7 @@ import org.springframework.webflow.execution.RequestContext;
  * 
  * @since 5.3.0
  */
+@Slf4j
 public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
 
     
@@ -46,8 +47,6 @@ public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
      * @see org.apereo.cas.web.support.WebUtils#putLogoutRedirectUrl(RequestContext, String)
      */
     public static final String FLOW_ATTR_LOGOUT_REDIR_URL = "logoutRedirectUrl";
-
-    private static final Logger LOGGER2 = LoggerFactory.getLogger(IgnoreServiceRedirectUrlForSamlAction.class);
 
     private final Clients clients;
 
@@ -75,7 +74,7 @@ public class IgnoreServiceRedirectUrlForSamlAction extends AbstractAction {
 
         if (shouldServiceRedirectBeIgnored(client, context)) {
             requestContext.getFlowScope().remove(FLOW_ATTR_LOGOUT_REDIR_URL);
-            LOGGER2.debug("The Logout Redirection URL has been removed from the web flow scope in order to allow for SAML2 SLO.");
+            LOGGER.debug("The Logout Redirection URL has been removed from the web flow scope in order to allow for SAML2 SLO.");
         }
 
         return null;

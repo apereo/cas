@@ -63,8 +63,8 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
             casProperties.getTheme().getParamName(),
             casProperties.getLocale().getParamName(),
             casProperties.getAuthn().getPac4j().isAutoRedirect(),
-            servicesManager,
-            profileStore);
+            profileStore,
+            servicesManager);
     }
 
 
