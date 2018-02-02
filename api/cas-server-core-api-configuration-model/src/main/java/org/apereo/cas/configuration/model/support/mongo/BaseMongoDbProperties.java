@@ -77,7 +77,7 @@ public abstract class BaseMongoDbProperties implements Serializable {
      * mongo db or to replica sets or to sharded clusters. In sharded clusters,
      * mongo db instances will pass the write concern on to the shards.
      */
-    private String writeConcern = "NORMAL";
+    private String writeConcern = "ACKNOWLEDGED";
 
     /**
      * MongoDb database instance name.
