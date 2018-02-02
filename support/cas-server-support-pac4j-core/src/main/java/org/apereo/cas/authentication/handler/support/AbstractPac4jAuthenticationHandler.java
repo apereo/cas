@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.LinkedHashMap;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.
@@ -60,7 +61,7 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
         credentials.setUserProfile(profile);
         credentials.setTypedIdUsed(isTypedIdUsed);
         
-        final Principal principal = this.principalFactory.createPrincipal(id, profile.getAttributes());
+        final Principal principal = this.principalFactory.createPrincipal(id, new LinkedHashMap<>(profile.getAttributes()));
         LOGGER.debug("Constructed authenticated principal [{}] based on user profile [{}]", principal, profile);
         return createHandlerResult(credentials, principal, null);
     }
