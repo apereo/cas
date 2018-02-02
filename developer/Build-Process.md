@@ -121,7 +121,6 @@ Additionally, you may need to customize the VM settings to ensure the developmen
 -XX:SoftRefLRUPolicyMSPerMB=50
 -Dsun.io.useCanonCaches=false
 -Djava.net.preferIPv4Stack=true
--Djsse.enableSNIExtension=false
 -ea
 -XX:MaxPermSize=512m
 -XX:PermSize=512m
