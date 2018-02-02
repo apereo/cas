@@ -7,13 +7,14 @@
 
     <title th:text="#{cas.mfa.googleauth.pagetitle}">Google Authentication View</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
 <body>
 <main role="main" class="container mt-3 mb-3">
-<div layout:fragment="content" id="login">
+    <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
             <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
@@ -34,7 +35,7 @@
             <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
             <input type="hidden" name="geolocation"/>
         </form>
-</div>
+    </div>
 </main>
 </body>
 </html>

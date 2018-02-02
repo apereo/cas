@@ -7,7 +7,8 @@
 
     <title th:text="#{screen.consent.title}">Consent View</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}"/>
@@ -94,7 +95,8 @@
                     <div class="tab-pane fade bg-white p-4" id="optionsPanel" role="tabpanel"
                          aria-labelledby="options-tab">
                         <div class="card mb-4">
-                            <div class="card-header bg-info text-white" th:text="#{screen.consent.options.header}">How should I be prompted
+                            <div class="card-header bg-info text-white" th:text="#{screen.consent.options.header}">How
+                                should I be prompted
                                 for consent again?
                             </div>
                             <div class="card-body">
@@ -139,7 +141,10 @@
                         </div>
 
                         <div id="reminderPanel" class="card">
-                            <div class="card-header bg-info text-white" th:text="#{screen.consent.options.reminder.header}">How often should I be reminded to consent again?</div>
+                            <div class="card-header bg-info text-white"
+                                 th:text="#{screen.consent.options.reminder.header}">How often should I be reminded to
+                                consent again?
+                            </div>
                             <div class="card-body">
                                 <p th:text="#{screen.consent.options.reminder.expl(${service.id})}">Show the consent
                                     screen, as a
@@ -193,18 +198,18 @@
                 </div>
 
             </div>
-                <div class="text-center form-group">
-                    <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                    <input type="hidden" name="_eventId" value="confirm"/>
-                    <input class="btn btn-success"
-                           name="confirm"
-                           accesskey="l"
-                           th:value="#{screen.consent.confirm}"
-                           value="Confirm"
-                           type="submit"/>
-                    <a class="btn btn-default" id="cancel" name="cancel"
-                       th:href="@{/login}" th:text="#{screen.consent.cancel}">Cancel</a>
-                </div>
+            <div class="text-center form-group">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="confirm"/>
+                <input class="btn btn-success"
+                       name="confirm"
+                       accesskey="l"
+                       th:value="#{screen.consent.confirm}"
+                       value="Confirm"
+                       type="submit"/>
+                <a class="btn btn-default" id="cancel" name="cancel"
+                   th:href="@{/login}" th:text="#{screen.consent.cancel}">Cancel</a>
+            </div>
         </form>
     </div>
 </main>

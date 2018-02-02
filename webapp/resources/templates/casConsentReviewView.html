@@ -7,7 +7,8 @@
 
     <title th:text="#{screen.consent.review.header}">Consent Review View</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
@@ -101,7 +102,8 @@
                                             </tr>
                                             <tr>
                                                 <td class="field-label active consent-option-label col-3"
-                                                    th:utext="#{screen.consent.review.option}">Option:</td>
+                                                    th:utext="#{screen.consent.review.option}">Option:
+                                                </td>
                                                 <td class="consent-options">
                                                                     <span class="attribute-name label label-default"
                                                                           th:utext="#{screen.consent.options.attributename}"
@@ -121,13 +123,17 @@
                                             </tr>
                                             <tr>
                                                 <td class="field-label active consent-attributes-label col-3"
-                                                    th:utext="#{screen.consent.review.attributes}">Attributes:</td>
+                                                    th:utext="#{screen.consent.review.attributes}">Attributes:
+                                                </td>
                                                 <td>
                                                     <table class="table table-striped table-bordered consent-attributes">
                                                         <thead>
                                                         <tr>
-                                                            <th th:text="#{screen.consent.attributes.attribute}">Attribute</th>
-                                                            <th th:text="#{screen.consent.attributes.values}">Value(s)</th>
+                                                            <th th:text="#{screen.consent.attributes.attribute}">
+                                                                Attribute
+                                                            </th>
+                                                            <th th:text="#{screen.consent.attributes.values}">Value(s)
+                                                            </th>
                                                         </tr>
                                                         </thead>
                                                         <tbody>
@@ -138,7 +144,8 @@
                                             </tbody>
                                         </table>
                                         <button type="button" class="btn btn-danger"
-                                                th:utext="#{screen.consent.review.delete}">DELETE</button>
+                                                th:utext="#{screen.consent.review.delete}">DELETE
+                                        </button>
                                     </div>
                                 </td>
                             </tr>
@@ -147,7 +154,8 @@
                     </div>
                 </div>
                 <button type="button" name="logout" id="logout" class="btn btn-primary"
-                        th:utext="#{screen.welcome.button.logout}">Logout</button>
+                        th:utext="#{screen.welcome.button.logout}">Logout
+                </button>
             </div>
         </div>
     </div>
