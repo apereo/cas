@@ -12,6 +12,8 @@ import org.pac4j.core.profile.UserProfile;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 /**
  * Abstract pac4j authentication handler which builds the CAS handler result from the pac4j user profile.
@@ -50,10 +52,11 @@ public abstract class AbstractPac4jAuthenticationHandler extends AbstractPreAndP
             if (StringUtils.isNotBlank(id)) {
                 credentials.setUserProfile(profile);
                 credentials.setTypedIdUsed(isTypedIdUsed);
+                final Map<String, Object> attributes = profile.getAttributes();
                 return new DefaultHandlerResult(
                         this,
                         new BasicCredentialMetaData(credentials),
-                        this.principalFactory.createPrincipal(id, profile.getAttributes()));
+                        this.principalFactory.createPrincipal(id, new LinkedHashMap<>(attributes)));
             }
 
             throw new FailedLoginException("No identifier found for this user profile: " + profile);
