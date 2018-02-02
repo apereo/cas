@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -32,6 +33,8 @@ import org.apereo.cas.support.oauth.validator.OAuth20TokenResponseTypeRequestVal
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
+import org.apereo.cas.support.oauth.web.audit.Oauth2Audits;
+import org.apereo.cas.support.oauth.web.audit.UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.endpoints.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -75,6 +78,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
@@ -106,17 +110,20 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 import static org.apereo.cas.support.oauth.OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
 import static org.apereo.cas.support.oauth.OAuth20Constants.CLIENT_ID;
 import static org.apereo.cas.support.oauth.OAuth20Constants.CLIENT_SECRET;
+import static org.apereo.cas.support.oauth.web.audit.Oauth2Audits.USER_PROFILE_AUDIT_ACTION_RESOLVER_NAME;
+import static org.apereo.cas.support.oauth.web.audit.Oauth2Audits.USER_PROFILE_AUDIT_RESOURCE_RESOLVER_NAME;
 
 /**
  * This this {@link CasOAuthConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasOAuthConfiguration {
+public class CasOAuthConfiguration implements org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -528,6 +535,14 @@ public class CasOAuthConfiguration {
             accessTokenGrantRequestExtractors());
     }
 
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditActionResolver(USER_PROFILE_AUDIT_ACTION_RESOLVER_NAME,
+                new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+
+        plan.registerAuditResourceResolver(USER_PROFILE_AUDIT_RESOURCE_RESOLVER_NAME, new UserProfileDataAuditResourceResolver());
+    }
+
     @PostConstruct
     public void initializeServletApplicationContext() {
         final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL_DEFINITION;
@@ -547,5 +562,7 @@ public class CasOAuthConfiguration {
             servicesManager.save(service);
             servicesManager.load();
         }
+
+
     }
 }

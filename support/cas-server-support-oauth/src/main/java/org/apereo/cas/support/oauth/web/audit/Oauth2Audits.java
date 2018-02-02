@@ -11,16 +11,16 @@ public interface Oauth2Audits {
     /**
      * User profile audit action name.
      */
-    String USER_PROFILE_AUDIT_ACTION = "OAUTH2_USER_PROFILE_REQUEST";
+    String USER_PROFILE_AUDIT_ACTION = "OAUTH2_USER_PROFILE_DATA";
 
     /**
      * User profile audit action resolver name.
      */
-    String USER_PROFILE_AUDIT_ACTION_RESOLVER_NAME = "OAUTH2_USER_PROFILE_REQUEST_ACTION_RESOLVER";
+    String USER_PROFILE_AUDIT_ACTION_RESOLVER_NAME = "OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER";
 
 
     /**
      * User profile audit resource resolver name.
      */
-    String USER_PROFILE_AUDIT_RESOURCE_RESOLVER_NAME = "OAUTH2_USER_PROFILE_REQUEST_RESOURCE_RESOLVER";
+    String USER_PROFILE_AUDIT_RESOURCE_RESOLVER_NAME = "OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER";
 }
