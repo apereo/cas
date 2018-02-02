@@ -7,7 +7,8 @@
 
     <title th:text="#{cas.login.pagetitle}">CAS Acceptable Use Policy View</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
 </head>
@@ -22,11 +23,18 @@
         <div id="notices" class="col-md mt-3 mt-md-0">
             <div th:replace="fragments/insecure :: insecure"><a href="fragments/insecure.html">insecure alert goes
                 here</a></div>
-            <div th:replace="fragments/defaultauthn :: staticAuthentication"><a href="fragments/defaultauthn.html">defaultAuthn</a> fragment</div>
-            <div th:replace="fragments/cookies :: cookiesDisabled"><a href="fragments/cookies.html">cookies</a> fragment</div>
+            <div th:replace="fragments/defaultauthn :: staticAuthentication"><a href="fragments/defaultauthn.html">defaultAuthn</a>
+                fragment
+            </div>
+            <div th:replace="fragments/cookies :: cookiesDisabled"><a href="fragments/cookies.html">cookies</a> fragment
+            </div>
             <div th:replace="fragments/serviceui"><a href="fragments/serviceui.html">service ui</a> fragment</div>
-            <div th:replace="fragments/loginProviders :: loginProviders"><a href="fragments/loginProviders.html">loginProviders</a> fragment</div>
-            <div th:replace="fragments/cas-resources-list :: cas-resource-list"><a href="fragments/cas-resources-list.html">cas-resource</a> list fragment</div>
+            <div th:replace="fragments/loginProviders :: loginProviders"><a href="fragments/loginProviders.html">loginProviders</a>
+                fragment
+            </div>
+            <div th:replace="fragments/cas-resources-list :: cas-resource-list"><a
+                    href="fragments/cas-resources-list.html">cas-resource</a> list fragment
+            </div>
         </div>
     </div>
 </main>

@@ -7,7 +7,8 @@
 
     <title th:text="#{cas.login.pagetitle}">CAS Interrupt View</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <script th:inline="javascript" th:if="${interrupt.autoRedirect}">
@@ -34,7 +35,8 @@
 <main role="main" class="container mt-3 mb-3">
     <div layout:fragment="content" id="login">
         <h1 th:text="#{screen.interrupt.title}">Authentication Interrupt</h1>
-        <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted. CAS has not yet established a single sign-on session for <strong>{0}</strong>.</p>
+        <p th:utext="#{screen.interrupt.message(${principal.id})}">The authentication flow has been interrupted. CAS has
+            not yet established a single sign-on session for <strong>{0}</strong>.</p>
 
         <div th:if="${interrupt.message}" class="alert alert-info">
             <p th:utext="${interrupt.message}">interrupt.message</p>
@@ -62,13 +64,15 @@
                            value="Proceed"
                            type="submit"/>
                     &nbsp;
-                    <a class="btn btn-warning" id="cancel" name="cancel" th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}">Cancel</a>
+                    <a class="btn btn-warning" id="cancel" name="cancel" th:href="@{/login}"
+                       th:text="#{screen.interrupt.btn.cancel}">Cancel</a>
                 </div>
             </div>
         </form>
 
         <div th:if="${interrupt.block}" class="text-center">
-            <a class="btn btn-warning" id="cancel" name="cancel" th:href="@{/login}" th:text="#{screen.interrupt.btn.cancel}">Cancel</a>
+            <a class="btn btn-warning" id="cancel" name="cancel" th:href="@{/login}"
+               th:text="#{screen.interrupt.btn.cancel}">Cancel</a>
         </div>
     </div>
 </main>

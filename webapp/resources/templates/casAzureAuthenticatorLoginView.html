@@ -7,7 +7,8 @@
 
     <title th:text="#{cas.mfa.azure.pagetitle}">Microsoft Authenticator View</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
-          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
     <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
     <style>
         textarea {
@@ -32,7 +33,8 @@
             <div class="form-group">
                 <label for="token">Press 'LOGIN' below and provide the displayed code via your mobile device.</label>
 
-                <textarea readonly class="form-control" id="token" size="25" rows="1" cols="8" th:field="*{token}"></textarea>
+                <textarea readonly class="form-control" id="token" size="25" rows="1" cols="8"
+                          th:field="*{token}"></textarea>
             </div>
 
             <input class="btn btn-success"
