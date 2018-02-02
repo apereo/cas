@@ -2,18 +2,17 @@ package org.apereo.cas.support.spnego.authentication.principal;
 
 import com.google.common.io.ByteSource;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
-import org.springframework.util.Assert;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.Arrays;
 import java.util.stream.IntStream;
 
 import lombok.ToString;
@@ -31,6 +30,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
+@EqualsAndHashCode(of ={"initToken", "nextToken", "principal"})
 public class SpnegoCredential implements Credential, Serializable {
 
     /**
@@ -73,8 +73,7 @@ public class SpnegoCredential implements Credential, Serializable {
      *
      * @param initToken the init token
      */
-    public SpnegoCredential(final byte[] initToken) {
-        Assert.notNull(initToken, "The initToken cannot be null.");
+    public SpnegoCredential(@NonNull final byte[] initToken) {
         this.initToken = consumeByteSourceOrNull(ByteSource.wrap(initToken));
         this.isNtlm = isTokenNtlm(this.initToken);
     }
@@ -97,24 +96,7 @@ public class SpnegoCredential implements Credential, Serializable {
         return IntStream.range(0, NTLM_TOKEN_MAX_LENGTH).noneMatch(i -> NTLMSSP_SIGNATURE[i] != token[i]);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null || !obj.getClass().equals(this.getClass())) {
-            return false;
-        }
-        final SpnegoCredential c = (SpnegoCredential) obj;
-        return Arrays.equals(this.getInitToken(), c.getInitToken()) && this.principal.equals(c.getPrincipal()) && Arrays.equals(this.getNextToken(), c.getNextToken());
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = super.hashCode();
-        if (this.principal != null) {
-            hash = this.principal.hashCode();
-        }
-        return new HashCodeBuilder().append(this.getInitToken()).append(this.getNextToken()).append(hash).toHashCode();
-    }
-
+    
     /**
      * Read the contents of the source into a byte array.
      *

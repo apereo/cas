@@ -57,7 +57,7 @@ public class YubiKeyAuthenticationHandlerTests {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
+
 
         handler.authenticate(new YubiKeyCredential(OTP));
     }
@@ -67,8 +67,6 @@ public class YubiKeyAuthenticationHandlerTests {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("OTP format is invalid");
-
         handler.authenticate(new YubiKeyCredential("casuser"));
     }
 

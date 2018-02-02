@@ -3,10 +3,10 @@ package org.apereo.cas.services;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Principal;
@@ -30,6 +30,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = -6249488544306639050L;
@@ -53,23 +55,4 @@ public class ReturnRestfulAttributeReleasePolicy extends AbstractRegisteredServi
         return new HashMap<>(0);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final ReturnRestfulAttributeReleasePolicy rhs = (ReturnRestfulAttributeReleasePolicy) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.endpoint, rhs.endpoint).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(this.endpoint).toHashCode();
-    }
 }

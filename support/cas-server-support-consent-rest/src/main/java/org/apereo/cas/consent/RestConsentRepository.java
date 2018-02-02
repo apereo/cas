@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -26,6 +27,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class RestConsentRepository implements ConsentRepository {
 
     private static final long serialVersionUID = 6583408864586270206L;
@@ -33,11 +35,6 @@ public class RestConsentRepository implements ConsentRepository {
     private final RestTemplate restTemplate;
 
     private final String endpoint;
-
-    public RestConsentRepository(final RestTemplate restTemplate, final String endpoint) {
-        this.restTemplate = restTemplate;
-        this.endpoint = endpoint;
-    }
 
     @Override
     public Collection<ConsentDecision> findConsentDecisions(final String principal) {

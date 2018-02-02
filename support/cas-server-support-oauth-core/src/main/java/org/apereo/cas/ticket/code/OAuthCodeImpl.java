@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.code;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -10,7 +11,7 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
-import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -46,7 +47,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
-    @JsonProperty("grantingTicket")
+    @JsonProperty("ticketGrantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**
@@ -74,11 +75,9 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * @param scopes               the scopes
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public OAuthCodeImpl(final String id, final Service service, final Authentication authentication, final ExpirationPolicy expirationPolicy,
+    public OAuthCodeImpl(final String id, @NonNull final Service service, @NonNull final Authentication authentication, final ExpirationPolicy expirationPolicy,
                          final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
         super(id, expirationPolicy);
-        Assert.notNull(service, "service cannot be null");
-        Assert.notNull(authentication, "authentication cannot be null");
         this.service = service;
         this.authentication = authentication;
         this.ticketGrantingTicket = ticketGrantingTicket;

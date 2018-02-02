@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.ldaptive.Connection;
@@ -14,6 +15,8 @@ import org.ldaptive.SearchRequest;
 import org.ldaptive.SearchResult;
 import org.ldaptive.Operation;
 
+import java.util.regex.Pattern;
+
 /**
  * Peek into an LDAP server and check for the existence of an attribute
  * in order to target invocation of spnego.
@@ -24,7 +27,6 @@ import org.ldaptive.Operation;
  */
 @Slf4j
 public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownClientSystemsFilterAction {
-
     
     /**
      * The must-have attribute name.
@@ -42,7 +44,8 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param searchRequest       the search request
      * @param spnegoAttributeName the certificate revocation list attribute name
      */
-    public LdapSpnegoKnownClientSystemsFilterAction(final String ipsToCheckPattern, final String alternativeRemoteHostAttribute,
+    public LdapSpnegoKnownClientSystemsFilterAction(final Pattern ipsToCheckPattern,
+                                                    final String alternativeRemoteHostAttribute,
                                                     final long dnsTimeout, 
                                                     final ConnectionFactory connectionFactory, 
                                                     final SearchRequest searchRequest,
@@ -107,6 +110,7 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
      * @param remoteIp the remote ip
      * @return true/false
      */
+    @SneakyThrows
     protected boolean executeSearchForSpnegoAttribute(final String remoteIp) {
         Connection connection = null;
         final String remoteHostName = getRemoteHostName(remoteIp);
@@ -126,9 +130,6 @@ public class LdapSpnegoKnownClientSystemsFilterAction extends BaseSpnegoKnownCli
                 return processSpnegoAttribute(searchResult);
             }
             throw new IllegalArgumentException("Failed to establish a connection ldap. " + searchResult.getMessage());
-        } catch (final LdapException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
         } finally {
             if (connection != null) {
                 connection.close();

@@ -68,31 +68,4 @@ public class AccessTokenRequestDataHolder {
         this.scopes = new LinkedHashSet<>(scopes);
     }
 
-    public OAuth20GrantTypes getGrantType() {
-        return grantType;
-    }
-
-    public Service getService() {
-        return service;
-    }
-
-    public Authentication getAuthentication() {
-        return authentication;
-    }
-
-    public OAuthToken getToken() {
-        return token;
-    }
-
-    public boolean isGenerateRefreshToken() {
-        return generateRefreshToken;
-    }
-
-    public OAuthRegisteredService getRegisteredService() {
-        return registeredService;
-    }
-
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
-    }
 }

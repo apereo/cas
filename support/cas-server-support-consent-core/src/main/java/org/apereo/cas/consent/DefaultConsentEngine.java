@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
@@ -18,19 +19,13 @@ import java.util.Map;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
 
     private final ConsentRepository consentRepository;
     private final ConsentDecisionBuilder consentDecisionBuilder;
-
-    public DefaultConsentEngine(final ConsentRepository consentRepository,
-                                final ConsentDecisionBuilder consentDecisionBuilder) {
-        this.consentRepository = consentRepository;
-        this.consentDecisionBuilder = consentDecisionBuilder;
-    }
-
 
     @Override
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,

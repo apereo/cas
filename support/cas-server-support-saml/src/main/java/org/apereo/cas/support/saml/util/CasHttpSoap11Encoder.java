@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.opensaml.core.xml.XMLObject;
 import org.opensaml.core.xml.config.XMLObjectProviderRegistrySupport;
@@ -18,17 +19,9 @@ import org.opensaml.core.xml.XMLObjectBuilderFactory;
  * @since 4.2.0
  */
 @Slf4j
+@NoArgsConstructor
 public class CasHttpSoap11Encoder extends HTTPSOAP11Encoder {
     private static final String OPENSAML_11_SOAP_NS_PREFIX = "SOAP-ENV";
-
-
-
-    /**
-     * Instantiates a new encoder.
-     */
-    public CasHttpSoap11Encoder() {
-        super();
-    }
 
     @Override
     protected void buildAndStoreSOAPMessage(final XMLObject payload) {

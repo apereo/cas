@@ -38,7 +38,7 @@ public class DefaultDigestHashedCredentialRetrieverTests {
                 Collections.singletonMap("anotherUsername", "password"));
 
         thrown.expect(AccountNotFoundException.class);
-        thrown.expectMessage("Could not locate user account for " + username);
+
 
         credentialRetriever.findCredential(username, "ignored");
     }

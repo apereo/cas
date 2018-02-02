@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.policy;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationPolicy;
@@ -29,16 +30,10 @@ import java.security.GeneralSecurityException;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RestfulAuthenticationPolicy implements AuthenticationPolicy {
-
-
     private final RestTemplate restTemplate;
     private final String endpoint;
-
-    public RestfulAuthenticationPolicy(final RestTemplate restTemplate, final String endpoint) {
-        this.restTemplate = restTemplate;
-        this.endpoint = endpoint;
-    }
 
     @Override
     public boolean isSatisfiedBy(final Authentication authentication) throws Exception {

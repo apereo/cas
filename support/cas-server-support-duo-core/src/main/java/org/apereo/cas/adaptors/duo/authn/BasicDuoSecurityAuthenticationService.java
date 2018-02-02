@@ -2,10 +2,9 @@ package org.apereo.cas.adaptors.duo.authn;
 
 import com.duosecurity.client.Http;
 import com.duosecurity.duoweb.DuoWeb;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -23,6 +22,7 @@ import org.json.JSONObject;
  * @since 4.2
  */
 @Slf4j
+@EqualsAndHashCode(callSuper = true)
 public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthenticationService {
 
     private static final long serialVersionUID = -6690808348975271382L;
@@ -82,27 +82,4 @@ public class BasicDuoSecurityAuthenticationService extends BaseDuoSecurityAuthen
         return Pair.of(Boolean.TRUE, result);
     }
 
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .toHashCode();
-    }
 }

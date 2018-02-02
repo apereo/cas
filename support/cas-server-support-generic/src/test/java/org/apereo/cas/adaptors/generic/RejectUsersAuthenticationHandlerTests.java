@@ -88,7 +88,7 @@ public class RejectUsersAuthenticationHandlerTests {
         c.setPassword("user");
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -96,7 +96,7 @@ public class RejectUsersAuthenticationHandlerTests {
     @Test
     public void verifyPassesNullUserNameAndPassword() throws Exception {
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(new UsernamePasswordCredential());
     }

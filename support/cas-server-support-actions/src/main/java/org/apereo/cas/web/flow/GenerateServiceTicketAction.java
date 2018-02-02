@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
@@ -33,25 +34,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 3.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class GenerateServiceTicketAction extends AbstractAction {
 
-    private final CentralAuthenticationService centralAuthenticationService;
-    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final AuthenticationSystemSupport authenticationSystemSupport;
+    private final CentralAuthenticationService centralAuthenticationService;
     private final TicketRegistrySupport ticketRegistrySupport;
+    private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
     private final ServicesManager servicesManager;
-
-    public GenerateServiceTicketAction(final AuthenticationSystemSupport authenticationSystemSupport,
-                                       final CentralAuthenticationService authenticationService,
-                                       final TicketRegistrySupport ticketRegistrySupport,
-                                       final ServicesManager servicesManager,
-                                       final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies) {
-        this.authenticationSystemSupport = authenticationSystemSupport;
-        this.centralAuthenticationService = authenticationService;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-        this.servicesManager = servicesManager;
-        this.authenticationRequestServiceSelectionStrategies = authenticationRequestServiceSelectionStrategies;
-    }
 
     /**
      * {@inheritDoc}

@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -20,16 +21,11 @@ import java.util.stream.Stream;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class RestServiceRegistryDao extends AbstractServiceRegistryDao {
     private final RestTemplate restTemplate;
     private final String url;
     private final MultiValueMap<String, String> headers;
-
-    public RestServiceRegistryDao(final RestTemplate restTemplate, final String url, final MultiValueMap<String, String> headers) {
-        this.restTemplate = restTemplate;
-        this.url = url;
-        this.headers = headers;
-    }
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {

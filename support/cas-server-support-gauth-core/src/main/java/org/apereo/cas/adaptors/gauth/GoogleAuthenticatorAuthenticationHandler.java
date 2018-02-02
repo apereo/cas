@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
@@ -58,11 +59,9 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
         }
         final int otp = Integer.parseInt(tokenCredential.getToken());
         LOGGER.debug("Received OTP [{}]", otp);
-        
+
+        @NonNull
         final Authentication authentication = WebUtils.getInProgressAuthentication();
-        if (authentication == null) {
-            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
-        }
         final String uid = authentication.getPrincipal().getId();
 
         LOGGER.debug("Received principal id [{}]", uid);

@@ -1,6 +1,7 @@
 package org.apereo.cas.util.http;
 
 import lombok.Setter;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.Header;
@@ -184,7 +185,8 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     public SimpleHttpClient getObject() {
         final CloseableHttpClient httpClient = buildHttpClient();
         final FutureRequestExecutionService requestExecutorService = buildRequestExecutorService(httpClient);
-        return new SimpleHttpClient(this.acceptableCodes, httpClient, requestExecutorService);
+        final List<Integer> codes = this.acceptableCodes.stream().sorted().collect(Collectors.toList());
+        return new SimpleHttpClient(codes, httpClient, requestExecutorService);
     }
 
     @Override
@@ -202,37 +204,33 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      *
      * @return the built HTTP client
      */
+    @SneakyThrows
     private CloseableHttpClient buildHttpClient() {
-        try {
-            final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
-            final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
-            final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
-                .register("http", plainsf).register("https", sslsf).build();
-            final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
-            connMgmr.setMaxTotal(this.maxPooledConnections);
-            connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
-            connMgmr.setValidateAfterInactivity(DEFAULT_TIMEOUT);
-            final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
-            final HttpRoute httpRoute = new HttpRoute(httpHost);
-            connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
-            final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(this.readTimeout)
-                .setConnectTimeout((int) this.connectionTimeout).setConnectionRequestTimeout((int) this.connectionTimeout)
-                .setCircularRedirectsAllowed(this.circularRedirectsAllowed).setRedirectsEnabled(this.redirectsEnabled)
-                .setAuthenticationEnabled(this.authenticationEnabled).build();
-            final HttpClientBuilder builder = HttpClients.custom().setConnectionManager(connMgmr)
-                .setDefaultRequestConfig(requestConfig).setSSLSocketFactory(sslsf)
-                .setSSLHostnameVerifier(this.hostnameVerifier).setRedirectStrategy(this.redirectionStrategy)
-                .setDefaultCredentialsProvider(this.credentialsProvider).setDefaultCookieStore(this.cookieStore)
-                .setConnectionReuseStrategy(this.connectionReuseStrategy)
-                .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
-                .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
-                .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
-                .setDefaultHeaders(this.defaultHeaders).useSystemProperties();
-            return builder.build();
-        } catch (final Exception e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        final ConnectionSocketFactory plainsf = PlainConnectionSocketFactory.getSocketFactory();
+        final LayeredConnectionSocketFactory sslsf = this.sslSocketFactory;
+        final Registry<ConnectionSocketFactory> registry = RegistryBuilder.<ConnectionSocketFactory>create()
+            .register("http", plainsf).register("https", sslsf).build();
+        final PoolingHttpClientConnectionManager connMgmr = new PoolingHttpClientConnectionManager(registry);
+        connMgmr.setMaxTotal(this.maxPooledConnections);
+        connMgmr.setDefaultMaxPerRoute(this.maxConnectionsPerRoute);
+        connMgmr.setValidateAfterInactivity(DEFAULT_TIMEOUT);
+        final HttpHost httpHost = new HttpHost(InetAddress.getLocalHost());
+        final HttpRoute httpRoute = new HttpRoute(httpHost);
+        connMgmr.setMaxPerRoute(httpRoute, MAX_CONNECTIONS_PER_ROUTE);
+        final RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(this.readTimeout)
+            .setConnectTimeout((int) this.connectionTimeout).setConnectionRequestTimeout((int) this.connectionTimeout)
+            .setCircularRedirectsAllowed(this.circularRedirectsAllowed).setRedirectsEnabled(this.redirectsEnabled)
+            .setAuthenticationEnabled(this.authenticationEnabled).build();
+        final HttpClientBuilder builder = HttpClients.custom().setConnectionManager(connMgmr)
+            .setDefaultRequestConfig(requestConfig).setSSLSocketFactory(sslsf)
+            .setSSLHostnameVerifier(this.hostnameVerifier).setRedirectStrategy(this.redirectionStrategy)
+            .setDefaultCredentialsProvider(this.credentialsProvider).setDefaultCookieStore(this.cookieStore)
+            .setConnectionReuseStrategy(this.connectionReuseStrategy)
+            .setConnectionBackoffStrategy(this.connectionBackoffStrategy)
+            .setServiceUnavailableRetryStrategy(this.serviceUnavailableRetryStrategy)
+            .setProxyAuthenticationStrategy(this.proxyAuthenticationStrategy)
+            .setDefaultHeaders(this.defaultHeaders).useSystemProperties();
+        return builder.build();
     }
 
     /**
@@ -246,90 +244,6 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
             this.executorService = new ThreadPoolExecutor(this.threadsNumber, this.threadsNumber, 0L, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<>(this.queueSize));
         }
         return new FutureRequestExecutionService(httpClient, this.executorService);
-    }
-
-    public ExecutorService getExecutorService() {
-        return this.executorService;
-    }
-
-    public int getThreadsNumber() {
-        return this.threadsNumber;
-    }
-
-    public int getQueueSize() {
-        return this.queueSize;
-    }
-
-    public int getMaxPooledConnections() {
-        return this.maxPooledConnections;
-    }
-
-    public int getMaxConnectionsPerRoute() {
-        return this.maxConnectionsPerRoute;
-    }
-
-    public List<Integer> getAcceptableCodes() {
-        return new ArrayList<>(this.acceptableCodes);
-    }
-
-    public long getConnectionTimeout() {
-        return this.connectionTimeout;
-    }
-
-    public int getReadTimeout() {
-        return this.readTimeout;
-    }
-
-    public RedirectStrategy getRedirectionStrategy() {
-        return this.redirectionStrategy;
-    }
-
-    public SSLConnectionSocketFactory getSslSocketFactory() {
-        return this.sslSocketFactory;
-    }
-
-    public HostnameVerifier getHostnameVerifier() {
-        return this.hostnameVerifier;
-    }
-
-    public CredentialsProvider getCredentialsProvider() {
-        return this.credentialsProvider;
-    }
-
-    public CookieStore getCookieStore() {
-        return this.cookieStore;
-    }
-
-    public ConnectionReuseStrategy getConnectionReuseStrategy() {
-        return this.connectionReuseStrategy;
-    }
-
-    public ConnectionBackoffStrategy getConnectionBackoffStrategy() {
-        return this.connectionBackoffStrategy;
-    }
-
-    public ServiceUnavailableRetryStrategy getServiceUnavailableRetryStrategy() {
-        return this.serviceUnavailableRetryStrategy;
-    }
-
-    public Collection<? extends Header> getDefaultHeaders() {
-        return this.defaultHeaders;
-    }
-
-    public AuthenticationStrategy getProxyAuthenticationStrategy() {
-        return this.proxyAuthenticationStrategy;
-    }
-
-    public boolean isCircularRedirectsAllowed() {
-        return this.circularRedirectsAllowed;
-    }
-
-    public boolean isAuthenticationEnabled() {
-        return this.authenticationEnabled;
-    }
-
-    public boolean isRedirectsEnabled() {
-        return this.redirectsEnabled;
     }
 
     /**
@@ -347,11 +261,5 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
      * The type Default http client.
      */
     public static class DefaultHttpClient extends SimpleHttpClientFactoryBean {
-    }
-
-    /**
-     * The type Ssl trust store aware http client.
-     */
-    public static class SslTrustStoreAwareHttpClient extends DefaultHttpClient {
     }
 }

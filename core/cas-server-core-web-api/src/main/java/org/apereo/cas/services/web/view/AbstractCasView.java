@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web.view;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Getter
+@AllArgsConstructor
 public abstract class AbstractCasView extends AbstractView {
 
     /**
@@ -62,16 +64,7 @@ public abstract class AbstractCasView extends AbstractView {
      * Authentication attribute release policy.
      */
     protected final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy;
-
-    public AbstractCasView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder,
-                           final ServicesManager servicesManager, final String authenticationContextAttribute,
-                           final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy) {
-        this.successResponse = successResponse;
-        this.protocolAttributeEncoder = protocolAttributeEncoder;
-        this.servicesManager = servicesManager;
-        this.authenticationContextAttribute = authenticationContextAttribute;
-        this.authenticationAttributeReleasePolicy = authenticationAttributeReleasePolicy;
-    }
+    
 
     /**
      * Gets the assertion from the model.
@@ -370,6 +363,7 @@ public abstract class AbstractCasView extends AbstractView {
      * @param value the value
      */
     protected void putIntoModel(final Map<String, Object> model, final String key, final Object value) {
+        LOGGER.trace("Adding attribute [{}] into the view model for [{}] with value [{}]", key, getClass().getSimpleName(), value);
         model.put(key, value);
     }
 
@@ -383,11 +377,4 @@ public abstract class AbstractCasView extends AbstractView {
         model.putAll(values);
     }
 
-    public ProtocolAttributeEncoder getProtocolAttributeEncoder() {
-        return this.protocolAttributeEncoder;
-    }
-
-    public ServicesManager getServicesManager() {
-        return this.servicesManager;
-    }
 }

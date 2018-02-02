@@ -1,5 +1,6 @@
 package org.apereo.cas.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -17,17 +18,12 @@ import java.util.Collection;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class MongoDbConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 7734163279139907616L;
 
-
-    private final String collectionName;
     private final MongoTemplate mongoTemplate;
-
-    public MongoDbConsentRepository(final MongoTemplate mongoTemplate, final String collectionName) {
-        this.mongoTemplate = mongoTemplate;
-        this.collectionName = collectionName;
-    }
+    private final String collectionName;
 
     @Override
     public ConsentDecision findConsentDecision(final Service service,

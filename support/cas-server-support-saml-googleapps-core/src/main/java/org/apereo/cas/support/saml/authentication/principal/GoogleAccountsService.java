@@ -2,9 +2,8 @@ package org.apereo.cas.support.saml.authentication.principal;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.AbstractWebApplicationService;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -24,14 +23,15 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class GoogleAccountsService extends AbstractWebApplicationService {
 
     private static final long serialVersionUID = 6678711809842282833L;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String relayState;
 
-    @Column(length = 255, updatable = true, insertable = true)
+    @Column
     private String requestId;
 
     /**
@@ -54,25 +54,5 @@ public class GoogleAccountsService extends AbstractWebApplicationService {
         super(id, originalUrl, artifactId);
         this.relayState = relayState;
         this.requestId = requestId;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final GoogleAccountsService rhs = (GoogleAccountsService) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(this.relayState, rhs.relayState).append(this.requestId, rhs.requestId).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(relayState).append(requestId).toHashCode();
     }
 }

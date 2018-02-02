@@ -1,5 +1,6 @@
 package org.apereo.cas.util.transforms;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import lombok.Setter;
@@ -17,13 +18,10 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ConvertCasePrincipalNameTransformer implements PrincipalNameTransformer {
 
     private boolean toUpperCase;
-
-    public ConvertCasePrincipalNameTransformer(final boolean toUpperCase) {
-        this.toUpperCase = toUpperCase;
-    }
 
     @Override
     public String transform(final String formUserId) {

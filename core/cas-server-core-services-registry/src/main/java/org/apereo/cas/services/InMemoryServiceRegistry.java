@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import lombok.NoArgsConstructor;
 
 /**
  * Default In Memory Service Registry Dao for test/demonstration purposes.
@@ -19,19 +21,11 @@ import lombok.NoArgsConstructor;
 @ToString
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
-
-    /**
-     * Instantiates a new In memory service registry dao.
-     *
-     * @param registeredServices the registered services
-     */
-    public InMemoryServiceRegistry(final List<RegisteredService> registeredServices) {
-        this.registeredServices = registeredServices;
-    }
-
+    
     @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);

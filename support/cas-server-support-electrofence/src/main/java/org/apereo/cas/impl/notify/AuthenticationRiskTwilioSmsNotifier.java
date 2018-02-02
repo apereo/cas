@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.notify;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,13 +18,9 @@ import org.apereo.cas.util.io.CommunicationsManager;
 @Slf4j
 @Getter
 @Setter
+@AllArgsConstructor
 public class AuthenticationRiskTwilioSmsNotifier extends BaseAuthenticationRiskNotifier {
-    
     private final CommunicationsManager communicationsManager;
-
-    public AuthenticationRiskTwilioSmsNotifier(final CommunicationsManager communicationsManager) {
-        this.communicationsManager = communicationsManager;
-    }
 
     @Override
     public void publish() {

@@ -1,5 +1,6 @@
 package org.apereo.cas.web.consent;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.Beans;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.context.request.async.WebAsyncTask;
+import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -38,34 +40,23 @@ import java.util.concurrent.Callable;
 @Controller("casConsentReviewController")
 @RequestMapping("/consentReview")
 @Slf4j
+@AllArgsConstructor
 public class CasConsentReviewController {
 
     private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
     private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
 
-    private final Config pac4jConfig;
-    private final CasConfigurationProperties casProperties;
-    
     /**
      * The consent repository.
      */
     private final ConsentRepository consentRepository;
-    
     /**
      * The consent engine.
      */
     private final ConsentEngine consentEngine;
+    private final Config pac4jConfig;
+    private final CasConfigurationProperties casProperties;
 
-    public CasConsentReviewController(final ConsentRepository consentRepository,
-            final ConsentEngine consentEngine,
-            final Config pac4jConfig,
-            final CasConfigurationProperties casProperties) {
-        this.consentRepository = consentRepository;
-        this.consentEngine = consentEngine;
-        this.pac4jConfig = pac4jConfig;
-        this.casProperties = casProperties;
-    }
-    
     /**
      * Show consent decisions.
      *
@@ -74,9 +65,11 @@ public class CasConsentReviewController {
      * @return the view where json data will be rendered
      */
     @GetMapping
-    public String showConsent(final HttpServletRequest request,
+    public ModelAndView showConsent(final HttpServletRequest request,
                                         final HttpServletResponse response) {
-        return CONSENT_REVIEW_VIEW;
+        final ModelAndView view = new ModelAndView(CONSENT_REVIEW_VIEW);
+        view.getModel().put("principal", Pac4jUtils.getPac4jAuthenticatedUsername());
+        return view;
     }
 
     /**

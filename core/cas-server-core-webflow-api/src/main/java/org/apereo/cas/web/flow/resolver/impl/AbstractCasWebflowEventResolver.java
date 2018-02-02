@@ -527,7 +527,6 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
      * @return the registered service multifactor authentication provider
      */
     protected Optional<MultifactorAuthenticationProvider> getMultifactorAuthenticationProviderFromApplicationContext(final String providerId) {
-
         try {
             LOGGER.debug("Locating bean definition for [{}]", providerId);
             return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(applicationContext).values().stream()

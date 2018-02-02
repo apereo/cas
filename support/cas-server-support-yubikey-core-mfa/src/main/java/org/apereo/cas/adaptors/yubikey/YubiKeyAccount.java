@@ -32,17 +32,13 @@ public class YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String publicId;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String username;
 
     public YubiKeyAccount() {
         this.id = System.currentTimeMillis();
-    }
-
-    public long getId() {
-        return id;
     }
 }

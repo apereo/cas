@@ -7,7 +7,6 @@ import org.springframework.context.ApplicationContext;
 import org.thymeleaf.spring4.SpringTemplateEngine;
 import org.thymeleaf.spring4.view.ThymeleafView;
 import java.util.Locale;
-import lombok.ToString;
 
 /**
  * This is {@link CasProtocolView}.
@@ -16,7 +15,6 @@ import lombok.ToString;
  * @since 5.0.0
  */
 @Slf4j
-@ToString
 public class CasProtocolView extends ThymeleafView {
 
     /**
@@ -51,5 +49,10 @@ public class CasProtocolView extends ThymeleafView {
     public CasProtocolView(final String templateName, final ApplicationContext applicationContext,
                            final SpringTemplateEngine templateEngine, final ThymeleafProperties properties) {
         this(templateName, applicationContext, templateEngine, properties, null);
+    }
+
+    @Override
+    public String toString() {
+        return getTemplateName();
     }
 }

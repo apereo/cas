@@ -124,6 +124,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      */
     @PostConstruct
     @SneakyThrows
+    @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;

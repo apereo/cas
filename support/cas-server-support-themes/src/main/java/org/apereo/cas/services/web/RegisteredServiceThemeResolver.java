@@ -46,9 +46,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
-
-
-
     private final ServicesManager servicesManager;
 
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -69,7 +66,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
                                           final AuthenticationServiceSelectionPlan serviceSelectionStrategies,
                                           final ResourceLoader resourceLoader,
                                           final CasConfigurationProperties casProperties) {
-        super();
         this.servicesManager = servicesManager;
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategies;
         this.resourceLoader = resourceLoader;
@@ -157,7 +153,6 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
             messageSource.setBasename(rService.getTheme());
             if (messageSource.doGetBundle(rService.getTheme(), request.getLocale()) != null) {
                 LOGGER.debug("Found custom theme [{}] for service [{}]", rService.getTheme(), rService);
-                request.getSession().setAttribute("myTheme", "Testing");
                 return rService.getTheme();
             }
             LOGGER.warn("Custom theme [{}] for service [{}] cannot be located. Falling back to default theme...", rService.getTheme(), rService);

@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -23,6 +24,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
+@AllArgsConstructor
 public class ThemeViewResolver extends AbstractCachingViewResolver {
 
     private final ViewResolver delegate;
@@ -32,13 +34,6 @@ public class ThemeViewResolver extends AbstractCachingViewResolver {
     private final CasConfigurationProperties casProperties;
 
     private final String theme;
-
-    public ThemeViewResolver(final ViewResolver baseResolver, final ThymeleafProperties thymeleafProperties, final CasConfigurationProperties casProperties, final String theme) {
-        this.delegate = baseResolver;
-        this.thymeleafProperties = thymeleafProperties;
-        this.casProperties = casProperties;
-        this.theme = theme;
-    }
 
     @Override
     protected View loadView(final String viewName, final Locale locale) throws Exception {

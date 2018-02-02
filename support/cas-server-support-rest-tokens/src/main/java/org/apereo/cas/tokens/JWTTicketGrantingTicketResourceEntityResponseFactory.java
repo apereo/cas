@@ -1,5 +1,6 @@
 package org.apereo.cas.tokens;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -22,20 +23,14 @@ import javax.servlet.http.HttpServletRequest;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class JWTTicketGrantingTicketResourceEntityResponseFactory extends DefaultTicketGrantingTicketResourceEntityResponseFactory {
-
-    
     private final ServicesManager servicesManager;
 
     /**
      * The ticket builder that produces tokens.
      */
     private final TokenTicketBuilder tokenTicketBuilder;
-    
-    public JWTTicketGrantingTicketResourceEntityResponseFactory(final ServicesManager servicesManager, final TokenTicketBuilder tokenTicketBuilder) {
-        this.servicesManager = servicesManager;
-        this.tokenTicketBuilder = tokenTicketBuilder;
-    }
 
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
@@ -49,7 +44,7 @@ public class JWTTicketGrantingTicketResourceEntityResponseFactory extends Defaul
         }
         
         final String jwt = this.tokenTicketBuilder.build(ticketGrantingTicket);
-        LOGGER.debug("Generated JWT [{}] for service [{}]", jwt);
+        LOGGER.debug("Generated JWT [{}]", jwt);
 
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.TEXT_PLAIN);

@@ -8,8 +8,10 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+
 import lombok.NoArgsConstructor;
 
 /**
@@ -53,14 +55,14 @@ public class ProxyGrantingTicketImpl extends TicketGrantingTicketImpl implements
      * @param proxiedBy                  the proxied by
      * @param parentTicketGrantingTicket the ticket granting ticket
      * @param authentication             the authentication
-     * @param policy                     the policy
+     * @param expirationPolicy           the policy
      */
     @JsonCreator
     public ProxyGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
-                                   @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+                                   @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
                                    @JsonProperty("authentication") final Authentication authentication,
-                                   @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
-        super(id, proxiedBy, parentTicketGrantingTicket, authentication, policy);
+                                   @JsonProperty("expirationPolicy") final ExpirationPolicy expirationPolicy) {
+        super(id, proxiedBy, parentTicketGrantingTicket, authentication, expirationPolicy);
     }
 
     @Override

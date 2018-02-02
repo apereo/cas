@@ -1,15 +1,14 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.util.CollectionUtils;
-import org.springframework.util.Assert;
 
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -25,6 +24,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
 @Slf4j
+@NoArgsConstructor
+@Getter
+@EqualsAndHashCode
 public class DefaultAuthentication implements Authentication {
 
     private static final long serialVersionUID = 3206127526058061391L;
@@ -35,14 +37,14 @@ public class DefaultAuthentication implements Authentication {
     private ZonedDateTime authenticationDate;
 
     /**
+     * Authenticated principal.
+     */
+    private Principal principal;
+
+    /**
      * List of metadata about credentials presented at authentication.
      */
     private List<CredentialMetaData> credentials;
-
-    /**
-     * Authenticated principal.
-     */
-    private final Principal principal;
 
     /**
      * Authentication metadata attributes.
@@ -52,24 +54,13 @@ public class DefaultAuthentication implements Authentication {
     /**
      * Map of handler name to handler authentication success event.
      */
-    private final Map<String, AuthenticationHandlerExecutionResult> successes;
+    private Map<String, AuthenticationHandlerExecutionResult> successes;
 
     /**
      * Map of handler name to handler authentication failure cause.
      */
     private Map<String, Throwable> failures;
 
-    /**
-     * No-arg constructor for serialization support.
-     */
-    private DefaultAuthentication() {
-        this.authenticationDate = null;
-        this.credentials = null;
-        this.principal = null;
-        this.attributes = null;
-        this.successes = null;
-        this.failures = null;
-    }
 
     /**
      * Creates a new instance with the given data.
@@ -80,15 +71,10 @@ public class DefaultAuthentication implements Authentication {
      * @param successes  Non-null map of authentication successes containing at least one entry.
      */
     public DefaultAuthentication(
-            final ZonedDateTime date,
-            final Principal principal,
-            final Map<String, Object> attributes,
-            final Map<String, AuthenticationHandlerExecutionResult> successes) {
-
-        Assert.notNull(date, "Date cannot be null");
-        Assert.notNull(principal, "Principal cannot be null");
-        Assert.notNull(successes, "Successes cannot be null");
-        Assert.notEmpty(successes, "Successes cannot be empty");
+        @NonNull final ZonedDateTime date,
+        @NonNull final Principal principal,
+        @NonNull final Map<String, Object> attributes,
+        @NonNull final Map<String, AuthenticationHandlerExecutionResult> successes) {
 
         this.authenticationDate = date;
         this.principal = principal;
@@ -109,83 +95,17 @@ public class DefaultAuthentication implements Authentication {
      * @param failures    Nullable map of authentication failures.
      */
     public DefaultAuthentication(
-            final ZonedDateTime date,
-            final List<CredentialMetaData> credentials,
-            final Principal principal,
-            final Map<String, Object> attributes,
-            final Map<String, AuthenticationHandlerExecutionResult> successes,
-            final Map<String, Throwable> failures) {
+        @NonNull final ZonedDateTime date,
+        @NonNull final List<CredentialMetaData> credentials,
+        @NonNull final Principal principal,
+        @NonNull final Map<String, Object> attributes,
+        @NonNull final Map<String, AuthenticationHandlerExecutionResult> successes,
+        @NonNull final Map<String, Throwable> failures) {
 
         this(date, principal, attributes, successes);
-
-        Assert.notNull(credentials, "Credential cannot be null");
-        Assert.notEmpty(credentials, "Credential cannot be empty");
-
         this.credentials = credentials;
-        this.failures = failures.isEmpty() ? new HashMap<>(0) : failures;
+        this.failures = failures;
     }
-
-    @Override
-    public Principal getPrincipal() {
-        return this.principal;
-    }
-
-    @Override
-    public ZonedDateTime getAuthenticationDate() {
-        return this.authenticationDate;
-    }
-
-    @Override
-    public Map<String, Object> getAttributes() {
-        return CollectionUtils.wrap(this.attributes);
-    }
-
-    @Override
-    public List<CredentialMetaData> getCredentials() {
-        return CollectionUtils.wrap(this.credentials);
-    }
-
-    @Override
-    public Map<String, AuthenticationHandlerExecutionResult> getSuccesses() {
-        return new HashMap<>(this.successes);
-    }
-
-    @Override
-    public Map<String, Throwable> getFailures() {
-        return CollectionUtils.wrap(this.failures);
-    }
-
-    @Override
-    public int hashCode() {
-        final HashCodeBuilder builder = new HashCodeBuilder(97, 31);
-        builder.append(this.principal);
-        builder.append(this.authenticationDate);
-        builder.append(this.attributes);
-        builder.append(this.credentials);
-        builder.append(this.successes);
-        builder.append(this.failures);
-        return builder.toHashCode();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (!(obj instanceof Authentication)) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        final Authentication other = (Authentication) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        builder.append(this.principal, other.getPrincipal());
-        builder.append(this.credentials, other.getCredentials());
-        builder.append(this.successes, other.getSuccesses());
-        builder.append(this.authenticationDate, other.getAuthenticationDate());
-        builder.append(CollectionUtils.wrap(this.attributes), other.getAttributes());
-        builder.append(CollectionUtils.wrap(this.failures), other.getFailures());
-        return builder.isEquals();
-    }
-    
 
     @Override
     public void update(final Authentication authn) {

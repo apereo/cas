@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow.login;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -24,30 +25,14 @@ import org.springframework.webflow.execution.RequestContext;
  * @since 4.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class GenericSuccessViewAction extends AbstractAction {
 
 
     private final CentralAuthenticationService centralAuthenticationService;
     private final ServicesManager servicesManager;
     private final ServiceFactory serviceFactory;
-
     private final String redirectUrl;
-
-    /**
-     * Instantiates a new Generic success view action.
-     *
-     * @param centralAuthenticationService the central authentication service
-     * @param servicesManager              the services manager
-     * @param serviceFactory               the service factory
-     * @param redirectUrl                  the redirect url
-     */
-    public GenericSuccessViewAction(final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
-                                    final ServiceFactory serviceFactory, final String redirectUrl) {
-        this.centralAuthenticationService = centralAuthenticationService;
-        this.servicesManager = servicesManager;
-        this.serviceFactory = serviceFactory;
-        this.redirectUrl = redirectUrl;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

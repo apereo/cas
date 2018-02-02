@@ -1,9 +1,13 @@
 package org.apereo.cas.adaptors.duo.authn;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.adaptors.duo.DuoUserAccount;
 import org.apereo.cas.adaptors.duo.DuoUserAccountAuthStatus;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
@@ -13,9 +17,6 @@ import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProp
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link DefaultDuoMultifactorAuthenticationProvider}.
@@ -26,6 +27,8 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
+@AllArgsConstructor
 @NoArgsConstructor
 public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements DuoMultifactorAuthenticationProvider {
 
@@ -33,16 +36,8 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     private String registrationUrl;
 
+    @NonNull
     private DuoSecurityAuthenticationService duoAuthenticationService;
-
-    public DefaultDuoMultifactorAuthenticationProvider(final DuoSecurityAuthenticationService duoAuthenticationService) {
-        this.duoAuthenticationService = duoAuthenticationService;
-    }
-
-    @Override
-    public DuoSecurityAuthenticationService getDuoAuthenticationService() {
-        return this.duoAuthenticationService;
-    }
 
     @Override
     protected boolean isAvailable() {
@@ -56,28 +51,7 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final DefaultDuoMultifactorAuthenticationProvider rhs = (DefaultDuoMultifactorAuthenticationProvider) obj;
-        return new EqualsBuilder().appendSuper(super.equals(obj)).append(duoAuthenticationService, rhs.duoAuthenticationService).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().appendSuper(super.hashCode()).append(duoAuthenticationService).toHashCode();
-    }
-
-    @Override
     protected boolean supportsInternal(final Event e, final Authentication authentication, final RegisteredService registeredService) {
-        Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
         if (!super.supportsInternal(e, authentication, registeredService)) {
             return false;
         }

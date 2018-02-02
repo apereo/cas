@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.authenticator;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
@@ -41,18 +42,14 @@ import java.util.Set;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class OAuth20CasAuthenticationBuilder {
-
-
-    /**
-     * Collection of CAS settings.
-     */
-    protected final CasConfigurationProperties casProperties;
 
     /**
      * The Principal factory.
      */
     protected final PrincipalFactory principalFactory;
+
     /**
      * The Web application service service factory.
      */
@@ -63,16 +60,11 @@ public class OAuth20CasAuthenticationBuilder {
      */
     protected final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter;
 
-    public OAuth20CasAuthenticationBuilder(final PrincipalFactory principalFactory,
-                                           final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory,
-                                           final OAuth20ProfileScopeToAttributesFilter scopeToAttributesFilter,
-                                           final CasConfigurationProperties casProperties) {
-        this.principalFactory = principalFactory;
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
-        this.scopeToAttributesFilter = scopeToAttributesFilter;
-        this.casProperties = casProperties;
-    }
-
+    /**
+     * Collection of CAS settings.
+     */
+    protected final CasConfigurationProperties casProperties;
+    
     /**
      * Build service.
      *

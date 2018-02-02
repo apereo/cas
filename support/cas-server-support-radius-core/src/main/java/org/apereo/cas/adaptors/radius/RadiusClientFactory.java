@@ -1,11 +1,11 @@
 package org.apereo.cas.adaptors.radius;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import net.jradius.client.RadiusClient;
 
-import java.io.IOException;
 import java.net.InetAddress;
 
 /**
@@ -16,6 +16,7 @@ import java.net.InetAddress;
  */
 @Slf4j
 @ToString
+@AllArgsConstructor
 public class RadiusClientFactory {
 
     private static final int DEFAULT_SOCKET_TIMEOUT = 60;
@@ -38,7 +39,7 @@ public class RadiusClientFactory {
     /**
      * RADIUS server network address.
      */
-    private InetAddress inetAddress;
+    private String inetAddress;
 
     /**
      * The shared secret to send to the RADIUS server.
@@ -56,23 +57,14 @@ public class RadiusClientFactory {
      * @param inetAddress        RADIUS server network address.
      * @param sharedSecret       RADIUS server authentication shared secret.
      */
-    @SneakyThrows
-    public RadiusClientFactory(final int accountingPort, final int authenticationPort, final int socketTimeout,
-                               final String inetAddress, final String sharedSecret) {
-        this.accountingPort = accountingPort;
-        this.authenticationPort = authenticationPort;
-        this.socketTimeout = socketTimeout;
-        this.inetAddress = InetAddress.getByName(inetAddress);
-        this.sharedSecret = sharedSecret;
-    }
 
     /**
      * Creates a new RADIUS client instance using factory configuration settings.
      *
      * @return New radius client instance.
-     * @throws IOException In case the transport method encounters an error.
      */
-    public RadiusClient newInstance() throws IOException {
-        return new RadiusClient(this.inetAddress, this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
+    @SneakyThrows
+    public RadiusClient newInstance() {
+        return new RadiusClient(InetAddress.getByName(this.inetAddress), this.sharedSecret, this.authenticationPort, this.accountingPort, this.socketTimeout);
     }
 }

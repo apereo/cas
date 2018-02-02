@@ -1,5 +1,6 @@
 package org.apereo.cas.services.replication;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.DistributedCacheManager;
 import org.apereo.cas.DistributedCacheObject;
@@ -22,19 +23,11 @@ import java.util.function.Predicate;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultRegisteredServiceReplicationStrategy implements RegisteredServiceReplicationStrategy {
-
-
     private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
     private final StreamingServiceRegistryProperties properties;
-
-    public DefaultRegisteredServiceReplicationStrategy(
-        final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager,
-        final StreamingServiceRegistryProperties properties) {
-        this.distributedCacheManager = distributedCacheManager;
-        this.properties = properties;
-    }
-
+    
     /**
      * Destroy the watch service thread.
      *
@@ -147,7 +140,7 @@ public class DefaultRegisteredServiceReplicationStrategy implements RegisteredSe
 
     private void updateServiceRegistryWithMatchingService(final List<RegisteredService> services, final RegisteredService cachedService,
                                                           final RegisteredService matchingService, final ServiceRegistryDao serviceRegistryDao) {
-        LOGGER.debug("Found corresponding service definition [{}] locally", matchingService, distributedCacheManager.getName());
+        LOGGER.debug("Found corresponding service definition [{}] locally via cache manager [{}]", matchingService, distributedCacheManager.getName());
         if (matchingService.equals(cachedService)) {
             LOGGER.debug("Service definition cache entry [{}] is the same as service definition found locally [{}]", cachedService, matchingService);
         } else {

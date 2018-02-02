@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -15,7 +16,6 @@ import org.apereo.cas.pm.BasePasswordManagementService;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.hjson.JsonValue;
 import org.springframework.core.io.Resource;
-import org.springframework.util.Assert;
 
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -43,7 +43,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     public JsonResourcePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                                  final String issuer, final PasswordManagementProperties passwordManagementProperties,
                                                  final Resource jsonResource) {
-        super(cipherExecutor, issuer, passwordManagementProperties);
+        super(passwordManagementProperties, cipherExecutor, issuer);
         this.jsonResource = jsonResource;
         readAccountsFromJsonResource();
     }
@@ -58,9 +58,7 @@ public class JsonResourcePasswordManagementService extends BasePasswordManagemen
     }
 
     @Override
-    public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
-        Assert.notNull(credential, "Credential cannot be null");
-        Assert.notNull(bean, "PasswordChangeBean cannot be null");
+    public boolean changeInternal(@NonNull final Credential credential, @NonNull final PasswordChangeBean bean) {
         final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
         if (StringUtils.isBlank(c.getPassword()) || StringUtils.isBlank(bean.getPassword())) {
             LOGGER.error("Password cannot be blank");

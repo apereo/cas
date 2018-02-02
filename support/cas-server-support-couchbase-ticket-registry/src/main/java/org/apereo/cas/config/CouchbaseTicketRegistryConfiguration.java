@@ -41,7 +41,7 @@ public class CouchbaseTicketRegistryConfiguration {
         final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
         return new CouchbaseClientFactory(nodes, cb.getBucket(),
-            cb.getBucket(), Beans.newDuration(cb.getTimeout()).toMillis(),
+            cb.getPassword(), Beans.newDuration(cb.getTimeout()).toMillis(),
             CouchbaseTicketRegistry.UTIL_DOCUMENT,
             CouchbaseTicketRegistry.ALL_VIEWS);
     }
@@ -51,7 +51,7 @@ public class CouchbaseTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
-        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketRegistryCouchbaseClientFactory(), ticketCatalog);
+        final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketCatalog, ticketRegistryCouchbaseClientFactory());
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
         System.setProperty("com.couchbase.queryEnabled", Boolean.toString(couchbase.isQueryEnabled()));
         return c;

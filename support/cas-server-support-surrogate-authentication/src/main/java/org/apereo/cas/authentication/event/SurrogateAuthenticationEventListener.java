@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.event;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,17 +19,10 @@ import org.springframework.context.event.EventListener;
  * @since 5.2.0
  */
 @Slf4j
+@AllArgsConstructor
 public class SurrogateAuthenticationEventListener {
-
-
     private final CommunicationsManager communicationsManager;
     private final CasConfigurationProperties casProperties;
-
-    public SurrogateAuthenticationEventListener(final CommunicationsManager communicationsManager,
-                                                final CasConfigurationProperties casProperties) {
-        this.communicationsManager = communicationsManager;
-        this.casProperties = casProperties;
-    }
 
     /**
      * Handle failure event.

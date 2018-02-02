@@ -1,5 +1,6 @@
 package org.apereo.cas.mock;
 
+import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
@@ -35,6 +36,7 @@ import lombok.Getter;
  */
 @Slf4j
 @Getter
+@EqualsAndHashCode(of ={"id"})
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
 
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
@@ -58,17 +60,17 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(c);
-        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory().createPrincipal(principal, attributes)).addCredential(metaData).addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(), new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
+        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
+            .createPrincipal(principal, attributes)).addCredential(metaData)
+            .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
         created = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return authentication;
+        this(principal,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            new HashMap());
     }
 
     @Override
@@ -77,11 +79,13 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, false, true);
+        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
+            false, true);
     }
 
     @Override
-    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy, final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
+    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+                                            final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         update();
         return new MockServiceTicket(id, service, this);
     }
@@ -104,11 +108,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     @Override
     public List<Authentication> getChainedAuthentications() {
         return new ArrayList<>(0);
-    }
-
-    @Override
-    public boolean isExpired() {
-        return expired;
     }
 
     @Override
@@ -154,16 +153,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return compareTo((Ticket) obj) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
-    }
+    
 
     @Override
     public String getPrefix() {

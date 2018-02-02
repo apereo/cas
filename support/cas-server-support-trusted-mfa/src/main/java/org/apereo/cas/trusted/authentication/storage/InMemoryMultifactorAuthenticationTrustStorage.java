@@ -1,6 +1,8 @@
 package org.apereo.cas.trusted.authentication.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 
@@ -15,14 +17,10 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
+@Getter
 public class InMemoryMultifactorAuthenticationTrustStorage extends BaseMultifactorAuthenticationTrustStorage {
-
-    
     private final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage;
-
-    public InMemoryMultifactorAuthenticationTrustStorage(final LoadingCache<String, MultifactorAuthenticationTrustRecord> st) {
-        this.storage = st;
-    }
 
     @Override
     public void expire(final String key) {

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui.config;
 
+import com.google.common.base.Splitter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
@@ -84,7 +85,7 @@ public class SamlMetadataUIConfiguration {
     @ConditionalOnMissingBean(name = "chainingSamlMetadataUIMetadataResolverAdapter")
     @Bean
     public MetadataResolverAdapter chainingSamlMetadataUIMetadataResolverAdapter() {
-        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapList(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
+        return new ChainingMetadataResolverAdapter(CollectionUtils.wrapSet(getStaticMetadataResolverAdapter(), getDynamicMetadataResolverAdapter()));
     }
 
     private MetadataResolverAdapter configureAdapter(final AbstractMetadataResolverAdapter adapter) {
@@ -102,9 +103,9 @@ public class SamlMetadataUIConfiguration {
         final String[] splitArray = org.springframework.util.StringUtils.commaDelimitedListToStringArray(r);
 
         Arrays.stream(splitArray).forEach(Unchecked.consumer(entry -> {
-            final String[] arr = entry.split(DEFAULT_SEPARATOR);
-            final String metadataFile = arr[0];
-            final String signingKey = arr.length > 1 ? arr[1] : null;
+            final List<String> arr = Splitter.on(DEFAULT_SEPARATOR).splitToList(entry);
+            final String metadataFile = arr.get(0);
+            final String signingKey = arr.size() > 1 ? arr.get(1) : null;
 
             final List<MetadataFilter> filters = new ArrayList<>();
             if (casProperties.getSamlMetadataUi().getMaxValidity() > 0) {

@@ -126,7 +126,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             getService("TestServiceAttributeForAuthzFails"));
 
         this.thrown.expect(PrincipalException.class);
-        this.thrown.expectMessage("screen.service.error.message");
+
 
         final TicketGrantingTicket ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), getService("TestServiceAttributeForAuthzFails"), ctx);
@@ -222,8 +222,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("testB"));
 
         this.thrown.expect(MixedPrincipalException.class);
-        this.thrown.expectMessage("testB != testA");
-
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), getService(), ctx2);
     }
 
@@ -264,8 +262,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyValidateServiceTicketNonExistantTicket() {
         this.thrown.expect(AbstractTicketException.class);
-        this.thrown.expectMessage("google");
-
         getCentralAuthenticationService().validateServiceTicket("google", getService());
     }
 
@@ -336,8 +332,6 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         this.thrown.expect(UnauthorizedSsoServiceException.class);
-        this.thrown.expectMessage("service.not.authorized.sso");
-
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
     }
 

@@ -3,6 +3,7 @@ package org.apereo.cas.support.oauth.web.response.accesstoken;
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.principal.Service;
@@ -46,6 +47,7 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
     protected CasConfigurationProperties casProperties;
 
     @Override
+    @SneakyThrows
     public void generate(final HttpServletRequest request,
                          final HttpServletResponse response,
                          final OAuthRegisteredService registeredService,
@@ -60,11 +62,8 @@ public class OAuth20AccessTokenResponseGenerator implements AccessTokenResponseG
             try (JsonGenerator jsonGenerator = getResponseJsonGenerator(response)) {
                 jsonGenerator.writeStartObject();
                 generateJsonInternal(request, response, jsonGenerator, accessTokenId,
-                        refreshTokenId, timeout, service, registeredService, responseType);
+                    refreshTokenId, timeout, service, registeredService, responseType);
                 jsonGenerator.writeEndObject();
-            } catch (final Exception e) {
-                LOGGER.error(e.getMessage(), e);
-                throw new RuntimeException(e.getMessage(), e);
             }
         } else {
             generateTextInternal(request, response, accessTokenId, refreshTokenId, timeout);

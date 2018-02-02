@@ -1,11 +1,12 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.springframework.util.Assert;
 
 import java.io.Serializable;
 import java.util.Collection;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @NoArgsConstructor
+@Getter
 public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider, Serializable {
 
     private static final long serialVersionUID = 4789727148134156909L;
@@ -46,11 +48,6 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
-    public Collection<MultifactorAuthenticationProvider> getProviders() {
-        return this.providers;
-    }
-
-    @Override
     public boolean isAvailable(final RegisteredService service) throws AuthenticationException {
         final long count = this.providers.stream().filter(p -> p.isAvailable(service)).count();
         return count == providers.size();
@@ -72,14 +69,15 @@ public class DefaultVariegatedMultifactorAuthenticationProvider extends Abstract
     }
 
     @Override
-    public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, final Class<T> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+    public <T extends MultifactorAuthenticationProvider> T findProvider(final String identifier, @NonNull final Class<T> clazz) {
+
         final MultifactorAuthenticationProvider provider = findProvider(identifier);
         if (provider == null) {
             return null;
         }
         if (!clazz.isAssignableFrom(provider.getClass())) {
-            throw new ClassCastException("MultifactorAuthenticationProvider [" + provider.getId() + " is of type " + provider.getClass() + " when we were expecting " + clazz);
+            throw new ClassCastException("MultifactorAuthenticationProvider ["
+                + provider.getId() + " is of type " + provider.getClass() + " when we were expecting " + clazz);
         }
         return (T) provider;
     }

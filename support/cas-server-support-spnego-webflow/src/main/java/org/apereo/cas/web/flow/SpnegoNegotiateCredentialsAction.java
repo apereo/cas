@@ -79,8 +79,6 @@ public class SpnegoNegotiateCredentialsAction extends AbstractAction {
      * @since 4.1
      */
     public SpnegoNegotiateCredentialsAction(final List<String> supportedBrowser, final boolean ntlm, final boolean mixedModeAuthenticationEnabled) {
-        super();
-
         this.ntlm = ntlm;
         this.messageBeginPrefix = constructMessagePrefix();
         this.mixedModeAuthentication = mixedModeAuthenticationEnabled;

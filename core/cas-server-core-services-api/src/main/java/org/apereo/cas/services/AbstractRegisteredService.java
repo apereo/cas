@@ -52,7 +52,7 @@ import java.util.Map;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"id"})
 public abstract class AbstractRegisteredService implements RegisteredService {
 
     private static final long serialVersionUID = 7645279151115635245L;
@@ -60,22 +60,22 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     /**
      * The unique identifier for this service.
      */
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     protected String serviceId;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String theme;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String informationUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String privacyUrl;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String responseType;
 
     @org.springframework.data.annotation.Id
@@ -84,7 +84,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = RegisteredService.INITIAL_IDENTIFIER_VALUE;
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String description;
 
     @Lob
@@ -117,7 +117,7 @@ public abstract class AbstractRegisteredService implements RegisteredService {
     @Column(name = "mfa_policy", nullable = true, length = Integer.MAX_VALUE)
     private RegisteredServiceMultifactorPolicy multifactorPolicy = new DefaultRegisteredServiceMultifactorPolicy();
 
-    @Column(length = 255, updatable = true, insertable = true, nullable = true)
+    @Column
     private String logo;
 
     @Column(name = "logout_url")
@@ -133,33 +133,13 @@ public abstract class AbstractRegisteredService implements RegisteredService {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredServiceImpl_Props")
-    private Map<String, RegisteredServiceProperty> properties = new HashMap<>();
+    private Map<String, DefaultRegisteredServiceProperty> properties = new HashMap<>();
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "RegisteredService_Contacts")
     @OrderColumn
-    private List<RegisteredServiceContact> contacts = new ArrayList<>();
-
-    @Override
-    public long getId() {
-        return this.id;
-    }
-
-    @Override
-    public RegisteredServiceProxyPolicy getProxyPolicy() {
-        return this.proxyPolicy;
-    }
-
-    @Override
-    public RegisteredServiceAccessStrategy getAccessStrategy() {
-        return this.accessStrategy;
-    }
-
-    @Override
-    public URL getLogoutUrl() {
-        return this.logoutUrl;
-    }
-
+    private List<DefaultRegisteredServiceContact> contacts = new ArrayList<>();
+    
     /**
      * Initializes the registered service with default values
      * for fields that are unspecified. Only triggered by JPA.
@@ -246,4 +226,21 @@ public abstract class AbstractRegisteredService implements RegisteredService {
      */
     protected abstract AbstractRegisteredService newInstance();
 
+    @Override
+    public Map<String, RegisteredServiceProperty> getProperties() {
+        return (Map) this.properties;
+    }
+
+    @Override
+    public List<RegisteredServiceContact> getContacts() {
+        return (List) this.contacts;
+    }
+
+    public void setProperties(final Map<String, RegisteredServiceProperty> properties) {
+        this.properties = (Map) properties;
+    }
+    
+    public void setContacts(final List<RegisteredServiceContact> contacts) {
+        this.contacts = (List) contacts;
+    }
 }

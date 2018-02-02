@@ -36,7 +36,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
     public LdapPasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
                                          final String issuer,
                                          final PasswordManagementProperties passwordManagementProperties) {
-        super(cipherExecutor, issuer, passwordManagementProperties);
+        super(passwordManagementProperties, cipherExecutor, issuer);
     }
 
     @Override
@@ -44,8 +44,8 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         try {
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                    CollectionUtils.wrap(username));
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate account email", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
@@ -68,7 +68,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     LOGGER.error("Email [{}] is not a valid address", email);
                 } else {
                     LOGGER.error("Could not locate an LDAP attribute [{}] for [{}] and base DN [{}]",
-                            attributeName, filter.format(), ldap.getBaseDn());
+                        attributeName, filter.format(), ldap.getBaseDn());
                 }
                 return null;
             }
@@ -78,7 +78,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         }
         return null;
     }
-    
+
     @Override
     public boolean changeInternal(final Credential credential, final PasswordChangeBean bean) {
         try {
@@ -86,8 +86,8 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
 
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                    CollectionUtils.wrap(c.getId()));
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                CollectionUtils.wrap(c.getId()));
             LOGGER.debug("Constructed LDAP filter [{}] to update account password", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
@@ -98,7 +98,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                 final String dn = response.getResult().getEntry().getDn();
                 LOGGER.debug("Updating account password for [{}]", dn);
                 if (LdapUtils.executePasswordModifyOperation(dn, factory, c.getPassword(), bean.getPassword(),
-                        properties.getLdap().getType())) {
+                    properties.getLdap().getType())) {
                     LOGGER.debug("Successfully updated the account password for [{}]", dn);
                     return true;
                 }
@@ -118,8 +118,8 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
         try {
             final PasswordManagementProperties.Ldap ldap = properties.getLdap();
             final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(ldap.getSearchFilter(),
-                    LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
-                    CollectionUtils.wrap(username));
+                LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
+                CollectionUtils.wrap(username));
             LOGGER.debug("Constructed LDAP filter [{}] to locate security questions", filter);
 
             final ConnectionFactory factory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
@@ -136,7 +136,7 @@ public class LdapPasswordManagementService extends BasePasswordManagementService
                     final LdapAttribute q = entry.getAttribute(k);
                     final LdapAttribute a = entry.getAttribute(v);
                     if (q != null && a != null && StringUtils.isNotBlank(q.getStringValue())
-                            && StringUtils.isNotBlank(a.getStringValue())) {
+                        && StringUtils.isNotBlank(a.getStringValue())) {
                         LOGGER.debug("Added security question [{}]", q.getStringValue());
                         set.put(q.getStringValue(), a.getStringValue());
                     }

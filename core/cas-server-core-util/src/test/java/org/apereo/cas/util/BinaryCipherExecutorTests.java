@@ -8,6 +8,7 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
 
 import static org.junit.Assert.*;
 
@@ -42,7 +43,7 @@ public class BinaryCipherExecutorTests {
                 "1234", 512, 16) {
         };
 
-        this.thrown.expect(RuntimeException.class);
+        this.thrown.expect(InvalidKeyException.class);
         cc.encode(value.getBytes(StandardCharsets.UTF_8));
     }
 

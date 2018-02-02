@@ -47,9 +47,7 @@ public class OneTimeTokenAuthenticationConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
-
-
-
+    
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;

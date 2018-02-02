@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -12,10 +13,10 @@ import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.springframework.util.Assert;
 
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -65,9 +66,25 @@ public abstract class AbstractPreAndPostProcessingAuthenticationHandler extends 
      * @param warnings   the warnings
      * @return the constructed handler result
      */
-    protected AuthenticationHandlerExecutionResult createHandlerResult(final Credential credential, final Principal principal,
+    protected AuthenticationHandlerExecutionResult createHandlerResult(@NonNull final Credential credential,
+                                                                       @NonNull final Principal principal,
                                                                        final List<MessageDescriptor> warnings) {
-        Assert.notNull(principal, "Cannot create authentication handler result with a null principal for credential " + credential.getId());
         return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential), principal, warnings);
+    }
+
+    /**
+     * Helper method to construct a handler result
+     * on successful authentication events.
+     *
+     * @param credential the credential on which the authentication was successfully performed.
+     *                   Note that this credential instance may be different from what was originally provided
+     *                   as transformation of the username may have occurred, if one is in fact defined.
+     * @param principal  the resolved principal
+     * @return the constructed handler result
+     */
+    protected AuthenticationHandlerExecutionResult createHandlerResult(@NonNull final Credential credential,
+                                                                       @NonNull final Principal principal) {
+        return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(credential),
+            principal, new ArrayList<>(0));
     }
 }

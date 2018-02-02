@@ -125,7 +125,8 @@ public class AbstractRegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p, RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(attr.size(), map.size());
     }
 
@@ -142,7 +143,8 @@ public class AbstractRegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p, RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(2, attr.size());
         assertTrue(attr.containsKey(ATTR_1));
         assertTrue(attr.containsKey(ATTR_3));
@@ -163,7 +165,8 @@ public class AbstractRegisteredServiceTests {
         map.put(ATTR_3, Arrays.asList("v3", "v4"));
         when(p.getAttributes()).thenReturn(map);
         when(p.getId()).thenReturn("principalId");
-        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p, RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
+        final Map<String, Object> attr = this.r.getAttributeReleasePolicy().getAttributes(p,
+            RegisteredServiceTestUtils.getService(), RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID));
         assertEquals(1, attr.size());
         assertTrue(attr.containsKey("newAttr1"));
     }

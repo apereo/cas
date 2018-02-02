@@ -1,5 +1,7 @@
 package org.apereo.cas.authorization;
 
+import lombok.AllArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
@@ -14,7 +16,6 @@ import org.pac4j.core.authorization.generator.AuthorizationGenerator;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.AccountNotFoundException;
 import org.pac4j.core.profile.CommonProfile;
-import org.springframework.util.Assert;
 
 /**
  * This is {@link BaseUseAttributesAuthorizationGenerator}.
@@ -23,24 +24,19 @@ import org.springframework.util.Assert;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public abstract class BaseUseAttributesAuthorizationGenerator implements AuthorizationGenerator<CommonProfile> {
 
 
     /**
      * Search connection factory.
      */
+    @NonNull
     protected final ConnectionFactory connectionFactory;
-
+    @NonNull
     private final SearchExecutor userSearchExecutor;
     private final boolean allowMultipleResults;
 
-    public BaseUseAttributesAuthorizationGenerator(final ConnectionFactory connectionFactory,
-                                                   final SearchExecutor userSearchExecutor,
-                                                   final boolean allowMultipleResults) {
-        this.connectionFactory = connectionFactory;
-        this.userSearchExecutor = userSearchExecutor;
-        this.allowMultipleResults = allowMultipleResults;
-    }
 
     /**
      * Add profile roles.
@@ -70,9 +66,6 @@ public abstract class BaseUseAttributesAuthorizationGenerator implements Authori
 
     @Override
     public CommonProfile generate(final WebContext context, final CommonProfile profile) {
-        Assert.notNull(this.connectionFactory, "connectionFactory must not be null");
-        Assert.notNull(this.userSearchExecutor, "userSearchExecutor must not be null");
-
         final String username = profile.getId();
         final SearchResult userResult;
         try {

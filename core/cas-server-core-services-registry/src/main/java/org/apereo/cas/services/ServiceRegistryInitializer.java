@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
@@ -14,24 +15,12 @@ import java.util.List;
  * @since 5.0.0
  */
 @Slf4j
+@AllArgsConstructor
 public class ServiceRegistryInitializer {
-
-
-
-    private final ServiceRegistryDao serviceRegistryDao;
     private final ServiceRegistryDao jsonServiceRegistryDao;
+    private final ServiceRegistryDao serviceRegistryDao;
     private final ServicesManager servicesManager;
     private final boolean initFromJson;
-
-    public ServiceRegistryInitializer(final ServiceRegistryDao jsonServiceRegistryDao,
-                                      final ServiceRegistryDao serviceRegistryDao,
-                                      final ServicesManager servicesManager,
-                                      final boolean initFromJson) {
-        this.jsonServiceRegistryDao = jsonServiceRegistryDao;
-        this.serviceRegistryDao = serviceRegistryDao;
-        this.servicesManager = servicesManager;
-        this.initFromJson = initFromJson;
-    }
 
     /**
      * Init service registry if necessary.

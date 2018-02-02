@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.services;
 
+import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -35,17 +36,10 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPartyTokenProducer {
-
-
     private final SecurityTokenServiceClientBuilder clientBuilder;
     private final CipherExecutor<String, String> credentialCipherExecutor;
-
-    public DefaultRelyingPartyTokenProducer(final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder,
-                                            final CipherExecutor<String, String> credentialCipherExecutor) {
-        this.clientBuilder = securityTokenServiceClientBuilder;
-        this.credentialCipherExecutor = credentialCipherExecutor;
-    }
 
     @Override
     public String produce(final SecurityToken securityToken, final WSFederationRegisteredService service,
@@ -109,7 +103,7 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
         }
     }
 
-
+    @SneakyThrows
     private Element requestSecurityTokenResponse(final WSFederationRegisteredService service,
                                                  final SecurityTokenServiceClient sts,
                                                  final Assertion assertion) {
@@ -124,8 +118,6 @@ public class DefaultRelyingPartyTokenProducer implements WSFederationRelyingPart
                 throw new IllegalArgumentException(new ProcessingException(ProcessingException.TYPE.BAD_REQUEST));
             }
             throw ex;
-        } catch (final Exception ex) {
-            throw new RuntimeException(ex.getMessage(), ex);
         }
     }
 }

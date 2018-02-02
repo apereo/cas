@@ -1,5 +1,6 @@
 package org.apereo.cas.support.pac4j.web.flow;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -31,13 +32,10 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 @Slf4j
+@AllArgsConstructor
 public class SAML2ClientLogoutAction extends AbstractAction {
 
     private final Clients clients;
-
-    public SAML2ClientLogoutAction(final Clients clients) {
-        this.clients = clients;
-    }
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {

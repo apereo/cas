@@ -1,6 +1,7 @@
 package org.apereo.cas.pm.impl;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -50,6 +51,7 @@ import static org.junit.Assert.*;
     CasCoreAuthenticationHandlersConfiguration.class,
     CasWebApplicationServiceFactoryConfiguration.class,
     CasCoreHttpConfiguration.class,
+    CasCoreAuditConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasPersonDirectoryConfiguration.class,

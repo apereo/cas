@@ -106,7 +106,8 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
     }
 
     private DefaultSingleLogoutServiceLogoutUrlBuilder createDefaultSingleLogoutServiceLogoutUrlBuilder(final boolean allowLocalLogoutUrls,
-                                                                                                        final String authorityValidationRegEx, final boolean authorityValidationRegExCaseSensitive) throws Exception {
+                                                                                                        final String authorityValidationRegEx,
+                                                                                                        final boolean authorityValidationRegExCaseSensitive) {
         final UrlValidator validator = new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx,
             authorityValidationRegExCaseSensitive).getObject();
         return new DefaultSingleLogoutServiceLogoutUrlBuilder(validator);
@@ -119,7 +120,7 @@ public class DefaultSingleLogoutServiceLogoutUrlBuilderTests {
         s.setName("Test service " + id);
         s.setDescription("Registered service description");
         s.setProxyPolicy(new RegexMatchingRegisteredServiceProxyPolicy("^https?://.+"));
-        s.setId(RandomUtils.getInstanceNative().nextInt(Math.abs(s.hashCode())));
+        s.setId(RandomUtils.getNativeInstance().nextInt(Math.abs(s.hashCode())));
         return s;
     }
 

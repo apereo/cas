@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth.token;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.otp.repository.token.OneTimeToken;
 
@@ -15,12 +16,9 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "GoogleAuthenticatorToken")
 @Slf4j
+@NoArgsConstructor
 public class GoogleAuthenticatorToken extends OneTimeToken {
     private static final long serialVersionUID = 8494781829798273770L;
-
-    public GoogleAuthenticatorToken() {
-        super();
-    }
 
     public GoogleAuthenticatorToken(final Integer token, final String userId) {
         super(token, userId);

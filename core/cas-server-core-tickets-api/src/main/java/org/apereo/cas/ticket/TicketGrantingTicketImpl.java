@@ -5,11 +5,14 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
-import org.springframework.util.Assert;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorValue;
@@ -22,9 +25,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 /**
  * Concrete implementation of a TicketGrantingTicket. A TicketGrantingTicket is
@@ -111,13 +111,12 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
      */
     @JsonCreator
     public TicketGrantingTicketImpl(@JsonProperty("id") final String id, @JsonProperty("proxiedBy") final Service proxiedBy,
-                                    @JsonProperty("grantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
-                                    @JsonProperty("authentication") final Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
+                                    @JsonProperty("ticketGrantingTicket") final TicketGrantingTicket parentTicketGrantingTicket,
+                                    @NonNull @JsonProperty("authentication") final Authentication authentication, @JsonProperty("expirationPolicy") final ExpirationPolicy policy) {
         super(id, policy);
         if (parentTicketGrantingTicket != null && proxiedBy == null) {
             throw new IllegalArgumentException("Must specify proxiedBy when providing parent TGT");
         }
-        Assert.notNull(authentication, "authentication cannot be null");
         this.ticketGrantingTicket = parentTicketGrantingTicket;
         this.authentication = authentication;
         this.proxiedBy = proxiedBy;
@@ -134,17 +133,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     public TicketGrantingTicketImpl(final String id, final Authentication authentication, final ExpirationPolicy policy) {
         this(id, null, null, authentication, policy);
     }
-
-    @Override
-    public TicketGrantingTicket getTicketGrantingTicket() {
-        return this.ticketGrantingTicket;
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return this.authentication;
-    }
-
+    
     /**
      * {@inheritDoc}
      * <p>The state of the ticket is affected by this operation and the
@@ -191,16 +180,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         path = StringUtils.substringBefore(path, ";");
         path = StringUtils.substringBefore(path, "#");
         return path;
-    }
-
-    /**
-     * Gets an new map with the service ticket and services accessed by this ticket-granting ticket.
-     *
-     * @return a map of service ticket and services accessed by this ticket-granting ticket.
-     */
-    @Override
-    public synchronized Map<String, Service> getServices() {
-        return new HashMap<>(this.services);
     }
 
     /**
@@ -260,17 +239,8 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     }
 
     @Override
-    public Service getProxiedBy() {
-        return this.proxiedBy;
-    }
-
-    @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;
     }
 
-    @Override
-    public Collection getDescendantTickets() {
-        return descendantTickets;
-    }
 }

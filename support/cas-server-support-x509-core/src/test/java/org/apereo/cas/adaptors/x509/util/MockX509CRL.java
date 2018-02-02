@@ -63,11 +63,6 @@ public class MockX509CRL extends X509CRL {
     }
 
     @Override
-    public Date getNextUpdate() {
-        return this.nextUpdate;
-    }
-
-    @Override
     public Set<String> getNonCriticalExtensionOIDs() {
         return null;
     }

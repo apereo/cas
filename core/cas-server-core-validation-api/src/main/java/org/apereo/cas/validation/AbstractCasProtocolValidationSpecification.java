@@ -1,12 +1,15 @@
 package org.apereo.cas.validation;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.springframework.context.annotation.Scope;
+
 import javax.servlet.http.HttpServletRequest;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
 
 /**
  * Base validation specification for the CAS protocol. This specification checks
@@ -20,33 +23,20 @@ import lombok.NoArgsConstructor;
 @Slf4j
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
+@Getter
 public abstract class AbstractCasProtocolValidationSpecification implements CasProtocolValidationSpecification {
 
-    /** Denotes whether we should always authenticate or not. */
+    /**
+     * Denotes whether we should always authenticate or not.
+     */
     private boolean renew;
-
-    /**
-     * Instantiates a new abstract cas protocol validation specification.
-     *
-     * @param renew the renew
-     */
-    public AbstractCasProtocolValidationSpecification(final boolean renew) {
-        this.renew = renew;
-    }
-
-    /**
-     * Method to determine if we require renew to be true.
-     *
-     * @return true if renew is required, false otherwise.
-     */
-    public boolean isRenew() {
-        return this.renew;
-    }
 
     @Override
     public boolean isSatisfiedBy(final Assertion assertion, final HttpServletRequest request) {
         LOGGER.debug("Is validation specification set to enforce [{}] protocol behavior? [{}]. Is assertion issued from a new login? [{}]",
-            CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(this.renew), BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
+            CasProtocolConstants.PARAMETER_RENEW, BooleanUtils.toStringYesNo(this.renew),
+            BooleanUtils.toStringYesNo(assertion.isFromNewLogin()));
         boolean satisfied = isSatisfiedByInternal(assertion);
         if (!satisfied) {
             LOGGER.warn("[{}] is not internally satisfied by the produced assertion", getClass().getSimpleName());
@@ -70,6 +60,7 @@ public abstract class AbstractCasProtocolValidationSpecification implements CasP
     /**
      * Template method to allow for additional checks by subclassed methods
      * without needing to call super.isSatisfiedBy(...).
+     *
      * @param assertion the assertion
      * @return true, if the subclass implementation is satisfied by the assertion
      */

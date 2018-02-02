@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
 import com.google.common.io.ByteSource;
+import lombok.NonNull;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -12,7 +13,6 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.util.DigestUtils;
 import org.apereo.cas.util.serialization.SerializationUtils;
-import org.springframework.util.Assert;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -51,8 +51,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      *                                  class.
      */
     @Override
-    public <T extends Ticket> T getTicket(final String ticketId, final Class<T> clazz) {
-        Assert.notNull(clazz, "clazz cannot be null");
+    public <T extends Ticket> T getTicket(final String ticketId, @NonNull final Class<T> clazz) {
         final Ticket ticket = this.getTicket(ticketId);
         if (ticket == null) {
             return null;
@@ -205,6 +204,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      * @param ticket the ticket
      * @return the ticket
      */
+    @SneakyThrows
     protected Ticket encodeTicket(final Ticket ticket) {
         if (!isCipherExecutorEnabled()) {
             LOGGER.trace(MESSAGE);
@@ -217,7 +217,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         LOGGER.debug("Encoding ticket [{}]", ticket);
         final byte[] encodedTicketObject = SerializationUtils.serializeAndEncodeObject(this.cipherExecutor, ticket);
         final String encodedTicketId = encodeTicketId(ticket.getId());
-        final Ticket encodedTicket = new EncodedTicket(ByteSource.wrap(encodedTicketObject), encodedTicketId);
+        final Ticket encodedTicket = new EncodedTicket(encodedTicketId, ByteSource.wrap(encodedTicketObject).read());
         LOGGER.debug("Created encoded ticket [{}]", encodedTicket);
         return encodedTicket;
     }
@@ -244,7 +244,7 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
         }
         LOGGER.debug("Attempting to decode [{}]", result);
         final EncodedTicket encodedTicket = (EncodedTicket) result;
-        final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncoded(), this.cipherExecutor, Ticket.class);
+        final Ticket ticket = SerializationUtils.decodeAndDeserializeObject(encodedTicket.getEncodedTicket(), this.cipherExecutor, Ticket.class);
         LOGGER.debug("Decoded ticket to [{}]", ticket);
         return ticket;
     }

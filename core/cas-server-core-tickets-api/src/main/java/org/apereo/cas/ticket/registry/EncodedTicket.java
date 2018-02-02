@@ -3,15 +3,14 @@ package org.apereo.cas.ticket.registry;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.io.ByteSource;
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -27,9 +26,11 @@ import java.time.ZonedDateTime;
  * @since 4.2
  */
 @Slf4j
-@ToString
+@ToString(of = {"id"})
 @Getter
 @NoArgsConstructor
+@EqualsAndHashCode(of = {"id"})
+@AllArgsConstructor
 public class EncodedTicket implements Ticket {
 
     private static final long serialVersionUID = -7078771807487764116L;
@@ -37,19 +38,6 @@ public class EncodedTicket implements Ticket {
     private String id;
 
     private byte[] encodedTicket;
-
-    /**
-     * Creates a new encoded ticket using the given encoder to encode the given
-     * source ticket.
-     *
-     * @param encodedTicket   the encoded ticket
-     * @param encodedTicketId the encoded ticket id
-     */
-    @SneakyThrows
-    public EncodedTicket(final ByteSource encodedTicket, final String encodedTicketId) {
-        this.id = encodedTicketId;
-        this.encodedTicket = encodedTicket.read();
-    }
 
     /**
      * Instantiates a new Encoded ticket.
@@ -99,10 +87,6 @@ public class EncodedTicket implements Ticket {
         return null;
     }
 
-    protected byte[] getEncoded() {
-        return this.encodedTicket;
-    }
-
     @JsonIgnore
     @Override
     public boolean isExpired() {
@@ -115,23 +99,4 @@ public class EncodedTicket implements Ticket {
         return getId().compareTo(o.getId());
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final EncodedTicket rhs = (EncodedTicket) obj;
-        return new EqualsBuilder().append(this.id, rhs.id).isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 133).append(id).toHashCode();
-    }
 }
