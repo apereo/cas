@@ -1,4 +1,4 @@
-package org.apereo.cas.support.oauth.web.endpoints;
+package org.apereo.cas.support.oauth.profile;
 
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.pac4j.core.context.J2EContext;
@@ -12,6 +12,7 @@ import java.util.Map;
  * @author Dmitriy Kopylenko
  * @since 5.3.0
  */
+@FunctionalInterface
 public interface OAuth2UserProfileDataCreator {
 
     /**

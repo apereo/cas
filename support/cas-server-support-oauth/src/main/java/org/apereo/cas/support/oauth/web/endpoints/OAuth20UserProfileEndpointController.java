@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRenderer;
@@ -40,8 +41,7 @@ import java.util.Map;
  */
 @Slf4j
 public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller {
-
-
+    
     /**
      * View renderer for the final profile.
      */
@@ -105,7 +105,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         updateAccessTokenUsage(accessTokenTicket);
 
         final Map<String, Object> map = this.userProfileDataCreator.createFrom(accessTokenTicket, context);
-
         final String value = this.userProfileViewRenderer.render(map, accessTokenTicket);
         return new ResponseEntity<>(value, HttpStatus.OK);
     }

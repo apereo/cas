@@ -21,21 +21,19 @@ import static org.apereo.cas.support.oauth.web.views.OAuth20UserProfileViewRende
  * @since 5.3.0
  */
 public class UserProfileDataAuditResourceResolver extends ReturnValueAsStringResourceResolver {
-
     @Override
-    @SuppressWarnings("unchecked")
-    public String[] resolveFrom(JoinPoint auditableTarget, Object retval) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "User profile data Map<String, Object> must not be null");
         final Map profileMap = Map.class.cast(retval);
         final AccessToken accessToken = AccessToken.class.cast(auditableTarget.getArgs()[0]);
 
         final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
-                .append("user_profile_id", profileMap.get(MODEL_ATTRIBUTE_ID))
-                .append("client_id", profileMap.get(CLIENT_ID))
-                .append("client_service", profileMap.get(PARAMETER_SERVICE))
-                .append("scopes", accessToken.getScopes())
-                .append("user_profile_attributes", profileMap.get(MODEL_ATTRIBUTE_ATTRIBUTES))
-                .toString();
+            .append("user_profile_id", profileMap.get(MODEL_ATTRIBUTE_ID))
+            .append("client_id", profileMap.get(CLIENT_ID))
+            .append("client_service", profileMap.get(PARAMETER_SERVICE))
+            .append("scopes", accessToken.getScopes())
+            .append("user_profile_attributes", profileMap.get(MODEL_ATTRIBUTE_ATTRIBUTES))
+            .toString();
 
         return new String[]{result};
     }
