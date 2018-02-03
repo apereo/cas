@@ -32,7 +32,7 @@ public class SurrogateAuditPrincipalIdProvider extends DefaultAuditPrincipalIdPr
                 .get(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_PRINCIPAL).toString();
             return String.format("(Primary User: [%s], Surrogate User: [%s])", principalId, surrogateUser);
         }
-        return authentication.getPrincipal().getId();
+        return super.getPrincipalIdFrom(authentication, returnValue, exception);
     }
 
     @Override
