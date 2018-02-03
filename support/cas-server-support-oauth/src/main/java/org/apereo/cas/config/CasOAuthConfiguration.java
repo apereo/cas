@@ -2,6 +2,8 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -10,6 +12,7 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthAccessTokenProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
+import org.apereo.cas.configuration.model.support.oauth.OAuthRefreshTokenProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -32,10 +35,13 @@ import org.apereo.cas.support.oauth.validator.OAuth20TokenResponseTypeRequestVal
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
+import org.apereo.cas.support.oauth.web.audit.UserProfileDataAuditResourceResolver;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
+import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -73,6 +79,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.inspektr.audit.spi.support.DefaultAuditActionResolver;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
@@ -109,12 +116,13 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.CLIENT_SECRET;
  * This this {@link CasOAuthConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.0.0
  */
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasOAuthConfiguration {
+public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -363,6 +371,12 @@ public class CasOAuthConfiguration {
         return new OAuth20DefaultUserProfileViewRenderer(casProperties.getAuthn().getOauth());
     }
 
+    @ConditionalOnMissingBean(name = "oAuth2UserProfileDataCreator")
+    @Bean
+    public OAuth2UserProfileDataCreator oAuth2UserProfileDataCreator() {
+        return new DefaultOAuth2UserProfileDataCreator(servicesManager, profileScopeToAttributesFilter());
+    }
+
     @ConditionalOnMissingBean(name = "profileController")
     @Bean
     public OAuth20UserProfileEndpointController profileController() {
@@ -371,7 +385,7 @@ public class CasOAuthConfiguration {
             oauthPrincipalFactory(), webApplicationServiceFactory,
             profileScopeToAttributesFilter(), casProperties,
             ticketGrantingTicketCookieGenerator,
-            oauthUserProfileViewRenderer());
+            oauthUserProfileViewRenderer(), oAuth2UserProfileDataCreator());
     }
 
     @ConditionalOnMissingBean(name = "oauthAuthorizationResponseBuilders")
@@ -492,7 +506,8 @@ public class CasOAuthConfiguration {
     }
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
-        final long timeout = Beans.newDuration(casProperties.getAuthn().getOauth().getRefreshToken().getTimeToKillInSeconds()).toMillis();
+        final OAuthRefreshTokenProperties rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
+        final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).toMillis();
         return new OAuthRefreshTokenExpirationPolicy(timeout);
     }
 
@@ -520,9 +535,18 @@ public class CasOAuthConfiguration {
             accessTokenGrantRequestExtractors());
     }
 
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER",
+            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+        plan.registerAuditResourceResolver("OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER",
+            new UserProfileDataAuditResourceResolver());
+    }
+
     @PostConstruct
     public void initializeServletApplicationContext() {
-        final String oAuthCallbackUrl = casProperties.getServer().getPrefix() + BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL_DEFINITION;
+        final String oAuthCallbackUrl = casProperties.getServer().getPrefix()
+            + BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL_DEFINITION;
 
         final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
         final RegisteredService svc = servicesManager.findServiceBy(callbackService);
