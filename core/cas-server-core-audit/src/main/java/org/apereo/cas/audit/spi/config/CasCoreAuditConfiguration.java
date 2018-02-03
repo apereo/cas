@@ -65,13 +65,13 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
     private ApplicationContext applicationContext;
 
     @Bean
-    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager,
+    public AuditTrailManagementAspect auditTrailManagementAspect(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailExecutionPlan,
                                                                  @Qualifier("auditTrailRecordResolutionPlan") final AuditTrailRecordResolutionPlan auditTrailRecordResolutionPlan) {
         final AuditTrailManagementAspect aspect = new AuditTrailManagementAspect(
-            casProperties.getAudit().getAppCode(),
-            auditablePrincipalResolver(auditPrincipalIdProvider()),
-            auditTrailManager.getAuditTrailManagers(), auditTrailRecordResolutionPlan.getAuditActionResolvers(),
-            auditTrailRecordResolutionPlan.getAuditResourceResolvers());
+                casProperties.getAudit().getAppCode(),
+                auditablePrincipalResolver(auditPrincipalIdProvider()),
+                auditTrailExecutionPlan.getAuditTrailManagers(), auditTrailRecordResolutionPlan.getAuditActionResolvers(),
+                auditTrailRecordResolutionPlan.getAuditResourceResolvers());
         aspect.setFailOnAuditFailures(!casProperties.getAudit().isIgnoreAuditFailures());
         return aspect;
     }

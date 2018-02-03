@@ -100,5 +100,6 @@ The following events are tracked and recorded in the audit log:
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
-| `SAML2_RESPONSE`                    | `CREATED`, `FAILED`
-| `SAML2_REQUEST`                        | `CREATED`, `FAILED`
+| `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
+| `SAML2_REQUEST`                       | `CREATED`, `FAILED`
+| `OAUTH2_USER_PROFILE_DATA`            | `CREATED`, `FAILED`
