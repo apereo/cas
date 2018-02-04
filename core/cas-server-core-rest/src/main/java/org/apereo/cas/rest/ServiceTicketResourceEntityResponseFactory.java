@@ -1,7 +1,8 @@
-package org.apereo.cas.support.rest.factory;
+package org.apereo.cas.rest;
 
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
+import org.springframework.core.Ordered;
 import org.springframework.http.ResponseEntity;
 
 /**
@@ -10,8 +11,7 @@ import org.springframework.http.ResponseEntity;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
-public interface ServiceTicketResourceEntityResponseFactory {
+public interface ServiceTicketResourceEntityResponseFactory extends Ordered {
 
     /**
      * Build response response entity.
@@ -24,4 +24,13 @@ public interface ServiceTicketResourceEntityResponseFactory {
     ResponseEntity<String> build(String ticketGrantingTicket,
                                  Service service,
                                  AuthenticationResult authenticationResult);
+
+    /**
+     * Supports boolean.
+     *
+     * @param service              the service
+     * @param authenticationResult the authentication result
+     * @return the boolean
+     */
+    boolean supports(Service service, AuthenticationResult authenticationResult);
 }

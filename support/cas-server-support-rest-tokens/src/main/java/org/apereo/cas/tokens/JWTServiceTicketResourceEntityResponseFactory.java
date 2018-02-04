@@ -8,7 +8,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.factory.DefaultServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.support.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 
@@ -19,9 +19,7 @@ import org.apereo.cas.token.TokenTicketBuilder;
  * @since 5.2.0
  */
 @Slf4j
-public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServiceTicketResourceEntityResponseFactory {
-
-
+public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolServiceTicketResourceEntityResponseFactory {
     /**
      * The ticket builder that produces tokens.
      */

@@ -10,7 +10,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.rest.BadRestRequestException;
 import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
-import org.apereo.cas.support.rest.factory.UserAuthenticationResourceEntityResponseFactory;
+import org.apereo.cas.rest.UserAuthenticationResourceEntityResponseFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
