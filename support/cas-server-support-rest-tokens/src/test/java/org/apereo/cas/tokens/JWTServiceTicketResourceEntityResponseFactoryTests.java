@@ -31,7 +31,7 @@ import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.rest.factory.ServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;

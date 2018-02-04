@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationResult;
+import org.apereo.cas.rest.UserAuthenticationResourceEntityResponseFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
