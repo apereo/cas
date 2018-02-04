@@ -29,7 +29,7 @@ import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguratio
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.support.rest.factory.TicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.junit.Test;
