@@ -60,8 +60,7 @@ public class CasAcceptableUsagePolicyWebflowConfiguration {
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer acceptableUsagePolicyWebflowConfigurer() {
         final CasWebflowConfigurer w = new AcceptableUsagePolicyWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry,
-                applicationContext, casProperties);
+                loginFlowDefinitionRegistry, applicationContext, casProperties);
         w.initialize();
         return w;
     }

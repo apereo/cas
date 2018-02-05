@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -50,6 +51,7 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.opensaml.saml.saml2.core.NameID;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -185,12 +187,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public RealmProperties casRealm() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
+        if (StringUtils.isBlank(wsfed.getRealm().getKeystoreFile())
+            || StringUtils.isBlank(wsfed.getRealm().getKeyPassword())
+            || StringUtils.isBlank(wsfed.getRealm().getKeystoreAlias())) {
+            throw new BeanCreationException("Keystore file, password or alias assigned to the realm must be defined");
+        }
+
         final Properties p = CryptoUtils.getSecurityProperties(wsfed.getRealm().getKeystoreFile(),
-            wsfed.getRealm().getKeystorePassword(),
-            wsfed.getRealm().getKeystoreAlias());
+            wsfed.getRealm().getKeystorePassword(), wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
         realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(wsfed.getRealm().getKeyPassword()));
         return realm;

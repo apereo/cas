@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest.factory;
+package org.apereo.cas.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;

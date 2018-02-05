@@ -25,13 +25,14 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasDefaultServiceTicketIdGeneratorsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
+import org.apereo.cas.config.CasRestConfiguration;
 import org.apereo.cas.config.CasRestTokensConfiguration;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.TokenCoreConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.support.rest.factory.ServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
@@ -63,31 +64,32 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        RefreshAutoConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasPersonDirectoryTestConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasRegisteredServicesTestConfiguration.class,
-        CasAuthenticationEventExecutionPlanTestConfiguration.class,
-        TokenCoreConfiguration.class,
-        JWTServiceTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
-        CasCoreTicketIdGeneratorsConfiguration.class,
-        CasDefaultServiceTicketIdGeneratorsConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasRestTokensConfiguration.class})
+    RefreshAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasPersonDirectoryTestConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasRegisteredServicesTestConfiguration.class,
+    CasAuthenticationEventExecutionPlanTestConfiguration.class,
+    TokenCoreConfiguration.class,
+    JWTServiceTicketResourceEntityResponseFactoryTests.TicketResourceTestConfiguration.class,
+    CasCoreTicketIdGeneratorsConfiguration.class,
+    CasDefaultServiceTicketIdGeneratorsConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasRestConfiguration.class,
+    CasRestTokensConfiguration.class})
 @Slf4j
 public class JWTServiceTicketResourceEntityResponseFactoryTests {
 
@@ -98,7 +100,7 @@ public class JWTServiceTicketResourceEntityResponseFactoryTests {
     @Autowired
     @Qualifier("tokenCipherExecutor")
     private CipherExecutor tokenCipherExecutor;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -120,14 +122,14 @@ public class JWTServiceTicketResourceEntityResponseFactoryTests {
     @Test
     public void verifyServiceTicketAsJwt() throws Exception {
         final AuthenticationResult result = CoreAuthenticationTestUtils.getAuthenticationResult(authenticationSystemSupport,
-                CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
+            CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final TicketGrantingTicket tgt = centralAuthenticationService.createTicketGrantingTicket(result);
         final Service service = RegisteredServiceTestUtils.getService("jwtservice");
         final ResponseEntity<String> response = serviceTicketResourceEntityResponseFactory.build(tgt.getId(), service, result);
         assertNotNull(response);
         assertEquals(HttpStatus.OK, response.getStatusCode());
         assertFalse(response.getBody().startsWith(ServiceTicket.PREFIX));
-        
+
         final Object jwt = this.tokenCipherExecutor.decode(response.getBody());
         final JWTClaimsSet claims = JWTClaimsSet.parse(jwt.toString());
         assertEquals(claims.getSubject(), tgt.getAuthentication().getPrincipal().getId());

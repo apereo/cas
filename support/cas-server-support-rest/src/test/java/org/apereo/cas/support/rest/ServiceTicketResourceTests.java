@@ -11,12 +11,13 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.support.rest.factory.DefaultServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.web.support.DefaultArgumentExtractor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -65,16 +66,16 @@ public class ServiceTicketResourceTests {
         when(ticketSupport.getAuthenticationFrom(anyString())).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
 
         this.serviceTicketResource = new ServiceTicketResource(
-                new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
-                        new DefaultPrincipalElectionStrategy()),
-                ticketSupport, new WebApplicationServiceFactory(),
-                new DefaultServiceTicketResourceEntityResponseFactory(casMock));
+            new DefaultAuthenticationSystemSupport(new DefaultAuthenticationTransactionManager(mgmr),
+                new DefaultPrincipalElectionStrategy()),
+            ticketSupport, new DefaultArgumentExtractor(new WebApplicationServiceFactory()),
+            new CasProtocolServiceTicketResourceEntityResponseFactory(casMock));
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(this.serviceTicketResource)
-                .defaultRequest(get("/")
-                        .contextPath("/cas")
-                        .contentType(MediaType.APPLICATION_FORM_URLENCODED))
-                .build();
+            .defaultRequest(get("/")
+                .contextPath("/cas")
+                .contentType(MediaType.APPLICATION_FORM_URLENCODED))
+            .build();
     }
 
     @Test
@@ -82,10 +83,10 @@ public class ServiceTicketResourceTests {
         configureCasMockToCreateValidST();
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
-                .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
-                .andExpect(status().isOk())
-                .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
-                .andExpect(content().string("ST-1"));
+            .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType("text/plain;charset=ISO-8859-1"))
+            .andExpect(content().string("ST-1"));
     }
 
     @Test
@@ -93,8 +94,8 @@ public class ServiceTicketResourceTests {
         configureCasMockSTCreationToThrow(new InvalidTicketException("TGT-1"));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
-                .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
-                .andExpect(status().isNotFound());
+            .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
+            .andExpect(status().isNotFound());
     }
 
     @Test
@@ -102,9 +103,9 @@ public class ServiceTicketResourceTests {
         configureCasMockSTCreationToThrow(new RuntimeException(OTHER_EXCEPTION));
 
         this.mockMvc.perform(post(TICKETS_RESOURCE_URL + "/TGT-1")
-                .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
-                .andExpect(status().is5xxServerError())
-                .andExpect(content().string(OTHER_EXCEPTION));
+            .param(SERVICE, CoreAuthenticationTestUtils.getService().getId()))
+            .andExpect(status().is5xxServerError())
+            .andExpect(content().string(OTHER_EXCEPTION));
     }
 
     private void configureCasMockSTCreationToThrow(final Throwable e) {

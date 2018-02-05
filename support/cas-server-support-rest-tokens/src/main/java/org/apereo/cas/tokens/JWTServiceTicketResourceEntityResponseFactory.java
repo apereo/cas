@@ -4,11 +4,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.rest.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.factory.DefaultServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.token.TokenTicketBuilder;
 
@@ -19,9 +19,7 @@ import org.apereo.cas.token.TokenTicketBuilder;
  * @since 5.2.0
  */
 @Slf4j
-public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServiceTicketResourceEntityResponseFactory {
-
-
+public class JWTServiceTicketResourceEntityResponseFactory extends CasProtocolServiceTicketResourceEntityResponseFactory {
     /**
      * The ticket builder that produces tokens.
      */
@@ -49,8 +47,8 @@ public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServic
         LOGGER.debug("Located registered service [{}] for [{}]", registeredService, service);
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
         final boolean tokenAsResponse = RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_RESPONSE.isAssignedTo(registeredService)
-                || RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
-        
+            || RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_AS_SERVICE_TICKET.isAssignedTo(registeredService);
+
         if (!tokenAsResponse) {
             LOGGER.debug("Service [{}] does not require JWTs as tickets", service);
             return super.grantServiceTicket(ticketGrantingTicket, service, authenticationResult);
@@ -60,5 +58,10 @@ public class JWTServiceTicketResourceEntityResponseFactory extends DefaultServic
         final String jwt = this.tokenTicketBuilder.build(serviceTicket, service);
         LOGGER.debug("Generated JWT [{}] for service [{}]", jwt, service);
         return jwt;
+    }
+
+    @Override
+    public int getOrder() {
+        return super.getOrder() - 1;
     }
 }
