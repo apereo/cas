@@ -45,7 +45,7 @@ public class CasJdbcMonitorConfiguration {
     @RefreshScope
     public HealthIndicator dataSourceHealthIndicator(@Qualifier("pooledJdbcMonitorExecutorService") final ExecutorService executor) {
         final MonitorProperties.Jdbc jdbc = casProperties.getMonitor().getJdbc();
-        return new JdbcDataSourceHealthIndicator((int) Beans.newDuration(jdbc.getMaxWait()).toMillis(),
+        return new JdbcDataSourceHealthIndicator(Beans.newDuration(jdbc.getMaxWait()).toMillis(),
             monitorDataSource(), executor, jdbc.getValidationQuery());
     }
 

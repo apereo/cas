@@ -27,7 +27,7 @@ public class PooledLdapConnectionFactoryHealthIndicator extends AbstractPoolHeal
      */
     private final Validator<Connection> validator;
 
-    public PooledLdapConnectionFactoryHealthIndicator(final int maxWait,
+    public PooledLdapConnectionFactoryHealthIndicator(final long maxWait,
                                                       final PooledConnectionFactory factory,
                                                       final ExecutorService executor,
                                                       final Validator<Connection> validator) {
