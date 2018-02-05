@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -27,6 +28,7 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -132,15 +134,24 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         if (casProperties.getAuthn().getLdap() != null) {
             casProperties.getAuthn().getLdap().stream()
                     .forEach(ldap -> {
-                        attributes.addAll(ldap.getPrincipalAttributeList());
-                        attributes.addAll(ldap.getAdditionalAttributes());
+                        attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
+                        attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
                     });
         }
         if (casProperties.getAuthn().getJdbc() != null) {
             casProperties.getAuthn().getJdbc().getQuery().stream()
-                    .forEach(jdbc -> attributes.addAll(jdbc.getPrincipalAttributeList()));
+                    .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
+    }
+
+    private Set<String> transformAttributes(final List<String> attributes) {
+        final Set<String> attributeSet = new LinkedHashSet<>();
+        CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
+                .values()
+                .stream()
+                .forEach(v -> attributeSet.add((String)v));
+        return attributeSet;
     }
 
     /**
