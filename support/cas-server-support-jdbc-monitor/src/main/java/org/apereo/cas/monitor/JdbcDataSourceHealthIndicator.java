@@ -20,7 +20,7 @@ public class JdbcDataSourceHealthIndicator extends AbstractPoolHealthIndicator {
     private final JdbcTemplate jdbcTemplate;
     private final String validationQuery;
 
-    public JdbcDataSourceHealthIndicator(final int maxWait,
+    public JdbcDataSourceHealthIndicator(final long maxWait,
                                          final DataSource dataSource,
                                          final ExecutorService executor,
                                          final String validationQuery) {
