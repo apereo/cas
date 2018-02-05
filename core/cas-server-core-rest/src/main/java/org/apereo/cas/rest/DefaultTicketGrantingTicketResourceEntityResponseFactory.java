@@ -1,8 +1,7 @@
-package org.apereo.cas.support.rest.factory;
+package org.apereo.cas.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.rest.TicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;

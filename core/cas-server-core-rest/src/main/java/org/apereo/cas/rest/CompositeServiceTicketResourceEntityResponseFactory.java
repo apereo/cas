@@ -24,7 +24,8 @@ public class CompositeServiceTicketResourceEntityResponseFactory implements Serv
         final ServiceTicketResourceEntityResponseFactory factory = chain.stream()
             .filter(f -> f.supports(service, authenticationResult))
             .findFirst()
-            .orElseThrow(() -> new IllegalArgumentException("Unable to locate a response entity factory to build a service ticket"));
+            .orElseThrow(() -> new IllegalArgumentException("Unable to locate a response entity factory to build a service ticket. "
+                + "This generally is due to a configuration issue where CAS is unable to recognize the incoming request"));
         return factory.build(ticketGrantingTicket, service, authenticationResult);
     }
 
