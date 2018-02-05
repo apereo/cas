@@ -22,9 +22,10 @@
             <div class="form-group">
                 <label for="deviceName" class="fl-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
 
-                <input type="text" class="required form-control" name="deviceName" id="deviceName" size="25"
+                <input type="text" class="form-control" name="deviceName" id="deviceName" size="25"
                        tabindex="1"
-                       autocomplete="off"/>
+                       autocomplete="off"
+                       required/>
                 <div>
                     <br/>
                     <input class="btn btn-success" name="_eventId_submit" accesskey="l"

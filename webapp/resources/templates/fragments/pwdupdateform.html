@@ -24,7 +24,7 @@
                     <label for="password" th:utext="#{screen.pm.enterpsw}"/>&nbsp;
                 </td>
                 <td class="pm">
-                    <input class="required form-control form-control-lg" type="password" id="password" th:field="*{password}"/>
+                    <input class="form-control" type="password" id="password" th:field="*{password}" required/>
                 </td>
             </tr>
 
@@ -33,7 +33,7 @@
                     <label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}"/>&nbsp;
                 </td>
                 <td class="pm">
-                    <input class="required form-control form-control-lg" type="password" id="confirmedPassword" th:field="*{confirmedPassword}"/>
+                    <input class="form-control" type="password" id="confirmedPassword" th:field="*{confirmedPassword}" required/>
                 </td>
             </tr>
         </table>

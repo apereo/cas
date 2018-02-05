@@ -18,14 +18,15 @@
         <form method="post" id="fm1" class="fm-v clearfix">
             <div class="form-group">
                 <label for="username" th:utext="#{screen.welcome.label.netid}"><span class="accesskey">U</span>sername:</label>
-                <input class="required form-control"
+                <input class="form-control"
                        type="password"
                        id="username"
                        name="username"
                        size="25"
                        tabindex="2"
                        th:accesskey="#{screen.welcome.label.netid.accesskey}"
-                       autocomplete="off"/>
+                       autocomplete="off"
+                       required/>
                 <div>
                     <p/>
                 </div>
