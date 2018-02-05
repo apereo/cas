@@ -1,7 +1,6 @@
 package org.apereo.cas.config.authentication.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactoryConfigurer;
