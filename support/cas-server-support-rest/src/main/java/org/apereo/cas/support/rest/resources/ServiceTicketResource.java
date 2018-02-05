@@ -2,8 +2,6 @@ package org.apereo.cas.support.rest.resources;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -59,15 +57,14 @@ public class ServiceTicketResource {
                                                       @PathVariable("tgtId") final String tgtId) {
         try {
             final Authentication authn = this.ticketRegistrySupport.getAuthenticationFrom(tgtId);
-            final String serviceId = httpServletRequest.getParameter(CasProtocolConstants.PARAMETER_SERVICE);
             if (authn == null) {
                 throw new InvalidTicketException(tgtId);
             }
-            if (StringUtils.isBlank(serviceId)) {
-                throw new InvalidTicketException(serviceId);
-            }
             final AuthenticationResultBuilder builder = new DefaultAuthenticationResultBuilder(this.authenticationSystemSupport.getPrincipalElectionStrategy());
             final Service service = this.argumentExtractor.extractService(httpServletRequest);
+            if (service == null) {
+                throw new IllegalArgumentException("Target service/application is unspecified or unrecognized in the request");
+            }
             final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
         } catch (final InvalidTicketException e) {

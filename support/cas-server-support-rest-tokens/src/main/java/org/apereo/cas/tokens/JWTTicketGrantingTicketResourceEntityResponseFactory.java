@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.rest.factory.DefaultTicketGrantingTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.DefaultTicketGrantingTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.token.TokenTicketBuilder;

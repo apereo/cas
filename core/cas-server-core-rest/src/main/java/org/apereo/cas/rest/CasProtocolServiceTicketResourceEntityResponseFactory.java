@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest.factory;
+package org.apereo.cas.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -6,7 +6,6 @@ import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
-import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
