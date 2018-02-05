@@ -45,7 +45,7 @@ public class LdapMonitorConfiguration {
                                                                           final ExecutorService executor) {
         final MonitorProperties.Ldap ldap = casProperties.getMonitor().getLdap();
         final PooledConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
-        return new PooledLdapConnectionFactoryHealthIndicator((int) Beans.newDuration(ldap.getMaxWait()).toMillis(),
+        return new PooledLdapConnectionFactoryHealthIndicator(Beans.newDuration(ldap.getMaxWait()).toMillis(),
             connectionFactory, executor, new SearchValidator());
     }
 }
