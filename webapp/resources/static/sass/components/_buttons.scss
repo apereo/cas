@@ -24,15 +24,17 @@
  * Add in our own custom social colors.
  */
 .btn-submit {
-  @include btn-social(#70ba61);
+  @include btn-social($brand-success);
 }
 
+/*
 .btn-submit {
   border: 0;
   padding: 10px 25px;
   font-weight: normal;
   font-size: 1.75rem;
 }
+*/
 
 .btn-cas {
   @include btn-social(#153e50);

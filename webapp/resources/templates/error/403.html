@@ -17,7 +17,7 @@
         <div class="alert alert-danger">
             <h2 th:utext="#{screen.error.page.authdenied}">Authorization Denied</h2>
             <p th:utext="#{screen.error.page.permissiondenied}">You do not have permission to view this page.</p>
-            <a class="btn btn-success" th:href="@{/login}" th:utext="#{screen.error.page.loginagain}">Login Again</a>
+            <a class="btn btn-submit" th:href="@{/login}" th:utext="#{screen.error.page.loginagain}">Login Again</a>
         </div>
     </div>
 </main>

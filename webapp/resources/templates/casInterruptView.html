@@ -43,7 +43,7 @@
             <br/>
 
             <div th:if="${interrupt.links}">
-                <a class="btn btn-success"
+                <a class="btn btn-submit"
                    th:each="link : ${interrupt.links}"
                    th:text="${link.key}"
                    th:href="${link.value}"
