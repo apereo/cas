@@ -28,6 +28,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
      * Same as that used by {@link DefaultFlowUrlHandler}.
      **/
     public static final String DEFAULT_FLOW_EXECUTION_KEY_PARAMETER = "execution";
+    private static final String DELIMITER = "&";
 
     /**
      * Flow execution parameter name.
@@ -51,8 +52,8 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
         return request.getParameterMap().entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-                .collect(Collectors.joining("&", request.getRequestURI() + '?',
-                        encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding)));
+                .collect(Collectors.joining(DELIMITER, request.getRequestURI() + '?',
+                        encodeSingleParameter(DELIMITER + this.flowExecutionKeyParameter, flowExecutionKey, encoding)));
     }
 
     @Override
