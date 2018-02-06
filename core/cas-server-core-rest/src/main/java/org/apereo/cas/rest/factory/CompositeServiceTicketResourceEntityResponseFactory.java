@@ -1,9 +1,10 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.factory;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.ResponseEntity;
 
 import java.util.Collection;
@@ -19,6 +20,10 @@ import java.util.Collection;
 public class CompositeServiceTicketResourceEntityResponseFactory implements ServiceTicketResourceEntityResponseFactory {
     private final Collection<ServiceTicketResourceEntityResponseFactory> chain;
 
+    @Audit(
+        action = "REST_API_SERVICE_TICKET",
+        actionResolverName = "REST_API_SERVICE_TICKET_ACTION_RESOLVER",
+        resourceResolverName = "REST_API_SERVICE_TICKET_RESOURCE_RESOLVER")
     @Override
     public ResponseEntity<String> build(final String ticketGrantingTicket, final Service service, final AuthenticationResult authenticationResult) {
         final ServiceTicketResourceEntityResponseFactory factory = chain.stream()

@@ -2,9 +2,9 @@ package org.apereo.cas.config.authentication.support;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactory;
-import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactoryConfigurer;
-import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactoryPlan;
+import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryConfigurer;
+import org.apereo.cas.rest.plan.ServiceTicketResourceEntityResponseFactoryPlan;
 import org.apereo.cas.support.saml.authentication.SamlRestServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.springframework.beans.factory.annotation.Autowired;

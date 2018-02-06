@@ -1,4 +1,6 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.plan;
+
+import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
 
 /**
  * This is {@link RestHttpRequestCredentialFactoryConfigurer}.
@@ -13,6 +15,6 @@ public interface RestHttpRequestCredentialFactoryConfigurer {
      *
      * @param factory the factory
      */
-    default void registerCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
+    default void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
     }
 }

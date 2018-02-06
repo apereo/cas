@@ -1,4 +1,4 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.plan;
 
 /**
  * This is {@link ServiceTicketResourceEntityResponseFactoryConfigurer}.

@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.yubikey;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.rest.RestHttpRequestCredentialFactory;
+import org.apereo.cas.rest.factory.RestHttpRequestCredentialFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.springframework.util.MultiValueMap;
 

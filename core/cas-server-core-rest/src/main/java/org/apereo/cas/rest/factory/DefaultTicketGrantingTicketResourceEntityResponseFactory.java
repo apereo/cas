@@ -1,8 +1,9 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.factory;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -19,8 +20,6 @@ import java.net.URI;
  */
 @Slf4j
 public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements TicketGrantingTicketResourceEntityResponseFactory {
-
-
     private static final String DOCTYPE_AND_TITLE = "<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\"><html><head><title>";
     private static final String CLOSE_TITLE_AND_OPEN_FORM = "</title></head><body><h1>TGT Created</h1><form action=\"";
     private static final String TGT_CREATED_TITLE_CONTENT = HttpStatus.CREATED.toString() + ' ' + HttpStatus.CREATED.getReasonPhrase();
@@ -30,6 +29,10 @@ public class DefaultTicketGrantingTicketResourceEntityResponseFactory implements
     private static final int SUCCESSFUL_TGT_CREATED_INITIAL_LENGTH = DOCTYPE_AND_OPENING_FORM.length() + REST_OF_THE_FORM_AND_CLOSING_TAGS.length();
 
 
+    @Audit(
+        action = "REST_API_TICKET_GRANTING_TICKET",
+        actionResolverName = "REST_API_TICKET_GRANTING_TICKET_ACTION_RESOLVER",
+        resourceResolverName = "REST_API_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
     @Override
     public ResponseEntity<String> build(final TicketGrantingTicket ticketGrantingTicket, final HttpServletRequest request) throws Exception {
         final URI ticketReference = new URI(request.getRequestURL().toString() + '/' + ticketGrantingTicket.getId());

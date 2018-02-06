@@ -11,7 +11,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultPrincipalElectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
-import org.apereo.cas.rest.CasProtocolServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.factory.CasProtocolServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.rest.resources.ServiceTicketResource;
 import org.apereo.cas.support.rest.resources.TicketGrantingTicketResource;
 import org.apereo.cas.ticket.InvalidTicketException;

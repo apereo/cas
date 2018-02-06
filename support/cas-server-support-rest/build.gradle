@@ -2,6 +2,7 @@ description = "Apereo CAS REST Implementation"
 dependencies {
     api project(":api:cas-server-core-api-throttle")
     api project(":api:cas-server-core-api")
+    api project(":api:cas-server-core-api-audit")
 
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")

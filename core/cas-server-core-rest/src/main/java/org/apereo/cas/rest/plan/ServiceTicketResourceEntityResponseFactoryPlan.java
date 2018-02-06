@@ -1,4 +1,6 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.plan;
+
+import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 
 import java.util.Collection;
 
