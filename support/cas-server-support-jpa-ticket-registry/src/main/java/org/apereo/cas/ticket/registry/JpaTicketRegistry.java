@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.LockModeType;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
@@ -32,7 +33,6 @@ import java.util.stream.Stream;
 @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
 @Slf4j
 public class JpaTicketRegistry extends AbstractTicketRegistry {
-
 
 
     private static final int STREAM_BATCH_SIZE = 100;
@@ -64,10 +64,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         return this.ticketCatalog.findAll().stream()
-                .map(JpaTicketRegistry::getTicketEntityName)
-                .map(entityName -> entityManager.createQuery("delete from " + entityName))
-                .mapToLong(Query::executeUpdate)
-                .sum();
+            .map(JpaTicketRegistry::getTicketEntityName)
+            .map(entityName -> entityManager.createQuery("delete from " + entityName))
+            .mapToLong(Query::executeUpdate)
+            .sum();
     }
 
     @Override
@@ -95,10 +95,10 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
-                .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
-                .map(TypedQuery::getResultList)
-                .flatMap(List::stream)
-                .collect(Collectors.toList());
+            .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
+            .map(TypedQuery::getResultList)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
     }
 
     /**
@@ -113,15 +113,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     @SuppressWarnings("unchecked")
     public Stream<Ticket> getTicketsStream() {
         return this.ticketCatalog.findAll().stream()
-                .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
-                // Unwrap to Hibernate Query, which supports streams
-                .map(q -> {
-                    final org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
-                    hq.setFetchSize(STREAM_BATCH_SIZE);
-                    hq.setLockOptions(LockOptions.NONE);
-                    return hq;
-                })
-                .flatMap(org.hibernate.query.Query::stream);
+            .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
+            // Unwrap to Hibernate Query, which supports streams
+            .map(q -> {
+                final org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
+                hq.setFetchSize(STREAM_BATCH_SIZE);
+                hq.setLockOptions(LockOptions.NONE);
+                return hq;
+            })
+            .flatMap(org.hibernate.query.Query::stream);
     }
 
     @Override
@@ -138,15 +138,22 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
-        final int totalCount;
+        int totalCount = 0;
         final TicketDefinition md = this.ticketCatalog.find(ticketId);
 
         if (md.getProperties().isCascade()) {
             totalCount = deleteTicketGrantingTickets(ticketId);
         } else {
-            final Query query = entityManager.createQuery("delete from " + getTicketEntityName(md) + " o where o.id = :id");
-            query.setParameter("id", ticketId);
-            totalCount = query.executeUpdate();
+            final String ticketEntityName = getTicketEntityName(md);
+            try {
+                final Query query = entityManager.createQuery("delete from " + ticketEntityName + " o where o.id = :id");
+                query.setParameter("id", ticketId);
+                totalCount = query.executeUpdate();
+            } catch (final EntityNotFoundException e) {
+                LOGGER.debug("Entity [{}] for ticket id [{}] is not found in the database and may have already been deleted",
+                    ticketEntityName, ticketId);
+                LOGGER.trace(e.getMessage(), e);
+            }
         }
         return totalCount != 0;
     }
@@ -182,7 +189,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
 
         return totalCount;
     }
-    
+
     private static long countToLong(final Object result) {
         return ((Number) result).longValue();
     }
