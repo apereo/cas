@@ -1,19 +1,18 @@
 package org.apereo.cas.web.flow;
 
-import java.security.cert.X509Certificate;
-
-import javax.servlet.http.HttpServletRequest;
-
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.X509CertificateCredential;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
-import org.apereo.cas.web.extractcert.ExtractX509Certificate;
+import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.execution.RequestContext;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.cert.X509Certificate;
 
 /**
  * Concrete implementation of AbstractNonInteractiveCredentialsAction that
@@ -31,7 +30,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
     private boolean extractCertificateFromRequest;
 
     @Autowired(required = false)
-    private ExtractX509Certificate x509ExtractSSLCertificate;
+    private X509CertificateExtractor x509CertificateExtractor;
     
     public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
                                                           final CasWebflowEventResolver serviceTicketRequestWebflowEventResolver,
@@ -54,9 +53,9 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
 
         if (certificates == null || certificates.length == 0) {
             if (extractCertificateFromRequest) {
-                final X509Certificate[] certsfromHeader = x509ExtractSSLCertificate.extract((HttpServletRequest) context.getExternalContext().getNativeRequest());
+                final X509Certificate[] certsfromHeader = x509CertificateExtractor.extract((HttpServletRequest) context.getExternalContext().getNativeRequest());
                 if (certsfromHeader != null) {
-                    LOGGER.debug("Certificate found in HTTP request via {}", x509ExtractSSLCertificate.getClass().getName());
+                    LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
                     return new X509CertificateCredential(certsfromHeader);
                 }
             } 

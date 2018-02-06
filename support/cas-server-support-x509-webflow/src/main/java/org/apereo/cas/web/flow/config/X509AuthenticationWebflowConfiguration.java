@@ -3,8 +3,8 @@ package org.apereo.cas.web.flow.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.web.extractcert.ExtractX509Certificate;
-import org.apereo.cas.web.extractcert.ExtractX509CertificateFromHeader;
+import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
+import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.web.flow.X509WebflowConfigurer;
@@ -80,9 +80,8 @@ public class X509AuthenticationWebflowConfiguration {
 
     @ConditionalOnMissingBean(name = "x509ExtractSSLCertificate")
     @Bean
-    public ExtractX509Certificate x509ExtractSSLCertificate() {
+    public X509CertificateExtractor x509ExtractSSLCertificate() {
         final String sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
-        final ExtractX509Certificate esc = new ExtractX509CertificateFromHeader(sslHeaderName);
-        return esc;
+        return new RequestHeaderX509CertificateExtractor(sslHeaderName);
     }
 }

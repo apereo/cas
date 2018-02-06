@@ -1,16 +1,17 @@
 package org.apereo.cas.configuration.model.support.x509;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link X509Properties}.
@@ -297,10 +298,10 @@ public class X509Properties implements Serializable {
     private String name;
 
     /**
-     * Whether to extract certificate from request via ExtractSSLCertificate interface.
+     * Whether to extract certificate from request.
      * 
      * The default implementation extracts certificate from header via Tomcat SSLValve parsing logic
-     * and using the DEFAULT_CERT_HEADER_NAME header.
+     * and using the {@link #DEFAULT_CERT_HEADER_NAME} header.
      * Must be false by default because if someone enables it they need to make sure they are
      * behind proxy that won't let the header arrive directly from the browser.
      */

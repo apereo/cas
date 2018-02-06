@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.x509.web.extractcert;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
-import org.apereo.cas.web.extractcert.ExtractX509CertificateFromHeader;
+import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -16,7 +16,7 @@ import static junit.framework.TestCase.assertNull;
  * @since 5.3.0
  */
 @Slf4j
-public class ExtractX509CertificateTests extends AbstractX509CertificateTests {
+public class X509CertificateExtractorTests extends AbstractX509CertificateTests {
 
     private static final String[] CERTIFICATE_LINES = new String[]{
         "-----BEGIN CERTIFICATE-----",
@@ -51,8 +51,8 @@ public class ExtractX509CertificateTests extends AbstractX509CertificateTests {
         "WLu8gep+XCwSn0Wb6D3eFs4DoIiMvQ6g2rS/pk7o5eWj",
         "-----END CERTIFICATE-----"};
 
-    private ExtractX509CertificateFromHeader extractX509CertificateFromHeader
-            = new ExtractX509CertificateFromHeader("ssl_client_cert");
+    private RequestHeaderX509CertificateExtractor extractX509CertificateFromHeader
+            = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
         StringBuilder singleSpaced = new StringBuilder();
