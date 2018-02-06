@@ -5,12 +5,16 @@ import org.apache.commons.codec.digest.MessageDigestAlgorithms;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DigestUtils;
@@ -22,15 +26,18 @@ import org.jose4j.jwt.NumericDate;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
-import org.springframework.beans.factory.annotation.Autowired;
+
+import com.google.common.base.Preconditions;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.stream.Stream;
+
 
 /**
  * This is {@link OidcIdTokenGeneratorService}.
@@ -41,20 +48,22 @@ import java.util.UUID;
 @Slf4j
 public class OidcIdTokenGeneratorService {
 
-
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
-    private final String issuer;
-    private final int skew;
+    private final CasConfigurationProperties casProperties;
     private final OidcIdTokenSigningAndEncryptionService signingService;
+    private final ServicesManager servicesManager;
 
-    public OidcIdTokenGeneratorService(final String issuer,
-                                       final int skew,
-                                       final OidcIdTokenSigningAndEncryptionService signingService) {
+    private final String oAuthCallbackUrl;
+
+    public OidcIdTokenGeneratorService(final CasConfigurationProperties casProperties,
+                                       final OidcIdTokenSigningAndEncryptionService signingService,
+                                       final ServicesManager servicesManager) {
+        this.casProperties = casProperties;
         this.signingService = signingService;
-        this.issuer = issuer;
-        this.skew = skew;
+        this.servicesManager = servicesManager;
+        // keep synchronized with CasOAuthConfiguration
+        this.oAuthCallbackUrl = casProperties.getServer().getPrefix()
+                + OAuth20Constants.BASE_OAUTH20_URL + '/'
+                + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
     }
 
     /**
@@ -114,17 +123,18 @@ public class OidcIdTokenGeneratorService {
                                              final OAuth20ResponseTypes responseType) {
         final Authentication authentication = accessTokenId.getAuthentication();
         final Principal principal = authentication.getPrincipal();
+        final OidcProperties oidc = casProperties.getAuthn().getOidc();
 
         final JwtClaims claims = new JwtClaims();
-        claims.setJwtId(UUID.randomUUID().toString());
-        claims.setIssuer(this.issuer);
+        claims.setJwtId(getOAuthServiceTicket(accessTokenId.getTicketGrantingTicket()).getKey());
+        claims.setIssuer(oidc.getIssuer());
         claims.setAudience(service.getClientId());
 
         final NumericDate expirationDate = NumericDate.now();
         expirationDate.addSeconds(timeout);
         claims.setExpirationTime(expirationDate);
         claims.setIssuedAtToNow();
-        claims.setNotBeforeMinutesInThePast(this.skew);
+        claims.setNotBeforeMinutesInThePast(oidc.getSkew());
         claims.setSubject(principal.getId());
 
         if (authentication.getAttributes().containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
@@ -143,7 +153,7 @@ public class OidcIdTokenGeneratorService {
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
 
         principal.getAttributes().entrySet().stream()
-                .filter(entry -> casProperties.getAuthn().getOidc().getClaims().contains(entry.getKey()))
+                .filter(entry -> oidc.getClaims().contains(entry.getKey()))
                 .forEach(entry -> claims.setClaim(entry.getKey(), entry.getValue()));
 
         if (!claims.hasClaim(OidcConstants.CLAIM_PREFERRED_USERNAME)) {
@@ -151,6 +161,16 @@ public class OidcIdTokenGeneratorService {
         }
 
         return claims;
+    }
+
+    private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
+        final Optional<Entry<String, Service>> oAuthServiceTicket = Stream.concat(
+            tgt.getServices().entrySet().stream(),
+            tgt.getProxyGrantingTickets().entrySet().stream())
+                .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
+                .findFirst();
+        Preconditions.checkState(oAuthServiceTicket.isPresent(), "Cannot find OAuth 2.0 service ticket!");
+        return oAuthServiceTicket.get();
     }
 
     private String generateAccessTokenHash(final AccessToken accessTokenId,
