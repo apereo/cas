@@ -1,4 +1,4 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.factory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -17,7 +17,6 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Slf4j
 public class DefaultUserAuthenticationResourceEntityResponseFactory implements UserAuthenticationResourceEntityResponseFactory {
-
 
     private static final ObjectWriter MAPPER = new ObjectMapper().findAndRegisterModules().writer().withDefaultPrettyPrinter();
 
