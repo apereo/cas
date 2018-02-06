@@ -277,9 +277,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @RefreshScope
     @Bean
     public OidcIdTokenGeneratorService oidcIdTokenGenerator() {
-        final OidcProperties oidc = casProperties.getAuthn().getOidc();
-        return new OidcIdTokenGeneratorService(oidc.getIssuer(), oidc.getSkew(),
-            oidcTokenSigningAndEncryptionService());
+        return new OidcIdTokenGeneratorService(
+                casProperties,
+                oidcTokenSigningAndEncryptionService(),
+                servicesManager);
     }
 
     @Bean
