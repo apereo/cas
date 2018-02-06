@@ -7,8 +7,7 @@ import org.springframework.webflow.context.servlet.DefaultFlowUrlHandler;
 import org.springframework.webflow.core.collection.AttributeMap;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import lombok.Setter;
@@ -49,14 +48,11 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
     @Override
     public String createFlowExecutionUrl(final String flowId, final String flowExecutionKey, final HttpServletRequest request) {
         final String encoding = getEncodingScheme(request);
-        final StringBuilder builder = new StringBuilder(request.getRequestURI()).append('?');
-        final Map<String, String[]> flowParams = new LinkedHashMap<>(request.getParameterMap());
-        flowParams.put(this.flowExecutionKeyParameter, new String[]{flowExecutionKey});
-        final String queryString = flowParams.entrySet().stream()
-            .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-            .reduce((param1, param2) -> param1 + '&' + param2).orElse(StringUtils.EMPTY);
-        builder.append(queryString);
-        return builder.toString();
+
+        return request.getParameterMap().entrySet().stream()
+                .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
+                .collect(Collectors.joining(request.getRequestURI() + '?', "&",
+                        encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding)));
     }
 
     @Override
