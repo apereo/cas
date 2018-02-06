@@ -162,7 +162,7 @@ subprojects {
         scanForTestClasses = false
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
-        exclude "**/*Abstract*.*"
+        exclude "**/Abstract*.*","**/Base*.*"
         maxParallelForks = 1
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
