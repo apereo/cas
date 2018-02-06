@@ -1,4 +1,4 @@
-package org.apereo.cas.support.rest.factory;
+package org.apereo.cas.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
