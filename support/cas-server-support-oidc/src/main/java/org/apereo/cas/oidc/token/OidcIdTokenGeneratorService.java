@@ -164,7 +164,7 @@ public class OidcIdTokenGeneratorService {
     }
 
     private Entry<String, Service> getOAuthServiceTicket(final TicketGrantingTicket tgt) {
-        Optional<Entry<String, Service>> oAuthServiceTicket = Stream.concat(
+        final Optional<Entry<String, Service>> oAuthServiceTicket = Stream.concat(
             tgt.getServices().entrySet().stream(),
             tgt.getProxyGrantingTickets().entrySet().stream())
                 .filter(e -> servicesManager.findServiceBy(e.getValue()).getServiceId().equals(oAuthCallbackUrl))
