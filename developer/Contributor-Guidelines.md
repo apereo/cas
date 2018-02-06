@@ -13,7 +13,7 @@ The goal of this guide is to, very simply put, help you learn how to catch fish.
 
 Shed all of your fears of making a mistake as part of your contributions to the project. Practice makes perfect and
 we are all here to help you as much as we can so you can ultimately become an independent contributor to the project. It's OK
-to make mistakes and it does take some time, effort and energy to get better at it. So do not be discouraged, keep at it
+to make mistakes and it does take some time, effort and energy to improve the state of proposals and contributions. So do not be discouraged, keep at it
 and if you find anything that is unclear along the way, do not hesitate to ask questions. 
 
 The overarching theme of this guide starts with the following questions:
@@ -100,9 +100,9 @@ The CAS project generally operates based on its own [maintenance policy](https:/
 
 By simply delivering the change and having it get merged into the codebase relevant branches. There is no predefined roadmap for the project. Work items get completed based on community's availability, interest, time and money. **The roadmap is what you intend to work on.**
 
-## Practically, how soon is that exactly?
+## How often are changed released?
 
-You can review the [release schedule](https://github.com/apereo/cas/milestones) from here. Note that the dates specified for each are somewhat tentative, and may be pushed around depending on need and severity. 
+You can review the [release schedule](https://github.com/apereo/cas/milestones). Note that the dates specified for each milestone are somewhat tentative and may be pushed around depending on need and severity. 
 
 As for general contributions, patches in form of pull requests are generally merged as fast as possible provided they are in *good health*. This means a given pull request must pass a series of automated checks that examine style, tests and such before it becomes eligible for a merge. If your proposed pull request does not yet have the green marking, worry not. Keep pushing to the branch that contains your change to auto-update the pull request and make life green again.
 
