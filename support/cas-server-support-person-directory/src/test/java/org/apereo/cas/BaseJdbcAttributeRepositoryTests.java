@@ -31,30 +31,32 @@ import java.sql.Statement;
     RefreshAutoConfiguration.class})
 public abstract class BaseJdbcAttributeRepositoryTests {
     @Autowired
-    private CasConfigurationProperties casProperties;
-
-    @Autowired
     @Qualifier("attributeRepository")
     protected IPersonAttributeDao attributeRepository;
 
     protected DataSource dataSource;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Before
     @SneakyThrows
     public void setupDatabase() {
         this.dataSource = JpaBeans.newDataSource(casProperties.getAuthn().getAttributeRepository().getJdbc().get(0));
-        @Cleanup final Connection c = dataSource.getConnection();
+        @Cleanup
+        final Connection c = dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
         prepareDatabaseTable(s);
     }
 
-    public abstract void prepareDatabaseTable(final Statement statement);
+    public abstract void prepareDatabaseTable(Statement statement);
 
     @After
     @SneakyThrows
     public void cleanup() {
-        @Cleanup final Connection c = dataSource.getConnection();
+        @Cleanup
+        final Connection c = dataSource.getConnection();
         final Statement s = c.createStatement();
         c.setAutoCommit(true);
         s.execute("delete from table_users;");
