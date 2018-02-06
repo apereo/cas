@@ -51,7 +51,7 @@ public class CasDefaultFlowUrlHandler extends DefaultFlowUrlHandler {
 
         return request.getParameterMap().entrySet().stream()
                 .flatMap(entry -> encodeMultiParameter(entry.getKey(), entry.getValue(), encoding))
-                .collect(Collectors.joining(request.getRequestURI() + '?', "&",
+                .collect(Collectors.joining("&", request.getRequestURI() + '?',
                         encodeSingleParameter(this.flowExecutionKeyParameter, flowExecutionKey, encoding)));
     }
 
