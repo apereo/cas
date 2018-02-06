@@ -1,4 +1,4 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.factory;
 
 import org.apereo.cas.authentication.Credential;
 import org.springframework.core.Ordered;

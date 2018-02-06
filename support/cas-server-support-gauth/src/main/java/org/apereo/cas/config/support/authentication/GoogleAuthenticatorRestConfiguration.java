@@ -3,8 +3,8 @@ package org.apereo.cas.config.support.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.rest.GoogleAuthenticatorRestHttpRequestCredentialFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.rest.ChainingRestHttpRequestCredentialFactory;
-import org.apereo.cas.rest.RestHttpRequestCredentialFactoryConfigurer;
+import org.apereo.cas.rest.factory.ChainingRestHttpRequestCredentialFactory;
+import org.apereo.cas.rest.plan.RestHttpRequestCredentialFactoryConfigurer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -26,7 +26,7 @@ public class GoogleAuthenticatorRestConfiguration {
     public RestHttpRequestCredentialFactoryConfigurer googleAuthenticatorRestHttpRequestCredentialFactoryConfigurer() {
         return new RestHttpRequestCredentialFactoryConfigurer() {
             @Override
-            public void registerCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
+            public void configureCredentialFactory(final ChainingRestHttpRequestCredentialFactory factory) {
                 factory.registerCredentialFactory(new GoogleAuthenticatorRestHttpRequestCredentialFactory());
             }
         };
