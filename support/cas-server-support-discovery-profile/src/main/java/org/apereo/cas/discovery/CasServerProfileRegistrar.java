@@ -150,7 +150,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
                 .values()
                 .stream()
-                .forEach(v -> attributeSet.add((String)v));
+                .forEach(v -> attributeSet.add((String) v));
         return attributeSet;
     }
 
