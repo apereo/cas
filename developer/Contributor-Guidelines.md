@@ -137,7 +137,7 @@ There are much faster ways of cloning the codebase, but let's keep it simple for
 ```bash
 git clone git@github.com:apereo/cas.git
 cd cas
-git remote add mmoayyed git@github.com:mmoayyed/cas.git
+git remote add github-username git@github.com:github-username/cas.git
 git checkout master
 ```
 
@@ -146,8 +146,8 @@ Next, if you simply list the remotes you should see:
 ```bash
 origin  git@github.com:apereo/cas.git (fetch)
 origin  git@github.com:apereo/cas.git (push)
-mmoayyed  git@github.com:mmoayyed/cas.git (fetch)
-mmoayyed  git@github.com:mmoayyed/cas.git (push)
+github-username  git@github.com:github-username/cas.git (fetch)
+github-username  git@github.com:github-username/cas.git (push)
 ```
 
 You want to isolate your changes inside individual topics branches and never commit anything to the `master` branch. The workflow more or less is the following:
@@ -186,7 +186,7 @@ Note that the `--all` flag adds *all* modified files in the project directory. I
 Push your changes from the *local* branch to a *remote* branch of your own fork:
 
 ```bash
-git push mmoayyed my-topic-branch-which-fixes-something
+git push github-username my-topic-branch-which-fixes-something
 ```
 
 ### Submit pull request
