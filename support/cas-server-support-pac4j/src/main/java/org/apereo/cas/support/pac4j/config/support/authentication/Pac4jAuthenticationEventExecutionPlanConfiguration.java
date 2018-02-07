@@ -18,6 +18,7 @@ import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthent
 import org.apereo.cas.support.pac4j.web.flow.IgnoreServiceRedirectUrlForSamlAction;
 import org.apereo.cas.support.pac4j.web.flow.SAML2ClientLogoutAction;
 import org.apereo.cas.support.pac4j.web.flow.SingleLogoutPreparationAction;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.support.pac4j.web.flow.LimitedTerminateSessionAction;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.cas.client.CasClient;
@@ -25,8 +26,6 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.store.Store;
 import org.pac4j.oauth.client.BitbucketClient;
 import org.pac4j.oauth.client.DropBoxClient;
 import org.pac4j.oauth.client.FacebookClient;
@@ -88,6 +87,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
 
 
     private void configureGithubClient(final Collection<BaseClient> properties) {
@@ -432,9 +435,8 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @Autowired
     public Action pac4jSingleLogoutPreparationAction(
-            @Qualifier("ticketGrantingTicketCookieGenerator") final CookieRetrievingCookieGenerator tgtCookieGenerator,
-            @Qualifier("pac4jProfileStore") final Store<String, CommonProfile> pac4jProfileStore) {
-        return new SingleLogoutPreparationAction(tgtCookieGenerator, pac4jProfileStore);
+            @Qualifier("ticketGrantingTicketCookieGenerator") final CookieRetrievingCookieGenerator tgtCookieGenerator) {
+        return new SingleLogoutPreparationAction(tgtCookieGenerator, ticketRegistrySupport);
     }
 
     @RefreshScope

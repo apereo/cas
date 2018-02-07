@@ -4,14 +4,19 @@ import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.junit.Before;
 import org.junit.Test;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.store.Store;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockHttpSession;
@@ -71,13 +76,23 @@ public class SingleLogoutPreparationActionTests {
         profile.setClientName("UnitTestClient");
         profile.setId("Profile-1");
 
-        final Store<String, CommonProfile> profileStoreMock = mock(Store.class);
-        when(profileStoreMock.get(TGT_ID)).thenReturn(profile);
+        final Principal principalMock = mock(Principal.class);
+        when(principalMock.getId()).thenReturn("UnitTestUser");
+
+        final Map<String, Object> authenticationAttributes = new HashMap<>();
+        // We could add concrete attributes here but they are not important for this test.
+
+        final Authentication authenticationMock = mock(Authentication.class);
+        when(authenticationMock.getPrincipal()).thenReturn(principalMock);
+        when(authenticationMock.getAttributes()).thenReturn(authenticationAttributes);
+
+        final TicketRegistrySupport ticketRegistrySupportMock = mock(TicketRegistrySupport.class);
+        when(ticketRegistrySupportMock.getAuthenticationFrom(TGT_ID)).thenReturn(authenticationMock);
 
         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGeneratorMock = mock(CookieRetrievingCookieGenerator.class);
         when(ticketGrantingTicketCookieGeneratorMock.retrieveCookieValue(any(HttpServletRequest.class))).thenReturn(TGT_ID);
 
-        actionUnderTest = new SingleLogoutPreparationAction(ticketGrantingTicketCookieGeneratorMock, profileStoreMock);
+        actionUnderTest = new SingleLogoutPreparationAction(ticketGrantingTicketCookieGeneratorMock, ticketRegistrySupportMock);
     }
 
 }

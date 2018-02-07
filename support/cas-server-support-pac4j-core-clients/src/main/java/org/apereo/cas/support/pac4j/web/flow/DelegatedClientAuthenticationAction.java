@@ -28,8 +28,6 @@ import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.UserProfile;
-import org.pac4j.core.store.Store;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -105,7 +103,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final String localParamName;
 
     private final boolean autoRedirect;
-    private final Store<String, CommonProfile> profileStore;
 
     private final ServicesManager servicesManager;
 
@@ -150,10 +147,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                     this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
                 final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
                 WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-
-                // Save the profile into a persistent storage. It may be used later during Logout.
-                saveProfileIntoPersistentStore(client, credentials, webContext, tgt.getId());
-
                 return success();
             }
         }
@@ -318,28 +311,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
         return true;
     }
-
-    /**
-     * Saves the profile into a persistent store. The profile will be retrieved later during Logout.
-     * 
-     * @param client
-     *            The current PAC4J client.
-     * @param credentials
-     *            Credentials from the user.
-     * @param webContext
-     *            PAC4J web context.
-     * @param tgtId
-     *            TGT ID, will be used as the Linked ID for later retrieval.
-     * 
-     * @throws Exception
-     *             If anything fails.
-     */
-    private void saveProfileIntoPersistentStore(final BaseClient<Credentials, ? extends UserProfile> client, final Credentials credentials,
-            final WebContext webContext, final String tgtId) throws HttpAction {
-        final CommonProfile profile = client.getUserProfile(credentials, webContext);
-        profileStore.set(tgtId, profile);
-    }
-
 
     /**
      * The Provider login page configuration.

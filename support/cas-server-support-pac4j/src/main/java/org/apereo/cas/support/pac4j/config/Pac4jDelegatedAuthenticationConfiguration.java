@@ -11,12 +11,8 @@ import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.pac4j.core.client.Clients;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.store.GuavaStore;
-import org.pac4j.core.store.Store;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -54,33 +50,14 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @RefreshScope
     @Bean
     @Lazy
-    public Action clientAction(
-            @Qualifier("builtClients") final Clients builtClients,
-            @Qualifier("pac4jProfileStore") final Store<String, CommonProfile> profileStore) {
+    public Action clientAction(@Qualifier("builtClients") final Clients builtClients) {
         return new DelegatedClientAuthenticationAction(builtClients,
             authenticationSystemSupport,
             centralAuthenticationService,
             casProperties.getTheme().getParamName(),
             casProperties.getLocale().getParamName(),
             casProperties.getAuthn().getPac4j().isAutoRedirect(),
-            profileStore,
             servicesManager);
-    }
-
-
-    /**
-     * Provides a PAC4J store able to save and retrieve user profiles.
-     * 
-     * This implementation uses {@link GuavaStore}, which stores profiles in a map in memory.
-     * It will work fine on a single node but not in a cluster. For cluster deployments, use a different implementation of
-     * {@link Store}, such an implementation that is able to persist and share {@link CommonProfile} across nodes.
-     * 
-     * @return A PAC4J profile service.
-     */
-    @Bean
-    @ConditionalOnMissingBean(name = "pac4jProfileStore")
-    public Store<String, CommonProfile> pac4jProfileStore() {
-        return new GuavaStore<>();
     }
 
 
