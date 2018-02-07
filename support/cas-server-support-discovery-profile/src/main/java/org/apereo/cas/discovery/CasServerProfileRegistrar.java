@@ -7,7 +7,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AbstractMultifactorAuthenticationProvider;
-import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -15,7 +14,6 @@ import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
-import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
@@ -28,7 +26,6 @@ import org.springframework.context.ApplicationContextAware;
 
 import java.lang.reflect.Modifier;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -52,7 +49,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
     private final Clients clients;
-    private final IPersonAttributeDao attributeRepository;
+    private final Set<String> availableAttributes;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
         return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext)
@@ -126,34 +123,6 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         return clients.findAllClients().stream().map(Client::getName).collect(Collectors.toSet());
     }
 
-    private Set<String> locateAvailableAttributes() {
-        final LinkedHashSet<String> attributes = new LinkedHashSet<>(0);
-        if (attributeRepository != null) {
-            attributes.addAll(attributeRepository.getPossibleUserAttributeNames());
-        }
-        if (casProperties.getAuthn().getLdap() != null) {
-            casProperties.getAuthn().getLdap().stream()
-                    .forEach(ldap -> {
-                        attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
-                        attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
-                    });
-        }
-        if (casProperties.getAuthn().getJdbc() != null) {
-            casProperties.getAuthn().getJdbc().getQuery().stream()
-                    .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
-        }
-        return attributes;
-    }
-
-    private Set<String> transformAttributes(final List<String> attributes) {
-        final Set<String> attributeSet = new LinkedHashSet<>();
-        CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
-                .values()
-                .stream()
-                .forEach(v -> attributeSet.add((String) v));
-        return attributeSet;
-    }
-
     /**
      * Gets profile.
      *
@@ -167,7 +136,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypes(locateMultifactorAuthenticationProviderTypesActive());
         profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setDelegatedClientTypes(locateDelegatedClientTypes());
-        profile.setAvailableAttributes(locateAvailableAttributes());
+        profile.setAvailableAttributes(this.availableAttributes);
         return profile;
     }
 }
