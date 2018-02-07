@@ -31,8 +31,7 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
     public void clean() {
         try {
             if (!isCleanerSupported()) {
-                LOGGER.trace("Ticket registry cleaner is not supported by [{}]. No cleaner processes will run.",
-                        getClass().getSimpleName());
+                LOGGER.trace("Ticket registry cleaner is not supported by [{}]. No cleaner processes will run.", getClass().getSimpleName());
                 return;
             }
 
@@ -57,9 +56,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
      */
     protected void cleanInternal() {
         final int ticketsDeleted = ticketRegistry.getTicketsStream()
-                .filter(Ticket::isExpired)
-                .mapToInt(this::cleanTicket)
-                .sum();
+            .filter(Ticket::isExpired)
+            .mapToInt(this::cleanTicket)
+            .sum();
         LOGGER.info("[{}] expired tickets removed.", ticketsDeleted);
     }
 

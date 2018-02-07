@@ -3,7 +3,7 @@ package org.apereo.cas.support.saml.authentication;
 import lombok.RequiredArgsConstructor;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.rest.ServiceTicketResourceEntityResponseFactory;
+import org.apereo.cas.rest.factory.ServiceTicketResourceEntityResponseFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlService;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
