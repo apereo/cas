@@ -98,7 +98,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
         if (req.actionSucceeded()) {
             LOGGER.debug("Successful Swivel authentication for [{}]", uid);
-            return createHandlerResult(swivelCredential, this.principalFactory.createPrincipal(uid), null);
+            return createHandlerResult(swivelCredential, this.principalFactory.createPrincipal(uid));
         }
 
         /*
