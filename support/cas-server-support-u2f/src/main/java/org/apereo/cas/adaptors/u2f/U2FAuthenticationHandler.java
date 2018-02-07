@@ -51,7 +51,7 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
         DeviceRegistration registration = null;
         try {
             registration = u2f.finishSignature(authenticateRequest, authenticateResponse, u2FDeviceRepository.getRegisteredDevices(p.getId()));
-            return createHandlerResult(tokenCredential, p, null);
+            return createHandlerResult(tokenCredential, p);
         } catch (final DeviceCompromisedException e) {
             registration = e.getDeviceRegistration();
             throw new PreventedException("Device possibly compromised and therefore blocked: " + e.getMessage(), e);
