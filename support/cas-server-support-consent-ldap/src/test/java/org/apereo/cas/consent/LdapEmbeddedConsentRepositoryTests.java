@@ -3,7 +3,8 @@ package org.apereo.cas.consent;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.ldap.InMemoryLdapServerManager;
+import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.TestPropertySource;
@@ -23,12 +24,19 @@ public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositor
     @Override
     @SneakyThrows
     public LDAPConnection getConnection() {
-        return InMemoryLdapServerManager.getLdapDirectory(LDAP_PORT).getConnection();
+        return LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).getConnection();
     }
 
+
+    @Before
+    public void setup() {
+        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+    }
+    
     @BeforeClass
     public static void bootstrap() throws Exception {
-        InMemoryLdapServerManager.initDirectoryServer(LDAP_PORT);
-        InMemoryLdapServerManager.getLdapDirectory(LDAP_PORT).populateEntries(new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
+        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        LdapIntegrationTestsOperations.initDirectoryServer(LDAP_PORT);
+        LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).populateEntries(new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
     }
 }

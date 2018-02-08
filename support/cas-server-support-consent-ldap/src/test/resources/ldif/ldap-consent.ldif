@@ -1,12 +1,17 @@
-
 dn: cn=consentTest,ou=people,dc=example,dc=org
 objectClass: organizationalRole
-cn: Consent Test
+objectClass: person
+objectClass: account
+cn: ConsentTest
 userPassword: 123456
-description: consent account
+sn: ConsentTest
+uid: ConsentTest
 
 dn: cn=consentTest2,ou=people,dc=example,dc=org
 objectClass: organizationalRole
-cn: Consent Test2
+objectClass: person
+objectClass: account
+cn: ConsentTest2
 userPassword: 123456
-description: consent account
+sn: ConsentTest2
+uid: ConsentTest2

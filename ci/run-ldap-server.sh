@@ -1,15 +1,21 @@
 #!/bin/bash
 
-echo "Copying LDIF files to prepare LDAP server..."
-cat ./support/cas-server-support-ldap/src/test/resources/ldif/ldap-base.ldif >>  ./ci/ldap/users.ldif
-cat ./support/cas-server-support-consent-ldap/src/test/resources/ldif/ldap-consent.ldif >>  ./ci/ldap/users.ldif
-cat ./support/cas-server-support-ldap/src/test/resources/ldif/users-groups.ldif >> ./ci/ldap/users.ldif
-cat ./support/cas-server-support-x509-core/src/test/resources/ldif/users-x509.ldif >> ./ci/ldap/users.ldif
+echo "Cloning 389-ds repository..."
+git clone --depth 1 https://github.com/jtgasper3/docker-images.git
+
+echo "Copying base LDIF files to prepare LDAP server..."
+cp ./ci/ldap/ds-setup.inf docker-images/389-ds
+cp ./ci/ldap/users.ldif docker-images/389-ds
 
 echo "Building LDAP docker image..."
-docker build --tag="apereocastests/ldap"  ./ci/ldap
-docker images
+docker rmi apereocastests/ldap --force
+docker build --tag="apereocastests/ldap"  ./docker-images/389-ds
+
+rm -Rf docker-images
+# rm -f ./ci/ldap/users.ldif
 
 echo "Running LDAP docker image"
 docker run -d -p 10389:389 --name="ldap-server" apereocastests/ldap
-docker ps -a
+docker ps
+
+
