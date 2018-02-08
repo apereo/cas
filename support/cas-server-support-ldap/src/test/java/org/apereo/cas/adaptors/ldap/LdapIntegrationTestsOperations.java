@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Base class for LDAP tests that provision and de-provision DIRECTORY data as part of test setup/teardown.
+ * Base class for LDAP tests that provision and de-provision DIRECTORY data as part of test setup/tear-down.
  *
  * @author Marvin S. Addison
  * @author Misagh Moayyed
@@ -21,10 +21,6 @@ import java.util.Map;
  */
 @Slf4j
 public class LdapIntegrationTestsOperations {
-
-    /**
-     * The constant DIRECTORY_MAP.
-     */
     private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
 
     /**
@@ -77,6 +73,17 @@ public class LdapIntegrationTestsOperations {
      */
     public static void populateEntries(final LDAPConnection c, final InputStream rs, final String baseDn) throws Exception {
         LdapTestUtils.createLdapEntries(c, LdapTestUtils.readLdif(rs, baseDn));
+    }
+
+    /**
+     * Populate default entries.
+     *
+     * @param c      the c
+     * @param baseDn the base dn
+     * @throws Exception the exception
+     */
+    public static void populateDefaultEntries(final LDAPConnection c, final String baseDn) throws Exception {
+        populateEntries(c, new ClassPathResource("ldif/users-groups.ldif").getInputStream(), baseDn);
     }
 
     /**
