@@ -3,6 +3,8 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.jdbc.JdbcAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.ldap.LdapAuthenticationProperties;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -32,7 +34,7 @@ public class CasDiscoveryProfileConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -55,19 +57,20 @@ public class CasDiscoveryProfileConfiguration {
     @Bean
     public Set<String> availableAttributes() {
         final LinkedHashSet<String> attributes = new LinkedHashSet<>(0);
-        if (attributeRepository != null) {
-            attributes.addAll(attributeRepository.getPossibleUserAttributeNames());
+        attributes.addAll(attributeRepository.getPossibleUserAttributeNames());
+
+        final List<LdapAuthenticationProperties> ldapProps = casProperties.getAuthn().getLdap();
+        if (ldapProps != null) {
+            ldapProps.stream()
+                .forEach(ldap -> {
+                    attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
+                    attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
+                });
         }
-        if (casProperties.getAuthn().getLdap() != null) {
-            casProperties.getAuthn().getLdap().stream()
-                    .forEach(ldap -> {
-                        attributes.addAll(transformAttributes(ldap.getPrincipalAttributeList()));
-                        attributes.addAll(transformAttributes(ldap.getAdditionalAttributes()));
-                    });
-        }
-        if (casProperties.getAuthn().getJdbc() != null) {
-            casProperties.getAuthn().getJdbc().getQuery().stream()
-                    .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
+        final JdbcAuthenticationProperties jdbcProps = casProperties.getAuthn().getJdbc();
+        if (jdbcProps != null) {
+            jdbcProps.getQuery().stream()
+                .forEach(jdbc -> attributes.addAll(transformAttributes(jdbc.getPrincipalAttributeList())));
         }
         return attributes;
     }
@@ -75,9 +78,9 @@ public class CasDiscoveryProfileConfiguration {
     private Set<String> transformAttributes(final List<String> attributes) {
         final Set<String> attributeSet = new LinkedHashSet<>();
         CoreAuthenticationUtils.transformPrincipalAttributesListIntoMultiMap(attributes)
-                .values()
-                .stream()
-                .forEach(v -> attributeSet.add((String)v));
+            .values()
+            .stream()
+            .forEach(v -> attributeSet.add(v.toString()));
         return attributeSet;
     }
 }
