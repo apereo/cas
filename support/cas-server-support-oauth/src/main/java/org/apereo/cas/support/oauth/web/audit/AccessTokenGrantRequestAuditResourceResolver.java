@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE
 public class AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
-    public String[] resolveFrom(JoinPoint auditableTarget, Object retval) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "AccessTokenRequestDataHolder must not be null");
         final AccessTokenRequestDataHolder accessTokenRequest = AccessTokenRequestDataHolder.class.cast(retval);
 
