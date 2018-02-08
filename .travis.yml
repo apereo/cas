@@ -39,7 +39,6 @@ env:
   - PUBLISH_SNAPSHOTS=false
   - PUBLISH_SNAPSHOTS=true
 before_install:
-- echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 - chmod -R 777 ./ci/init-travis-build.sh
 - ./ci/init-travis-build.sh
 - chmod -R 777 ./ci/push-docs-ghpages.sh
