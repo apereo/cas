@@ -1,0 +1,36 @@
+package org.apereo.cas.support.oauth.web.audit;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apereo.cas.support.oauth.web.response.accesstoken.ext.AccessTokenRequestDataHolder;
+import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
+import org.aspectj.lang.JoinPoint;
+
+import java.util.Objects;
+
+import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE;
+
+/**
+ * The {@link AccessTokenGrantRequestAuditResourceResolver} for audit advice
+ * weaved at <code>BaseAccessTokenGrantRequestExtractor#extract</code> joinpoint.
+ *
+ * @author Dmitriy Kopylenko
+ * @since 5.3.0
+ */
+public class AccessTokenGrantRequestAuditResourceResolver extends ReturnValueAsStringResourceResolver {
+
+    @Override
+    public String[] resolveFrom(JoinPoint auditableTarget, Object retval) {
+        Objects.requireNonNull(retval, "AccessTokenRequestDataHolder must not be null");
+        final AccessTokenRequestDataHolder accessTokenRequest = AccessTokenRequestDataHolder.class.cast(retval);
+
+        final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+                .append("oauth_token", accessTokenRequest.getToken().getId())
+                .append("client_id", accessTokenRequest.getRegisteredService().getClientId())
+                .append("client_service", accessTokenRequest.getService().getId())
+                .append("grant_type", accessTokenRequest.getGrantType().getType())
+                .append("scopes", accessTokenRequest.getScopes())
+                .toString();
+
+        return new String[]{result};
+    }
+}
