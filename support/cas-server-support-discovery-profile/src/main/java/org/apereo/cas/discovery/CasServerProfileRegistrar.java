@@ -49,6 +49,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
     private final ServicesManager servicesManager;
     private final CasConfigurationProperties casProperties;
     private final Clients clients;
+    private final Set<String> availableAttributes;
 
     private Map<String, String> locateMultifactorAuthenticationProviderTypesActive() {
         return MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext)
@@ -135,6 +136,7 @@ public class CasServerProfileRegistrar implements ApplicationContextAware {
         profile.setMultifactorAuthenticationProviderTypes(locateMultifactorAuthenticationProviderTypesActive());
         profile.setDelegatedClientTypesSupported(locateDelegatedClientTypesSupported());
         profile.setDelegatedClientTypes(locateDelegatedClientTypes());
+        profile.setAvailableAttributes(this.availableAttributes);
         return profile;
     }
 }
