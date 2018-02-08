@@ -1,7 +1,6 @@
 package org.apereo.cas.web.flow.client;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -20,13 +19,11 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.SpnegoConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.SpnegoWebflowActionsConfiguration;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +35,6 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.mock.web.MockServletContext;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
@@ -59,30 +54,30 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        BaseLdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class,
-        SpnegoConfiguration.class,
-        SpnegoWebflowActionsConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCookieConfiguration.class,
-        CasCoreWebflowConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class})
+    BaseLdapSpnegoKnownClientSystemsFilterActionTests.CasTestConfiguration.class,
+    SpnegoConfiguration.class,
+    SpnegoWebflowActionsConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCookieConfiguration.class,
+    CasCoreWebflowConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class})
 @Slf4j
 public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests {
 
@@ -100,20 +95,20 @@ public abstract class BaseLdapSpnegoKnownClientSystemsFilterActionTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Test
     public void ensureLdapAttributeShouldDoSpnego() throws Exception {
         final MockRequestContext ctx = new MockRequestContext();
         final MockHttpServletRequest req = new MockHttpServletRequest();
         req.setRemoteAddr("localhost");
         final ServletExternalContext extCtx = new ServletExternalContext(
-                new MockServletContext(), req,
-                new MockHttpServletResponse());
+            new MockServletContext(), req,
+            new MockHttpServletResponse());
         ctx.setExternalContext(extCtx);
 
         final Event ev = action.execute(ctx);
         assertEquals(ev.getId(), new EventFactorySupport().yes(this).getId());
     }
-    
-    
+
+
 }
