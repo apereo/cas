@@ -12,7 +12,7 @@ services:
   - docker
 branches:
   only:
-  - ldap-tests-docker
+  - master
 jdk:
 - oraclejdk8
 # - oraclejdk9
