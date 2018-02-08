@@ -10,7 +10,7 @@ import org.apereo.cas.adaptors.x509.authentication.revocation.checker.CRLDistrib
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.AllowRevocationPolicy;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
-import org.apereo.cas.adaptors.x509.util.MockWebServer;
+import org.apereo.cas.util.MockWebServer;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
