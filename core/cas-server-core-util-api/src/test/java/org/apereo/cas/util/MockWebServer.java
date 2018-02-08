@@ -1,4 +1,4 @@
-package org.apereo.cas.adaptors.x509.util;
+package org.apereo.cas.util;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -22,15 +22,11 @@ import org.springframework.core.io.Resource;
  */
 @Slf4j
 public class MockWebServer {
-
-
-    
     /** Request handler. */
     private final Worker worker;
 
     /** Controls the worker thread. */
     private Thread workerThread;
-
 
     /**
      * Creates a new server that listens for requests on the given port and
@@ -89,8 +85,6 @@ public class MockWebServer {
 
         /** Response buffer size. */
         private static final int BUFFER_SIZE = 2048;
-
-
         
         /** Run flag. */
         private boolean running;
