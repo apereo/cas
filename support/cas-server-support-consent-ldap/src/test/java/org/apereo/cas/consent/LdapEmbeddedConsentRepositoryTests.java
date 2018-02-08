@@ -15,7 +15,6 @@ import org.springframework.test.context.TestPropertySource;
  * @author Arnold Bergner
  * @since 5.2.0
  */
-
 @TestPropertySource(locations = "classpath:/ldapconsent.properties")
 @Slf4j
 public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositoryTests {
@@ -26,8 +25,7 @@ public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositor
     public LDAPConnection getConnection() {
         return LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).getConnection();
     }
-
-
+    
     @Before
     public void setup() {
         LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);

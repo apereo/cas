@@ -87,7 +87,7 @@ public class LdapTestUtils {
                 connection.add(ad);
             }
         } catch (final Exception e) {
-            LOGGER.warn(e.getLocalizedMessage());
+            LOGGER.error(e.getLocalizedMessage());
         }
     }
 

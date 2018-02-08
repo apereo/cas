@@ -22,7 +22,7 @@ import static org.junit.Assert.*;
  * @since 4.1
  */
 @Slf4j
-public class AllSpnegoKnownClientSystemsFilterActionTests {
+public class SpnegoKnownClientSystemsFilterActionTests {
 
     private static final String ALTERNATE_REMOTE_IP = "74.125.136.102";
 
