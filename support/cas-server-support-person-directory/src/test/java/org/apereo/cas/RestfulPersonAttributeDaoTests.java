@@ -13,8 +13,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
