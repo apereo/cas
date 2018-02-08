@@ -1,7 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.ldap.InMemoryLdapServerManager;
+import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.adaptors.ldap.services.config.LdapServiceRegistryConfiguration;
 import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdGenerator;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -53,7 +53,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @DirtiesContext
 @Slf4j
-public class LdapServiceRegistryDaoTests extends InMemoryLdapServerManager {
+public class LdapServiceRegistryDaoTests extends LdapIntegrationTestsOperations {
 
     @Autowired
     @Qualifier("serviceRegistryDao")

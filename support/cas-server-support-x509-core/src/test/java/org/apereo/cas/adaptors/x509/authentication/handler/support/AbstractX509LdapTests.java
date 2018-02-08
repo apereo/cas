@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.adaptors.ldap.InMemoryLdapServerManager;
+import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapAttribute;
@@ -19,7 +19,7 @@ import java.util.Collection;
  * @since 4.1
  */
 @Slf4j
-public abstract class AbstractX509LdapTests extends InMemoryLdapServerManager {
+public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
 
