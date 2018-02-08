@@ -52,5 +52,7 @@ env:
 #- chmod -R 777 ./ci/script.sh
 #- ./ci/script.sh
 before_install:
+- chmod -R 777 ./ci/run-ldap-server.sh
+- ./ci/run-ldap-server.sh
 
 
