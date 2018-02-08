@@ -50,4 +50,9 @@ public class CasServerProfile {
      * The type of delegated clients that <i>are</i> supported by CAS and configured.
      */
     private Set<String> delegatedClientTypes;
+
+    /**
+     * The list of available attributes currently active and configured in the CAS application context.
+     */
+    private Set<String> availableAttributes;
 }
