@@ -16,12 +16,11 @@ import org.springframework.core.io.ClassPathResource;
  * @since 4.1.0
  */
 @Slf4j
-public abstract class AbstractLdapTests {
+public class InMemoryLdapServerManager {
 
     private static Map<Integer, InMemoryTestLdapDirectoryServer> DIRECTORY_MAP = new HashMap<>();
 
-    public static synchronized void initDirectoryServer(final InputStream ldifFile,
-                                                        final int port) {
+    public static synchronized void initDirectoryServer(final InputStream ldifFile, final int port) {
         try {
             final InMemoryTestLdapDirectoryServer directory = DIRECTORY_MAP.get(port);
             final boolean createInstance = directory == null || !directory.isAlive();
@@ -39,11 +38,7 @@ public abstract class AbstractLdapTests {
         initDirectoryServer(new ClassPathResource("ldif/ldap-base.ldif").getInputStream(), port);
     }
 
-    protected static InMemoryTestLdapDirectoryServer getDirectory(final int port) {
-        return getLdapDirectory(port);
-    }
-
-    protected static InMemoryTestLdapDirectoryServer getLdapDirectory(final int port) {
+    public static InMemoryTestLdapDirectoryServer getLdapDirectory(final int port) {
         return DIRECTORY_MAP.get(port);
     }
 }
