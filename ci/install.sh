@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew $@"
 gradleBuild="assemble"
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --parallel -DskipNestedConfigMetadataGen=true "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -16,7 +16,6 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
         echo -e "The build commit message indicates that tests should be skipped.\n"
         gradleBuild="$gradleBuild -x test"
-        gradleBuildOptions+="--parallel "
     else
         echo -e "The build indicates that tests along with coveralls test coverage should run.\n"
         gradleBuild="$gradleBuild checkstyleTest test coveralls"
@@ -26,8 +25,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     fi
 else
     echo -e "The build is publishing snapshots; Skipping tests and checks...\n"
-    gradleBuild="$gradleBuild -x test -x check -x javadoc"
-    gradleBuildOptions+="-parallel"
+    gradleBuild="$gradleBuild -x test -x check -x javadoc "
 fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"

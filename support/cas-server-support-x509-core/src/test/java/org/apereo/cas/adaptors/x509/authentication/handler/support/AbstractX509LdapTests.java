@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.x509.authentication.handler.support;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
-import org.apereo.cas.adaptors.ldap.AbstractLdapTests;
+import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.LdapTestUtils;
 import org.ldaptive.LdapAttribute;
@@ -19,13 +19,13 @@ import java.util.Collection;
  * @since 4.1
  */
 @Slf4j
-public abstract class AbstractX509LdapTests extends AbstractLdapTests {
+public abstract class AbstractX509LdapTests extends LdapIntegrationTestsOperations {
 
     private static final String DN = "CN=x509,ou=people,dc=example,dc=org";
 
     @SneakyThrows
     public static void bootstrap(final int port) {
-        getDirectory(port).populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
+        getLdapDirectory(port).populateEntries(new ClassPathResource("ldif/users-x509.ldif").getInputStream());
         populateCertificateRevocationListAttribute(port);
     }
 
@@ -39,7 +39,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
      * @throws Exception the exception
      */
     private static void populateCertificateRevocationListAttribute(final int port) throws Exception {
-        final Collection<LdapEntry> col = getDirectory(port).getLdapEntries();
+        final Collection<LdapEntry> col = getLdapDirectory(port).getLdapEntries();
         for (final LdapEntry ldapEntry : col) {
             if (ldapEntry.getDn().equals(DN)) {
                 final LdapAttribute attr = new LdapAttribute(true);
@@ -49,7 +49,7 @@ public abstract class AbstractX509LdapTests extends AbstractLdapTests {
                 value = EncodingUtils.encodeBase64ToByteArray(value);
                 attr.setName("certificateRevocationList");
                 attr.addBinaryValue(value);
-                LdapTestUtils.modifyLdapEntry(getDirectory(port).getConnection(), ldapEntry, attr);
+                LdapTestUtils.modifyLdapEntry(getLdapDirectory(port).getConnection(), ldapEntry, attr);
 
             }
         }

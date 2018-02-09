@@ -13,7 +13,6 @@ import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.http.HttpClient;
-import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataController;
@@ -21,23 +20,15 @@ import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
-import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
-import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
-import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
-import org.springframework.webflow.execution.Action;
 
 /**
  * This is {@link CoreWsSecurityIdentityProviderConfiguration}.
@@ -64,18 +55,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     private HttpClient httpClient;
 
     @Autowired
-    @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
-
-    @Autowired
     @Qualifier("defaultTicketRegistrySupport")
     private TicketRegistrySupport ticketRegistrySupport;
-
-    @Autowired
-    private ApplicationContext applicationContext;
-    
-    @Autowired
-    private FlowBuilderServices flowBuilderServices;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -100,22 +81,22 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Bean
     public WSFederationValidateRequestController federationValidateRequestController() {
         return new WSFederationValidateRequestController(servicesManager,
-                webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
-                ticketRegistrySupport);
+            webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
+            httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
+            ticketRegistrySupport);
     }
 
     @Lazy
     @Autowired
     @Bean
     public WSFederationValidateRequestCallbackController federationValidateRequestCallbackController(
-            @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
+        @Qualifier("wsFederationRelyingPartyTokenProducer") final WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer) {
         return new WSFederationValidateRequestCallbackController(servicesManager,
-                webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
-                wsFederationAuthenticationServiceSelectionStrategy(),
-                httpClient, securityTokenTicketFactory, ticketRegistry,
-                ticketGrantingTicketCookieGenerator,
-                ticketRegistrySupport, casClientTicketValidator);
+            webApplicationServiceFactory, casProperties, wsFederationRelyingPartyTokenProducer,
+            wsFederationAuthenticationServiceSelectionStrategy(),
+            httpClient, securityTokenTicketFactory, ticketRegistry,
+            ticketGrantingTicketCookieGenerator,
+            ticketRegistrySupport, casClientTicketValidator);
     }
 
     @Lazy
@@ -129,8 +110,8 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Autowired
     @Bean
     public WSFederationRelyingPartyTokenProducer wsFederationRelyingPartyTokenProducer(
-            @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
-            @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
+        @Qualifier("securityTokenServiceCredentialCipherExecutor") final CipherExecutor securityTokenServiceCredentialCipherExecutor,
+        @Qualifier("securityTokenServiceClientBuilder") final SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder) {
         return new DefaultRelyingPartyTokenProducer(securityTokenServiceClientBuilder, securityTokenServiceCredentialCipherExecutor);
     }
 
@@ -138,23 +119,6 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @RefreshScope
     public AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy() {
         return new WSFederationAuthenticationServiceSelectionStrategy(webApplicationServiceFactory);
-    }
-
-    @Bean
-    @RefreshScope
-    public Action wsFederationMetadataUIAction() {
-        return new WSFederationMetadataUIAction(servicesManager, wsFederationAuthenticationServiceSelectionStrategy());
-    }
-
-    @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
-    @Bean
-    @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new WSFederationWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry, wsFederationMetadataUIAction(),
-                applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @Override

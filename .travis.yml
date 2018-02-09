@@ -8,6 +8,8 @@
 
 language: java
 sudo: required
+services:
+  - docker
 branches:
   only:
   - master
@@ -39,14 +41,20 @@ env:
   - PUBLISH_SNAPSHOTS=false
   - PUBLISH_SNAPSHOTS=true
 before_install:
-- echo -n | openssl s_client -connect scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
+- chmod -R 777 ./ci/run-ldap-server.sh
+- ./ci/run-ldap-server.sh
 - chmod -R 777 ./ci/init-travis-build.sh
 - ./ci/init-travis-build.sh
 - chmod -R 777 ./ci/push-docs-ghpages.sh
 - ./ci/push-docs-ghpages.sh
-install: 
+install:
 - chmod -R 777 ./ci/install.sh
 - ./ci/install.sh
 script:
 - chmod -R 777 ./ci/script.sh
 - ./ci/script.sh
+after_script:
+- chmod -R 777 ./ci/stop.sh
+- ./ci/stop.sh
+
+

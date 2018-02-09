@@ -1,4 +1,4 @@
-package org.apereo.cas.rest;
+package org.apereo.cas.rest.factory;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
