@@ -41,10 +41,11 @@ public class DynamoDbTicketRegistry extends AbstractTicketRegistry {
             LOGGER.debug("Retrieving ticket [{}] ", ticketId);
             final Ticket ticket = this.dbTableService.get(ticketId, encTicketId);
             final Ticket decodedTicket = decodeTicket(ticket);
-            if (decodedTicket.isExpired()) {
+            if (decodedTicket == null || decodedTicket.isExpired()) {
                 LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
                 return null;
             }
+            return decodedTicket;
         }
         return null;
     }
