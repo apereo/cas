@@ -3,9 +3,12 @@ package org.apereo.cas.config;
 import com.amazonaws.ClientConfiguration;
 import com.amazonaws.Protocol;
 import com.amazonaws.auth.AWSCredentialsProvider;
+import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -63,9 +66,15 @@ public class DynamoDbTicketRegistryConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public AmazonDynamoDBClient amazonDynamoDbClient() {
-
+    public AmazonDynamoDB amazonDynamoDbClient() {
         final DynamoDbTicketRegistryProperties dynamoDbProperties = casProperties.getTicket().getRegistry().getDynamoDb();
+
+        if (dynamoDbProperties.isLocalInstance()) {
+            return AmazonDynamoDBClientBuilder.standard()
+                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(
+                    dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion())).build();
+        }
+        
         final ClientConfiguration cfg = new ClientConfiguration();
         cfg.setConnectionTimeout(dynamoDbProperties.getConnectionTimeout());
         cfg.setMaxConnections(dynamoDbProperties.getMaxConnections());
@@ -86,6 +95,7 @@ public class DynamoDbTicketRegistryConfiguration {
         final AWSCredentialsProvider provider =
             ChainingAWSCredentialsProvider.getInstance(dynamoDbProperties.getCredentialAccessKey(),
                 dynamoDbProperties.getCredentialSecretKey(), dynamoDbProperties.getCredentialsPropertiesFile());
+
         final AmazonDynamoDBClient client = new AmazonDynamoDBClient(provider, cfg);
 
         if (StringUtils.isNotBlank(dynamoDbProperties.getEndpoint())) {
@@ -107,7 +117,6 @@ public class DynamoDbTicketRegistryConfiguration {
         if (dynamoDbProperties.getTimeOffset() != 0) {
             client.setTimeOffset(dynamoDbProperties.getTimeOffset());
         }
-
         return client;
 
     }

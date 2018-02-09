@@ -3,6 +3,7 @@ package org.apereo.cas.aws;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.AWSCredentialsProvider;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.AnonymousAWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.ClasspathPropertiesFileCredentialsProvider;
 import com.amazonaws.auth.EnvironmentVariableCredentialsProvider;
@@ -59,7 +60,8 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
                 return c;
             }
         }
-        throw new IllegalArgumentException("No AWS credentials could be determined from the chain: " + this.chain);
+        LOGGER.warn("No AWS credentials could be determined from the chain: [{}]");
+        return new AnonymousAWSCredentials();
     }
 
     @Override
