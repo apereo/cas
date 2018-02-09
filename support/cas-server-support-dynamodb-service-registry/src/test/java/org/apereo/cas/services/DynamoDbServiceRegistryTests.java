@@ -80,5 +80,4 @@ public class DynamoDbServiceRegistryTests {
         rs.setProperties(propertyMap);
         return rs;
     }
-
 }
