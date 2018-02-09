@@ -24,9 +24,6 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = "cas.authn.adaptive.risk.ip.enabled=true")
 public class IpAddressAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
-    @Autowired
-    private CasConfigurationProperties casProperties;
-
     @Test
     public void verifyTestWhenNoAuthnEventsFoundForUser() {
         final Authentication authentication = CoreAuthenticationTestUtils.getAuthentication("nobody");
