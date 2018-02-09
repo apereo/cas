@@ -3,6 +3,8 @@ package org.apereo.cas.couchbase.core;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.bucket.BucketManager;
+import com.couchbase.client.java.error.DesignDocumentDoesNotExistException;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import lombok.SneakyThrows;
@@ -28,19 +30,21 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CouchbaseClientFactory {
     private static final int DEFAULT_TIMEOUT = 5;
+    private static final int BUCKET_QUOTA = 120;
+
     private Cluster cluster;
 
     private Bucket bucket;
     private final Collection<View> views;
     private final Set<String> nodes;
 
-    /* The name of the getBucket, will use the default getBucket unless otherwise specified. */
+    /* The name of the bucket, will use the default getBucket unless otherwise specified. */
     private String bucketName = "default";
 
-    /* Password for the getBucket if any. */
+    /* Password for the bucket if any. */
     private String bucketPassword = StringUtils.EMPTY;
 
-    /* Design document and views to create in the getBucket, if any. */
+    /* Design document and views to create in the bucket, if any. */
     private final String designDocument;
 
     private long timeout = DEFAULT_TIMEOUT;
@@ -62,13 +66,9 @@ public class CouchbaseClientFactory {
         this.bucketName = bucketName;
         this.bucketPassword = bucketPassword;
         this.timeout = timeout;
-
-        if (this.cluster == null) {
-            this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
-        }
-
         this.designDocument = documentName;
         this.views = views;
+        initializeCluster();
     }
 
     /**
@@ -83,16 +83,6 @@ public class CouchbaseClientFactory {
     }
 
     /**
-     * Authenticate.
-     *
-     * @param uid the uid
-     * @param psw the psw
-     */
-    public void authenticate(final String uid, final String psw) {
-        this.cluster = this.cluster.authenticate(uid, psw);
-    }
-    
-    /**
      * Inverse of connectBucket, shuts down the client, cancelling connection
      * task if not completed.
      */
@@ -103,34 +93,58 @@ public class CouchbaseClientFactory {
         }
     }
 
+    private void initializeCluster() {
+        if (this.cluster != null) {
+            shutdown();
+        }
+        this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
+    }
+
     /**
      * Retrieve the Couchbase getBucket.
      *
      * @return the getBucket.
      */
     public Bucket getBucket() {
-        if (this.bucket == null) {
-            if (StringUtils.isBlank(this.bucketName)) {
-                throw new IllegalArgumentException("Bucket name cannot be blank");
-            }
+        if (this.bucket != null) {
+            return this.bucket;
+        }
+        initializeBucket();
+        return this.bucket;
+    }
 
+    private void initializeBucket() {
+        createBucketIfNeeded();
+        createDesignDocumentAndViewIfNeeded();
+    }
+
+    private void createDesignDocumentAndViewIfNeeded() {
+        if (this.views != null && this.designDocument != null) {
+            LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
+            final BucketManager bucketManager = this.bucket.bucketManager();
+            final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
             try {
-                LOGGER.debug("Trying to connect to couchbase getBucket [{}]", this.bucketName);
-                this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
-                LOGGER.info("Connected to Couchbase getBucket [{}]", this.bucketName);
-                if (this.views != null && this.designDocument != null) {
-                    LOGGER.debug("Ensure that indexes exist in getBucket [{}]", this.bucket.name());
-                    final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
-                    if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(this.designDocument))) {
-                        LOGGER.warn("Missing indexes in getBucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
-                        this.bucket.bucketManager().upsertDesignDocument(newDocument);
-                    }
+                if (!newDocument.equals(bucketManager.getDesignDocument(this.designDocument))) {
+                    LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
+                    bucketManager.upsertDesignDocument(newDocument);
                 }
+            } catch (final DesignDocumentDoesNotExistException e) {
+                LOGGER.debug("Design document in bucket [{}] for document [{}] should be created", this.bucket.name(), this.designDocument);
+                bucketManager.upsertDesignDocument(newDocument);
             } catch (final Exception e) {
-                throw new IllegalArgumentException("Failed to connect to Couchbase getBucket", e);
+                throw new IllegalArgumentException(e.getMessage(), e);
             }
         }
-        return this.bucket;
+    }
+
+    private void createBucketIfNeeded() {
+        try {
+            LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
+            this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
+        }
+        LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
     }
 }
 
