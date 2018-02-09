@@ -17,6 +17,8 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.nio.charset.StandardCharsets;
+
 import static org.junit.Assert.*;
 
 /**
@@ -45,7 +47,7 @@ public class RestfulPersonAttributeDaoTests {
             + "\"messages\": [\"msg 1\", \"msg 2\", \"msg 3\"]      "
             + "}";
         this.webServer = new MockWebServer(8085,
-            new ByteArrayResource(data.getBytes(), "REST Output"),
+            new ByteArrayResource(data.getBytes(StandardCharsets.UTF_8), "REST Output"),
             MediaType.APPLICATION_JSON_VALUE);
         this.webServer.start();
     }
