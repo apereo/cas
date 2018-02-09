@@ -71,7 +71,7 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
     public Set<AuthenticationHandler> getAuthenticationHandlersForTransaction(final AuthenticationTransaction transaction) {
         final AuthenticationHandler[] handlers = authenticationHandlerPrincipalResolverMap.keySet().toArray(new AuthenticationHandler[]{});
         OrderComparator.sortIfNecessary(handlers);
-        return new LinkedHashSet<>(Arrays.stream(handlers).collect(Collectors.toSet()));
+        return new LinkedHashSet<>(Arrays.asList(handlers));
     }
 
     @Override
