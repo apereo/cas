@@ -9,7 +9,6 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.security.cert.X509Certificate;
 
-import static junit.framework.TestCase.assertNull;
 
 /**
  * @author Hal Deadman
@@ -55,8 +54,8 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
             = new RequestHeaderX509CertificateExtractor("ssl_client_cert");
 
     private static String certificateSingleLine(final String[] lines, final String separator) {
-        StringBuilder singleSpaced = new StringBuilder();
-        for (String current : lines) {
+        final StringBuilder singleSpaced = new StringBuilder();
+        for (final String current : lines) {
             singleSpaced.append(current).append(separator);
         }
         singleSpaced.deleteCharAt(singleSpaced.length() - 1);
@@ -75,21 +74,21 @@ public class X509CertificateExtractorTests extends AbstractX509CertificateTests 
 
     @Test
     public void verifyExtractX509FromHeaderSpaceSeperator() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine(" "));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoSeparator() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
+        final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addHeader(extractX509CertificateFromHeader.getSslClientCertHeader(), certificateSingleLine("\t"));
         assertCertificateParsed(extractX509CertificateFromHeader.extract(request));
     }
 
     @Test
     public void verifyExtractX509FromHeaderNoHeader() {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        assertNull(extractX509CertificateFromHeader.extract(request));
+        final MockHttpServletRequest request = new MockHttpServletRequest();
+        Assert.assertNull(extractX509CertificateFromHeader.extract(request));
     }
 }
