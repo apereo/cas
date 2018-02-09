@@ -104,7 +104,7 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter {
         final String auth = RequireAnyRoleAuthorizer.class.getSimpleName();
         if (adminAuthorizers.containsKey(auth)) {
             config.addAuthorizer(auth, adminAuthorizers.get(auth));
-            final BaseClient adminClient = (BaseClient) casAdminPagesPac4jConfig.getClients().findClient(DirectCasClient.class);
+            final BaseClient adminClient = casAdminPagesPac4jConfig.getClients().findClient(DirectCasClient.class);
             client.addAuthorizationGenerators(adminClient.getAuthorizationGenerators());
         }
         return config;

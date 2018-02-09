@@ -59,7 +59,7 @@ public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
     @Override
     public RegisteredService save(final RegisteredService svc) {
         if (svc.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) svc).setId(svc.hashCode());
+            svc.setId(svc.hashCode());
         }
         this.mongoTemplate.save(svc, this.collectionName);
         LOGGER.debug("Saved registered service: [{}]", svc);

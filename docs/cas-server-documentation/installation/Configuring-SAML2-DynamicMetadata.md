@@ -60,6 +60,10 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 }
 ```
 
+<div class="alert alert-info"><strong>Metadata Location</strong><p>
+The metadata location in the registration record above simply needs to be specified as <code>mongodb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
+</p></div>
+
 ## JPA
 
 Metadata documents may also be stored in and fetched from a relational database instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
@@ -93,6 +97,10 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
   "metadataLocation" : "jdbc://"
 }
 ```
+
+<div class="alert alert-info"><strong>Metadata Location</strong><p>
+The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
+</p></div>
 
 ## Groovy
 

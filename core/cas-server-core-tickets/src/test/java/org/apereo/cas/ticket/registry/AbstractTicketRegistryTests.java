@@ -195,6 +195,7 @@ public abstract class AbstractTicketRegistryTests {
             this.ticketRegistry.addTicket(tgt);
 
             tgt = this.ticketRegistry.getTicket(tgt.getId(), TicketGrantingTicket.class);
+            assertNotNull(tgt);
             assertTrue(tgt.getServices().isEmpty());
 
             tgt.grantServiceTicket("ST1", RegisteredServiceTestUtils.getService("TGT_UPDATE_TEST"),

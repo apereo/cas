@@ -50,7 +50,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
+            registeredService.setId(findHighestId() + 1);
         }
         final RegisteredService svc = findServiceById(registeredService.getId());
         if (svc != null) {
