@@ -2354,8 +2354,9 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Box               | `cas.samlSp.box` | `email`, `firstName`, `lastName`
 | Service Now               | `cas.samlSp.serviceNow` | `eduPersonPrincipalName`
 | Net Partner               | `cas.samlSp.netPartner` | `studentId`
-| Webex               | `cas.samlSp.webex` | `firstName`, `lastName` 
+| Webex               | `cas.samlSp.webex` | `firstName`, `lastName`
 | InCommon        |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
+| Amazon        |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata. 
 
