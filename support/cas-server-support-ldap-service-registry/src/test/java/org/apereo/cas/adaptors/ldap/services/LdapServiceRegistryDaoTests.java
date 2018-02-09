@@ -1,8 +1,11 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
-import org.junit.Before;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.RunningStandaloneCondition;
 import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
 import org.springframework.test.context.TestPropertySource;
 
 /**
@@ -13,16 +16,12 @@ import org.springframework.test.context.TestPropertySource;
  * @since 4.0.0
  */
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
+@RunWith(ConditionalSpringRunner.class)
+@ConditionalIgnore(condition = RunningStandaloneCondition.class)
 public class LdapServiceRegistryDaoTests extends BaseLdapServiceRegistryDaoTests {
-
-    @Before
-    public void setup() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
-    }
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
         LdapIntegrationTestsOperations.initDirectoryServer(1390);
     }
 }

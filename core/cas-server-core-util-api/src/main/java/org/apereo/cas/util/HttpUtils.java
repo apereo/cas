@@ -9,6 +9,7 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpUriRequest;
@@ -50,6 +51,17 @@ public class HttpUtils {
     }
 
     /**
+     * Execute http response.
+     *
+     * @param url    the url
+     * @param method the method
+     * @return the http response
+     */
+    public static HttpResponse execute(final String url, final String method) {
+        return execute(url, method, null, null, new HashMap<>(), new HashMap<>());
+    }
+
+    /**
      * Execute http request and produce a response.
      *
      * @param url               the url
@@ -68,7 +80,19 @@ public class HttpUtils {
         try {
             final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
             final URI uri = buildHttpUri(url, parameters);
-            final HttpUriRequest request = method.equalsIgnoreCase(HttpMethod.GET.name()) ? new HttpGet(uri) : new HttpPost(uri);
+            final HttpUriRequest request;
+            switch (method.toLowerCase()) {
+                case "post":
+                    request = new HttpPost(uri);
+                    break;
+                case "delete":
+                    request = new HttpDelete(uri);
+                    break;
+                case "get":
+                default:
+                    request = new HttpGet(uri);
+                    break;
+            }
             headers.forEach(request::addHeader);
             return client.execute(request);
         } catch (final Exception e) {
@@ -230,6 +254,26 @@ public class HttpUtils {
             final URI uri = buildHttpUri(url, parameters);
             final HttpPost request = new HttpPost(uri);
             request.setEntity(entity);
+            return client.execute(request);
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    /**
+     * Execute post http response.
+     *
+     * @param url        the url
+     * @param parameters the parameters
+     * @return the http response
+     */
+    public static HttpResponse executePost(final String url,
+                                           final Map<String, String> parameters) {
+        try {
+            final HttpClient client = buildHttpClient(null, null);
+            final URI uri = buildHttpUri(url, parameters);
+            final HttpPost request = new HttpPost(uri);
             return client.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

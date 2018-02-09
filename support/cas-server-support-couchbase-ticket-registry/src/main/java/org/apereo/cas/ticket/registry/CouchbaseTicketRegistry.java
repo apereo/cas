@@ -59,13 +59,11 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     public static final String UTIL_DOCUMENT = "statistics";
 
-
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
     private static final String END_TOKEN = "\u02ad";
 
     private final TicketCatalog ticketCatalog;
     private final CouchbaseClientFactory couchbase;
-
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
@@ -108,7 +106,13 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 LOGGER.debug("Got ticket [{}] from the registry.", t);
-                return t;
+
+                final Ticket decoded = decodeTicket(t);
+                if (decoded == null || decoded.isExpired()) {
+                    LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
+                    return null;
+                }
+                return decoded;
             }
             LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
             return null;
