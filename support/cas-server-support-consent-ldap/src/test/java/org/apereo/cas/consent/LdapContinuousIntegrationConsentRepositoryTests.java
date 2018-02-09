@@ -5,6 +5,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.util.CoreTestUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,13 @@ public class LdapContinuousIntegrationConsentRepositoryTests extends BaseLdapCon
 
     @Before
     public void setup() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(true);
+        CoreTestUtils.checkContinuousIntegrationBuild(true);
     }
 
     @BeforeClass
     @SneakyThrows
     public static void bootstrap() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(true);
+        CoreTestUtils.checkContinuousIntegrationBuild(true);
         final LDAPConnection localhost = new LDAPConnection("localhost", LDAP_PORT,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateEntries(
