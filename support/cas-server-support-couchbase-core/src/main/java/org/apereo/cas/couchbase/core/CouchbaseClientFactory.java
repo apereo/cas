@@ -10,9 +10,15 @@ import com.couchbase.client.java.view.View;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apereo.cas.util.HttpUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -145,6 +151,30 @@ public class CouchbaseClientFactory {
             throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
         }
         LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
+    }
+
+    /**
+     * Remove default bucket.
+     */
+    public static void removeDefaultBucket() {
+        HttpUtils.execute("http://localhost:8091/pools/default/buckets/default", "DELETE");
+    }
+
+    /**
+     * Create default bucket http servlet response.
+     *
+     * @return the http servlet response
+     */
+    @SneakyThrows
+    public static HttpResponse createDefaultBucket() {
+        final List postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("authType", "none"));
+        postParameters.add(new BasicNameValuePair("name", "default"));
+        postParameters.add(new BasicNameValuePair("bucketType", "couchbase"));
+        postParameters.add(new BasicNameValuePair("proxyPort", "11216"));
+        postParameters.add(new BasicNameValuePair("ramQuotaMB", "120"));
+        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
+        return HttpUtils.executePost("http://localhost:8091/pools/default/buckets", entity);
     }
 }
 
