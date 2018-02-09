@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.client;
 import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.CoreTestUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.test.context.TestPropertySource;
@@ -20,12 +21,12 @@ public class LdapContinuousIntegrationSpnegoKnownClientSystemsFilterActionTests
 
     @Before
     public void setup() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(true);
+        CoreTestUtils.checkContinuousIntegrationBuild(true);
     }
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(true);
+        CoreTestUtils.checkContinuousIntegrationBuild(true);
         final LDAPConnection c = new LDAPConnection("localhost", 10389,
             "cn=Directory Manager", "password");
         LdapIntegrationTestsOperations.populateDefaultEntries(c, "ou=people,dc=example,dc=org");

@@ -4,6 +4,7 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.CoreTestUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.core.io.ClassPathResource;
@@ -28,12 +29,12 @@ public class LdapEmbeddedConsentRepositoryTests extends BaseLdapConsentRepositor
     
     @Before
     public void setup() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        CoreTestUtils.checkContinuousIntegrationBuild(false);
     }
     
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        CoreTestUtils.checkContinuousIntegrationBuild(false);
         LdapIntegrationTestsOperations.initDirectoryServer(LDAP_PORT);
         LdapIntegrationTestsOperations.getLdapDirectory(LDAP_PORT).populateEntries(new ClassPathResource("ldif/ldap-consent.ldif").getInputStream());
     }

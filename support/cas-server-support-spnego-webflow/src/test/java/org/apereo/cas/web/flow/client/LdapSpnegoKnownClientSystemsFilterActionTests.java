@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.client;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.CoreTestUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.test.context.TestPropertySource;
@@ -18,12 +19,12 @@ public class LdapSpnegoKnownClientSystemsFilterActionTests extends BaseLdapSpneg
 
     @Before
     public void setup() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        CoreTestUtils.checkContinuousIntegrationBuild(false);
     }
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        CoreTestUtils.checkContinuousIntegrationBuild(false);
         LdapIntegrationTestsOperations.initDirectoryServer(1381);
     }
 }

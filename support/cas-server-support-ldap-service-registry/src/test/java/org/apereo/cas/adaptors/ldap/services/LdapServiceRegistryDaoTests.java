@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.ldap.services;
 
 import org.apereo.cas.adaptors.ldap.LdapIntegrationTestsOperations;
+import org.apereo.cas.util.CoreTestUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.springframework.test.context.TestPropertySource;
@@ -17,12 +18,12 @@ public class LdapServiceRegistryDaoTests extends BaseLdapServiceRegistryDaoTests
 
     @Before
     public void setup() {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        CoreTestUtils.checkContinuousIntegrationBuild(false);
     }
 
     @BeforeClass
     public static void bootstrap() throws Exception {
-        LdapIntegrationTestsOperations.checkContinuousIntegrationBuild(false);
+        CoreTestUtils.checkContinuousIntegrationBuild(false);
         LdapIntegrationTestsOperations.initDirectoryServer(1390);
     }
 }

@@ -4,7 +4,6 @@ import com.unboundid.ldap.sdk.LDAPConnection;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.LdapTestUtils;
 import org.apereo.cas.util.ldap.uboundid.InMemoryTestLdapDirectoryServer;
-import org.junit.Assume;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
@@ -84,20 +83,5 @@ public class LdapIntegrationTestsOperations {
      */
     public static void populateDefaultEntries(final LDAPConnection c, final String baseDn) throws Exception {
         populateEntries(c, new ClassPathResource("ldif/users-groups.ldif").getInputStream(), baseDn);
-    }
-
-    /**
-     * Check continuous integration build.
-     *
-     * @param ciBuildAssumption the ci build assumption
-     */
-    public static void checkContinuousIntegrationBuild(final boolean ciBuildAssumption) {
-        final String sysProp = System.getProperty("CI", Boolean.FALSE.toString());
-        final String envProp = System.getenv("CI");
-        final boolean result = "true".equals(sysProp) || "true".equals(envProp);
-        if (ciBuildAssumption) {
-            Assume.assumeTrue(result);
-        }
-        Assume.assumeFalse(ciBuildAssumption);
     }
 }
