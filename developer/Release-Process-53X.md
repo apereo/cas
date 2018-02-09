@@ -52,10 +52,11 @@ Do not forget to commit all changes and push changes upstream, creatng a new rem
 
 ### Build 
 
-In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). Then build the project using the following command:
+- In the project's `gradle.properties`, change the project version to the release version. (i.e. `5.0.0-RC1`). 
+- Then build the project using the following command:
 
 ```bash
-./gradlew clean assemble install -x test --parallel -x check -DpublishReleases=true
+./gradlew clean assemble install -x test -x check -DpublishReleases=true -DskipNodeModulesCleanUp=true -DskipNpmCache=true
 ```
 
 ### Release
