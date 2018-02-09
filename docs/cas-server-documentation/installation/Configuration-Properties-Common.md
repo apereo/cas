@@ -574,6 +574,8 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
 # ${configurationKey}.dynamoDb.timeOffset=0
 
+# ${configurationKey}.dynamoDb.localInstance=false
+
 # ${configurationKey}.dynamoDb.readCapacity=10
 # ${configurationKey}.dynamoDb.writeCapacity=10
 # ${configurationKey}.dynamoDb.connectionTimeout=5000
