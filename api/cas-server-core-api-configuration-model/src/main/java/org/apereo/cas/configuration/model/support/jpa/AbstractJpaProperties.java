@@ -1,14 +1,15 @@
 package org.apereo.cas.configuration.model.support.jpa;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ConnectionPoolingProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Common properties for all jpa configs.
@@ -160,4 +161,16 @@ public abstract class AbstractJpaProperties implements Serializable {
      * or returned back verbatim.
      */
     private boolean dataSourceProxy;
+
+    /**
+     * The Jpa Driver type: only JDBC currently.
+     */
+    private JpaType type = JpaType.JDBC;
+
+    public enum JpaType {
+        /**
+         * RDBMS type using hibernate.
+         */
+        JDBC
+    }
 }

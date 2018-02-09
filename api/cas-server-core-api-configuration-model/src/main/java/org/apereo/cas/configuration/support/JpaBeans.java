@@ -5,9 +5,12 @@ import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.config.DefaultJpaEntityManagerFactoryBeanFactory;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.jpa.DatabaseProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
+import org.apereo.cas.support.jpa.JpaEntityManagerFactoryBeanFactory;
+import org.apereo.cas.support.jpa.JpaRuntimeException;
 import org.hibernate.cfg.Environment;
 import org.springframework.jdbc.datasource.lookup.DataSourceLookupFailureException;
 import org.springframework.jdbc.datasource.lookup.JndiDataSourceLookup;
@@ -27,6 +30,20 @@ import java.util.Properties;
 @Slf4j
 @UtilityClass
 public class JpaBeans {
+
+    /**
+     * Get new data source, for JDBC.
+     *
+     * @param jpa the jpa properties
+     * @return the data source
+     */
+    public static DataSource newDataSource(final AbstractJpaProperties jpa) {
+        switch (jpa.getType()){
+            case JDBC:
+            default:
+                return newJdbcDataSource(jpa);
+        }
+    }
 
     /**
      * Get new data source, from JNDI lookup or created via direct configuration
@@ -50,7 +67,7 @@ public class JpaBeans {
      * @return the data source
      */
     @SneakyThrows
-    public static DataSource newDataSource(final AbstractJpaProperties jpaProperties) {
+    private static DataSource newJdbcDataSource(final AbstractJpaProperties jpaProperties) {
         final String dataSourceName = jpaProperties.getDataSourceName();
         final boolean proxyDataSource = jpaProperties.isDataSourceProxy();
 
@@ -103,14 +120,14 @@ public class JpaBeans {
         return bean;
     }
 
-
     /**
-     * New entity manager factory bean.
+     * New entity manager factory bean. @deprecated Being replaced with one to decouple EntityManagerFactoryBean creation.
      *
      * @param config        the config
      * @param jpaProperties the jpa properties
      * @return the local container entity manager factory bean
      */
+    @Deprecated
     public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(final JpaConfigDataHolder config,
                                                                                               final AbstractJpaProperties jpaProperties) {
         final LocalContainerEntityManagerFactoryBean bean = new LocalContainerEntityManagerFactoryBean();
@@ -129,17 +146,91 @@ public class JpaBeans {
         properties.put(Environment.DIALECT, jpaProperties.getDialect());
         properties.put(Environment.HBM2DDL_AUTO, jpaProperties.getDdlAuto());
         properties.put(Environment.STATEMENT_BATCH_SIZE, jpaProperties.getBatchSize());
-        if (StringUtils.isNotBlank(jpaProperties.getDefaultCatalog())) {
-            properties.put(Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
-        }
-        if (StringUtils.isNotBlank(jpaProperties.getDefaultSchema())) {
-            properties.put(Environment.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
-        }
+        putPropertyUnlessBlank(properties, Environment.DEFAULT_SCHEMA, jpaProperties.getDefaultSchema());
+        putPropertyUnlessBlank(properties, Environment.DEFAULT_CATALOG, jpaProperties.getDefaultCatalog());
         properties.put(Environment.ENABLE_LAZY_LOAD_NO_TRANS, Boolean.TRUE);
         properties.put(Environment.FORMAT_SQL, Boolean.TRUE);
         properties.putAll(jpaProperties.getProperties());
         bean.setJpaProperties(properties);
 
         return bean;
+    }
+
+    /**
+     * Creates new entitfy manager factory.
+     * @param factoryBeanFactory decoupled map for jpa type
+     * @param configDataHolder configuration details holder
+     * @param jpaProperties jpa properties
+     * @return EntityManagerFactoryBean fully configured
+     */
+    public static LocalContainerEntityManagerFactoryBean newHibernateEntityManagerFactoryBean(
+        final DefaultJpaEntityManagerFactoryBeanFactory factoryBeanFactory,
+        final JpaConfigDataHolder configDataHolder, final AbstractJpaProperties jpaProperties) {
+
+        final JpaEntityManagerFactoryBeanFactory jpaEmfbf = factoryBeanFactory.getFactoryForType(jpaProperties.getType());
+
+        if (jpaEmfbf == null) {
+            throw new JpaRuntimeException(String.format("No EntityManagerFactoryBean for [%s]", String.valueOf(jpaProperties.getType())));
+        }
+
+        return jpaEmfbf.newEntityManagerFactoryBean(configDataHolder, jpaProperties);
+    }
+
+    /**
+     * Add propery, with optional default, if set.
+     * @param properties Properties to add to
+     * @param name property name to add
+     * @param value property value to add
+     */
+    public static void putPropertyUnlessBlank(final Properties properties, final String name, final String value) {
+        putPropertyUnlessBlank(properties, name, value, null);
+    }
+
+    /**
+     * Add propery, with optional default, if set.
+     * @param properties Properties to add to
+     * @param name property name to add
+     * @param value property value to add
+     */
+    public static void putPropertyUnlessBlank(final Properties properties, final String name, final Integer value) {
+        putPropertyUnlessBlank(properties, name, value, null);
+    }
+
+    /**
+     * Add propery, with optional default, if set.
+     * @param properties Properties to add to
+     * @param name property name to add
+     * @param value property value to add
+     * @param defaultValue default value, ignored if +null+
+     */
+    public static void putPropertyUnlessBlank(final Properties properties, final String name, final String value, final String defaultValue) {
+        if (StringUtils.isNotBlank(value)) {
+            LOGGER.debug("Property [{}] set to [{}].", name, value);
+            properties.put(name, value);
+        } else if (StringUtils.isNotBlank(defaultValue)) {
+            LOGGER.warn("Property [{}] not set: failover to [{}].", name, defaultValue);
+            properties.put(name, defaultValue);
+        } else {
+            LOGGER.debug("Property [{}] not set: using default [{}].", name, properties.get(name));
+        }
+    }
+
+    /**
+     * Add propery, with optional default, if set.
+     * @param properties Properties to add to
+     * @param name property name to add
+     * @param value property value to add
+     * @param defaultValue default value, ignored if +null+
+     */
+    public static void putPropertyUnlessBlank(final Properties properties, final String name, final Integer value, final Integer defaultValue) {
+        if (value != null) {
+            LOGGER.debug("Property [{}] set to [{}].", name, value);
+            properties.put(name, value);
+        } else if (defaultValue != null) {
+            LOGGER.warn("Property [{}] not set: failover to [{}].", name, defaultValue);
+            properties.put(name, defaultValue);
+        } else {
+            LOGGER.trace("Property [{}] not set: no failover.", name);
+        }
     }
 }

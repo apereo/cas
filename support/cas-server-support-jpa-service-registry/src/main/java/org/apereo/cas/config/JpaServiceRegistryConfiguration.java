@@ -65,18 +65,21 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
         return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
     }
 
+    @RefreshScope
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
-            new JpaConfigDataHolder(
-                jpaServiceVendorAdapter(),
-                "jpaServiceRegistryContext",
-                jpaServicePackagesToScan(),
-                dataSourceService()),
-            casProperties.getServiceRegistry().getJpa());
+    public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory(@Qualifier("jpaEntityManagerFactoryBeanFactory")
+                                                                                  final DefaultJpaEntityManagerFactoryBeanFactory factory) {
+        return JpaBeans.newHibernateEntityManagerFactoryBean(factory,
+                new JpaConfigDataHolder(
+                        jpaServiceVendorAdapter(),
+                        "jpaServiceRegistryContext",
+                        jpaServicePackagesToScan(),
+                        dataSourceService()),
+                casProperties.getServiceRegistry().getJpa());
     }
 
+    @RefreshScope
     @Autowired
     @Bean
     public PlatformTransactionManager transactionManagerServiceReg(@Qualifier("serviceEntityManagerFactory") final EntityManagerFactory emf) {
@@ -85,6 +88,7 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
         return mgmr;
     }
 
+    @RefreshScope
     @Bean
     public DataSource dataSourceService() {
         return JpaBeans.newDataSource(casProperties.getServiceRegistry().getJpa());
