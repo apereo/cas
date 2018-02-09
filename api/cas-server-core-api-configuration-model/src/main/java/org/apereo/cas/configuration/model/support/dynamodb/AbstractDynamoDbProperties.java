@@ -138,4 +138,12 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
      * Maximum connections setting.
      */
     private int maxConnections = 10;
+
+    /**
+     * Indicates that the database instance is local to the deployment
+     * that does not require or use any credentials or other configuration
+     * other than host and region. This is mostly used during development
+     * and testing.
+     */
+    private boolean localInstance;
 }
