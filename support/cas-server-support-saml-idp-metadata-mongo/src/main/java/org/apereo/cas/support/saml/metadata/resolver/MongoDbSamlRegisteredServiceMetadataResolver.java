@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbSamlRegisteredServiceMetadataResolver extends BaseSamlRegisteredServiceMetadataResolver {
-
-
     private final MongoTemplate mongoTemplate;
     private final String collectionName;
 

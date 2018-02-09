@@ -50,7 +50,7 @@ public class CosmosDbServiceRegistryDao extends AbstractServiceRegistryDao {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) registeredService).setId(System.currentTimeMillis());
+            registeredService.setId(System.currentTimeMillis());
             insert(registeredService);
         } else {
             update(registeredService);
