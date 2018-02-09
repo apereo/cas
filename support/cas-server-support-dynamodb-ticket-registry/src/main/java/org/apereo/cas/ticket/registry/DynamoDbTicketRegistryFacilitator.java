@@ -48,7 +48,6 @@ import java.util.stream.Collectors;
 @Getter
 @AllArgsConstructor
 public class DynamoDbTicketRegistryFacilitator {
-
     @Getter
     private enum ColumnNames {
 
@@ -68,7 +67,6 @@ public class DynamoDbTicketRegistryFacilitator {
     private final DynamoDbTicketRegistryProperties dynamoDbProperties;
 
     private final AmazonDynamoDB amazonDynamoDBClient;
-
 
     /**
      * Delete.
@@ -143,7 +141,7 @@ public class DynamoDbTicketRegistryFacilitator {
             if (returnItem != null) {
                 final Ticket ticket = deserializeTicket(returnItem);
                 LOGGER.debug("Located ticket [{}]", ticket);
-                if (ticket.isExpired()) {
+                if (ticket == null || ticket.isExpired()) {
                     LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
                     return null;
                 }
