@@ -19,7 +19,6 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
 @TestPropertySource(properties = "cas.authn.adaptive.risk.geoLocation.enabled=true")
 public class GeoLocationAuthenticationRequestRiskCalculatorTests extends BaseAuthenticationRequestRiskCalculatorTests {
 
