@@ -31,7 +31,7 @@ import java.util.stream.Stream;
 @Slf4j
 @AllArgsConstructor
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
-    private List<AWSCredentialsProvider> chain = new ArrayList<>();
+    private final List<AWSCredentialsProvider> chain;
 
     public ChainingAWSCredentialsProvider(final AWSCredentialsProvider... chain) {
         this.chain = Stream.of(chain).collect(Collectors.toList());

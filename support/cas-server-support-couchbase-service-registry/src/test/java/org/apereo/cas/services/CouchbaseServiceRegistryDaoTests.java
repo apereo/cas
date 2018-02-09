@@ -1,6 +1,5 @@
 package org.apereo.cas.services;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
@@ -46,7 +45,6 @@ public class CouchbaseServiceRegistryDaoTests {
     private ServiceRegistryDao serviceRegistryDao;
 
     @BeforeClass
-    @SneakyThrows
     public static void setup() {
         cleanup();
 
@@ -66,7 +64,6 @@ public class CouchbaseServiceRegistryDaoTests {
     }
 
     @Test
-    @SneakyThrows
     public void verifySaveAndLoad() {
         final List<RegisteredService> list = new ArrayList<>();
         for (int i = 0; i < LOAD_SIZE; i++) {
@@ -91,7 +88,6 @@ public class CouchbaseServiceRegistryDaoTests {
         property.setValues(values);
         propertyMap.put("field1", property);
         rs.setProperties(propertyMap);
-
         return rs;
     }
 
