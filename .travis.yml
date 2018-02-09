@@ -46,7 +46,7 @@ before_install:
 - chmod -R 777 ./ci/run-influxdb-server.sh
 - ./ci/run-influxdb-server.sh
 - chmod -R 777 ./ci/run-dynamodb-server.sh
-- ./ci/run-influxdb-server.sh
+- ./ci/run-dynamodb-server.sh
 - chmod -R 777 ./ci/run-couchbase-server.sh
 - ./ci/run-couchbase-server.sh
 - chmod -R 777 ./ci/init-travis-build.sh
