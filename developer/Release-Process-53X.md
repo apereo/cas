@@ -64,7 +64,7 @@ Do not forget to commit all changes and push changes upstream, creatng a new rem
 Release the project using the following commands:
 
 ```bash
-./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD>
+./gradlew uploadArchives -DpublishReleases=true -DsonatypeUsername=<UID> -DsonatypePassword=<PASSWORD> -DskipNodeModulesCleanUp=true -DskipNpmCache=true
 ```
 
 ## Performing the Release
