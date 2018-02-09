@@ -3,6 +3,7 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
 import org.junit.Before;
 import org.junit.Test;
@@ -11,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -31,16 +31,13 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@IfProfileValue(name = "dynamoDbEnabled", value = "true")
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {DynamoDbServiceRegistryConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        RefreshAutoConfiguration.class})
-@TestPropertySource(properties = {"cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000",
-        "cas.serviceRegistry.dynamoDb.credentialAccessKey=AKIALUS4ZCYABQ",
-        "cas.serviceRegistry.dynamoDb.dropTablesOnStartup=true",
-        "cas.serviceRegistry.dynamoDb.credentialSecretKey=obZx92Un8zu+D1zTkJOFfZ"})
+    CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    RefreshAutoConfiguration.class})
+@TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
 @Slf4j
 public class DynamoDbServiceRegistryTests {
     @Autowired
