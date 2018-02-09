@@ -1,6 +1,9 @@
 package org.apereo.cas.influxdb;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.influxdb.annotation.Column;
 import org.influxdb.annotation.Measurement;
 import org.influxdb.dto.Point;
@@ -10,8 +13,8 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.annotation.IfProfileValue;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,9 +28,10 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@RunWith(SpringRunner.class)
-@IfProfileValue(name = "influxDbEnabled", value = "true")
 @Slf4j
+@SpringBootTest(classes = RefreshAutoConfiguration.class)
+@RunWith(ConditionalSpringRunner.class)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class InfluxDbConnectionFactoryTests {
     private static final String CAS_EVENTS_DATABASE = "casEventsDatabase";
     private InfluxDbConnectionFactory factory;
@@ -35,7 +39,7 @@ public class InfluxDbConnectionFactoryTests {
     @Before
     public void init() {
         this.factory = new InfluxDbConnectionFactory("http://localhost:8086", "root",
-                "root", CAS_EVENTS_DATABASE, true);
+            "root", CAS_EVENTS_DATABASE, true);
     }
 
     @After
@@ -46,9 +50,9 @@ public class InfluxDbConnectionFactoryTests {
     @Test
     public void verifyWritePoint() {
         final Point p = Point.measurement("events")
-                .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
-                .addField("hostname", "cas.example.org")
-                .build();
+            .time(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+            .addField("hostname", "cas.example.org")
+            .build();
         factory.write(p, CAS_EVENTS_DATABASE);
         final QueryResult result = factory.query("*", "events", CAS_EVENTS_DATABASE);
         final InfluxDBResultMapper resultMapper = new InfluxDBResultMapper();
