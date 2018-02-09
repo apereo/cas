@@ -19,7 +19,7 @@ Please take the following steps to obtain support from the CAS user community.
 
 <div class="alert alert-info"><strong>Community Etiquette</strong><p>Remember that activity on the mailing lists and all other support channels
 is entirely voluntary. There are no SLAs. There are no guarantees. You may opt into professional support agreements with 
-Apereo commercial service providers if that is unacceptable.</p></div>
+Apereo commercial service providers if that is unacceptable. Also unless explicitly asked, please <b>avoid</b> contacting individual project members directly.</p></div>
 
 ### Chat Rooms 
 
