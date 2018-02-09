@@ -25,7 +25,6 @@ import java.util.Collection;
  */
 @Slf4j
 public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
-
     
     /**
      * Geolocation service.
@@ -41,9 +40,8 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<CasEvent> events) {
-
-        final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocationFromRequestContext();
-        if (loc.isValid()) {
+        final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocation(request);
+        if (loc != null && loc.isValid()) {
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);
             final long count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();
             LOGGER.debug("Total authentication events found for [{}]: [{}]", loc, count);
