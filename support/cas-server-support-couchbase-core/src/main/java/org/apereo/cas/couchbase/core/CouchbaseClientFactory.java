@@ -146,7 +146,7 @@ public class CouchbaseClientFactory {
     private void openBucket() {
         try {
             LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
-            this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.SECONDS);
+            this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
         }
