@@ -3,6 +3,7 @@ package org.apereo.cas.util.junit;
 import lombok.SneakyThrows;
 import org.junit.runners.model.FrameworkMethod;
 import org.junit.runners.model.InitializationError;
+import org.junit.runners.model.Statement;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
@@ -36,5 +37,31 @@ public class ConditionalSpringRunner extends SpringJUnit4ClassRunner {
             return !condition.isSatisfied();
         }
         return super.isTestMethodIgnored(frameworkMethod);
+    }
+
+    @Override
+    @SneakyThrows
+    protected Statement withBeforeClasses(final Statement statement) {
+        final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        if (ignore != null) {
+            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
+            if (!condition.isSatisfied()) {
+                return new ConditionalIgnoreRule.IgnoreStatement(condition);
+            }
+        }
+        return super.withBeforeClasses(statement);
+    }
+
+    @Override
+    @SneakyThrows
+    protected Statement withAfterClasses(final Statement statement) {
+        final ConditionalIgnore ignore = getTestClass().getJavaClass().getAnnotation(ConditionalIgnore.class);
+        if (ignore != null) {
+            final IgnoreCondition condition = ignore.condition().getDeclaredConstructor().newInstance();
+            if (!condition.isSatisfied()) {
+                return new ConditionalIgnoreRule.IgnoreStatement(condition);
+            }
+        }
+        return super.withAfterClasses(statement);
     }
 }

@@ -14,6 +14,7 @@ import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,7 +22,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-@RunWith(SpringRunner.class)
+@RunWith(ConditionalSpringRunner.class)
 @SpringBootTest(classes = {CasConsentLdapConfiguration.class, RefreshAutoConfiguration.class})
 public abstract class BaseLdapConsentRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();

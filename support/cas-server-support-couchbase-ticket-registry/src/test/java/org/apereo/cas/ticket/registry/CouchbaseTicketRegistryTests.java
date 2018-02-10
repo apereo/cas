@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -23,7 +22,9 @@ import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
@@ -45,7 +46,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @RunWith(ConditionalParameterizedRunner.class)
-//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @SpringBootTest(classes = {CouchbaseTicketRegistryConfiguration.class,
     CasCoreTicketsConfiguration.class,
     CasCoreTicketCatalogConfiguration.class,
@@ -77,7 +78,6 @@ public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @BeforeClass
-    @SneakyThrows
     public static void setup() {
         cleanup();
         final HttpResponse response = CouchbaseClientFactory.createDefaultBucket();

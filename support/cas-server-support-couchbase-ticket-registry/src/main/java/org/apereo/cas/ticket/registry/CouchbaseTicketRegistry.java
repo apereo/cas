@@ -227,7 +227,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
                 + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
 
         }
-        return 30;
+        return expTime;
     }
 }
 
