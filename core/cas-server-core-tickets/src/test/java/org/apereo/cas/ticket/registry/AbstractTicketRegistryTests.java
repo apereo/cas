@@ -264,6 +264,7 @@ public abstract class AbstractTicketRegistryTests {
     @Test
     public void verifyGetTicketsIsZero() {
         try {
+            this.ticketRegistry.deleteAll();
             assertEquals("The size of the empty registry is not zero.", 0, this.ticketRegistry.getTickets().size());
         } catch (final Exception e) {
             throw new AssertionError(EXCEPTION_CAUGHT_NONE_EXPECTED + e.getMessage(), e);

@@ -80,7 +80,6 @@ public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
     @SneakyThrows
     public static void setup() {
         cleanup();
-
         final HttpResponse response = CouchbaseClientFactory.createDefaultBucket();
         assertEquals(202, response.getStatusLine().getStatusCode());
     }
@@ -99,4 +98,10 @@ public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
     public TicketRegistry getNewTicketRegistry() {
         return ticketRegistry;
     }
+
+    @Override
+    protected boolean isIterableRegistry() {
+        return false;
+    }
+
 }
