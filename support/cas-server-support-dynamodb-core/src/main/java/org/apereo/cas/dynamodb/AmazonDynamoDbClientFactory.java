@@ -33,9 +33,9 @@ public class AmazonDynamoDbClientFactory {
     @SneakyThrows
     public AmazonDynamoDB createAmazonDynamoDb(final AbstractDynamoDbProperties dynamoDbProperties) {
         if (dynamoDbProperties.isLocalInstance()) {
-            return AmazonDynamoDBClientBuilder.standard()
-                .withEndpointConfiguration(new AwsClientBuilder.EndpointConfiguration(dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion()))
-                .build();
+            final AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration(
+                dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
+            return AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(endpoint).build();
         }
 
         final ClientConfiguration cfg = new ClientConfiguration();
