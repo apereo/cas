@@ -2,6 +2,7 @@ package org.apereo.cas.ticket.registry;
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
@@ -83,8 +84,11 @@ public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
     public static void setup() {
         cleanup();
 
-        final HttpResponse response = CouchbaseClientFactory.createDefaultBucket();
+        HttpResponse response = CouchbaseClientFactory.createDefaultBucket();
         assertEquals(202, response.getStatusLine().getStatusCode());
+
+        response = CouchbaseClientFactory.createCredentials();
+        assertEquals(200, response.getStatusLine().getStatusCode());
     }
 
     @AfterClass

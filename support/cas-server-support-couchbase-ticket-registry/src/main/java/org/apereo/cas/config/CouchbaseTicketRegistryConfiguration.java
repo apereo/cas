@@ -41,7 +41,8 @@ public class CouchbaseTicketRegistryConfiguration {
         final CouchbaseTicketRegistryProperties cb = casProperties.getTicket().getRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(cb.getNodeSet());
         return new CouchbaseClientFactory(nodes, cb.getBucket(),
-            cb.getPassword(), Beans.newDuration(cb.getTimeout()).toMillis(),
+            cb.getPassword(),
+            Beans.newDuration(cb.getTimeout()).toMillis(),
             CouchbaseTicketRegistry.UTIL_DOCUMENT,
             CouchbaseTicketRegistry.ALL_VIEWS);
     }

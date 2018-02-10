@@ -120,7 +120,7 @@ public class CouchbaseClientFactory {
     }
 
     private void initializeBucket() {
-        createBucketIfNeeded();
+        openBucket();
         createDesignDocumentAndViewIfNeeded();
     }
 
@@ -143,10 +143,10 @@ public class CouchbaseClientFactory {
         }
     }
 
-    private void createBucketIfNeeded() {
+    private void openBucket() {
         try {
             LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
-            this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
+            this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.SECONDS);
         } catch (final Exception e) {
             throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
         }
@@ -175,6 +175,21 @@ public class CouchbaseClientFactory {
         postParameters.add(new BasicNameValuePair("ramQuotaMB", "120"));
         final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
         return HttpUtils.executePost("http://localhost:8091/pools/default/buckets", entity);
+    }
+
+    /**
+     * Create credentials http response.
+     *
+     * @return the http response
+     */
+    @SneakyThrows
+    public static HttpResponse createCredentials() {
+        final List postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("username", "Administrator"));
+        postParameters.add(new BasicNameValuePair("password", "password"));
+        postParameters.add(new BasicNameValuePair("port", "8091"));
+        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
+        return HttpUtils.executePost("http://localhost:8091/settings/web", entity);
     }
 }
 
