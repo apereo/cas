@@ -10,6 +10,7 @@ import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.aws.ChainingAWSCredentialsProvider;
 import org.apereo.cas.configuration.model.support.dynamodb.AbstractDynamoDbProperties;
@@ -22,6 +23,7 @@ import java.net.InetAddress;
  * @author Misagh Moayyed
  * @since 5.3.0
  */
+@Slf4j
 public class AmazonDynamoDbClientFactory {
 
     /**
@@ -33,11 +35,14 @@ public class AmazonDynamoDbClientFactory {
     @SneakyThrows
     public AmazonDynamoDB createAmazonDynamoDb(final AbstractDynamoDbProperties dynamoDbProperties) {
         if (dynamoDbProperties.isLocalInstance()) {
+            LOGGER.debug("Creating DynamoDb standard client with endpoint [{}] and region [{}]",
+                dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
             final AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration(
                 dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
             return AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(endpoint).build();
         }
 
+        LOGGER.debug("Creating DynamoDb client configuration...");
         final ClientConfiguration cfg = new ClientConfiguration();
         cfg.setConnectionTimeout(dynamoDbProperties.getConnectionTimeout());
         cfg.setMaxConnections(dynamoDbProperties.getMaxConnections());
@@ -52,6 +57,7 @@ public class AmazonDynamoDbClientFactory {
         cfg.setCacheResponseMetadata(dynamoDbProperties.isCacheResponseMetadata());
 
         if (StringUtils.isNotBlank(dynamoDbProperties.getLocalAddress())) {
+            LOGGER.debug("Creating DynamoDb client local address [{}]", dynamoDbProperties.getLocalAddress());
             cfg.setLocalAddress(InetAddress.getByName(dynamoDbProperties.getLocalAddress()));
         }
 
@@ -59,17 +65,21 @@ public class AmazonDynamoDbClientFactory {
             ChainingAWSCredentialsProvider.getInstance(dynamoDbProperties.getCredentialAccessKey(),
                 dynamoDbProperties.getCredentialSecretKey(), dynamoDbProperties.getCredentialsPropertiesFile());
 
+        LOGGER.debug("Creating DynamoDb client instance...");
         final AmazonDynamoDBClient client = new AmazonDynamoDBClient(provider, cfg);
 
         if (StringUtils.isNotBlank(dynamoDbProperties.getEndpoint())) {
+            LOGGER.debug("Setting DynamoDb client endpoint [{}]", dynamoDbProperties.getEndpoint());
             client.setEndpoint(dynamoDbProperties.getEndpoint());
         }
 
         if (StringUtils.isNotBlank(dynamoDbProperties.getRegion())) {
+            LOGGER.debug("Setting DynamoDb client region [{}]", dynamoDbProperties.getRegion());
             client.setRegion(Region.getRegion(Regions.valueOf(dynamoDbProperties.getRegion())));
         }
 
         if (StringUtils.isNotBlank(dynamoDbProperties.getRegionOverride())) {
+            LOGGER.debug("Setting DynamoDb client region override [{}]", dynamoDbProperties.getRegionOverride());
             client.setSignerRegionOverride(dynamoDbProperties.getRegionOverride());
         }
 

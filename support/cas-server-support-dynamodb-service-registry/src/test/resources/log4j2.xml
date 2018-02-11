@@ -15,10 +15,10 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="off" additivity="false">
+        <Logger name="org.apereo" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="com.amazonaws" level="off" additivity="false">
+        <Logger name="com.amazonaws" level="trace" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Root level="off" additivity="false">

@@ -19,8 +19,6 @@ import org.springframework.core.io.Resource;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * This is {@link ChainingAWSCredentialsProvider}.
@@ -33,30 +31,20 @@ import java.util.stream.Stream;
 public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     private final List<AWSCredentialsProvider> chain;
 
-    public ChainingAWSCredentialsProvider(final AWSCredentialsProvider... chain) {
-        this.chain = Stream.of(chain).collect(Collectors.toList());
-    }
-
-    /**
-     * Add provider.
-     *
-     * @param p the provider
-     */
-    public void addProvider(final AWSCredentialsProvider p) {
-        this.chain.add(p);
-    }
-
     @Override
     public AWSCredentials getCredentials() {
+        LOGGER.debug("Attempting to locate AWS credentials from the chain...");
         for (final AWSCredentialsProvider p : this.chain) {
             AWSCredentials c;
             try {
+                LOGGER.debug("Calling credential provider [{}] to fetch credentials...", p.getClass().getSimpleName());
                 c = p.getCredentials();
             } catch (final Throwable e) {
                 LOGGER.trace(e.getMessage(), e);
                 c = null;
             }
             if (c != null) {
+                LOGGER.debug("Fetched credentials from provider successfully.", p.getClass().getSimpleName());
                 return c;
             }
         }
@@ -121,6 +109,9 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
     public static AWSCredentialsProvider getInstance(final String credentialAccessKey, final String credentialSecretKey,
                                                      final Resource credentialPropertiesFile,
                                                      final String profilePath, final String profileName) {
+
+        LOGGER.debug("Attmpting Locating AWS credentials...");
+
         final List<AWSCredentialsProvider> chain = new ArrayList<>();
         chain.add(new InstanceProfileCredentialsProvider(false));
 
@@ -142,6 +133,8 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
             final BasicAWSCredentials credentials = new BasicAWSCredentials(credentialAccessKey, credentialSecretKey);
             chain.add(new AWSStaticCredentialsProvider(credentials));
         }
+
+        LOGGER.debug("AWS chained credential providers are configured as [{}]", chain);
         return new ChainingAWSCredentialsProvider(chain);
     }
 }
