@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CouchbaseClientFactory {
     private static final int DEFAULT_TIMEOUT = 5;
-    private static final int BUCKET_QUOTA = 120;
 
     private Cluster cluster;
 
@@ -95,6 +94,7 @@ public class CouchbaseClientFactory {
     @SneakyThrows
     public void shutdown() {
         if (this.cluster != null) {
+            LOGGER.debug("Disconnecting from Couchbase cluster");
             this.cluster.disconnect();
         }
     }
@@ -103,6 +103,7 @@ public class CouchbaseClientFactory {
         if (this.cluster != null) {
             shutdown();
         }
+        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", this.nodes);
         this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
     }
 

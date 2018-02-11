@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew $@"
 gradleBuild="assemble"
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --parallel -DskipNestedConfigMetadataGen=true "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --parallel -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -33,7 +33,7 @@ echo $tasks
 
 waitRetVal=-1
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
-    waitloop="while sleep 9m; do echo '=====[ Gradle build is still running ]====='; done &"
+    waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
 fi
