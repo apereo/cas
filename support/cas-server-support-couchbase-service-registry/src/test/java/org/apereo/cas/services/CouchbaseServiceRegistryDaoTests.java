@@ -1,15 +1,11 @@
 package org.apereo.cas.services;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
 import org.apereo.cas.config.CouchbaseServiceRegistryConfiguration;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,19 +39,6 @@ public class CouchbaseServiceRegistryDaoTests {
     @Autowired
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
-
-    @BeforeClass
-    public static void setup() {
-        cleanup();
-
-        final HttpResponse response = CouchbaseClientFactory.createDefaultBucket();
-        assertEquals(202, response.getStatusLine().getStatusCode());
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        CouchbaseClientFactory.removeDefaultBucket();
-    }
 
     @Before
     public void setUp() {
