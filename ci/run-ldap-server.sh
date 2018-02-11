@@ -16,6 +16,14 @@ rm -Rf docker-images
 
 echo "Running LDAP docker image"
 docker run -d -p 10389:389 --name="ldap-server" apereocastests/ldap
-docker ps
+
+docker ps | grep "ldap-server"
+retVal=$?
+if [ $retVal == 0 ]; then
+    echo "LDAP docker image is running."
+else
+    echo "LDAP docker image failed to start."
+    exit $retVal
+fi
 
 
