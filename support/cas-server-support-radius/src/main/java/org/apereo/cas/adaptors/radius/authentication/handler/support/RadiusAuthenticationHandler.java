@@ -71,7 +71,7 @@ public class RadiusAuthenticationHandler extends AbstractUsernamePasswordAuthent
         try {
             final String username = credential.getUsername();
             final Pair<Boolean, Optional<Map<String, Object>>> result =
-                RadiusUtils.authenticate(username, credential.getPassword(), this.servers,
+                RadiusUtils.authenticate(username, credential.getPassword(), null, this.servers,
                     this.failoverOnAuthenticationFailure, this.failoverOnException);
             if (result.getKey()) {
                 return createHandlerResult(credential,

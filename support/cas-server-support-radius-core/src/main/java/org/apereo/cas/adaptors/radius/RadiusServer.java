@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.radius;
 
+import java.io.Serializable;
+
 /**
  * Interface representing a Radius Server.
  *
@@ -25,11 +27,12 @@ public interface RadiusServer {
      *
      * @param username Non-null username to authenticate.
      * @param password Password to authenticate.
+     * @param state Identification of challenged state
      *
      * @return {@link RadiusResponse} on success, null otherwise.
      *
      * @throws Exception On indeterminate case where authentication was prevented by a system (e.g. IO) error.
      */
-    RadiusResponse authenticate(String username, String password) throws Exception;
+    RadiusResponse authenticate(String username, String password, Serializable state) throws Exception;
 
 }

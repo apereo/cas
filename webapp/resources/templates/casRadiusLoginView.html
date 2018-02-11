@@ -13,6 +13,9 @@
             <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
                 <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
             </div>
+            <div class="alert alert-info" th:if="${accessChallenged!=null}">
+                <p th:text="${accessChallenged}"/>
+            </div>
 
             <div class="row fl-controls-left">
                 <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
@@ -32,4 +35,3 @@
 </div>
 </body>
 </html>
-

@@ -22,7 +22,9 @@ public enum RadiusProtocol {
     MSCHAPv1("mschapv1"), /** The MSCHA pv2. */
     MSCHAPv2("mschapv2"), /** The pap. */
     PAP("pap"), /** The peap. */
-    PEAP("peap");
+    PEAP("peap"),
+    /** Internal protocol to distinguish RSA SecurId challenged communication */
+    SECURID_PAP("securid-pap");
 
     /** The name. */
     private final String name;
