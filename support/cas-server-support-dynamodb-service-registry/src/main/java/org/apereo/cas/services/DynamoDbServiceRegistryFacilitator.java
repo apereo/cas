@@ -179,6 +179,7 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     @SneakyThrows
     public void createServicesTable(final boolean deleteTables) {
+        LOGGER.debug("Attempting to create DynamoDb services table");
         final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(
             new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(ColumnNames.ID.getColumnName(), KeyType.HASH))
