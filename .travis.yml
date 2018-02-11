@@ -49,6 +49,8 @@ before_install:
 - ./ci/run-dynamodb-server.sh
 - chmod -R 777 ./ci/run-couchbase-server.sh
 - ./ci/run-couchbase-server.sh
+- chmod -R 777 ./ci/run-radius-server.sh
+- ./ci/run-radius-server.sh
 - chmod -R 777 ./ci/init-travis-build.sh
 - ./ci/init-travis-build.sh
 - chmod -R 777 ./ci/push-docs-ghpages.sh
