@@ -15,13 +15,13 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn" additivity="false">
+        <Logger name="org.apereo" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="net.spy.memcached" level="warn" additivity="false">
+        <Logger name="net.spy.memcached" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="de.flapdoodle" level="warn" additivity="false">
+        <Logger name="de.flapdoodle" level="off" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
         <Logger name="org.hibernate.validator" level="error" additivity="false">
@@ -29,7 +29,7 @@
         </Logger>
 
 
-        <Root level="warn">
+        <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
