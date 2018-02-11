@@ -1,5 +1,7 @@
 #!/bin/bash
 
+while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+
 echo "Pulling Couchbase docker image..."
 docker pull couchbase/server:4.6.4
 

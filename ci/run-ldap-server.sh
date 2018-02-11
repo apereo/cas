@@ -1,5 +1,7 @@
 #!/bin/bash
 
+while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+
 echo "Cloning 389-ds repository..."
 git clone --depth 1 https://github.com/jtgasper3/docker-images.git
 

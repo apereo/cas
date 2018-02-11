@@ -1,5 +1,7 @@
 #!/bin/bash
 
+while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+
 echo "Pulling InfluxDb docker image..."
 docker pull store/influxdata/influxdb:1.2.2
 
