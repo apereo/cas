@@ -1,8 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -21,13 +19,10 @@ import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CouchbaseTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +32,6 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 
 import java.util.Arrays;
 import java.util.Collection;
-
-import static org.junit.Assert.*;
 
 /**
  * This is {@link CouchbaseTicketRegistryTests}.
@@ -73,21 +66,9 @@ public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
     @Autowired
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
-
+                                                                       
     public CouchbaseTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
-    }
-
-    @BeforeClass
-    public static void setup() {
-        cleanup();
-        final HttpResponse response = CouchbaseClientFactory.createDefaultBucket();
-        assertEquals(HttpStatus.SC_ACCEPTED, response.getStatusLine().getStatusCode());
-    }
-
-    @AfterClass
-    public static void cleanup() {
-        CouchbaseClientFactory.removeDefaultBucket();
     }
 
     @Parameterized.Parameters
