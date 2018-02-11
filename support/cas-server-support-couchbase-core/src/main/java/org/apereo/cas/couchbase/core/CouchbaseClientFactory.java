@@ -147,20 +147,17 @@ public class CouchbaseClientFactory {
     private void openBucket() {
         try {
             LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
-            this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
+            if (StringUtils.isBlank(this.bucketPassword)) {
+                this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.MILLISECONDS);
+            } else {
+                this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.MILLISECONDS);
+            }
         } catch (final Exception e) {
             throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
         }
         LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
     }
-
-    /**
-     * Remove default bucket.
-     */
-    public static void removeDefaultBucket() {
-        HttpUtils.execute("http://localhost:8091/pools/default/buckets/default", "DELETE");
-    }
-
+    
     /**
      * Create default bucket http servlet response.
      *

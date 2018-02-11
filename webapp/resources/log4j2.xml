@@ -70,7 +70,7 @@
         </CasAppender>
     </Appenders>
     <Loggers>
-        <AsyncLogger name="com.couchbase" level="warn" additivity="false" includeLocation="true">
+        <AsyncLogger name="com.couchbase" level="off" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -78,7 +78,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.security" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.security" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -94,7 +94,7 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.apereo.services.persondir" level="warn" additivity="false" includeLocation="true">
+        <AsyncLogger name="org.apereo.services.persondir" level="off" additivity="false" includeLocation="true">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -106,30 +106,30 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.cloud.context" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.cloud.context" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.boot" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.aop" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.aop" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.boot.actuate.autoconfigure" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.boot.actuate.autoconfigure" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.webflow" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.webflow" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.session" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.session" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
@@ -137,77 +137,77 @@
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.integration" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.integration" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.messaging" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.messaging" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.web" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.web" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.orm.jpa" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.orm.jpa" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.scheduling" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.scheduling" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.thymeleaf" level="warn" additivity="false">
+        <AsyncLogger name="org.thymeleaf" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.pac4j" level="warn" additivity="false">
+        <AsyncLogger name="org.pac4j" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.opensaml" level="warn" additivity="false">
+        <AsyncLogger name="org.opensaml" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="net.sf.ehcache" level="warn" additivity="false">
+        <AsyncLogger name="net.sf.ehcache" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="com.ryantenney.metrics" level="warn" additivity="false">
+        <AsyncLogger name="com.ryantenney.metrics" level="off" additivity="false">
             <AppenderRef ref="console"/>
             <AppenderRef ref="file"/>
         </AsyncLogger>
-        <AsyncLogger name="net.jradius" level="warn" additivity="false">
+        <AsyncLogger name="net.jradius" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.openid4java" level="warn" additivity="false">
+        <AsyncLogger name="org.openid4java" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.ldaptive" level="warn" additivity="false">
+        <AsyncLogger name="org.ldaptive" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="com.hazelcast" level="warn" additivity="false">
+        <AsyncLogger name="com.hazelcast" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
         <AsyncLogger name="org.springframework.context.annotation" level="off" additivity="false" />
         <AsyncLogger name="org.springframework.boot.devtools" level="off" additivity="false" />
-        <AsyncLogger name="org.jasig.spring" level="warn" additivity="false">
+        <AsyncLogger name="org.jasig.spring" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.springframework.web.socket" level="warn" additivity="false">
+        <AsyncLogger name="org.springframework.web.socket" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.apache.cxf" level="warn" additivity="false">
+        <AsyncLogger name="org.apache.cxf" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
-        <AsyncLogger name="org.apache.http" level="warn" additivity="false">
+        <AsyncLogger name="org.apache.http" level="off" additivity="false">
             <AppenderRef ref="casConsole"/>
             <AppenderRef ref="casFile"/>
         </AsyncLogger>
