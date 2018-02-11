@@ -19,6 +19,7 @@ until $(curl --output /dev/null --silent --head --fail http://localhost:8091); d
 done
 
 echo -e "\nCreating default Couchbase bucket..."
-curl -X POST -d name=default -d ramQuotaMB=120 -d authType=none -d proxyPort=11216 http://localhost:8091/pools/default/buckets
+curl -X POST -d 'name=default' -d 'ramQuotaMB=120' -d 'authType=none' -d 'proxyPort=11216' http://localhost:8091/pools/default/buckets
+curl -X POST -d 'name=casbucket' -d 'ramQuotaMB=120' -d 'authType=none' -d 'proxyPort=11217' http://localhost:8091/pools/default/buckets
 
 

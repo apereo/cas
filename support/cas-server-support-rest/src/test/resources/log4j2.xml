@@ -15,13 +15,13 @@
         </RollingFile>
     </Appenders>
     <Loggers>
-        <Logger name="org.apereo" level="warn">
+        <Logger name="org.apereo" level="off">
             <AppenderRef ref="console"/>
         </Logger>
-        <Logger name="org.springframework" level="warn">
+        <Logger name="org.springframework" level="off">
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="warn">
+        <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>

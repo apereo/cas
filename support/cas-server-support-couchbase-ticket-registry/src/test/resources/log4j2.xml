@@ -21,7 +21,7 @@
         <Logger name="com.couchbase" level="debug" additivity="false">
             <AppenderRef ref="console"/>
         </Logger>
-        <Root level="warn">
+        <Root level="off">
             <AppenderRef ref="console"/>
         </Root>
     </Loggers>
