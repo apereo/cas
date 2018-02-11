@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew $@"
 gradleBuild="assemble"
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand --parallel -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
