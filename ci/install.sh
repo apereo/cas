@@ -7,7 +7,7 @@ fi
 
 gradle="sudo ./gradlew $@"
 gradleBuild="assemble"
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true -DshowStandardStreams=true "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true --parallel "
 
 if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
@@ -25,7 +25,7 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
     fi
 else
     echo -e "The build is publishing snapshots; Skipping tests and checks...\n"
-    gradleBuild="$gradleBuild -x test -x check -x javadoc --parallel "
+    gradleBuild="$gradleBuild -x test -x check -x javadoc  "
 fi
 
 tasks="$gradle $gradleBuildOptions $gradleBuild"
