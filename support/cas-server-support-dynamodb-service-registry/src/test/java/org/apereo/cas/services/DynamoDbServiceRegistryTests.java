@@ -47,6 +47,11 @@ public class DynamoDbServiceRegistryTests {
     @Qualifier("serviceRegistryDao")
     private ServiceRegistryDao serviceRegistryDao;
 
+    static {
+        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty("aws.secretKey", "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");
+    }
+
     @Before
     public void setUp() {
         final List<RegisteredService> services = this.serviceRegistryDao.load();
