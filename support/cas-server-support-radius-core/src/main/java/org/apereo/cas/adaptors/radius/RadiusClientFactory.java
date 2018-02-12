@@ -50,6 +50,11 @@ public class RadiusClientFactory {
         this(accountingPort, authenticationPort, DEFAULT_SOCKET_TIMEOUT, inetAddress, sharedSecret);
     }
 
+    public RadiusClientFactory(final String inetAddress, final String sharedSecret) {
+        this(RadiusServer.DEFAULT_PORT_ACCOUNTING, RadiusServer.DEFAULT_PORT_AUTHENTICATION,
+            DEFAULT_SOCKET_TIMEOUT, inetAddress, sharedSecret);
+    }
+
     /**
      * @param accountingPort     Sets the RADIUS server accounting port.
      * @param authenticationPort Sets the RADIUS server authentication port.
@@ -57,7 +62,6 @@ public class RadiusClientFactory {
      * @param inetAddress        RADIUS server network address.
      * @param sharedSecret       RADIUS server authentication shared secret.
      */
-
     /**
      * Creates a new RADIUS client instance using factory configuration settings.
      *
