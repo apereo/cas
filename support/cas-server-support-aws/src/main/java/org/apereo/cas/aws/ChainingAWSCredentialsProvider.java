@@ -48,7 +48,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
                 return c;
             }
         }
-        LOGGER.warn("No AWS credentials could be determined from the chain: [{}]");
+        LOGGER.warn("No AWS credentials could be determined from the chain: [{}]. Using anonymous credentials...");
         return new AnonymousAWSCredentials();
     }
 
@@ -110,7 +110,7 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
                                                      final Resource credentialPropertiesFile,
                                                      final String profilePath, final String profileName) {
 
-        LOGGER.debug("Attmpting Locating AWS credentials...");
+        LOGGER.debug("Attempting to locate AWS credentials...");
 
         final List<AWSCredentialsProvider> chain = new ArrayList<>();
         chain.add(new InstanceProfileCredentialsProvider(false));
