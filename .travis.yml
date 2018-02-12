@@ -12,7 +12,7 @@ services:
   - docker
 branches:
   only:
-  - docker-tests
+  - master
 jdk:
 - oraclejdk8
 # - oraclejdk9
