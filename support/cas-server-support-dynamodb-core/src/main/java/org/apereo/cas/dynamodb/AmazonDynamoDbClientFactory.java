@@ -39,8 +39,14 @@ public class AmazonDynamoDbClientFactory {
                 dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
             final AwsClientBuilder.EndpointConfiguration endpoint = new AwsClientBuilder.EndpointConfiguration(
                 dynamoDbProperties.getEndpoint(), dynamoDbProperties.getRegion());
-            return AmazonDynamoDBClientBuilder.standard().withEndpointConfiguration(endpoint).build();
+            return AmazonDynamoDBClientBuilder.standard()
+                .withEndpointConfiguration(endpoint)
+                .build();
         }
+
+        final AWSCredentialsProvider provider =
+            ChainingAWSCredentialsProvider.getInstance(dynamoDbProperties.getCredentialAccessKey(),
+                dynamoDbProperties.getCredentialSecretKey(), dynamoDbProperties.getCredentialsPropertiesFile());
 
         LOGGER.debug("Creating DynamoDb client configuration...");
         final ClientConfiguration cfg = new ClientConfiguration();
@@ -61,9 +67,6 @@ public class AmazonDynamoDbClientFactory {
             cfg.setLocalAddress(InetAddress.getByName(dynamoDbProperties.getLocalAddress()));
         }
 
-        final AWSCredentialsProvider provider =
-            ChainingAWSCredentialsProvider.getInstance(dynamoDbProperties.getCredentialAccessKey(),
-                dynamoDbProperties.getCredentialSecretKey(), dynamoDbProperties.getCredentialsPropertiesFile());
 
         LOGGER.debug("Creating DynamoDb client instance...");
         final AmazonDynamoDBClient client = new AmazonDynamoDBClient(provider, cfg);
