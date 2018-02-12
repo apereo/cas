@@ -81,7 +81,7 @@ Go through your catalog of changes found in your local overlay. Compare and diff
 original version. You can find out the delta between two versions via the following ways:
 
 1. If you have built the clean CAS overlay once, you will automatically get the original version typically
-in the `target` directory of CAS overlay. Find the correct file at the correct path, and compare.
+in the `target` or `build/libs` directory of CAS overlay. Find the correct file at the correct path and compare.
 
 2. Go directly to the [project source repository](https://github.com/apereo/cas), find the appropriate branch
 and compare files. 
