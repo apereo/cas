@@ -115,7 +115,6 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             final ServiceAccessCheckResult serviceAccessCheckResult = this.registeredServiceAccessStrategyEnforcer
                     .enforceServiceAccessStrategy(service,registeredService,authn,false);
             serviceAccessCheckResult.reThrowAccessDeniedTargetExceptionIfOccured();
-            //RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn, false);
         }
         return registeredService;
     }
