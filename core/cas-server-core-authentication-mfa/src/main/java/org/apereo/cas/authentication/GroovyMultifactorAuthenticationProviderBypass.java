@@ -21,7 +21,7 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
     private static final long serialVersionUID = -4909072898415688377L;
     private static final Logger LOGGER = LoggerFactory.getLogger(GroovyMultifactorAuthenticationProviderBypass.class);
 
-    private final Resource groovyScript;
+    private final transient Resource groovyScript;
 
     public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
         super(bypass);
@@ -35,10 +35,10 @@ public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultif
         try {
             final Principal principal = authentication.getPrincipal();
             LOGGER.debug("Evaluating multifactor authentication bypass properties for principal [{}], "
-                            + "service [{}] and provider [{}] via Groovy script [{}]",
-                    principal.getId(), registeredService, provider, this.groovyScript);
+                    + "service [{}] and provider [{}] via Groovy script [{}]",
+                principal.getId(), registeredService, provider, this.groovyScript);
             return ScriptingUtils.executeGroovyScript(this.groovyScript,
-                    new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
+                new Object[]{authentication, principal, registeredService, provider, LOGGER, request}, Boolean.class);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

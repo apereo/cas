@@ -18,7 +18,7 @@ public class SpringResourceProperties implements Serializable {
      * in the file system.
      */
     @RequiredProperty
-    private Resource location;
+    private transient Resource location;
 
     public Resource getLocation() {
         return location;

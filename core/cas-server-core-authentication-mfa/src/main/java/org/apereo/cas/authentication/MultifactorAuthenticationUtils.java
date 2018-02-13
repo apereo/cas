@@ -17,9 +17,10 @@ import java.util.Map;
  */
 public final class MultifactorAuthenticationUtils {
     private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthenticationUtils.class);
-    
-    private MultifactorAuthenticationUtils() {}
-    
+
+    private MultifactorAuthenticationUtils() {
+    }
+
     /**
      * New multifactor authentication provider bypass multifactor.
      *
@@ -27,7 +28,7 @@ public final class MultifactorAuthenticationUtils {
      * @return the multifactor authentication provider bypass
      */
     public static MultifactorAuthenticationProviderBypass newMultifactorAuthenticationProviderBypass(
-            final MultifactorAuthenticationProviderBypassProperties props) {
+        final MultifactorAuthenticationProviderBypassProperties props) {
 
         final MultifactorAuthenticationProviderBypass bypass;
         switch (props.getType()) {
@@ -52,13 +53,13 @@ public final class MultifactorAuthenticationUtils {
      * @return the all multifactor authentication providers from application context
      */
     public static Map<String, MultifactorAuthenticationProvider> getAvailableMultifactorAuthenticationProviders(
-            final ApplicationContext applicationContext) {
+        final ApplicationContext applicationContext) {
         try {
             return applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         } catch (final Exception e) {
             LOGGER.debug("No beans of type [{}] are available in the application context. "
-                            + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
-                    MultifactorAuthenticationProvider.class);
+                    + "CAS may not be configured to handle multifactor authentication requests in absence of a provider",
+                MultifactorAuthenticationProvider.class);
         }
         return new HashMap<>(0);
     }
