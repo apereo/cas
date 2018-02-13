@@ -162,9 +162,4 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         LOGGER.debug(ex.getMessage(), ex);
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
     }
-
-    @Override
-    public Event resolveSingle(RequestContext context) {
-        return super.resolveSingle(context);
-    }
 }
