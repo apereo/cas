@@ -22,7 +22,7 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
     public String[] resolveFrom(JoinPoint auditableTarget, Object retval) {
         Objects.requireNonNull(retval, "ServiceAccessCheckResult must not be null");
         final ServiceAccessCheckResult serviceAccessCheckResult = ServiceAccessCheckResult.class.cast(retval);
-        String accessCheckOutcome = serviceAccessCheckResult.accessDenied() ? "ACCESS GRANTED" : "ACCESS DENIED";
+        String accessCheckOutcome = serviceAccessCheckResult.accessDenied() ? "ACCESS DENIED" : "ACCESS GRANTED";
 
         final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
                 .append("service_access_check_outcome", accessCheckOutcome)
