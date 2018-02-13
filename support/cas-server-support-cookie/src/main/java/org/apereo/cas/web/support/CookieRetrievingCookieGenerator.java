@@ -1,7 +1,10 @@
 package org.apereo.cas.web.support;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.RememberMeCredential;
+import org.apereo.cas.util.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
@@ -10,6 +13,7 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Map;
 
 /**
  * Extends CookieGenerator to allow you to retrieve a value from a request.
@@ -111,7 +115,23 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     private boolean isRememberMeAuthentication(final RequestContext requestContext) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String value = request.getParameter(RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME);
-        return StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
+        LOGGER.debug("Locating request parameter [{}] with value [{}]", RememberMeCredential.REQUEST_PARAMETER_REMEMBER_ME, value);
+        boolean isRememberMe = StringUtils.isNotBlank(value) && WebUtils.isRememberMeAuthenticationEnabled(requestContext);
+        if (!isRememberMe) {
+            LOGGER.debug("Request does not indicate a remember-me authentication event. Locating authentication object from the request context...");
+            final Authentication auth = WebUtils.getAuthentication(requestContext);
+            if (auth != null) {
+                final Map<String, Object> attributes = auth.getAttributes();
+                LOGGER.debug("Located authentication attributes [{}]", attributes);
+                if (attributes.containsKey(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME)) {
+                    final Object rememberMeValue = attributes.getOrDefault(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME, false);
+                    LOGGER.debug("Located remember-me authentication attribute [{}]", rememberMeValue);
+                    isRememberMe = CollectionUtils.wrapSet(rememberMeValue).contains(true);
+                }
+            }
+        }
+        LOGGER.debug("Is this request from a remember-me authentication event? [{}]", BooleanUtils.toStringYesNo(isRememberMe));
+        return isRememberMe;
     }
 
     /**
