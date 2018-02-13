@@ -6,11 +6,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title>CAS Resource List Fragment</title>
-<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"          th:href="@{#{webjars.bootstrapmin.css}}">    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"
+          th:href="@{#{webjars.bootstrapmin.css}}">
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div th:fragment="cas-resource-list" class="card d-sm-none d-md-block">
+    <div th:fragment="cas-resource-list" id="cas-resource-list" class="card d-sm-none d-md-block">
         <div class="card-body">
             <h3 class="card-title" th:text="#{cas.login.resources.header}">Links to CAS Resources</h3>
             <ul class="list-group">
