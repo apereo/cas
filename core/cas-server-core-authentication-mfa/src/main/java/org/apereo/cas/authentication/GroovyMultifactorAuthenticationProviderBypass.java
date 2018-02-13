@@ -20,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 public class GroovyMultifactorAuthenticationProviderBypass extends DefaultMultifactorAuthenticationProviderBypass {
     private static final long serialVersionUID = -4909072898415688377L;
 
-    private final Resource groovyScript;
+    private final transient Resource groovyScript;
 
     public GroovyMultifactorAuthenticationProviderBypass(final MultifactorAuthenticationProviderBypassProperties bypass) {
         super(bypass);

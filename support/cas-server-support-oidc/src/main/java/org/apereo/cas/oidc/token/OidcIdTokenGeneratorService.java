@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.services.OidcRegisteredService;
@@ -34,6 +35,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -60,7 +62,6 @@ public class OidcIdTokenGeneratorService {
         this.casProperties = casProperties;
         this.signingService = signingService;
         this.servicesManager = servicesManager;
-        // keep synchronized with CasOAuthConfiguration
         this.oAuthCallbackUrl = casProperties.getServer().getPrefix()
                 + OAuth20Constants.BASE_OAUTH20_URL + '/'
                 + OAuth20Constants.CALLBACK_AUTHORIZE_URL_DEFINITION;
@@ -137,19 +138,20 @@ public class OidcIdTokenGeneratorService {
         claims.setNotBeforeMinutesInThePast(oidc.getSkew());
         claims.setSubject(principal.getId());
 
-        if (authentication.getAttributes().containsKey(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute())) {
-            final Collection<Object> val = CollectionUtils.toCollection(
-                    authentication.getAttributes().get(casProperties.getAuthn().getMfa().getAuthenticationContextAttribute()));
+        final MultifactorAuthenticationProperties mfa = casProperties.getAuthn().getMfa();
+        final Map<String, Object> attributes = authentication.getAttributes();
+
+        if (attributes.containsKey(mfa.getAuthenticationContextAttribute())) {
+            final Collection<Object> val = CollectionUtils.toCollection(attributes.get(mfa.getAuthenticationContextAttribute()));
             claims.setStringClaim(OidcConstants.ACR, val.iterator().next().toString());
         }
-        if (authentication.getAttributes().containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
-            final Collection<Object> val = CollectionUtils.toCollection(
-                    authentication.getAttributes().get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
+        if (attributes.containsKey(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS)) {
+            final Collection<Object> val = CollectionUtils.toCollection(attributes.get(AuthenticationHandler.SUCCESSFUL_AUTHENTICATION_HANDLERS));
             claims.setStringListClaim(OidcConstants.AMR, val.toArray(new String[]{}));
         }
 
-        claims.setClaim(OAuth20Constants.STATE, authentication.getAttributes().get(OAuth20Constants.STATE));
-        claims.setClaim(OAuth20Constants.NONCE, authentication.getAttributes().get(OAuth20Constants.NONCE));
+        claims.setClaim(OAuth20Constants.STATE, attributes.get(OAuth20Constants.STATE));
+        claims.setClaim(OAuth20Constants.NONCE, attributes.get(OAuth20Constants.NONCE));
         claims.setClaim(OidcConstants.CLAIM_AT_HASH, generateAccessTokenHash(accessTokenId, service));
 
         principal.getAttributes().entrySet().stream()

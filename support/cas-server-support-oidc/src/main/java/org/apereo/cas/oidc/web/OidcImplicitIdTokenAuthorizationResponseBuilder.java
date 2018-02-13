@@ -48,7 +48,7 @@ public class OidcImplicitIdTokenAuthorizationResponseBuilder extends OAuth20Toke
                                                 final J2EContext context) throws Exception {
 
         final String idToken = this.idTokenGenerator.generate(context.getRequest(),
-                context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToIdle(),
+                context.getResponse(), accessToken, idTokenExpirationPolicy.getTimeToLive(),
                 OAuth20ResponseTypes.IDTOKEN_TOKEN, holder.getRegisteredService());
         LOGGER.debug("Generated id token [{}]", idToken);
         params.add(new BasicNameValuePair(OidcConstants.ID_TOKEN, idToken));
