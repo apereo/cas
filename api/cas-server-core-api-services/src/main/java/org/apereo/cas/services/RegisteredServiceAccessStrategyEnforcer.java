@@ -40,12 +40,12 @@ public interface RegisteredServiceAccessStrategyEnforcer {
     /**
      * Immutable class to encapsulate result of service access check.
      */
-    final class ServiceAccessCheckResult {
-        final private PrincipalException principalException;
-        final private String principalId;
-        final private Map<String, Object> principalAttributes;
-        final private String serviceId;
-        final private RegisteredService registeredService;
+    class ServiceAccessCheckResult {
+        private final PrincipalException principalException;
+        private final String principalId;
+        private final Map<String, Object> principalAttributes;
+        private final String serviceId;
+        private final RegisteredService registeredService;
 
         public ServiceAccessCheckResult(final PrincipalException principalException,
                                         final String principalId,
@@ -85,7 +85,7 @@ public interface RegisteredServiceAccessStrategyEnforcer {
          * Re-throw encapsulated {@link PrincipalException} if occurred, or noop.
          */
         public void reThrowAccessDeniedTargetExceptionIfOccured() {
-            if(principalException != null) {
+            if (principalException != null) {
                 throw principalException;
             }
         }
