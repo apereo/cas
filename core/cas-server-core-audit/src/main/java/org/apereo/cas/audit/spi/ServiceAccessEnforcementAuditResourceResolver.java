@@ -26,7 +26,7 @@ public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAs
 
         final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
                 .append("service_access_check_outcome", accessCheckOutcome)
-                .append("service", serviceAccessCheckResult)
+                .append("service", serviceAccessCheckResult.getServiceId())
                 .append("principal_attributes", serviceAccessCheckResult.getPrincipalAttributes())
                 .append("required_attributes_defined_by_policy", serviceAccessCheckResult.getServiceAccessRequiredAttributes())
                 .toString();
