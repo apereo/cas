@@ -20,6 +20,12 @@ public class UnauthorizedServiceForPrincipalException extends UnauthorizedServic
     /** The code description. */
     private static final String CODE = "service.not.authorized.missing.attr";
 
+    private String principal;
+
+    private String targetServiceId;
+
+    private RegisteredService registeredService;
+
     /**
      * Instantiates a new unauthorized sso service exception.
      */
@@ -45,5 +51,15 @@ public class UnauthorizedServiceForPrincipalException extends UnauthorizedServic
      */
     public UnauthorizedServiceForPrincipalException(final String message) {
         super(message);
+    }
+
+    public UnauthorizedServiceForPrincipalException(final String message,
+                                                    final String principalId,
+                                                    final String targetServiceId,
+                                                    final RegisteredService registeredService) {
+        super(message);
+        this.principal = principalId;
+        this.targetServiceId = targetServiceId;
+        this.registeredService = registeredService;
     }
 }

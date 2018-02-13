@@ -122,6 +122,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    @Override
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return requiredAttributes;
+    }
+
+    /**
      * Instantiates a new Default registered service access strategy.
      *
      * @param requiredAttributes the required attributes

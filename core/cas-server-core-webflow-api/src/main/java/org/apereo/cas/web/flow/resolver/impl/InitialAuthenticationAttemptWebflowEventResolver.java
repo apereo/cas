@@ -12,7 +12,8 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer.ServiceAccessCheckResult;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -49,11 +50,14 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver selectiveResolver;
 
+    private RegisteredServiceAccessStrategyEnforcer registeredServiceAccessStrategyEnforcer;
+
     public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                             final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
                                                             final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
                                                             final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                            final MultifactorAuthenticationProviderSelector selector) {
+                                                            final MultifactorAuthenticationProviderSelector selector,
+                                                            final RegisteredServiceAccessStrategyEnforcer registeredServiceAccessStrategyEnforcer) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
             warnCookieGenerator, authenticationSelectionStrategies, selector);
     }
@@ -106,8 +110,12 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Locating authentication event in the request context...");
             final Authentication authn = WebUtils.getAuthentication(context);
+
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn, false);
+            final ServiceAccessCheckResult serviceAccessCheckResult = this.registeredServiceAccessStrategyEnforcer
+                    .enforceServiceAccessStrategy(service,registeredService,authn,false);
+            serviceAccessCheckResult.reThrowAccessDeniedTargetExceptionIfOccured();
+            //RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn, false);
         }
         return registeredService;
     }
@@ -153,5 +161,10 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
         }
         LOGGER.debug(ex.getMessage(), ex);
         return newEvent(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, ex);
+    }
+
+    @Override
+    public Event resolveSingle(RequestContext context) {
+        return super.resolveSingle(context);
     }
 }

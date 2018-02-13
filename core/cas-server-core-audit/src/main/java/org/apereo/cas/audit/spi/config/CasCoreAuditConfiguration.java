@@ -13,6 +13,7 @@ import org.apereo.cas.audit.spi.DefaultAuditTrailExecutionPlan;
 import org.apereo.cas.audit.spi.DefaultAuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.spi.MessageBundleAwareResourceResolver;
 import org.apereo.cas.audit.spi.NullableReturnValueAuditResourceResolver;
+import org.apereo.cas.audit.spi.ServiceAccessEnforcementAuditResourceResolver;
 import org.apereo.cas.audit.spi.ServiceResourceResolver;
 import org.apereo.cas.audit.spi.ShortenedReturnValueAsStringResourceResolver;
 import org.apereo.cas.audit.spi.ThreadLocalPrincipalResolver;
@@ -157,6 +158,12 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         return new NullableReturnValueAuditResourceResolver(returnValueResourceResolver());
     }
 
+    @ConditionalOnMissingBean(name = "serviceAccessEnforcementAuditResourceResolver")
+    @Bean
+    public ServiceAccessEnforcementAuditResourceResolver serviceAccessEnforcementAuditResourceResolver() {
+        return new ServiceAccessEnforcementAuditResourceResolver();
+    }
+
     /**
      * Extension point for deployers to define custom AuditActionResolvers to extend the stock resolvers.
      *
@@ -249,6 +256,9 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
         plan.registerAuditActionResolver("AUTHENTICATION_EVENT_ACTION_RESOLVER", authResolver);
         plan.registerAuditActionResolver("VALIDATE_SERVICE_TICKET_RESOLVER", ticketValidationActionResolver());
 
+        final AuditActionResolver serviceAccessResolver = new DefaultAuditActionResolver("_TRIGGERED", StringUtils.EMPTY);
+        plan.registerAuditActionResolver("SERVICE_ACCESS_ENFORCEMENT_ACTION_RESOLVER", serviceAccessResolver);
+
         /*
             Add audit resource resolvers here.
          */
@@ -268,6 +278,8 @@ public class CasCoreAuditConfiguration implements AuditTrailExecutionPlanConfigu
 
         plan.registerAuditResourceResolver("SAVE_SERVICE_RESOURCE_RESOLVER", returnValueResourceResolver());
         plan.registerAuditResourceResolver("AUTHENTICATION_EVENT_RESOURCE_RESOLVER", nullableReturnValueResourceResolver());
+
+        plan.registerAuditResourceResolver("SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER", serviceAccessEnforcementAuditResourceResolver());
 
         /*
             Add custom resolvers here.
