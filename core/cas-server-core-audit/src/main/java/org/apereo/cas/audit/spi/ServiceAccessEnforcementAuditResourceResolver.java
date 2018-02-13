@@ -19,7 +19,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE
 public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
-    public String[] resolveFrom(JoinPoint auditableTarget, Object retval) {
+    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
         Objects.requireNonNull(retval, "ServiceAccessCheckResult must not be null");
         final ServiceAccessCheckResult serviceAccessCheckResult = ServiceAccessCheckResult.class.cast(retval);
         String accessCheckOutcome = serviceAccessCheckResult.accessDenied() ? "ACCESS DENIED" : "ACCESS GRANTED";
