@@ -11,7 +11,7 @@
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
-<div th:if="${registeredService}" id="serviceui" class="alert alert-info">
+<div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="alert alert-info">
     <div th:if="${serviceUIMetadata}">
         <table>
             <tr>
