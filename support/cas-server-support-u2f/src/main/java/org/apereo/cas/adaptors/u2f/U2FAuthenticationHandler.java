@@ -5,6 +5,7 @@ import com.yubico.u2f.data.DeviceRegistration;
 import com.yubico.u2f.data.messages.SignRequestData;
 import com.yubico.u2f.data.messages.SignResponse;
 import com.yubico.u2f.exceptions.DeviceCompromisedException;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.Authentication;
@@ -36,7 +37,8 @@ public class U2FAuthenticationHandler extends AbstractPreAndPostProcessingAuthen
     }
 
     @Override
-    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws PreventedException {
+    @SneakyThrows
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) {
         final U2FTokenCredential tokenCredential = (U2FTokenCredential) credential;
 
         final Authentication authentication = WebUtils.getInProgressAuthentication();

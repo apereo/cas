@@ -17,6 +17,7 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * This is {@link SamlRegisteredServiceMetadataResolverCacheLoader} that uses Guava's cache loading strategy
@@ -52,7 +53,9 @@ public class SamlRegisteredServiceMetadataResolverCacheLoader implements CacheLo
         final List<MetadataResolver> metadataResolvers = new ArrayList<>();
 
         final Collection<SamlRegisteredServiceMetadataResolver> availableResolvers = this.metadataResolutionPlan.getRegisteredMetadataResolvers();
-        availableResolvers.stream()
+        availableResolvers
+            .stream()
+            .filter(Objects::nonNull)
             .filter(r -> r.supports(service))
             .map(r -> r.resolve(service))
             .forEach(metadataResolvers::addAll);
