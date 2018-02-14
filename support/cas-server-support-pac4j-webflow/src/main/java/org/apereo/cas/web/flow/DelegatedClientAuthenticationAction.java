@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.web.flow;
+package org.apereo.cas.web.flow;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -150,7 +150,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 return success();
             }
         }
-        // no or aborted authentication : go to login page
+
         prepareForLoginPage(context);
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
@@ -291,25 +291,29 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client client, final Service service) {
-        if (service != null) {
-            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
-            if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
-                LOGGER.warn("Service access for [{}] is denied", registeredService);
-                return false;
-            }
-            LOGGER.debug("Located registered service definition [{}] matching [{}]", registeredService, service);
-            final RegisteredServiceDelegatedAuthenticationPolicy policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-            if (policy != null) {
-                LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
-                if (policy.isProviderAllowed(client.getName(), registeredService)) {
-                    LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, client);
-                    return true;
-                }
-                LOGGER.warn("Delegated authentication policy for [{}] refuses access to client [{}]", registeredService.getServiceId(), client);
-                return false;
-            }
+        if (service == null) {
+            LOGGER.debug("Can not evaluate delegated authentication policy since no service was provided in the request while processing client [{}]", client);
+            return true;
         }
-        return true;
+
+        final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+        if (registeredService == null || !registeredService.getAccessStrategy().isServiceAccessAllowed()) {
+            LOGGER.warn("Service access for [{}] is denied", registeredService);
+            return false;
+        }
+        LOGGER.debug("Located registered service definition [{}] matching [{}]", registeredService, service);
+        final RegisteredServiceDelegatedAuthenticationPolicy policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
+        if (policy == null) {
+            LOGGER.debug("No delegated authentication policy is defined for client [{}] and service [{}]", client, registeredService);
+            return true;
+        }
+        LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
+        if (policy.isProviderAllowed(client.getName(), registeredService)) {
+            LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, client);
+            return true;
+        }
+        LOGGER.warn("Delegated authentication policy for [{}] refuses access to client [{}]", registeredService.getServiceId(), client);
+        return false;
     }
 
     /**

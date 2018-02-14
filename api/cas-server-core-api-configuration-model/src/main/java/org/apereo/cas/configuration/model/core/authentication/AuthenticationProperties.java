@@ -22,7 +22,7 @@ import org.apereo.cas.configuration.model.support.ntlm.NtlmProperties;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.configuration.model.support.oidc.OidcProperties;
 import org.apereo.cas.configuration.model.support.openid.OpenIdProperties;
-import org.apereo.cas.configuration.model.support.pac4j.Pac4jProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusProperties;
 import org.apereo.cas.configuration.model.support.rest.RestAuthenticationProperties;
@@ -255,7 +255,7 @@ public class AuthenticationProperties implements Serializable {
      * Pac4j delegated authentication settings.
      */
     @NestedConfigurationProperty
-    private Pac4jProperties pac4j = new Pac4jProperties();
+    private Pac4jDelegatedAuthenticationProperties pac4j = new Pac4jDelegatedAuthenticationProperties();
 
     /**
      * RADIUS authentication settings.

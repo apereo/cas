@@ -9,7 +9,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link Pac4jProperties}.
+ * This is {@link Pac4jDelegatedAuthenticationProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -18,7 +18,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jProperties implements Serializable {
+public class Pac4jDelegatedAuthenticationProperties implements Serializable {
 
     private static final long serialVersionUID = 4388567744591488495L;
 
