@@ -2,6 +2,9 @@ package org.apereo.cas.services;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.ResourceUtils;
@@ -11,10 +14,7 @@ import org.springframework.core.io.Resource;
 import javax.persistence.Transient;
 import java.net.URI;
 import java.util.Map;
-
-import lombok.Getter;
-import lombok.Setter;
-import lombok.NoArgsConstructor;
+import java.util.Set;
 
 /**
  * This is {@link GroovyRegisteredServiceAccessStrategy}.
@@ -82,6 +82,12 @@ public class GroovyRegisteredServiceAccessStrategy implements RegisteredServiceA
     public RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         buildGroovyAccessStrategyInstanceIfNeeded();
         return this.groovyStrategyInstance.getDelegatedAuthenticationPolicy();
+    }
+
+    @Override
+    @JsonIgnore
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return this.groovyStrategyInstance.getRequiredAttributes();
     }
 
     @SneakyThrows
