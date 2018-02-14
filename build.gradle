@@ -41,7 +41,7 @@ buildscript {
 
     dependencies {
         classpath "org.springframework.boot:spring-boot-gradle-plugin:$springBootVersion"
-        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.1"
+        classpath "com.netflix.nebula:gradle-lint-plugin:8.3.2"
         classpath "io.franzbecker:gradle-lombok:1.11"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
