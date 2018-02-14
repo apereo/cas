@@ -6,7 +6,9 @@ import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAccessStrategy}
@@ -101,5 +103,14 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      */
     default RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
         return null;
+    }
+
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    default Map<String, Set<String>> getRequiredAttributes() {
+        return new HashMap<>();
     }
 }
