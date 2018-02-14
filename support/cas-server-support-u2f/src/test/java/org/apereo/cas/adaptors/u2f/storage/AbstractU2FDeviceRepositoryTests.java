@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.yubico.u2f.data.DeviceRegistration;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;

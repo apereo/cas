@@ -17,10 +17,9 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Optional;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.Optional;
 
 /**
  * This is {@link SAML2ClientLogoutAction}.
@@ -80,7 +79,7 @@ public class SAML2ClientLogoutAction extends AbstractAction {
      * @return The currently used client's name or {@code null} if there is no active profile.
      */
     private String findCurrentClientName(final WebContext webContext) {
-        @SuppressWarnings("unchecked") final ProfileManager<? extends CommonProfile> pm = Pac4jUtils.getPac4jProfileManager(webContext);
+        final ProfileManager<? extends CommonProfile> pm = Pac4jUtils.getPac4jProfileManager(webContext);
         final Optional<? extends CommonProfile> profile = pm.get(true);
         return profile.map(CommonProfile::getClientName).orElse(null);
     }
