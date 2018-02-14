@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
@@ -9,6 +10,7 @@ import com.couchbase.client.java.view.ViewRow;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -20,6 +22,7 @@ import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -67,15 +70,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        LOGGER.debug("Updating ticket [{}]", ticket);
-        try {
-            final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
-
-            LOGGER.debug("Upserting document [{}] into couchbase getBucket [{}]", document.id(), this.couchbase.getBucket().name());
-            this.couchbase.getBucket().upsert(document);
-        } catch (final Exception e) {
-            LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
-        }
+        addTicket(ticket);
         return ticket;
     }
 
@@ -85,7 +80,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            LOGGER.debug("Created document for ticket [{}]. Upserting into getBucket [{}]", ticketToAdd, this.couchbase.getBucket().name());
+            LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, this.couchbase.getBucket().name());
             this.couchbase.getBucket().upsert(document);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
@@ -134,8 +129,26 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        LOGGER.debug("getTickets() isn't supported. Returning empty list");
-        return new ArrayList<>(0);
+        final List<Ticket> tickets = new ArrayList<>();
+        this.ticketCatalog.findAll().forEach(t -> {
+            final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+            while (it.hasNext()) {
+                final ViewRow row = it.next();
+                if (StringUtils.isNotBlank(row.id())) {
+                    final JsonDocument document = row.document();
+                    final Ticket ticket = (Ticket) document.content();
+                    LOGGER.debug("Got ticket [{}] from the registry.", ticket);
+
+                    final Ticket decoded = decodeTicket(ticket);
+                    if (decoded == null || decoded.isExpired()) {
+                        LOGGER.warn("Ticket has expired or cannot be decoded");
+                    } else {
+                        tickets.add(decoded);
+                    }
+                }
+            }
+        });
+        return tickets;
     }
 
     @Override
@@ -163,12 +176,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         final Consumer<? super ViewRow> remove = t -> this.couchbase.getBucket().remove(t.document());
-        return this.ticketCatalog.findAll().stream().mapToLong(t -> {
-            final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
-            final int count = getViewRowCountFromViewResultIterator(it);
-            it.forEachRemaining(remove);
-            return count;
-        }).sum();
+        return this.ticketCatalog.findAll()
+            .stream()
+            .mapToLong(t -> {
+                final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+                final int count = getViewRowCountFromViewResultIterator(it);
+                it.forEachRemaining(remove);
+                return count;
+            })
+            .sum();
     }
 
     private int runQuery(final String prefix) {

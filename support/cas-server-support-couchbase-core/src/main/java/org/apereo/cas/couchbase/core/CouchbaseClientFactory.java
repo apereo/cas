@@ -36,7 +36,6 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CouchbaseClientFactory {
     private static final int DEFAULT_TIMEOUT = 5;
-    private static final int BUCKET_QUOTA = 120;
 
     private Cluster cluster;
 
@@ -95,6 +94,7 @@ public class CouchbaseClientFactory {
     @SneakyThrows
     public void shutdown() {
         if (this.cluster != null) {
+            LOGGER.debug("Disconnecting from Couchbase cluster");
             this.cluster.disconnect();
         }
     }
@@ -103,6 +103,7 @@ public class CouchbaseClientFactory {
         if (this.cluster != null) {
             shutdown();
         }
+        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", this.nodes);
         this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
     }
 
@@ -120,7 +121,7 @@ public class CouchbaseClientFactory {
     }
 
     private void initializeBucket() {
-        createBucketIfNeeded();
+        openBucket();
         createDesignDocumentAndViewIfNeeded();
     }
 
@@ -143,23 +144,20 @@ public class CouchbaseClientFactory {
         }
     }
 
-    private void createBucketIfNeeded() {
+    private void openBucket() {
         try {
             LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
-            this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
+            if (StringUtils.isBlank(this.bucketPassword)) {
+                this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.MILLISECONDS);
+            } else {
+                this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.MILLISECONDS);
+            }
         } catch (final Exception e) {
             throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
         }
         LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
     }
-
-    /**
-     * Remove default bucket.
-     */
-    public static void removeDefaultBucket() {
-        HttpUtils.execute("http://localhost:8091/pools/default/buckets/default", "DELETE");
-    }
-
+    
     /**
      * Create default bucket http servlet response.
      *
@@ -175,6 +173,21 @@ public class CouchbaseClientFactory {
         postParameters.add(new BasicNameValuePair("ramQuotaMB", "120"));
         final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
         return HttpUtils.executePost("http://localhost:8091/pools/default/buckets", entity);
+    }
+
+    /**
+     * Create credentials http response.
+     *
+     * @return the http response
+     */
+    @SneakyThrows
+    public static HttpResponse createCredentials() {
+        final List postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("username", "Administrator"));
+        postParameters.add(new BasicNameValuePair("password", "password"));
+        postParameters.add(new BasicNameValuePair("port", "8091"));
+        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
+        return HttpUtils.executePost("http://localhost:8091/settings/web", entity);
     }
 }
 

@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
+
+import javax.persistence.PostLoad;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +65,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * The delegated authn policy.
      */
-    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy;
+    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy =
+        new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
@@ -129,6 +133,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     public DefaultRegisteredServiceAccessStrategy(final Map<String, Set<String>> requiredAttributes) {
         this();
         this.requiredAttributes = requiredAttributes;
+    }
+
+    /**
+     * Post load.
+     */
+    @PostLoad
+    public void postLoad() {
+        this.delegatedAuthenticationPolicy = ObjectUtils.defaultIfNull(this.delegatedAuthenticationPolicy,
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy());
+    }
+
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    @Override
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return requiredAttributes;
     }
 
     @JsonIgnore

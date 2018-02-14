@@ -133,7 +133,7 @@ public class ConditionalIgnoreRule implements MethodRule {
     /**
      * The type Ignore statement.
      */
-    private static class IgnoreStatement extends Statement {
+    public static class IgnoreStatement extends Statement {
         private final IgnoreCondition condition;
 
         /**
