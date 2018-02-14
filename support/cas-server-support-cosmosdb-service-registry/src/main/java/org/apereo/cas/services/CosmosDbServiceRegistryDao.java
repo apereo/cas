@@ -68,7 +68,7 @@ public class CosmosDbServiceRegistryDao extends AbstractServiceRegistryDao {
         try {
             final CosmosDbDocument document = createCosmosDbDocument(registeredService);
             final String id = String.valueOf(registeredService.getId());
-            this.documentDbTemplate.update(this.collectionName, document, id, document.getPartitionKey());
+            this.documentDbTemplate.upsert(this.collectionName, document, id, document.getPartitionKey());
         } catch (final Exception e) {
             if (e.getCause().getClass().equals(DocumentClientException.class)) {
                 final DocumentClientException ex = DocumentClientException.class.cast(e.getCause());

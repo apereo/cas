@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -54,7 +55,15 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                     .collect(Collectors.toList());
 
                 return list.stream()
-                    .map(d -> DeviceRegistration.fromJson(d.getRecord()))
+                    .map(r -> {
+                        try {
+                            return DeviceRegistration.fromJson(r.getRecord());
+                        } catch (final Exception e) {
+                            LOGGER.error(e.getMessage(), e);
+                        }
+                        return null;
+                    })
+                    .filter(Objects::nonNull)
                     .collect(Collectors.toList());
             }
         } catch (final Exception e) {

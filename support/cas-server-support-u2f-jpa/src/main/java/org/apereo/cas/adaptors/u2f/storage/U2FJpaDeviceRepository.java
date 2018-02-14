@@ -13,6 +13,7 @@ import javax.persistence.PersistenceContext;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -49,13 +50,21 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
         try {
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             return this.entityManager.createQuery(
-                    SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"), U2FDeviceRegistration.class)
-                    .setParameter("username", username)
-                    .setParameter("expdate", expirationDate)
-                    .getResultList()
-                    .stream()
-                    .map(r -> DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord())))
-                    .collect(Collectors.toList());
+                SELECT_QUERY.concat("where r.username = :username and r.createdDate >= :expdate"), U2FDeviceRegistration.class)
+                .setParameter("username", username)
+                .setParameter("expdate", expirationDate)
+                .getResultList()
+                .stream()
+                .map(r -> {
+                    try {
+                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No device registration was found for [{}]", username);
         } catch (final Exception e) {
@@ -89,9 +98,9 @@ public class U2FJpaDeviceRepository extends BaseU2FDeviceRepository {
             final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
             LOGGER.debug("Cleaning up expired U2F device registrations based on expiration date [{}]", expirationDate);
             this.entityManager.createQuery(
-                    DELETE_QUERY.concat("where r.createdDate <= :expdate"))
-                    .setParameter("expdate", expirationDate)
-                    .executeUpdate();
+                DELETE_QUERY.concat("where r.createdDate <= :expdate"))
+                .setParameter("expdate", expirationDate)
+                .executeUpdate();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
