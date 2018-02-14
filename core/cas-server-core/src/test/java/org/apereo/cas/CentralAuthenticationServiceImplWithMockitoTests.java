@@ -1,6 +1,8 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
@@ -188,11 +190,14 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
             new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
+        final AuditableExecution enforcer = mock(AuditableExecution.class);
+        when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         this.cas = new DefaultCentralAuthenticationService(
             mock(ApplicationEventPublisher.class), ticketRegMock, smMock,
             mock(LogoutManager.class), factory,
             authenticationRequestServiceSelectionStrategies, new AcceptAnyAuthenticationPolicyFactory(),
-            new DefaultPrincipalFactory(), null);
+            new DefaultPrincipalFactory(), null,
+            enforcer);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
     }
 

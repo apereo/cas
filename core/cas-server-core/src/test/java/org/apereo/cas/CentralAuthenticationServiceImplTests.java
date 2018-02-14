@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -447,7 +448,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final DefaultCentralAuthenticationService cas = new DefaultCentralAuthenticationService(
             mock(ApplicationEventPublisher.class), registry, null, logoutManager,
             null, null,
-            null, null, null);
+            null, null, null,
+            mock(AuditableExecution.class));
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
 
