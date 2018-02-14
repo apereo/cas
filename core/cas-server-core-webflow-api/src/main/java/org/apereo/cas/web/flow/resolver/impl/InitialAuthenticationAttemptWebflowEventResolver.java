@@ -113,7 +113,7 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
             final ServiceAccessCheckResult serviceAccessCheckResult = this.registeredServiceAccessStrategyEnforcer
-                    .enforceServiceAccessStrategy(service,registeredService,authn,false);
+                    .enforceServiceAccessStrategy(service, registeredService, authn, false);
             serviceAccessCheckResult.reThrowAccessDeniedTargetExceptionIfOccured();
         }
         return registeredService;
