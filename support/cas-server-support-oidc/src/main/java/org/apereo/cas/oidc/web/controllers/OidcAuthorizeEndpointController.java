@@ -1,6 +1,7 @@
 package org.apereo.cas.oidc.web.controllers;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -42,9 +43,6 @@ import java.util.Set;
  */
 @Slf4j
 public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointController {
-
-
-
     public OidcAuthorizeEndpointController(final ServicesManager servicesManager,
                                            final TicketRegistry ticketRegistry,
                                            final OAuth20Validator validator,
@@ -58,11 +56,14 @@ public class OidcAuthorizeEndpointController extends OAuth20AuthorizeEndpointCon
                                            final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                            final OAuth20CasAuthenticationBuilder authenticationBuilder,
                                            final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
-                                           final Set<OAuth20RequestValidator> oauthRequestValidators) {
+                                           final Set<OAuth20RequestValidator> oauthRequestValidators,
+                                           final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, oAuthCodeFactory, consentApprovalViewResolver,
                 scopeToAttributesFilter, casProperties, ticketGrantingTicketCookieGenerator,
-                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators);
+                authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators,
+                registeredServiceAccessStrategyEnforcer
+            );
     }
 
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + '/' + OAuth20Constants.AUTHORIZE_URL)

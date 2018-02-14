@@ -5,6 +5,7 @@ import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -119,6 +120,10 @@ import java.util.stream.Stream;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class OidcConfiguration extends WebMvcConfigurerAdapter {
+
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Autowired
     @Qualifier("oauthRequestValidators")
@@ -405,7 +410,8 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
             consentApprovalViewResolver(),
             profileScopeToAttributesFilter(), casProperties,
             ticketGrantingTicketCookieGenerator,
-            authenticationBuilder, oauthAuthorizationResponseBuilders, oauthRequestValidators);
+            authenticationBuilder, oauthAuthorizationResponseBuilders,
+            oauthRequestValidators, registeredServiceAccessStrategyEnforcer);
     }
 
     @Autowired

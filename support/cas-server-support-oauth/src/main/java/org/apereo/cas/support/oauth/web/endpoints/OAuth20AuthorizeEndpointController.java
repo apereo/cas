@@ -2,6 +2,8 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -78,6 +80,11 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
      */
     protected final Set<OAuth20RequestValidator> oauthRequestValidators;
 
+    /**
+     * Access strategy enforcer.
+     */
+    protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     public OAuth20AuthorizeEndpointController(final ServicesManager servicesManager,
                                               final TicketRegistry ticketRegistry,
                                               final OAuth20Validator validator,
@@ -91,7 +98,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
                                               final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                               final OAuth20CasAuthenticationBuilder authenticationBuilder,
                                               final Set<OAuth20AuthorizationResponseBuilder> oauthAuthorizationResponseBuilders,
-                                              final Set<OAuth20RequestValidator> oauthRequestValidators) {
+                                              final Set<OAuth20RequestValidator> oauthRequestValidators,
+                                              final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
             webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties,
             ticketGrantingTicketCookieGenerator);
@@ -100,6 +108,7 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         this.authenticationBuilder = authenticationBuilder;
         this.oauthAuthorizationResponseBuilders = oauthAuthorizationResponseBuilders;
         this.oauthRequestValidators = oauthRequestValidators;
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
     }
 
     /**
@@ -192,7 +201,8 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(service, registeredService, authentication, true);
+            accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
             return OAuth20Utils.produceUnauthorizedErrorView();

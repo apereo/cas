@@ -3,6 +3,7 @@ package org.apereo.cas.config;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
@@ -65,6 +66,10 @@ public class SurrogateAuthenticationConfiguration {
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
@@ -103,7 +108,7 @@ public class SurrogateAuthenticationConfiguration {
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
         return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService(),
-            servicesManager, eventPublisher);
+            servicesManager, eventPublisher, registeredServiceAccessStrategyEnforcer);
     }
 
     @Bean

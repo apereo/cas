@@ -75,7 +75,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param principalId       the principal id
      * @param attributes        the attributes
      */
-    public static void ensurePrincipalAccessIsAllowedForService(final Service service,
+    static void ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                 final RegisteredService registeredService,
                                                                 final String principalId,
                                                                 final Map<String, Object> attributes) {
@@ -97,7 +97,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @param registeredService the registered service
      * @param authentication    the authentication
      */
-    public static void ensurePrincipalAccessIsAllowedForService(final Service service,
+    static void ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                 final RegisteredService registeredService,
                                                                 final Authentication authentication) {
         ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication, true);
@@ -115,7 +115,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    public static void ensurePrincipalAccessIsAllowedForService(final Service service,
+    static void ensurePrincipalAccessIsAllowedForService(final Service service,
                                                                 final RegisteredService registeredService,
                                                                 final Authentication authentication,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
@@ -144,7 +144,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
+    static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final RegisteredService registeredService,
                                                                 final TicketGrantingTicket ticketGrantingTicket,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
@@ -164,7 +164,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    public static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
+    static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
                                                                 final TicketGrantingTicket ticketGrantingTicket,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
             throws UnauthorizedServiceException, PrincipalException {
@@ -182,7 +182,7 @@ public class RegisteredServiceAccessStrategyUtils {
      * @throws UnauthorizedServiceException the unauthorized service exception
      * @throws PrincipalException           the principal exception
      */
-    public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
+    static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final AuthenticationResult context,
                                                                 final RegisteredService registeredService)
             throws UnauthorizedServiceException, PrincipalException {
