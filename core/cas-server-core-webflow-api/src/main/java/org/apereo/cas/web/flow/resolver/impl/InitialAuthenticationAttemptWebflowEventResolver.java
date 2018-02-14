@@ -116,9 +116,8 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             final Authentication authn = WebUtils.getAuthentication(context);
 
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
-            final AuditableExecutionResult serviceAccessCheckResult =
-                this.registeredServiceAccessStrategyEnforcer.execute(service, authn, registeredService, Boolean.FALSE);
-            serviceAccessCheckResult.throwExceptionIfNeeded();
+            final AuditableExecutionResult result =this.registeredServiceAccessStrategyEnforcer.execute(service, authn, registeredService, Boolean.FALSE);
+            result.throwExceptionIfNeeded();
         }
         return registeredService;
     }
