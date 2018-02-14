@@ -16,12 +16,14 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
+import org.apereo.cas.services.support.DefaultRegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -98,6 +100,12 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     public RegisteredServiceCipherExecutor registeredServiceCipherExecutor() {
         return new DefaultRegisteredServiceCipherExecutor();
+    }
+
+    @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
+    @Bean
+    public RegisteredServiceAccessStrategyEnforcer registeredServiceAccessStrategyEnforcer() {
+        return new DefaultRegisteredServiceAccessStrategyEnforcer();
     }
 
     @ConditionalOnMissingBean(name = "servicesManager")

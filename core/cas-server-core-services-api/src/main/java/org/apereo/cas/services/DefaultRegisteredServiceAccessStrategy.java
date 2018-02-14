@@ -144,6 +144,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy());
     }
 
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    @Override
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return requiredAttributes;
+    }
+
     @JsonIgnore
     @Override
     public boolean isServiceAccessAllowedForSso() {
