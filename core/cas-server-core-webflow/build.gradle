@@ -16,6 +16,7 @@ dependencies {
     api project(":api:cas-server-core-api-ticket")
     api project(":api:cas-server-core-api")
     api project(":api:cas-server-core-api-webflow")
+    api project(":api:cas-server-core-api-audit")
 }
 
 
