@@ -37,6 +37,19 @@ public abstract class BaseAuditableExecution implements AuditableExecution {
      * @return the unique parameter
      */
     protected <T> T getUniqueParameter(final Object[] parameters, final Class<T> clazz) {
+        return getUniqueParameter(parameters, clazz, null);
+    }
+
+    /**
+     * Gets unique parameter.
+     *
+     * @param <T>          the type parameter
+     * @param parameters   the parameters
+     * @param clazz        the clazz
+     * @param defaultValue the default value
+     * @return the unique parameter
+     */
+    protected <T> T getUniqueParameter(final Object[] parameters, final Class<T> clazz, final T defaultValue) {
         try {
             final Object result = Arrays.stream(parameters)
                 .filter(r -> clazz.isAssignableFrom(r.getClass()))
@@ -45,7 +58,7 @@ public abstract class BaseAuditableExecution implements AuditableExecution {
             if (result != null) {
                 return clazz.cast(result);
             }
-            return null;
+            return defaultValue;
         } catch (final Exception e) {
             throw new RuntimeException("Unable to extract parameter to execute auditable action: " + e.getMessage(), e);
         }
