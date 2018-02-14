@@ -131,6 +131,16 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.requiredAttributes = requiredAttributes;
     }
 
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    @Override
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return requiredAttributes;
+    }
+
     @JsonIgnore
     @Override
     public boolean isServiceAccessAllowedForSso() {
