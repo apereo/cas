@@ -1,4 +1,4 @@
-package org.apereo.cas.support.pac4j.web.flow;
+package org.apereo.cas.web.flow;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
