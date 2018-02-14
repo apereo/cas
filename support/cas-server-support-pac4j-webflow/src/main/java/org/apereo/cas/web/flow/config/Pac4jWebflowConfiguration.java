@@ -5,14 +5,21 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
+import org.apereo.cas.web.flow.Pac4jInitialFlowSetupAction;
 import org.apereo.cas.web.flow.Pac4jWebflowConfigurer;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.pac4j.core.client.Clients;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.support.ArgumentExtractor;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -57,6 +64,22 @@ public class Pac4jWebflowConfiguration {
     @Qualifier("logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
+
+    @Autowired
+    @Qualifier("warnCookieGenerator")
+    private CookieRetrievingCookieGenerator warnCookieGenerator;
+
     @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
@@ -76,5 +99,18 @@ public class Pac4jWebflowConfiguration {
     @Autowired
     public Saml2ClientMetadataController saml2ClientMetadataController(@Qualifier("builtClients") final Clients builtClients) {
         return new Saml2ClientMetadataController(builtClients, configBean);
+    }
+
+    @RefreshScope
+    @Bean
+    @Autowired
+    @ConditionalOnMissingBean(name = "Pac4jInitialFlowSetupAction")
+    public Action Pac4jInitialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
+        return new Pac4jInitialFlowSetupAction(
+            CollectionUtils.wrap(argumentExtractor),
+            servicesManager,
+            authenticationRequestServiceSelectionStrategies,
+            ticketGrantingTicketCookieGenerator,
+            warnCookieGenerator, casProperties);
     }
 }
