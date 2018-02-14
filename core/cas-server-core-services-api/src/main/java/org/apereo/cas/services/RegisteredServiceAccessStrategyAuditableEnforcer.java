@@ -31,7 +31,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         final Service service = getUniqueParameter(parameters, Service.class);
         final Authentication authentication = getUniqueParameter(parameters, Authentication.class);
         final RegisteredService registeredService = getUniqueParameter(parameters, RegisteredService.class);
-        final Boolean retrievePrincipalAttributesFromReleasePolicy = getUniqueParameter(parameters, Boolean.class);
+        final Boolean retrievePrincipalAttributesFromReleasePolicy = getUniqueParameter(parameters, Boolean.class, Boolean.TRUE);
         final TicketGrantingTicket ticketGrantingTicket = getUniqueParameter(parameters, TicketGrantingTicket.class);
         final ProxyGrantingTicket proxyGrantingTicket = getUniqueParameter(parameters, ProxyGrantingTicket.class);
         final ServiceTicket serviceTicket = getUniqueParameter(parameters, ServiceTicket.class);
