@@ -2273,7 +2273,11 @@ Database settings for this feature are available [here](Configuration-Properties
 #### SAML Metadata MongoDb
 
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
- 
+
+ #### SAML Metadata REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.samlIdp.metadata.rest`.
+
 ### SAML Logout
 
 ```properties

@@ -10,8 +10,9 @@ Management of service provider metadata in a dynamic on-the-fly fashion may be a
 ## Metadata Query Protocol
 
 CAS also supports the [Dynamic Metadata Query Protocol](https://spaces.internet2.edu/display/InCFederation/Metadata+Query+Protocol)
-which is a REST-like API for requesting and receiving arbitrary metadata. In order to configure a CAS SAML service to retrieve its metadata
-from a Metadata query server, the metadata location must be configured to point to the query server instance. Here is an example:
+which is a REST-like API for requesting and receiving arbitrary metadata. In order to configure a CAS SAML service to retrieve its metadata from a Metadata query server, the metadata location must be configured to point to the query server instance.
+
+MDQ may be configured using the below snippet as an example:
 
 ```json
 {
@@ -20,11 +21,55 @@ from a Metadata query server, the metadata location must be configured to point 
   "name" : "SAMLService",
   "id" : 10000003,
   "evaluationOrder" : 10,
-  "metadataLocation" : "http://mdq.server.org/entities/{0}"
+  "metadataLocation" : "https://mdq.server.org/entities/{0}"
 }
 ```
 
-...where `{0}` serves as an entityID placeholder for which metadata is to be queried.
+...where `{0}` serves as an entityID placeholder for which metadata is to be queried. The placeholder is dynamically processed and replaced by CAS at runtime.
+
+## REST
+
+Similar to the Dynamic Metadata Query Protocol (MDQ), SAML sevice provider metadata may also be fetched using a more traditional REST interface. This is a simpler option that does not require one to deploy a compliant MDQ server and provides the flexibility of producing SP metadata using any programming language or framework.
+
+Support is enabled by including the following module in the overlay:
+
+```xml
+<dependency>
+  <groupId>org.apereo.cas</groupId>
+  <artifactId>cas-server-support-saml-idp-metadata-rest</artifactId>
+  <version>${cas.version}</version>
+</dependency>
+```
+
+Use the below snippet as an example to fetch metadata from REST endpoints:
+
+```json
+{
+  "@class" : "org.apereo.cas.support.saml.services.SamlRegisteredService",
+  "serviceId" : "the-entity-id-of-the-sp",
+  "name" : "SAMLService",
+  "id" : 10000003,
+  "evaluationOrder" : 10,
+  "metadataLocation" : "rest://"
+}
+```
+
+<div class="alert alert-info"><strong>Metadata Location</strong><p>
+The metadata location in the registration record above simply needs to be specified as <code>rest://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from REST endpoints defined in CAS configuration.
+</p></div>
+
+Requests are submitted to REST endpoints with `entityId` as the parameter and `Content-Type: application/xml` as the header. Upon a successful `200 - OK` response status, CAS expects the body of the HTTP response to match the below snippet:
+
+```json
+{  
+   "id":1000,
+   "name":"SAML Metadata For Service Provider",
+   "value":"...",
+   "signature":"..."
+}
+```
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-rest).
 
 ## MongoDb
 
@@ -64,6 +109,8 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 The metadata location in the registration record above simply needs to be specified as <code>mongodb://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from MongoDb data sources defined in CAS configuration. 
 </p></div>
 
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-mongodb).
+
 ## JPA
 
 Metadata documents may also be stored in and fetched from a relational database instance.  This may specially be used to avoid copying metadata files across CAS nodes in a cluster, particularly where one needs to deal with more than a few bilateral SAML integrations. Metadata documents are stored in and fetched from a single pre-defined table  (i.e. `SamlMetadataDocument`) whose connection information is taught to CAS via settings and is automatically generated.  The outline of the table is as follows:
@@ -101,6 +148,8 @@ SAML service definitions must then be designed as follows to allow CAS to fetch 
 <div class="alert alert-info"><strong>Metadata Location</strong><p>
 The metadata location in the registration record above simply needs to be specified as <code>jdbc://</code> to signal to CAS that SAML metadata for registered service provider must be fetched from JDBC data sources defined in CAS configuration. 
 </p></div>
+
+To see the relevant CAS properties, please [see this guide](Configuration-Properties.html#saml-metadata-jpa).
 
 ## Groovy
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.junit.Test;
@@ -21,6 +22,7 @@ import static org.junit.Assert.*;
 public abstract class AbstractU2FDeviceRepositoryTests {
 
     @Test
+    @SneakyThrows
     public void verifyDeviceSaved() {
         final X509Certificate cert = CertUtils.readCertificate(new ClassPathResource("cert.crt"));
         final DeviceRegistration r1 = new DeviceRegistration("keyhandle11", "publickey1", cert, 1);

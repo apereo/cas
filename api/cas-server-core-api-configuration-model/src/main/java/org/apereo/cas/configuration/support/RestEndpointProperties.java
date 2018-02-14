@@ -21,5 +21,5 @@ public class RestEndpointProperties extends BaseRestEndpointProperties {
      * Examples include {@code GET, POST}, etc.
      */
     @RequiredProperty
-    private String method;
+    private String method = "GET";
 }
