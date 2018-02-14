@@ -27,8 +27,8 @@ public class DefaultRegisteredServiceAccessStrategyEnforcer implements Registere
         try {
             RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service,
                     registeredService, authentication, retrievePrincipalAttributesFromReleasePolicy);
-        } catch (final PrincipalException pe) {
-            return createResult(pe, authentication, service, registeredService);
+        } catch (final PrincipalException e) {
+            return createResult(e, authentication, service, registeredService);
         }
 
         return createResult(null, authentication, service, registeredService);
