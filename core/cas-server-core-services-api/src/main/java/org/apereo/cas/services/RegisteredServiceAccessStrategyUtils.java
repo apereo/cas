@@ -84,7 +84,8 @@ public class RegisteredServiceAccessStrategyUtils {
             LOGGER.warn("Cannot grant access to service [{}] because it is not authorized for use by [{}].", service.getId(), principalId);
             final Map<String, Throwable> handlerErrors = new HashMap<>();
             handlerErrors.put(UnauthorizedServiceForPrincipalException.class.getSimpleName(),
-                new UnauthorizedServiceForPrincipalException("Cannot grant service access to " + principalId));
+                    new UnauthorizedServiceForPrincipalException(String.format("Cannot grant service access to %s", principalId)));
+
             throw new PrincipalException(UnauthorizedServiceForPrincipalException.CODE_UNAUTHZ_SERVICE, handlerErrors, new HashMap<>());
         }
     }
@@ -118,7 +119,7 @@ public class RegisteredServiceAccessStrategyUtils {
                                                                 final RegisteredService registeredService,
                                                                 final Authentication authentication,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
-        throws UnauthorizedServiceException, PrincipalException {
+            throws UnauthorizedServiceException, PrincipalException {
         ensureServiceAccessIsAllowed(service, registeredService);
 
         final Principal principal = authentication.getPrincipal();
@@ -147,9 +148,9 @@ public class RegisteredServiceAccessStrategyUtils {
                                                                 final RegisteredService registeredService,
                                                                 final TicketGrantingTicket ticketGrantingTicket,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
-        throws UnauthorizedServiceException, PrincipalException {
+            throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(),
-            registeredService, ticketGrantingTicket.getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
+                registeredService, ticketGrantingTicket.getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
     }
 
     /**
@@ -166,9 +167,9 @@ public class RegisteredServiceAccessStrategyUtils {
     public static void ensurePrincipalAccessIsAllowedForService(final Service service, final RegisteredService registeredService,
                                                                 final TicketGrantingTicket ticketGrantingTicket,
                                                                 final boolean retrievePrincipalAttributesFromReleasePolicy)
-        throws UnauthorizedServiceException, PrincipalException {
+            throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(service, registeredService,
-            ticketGrantingTicket.getRoot().getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
+                ticketGrantingTicket.getRoot().getAuthentication(), retrievePrincipalAttributesFromReleasePolicy);
 
     }
 
@@ -184,7 +185,7 @@ public class RegisteredServiceAccessStrategyUtils {
     public static void ensurePrincipalAccessIsAllowedForService(final ServiceTicket serviceTicket,
                                                                 final AuthenticationResult context,
                                                                 final RegisteredService registeredService)
-        throws UnauthorizedServiceException, PrincipalException {
+            throws UnauthorizedServiceException, PrincipalException {
         ensurePrincipalAccessIsAllowedForService(serviceTicket.getService(), registeredService, context.getAuthentication());
     }
 
@@ -210,7 +211,7 @@ public class RegisteredServiceAccessStrategyUtils {
             }
         }
         LOGGER.debug("Current authentication via ticket [{}] allows service [{}] to participate in the existing SSO session",
-            ticketGrantingTicket.getId(), service.getId());
+                ticketGrantingTicket.getId(), service.getId());
     }
 
 }
