@@ -2,15 +2,17 @@ package org.apereo.cas.validation;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.RegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.util.CollectionUtils;
+import org.pac4j.core.client.Client;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -27,6 +29,7 @@ import java.util.Optional;
 public class Pac4jServiceTicketValidationAuthorizer implements ServiceTicketValidationAuthorizer {
 
     private final ServicesManager servicesManager;
+    private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
 
     @Override
     public void authorize(final HttpServletRequest request, final Service service, final Assertion assertion) {
@@ -43,10 +46,13 @@ public class Pac4jServiceTicketValidationAuthorizer implements ServiceTicketVali
                 if (value.isPresent()) {
                     final String client = value.get().toString();
                     LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
-                    if (!policy.isProviderAllowed(client, registeredService)) {
-                        LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, client);
-                        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
-                    }
+
+                    final AuditableContext context = AuditableContext.builder()
+                        .registeredService(Optional.of(registeredService))
+                        .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client))
+                        .build();
+                    final AuditableExecutionResult result = delegatedAuthenticationPolicyEnforcer.execute(context);
+                    result.throwExceptionIfNeeded();
                 }
             }
         }

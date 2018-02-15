@@ -128,6 +128,7 @@ public class AuditableExecutionResult {
         context.getRegisteredService().ifPresent(obj -> result.setRegisteredService(Optional.of(obj)));
         context.getService().ifPresent(obj -> result.setService(Optional.of(obj)));
         context.getServiceTicket().ifPresent(obj -> result.setServiceTicket(Optional.of(obj)));
+        context.getProperties().putAll(result.getProperties());
         return result;
     }
 }
