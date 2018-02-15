@@ -46,6 +46,7 @@ import org.apereo.cas.configuration.model.support.sms.TwilioProperties;
 import org.apereo.cas.configuration.model.support.themes.ThemeProperties;
 import org.apereo.cas.configuration.model.webapp.LocaleProperties;
 import org.apereo.cas.configuration.model.webapp.WebflowProperties;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
@@ -57,6 +58,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@ConditionalOnMissingBean
 @ConfigurationProperties(value = "cas", ignoreUnknownFields = false)
 @Slf4j
 @Getter

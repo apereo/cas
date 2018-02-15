@@ -44,11 +44,11 @@ public class ChainingAWSCredentialsProvider implements AWSCredentialsProvider {
                 c = null;
             }
             if (c != null) {
-                LOGGER.debug("Fetched credentials from provider successfully.", p.getClass().getSimpleName());
+                LOGGER.debug("Fetched credentials from [{}] provider successfully.", p.getClass().getSimpleName());
                 return c;
             }
         }
-        LOGGER.warn("No AWS credentials could be determined from the chain: [{}]. Using anonymous credentials...");
+        LOGGER.warn("No AWS credentials could be determined from the chain. Using anonymous credentials...");
         return new AnonymousAWSCredentials();
     }
 

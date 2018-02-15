@@ -22,7 +22,6 @@ import org.springframework.webflow.execution.RequestContext;
 @Slf4j
 public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonInteractiveCredentialsAction {
 
-    
     private static final String CERTIFICATE_REQUEST_ATTRIBUTE = "javax.servlet.request.X509Certificate";
 
     public X509CertificateCredentialsNonInteractiveAction(final CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver,
@@ -36,7 +35,7 @@ public class X509CertificateCredentialsNonInteractiveAction extends AbstractNonI
         final X509Certificate[] certificates = (X509Certificate[]) context.getExternalContext().getRequestMap().get(CERTIFICATE_REQUEST_ATTRIBUTE);
 
         if (certificates == null || certificates.length == 0) {
-            LOGGER.debug("Certificates not found in request.");
+            LOGGER.debug("Certificates not found in request attribute: {}", CERTIFICATE_REQUEST_ATTRIBUTE);
             return null;
         }
         LOGGER.debug("Certificate found in request.");
