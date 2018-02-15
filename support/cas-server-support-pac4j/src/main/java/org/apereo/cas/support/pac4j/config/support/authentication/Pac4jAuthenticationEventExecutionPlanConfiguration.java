@@ -3,6 +3,7 @@ package org.apereo.cas.support.pac4j.config.support.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.audit.DelegatedAuthenticationAuditResourceResolver;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
@@ -56,10 +57,6 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @Qualifier("authenticationActionResolver")
     private AuditActionResolver authenticationActionResolver;
 
-    @Autowired
-    @Qualifier("returnValueResourceResolver")
-    private AuditResourceResolver returnValueResourceResolver;
-
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
     public DelegatedClientFactory pac4jDelegatedClientFactory() {
@@ -112,9 +109,15 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
         };
     }
 
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationAuditResourceResolver")
+    @Bean
+    public AuditResourceResolver delegatedAuthenticationAuditResourceResolver() {
+        return new DelegatedAuthenticationAuditResourceResolver();
+    }
+
     @Override
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
         plan.registerAuditActionResolver("DELEGATED_CLIENT_ACTION_RESOLVER", this.authenticationActionResolver);
-        plan.registerAuditResourceResolver("DELEGATED_CLIENT_RESOURCE_RESOLVER", this.returnValueResourceResolver);
+        plan.registerAuditResourceResolver("DELEGATED_CLIENT_RESOURCE_RESOLVER", delegatedAuthenticationAuditResourceResolver());
     }
 }
