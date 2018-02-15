@@ -80,7 +80,8 @@ Audit events may also be `POST`ed to an endpoint of your choosing. To activate t
 </dependency>
 ```
 
-The body of the HTTP request is a JSON representation of the audit record. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
+The body of the HTTP request is a JSON representation of the audit record. 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
 
 ## Audit Events
 
@@ -106,3 +107,5 @@ The following events are tracked and recorded in the audit log:
 | `OAUTH2_ACCESS_TOKEN_REQUEST`         | `CREATED`, `FAILED`
 | `REST_API_TICKET_GRANTING_TICKET`     | `CREATED`, `FAILED`
 | `REST_API_SERVICE_TICKET`             | `CREATED`, `FAILED`
+| `SERVICE_ACCESS_ENFORCEMENT` | `TRIGGERED`
+| `DELEGATED_CLIENT` | `SUCCESS`, `FAILURE`
