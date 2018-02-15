@@ -11,6 +11,7 @@ import org.apereo.cas.services.VariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
+import org.springframework.webflow.core.collection.MutableAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -38,10 +39,11 @@ public class PrepareDuoWebLoginFormAction extends AbstractAction {
         providers.forEach(pr -> {
             final DuoSecurityAuthenticationService duoAuthenticationService =
                     provider.findProvider(pr.getId(), DuoMultifactorAuthenticationProvider.class).getDuoAuthenticationService();
-            requestContext.getViewScope().put("sigRequest", duoAuthenticationService.signRequestToken(p.getId()));
-            requestContext.getViewScope().put("apiHost", duoAuthenticationService.getApiHost());
-            requestContext.getViewScope().put("commandName", "credential");
-            requestContext.getViewScope().put("principal", p);
+            final MutableAttributeMap<Object> viewScope = requestContext.getViewScope();
+            viewScope.put("sigRequest", duoAuthenticationService.signRequestToken(p.getId()));
+            viewScope.put("apiHost", duoAuthenticationService.getApiHost());
+            viewScope.put("commandName", "credential");
+            viewScope.put("principal", p);
         });
         return success();
     }

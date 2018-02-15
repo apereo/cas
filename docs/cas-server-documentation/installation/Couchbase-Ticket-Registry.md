@@ -4,6 +4,7 @@ title: CAS - Couchbase Ticket Registry
 ---
 
 # Couchbase Ticket Registry
+
 Couchbase integration is enabled by including the following dependency in the WAR overlay:
 
 ```xml
@@ -17,8 +18,9 @@ Couchbase integration is enabled by including the following dependency in the WA
 
 [Couchbase](http://www.couchbase.com) is a highly available, open source NoSQL database server based on
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this
-registry is to leverage the capability of Couchbase
-server to provide high availability to CAS.
+registry is to leverage the capability of Couchbase server to provide high availability to CAS.
+
+<div class="alert alert-info"><strong>Compatibility</strong><p>Couchbase support in CAS at the moment is limited to Couchbase v4.</p></div>
 
 ## Configuration
 

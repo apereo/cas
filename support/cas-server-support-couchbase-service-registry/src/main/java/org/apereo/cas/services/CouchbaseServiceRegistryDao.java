@@ -74,7 +74,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     @Override
     @SneakyThrows
     public RegisteredService save(final RegisteredService service) {
-        LOGGER.debug("Saving service [{}]", service);
+        LOGGER.debug("Saving service [{}]", service.getName());
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
             service.setId(service.hashCode());
         }
@@ -88,7 +88,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
 
     @Override
     public boolean delete(final RegisteredService service) {
-        LOGGER.debug("Deleting service [{}]", service);
+        LOGGER.debug("Deleting service [{}]", service.getName());
         this.couchbase.getBucket().remove(String.valueOf(service.getId()));
         return true;
     }

@@ -71,6 +71,11 @@ public class DynamoDbTicketRegistryTests extends AbstractTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    static {
+        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty("aws.secretKey", "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");
+    }
+    
     public DynamoDbTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
     }
