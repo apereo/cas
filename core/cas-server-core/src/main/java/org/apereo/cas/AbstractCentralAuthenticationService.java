@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicy;
@@ -98,6 +99,11 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      */
     protected final CipherExecutor<String, String> cipherExecutor;
 
+    /**
+     * Enforce registered service access in an auditable way
+     * since the access strategy is not usually managed as a Spring bean.
+     */
+    protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
     /**
      * Publish CAS events.
      *

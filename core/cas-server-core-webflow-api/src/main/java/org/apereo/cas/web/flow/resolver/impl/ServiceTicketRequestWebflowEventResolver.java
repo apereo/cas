@@ -4,6 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -13,7 +16,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
@@ -25,6 +27,7 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -36,7 +39,7 @@ import java.util.Set;
  */
 @Slf4j
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
-
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     public ServiceTicketRequestWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                     final CentralAuthenticationService centralAuthenticationService,
@@ -44,9 +47,12 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                                                     final TicketRegistrySupport ticketRegistrySupport,
                                                     final CookieGenerator warnCookieGenerator,
                                                     final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                    final MultifactorAuthenticationProviderSelector selector) {
-        super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport, warnCookieGenerator,
-                authenticationSelectionStrategies, selector);
+                                                    final MultifactorAuthenticationProviderSelector selector,
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+        super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationSelectionStrategies, selector);
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
     }
 
     @Override
@@ -82,12 +88,12 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                 final boolean validAuthn = authn != null;
                 if (validAuthn) {
                     LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is valid. "
-                            + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
+                        + "CAS should begin to issue service tickets for [{}] once credentials are renewed", ticketGrantingTicketId, service);
                     return false;
                 }
                 LOGGER.debug("Existing authentication context linked to ticket-granting ticket [{}] is NOT valid. "
-                                + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
-                        ticketGrantingTicketId, service);
+                        + "CAS will not issue service tickets for [{}] just yet without renewing the authentication context",
+                    ticketGrantingTicketId, service);
                 return false;
             }
         }
@@ -114,13 +120,19 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
             if (authn != null && registeredService != null) {
-                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]",
-                        registeredService, authn.getPrincipal());
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn);
+                LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
+
+                final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
+                    .authentication(Optional.of(authn))
+                    .registeredService(Optional.of(registeredService))
+                    .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                    .build();
+                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                accessResult.throwExceptionIfNeeded();
             }
-            
+
             final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
+                this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             final ServiceTicket serviceTicketId = this.centralAuthenticationService.grantServiceTicket(ticketGrantingTicketId, service, authenticationResult);
             WebUtils.putServiceTicketInRequestScope(context, serviceTicketId);
             WebUtils.putWarnCookieIfRequestParameterPresent(this.warnCookieGenerator, context);

@@ -9,15 +9,18 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.StringEscapeUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
@@ -27,8 +30,8 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
-import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.core.redirect.RedirectAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -90,22 +93,19 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
-
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
     private final Clients clients;
 
     private final AuthenticationSystemSupport authenticationSystemSupport;
-
     private final CentralAuthenticationService centralAuthenticationService;
 
     private final String themeParamName;
-
     private final String localParamName;
 
     private final boolean autoRedirect;
-
     private final ServicesManager servicesManager;
+    private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -309,13 +309,12 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             return false;
         }
         LOGGER.debug("Located registered service definition [{}] matching [{}]", registeredService, service);
-        final RegisteredServiceDelegatedAuthenticationPolicy policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
-        if (policy == null) {
-            LOGGER.debug("No delegated authentication policy is defined for client [{}] and service [{}]", client, registeredService);
-            return true;
-        }
-        LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
-        if (policy.isProviderAllowed(client.getName(), registeredService)) {
+        final AuditableContext context = AuditableContext.builder()
+            .registeredService(Optional.of(registeredService))
+            .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client.getName()))
+            .build();
+        final AuditableExecutionResult result = delegatedAuthenticationPolicyEnforcer.execute(context);
+        if (!result.isExecutionFailure()) {
             LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, client);
             return true;
         }

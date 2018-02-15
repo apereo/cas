@@ -1,7 +1,8 @@
 package org.apereo.cas.audit.spi;
 
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer.ServiceAccessCheckResult;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.inspektr.audit.spi.support.ReturnValueAsStringResourceResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -19,18 +20,19 @@ import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE
 public class ServiceAccessEnforcementAuditResourceResolver extends ReturnValueAsStringResourceResolver {
 
     @Override
-    public String[] resolveFrom(final JoinPoint auditableTarget, final Object retval) {
-        Objects.requireNonNull(retval, "ServiceAccessCheckResult must not be null");
-        final ServiceAccessCheckResult serviceAccessCheckResult = ServiceAccessCheckResult.class.cast(retval);
-        final String accessCheckOutcome = serviceAccessCheckResult.accessDenied() ? "ACCESS DENIED" : "ACCESS GRANTED";
+    public String[] resolveFrom(final JoinPoint auditableTarget, final Object returnValue) {
+        Objects.requireNonNull(returnValue, "AuditableExecutionResult must not be null");
+        final AuditableExecutionResult serviceAccessCheckResult = AuditableExecutionResult.class.cast(returnValue);
+        final String accessCheckOutcome = "Service Access "
+            + BooleanUtils.toString(serviceAccessCheckResult.isExecutionFailure(), "Denied", "Granted");
 
-        final String result = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
-                .append("service_access_check_outcome", accessCheckOutcome)
-                .append("service", serviceAccessCheckResult.getServiceId())
-                .append("principal_attributes", serviceAccessCheckResult.getPrincipalAttributes())
-                .append("required_attributes_defined_by_policy", serviceAccessCheckResult.getServiceAccessRequiredAttributes())
-                .toString();
+        final ToStringBuilder builder = new ToStringBuilder(this, NO_CLASS_NAME_STYLE)
+            .append("result", accessCheckOutcome);
+        serviceAccessCheckResult.getService().ifPresent(service -> builder.append("service", service.getId()));
+        serviceAccessCheckResult.getAuthentication().ifPresent(service -> builder.append("principal", service.getPrincipal()));
+        serviceAccessCheckResult.getRegisteredService().ifPresent(service ->
+            builder.append("requiredAttributes", service.getAccessStrategy().getRequiredAttributes()));
 
-        return new String[]{result};
+        return new String[]{builder.toString()};
     }
 }

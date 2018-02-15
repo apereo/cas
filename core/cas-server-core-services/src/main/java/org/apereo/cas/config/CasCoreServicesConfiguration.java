@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.principal.DefaultWebApplicationResponseBuilderLocator;
@@ -16,14 +17,13 @@ import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyEnforcer;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
-import org.apereo.cas.services.support.DefaultRegisteredServiceAccessStrategyEnforcer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,8 +49,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreServicesConfiguration {
-
-
     @Autowired
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
@@ -90,8 +88,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "webApplicationServiceResponseBuilder")
     @Bean
     @Autowired
-    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(@Qualifier("servicesManager")
-                                                                                           final ServicesManager servicesManager) {
+    public ResponseBuilder<WebApplicationService> webApplicationServiceResponseBuilder(@Qualifier("servicesManager") final ServicesManager servicesManager) {
         return new WebApplicationServiceResponseBuilder(servicesManager);
     }
 
@@ -104,8 +101,9 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
     @Bean
-    public RegisteredServiceAccessStrategyEnforcer registeredServiceAccessStrategyEnforcer() {
-        return new DefaultRegisteredServiceAccessStrategyEnforcer();
+    @RefreshScope
+    public AuditableExecution registeredServiceAccessStrategyEnforcer() {
+        return new RegisteredServiceAccessStrategyAuditableEnforcer();
     }
 
     @ConditionalOnMissingBean(name = "servicesManager")

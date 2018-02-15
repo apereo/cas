@@ -2,6 +2,7 @@ package org.apereo.cas.web.flow.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -38,6 +39,10 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class Pac4jWebflowConfiguration {
+
+    @Autowired
+    @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+    private AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 
     @Autowired
     @Qualifier("builtClients")
@@ -97,7 +102,8 @@ public class Pac4jWebflowConfiguration {
             casProperties.getTheme().getParamName(),
             casProperties.getLocale().getParamName(),
             casProperties.getAuthn().getPac4j().isAutoRedirect(),
-            servicesManager);
+            servicesManager,
+            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
     }
 
     @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")

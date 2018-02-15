@@ -1,15 +1,19 @@
 package org.apereo.cas.support.pac4j.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.Pac4jServiceTicketValidationAuthorizer;
+import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizerConfigurer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,10 +32,17 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
+    @Bean
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
+    public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
+        return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
+    }
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager);
+        return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager,
+            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 
     @Override

@@ -16,8 +16,6 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  */
 @Slf4j
 public class GroovyWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
-
     public GroovyWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                    final ApplicationContext applicationContext, final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);

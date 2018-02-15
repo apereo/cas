@@ -3,11 +3,13 @@ package org.apereo.cas.authentication;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
@@ -18,6 +20,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link SurrogateAuthenticationPostProcessor}.
@@ -32,7 +35,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     private final ServicesManager servicesManager;
     private final ApplicationEventPublisher applicationEventPublisher;
-
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
@@ -51,7 +54,14 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
             if (transaction.getService() != null) {
                 final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(transaction.getService(), svc, authentication);
+
+                final AuditableContext audit = AuditableContext.builder().service(Optional.of(transaction.getService()))
+                    .authentication(Optional.of(authentication))
+                    .registeredService(Optional.of(svc))
+                    .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                    .build();
+                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                accessResult.throwExceptionIfNeeded();
             }
 
             if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal, transaction.getService())) {
@@ -66,7 +76,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         } catch (final Exception e) {
             publishFailureEvent(principal, targetUserId);
             final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
-                new SurrogateAuthenticationException("Principal " + principal+ " is unauthorized to authenticate as " + targetUserId));
+                new SurrogateAuthenticationException("Principal " + principal + " is unauthorized to authenticate as " + targetUserId));
             throw new AuthenticationException(map);
         }
     }
