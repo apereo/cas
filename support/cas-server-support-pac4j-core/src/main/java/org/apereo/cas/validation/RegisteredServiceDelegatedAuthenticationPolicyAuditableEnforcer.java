@@ -8,6 +8,7 @@ import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.client.Client;
 
 import java.util.Optional;
@@ -20,6 +21,10 @@ import java.util.Optional;
  */
 @Slf4j
 public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer extends BaseAuditableExecution {
+
+    @Audit(action = "DELEGATED_CLIENT",
+        actionResolverName = "DELEGATED_CLIENT_ACTION_RESOLVER",
+        resourceResolverName = "DELEGATED_CLIENT_RESOURCE_RESOLVER")
     @Override
     public AuditableExecutionResult execute(final AuditableContext context) {
         final AuditableExecutionResult result = AuditableExecutionResult.of(context);

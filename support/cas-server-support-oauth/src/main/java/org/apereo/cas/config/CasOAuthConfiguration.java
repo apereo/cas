@@ -37,7 +37,7 @@ import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
-import org.apereo.cas.support.oauth.web.audit.UserProfileDataAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -547,7 +547,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER",
             new DefaultAuditActionResolver("_CREATED", "_FAILED"));
         plan.registerAuditResourceResolver("OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER",
-            new UserProfileDataAuditResourceResolver());
+            new OAuth20UserProfileDataAuditResourceResolver());
 
         plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER",
             new DefaultAuditActionResolver("_CREATED", "_FAILED"));

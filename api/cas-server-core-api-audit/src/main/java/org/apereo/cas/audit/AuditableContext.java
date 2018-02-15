@@ -23,12 +23,20 @@ import java.util.Optional;
 @Builder
 public class AuditableContext {
 
-    private Optional<Service> service;
-    private Optional<RegisteredService> registeredService;
-    private Optional<Authentication> authentication;
-    private Optional<ServiceTicket> serviceTicket;
-    private Optional<AuthenticationResult> authenticationResult;
-    private Optional<TicketGrantingTicket> ticketGrantingTicket;
-    private Optional<Boolean> retrievePrincipalAttributesFromReleasePolicy;
+    @Builder.Default
+    private Optional<Service> service = Optional.empty();
+    @Builder.Default
+    private Optional<RegisteredService> registeredService= Optional.empty();
+    @Builder.Default
+    private Optional<Authentication> authentication= Optional.empty();
+    @Builder.Default
+    private Optional<ServiceTicket> serviceTicket= Optional.empty();
+    @Builder.Default
+    private Optional<AuthenticationResult> authenticationResult= Optional.empty();
+    @Builder.Default
+    private Optional<TicketGrantingTicket> ticketGrantingTicket= Optional.empty();
+    @Builder.Default
+    private Optional<Boolean> retrievePrincipalAttributesFromReleasePolicy= Optional.empty();
+    @Builder.Default
     private Map<String, Object> properties = new LinkedHashMap<>();
 }
