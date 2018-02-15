@@ -39,10 +39,10 @@ public class X509CertificateCredentialsRequestHeaderAction extends X509Certifica
         if (x509Credential != null) {
             return x509Credential;
         }
-        final X509Certificate[] certsfromHeader = x509CertificateExtractor.extract((HttpServletRequest) context.getExternalContext().getNativeRequest());
-        if (certsfromHeader != null) {
+        final X509Certificate[] certFromHeader = x509CertificateExtractor.extract((HttpServletRequest) context.getExternalContext().getNativeRequest());
+        if (certFromHeader != null) {
             LOGGER.debug("Certificate found in HTTP request via {}", x509CertificateExtractor.getClass().getName());
-            return new X509CertificateCredential(certsfromHeader);
+            return new X509CertificateCredential(certFromHeader);
         }
         LOGGER.debug("Certificates not found in request header.");
         return null;
