@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
@@ -19,6 +20,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * This is {@link SurrogateAuthenticationPostProcessor}.
@@ -53,7 +55,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             if (transaction.getService() != null) {
                 final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(transaction.getService(), svc, authentication, true);
+                final AuditableContext audit = AuditableContext.builder().service(Optional.of(transaction.getService()))
+                    .authentication(Optional.of(authentication))
+                    .registeredService(Optional.of(svc))
+                    .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                    .build();
+                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();
             }
 
