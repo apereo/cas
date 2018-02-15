@@ -79,14 +79,13 @@ public class X509AuthenticationWebflowConfiguration {
         final boolean extractCertFromRequestHeader = casProperties.getAuthn().getX509().isExtractCert();
         if (extractCertFromRequestHeader) {
             return new X509CertificateCredentialsRequestHeaderAction(initialAuthenticationAttemptWebflowEventResolver,
-                    serviceTicketRequestWebflowEventResolver,
-                    adaptiveAuthenticationPolicy,
-                    x509CertificateExtractor);
-        } else {
-            return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver,
-                    serviceTicketRequestWebflowEventResolver,
-                    adaptiveAuthenticationPolicy);
+                serviceTicketRequestWebflowEventResolver,
+                adaptiveAuthenticationPolicy,
+                x509CertificateExtractor);
         }
+        return new X509CertificateCredentialsNonInteractiveAction(initialAuthenticationAttemptWebflowEventResolver,
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy);
     }
 
     @ConditionalOnMissingBean(name = "x509ExtractSSLCertificate")
