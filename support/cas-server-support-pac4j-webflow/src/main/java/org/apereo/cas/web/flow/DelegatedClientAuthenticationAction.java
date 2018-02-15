@@ -27,6 +27,7 @@ import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
+import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
@@ -194,7 +195,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                     final String name = client.getName();
                     final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
                     final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-                    final String redirectionUrl = indirectClient.getRedirectAction(webContext).getLocation();
+                    final String redirectionUrl;
+                    final RedirectAction action = indirectClient.getRedirectAction(webContext);
+                    if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
+                        redirectionUrl = String.format("javascript:document.write('%1$s');document.close()", action.getContent().replaceAll("\n", ""));
+                    } else {
+                        redirectionUrl = action.getLocation();
+                    }
                     LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
                     urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
                 } catch (final HttpAction e) {

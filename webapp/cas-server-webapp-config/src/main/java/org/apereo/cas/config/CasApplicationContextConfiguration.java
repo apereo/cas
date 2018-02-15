@@ -3,7 +3,6 @@ package org.apereo.cas.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,17 +26,11 @@ import javax.servlet.http.HttpServletResponse;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasApplicationContextConfiguration {
-    
-    @Bean
-    public DefaultAdvisorAutoProxyCreator advisorAutoProxyCreator() {
-        return new DefaultAdvisorAutoProxyCreator();
-    }
-            
     @Bean
     protected UrlFilenameViewController passThroughController() {
         return new UrlFilenameViewController();
     }
-    
+
     @Bean
     protected Controller rootController() {
         return new ParameterizableViewController() {
