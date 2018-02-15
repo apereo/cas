@@ -145,6 +145,11 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
     }
 
     @Override
+    public void setCookieDomain(final String cookieDomain) {
+        super.setCookieDomain(StringUtils.defaultIfEmpty(cookieDomain, null));
+    }
+
+    @Override
     protected Cookie createCookie(final String cookieValue) {
         final Cookie c = super.createCookie(cookieValue);
         c.setComment("CAS Cookie");
