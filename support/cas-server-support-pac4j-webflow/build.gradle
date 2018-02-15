@@ -11,6 +11,7 @@ dependencies {
     implementation project(":support:cas-server-support-saml-core")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":core:cas-server-core-services-api")
 
     implementation libraries.pac4j
 }
