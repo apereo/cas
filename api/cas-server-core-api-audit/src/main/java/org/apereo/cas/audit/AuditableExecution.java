@@ -20,5 +20,5 @@ public interface AuditableExecution {
      * @param parameters the parameters
      * @return the result
      */
-    AuditableExecutionResult execute(Object... parameters);
+    AuditableExecutionResult execute(AuditableContext parameters);
 }

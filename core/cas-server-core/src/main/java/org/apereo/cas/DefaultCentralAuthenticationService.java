@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
@@ -58,6 +59,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
@@ -133,8 +135,13 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final Service selectedService = resolveServiceFromAuthenticationRequest(service);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(selectedService, registeredService, ticketGrantingTicket, false);
-        result.throwExceptionIfNeeded();
+        final AuditableContext audit = AuditableContext.builder().service(Optional.of(selectedService))
+            .ticketGrantingTicket(Optional.of(ticketGrantingTicket))
+            .registeredService(Optional.of(registeredService))
+            .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+            .build();
+        final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
         RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket);
@@ -174,8 +181,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         try {
-            final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(service, registeredService, proxyGrantingTicketObject, false);
-            result.throwExceptionIfNeeded();
+
+            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
+                .ticketGrantingTicket(Optional.of(proxyGrantingTicketObject))
+                .registeredService(Optional.of(registeredService))
+                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            accessResult.throwExceptionIfNeeded();
 
             RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
         } catch (final PrincipalException e) {
@@ -224,11 +237,15 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("ServiceTicket [{}] has expired or cannot be found in the ticket registry", serviceTicketId);
             throw new InvalidTicketException(serviceTicketId);
         }
-
         final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceTicket.getService());
 
+        final AuditableContext ctx = AuditableContext.builder()
+            .serviceTicket(Optional.of(serviceTicket))
+            .authenticationResult(Optional.of(authenticationResult))
+            .registeredService(Optional.of(registeredService))
+            .build();
 
-        final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(serviceTicket, authenticationResult, registeredService);
+        final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(ctx);
         result.throwExceptionIfNeeded();
 
         if (!registeredService.getProxyPolicy().isAllowedToProxy()) {
@@ -317,8 +334,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Principal determined for release to [{}] is [{}]", registeredService.getServiceId(), principalId);
 
             final Authentication finalAuthentication = builder.build();
-            final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(selectedService, registeredService, finalAuthentication, false);
-            result.throwExceptionIfNeeded();
+
+            final AuditableContext audit = AuditableContext.builder().service(Optional.of(selectedService))
+                .authentication(Optional.of(finalAuthentication))
+                .registeredService(Optional.of(registeredService))
+                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            accessResult.throwExceptionIfNeeded();
 
             AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
 
@@ -359,8 +382,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             LOGGER.debug("Resolved service [{}] from the authentication request", selectedService);
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
-            final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(selectedService, registeredService, authentication, false);
-            result.throwExceptionIfNeeded();
+
+            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
+                .authentication(Optional.of(authentication))
+                .registeredService(Optional.of(registeredService))
+                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            accessResult.throwExceptionIfNeeded();
         }
 
         final TicketGrantingTicketFactory factory = (TicketGrantingTicketFactory) this.ticketFactory.get(TicketGrantingTicket.class);

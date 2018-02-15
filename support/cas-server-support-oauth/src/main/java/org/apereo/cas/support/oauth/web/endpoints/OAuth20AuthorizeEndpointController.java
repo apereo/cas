@@ -2,6 +2,7 @@ package org.apereo.cas.support.oauth.web.endpoints;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
@@ -201,7 +202,12 @@ public class OAuth20AuthorizeEndpointController extends BaseOAuth20Controller {
         LOGGER.debug("Created OAuth authentication [{}] for service [{}]", service, authentication);
 
         try {
-            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(service, registeredService, authentication, true);
+            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
+                .authentication(Optional.of(authentication))
+                .registeredService(Optional.of(registeredService))
+                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                .build();
+            final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
         } catch (final UnauthorizedServiceException | PrincipalException e) {
             LOGGER.error(e.getMessage(), e);
