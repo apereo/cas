@@ -1,10 +1,6 @@
 // Todo: Export various sections based on functionality
 @import "components/variables";
 
-@import "partials/fonts";
-
-@import "partials/base";
-
 @import "partials/messages";
 
 @import "components/login";
@@ -13,4 +9,41 @@
 
 @import "components/buttons";
 
-@import "partials/junk-drawer";
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  /* Margin bottom by footer height */
+  margin-bottom: 60px;
+}
+
+body>.container {
+  padding: 65px 15px 0px;
+}
+
+a {
+  color: $link-color;
+}
+.logo {
+  width: 80px;
+  display: block;
+}
+
+header {
+  & > .navbar {
+    background-color: $navbar-background-color;
+
+    .logo {
+      path.cls-1 {
+        @if lightness($navbar-background-color) > lightness(#aaa) {
+          fill: $cas-primary;
+        } @else {
+          fill: white;
+        }
+      }
+    }
+  }
+}
