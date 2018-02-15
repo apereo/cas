@@ -12,6 +12,7 @@ import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 
 import java.util.Map;
+import java.util.Optional;
 import java.util.TreeMap;
 
 /**
@@ -25,17 +26,18 @@ import java.util.TreeMap;
 @Setter
 @Getter
 public class AuditableExecutionResult {
-    private RegisteredService registeredService;
-    private Service service;
-    private ServiceTicket serviceTicket;
-    private Authentication authentication;
-    private RuntimeException exception;
-    private TicketGrantingTicket ticketGrantingTicket;
-    private AuthenticationResult authenticationResult;
+    private Optional<RegisteredService> registeredService;
+    private Optional<Service> service;
+    private Optional<ServiceTicket> serviceTicket;
+    private Optional<Authentication> authentication;
+    private Optional<RuntimeException> exception;
+    private Optional<TicketGrantingTicket> ticketGrantingTicket;
+    private Optional<AuthenticationResult> authenticationResult;
+
     private Map<String, Object> properties = new TreeMap<>();
 
     public boolean isExecutionFailure() {
-        return exception != null;
+        return exception.isPresent();
     }
 
     /**
@@ -43,7 +45,7 @@ public class AuditableExecutionResult {
      */
     public void throwExceptionIfNeeded() {
         if (isExecutionFailure()) {
-            throw this.exception;
+            throw this.exception.get();
         }
     }
 
@@ -59,10 +61,10 @@ public class AuditableExecutionResult {
     public static AuditableExecutionResult of(final RuntimeException e, final Authentication authentication,
                                               final Service service, final RegisteredService registeredService) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        result.setAuthentication(authentication);
-        result.setException(e);
-        result.setRegisteredService(registeredService);
-        result.setService(service);
+        result.setAuthentication(Optional.of(authentication));
+        result.setException(Optional.of(e));
+        result.setRegisteredService(Optional.of(registeredService));
+        result.setService(Optional.of(service));
         return result;
     }
 
@@ -90,9 +92,9 @@ public class AuditableExecutionResult {
     public static AuditableExecutionResult of(final ServiceTicket serviceTicket, final AuthenticationResult authenticationResult,
                                               final RegisteredService registeredService) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        result.setServiceTicket(serviceTicket);
-        result.setAuthenticationResult(authenticationResult);
-        result.setRegisteredService(registeredService);
+        result.setServiceTicket(Optional.of(serviceTicket));
+        result.setAuthenticationResult(Optional.of(authenticationResult));
+        result.setRegisteredService(Optional.of(registeredService));
         return result;
     }
 
@@ -106,9 +108,26 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        result.setTicketGrantingTicket(ticketGrantingTicket);
-        result.setRegisteredService(registeredService);
-        result.setService(service);
+        result.setTicketGrantingTicket(Optional.of(ticketGrantingTicket));
+        result.setRegisteredService(Optional.of(registeredService));
+        result.setService(Optional.of(service));
+        return result;
+    }
+
+    /**
+     * Of auditable execution result.
+     *
+     * @param context the context
+     * @return the auditable execution result
+     */
+    public static AuditableExecutionResult of(final AuditableContext context) {
+        final AuditableExecutionResult result = new AuditableExecutionResult();
+        context.getTicketGrantingTicket().ifPresent(obj -> result.setTicketGrantingTicket(Optional.of(obj)));
+        context.getAuthentication().ifPresent(obj -> result.setAuthentication(Optional.of(obj)));
+        context.getAuthenticationResult().ifPresent(obj -> result.setAuthenticationResult(Optional.of(obj)));
+        context.getRegisteredService().ifPresent(obj -> result.setRegisteredService(Optional.of(obj)));
+        context.getService().ifPresent(obj -> result.setService(Optional.of(obj)));
+        context.getServiceTicket().ifPresent(obj -> result.setServiceTicket(Optional.of(obj)));
         return result;
     }
 }
