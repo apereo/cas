@@ -1,3 +1,5 @@
+$cas-primary: #153e50;
+
 $color-light: #efefef;
 $color-text-hover: black;
 
@@ -7,6 +9,19 @@ $link-hover-color: rgb(160, 183, 87);
 $secondary-color: rgb(20, 144, 179);
 
 $bootstrap-sass-asset-helper: false !default;
+
+$navbar-background-color: $cas-primary;
+
+// Footer Colors
+$footer-text-color: black;
+$footer-link-color: black;
+$footer-background-color: #f5f5f5;
+
+
+// Login specific Colors
+$list-providers-link-color: white;
+
+
 //
 // Variables
 // --------------------------------------------------
