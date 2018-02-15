@@ -11,6 +11,7 @@ dependencies {
     implementation project(":core:cas-server-core-util-api")
     
     compileOnly project(":core:cas-server-core-tickets")
+    compileOnly project(":support:cas-server-support-jpa-ticket-registry")
     
     implementation libraries.pac4j
 

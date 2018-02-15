@@ -26,16 +26,23 @@ import org.apereo.cas.config.JpaTicketRegistryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.ticket.BaseTicketCatalogConfigurer;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketCatalog;
+import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicket;
+import org.apereo.cas.ticket.registry.support.DefaultJpaTgtDeleteHandler;
+import org.apereo.cas.ticket.registry.support.JpaTgtDeleteHandler;
+import org.apereo.cas.ticket.registry.support.TestTicket;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.MultiTimeUseOrTimeoutExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
@@ -49,6 +56,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -56,6 +65,7 @@ import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -65,7 +75,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import static org.junit.Assert.*;
-
+import static org.mockito.Mockito.*;
 
 /**
  * Unit test for {@link JpaTicketRegistry} class.
@@ -116,6 +126,8 @@ public class JpaTicketRegistryTests {
 
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
+    private static final ExpirationPolicy EXP_POLICY_TT = new HardTimeoutExpirationPolicy(1000);
+
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -125,10 +137,39 @@ public class JpaTicketRegistryTests {
     @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
+    @Autowired
+    @Qualifier("mockHandler")
+    private JpaTgtDeleteHandler mockHandler;
+
     @TestConfiguration
     public static class JpaTestConfiguration {
         @Autowired
         protected ApplicationContext applicationContext;
+
+        @Bean
+        public JpaTgtDeleteHandler testHandler(final TicketCatalog catalog) {
+            return new DefaultJpaTgtDeleteHandler(catalog, TestTicket.PREFIX);
+        }
+
+        @Bean
+        public JpaTgtDeleteHandler mockHandler() {
+            final JpaTgtDeleteHandler mockHandler = mock(JpaTgtDeleteHandler.class);
+            when(mockHandler.deleteSingleTgt((EntityManager) any(EntityManager.class), anyString())).thenReturn(0);
+            return mockHandler;
+        }
+
+        @Configuration("testTicketMetadataRegistrationConfiguration")
+        public static class TestTicketCatalogConfiguration extends BaseTicketCatalogConfigurer {
+
+            @Override
+            public void configureTicketCatalog(final TicketCatalog plan) {
+                final TicketDefinition metadata = buildTicketDefinition(plan, TestTicket.PREFIX, TestTicket.class);
+                metadata.getProperties().setStorageName("testTokensCache");
+                final long timeout = Beans.newDuration("PT1S").toMillis();
+                metadata.getProperties().setStorageTimeout(timeout);
+                registerTicketDefinition(plan, metadata);
+            }
+        }
 
         @PostConstruct
         public void init() {
@@ -146,8 +187,10 @@ public class JpaTicketRegistryTests {
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         final ProxyTicket newPt = grantProxyTicketInTransaction(pgtFromDb);
+        final TestTicket newTt = grantTestTicketInTransaction(tgtFromDb);
 
         getTicketInTransaction(newPt.getId());
+        getTicketInTransaction(newTt.getId());
         deleteTicketsInTransaction();
     }
 
@@ -219,6 +262,27 @@ public class JpaTicketRegistryTests {
     }
 
     @Test
+    public void verifyTgtDeleteHandlerExecuted() {
+        // TGT
+        final TicketGrantingTicket newTgt = newTGT();
+        addTicketInTransaction(newTgt);
+        final TicketGrantingTicket tgtFromDb = (TicketGrantingTicket) getTicketInTransaction(newTgt.getId());
+        assertNotNull(tgtFromDb);
+
+        final TestTicket newTt = grantTestTicketInTransaction(tgtFromDb);
+        final TestTicket ttFromDb = (TestTicket) getTicketInTransaction(newTt.getId());
+        assertNotNull(ttFromDb);
+        assertEquals(newTt.getId(), ttFromDb.getId());
+
+        deleteTicketInTransaction(tgtFromDb.getId());
+
+        // verify test ticket delete handler is executed
+        assertNull(getTicketInTransaction(ttFromDb.getId()));
+        // verify second tgt delete handler is executed
+        verify(mockHandler).deleteSingleTgt(isA(EntityManager.class), eq(tgtFromDb.getId()));
+    }
+
+    @Test
     public void verifyConcurrentServiceTicketGeneration() {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
@@ -278,6 +342,15 @@ public class JpaTicketRegistryTests {
             false);
     }
 
+    static TestTicket newTT(final TicketGrantingTicket parent) {
+        final TestTicket tt = new TestTicket();
+        tt.setId(ID_GENERATOR.getNewTicketId(TestTicket.PREFIX));
+        tt.setTicketGrantingTicket(parent);
+        tt.setExpirationPolicy(EXP_POLICY_TT);
+
+        return tt;
+    }
+
     private void addTicketInTransaction(final Ticket ticket) {
         new TransactionTemplate(txManager).execute(status -> {
             ticketRegistry.addTicket(ticket);
@@ -331,6 +404,14 @@ public class JpaTicketRegistryTests {
             final ProxyTicket st = newPT(parent);
             ticketRegistry.addTicket(st);
             return st;
+        });
+    }
+
+    private TestTicket grantTestTicketInTransaction(final TicketGrantingTicket parent) {
+        return new TransactionTemplate(txManager).execute(status -> {
+            final TestTicket tt = newTT(parent);
+            ticketRegistry.addTicket(tt);
+            return tt;
         });
     }
 
