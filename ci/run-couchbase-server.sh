@@ -23,11 +23,9 @@ if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
         printf '.'
         sleep 1
     done
+
+    echo -e "\nCreating default Couchbase bucket..."
+    curl -X POST -d 'name=default' -d 'bucketType=couchbase' -d 'ramQuotaMB=120' -d 'authType=none' -d 'proxyPort=11216' http://localhost:8091/pools/default/buckets
+    curl -X POST -d name=casbucket -d bucketType=couchbase -d ramQuotaMB=120 -d authType=none -d proxyPort=11217 http://localhost:8091/pools/default/buckets
+    curl http://localhost:8091/pools/default/buckets
 fi
-
-echo -e "\nCreating default Couchbase bucket..."
-curl -X POST -d 'name=default' -d 'bucketType=couchbase' -d 'ramQuotaMB=120' -d 'authType=none' -d 'proxyPort=11216' http://localhost:8091/pools/default/buckets
-curl -X POST -d name=casbucket -d bucketType=couchbase -d ramQuotaMB=120 -d authType=none -d proxyPort=11217 http://localhost:8091/pools/default/buckets
-curl http://localhost:8091/pools/default/buckets
-
-
