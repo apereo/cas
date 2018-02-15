@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationManager;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -90,7 +91,8 @@ public class DelegatedClientAuthenticationActionTests {
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
             null, mock(CentralAuthenticationService.class),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
-            false, getServicesManagerWith(service));
+            false, getServicesManagerWith(service),
+            mock(AuditableExecution.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -150,7 +152,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
             "theme", "locale", false,
-            getServicesManagerWith(service));
+            getServicesManagerWith(service), mock(AuditableExecution.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

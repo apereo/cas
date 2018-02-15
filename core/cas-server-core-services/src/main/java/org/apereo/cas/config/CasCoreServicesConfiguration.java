@@ -101,6 +101,7 @@ public class CasCoreServicesConfiguration {
 
     @ConditionalOnMissingBean(name = "registeredServiceAccessStrategyEnforcer")
     @Bean
+    @RefreshScope
     public AuditableExecution registeredServiceAccessStrategyEnforcer() {
         return new RegisteredServiceAccessStrategyAuditableEnforcer();
     }

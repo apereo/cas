@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -32,6 +33,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
     private ServicesManager servicesManager;
 
     @Bean
+    @RefreshScope
     @ConditionalOnMissingBean(name = "registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
     public AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer() {
         return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
@@ -39,7 +41,8 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
 
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
-        return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager, registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
+        return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager,
+            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer());
     }
 
     @Override
