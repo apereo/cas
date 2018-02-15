@@ -4,6 +4,7 @@ dependencies {
     implementation project(":core:cas-server-core-web")
     implementation project(":core:cas-server-core-authentication-attributes")
     compileOnly project(":core:cas-server-core-tickets")
+    compileOnly project(":support:cas-server-support-jpa-ticket-registry")
     implementation project(":support:cas-server-support-oauth-api")
     implementation project(":support:cas-server-support-oauth-services")
     implementation project(":core:cas-server-core-configuration")

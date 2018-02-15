@@ -8,6 +8,8 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.util.Assert;
 
 import javax.persistence.Column;
@@ -36,6 +38,7 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The {@link TicketGrantingTicket} this is associated with.
      */
     @ManyToOne(targetEntity = TicketGrantingTicketImpl.class)
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @JsonProperty("grantingTicket")
     private TicketGrantingTicket ticketGrantingTicket;
 
