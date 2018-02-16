@@ -3,7 +3,7 @@ layout: default
 title: CAS - Protocol Overview
 ---
 
-# Protocols
+# Protocols Overview
 
 The following protocols are supported and provided by CAS:
 
