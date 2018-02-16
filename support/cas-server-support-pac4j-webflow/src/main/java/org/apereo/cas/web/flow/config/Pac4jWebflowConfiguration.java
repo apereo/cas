@@ -10,7 +10,7 @@ import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
-import org.apereo.cas.web.flow.Pac4jWebflowConfigurer;
+import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.SAML2ClientLogoutAction;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.pac4j.core.client.Clients;
@@ -106,11 +106,11 @@ public class Pac4jWebflowConfiguration {
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
     }
 
-    @ConditionalOnMissingBean(name = "pac4jWebflowConfigurer")
+    @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
-    public CasWebflowConfigurer pac4jWebflowConfigurer() {
-        final CasWebflowConfigurer w = new Pac4jWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+    public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
+        final CasWebflowConfigurer w = new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
         w.initialize();
         return w;
