@@ -20,7 +20,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogateextendsRegisteredServiceAccessStrategy {
+public class GroovySurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
     private static final long serialVersionUID = -3998531629984937388L;
 
     private String groovyScript;
