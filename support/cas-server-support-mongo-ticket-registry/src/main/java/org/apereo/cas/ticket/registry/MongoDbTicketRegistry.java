@@ -200,7 +200,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
-        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
 
         // expiration policy can specify not to delete automatically
         if (ttl < 1) {
