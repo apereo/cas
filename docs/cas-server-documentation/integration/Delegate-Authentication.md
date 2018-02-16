@@ -23,8 +23,7 @@ Support is enabled by including the following dependency in the WAR overlay:
 </dependency>
 ```
 
-<div class="alert alert-info"><strong>Remember</strong><p>Delegated authentication always assumes the originator of the authentication request is a CAS client; an
-application that understands CAS protocol and can validate a service ticket. Clients that use other protocols (SAML2, OAuth, etc) with CAS cannot today take advantage of delegated authentication scenarios. Support for this behavior may be worked out in future releases.</p></div>
+<div class="alert alert-info"><strong>Note</strong><p>The client issuing the authentication request can be of any type (SAML, OAuth2, OpenID Connect, etc) and is allowed to submit the authentication request using any protocol that the CAS server supports and is configured to understand. This means that you may have an OAuth2 client using CAS in delegation mode to authenticate at an external SAML2 identity provider, another CAS server or Facebook and in the end of that flow receiving an OAuth2 user profile. The CAS server is able to act as a proxy, doing the protocol translation in the middle.</p></div>
 
 ## Register Providers
 
