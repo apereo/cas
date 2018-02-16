@@ -156,7 +156,7 @@ Upon a successful surrogate authentication event, the following attributes are c
 | `surrogatePrincipal`  | The admin user whose credentials are validated and acts as the impersonator.
 | `surrogateUser`       | The surrogate user that is impersonated.
 
-## Surrogate Authorization
+## Surrogate Access Strategy
 
 Each surrogate account storage is able to determine the list of impersonatees to enforce authorization rules. Additionally, you may on a per-service level define whether an application is authorized to leverage surrogate authentication and whether the primary user is tagged with enough attributes and entitlements to allow impersonation to execute.
 
