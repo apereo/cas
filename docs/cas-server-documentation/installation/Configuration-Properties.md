@@ -2382,6 +2382,8 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Webex               | `cas.samlSp.webex` | `firstName`, `lastName`
 | InCommon        |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
 | Amazon        |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
+| Concur Solutions               | `cas.samlSp.concurSolutions` | `email`
+| PollEverywhere               | `cas.samlSp.pollEverywhere` | `email`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata. 
 
