@@ -66,31 +66,10 @@ import java.util.regex.Pattern;
 @Getter
 @AllArgsConstructor
 public class DelegatedClientAuthenticationAction extends AbstractAction {
-
-    /**
-     * Stop the webflow for pac4j and route to view.
-     */
-    public static final String STOP_WEBFLOW = "stopWebflow";
-
-    /**
-     * Stop the webflow.
-     */
-    public static final String STOP = "stop";
-
-    /**
-     * Client action state id in the webflow.
-     */
-    public static final String CLIENT_ACTION = "clientAction";
-
     /**
      * All the urls and names of the pac4j clients.
      */
     public static final String PAC4J_URLS = "pac4jUrls";
-
-    /**
-     * View id that stops the webflow.
-     */
-    public static final String VIEW_ID_STOP_WEBFLOW = "casPac4jStopWebflow";
 
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
@@ -111,44 +90,30 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        final HttpSession session = request.getSession();
-        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+
+
         final String clientName = request.getParameter(this.clients.getClientNameParameter());
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             return stopWebflow();
         }
+
+        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
         if (StringUtils.isNotBlank(clientName)) {
-            final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            LOGGER.debug("Delegated authentication client is [{}]", client);
-            final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
-            context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
-            LOGGER.debug("Retrieve service: [{}]", service);
-            if (service != null) {
-                request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
-                if (!isDelegatedClientAuthorizedForService(client, service)) {
-                    LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
-                    throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
-                }
-            }
+            final Service service = restoreAuthenticationRequestInContext(context, request);
+            final BaseClient<Credentials, CommonProfile> client = findDelegatedClientByName(request, clientName, service);
+
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
                 LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
             } catch (final Exception e) {
-                LOGGER.debug("The request requires http action.", e);
+                LOGGER.debug(e.getMessage(), e);
                 return stopWebflow();
             }
-            restoreRequestAttribute(request, session, this.themeParamName);
-            restoreRequestAttribute(request, session, this.localParamName);
-            restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
+
             if (credentials != null) {
-                final ClientCredential clientCredential = new ClientCredential(credentials);
-                final AuthenticationResult authenticationResult =
-                    this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
-                final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
-                WebUtils.putTicketGrantingTicketInScopes(context, tgt);
-                return success();
+                return establishDelegatedAuthenticationSession(context, service, credentials);
             }
         }
 
@@ -156,6 +121,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
         }
+
         if (this.autoRedirect) {
             final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
             if (urls != null && urls.size() == 1) {
@@ -170,46 +136,61 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         return error();
     }
 
+    private Service restoreAuthenticationRequestInContext(final RequestContext context, final HttpServletRequest request) {
+        final HttpSession session = request.getSession();
+        final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
+        context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        restoreRequestAttribute(request, session, this.themeParamName);
+        restoreRequestAttribute(request, session, this.localParamName);
+        restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
+        return service;
+    }
+
+    private Event establishDelegatedAuthenticationSession(final RequestContext context, final Service service, final Credentials credentials) {
+        final ClientCredential clientCredential = new ClientCredential(credentials);
+        final AuthenticationResult authenticationResult =
+            this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
+        final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
+        WebUtils.putTicketGrantingTicketInScopes(context, tgt);
+        return success();
+    }
+
+    private BaseClient<Credentials, CommonProfile> findDelegatedClientByName(final HttpServletRequest request, final String clientName, final Service service) {
+        final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+        LOGGER.debug("Delegated authentication client is [{}]", client);
+        LOGGER.debug("Retrieve service: [{}]", service);
+        if (service != null) {
+            request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
+            if (!isDelegatedClientAuthorizedForService(client, service)) {
+                LOGGER.warn("Delegated client [{}] is not authorized by service [{}]", client, service);
+                throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
+            }
+        }
+        return client;
+    }
+
     /**
      * Prepare the data for the login page.
      *
      * @param context The current webflow context
      */
     protected void prepareForLoginPage(final RequestContext context) {
+        final Service service = WebUtils.getService(context);
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
-        final HttpSession session = request.getSession();
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final Service service = WebUtils.getService(context);
-        LOGGER.debug("Save service: [{}]", service);
-        session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
-        saveRequestParameter(request, session, this.themeParamName);
-        saveRequestParameter(request, session, this.localParamName);
-        saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
+
+        rememberAuthenticationRequest(service, request);
+
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
-        this.clients.findAllClients().stream().filter(client -> client instanceof IndirectClient
-            && isDelegatedClientAuthorizedForService(client, service))
+        this.clients.findAllClients()
+            .stream()
+            .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
+            .map(IndirectClient.class::cast)
             .forEach(client -> {
                 try {
-                    final IndirectClient indirectClient = (IndirectClient) client;
-                    final String name = client.getName();
-                    final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-                    final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-                    final String redirectionUrl;
-                    final RedirectAction action = indirectClient.getRedirectAction(webContext);
-                    if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
-                        redirectionUrl = String.format("javascript:document.write('%1$s');document.close()", action.getContent().replaceAll("\n", ""));
-                    } else {
-                        redirectionUrl = action.getLocation();
-                    }
-                    LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-                    urls.add(new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name)));
-                } catch (final HttpAction e) {
-                    if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                        LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
-                    } else {
-                        LOGGER.warn(e.getMessage(), e);
-                    }
+                    final Optional<ProviderLoginPageConfiguration> provider = buildProviderConfiguration(client, webContext);
+                    provider.ifPresent(urls::add);
                 } catch (final Exception e) {
                     LOGGER.error("Cannot process client [{}]", client, e);
                 }
@@ -220,6 +201,42 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             LOGGER.warn("No delegated authentication providers could be determined based on the provided configuration. "
                 + "Either no clients are configured, or the current access strategy rules prohibit CAS from using authentication providers for this request.");
         }
+    }
+
+    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext) {
+        try {
+            final String name = client.getName();
+            final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
+            final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+            final String redirectionUrl;
+            final RedirectAction action = client.getRedirectAction(webContext);
+            if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
+                final String content = StringUtils.removeAll(action.getContent(), "\n");
+                redirectionUrl = String.format("javascript:document.write('%1$s');document.close();", content);
+            } else {
+                redirectionUrl = action.getLocation();
+            }
+            LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
+            final ProviderLoginPageConfiguration p = new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name));
+            return Optional.of(p);
+        } catch (final HttpAction e) {
+            if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
+                LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
+            } else {
+                LOGGER.warn(e.getMessage(), e);
+            }
+        }
+        return Optional.empty();
+
+    }
+
+    private void rememberAuthenticationRequest(final Service service, final HttpServletRequest request) {
+        final HttpSession session = request.getSession();
+        LOGGER.debug("Save service: [{}]", service);
+        session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
+        saveRequestParameter(request, session, this.themeParamName);
+        saveRequestParameter(request, session, this.localParamName);
+        saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
     }
 
     /**
@@ -263,7 +280,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     private Event stopWebflow() {
-        return new Event(this, STOP);
+        return new Event(this, CasWebflowConstants.TRANSITION_ID_STOP);
     }
 
     /**
