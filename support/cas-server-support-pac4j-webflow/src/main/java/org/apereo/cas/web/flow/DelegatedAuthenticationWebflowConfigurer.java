@@ -22,21 +22,22 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
- * The {@link Pac4jWebflowConfigurer} is responsible for
+ * The {@link DelegatedAuthenticationWebflowConfigurer} is responsible for
  * adjusting the CAS webflow context for pac4j integration.
  *
  * @author Misagh Moayyed
  * @since 4.2
  */
 @Slf4j
-public class Pac4jWebflowConfigurer extends AbstractCasWebflowConfigurer {
+public class DelegatedAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
     private final Action saml2ClientLogoutAction;
     
-    public Pac4jWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
-                                  final FlowDefinitionRegistry loginFlowDefinitionRegistry,
-                                  final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
-                                  final Action saml2ClientLogoutAction, final ApplicationContext applicationContext,
-                                  final CasConfigurationProperties casProperties) {
+    public DelegatedAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
+                                                    final FlowDefinitionRegistry loginFlowDefinitionRegistry,
+                                                    final FlowDefinitionRegistry logoutFlowDefinitionRegistry,
+                                                    final Action saml2ClientLogoutAction,
+                                                    final ApplicationContext applicationContext,
+                                                    final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
         this.saml2ClientLogoutAction = saml2ClientLogoutAction;
