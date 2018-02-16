@@ -119,7 +119,6 @@ function resourceLoadedSuccessfully() {
             $('#cookiesDisabled').hide();
         } else {
             $('#cookiesDisabled').show();
-            $('#cookiesDisabled').animate({backgroundColor: 'rgb(187,0,0)'}, 30).animate({backgroundColor: 'rgb(255,238,221)'}, 500);
         }
 
         disableEmptyInputFormSubmission();
