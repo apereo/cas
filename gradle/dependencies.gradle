@@ -1263,7 +1263,6 @@ ext.libraries = [
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.jboss.logging", module: "jboss-logging")
-                    exclude(group: "org.mockito", module: "mockito-core")
                     exclude(group: "com.fasterxml", module: "classmate")
                     exclude(group: "net.minidev", module: "json-smart")
                     exclude(group: "org.hibernate", module: "hibernate-validator")
