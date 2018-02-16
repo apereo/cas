@@ -9,7 +9,7 @@
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
-    <div th:fragment="staticAuthentication" class="card text-white bg-info mb-3" th:if="${staticAuthentication}">
+    <div th:fragment="staticAuthentication" id="staticAuthentication" class="card" th:if="${staticAuthentication}">
         <div class="card-body">
             <h5 class="card-title" th:utext="#{screen.defaultauthn.title}">screen.defaultauthn.title text</h5>
             <p class="card-text" th:utext="#{screen.defaultauthn.heading}">screen.defaultauthn.heading text</p>
