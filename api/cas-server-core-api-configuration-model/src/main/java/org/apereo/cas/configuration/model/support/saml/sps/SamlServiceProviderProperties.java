@@ -33,6 +33,16 @@ public class SamlServiceProviderProperties implements Serializable {
     private static final long serialVersionUID = 8602328179113963081L;
 
     /**
+     * Settings related to ConcurSolutions acting as a SAML service provider.
+     */
+    private ConcurSolutions concurSolutions = new ConcurSolutions();
+
+    /**
+     * Settings related to PollEverywhere acting as a SAML service provider.
+     */
+    private PollEverywhere pollEverywhere = new PollEverywhere();
+
+    /**
      * Settings related to Hipchat acting as a SAML service provider.
      */
     private Hipchat hipchat = new Hipchat();
@@ -694,6 +704,34 @@ public class SamlServiceProviderProperties implements Serializable {
             setSignAssertions(true);
             setSignResponses(false);
             addAttributes("awsRoles", "awsRoleSessionName");
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class PollEverywhere extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public PollEverywhere() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            setNameIdAttribute(EMAIL);
+        }
+    }
+
+    @RequiresModule(name = "cas-server-support-saml-sp-integrations")
+    @Getter
+    @Setter
+    public static class ConcurSolutions extends AbstractSamlSPProperties {
+
+        private static final long serialVersionUID = -6141931806328699054L;
+
+        public ConcurSolutions() {
+            setSignAssertions(true);
+            setSignResponses(false);
+            setNameIdAttribute(EMAIL);
         }
     }
 }
