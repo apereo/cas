@@ -39,10 +39,14 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
     private static final Logger LOGGER = LoggerFactory.getLogger(PrincipalAttributeMultifactorAuthenticationPolicyEventResolver.class);
 
-    /** Principal attribute value regex. */
+    /**
+     * Principal attribute value regex.
+     */
     protected final String globalPrincipalAttributeValueRegex;
 
-    /** Principal attribute names. */
+    /**
+     * Principal attribute names.
+     */
     protected final Set<String> attributeNames;
 
     public PrincipalAttributeMultifactorAuthenticationPolicyEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
@@ -54,7 +58,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
                                                                           final MultifactorAuthenticationProviderSelector selector,
                                                                           final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
-                ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies, selector);
+            ticketRegistrySupport, warnCookieGenerator, authSelectionStrategies, selector);
         globalPrincipalAttributeValueRegex = casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeValueRegex();
         attributeNames = commaDelimitedListToSet(casProperties.getAuthn().getMfa().getGlobalPrincipalAttributeNameTriggers());
     }
@@ -64,11 +68,11 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        if (service == null || authentication == null) {
+        if (authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
             return null;
         }
-        
+
 
         final Principal principal = authentication.getPrincipal();
         return resolveMultifactorAuthenticationProvider(context, service, principal);
@@ -77,15 +81,15 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
     /**
      * Resolve multifactor authentication provider set.
      *
-     * @param context     the context
-     * @param service     the service
-     * @param principal   the principal
+     * @param context   the context
+     * @param service   the service
+     * @param principal the principal
      * @return the set
      */
     protected Set<Event> resolveMultifactorAuthenticationProvider(final RequestContext context, final RegisteredService service,
                                                                   final Principal principal) {
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+            MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         final Collection<MultifactorAuthenticationProvider> providers = flattenProviders(providerMap.values());
         if (providers.size() == 1 && StringUtils.isNotBlank(globalPrincipalAttributeValueRegex)) {
             return resolveSingleMultifactorProvider(context, service, principal, providers);
@@ -109,8 +113,8 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
         return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
             input -> providers.stream()
-                    .filter(provider -> input != null && provider.matches(input))
-                    .count() > 0);
+                .filter(provider -> input != null && provider.matches(input))
+                .count() > 0);
     }
 
     /**
@@ -132,8 +136,8 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
     }
 
     @Audit(action = "AUTHENTICATION_EVENT",
-            actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
-            resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
+        actionResolverName = "AUTHENTICATION_EVENT_ACTION_RESOLVER",
+        resourceResolverName = "AUTHENTICATION_EVENT_RESOURCE_RESOLVER")
     @Override
     public Event resolveSingle(final RequestContext context) {
         return super.resolveSingle(context);
