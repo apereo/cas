@@ -6,6 +6,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.registry.support.JpaTgtDeleteHandler;
 import org.hibernate.LockOptions;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,12 +41,15 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     private final TicketCatalog ticketCatalog;
     private final LockModeType lockType;
 
+    private final List<JpaTgtDeleteHandler> tgtDeleteHandlers;
+
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog) {
+    public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog, final List<JpaTgtDeleteHandler> tgtDeleteHandlers) {
         this.lockType = lockType;
         this.ticketCatalog = ticketCatalog;
+        this.tgtDeleteHandlers = tgtDeleteHandlers;
     }
 
     @Override
@@ -169,7 +173,9 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
      * @return the int
      */
     private int deleteTicketGrantingTickets(final String ticketId) {
-        int totalCount = 0;
+        int totalCount = tgtDeleteHandlers.stream()
+                .mapToInt(handler -> handler.deleteSingleTgt(entityManager, ticketId))
+                .sum();
 
         final TicketDefinition st = this.ticketCatalog.find(ServiceTicket.PREFIX);
 
