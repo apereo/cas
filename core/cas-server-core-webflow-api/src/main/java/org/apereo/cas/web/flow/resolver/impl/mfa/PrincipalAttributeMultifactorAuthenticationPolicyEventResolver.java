@@ -64,8 +64,8 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
 
-        if (service == null || authentication == null) {
-            LOGGER.debug("No service or authentication is available to determine event for principal");
+        if (authentication == null) {
+            LOGGER.debug("No authentication is available to determine event for principal");
             return null;
         }
         
