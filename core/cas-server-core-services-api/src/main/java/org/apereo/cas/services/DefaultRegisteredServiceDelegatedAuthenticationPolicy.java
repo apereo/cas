@@ -22,7 +22,7 @@ import java.util.LinkedHashSet;
 @ToString
 @Getter
 @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(exclude = {"allowedProviders"})
 @AllArgsConstructor
 @NoArgsConstructor
 public class DefaultRegisteredServiceDelegatedAuthenticationPolicy implements RegisteredServiceDelegatedAuthenticationPolicy {
