@@ -5,12 +5,12 @@ import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import java.util.Map;
 
 /**
- * This is {@link BaseSurrogateextendsRegisteredServiceAccessStrategy}.
+ * This is {@link BaseSurrogateRegisteredServiceAccessStrategy}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
-public abstract class BaseSurrogateextendsRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy  {
+public abstract class BaseSurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy  {
     private static final long serialVersionUID = -3975861635454453130L;
 
     /**

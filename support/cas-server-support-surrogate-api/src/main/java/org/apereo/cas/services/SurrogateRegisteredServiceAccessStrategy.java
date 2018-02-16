@@ -19,7 +19,7 @@ import java.util.Set;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateextendsRegisteredServiceAccessStrategy {
+public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1688944419711632962L;
 
