@@ -504,7 +504,15 @@ More advanced Hazelcast configuration settings are listed below, given the compo
 
 ## RADIUS Configuration
 
-The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) given the component's *configuration key*:
+The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) 
+given the component's *configuration key*.
+
+`server` parameters defines identification values of authenticated service (CAS server), primarily `server.protocol`
+ for communication to RADIUS server identified by `client`.
+
+`client` parameters defines values for connecting RADIUS server. 
+Parameter `client.inetAddress` has possibility to contain more addresses separated by comma to define failover servers 
+when `failoverOnException` is set.   
 
 ```properties
 # ${configurationKey}.server.nasPortId=-1

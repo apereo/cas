@@ -6,4 +6,7 @@ dependencies {
     
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-configuration-api")
+
+    testImplementation project(":core:cas-server-core-configuration-api")
+    testImplementation project(":core:cas-server-core-configuration")
 }
