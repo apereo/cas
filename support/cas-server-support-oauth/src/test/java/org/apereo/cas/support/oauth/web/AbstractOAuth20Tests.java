@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -7,13 +8,13 @@ import org.apache.http.HttpStatus;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.ComponentSerializationPlanConfigurator;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.BasicIdentifiableCredential;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
 import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
-import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
@@ -149,6 +150,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public abstract class AbstractOAuth20Tests {
 
+
     public static final String CONTEXT = "/oauth2.0/";
     public static final String CLIENT_ID = "1";
     public static final String CLIENT_SECRET = "secret";
@@ -167,6 +169,8 @@ public abstract class AbstractOAuth20Tests {
     public static final int DELTA = 2;
 
     public static final String ERROR_EQUALS = "error=";
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Autowired
     @Qualifier("accessTokenController")
@@ -321,12 +325,14 @@ public abstract class AbstractOAuth20Tests {
         if (json) {
             assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
             assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
+
+            final Map results = MAPPER.readValue(body, Map.class);
             if (refreshToken) {
                 assertTrue(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
-                refreshTokenId = StringUtils.substringBetween(body, OAuth20Constants.REFRESH_TOKEN + "\":\"", "\",\"");
+                refreshTokenId = results.get(OAuth20Constants.REFRESH_TOKEN).toString();
             }
             assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
-            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + "\":\"", "\",\"");
+            accessTokenId = results.get(OAuth20Constants.ACCESS_TOKEN).toString();
         } else {
             assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
             assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + "=AT-"));
@@ -368,5 +374,51 @@ public abstract class AbstractOAuth20Tests {
             }
         }
         return timeLeft;
+    }
+
+    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service, final boolean json) throws Exception {
+        final Principal principal = createPrincipal();
+        final RefreshToken refreshToken = addRefreshToken(principal, service);
+        return internalVerifyRefreshTokenOk(service, json, refreshToken, principal);
+    }
+
+
+    protected Pair<AccessToken, RefreshToken> internalVerifyRefreshTokenOk(final OAuthRegisteredService service, final boolean json,
+                                                                           final RefreshToken refreshToken, final Principal principal) throws Exception {
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
+        assertEquals(200, mockResponse.getStatus());
+        final String body = mockResponse.getContentAsString();
+
+        final String accessTokenId;
+        if (json) {
+            final Map results = MAPPER.readValue(body, Map.class);
+
+            assertEquals(MediaType.APPLICATION_JSON_VALUE, mockResponse.getContentType());
+            assertTrue(body.contains('"' + OAuth20Constants.ACCESS_TOKEN + "\":\"AT-"));
+            assertFalse(body.contains('"' + OAuth20Constants.REFRESH_TOKEN + "\":\"RT-"));
+            assertTrue(body.contains('"' + OAuth20Constants.EXPIRES_IN + "\":"));
+            accessTokenId = results.get(OAuth20Constants.ACCESS_TOKEN).toString();
+        } else {
+            assertEquals(MediaType.TEXT_PLAIN_VALUE, mockResponse.getContentType());
+            assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
+            assertFalse(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
+            assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
+            accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
+        }
+
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        assertEquals(principal, accessToken.getAuthentication().getPrincipal());
+
+        final int timeLeft = getTimeLeft(body, false, json);
+        assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
+
+        return Pair.of(accessToken, refreshToken);
     }
 }
