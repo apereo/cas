@@ -1828,7 +1828,8 @@ The specific parsing logic for the certificate is compatible
 with the Tomcat SSLValve which can work with headers set by
 Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
 
-### Principal resolution/Personal Directory Settings
+### X509 Principal Resolution
+
 ```properties
 cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
