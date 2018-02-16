@@ -126,7 +126,7 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            Set<String> ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+            final Set<String> ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
             if (!ips.isEmpty()) {
                 plan.registerAuthenticationHandler(radiusAuthenticationHandler());
             } else {
