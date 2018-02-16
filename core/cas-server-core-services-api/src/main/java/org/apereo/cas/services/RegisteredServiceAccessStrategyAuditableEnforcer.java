@@ -22,8 +22,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
         resourceResolverName = "SERVICE_ACCESS_ENFORCEMENT_RESOURCE_RESOLVER")
     public AuditableExecutionResult execute(final AuditableContext context) {
 
-        if (context.getServiceTicket().isPresent() && context.getAuthentication().isPresent()
-            && context.getRegisteredService().isPresent()) {
+        if (context.getServiceTicket().isPresent() && context.getAuthenticationResult().isPresent() && context.getRegisteredService().isPresent()) {
             final AuditableExecutionResult result = AuditableExecutionResult.of(context);
             try {
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
@@ -46,6 +45,10 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 result.setException(Optional.of(e));
             }
             return result;
+        }
+
+        if (!context.getAuthentication().isPresent() || !context.getService().isPresent() || !context.getRegisteredService().isPresent()) {
+            throw new IllegalArgumentException("Authentication, service and registered service must be all present for enforcing principal access");
         }
 
         final AuditableExecutionResult result =
