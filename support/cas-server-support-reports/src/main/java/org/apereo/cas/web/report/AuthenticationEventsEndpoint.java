@@ -41,7 +41,7 @@ public class AuthenticationEventsEndpoint extends BaseCasMvcEndpoint {
      */
     @GetMapping
     protected ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         return new ModelAndView("monitoring/viewAuthenticationEvents");
     }
 
@@ -56,7 +56,7 @@ public class AuthenticationEventsEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Collection<? extends CasEvent> getRecords(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         return this.eventRepository.load();
     }
 }

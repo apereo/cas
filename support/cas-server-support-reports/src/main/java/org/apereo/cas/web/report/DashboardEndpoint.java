@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.beans.BeansEndpoint;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
 import org.springframework.boot.actuate.context.properties.ConfigurationPropertiesReportEndpoint;
-import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.env.EnvironmentEndpoint;
@@ -92,7 +91,6 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
     @GetMapping
     @ReadOperation
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = getEndpointsModelMap();
         return new ModelAndView("monitoring/viewDashboard", model);
     }
@@ -108,16 +106,18 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Set<EndpointBean> getEndpoints(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> endpointsModel = getEndpointsModelMap();
-        return endpointsModel.entrySet().stream().map(entry -> {
-            final EndpointBean bean = new EndpointBean();
-            bean.setName(StringUtils.remove(entry.getKey(), "Enabled"));
-            String title = StringUtils.capitalize(StringUtils.remove(bean.getName(), "Endpoint"));
-            title = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(title), ' ');
-            bean.setTitle(title);
-            return bean;
-        }).collect(Collectors.toSet());
+        return endpointsModel.entrySet()
+            .stream()
+            .map(entry -> {
+                final EndpointBean bean = new EndpointBean();
+                bean.setName(StringUtils.remove(entry.getKey(), "Enabled"));
+                String title = StringUtils.capitalize(StringUtils.remove(bean.getName(), "Endpoint"));
+                title = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(title), ' ');
+                bean.setTitle(title);
+                return bean;
+            })
+            .collect(Collectors.toSet());
     }
 
     private Map<String, Object> getEndpointsModelMap() {
@@ -133,10 +133,8 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
 
     private void processCasProvidedEndpoints(final Map<String, Object> model) {
         final MonitorProperties.Endpoints endpoints = getCasProperties().getMonitor().getEndpoints();
-        model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
-            && isEndpointCapable(endpoints.getTrustedDevices(), getCasProperties()));
-        model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository")
-            && isEndpointCapable(endpoints.getAuthenticationEvents(), getCasProperties()));
+        model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController"));
+        model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository"));
         model.put("singleSignOnReportEnabled", isEndpointCapable(endpoints.getSingleSignOnReport(), getCasProperties()));
         model.put("statisticsEndpointEnabled", isEndpointCapable(endpoints.getStatistics(), getCasProperties()));
         model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(endpoints.getSingleSignOnStatus(), getCasProperties()));
@@ -146,8 +144,7 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
         model.put("healthCheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), getCasProperties()));
         model.put("metricsEndpointEnabled", isEndpointCapable(endpoints.getMetrics(), getCasProperties()));
         model.put("servicesEndpointEnabled", isEndpointCapable(endpoints.getRegisteredServicesReport(), getCasProperties()));
-        model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar")
-            && isEndpointCapable(endpoints.getDiscovery(), getCasProperties()));
+        model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar"))
         model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), getCasProperties()));
         model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), getCasProperties()));
     }
@@ -156,7 +153,7 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
         model.put("restartEndpointEnabled", isSpringBootEndpointEnabled(restartEndpoint));
         model.put("shutdownEndpointEnabled", isSpringBootEndpointEnabled(shutdownEndpoint));
         model.put("environmentEndpointEnabled", isSpringBootEndpointEnabled(environmentEndpoint));
-        model.put("serverFunctionsEnabled", isSpringBootEndpointEnabled(restartEndpoint) || isSpringBootEndpointEnabled(shutdownEndpoint));
+
         model.put("autoConfigurationEndpointEnabled", isSpringBootEndpointEnabled(autoConfigurationReportEndpoint));
         model.put("beansEndpointEnabled", isSpringBootEndpointEnabled(beansEndpoint));
         model.put("mappingsEndpointEnabled", isSpringBootEndpointEnabled(requestMappingEndpoint));
@@ -165,10 +162,8 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
         model.put("infoEndpointEnabled", isSpringBootEndpointEnabled(infoEndpoint));
         model.put("healthEndpointEnabled", isSpringBootEndpointEnabled(healthEndpoint));
         model.put("traceEndpointEnabled", isSpringBootEndpointEnabled(traceEndpoint));
-    }
 
-    private boolean isSpringBootEndpointEnabled(final AbstractEndpoint endpoint) {
-        return endpoint != null && endpoint.isEnabled();
+        model.put("serverFunctionsEnabled", isSpringBootEndpointEnabled(restartEndpoint) || isSpringBootEndpointEnabled(shutdownEndpoint));
     }
 
     /**
@@ -176,11 +171,8 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
      */
     @Data
     public static class EndpointBean implements Serializable {
-
         private static final long serialVersionUID = -3446962071459197099L;
-
         private String name;
-
         private String title;
     }
 }

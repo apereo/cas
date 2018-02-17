@@ -12,7 +12,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.jaas.JaasAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.authentication.configurers.GlobalAuthenticationConfigurerAdapter;
+import org.springframework.security.config.annotation.authentication.configuration.GlobalAuthenticationConfigurerAdapter;
 
 /**
  * This is {@link CasWebApplicationSpringSecurityConfiguration}.
@@ -51,7 +51,7 @@ public class CasWebApplicationSpringSecurityConfiguration extends GlobalAuthenti
         final AdminPagesSecurityProperties.Ldap ldap = casProperties.getAdminPagesSecurity().getLdap();
         final LdapAuthorizationProperties authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())
-                && StringUtils.isNotBlank(ldap.getSearchFilter())
-                && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
+            && StringUtils.isNotBlank(ldap.getSearchFilter())
+            && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
     }
 }
