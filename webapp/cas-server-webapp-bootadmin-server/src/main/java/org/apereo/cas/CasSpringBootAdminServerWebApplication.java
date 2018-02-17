@@ -2,7 +2,6 @@ package org.apereo.cas;
 
 import de.codecentric.boot.admin.config.EnableAdminServer;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
@@ -29,7 +28,7 @@ import lombok.NoArgsConstructor;
 @EnableAutoConfiguration(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
     GroovyTemplateAutoConfiguration.class, JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class,
     MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class,
-    DataSourceTransactionManagerAutoConfiguration.class, MetricsDropwizardAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class,
     RedisRepositoriesAutoConfiguration.class })
 @EnableAdminServer
 @Slf4j
