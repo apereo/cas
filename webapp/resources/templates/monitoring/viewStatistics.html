@@ -44,28 +44,28 @@
             <div class="card-deck">
                 <div class="card" id="card-unexpired-tgts">
                     <div class="card-body">
-                        <h4 class="card-title"
+                        <h4 class="card-title semi-huge"
                             th:text="#{cas.statistics.section.ticket.panel.unexpiredtgts.title}"></h4>
-                        <p id="unexpiredTgts" class="card-text">--</p>
+                        <p id="unexpiredTgts" class="card-text huge">--</p>
                     </div>
                 </div>
                 <div class="card" id="card-unexpired-sts">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="#{cas.statistics.section.ticket.panel.unexpiredsts.title}"/>
-                        <p id="unexpiredSts" class="card-text">--</p>
+                        <h4 class="card-title semi-huge" th:text="#{cas.statistics.section.ticket.panel.unexpiredsts.title}"/>
+                        <p id="unexpiredSts" class="card-text huge">--</p>
                     </div>
                 </div>
                 <div class="card" id="card-expired-tgts">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="#{cas.statistics.section.ticket.panel.expiredtgts.title}"/>
-                        <p id="expiredTgts" class="card-text">--</p>
+                        <h4 class="card-title semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredtgts.title}"/>
+                        <p id="expiredTgts" class="card-text huge">--</p>
                     </div>
                 </div>
 
                 <div class="card" id="card-expired-sts">
                     <div class="card-body">
-                        <h5 class="card-title" th:text="#{cas.statistics.section.ticket.panel.expiredsts.title}"/>
-                        <p id="expiredSts" class="card-text">--</p>
+                        <h4 class="card-title semi-huge" th:text="#{cas.statistics.section.ticket.panel.expiredsts.title}"/>
+                        <p id="expiredSts" class="card-text huge">--</p>
                     </div>
                 </div>
             </div>
@@ -92,7 +92,7 @@
                                     <i class="far fa-clock fa-4x"></i>
                                 </div>
                                 <div class="col-auto text-right">
-                                    <div class="display-4" th:text="#{cas.statistics.section.serverstatistics.panel.uptime.title}"></div>
+                                    <div class="huge" th:text="#{cas.statistics.section.serverstatistics.panel.uptime.title}"></div>
                                     <div id="uptime"></div>
                                 </div>
                             </div>
@@ -102,7 +102,7 @@
                     <div id="card-server-info" class="card">
                         <div class="card-header d-flex">
                             <div class="fas fa-server fa-4x"></div>
-                            <div class="ml-auto display-4" th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.title}"></div>
+                            <div class="ml-auto huge" th:text="#{cas.statistics.section.serverstatistics.panel.serverinfo.title}"></div>
                         </div>
                         <div class="card-body">
                             <table class="table table-striped">
