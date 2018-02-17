@@ -5,7 +5,6 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.mvc.AbstractNamedMvcEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -21,7 +20,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @Slf4j
-public abstract class BaseCasMvcEndpoint extends AbstractNamedMvcEndpoint {
+public abstract class BaseCasMvcEndpoint {
 
 
     private static final Boolean DEFAULT_SENSITIVE_VALUE = Boolean.TRUE;
