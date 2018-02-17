@@ -1,7 +1,5 @@
 package org.apereo.cas.web.report.config;
 
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.health.HealthCheckRegistry;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
@@ -17,32 +15,34 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.web.report.AuthenticationEventsController;
+import org.apereo.cas.web.report.AuthenticationEventsEndpoint;
 import org.apereo.cas.web.report.CasInfoEndpointContributor;
-import org.apereo.cas.web.report.CasServerDiscoveryProfileController;
-import org.apereo.cas.web.report.ConfigurationStateController;
-import org.apereo.cas.web.report.DashboardController;
-import org.apereo.cas.web.report.LoggingConfigController;
+import org.apereo.cas.web.report.CasServerDiscoveryProfileEndpoint;
+import org.apereo.cas.web.report.ConfigurationStateEndpoint;
+import org.apereo.cas.web.report.DashboardEndpoint;
+import org.apereo.cas.web.report.LoggingConfigurationEndpoint;
 import org.apereo.cas.web.report.LoggingOutputTailingService;
-import org.apereo.cas.web.report.MetricsController;
-import org.apereo.cas.web.report.PersonDirectoryAttributeResolutionController;
-import org.apereo.cas.web.report.RegisteredServicesReportController;
-import org.apereo.cas.web.report.SingleSignOnSessionStatusController;
-import org.apereo.cas.web.report.SingleSignOnSessionsReportController;
-import org.apereo.cas.web.report.SpringWebflowReportController;
-import org.apereo.cas.web.report.StatisticsController;
-import org.apereo.cas.web.report.StatusController;
-import org.apereo.cas.web.report.TrustedDevicesController;
+import org.apereo.cas.web.report.MultifactorAuthenticationTrustedDevicesEndpoint;
+import org.apereo.cas.web.report.PersonDirectoryEndpoint;
+import org.apereo.cas.web.report.RegisteredServicesEndpoint;
+import org.apereo.cas.web.report.SingleSignOnSessionStatusEndpoint;
+import org.apereo.cas.web.report.SingleSignOnSessionsEndpoint;
+import org.apereo.cas.web.report.SpringWebflowEndpoint;
+import org.apereo.cas.web.report.StatisticsEndpoint;
+import org.apereo.cas.web.report.StatusEndpoint;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.endpoint.HealthEndpoint;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -58,9 +58,6 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 
 /**
  * This is {@link CasReportsConfiguration}.
- * The {@link MvcEndpoint} instances in this configuration class
- * MUST NOT be marked as {@link org.springframework.cloud.context.config.annotation.RefreshScope}
- * because they are not quite reloadable and the proxy that is created interferes with web mvc.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -70,9 +67,12 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 @EnableWebSocketMessageBroker
 @Slf4j
 public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfigurer {
-    private static final int LOG_TAILING_CORE_POOL_SIZE =5;
+    private static final int LOG_TAILING_CORE_POOL_SIZE = 5;
     private static final int LOG_TAILING_QUEUE_CAPACITY = 25;
-    
+
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -130,22 +130,16 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
-    @Autowired
-    @Qualifier("metrics")
-    private MetricRegistry metricsRegistry;
-
-    @Autowired
-    @Qualifier("healthCheckMetrics")
-    private HealthCheckRegistry healthCheckRegistry;
-
     @Bean
-    public MvcEndpoint dashboardController() {
-        return new DashboardController(casProperties);
+    @ConditionalOnEnabledEndpoint
+    public DashboardEndpoint dashboardEndpoint() {
+        return new DashboardEndpoint(casProperties);
     }
 
     @Bean
-    public MvcEndpoint personDirectoryAttributeResolutionController() {
-        return new PersonDirectoryAttributeResolutionController(casProperties, servicesManager,
+    @ConditionalOnEnabledEndpoint
+    public PersonDirectoryEndpoint personDirectoryEndpoint() {
+        return new PersonDirectoryEndpoint(casProperties, servicesManager,
             authenticationSystemSupport, personDirectoryPrincipalResolver, webApplicationServiceFactory,
             principalFactory, cas3ServiceSuccessView, cas3ServiceJsonView, cas2ServiceSuccessView, cas1ServiceSuccessView);
     }
@@ -153,53 +147,54 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @Profile("standalone")
     @ConditionalOnBean(name = "configurationPropertiesEnvironmentManager")
     @Bean
-    public MvcEndpoint internalConfigController() {
-        return new ConfigurationStateController(casProperties);
+    @ConditionalOnEnabledEndpoint
+    public ConfigurationStateEndpoint internalConfigEndpoint() {
+        return new ConfigurationStateEndpoint(casProperties);
     }
 
     @Bean
-    public MvcEndpoint statusController() {
-        return new StatusController(casProperties, healthEndpoint);
+    @ConditionalOnEnabledEndpoint
+    public StatusEndpoint statusEndpoint() {
+        return new StatusEndpoint(casProperties, healthEndpoint);
     }
 
     @Bean
-    public MvcEndpoint singleSignOnSessionsReportController() {
-        return new SingleSignOnSessionsReportController(centralAuthenticationService, casProperties);
+    @ConditionalOnEnabledEndpoint
+    public SingleSignOnSessionsEndpoint singleSignOnSessionsEndpoint() {
+        return new SingleSignOnSessionsEndpoint(centralAuthenticationService, casProperties);
     }
 
     @Bean
-    public MvcEndpoint registeredServicesReportController() {
-        return new RegisteredServicesReportController(casProperties, servicesManager);
+    @ConditionalOnEnabledEndpoint
+    public RegisteredServicesEndpoint registeredServicesEndpoint() {
+        return new RegisteredServicesEndpoint(casProperties, servicesManager);
     }
 
     @Bean
     @Autowired
-    public MvcEndpoint loggingConfigController(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
-        return new LoggingConfigController(auditTrailManager, casProperties);
+    @ConditionalOnEnabledEndpoint
+    public LoggingConfigurationEndpoint loggingConfigurationEndpoint(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
+        return new LoggingConfigurationEndpoint(auditTrailManager, casProperties);
     }
 
     @Bean
-    public MvcEndpoint ssoStatusController() {
-        return new SingleSignOnSessionStatusController(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
+    @ConditionalOnEnabledEndpoint
+    public SingleSignOnSessionStatusEndpoint ssoSessionStatusEndpoint() {
+        return new SingleSignOnSessionStatusEndpoint(ticketGrantingTicketCookieGenerator, ticketRegistrySupport, casProperties);
     }
 
     @Bean
-    public MvcEndpoint swfReportController() {
-        return new SpringWebflowReportController(casProperties);
+    @ConditionalOnEnabledEndpoint
+    public SpringWebflowEndpoint springWebflowEndpoint() {
+        return new SpringWebflowEndpoint(casProperties, applicationContext);
     }
 
     @Autowired
     @Bean
-    public MvcEndpoint statisticsController(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
-        return new StatisticsController(auditTrailManager, centralAuthenticationService,
-            metricsRegistry, healthCheckRegistry, casProperties);
+    @ConditionalOnEnabledEndpoint
+    public StatisticsEndpoint statisticsEndpoint(@Qualifier("auditTrailExecutionPlan") final AuditTrailExecutionPlan auditTrailManager) {
+        return new StatisticsEndpoint(auditTrailManager, centralAuthenticationService, casProperties);
     }
-
-    @Bean
-    public MvcEndpoint metricsController() {
-        return new MetricsController(casProperties);
-    }
-
 
     @Bean
     public InfoContributor casInfoEndpointContributor() {
@@ -228,8 +223,10 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public MvcEndpoint trustedDevicesController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
-            return new TrustedDevicesController(mfaTrustEngine, casProperties);
+        @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+        @ConditionalOnEnabledEndpoint
+        public MultifactorAuthenticationTrustedDevicesEndpoint multifactorAuthenticationTrustedDevicesEndpoint(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+            return new MultifactorAuthenticationTrustedDevicesEndpoint(mfaTrustEngine, casProperties);
         }
     }
 
@@ -242,8 +239,11 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public MvcEndpoint authenticationEventsController(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
-            return new AuthenticationEventsController(eventRepository, casProperties);
+        @ConditionalOnClass(value = CasEventRepository.class)
+        @ConditionalOnEnabledEndpoint
+        @ConditionalOnMissingBean(name = "authenticationEventsEndpoint")
+        public AuthenticationEventsEndpoint authenticationEventsEndpoint(@Qualifier("casEventRepository") final CasEventRepository eventRepository) {
+            return new AuthenticationEventsEndpoint(eventRepository, casProperties);
         }
     }
 
@@ -256,16 +256,18 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
 
         @Autowired
         @Bean
-        public MvcEndpoint discoveryController(@Qualifier("casServerProfileRegistrar") final CasServerProfileRegistrar casServerProfileRegistrar) {
-            return new CasServerDiscoveryProfileController(casProperties, servicesManager, casServerProfileRegistrar);
+        @ConditionalOnEnabledEndpoint
+        public CasServerDiscoveryProfileEndpoint discoveryProfileEndpoint(@Qualifier("casServerProfileRegistrar") final CasServerProfileRegistrar casServerProfileRegistrar) {
+            return new CasServerDiscoveryProfileEndpoint(casProperties, servicesManager, casServerProfileRegistrar);
         }
     }
 
     @Override
     public void configureMessageBroker(final MessageBrokerRegistry config) {
         config.enableSimpleBroker("/topic");
-        if (StringUtils.isNotBlank(serverProperties.getContextPath())) {
-            config.setApplicationDestinationPrefixes(serverProperties.getContextPath());
+        final String contextPath = serverProperties.getServlet().getContextPath();
+        if (StringUtils.isNotBlank(contextPath)) {
+            config.setApplicationDestinationPrefixes(contextPath);
         }
     }
 

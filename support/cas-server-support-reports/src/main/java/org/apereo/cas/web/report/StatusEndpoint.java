@@ -7,8 +7,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CasVersion;
 import org.apereo.cas.util.InetAddressUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.springframework.boot.actuate.endpoint.HealthEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -29,11 +30,12 @@ import java.nio.charset.StandardCharsets;
  * @since 3.5
  */
 @Slf4j
-public class StatusController extends BaseCasMvcEndpoint {
+@Endpoint(id = "status")
+public class StatusEndpoint extends BaseCasMvcEndpoint {
     private final HealthEndpoint healthEndpoint;
 
-    public StatusController(final CasConfigurationProperties casProperties, final HealthEndpoint healthEndpoint) {
-        super("status", StringUtils.EMPTY, casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
+    public StatusEndpoint(final CasConfigurationProperties casProperties, final HealthEndpoint healthEndpoint) {
+        super(casProperties.getMonitor().getEndpoints().getStatus(), casProperties);
         this.healthEndpoint = healthEndpoint;
     }
 
@@ -49,20 +51,20 @@ public class StatusController extends BaseCasMvcEndpoint {
     protected void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
         final StringBuilder sb = new StringBuilder();
-        final Health health = this.healthEndpoint.invoke();
+        final Health health = this.healthEndpoint.health();
         final Status status = health.getStatus();
-        
+
         if (status.equals(Status.DOWN) || status.equals(Status.OUT_OF_SERVICE)) {
             response.setStatus(HttpStatus.SERVICE_UNAVAILABLE.value());
         }
 
         sb.append("Health: ").append(status.getCode());
         sb.append("\n\nHost:\t\t").append(
-            StringUtils.isBlank(casProperties.getHost().getName())
+            StringUtils.isBlank(getCasProperties().getHost().getName())
                 ? InetAddressUtils.getCasServerHostName()
-                : casProperties.getHost().getName()
+                : getCasProperties().getHost().getName()
         );
-        sb.append("\nServer:\t\t").append(casProperties.getServer().getName());
+        sb.append("\nServer:\t\t").append(getCasProperties().getServer().getName());
         sb.append("\nVersion:\t").append(CasVersion.getVersion());
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
         try (Writer writer = response.getWriter()) {

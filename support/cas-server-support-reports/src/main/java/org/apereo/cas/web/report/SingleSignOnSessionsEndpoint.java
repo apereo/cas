@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.Getter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
@@ -12,6 +13,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.ISOStandardDateFormat;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -29,8 +33,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 
-import lombok.Getter;
-
 /**
  * SSO Report web controller that produces JSON data for the view.
  *
@@ -41,8 +43,8 @@ import lombok.Getter;
 @Slf4j
 @ToString
 @Getter
-public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
-
+@Endpoint(id = "ssoSessions")
+public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     private static final String VIEW_SSO_SESSIONS = "monitoring/viewSsoSessions";
 
     private static final String STATUS = "status";
@@ -92,9 +94,9 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
 
     private final CentralAuthenticationService centralAuthenticationService;
 
-    public SingleSignOnSessionsReportController(final CentralAuthenticationService centralAuthenticationService,
-                                                final CasConfigurationProperties casProperties) {
-        super("ssosessions", "/ssosessions", casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties);
+    public SingleSignOnSessionsEndpoint(final CentralAuthenticationService centralAuthenticationService,
+                                        final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getSingleSignOnReport(), casProperties);
         this.centralAuthenticationService = centralAuthenticationService;
     }
 
@@ -154,6 +156,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getSsoSessions")
     @ResponseBody
+    @ReadOperation
     public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type,
                                                             final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
@@ -190,7 +193,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
             sessionsMap.put("totalUsageCount", totalUsageCount);
             return sessionsMap;
         };
-        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        final long timeout = Beans.newDuration(getCasProperties().getHttpClient().getAsyncTimeout()).toMillis();
         return new WebAsyncTask<>(timeout, asyncTask);
     }
 
@@ -204,6 +207,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     @PostMapping(value = "/destroySsoSession")
     @ResponseBody
+    @WriteOperation
     public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket,
                                                  final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
@@ -231,6 +235,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      */
     @PostMapping(value = "/destroySsoSessions")
     @ResponseBody
+    @WriteOperation
     public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type,
                                                   final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
@@ -263,6 +268,7 @@ public class SingleSignOnSessionsReportController extends BaseCasMvcEndpoint {
      * @return the model and view where json data will be rendered
      */
     @GetMapping
+    @ReadOperation
     public ModelAndView showSsoSessions(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         return new ModelAndView(VIEW_SSO_SESSIONS);
