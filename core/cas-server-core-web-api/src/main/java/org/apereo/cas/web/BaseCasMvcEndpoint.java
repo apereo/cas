@@ -1,11 +1,10 @@
 package org.apereo.cas.web;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -20,44 +19,28 @@ import javax.servlet.http.HttpServletResponse;
  */
 
 @Slf4j
+@Getter
 public abstract class BaseCasMvcEndpoint {
-
-
     private static final Boolean DEFAULT_SENSITIVE_VALUE = Boolean.TRUE;
 
-    /**
-     * CAS settings.
-     */
-    protected final CasConfigurationProperties casProperties;
-
-    /**
-     * App context.
-     */
-    @Autowired
-    protected ApplicationContext applicationContext;
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Instantiates a new Base cas mvc endpoint.
      * Endpoints are by default sensitive.
      *
-     * @param name          the name
-     * @param path          the path
      * @param endpoint      the endpoint
      * @param casProperties the cas properties
      */
-    public BaseCasMvcEndpoint(final String name, final String path,
-                              final MonitorProperties.BaseEndpoint endpoint,
-                              final CasConfigurationProperties casProperties) {
-        super(name, path, DEFAULT_SENSITIVE_VALUE);
+    public BaseCasMvcEndpoint(final MonitorProperties.BaseEndpoint endpoint, final CasConfigurationProperties casProperties) {
         this.casProperties = casProperties;
 
-        setEndpointSensitivity(endpoint, casProperties);
-        setEndpointCapability(endpoint, casProperties);
+        setEndpointSensitivity(endpoint);
+        setEndpointCapability(endpoint);
 
     }
 
-    private void setEndpointSensitivity(final MonitorProperties.BaseEndpoint endpoint,
-                                        final CasConfigurationProperties casProperties) {
+    private void setEndpointSensitivity(final MonitorProperties.BaseEndpoint endpoint) {
         final String endpointName = endpoint.getClass().getSimpleName();
         if (endpoint.getSensitive() == null) {
             LOGGER.trace("Sensitivity for endpoint [{}] is undefined. Checking defaults...", endpointName);
@@ -104,8 +87,7 @@ public abstract class BaseCasMvcEndpoint {
         return s;
     }
 
-    private void setEndpointCapability(final MonitorProperties.BaseEndpoint endpoint,
-                                       final CasConfigurationProperties casProperties) {
+    private void setEndpointCapability(final MonitorProperties.BaseEndpoint endpoint) {
         final String endpointName = endpoint.getClass().getSimpleName();
         final boolean s = isEndpointCapable(endpoint, casProperties);
         LOGGER.trace("Finalized capability for endpoint [{}] is [{}].", endpointName, s);
@@ -118,12 +100,15 @@ public abstract class BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      */
-    protected void ensureEndpointAccessIsAuthorized(final HttpServletRequest request,
-                                                    final HttpServletResponse response) {
+    protected void ensureEndpointAccessIsAuthorized(final HttpServletRequest request, final HttpServletResponse response) {
         if (!isEnabled()) {
             LOGGER.warn("Access to endpoint [{}] is not enabled", getName());
             throw new UnuauthorizedEndpointException();
         }
+    }
+
+    private String getName() {
+        return getClass().getSimpleName();
     }
 
     /**
