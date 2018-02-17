@@ -25,6 +25,9 @@ import org.slf4j.ILoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.core.env.Environment;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -52,7 +55,8 @@ import java.util.Set;
  * @since 4.2
  */
 @Slf4j
-public class LoggingConfigController extends BaseCasMvcEndpoint {
+@Endpoint(id = "loggingConfiguration")
+public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint {
     private static final String VIEW_CONFIG = "monitoring/viewLoggingConfig";
     private static final String LOGGER_NAME_ROOT = "root";
     private static final String FILE_PARAM = "file";
@@ -71,8 +75,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
 
     private Resource logConfigurationFile;
 
-    public LoggingConfigController(final AuditTrailExecutionPlan auditTrailManager, final CasConfigurationProperties casProperties) {
-        super("casloggingconfig", "/logging", casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
+    public LoggingConfigurationEndpoint(final AuditTrailExecutionPlan auditTrailManager, final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getLoggingConfig(), casProperties);
         this.auditTrailManager = auditTrailManager;
     }
 
@@ -99,8 +103,8 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      * @throws Exception the exception
      */
     @GetMapping
-    public ModelAndView getDefaultView(final HttpServletRequest request,
-                                       final HttpServletResponse response) throws Exception {
+    @ReadOperation
+    public ModelAndView getDefaultView(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final Map<String, Object> model = new HashMap<>();
@@ -117,6 +121,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getActiveLoggers")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
@@ -138,6 +143,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getConfiguration")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         ensureEndpointAccessIsAuthorized(request, response);
 
@@ -226,6 +232,7 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @PostMapping(value = "/updateLoggerLevel")
     @ResponseBody
+    @WriteOperation
     public void updateLoggerLevel(@RequestParam final String loggerName,
                                   @RequestParam final String loggerLevel,
                                   @RequestParam(defaultValue = "false") final boolean additive,
@@ -252,9 +259,10 @@ public class LoggingConfigController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getAuditLog")
     @ResponseBody
+    @ReadOperation
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
-        final LocalDate sinceDate = LocalDate.now().minusDays(casProperties.getAudit().getNumberOfDaysInHistory());
+        final LocalDate sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
 }
