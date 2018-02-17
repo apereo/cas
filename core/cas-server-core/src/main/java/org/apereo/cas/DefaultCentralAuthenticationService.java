@@ -1,8 +1,6 @@
 package org.apereo.cas;
 
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
@@ -96,9 +94,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "TICKET_GRANTING_TICKET_DESTROYED",
         actionResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName = "DESTROY_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "DESTROY_TICKET_GRANTING_TICKET_TIMER")
-    @Metered(name = "DESTROY_TICKET_GRANTING_TICKET_METER")
-    @Counted(name = "DESTROY_TICKET_GRANTING_TICKET_COUNTER", monotonic = true)
+    @Timed("DESTROY_TICKET_GRANTING_TICKET_TIMER")
     @Override
     public List<LogoutRequest> destroyTicketGrantingTicket(final String ticketGrantingTicketId) {
         try {
@@ -124,9 +120,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "SERVICE_TICKET",
         actionResolverName = "GRANT_SERVICE_TICKET_RESOLVER",
         resourceResolverName = "GRANT_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "GRANT_SERVICE_TICKET_TIMER")
-    @Metered(name = "GRANT_SERVICE_TICKET_METER")
-    @Counted(name = "GRANT_SERVICE_TICKET_COUNTER", monotonic = true)
+    @Timed("GRANT_SERVICE_TICKET_TIMER")
     @Override
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
@@ -170,9 +164,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "PROXY_TICKET",
         actionResolverName = "GRANT_PROXY_TICKET_RESOLVER",
         resourceResolverName = "GRANT_PROXY_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "GRANT_PROXY_TICKET_TIMER")
-    @Metered(name = "GRANT_PROXY_TICKET_METER")
-    @Counted(name = "GRANT_PROXY_TICKET_COUNTER", monotonic = true)
+    @Timed("GRANT_PROXY_TICKET_TIMER")
     @Override
     public ProxyTicket grantProxyTicket(final String proxyGrantingTicket, final Service service)
         throws AbstractTicketException {
@@ -223,9 +215,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "PROXY_GRANTING_TICKET",
         actionResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOLVER",
         resourceResolverName = "CREATE_PROXY_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "CREATE_PROXY_GRANTING_TICKET_TIMER")
-    @Metered(name = "CREATE_PROXY_GRANTING_TICKET_METER")
-    @Counted(name = "CREATE_PROXY_GRANTING_TICKET_COUNTER", monotonic = true)
+    @Timed("CREATE_PROXY_GRANTING_TICKET_TIMER")
     @Override
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
@@ -270,9 +260,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "SERVICE_TICKET_VALIDATE",
         actionResolverName = "VALIDATE_SERVICE_TICKET_RESOLVER",
         resourceResolverName = "VALIDATE_SERVICE_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "VALIDATE_SERVICE_TICKET_TIMER")
-    @Metered(name = "VALIDATE_SERVICE_TICKET_METER")
-    @Counted(name = "VALIDATE_SERVICE_TICKET_COUNTER", monotonic = true)
+    @Timed("VALIDATE_SERVICE_TICKET_TIMER")
     @Override
     public Assertion validateServiceTicket(final String serviceTicketId, final Service service) throws AbstractTicketException {
 
@@ -366,9 +354,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         action = "TICKET_GRANTING_TICKET",
         actionResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOLVER",
         resourceResolverName = "CREATE_TICKET_GRANTING_TICKET_RESOURCE_RESOLVER")
-    @Timed(name = "CREATE_TICKET_GRANTING_TICKET_TIMER")
-    @Metered(name = "CREATE_TICKET_GRANTING_TICKET_METER")
-    @Counted(name = "CREATE_TICKET_GRANTING_TICKET_COUNTER", monotonic = true)
+    @Timed("CREATE_TICKET_GRANTING_TICKET_TIMER")
     @Override
     public TicketGrantingTicket createTicketGrantingTicket(final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {

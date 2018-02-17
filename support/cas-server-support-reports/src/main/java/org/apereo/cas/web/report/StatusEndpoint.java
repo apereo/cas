@@ -49,7 +49,7 @@ public class StatusEndpoint extends BaseCasMvcEndpoint {
     @GetMapping
     @ResponseBody
     protected void handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final StringBuilder sb = new StringBuilder();
         final Health health = this.healthEndpoint.health();
         final Status status = health.getStatus();

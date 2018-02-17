@@ -1,6 +1,5 @@
 package org.apereo.cas.mongo;
 
-import com.mongodb.Mongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoClientURI;
@@ -145,27 +144,14 @@ public class MongoDbConnectionFactory {
         return converter;
     }
 
-    private MongoDbFactory mongoDbFactory(final Mongo mongo, final BaseMongoDbProperties props) {
-        final String dbName;
-        final String authDbName;
-
+    private MongoDbFactory mongoDbFactory(final MongoClient mongo, final BaseMongoDbProperties props) {
         if (StringUtils.isNotBlank(props.getClientUri())) {
             final MongoClientURI uri = buildMongoClientURI(props.getClientUri(), buildMongoDbClientOptions(props));
-            authDbName = uri.getCredentials().getSource();
-            dbName = uri.getDatabase();
-            LOGGER.debug("Using database [{}] from the connection client URI", dbName);
-        } else {
-            authDbName = props.getAuthenticationDatabaseName();
-            dbName = props.getDatabaseName();
-            LOGGER.debug("Using database [{}] from individual settings", dbName);
+            LOGGER.debug("Using database [{}] from the connection client URI with authentication database [{}]",
+                uri.getDatabase(), uri.getCredentials().getSource());
+            return new SimpleMongoDbFactory(uri);
         }
-
-        if (StringUtils.isBlank(dbName)) {
-            LOGGER.error("Database name cannot be undefined. It must be specified as part of the client URI connection string if used, or "
-                    + "as an individual setting for the MongoDb connection");
-        }
-
-        return new SimpleMongoDbFactory(mongo, dbName, null, authDbName);
+        return new SimpleMongoDbFactory(mongo, props.getDatabaseName());
     }
 
     private Set<Class<?>> getInitialEntitySet() {
@@ -314,7 +300,7 @@ public class MongoDbConnectionFactory {
 
     }
 
-    private Mongo buildMongoDbClient(final BaseMongoDbProperties mongo) {
+    private MongoClient buildMongoDbClient(final BaseMongoDbProperties mongo) {
 
         if (StringUtils.isNotBlank(mongo.getClientUri())) {
             LOGGER.debug("Using MongoDb client URI [{}] to connect to MongoDb instance", mongo.getClientUri());
@@ -345,7 +331,7 @@ public class MongoDbConnectionFactory {
         return new MongoClient(servers, CollectionUtils.wrap(credential), buildMongoDbClientOptions(mongo));
     }
 
-    private Mongo buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
+    private MongoClient buildMongoDbClient(final String clientUri, final MongoClientOptions clientOptions) {
         final MongoClientURI uri = buildMongoClientURI(clientUri, clientOptions);
         return new MongoClient(uri);
     }

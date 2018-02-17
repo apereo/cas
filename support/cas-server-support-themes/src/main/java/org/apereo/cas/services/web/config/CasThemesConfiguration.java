@@ -7,8 +7,8 @@ import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookiePro
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.CasThymeleafOutputTemplateHandler;
 import org.apereo.cas.services.web.ChainingThemeResolver;
-import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.RegisteredServiceThemeResolver;
+import org.apereo.cas.services.web.RequestHeaderThemeResolver;
 import org.apereo.cas.services.web.ThemeBasedViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolver;
 import org.apereo.cas.services.web.ThemeViewResolverFactory;
@@ -32,8 +32,8 @@ import org.springframework.web.servlet.theme.SessionThemeResolver;
 import org.thymeleaf.dialect.IPostProcessorDialect;
 import org.thymeleaf.postprocessor.IPostProcessor;
 import org.thymeleaf.postprocessor.PostProcessor;
-import org.thymeleaf.spring4.SpringTemplateEngine;
-import org.thymeleaf.spring4.view.ThymeleafViewResolver;
+import org.thymeleaf.spring5.SpringTemplateEngine;
+import org.thymeleaf.spring5.view.ThymeleafViewResolver;
 import org.thymeleaf.templatemode.TemplateMode;
 
 import java.util.HashMap;
@@ -54,7 +54,7 @@ public class CasThemesConfiguration {
 
     @Autowired
     private ResourceLoader resourceLoader;
-    
+
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
@@ -90,7 +90,7 @@ public class CasThemesConfiguration {
         factory.setApplicationContext(applicationContext);
         return factory;
     }
-    
+
     @Bean
     public Map serviceThemeResolverSupportedBrowsers() {
         final Map<String, String> map = new HashMap<>();
@@ -123,8 +123,8 @@ public class CasThemesConfiguration {
         cookieThemeResolver.setCookieSecure(tgc.isSecure());
 
         final RegisteredServiceThemeResolver serviceThemeResolver = new RegisteredServiceThemeResolver(servicesManager,
-                serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
-                this.resourceLoader, new CasConfigurationProperties());
+            serviceThemeResolverSupportedBrowsers(), authenticationRequestServiceSelectionStrategies,
+            this.resourceLoader, new CasConfigurationProperties());
         serviceThemeResolver.setDefaultThemeName(defaultThemeName);
 
         final RequestHeaderThemeResolver header = new RequestHeaderThemeResolver();
@@ -132,10 +132,10 @@ public class CasThemesConfiguration {
 
         final ChainingThemeResolver chainingThemeResolver = new ChainingThemeResolver();
         chainingThemeResolver.addResolver(cookieThemeResolver)
-                .addResolver(sessionThemeResolver)
-                .addResolver(header)
-                .addResolver(serviceThemeResolver)
-                .addResolver(fixedResolver);
+            .addResolver(sessionThemeResolver)
+            .addResolver(header)
+            .addResolver(serviceThemeResolver)
+            .addResolver(fixedResolver);
         chainingThemeResolver.setDefaultThemeName(defaultThemeName);
         return chainingThemeResolver;
     }
@@ -176,7 +176,7 @@ public class CasThemesConfiguration {
 
         r.setTemplateEngine(engine);
         r.setViewNames(this.thymeleafViewResolver.getViewNames());
-        
+
         // disable the cache
         r.setCache(false);
 

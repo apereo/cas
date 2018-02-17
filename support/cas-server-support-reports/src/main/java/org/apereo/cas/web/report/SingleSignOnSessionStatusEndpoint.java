@@ -49,7 +49,7 @@ public class SingleSignOnSessionStatusEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation(produces = MediaType.TEXT_PLAIN_VALUE)
     public String getStatus(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         response.setStatus(HttpStatus.OK.value());
         final String tgtId = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);

@@ -94,7 +94,6 @@ public class CasWebAppConfiguration extends WebMvcConfigurerAdapter {
     public ServletListenerRegistrationBean log4jServletContextListener() {
         final ServletListenerRegistrationBean bean = new ServletListenerRegistrationBean();
         bean.setEnabled(true);
-        bean.setName("log4jServletContextListener");
         bean.setListener(new Log4jServletContextListener());
         return bean;
     }

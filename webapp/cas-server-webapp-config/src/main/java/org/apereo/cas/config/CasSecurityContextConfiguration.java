@@ -18,7 +18,6 @@ import org.pac4j.http.credentials.authenticator.IpRegexpAuthenticator;
 import org.pac4j.http.credentials.extractor.IpExtractor;
 import org.pac4j.springframework.web.SecurityInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.endpoint.mvc.EndpointHandlerMappingCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -131,12 +130,6 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public HandlerInterceptorAdapter statusInterceptor() {
         return new CasAdminStatusInterceptor();
-    }
-
-    @RefreshScope
-    @Bean
-    public EndpointHandlerMappingCustomizer mappingCustomizer() {
-        return mapping -> mapping.setInterceptors(new Object[]{statusInterceptor()});
     }
 
     private String getAuthorizerName() {

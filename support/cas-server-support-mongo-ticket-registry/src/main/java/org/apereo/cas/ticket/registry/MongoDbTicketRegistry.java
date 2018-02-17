@@ -3,6 +3,8 @@ package org.apereo.cas.ticket.registry;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
@@ -56,7 +58,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
 
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
-        final DBCollection collection = mongoTemplate.getCollection(collectionName);
+        final MongoCollection collection = mongoTemplate.getCollection(collectionName);
         collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1),
                 new BasicDBObject(FIELD_NAME_EXPIRE_AFTER_SECONDS, ticket.getProperties().getStorageTimeout()));
         return collection;
@@ -173,7 +175,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
             final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToDelete);
             final String collectionName = getTicketCollectionInstanceByMetadata(metadata);
             final Query query = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).is(ticketId));
-            final WriteResult res = this.mongoTemplate.remove(query, collectionName);
+            final DeleteResult res = this.mongoTemplate.remove(query, collectionName);
             LOGGER.debug("Deleted ticket [{}] with result [{}]", ticketIdToDelete, res);
             return true;
         } catch (final Exception e) {
@@ -237,16 +239,16 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     private String getTicketCollectionInstanceByMetadata(final TicketDefinition metadata) {
         final String mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating collection name [{}] for ticket definition [{}]", mapName, metadata);
-        final DBCollection c = getTicketCollectionInstance(mapName);
+        final MongoCollection c = getTicketCollectionInstance(mapName);
         if (c != null) {
-            return c.getName();
+            return c.getNamespace().getCollectionName();
         }
         throw new IllegalArgumentException("Could not locate MongoDb collection " + mapName);
     }
 
-    private DBCollection getTicketCollectionInstance(final String mapName) {
+    private MongoCollection getTicketCollectionInstance(final String mapName) {
         try {
-            final DBCollection inst = this.mongoTemplate.getCollection(mapName);
+            final MongoCollection inst = this.mongoTemplate.getCollection(mapName);
             LOGGER.debug("Located MongoDb collection instance [{}]", mapName);
             return inst;
         } catch (final Exception e) {

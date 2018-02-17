@@ -2,6 +2,7 @@ package org.apereo.cas.services.web;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.autoconfigure.template.TemplateLocation;
@@ -11,9 +12,9 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.AbstractCachingViewResolver;
-import org.thymeleaf.spring4.view.AbstractThymeleafView;
+import org.thymeleaf.spring5.view.AbstractThymeleafView;
+
 import java.util.Locale;
-import lombok.Setter;
 
 /**
  * {@link ThemeViewResolver} is a theme resolver that checks for a UI view in the specific theme before utilizing the

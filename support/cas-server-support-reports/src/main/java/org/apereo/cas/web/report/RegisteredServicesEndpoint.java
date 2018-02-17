@@ -53,7 +53,7 @@ public class RegisteredServicesEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
             .stream()
             .collect(Collectors.toMap(RegisteredService::getName, Function.identity()));

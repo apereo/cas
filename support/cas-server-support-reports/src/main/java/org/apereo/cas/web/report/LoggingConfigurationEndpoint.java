@@ -105,7 +105,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint {
     @GetMapping
     @ReadOperation
     public ModelAndView getDefaultView(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> model = new HashMap<>();
         model.put("logConfigurationFile", logConfigurationFile.getURI().toString());
@@ -123,7 +123,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> getActiveLoggers(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> responseMap = new HashMap<>();
         final Map<String, Logger> loggers = getActiveLoggersInFactory();
@@ -145,7 +145,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> getConfiguration(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Collection<Map<String, Object>> configuredLoggers = new HashSet<>();
         getLoggerConfigurations().forEach(config -> {
@@ -238,7 +238,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint {
                                   @RequestParam(defaultValue = "false") final boolean additive,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Collection<LoggerConfig> loggerConfigs = getLoggerConfigurations();
         loggerConfigs.stream().
@@ -261,7 +261,7 @@ public class LoggingConfigurationEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Set<AuditActionContext> getAuditLog(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final LocalDate sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }

@@ -50,7 +50,7 @@ public class MultifactorAuthenticationTrustedDevicesEndpoint extends BaseCasMvcE
     @GetMapping
     @ReadOperation
     protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         return new ModelAndView("monitoring/viewTrustedDevices");
     }
@@ -67,7 +67,7 @@ public class MultifactorAuthenticationTrustedDevicesEndpoint extends BaseCasMvcE
     @ReadOperation
     public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
                                                                 final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final TrustedDevicesMultifactorProperties trusted = getCasProperties().getAuthn().getMfa().getTrusted();
         final LocalDate onOrAfter = LocalDate.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
@@ -88,7 +88,7 @@ public class MultifactorAuthenticationTrustedDevicesEndpoint extends BaseCasMvcE
     @ResponseBody
     @WriteOperation
     public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         this.mfaTrustEngine.expire(key);
         return HttpStatus.OK.value();

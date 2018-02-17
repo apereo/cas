@@ -55,8 +55,6 @@ public class CasServerDiscoveryProfileEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> discovery(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
-        
         final Map<String, Object> results = new LinkedHashMap<>();
         results.put("profile", casServerProfileRegistrar.getProfile());
         return results;
