@@ -71,7 +71,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map<String, Object> getAvailability(final HttpServletRequest request,
                                                final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> model = new HashMap<>();
         final Duration diff = Duration.between(this.upTimeStartDate, ZonedDateTime.now(ZoneOffset.UTC));
@@ -90,7 +90,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> getMemoryStats(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> model = new HashMap<>();
         final Runtime runtime = Runtime.getRuntime();
@@ -112,7 +112,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Set<AuditActionContext> getAuthnAudit(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final LocalDate sinceDate = LocalDate.now().minusDays(getCasProperties().getAudit().getNumberOfDaysInHistory());
         return this.auditTrailManager.getAuditRecordsSince(sinceDate);
     }
@@ -135,7 +135,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
                                                                                      @RequestParam final long start,
                                                                                      @RequestParam final String range,
                                                                                      @RequestParam final String scale) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         final Callable<Collection<AuthenticationAuditSummary>> asyncTask = () -> {
@@ -255,7 +255,7 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     @ResponseBody
     @ReadOperation
     public Map<String, Object> getTicketStats(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
 
         int unexpiredTgts = 0;

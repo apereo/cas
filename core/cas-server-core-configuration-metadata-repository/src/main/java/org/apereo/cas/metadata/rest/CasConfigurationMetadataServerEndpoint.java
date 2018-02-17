@@ -3,10 +3,12 @@ package org.apereo.cas.metadata.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.springframework.boot.bind.RelaxedNames;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.http.ResponseEntity;
@@ -25,21 +27,20 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * This is {@link CasConfigurationMetadataServerController}.
+ * This is {@link CasConfigurationMetadataServerEndpoint}.
  *
  * @author Dmitriy Kopylenko
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint {
-
-
+@Endpoint(id = "configurationMetadata")
+public class CasConfigurationMetadataServerEndpoint extends BaseCasMvcEndpoint {
     private final CasConfigurationMetadataRepository repository;
 
-    public CasConfigurationMetadataServerController(final CasConfigurationMetadataRepository repository,
-                                                    final CasConfigurationProperties casProperties) {
-        super("configmetadata", "/configmetadata", casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties);
+    public CasConfigurationMetadataServerEndpoint(final CasConfigurationMetadataRepository repository,
+                                                  final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getConfigurationMetadata(), casProperties);
         this.repository = repository;
     }
 
@@ -50,6 +51,7 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the response entity
      */
     @GetMapping(path = "/property")
+    @ReadOperation
     public ResponseEntity<ConfigurationMetadataProperty> findByPropertyName(@RequestParam("name") final String propertyName) {
         final ConfigurationMetadataProperty configMetadataProp = repository.getRepository().getAllProperties().get(propertyName);
         return ResponseEntity.ok(configMetadataProp);
@@ -62,6 +64,7 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the response entity
      */
     @GetMapping(path = "/group")
+    @ReadOperation
     public ResponseEntity<ConfigurationMetadataGroup> findByGroupName(@RequestParam("name") final String name) {
         final ConfigurationMetadataGroup grp = repository.getRepository().getAllGroups().get(name);
         return ResponseEntity.ok(grp);
@@ -73,6 +76,7 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the response entity
      */
     @GetMapping(path = "/groups")
+    @ReadOperation
     public ResponseEntity<Map<String, ConfigurationMetadataGroup>> findAllGroups() {
         return ResponseEntity.ok(repository.getRepository().getAllGroups());
     }
@@ -83,6 +87,7 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the response entity
      */
     @GetMapping(path = "/properties")
+    @ReadOperation
     public ResponseEntity<Map<String, ConfigurationMetadataProperty>> findAllProperties() {
         final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
         return ResponseEntity.ok(allProps);
@@ -95,20 +100,21 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the response entity
      */
     @GetMapping(path = "/search")
+    @ReadOperation
     public ResponseEntity<List<ConfigurationMetadataSearchResult>> search(@RequestParam(value = "name", required = false) final String name) {
         List results = new ArrayList<>();
         final Map<String, ConfigurationMetadataProperty> allProps = repository.getRepository().getAllProperties();
 
         if (StringUtils.isNotBlank(name) && RegexUtils.isValidRegex(name)) {
-            final String names = StreamSupport.stream(RelaxedNames.forCamelCase(name).spliterator(), false)
-                    .map(Object::toString)
-                    .collect(Collectors.joining("|"));
+            final String names = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(name).spliterator(), false)
+                .map(Object::toString)
+                .collect(Collectors.joining("|"));
             final Pattern pattern = RegexUtils.createPattern(names);
             results = allProps.entrySet()
-                    .stream()
-                    .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))
-                    .map(propEntry -> new ConfigurationMetadataSearchResult(propEntry.getValue(), repository))
-                    .collect(Collectors.toList());
+                .stream()
+                .filter(propEntry -> RegexUtils.find(pattern, propEntry.getKey()))
+                .map(propEntry -> new ConfigurationMetadataSearchResult(propEntry.getValue(), repository))
+                .collect(Collectors.toList());
             Collections.sort(results);
         }
         return ResponseEntity.ok(results);
@@ -122,8 +128,8 @@ public class CasConfigurationMetadataServerController extends BaseCasMvcEndpoint
      * @return the model and view
      */
     @GetMapping
+    @ReadOperation
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
         return new ModelAndView("monitoring/viewConfigMetadata");
     }
 

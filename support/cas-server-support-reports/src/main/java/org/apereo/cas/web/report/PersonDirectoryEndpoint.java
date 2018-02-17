@@ -97,7 +97,7 @@ public class PersonDirectoryEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map model = new LinkedHashMap();
        
         return new ModelAndView("monitoring/attrresolution", model);
@@ -117,7 +117,7 @@ public class PersonDirectoryEndpoint extends BaseCasMvcEndpoint {
     public Map<String, Object> resolvePrincipalAttributes(@RequestParam final String uid,
                                                           final HttpServletRequest request,
                                                           final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Principal p = personDirectoryPrincipalResolver.resolve(new BasicIdentifiableCredential(uid));
         final Map<String, Object> map = new LinkedHashMap<>();
         map.put("uid", p.getId());
@@ -144,7 +144,7 @@ public class PersonDirectoryEndpoint extends BaseCasMvcEndpoint {
                                                           @RequestParam final String service,
                                                           final HttpServletRequest request,
                                                           final HttpServletResponse response) throws Exception {
-        ensureEndpointAccessIsAuthorized(request, response);
+
 
         final Map<String, Object> resValidation = new HashMap<>();
         final Service selectedService = this.serviceFactory.createService(service);

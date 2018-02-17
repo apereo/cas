@@ -73,7 +73,7 @@ public class ConfigurationStateEndpoint extends BaseCasMvcEndpoint {
     @GetMapping
     @ReadOperation
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> model = new HashMap<>();
         final String path = request.getContextPath();
         ControllerUtils.configureModelMapForConfigServerCloudBusEndpoints(path, model);
@@ -104,7 +104,6 @@ public class ConfigurationStateEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
         final Map results = new TreeMap();
-        ensureEndpointAccessIsAuthorized(request, response);
         if (environmentEndpoint == null) {
             LOGGER.warn("Environment endpoint is either undefined or disabled");
             return results;
@@ -142,7 +141,7 @@ public class ConfigurationStateEndpoint extends BaseCasMvcEndpoint {
     public void updateConfiguration(@RequestBody final Map<String, Map<String, String>> jsonInput,
                                     final HttpServletRequest request,
                                     final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         if (isUpdateEnabled()) {
             final Map<String, String> newData = jsonInput.get("new");
             configurationPropertiesEnvironmentManager.savePropertyForStandaloneProfile(Pair.of(newData.get("key"), newData.get("value")));
