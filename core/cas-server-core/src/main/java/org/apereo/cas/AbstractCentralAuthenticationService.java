@@ -1,10 +1,9 @@
 package org.apereo.cas;
 
-import com.codahale.metrics.annotation.Counted;
-import com.codahale.metrics.annotation.Metered;
-import com.codahale.metrics.annotation.Timed;
+import io.micrometer.core.annotation.Timed;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditableExecution;
@@ -31,11 +30,11 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.ApplicationEventPublisherAware;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import lombok.Setter;
 
 /**
  * An abstract implementation of the {@link CentralAuthenticationService} that provides access to
@@ -104,6 +103,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * since the access strategy is not usually managed as a Spring bean.
      */
     protected final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     /**
      * Publish CAS events.
      *
@@ -117,9 +117,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
-    @Timed(name = "GET_TICKET_TIMER")
-    @Metered(name = "GET_TICKET_METER")
-    @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
+    @Timed("GET_TICKET_TIMER")
     @Override
     public Ticket getTicket(@NonNull final String ticketId) throws InvalidTicketException {
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId);
@@ -136,9 +134,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
      * builds new object, most likely for each pull. Is this synchronization needed here?
      */
     @Transactional(transactionManager = "ticketTransactionManager", noRollbackFor = InvalidTicketException.class)
-    @Timed(name = "GET_TICKET_TIMER")
-    @Metered(name = "GET_TICKET_METER")
-    @Counted(name = "GET_TICKET_COUNTER", monotonic = true)
+    @Timed("GET_TICKET_TIMER")
     @Override
     public <T extends Ticket> T getTicket(@NonNull final String ticketId, final Class<T> clazz) throws InvalidTicketException {
         final Ticket ticket = this.ticketRegistry.getTicket(ticketId, clazz);
@@ -147,18 +143,14 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
     }
 
     @Transactional(transactionManager = "ticketTransactionManager")
-    @Timed(name = "GET_TICKETS_TIMER")
-    @Metered(name = "GET_TICKETS_METER")
-    @Counted(name = "GET_TICKETS_COUNTER", monotonic = true)
+    @Timed("GET_TICKETS_TIMER")
     @Override
     public Collection<Ticket> getTickets(final Predicate<Ticket> predicate) {
         return this.ticketRegistry.getTickets().stream().filter(predicate).collect(Collectors.toSet());
     }
 
     @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
-    @Timed(name = "DELETE_TICKET_TIMER")
-    @Metered(name = "DELETE_TICKET_METER")
-    @Counted(name = "DELETE_TICKET_COUNTER", monotonic = true)
+    @Timed("DELETE_TICKET_TIMER")
     @Override
     public void deleteTicket(final String ticketId) {
         this.ticketRegistry.deleteTicket(ticketId);

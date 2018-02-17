@@ -159,7 +159,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public WebAsyncTask<Map<String, Object>> getSsoSessions(@RequestParam(defaultValue = "ALL") final String type,
                                                             final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Callable<Map<String, Object>> asyncTask = () -> {
             final Map<String, Object> sessionsMap = new HashMap<>(1);
             final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
@@ -210,7 +210,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @WriteOperation
     public Map<String, Object> destroySsoSession(@RequestParam final String ticketGrantingTicket,
                                                  final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> sessionsMap = new HashMap<>(1);
         try {
             this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
@@ -238,7 +238,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @WriteOperation
     public Map<String, Object> destroySsoSessions(@RequestParam(defaultValue = "ALL") final String type,
                                                   final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         final Map<String, Object> sessionsMap = new HashMap<>();
         final Map<String, String> failedTickets = new HashMap<>();
         final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
@@ -270,7 +270,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @GetMapping
     @ReadOperation
     public ModelAndView showSsoSessions(final HttpServletRequest request, final HttpServletResponse response) {
-        ensureEndpointAccessIsAuthorized(request, response);
+
         return new ModelAndView(VIEW_SSO_SESSIONS);
     }
 }
