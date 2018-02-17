@@ -1,5 +1,8 @@
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
+
+def MAIN_CLASS = "org.apereo.cas.CasConfigurationServerWebApplication"
 
 description = "Apereo CAS Spring Cloud Configuration Server"
 
@@ -8,7 +11,7 @@ javadoc {
 }
 
 bootRun {
-    addResources = true
+    sourceResources sourceSets.main
     jvmArgs = ["-Xrunjdwp:transport=dt_socket,address=5005,server=y,suspend=n"]
 }
 
@@ -17,11 +20,11 @@ war {
 }
 
 springBoot  {
-    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
+    mainClassName = MAIN_CLASS
 }
 
-bootRepackage {
-    mainClass = "org.apereo.cas.CasConfigurationServerWebApplication"
+bootWar {
+    mainClassName = MAIN_CLASS
     enabled = !rootProject.publishingRelease
 }
 

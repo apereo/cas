@@ -26,6 +26,7 @@ import org.apereo.cas.configuration.model.core.authentication.PasswordPolicyProp
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapProperties;
 import org.apereo.cas.configuration.model.support.ldap.LdapSearchEntryHandlersProperties;
+import org.apereo.cas.configuration.support.RelaxedPropertyNames;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.services.persondir.support.QueryType;
@@ -36,7 +37,6 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.scanners.TypeElementsScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
-import org.springframework.boot.bind.RelaxedNames;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 import org.springframework.boot.configurationmetadata.ValueHint;
 import org.springframework.core.io.Resource;
@@ -218,7 +218,7 @@ public class ConfigurationMetadataGenerator {
         private ConfigurationMetadataProperty createConfigurationProperty(final FieldDeclaration n,
                                                                           final ConfigurationMetadataProperty arg) {
             final VariableDeclarator variable = n.getVariables().get(0);
-            final String name = StreamSupport.stream(RelaxedNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
+            final String name = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(variable.getNameAsString()).spliterator(), false)
                 .map(Object::toString)
                 .findFirst()
                 .orElse(variable.getNameAsString());
@@ -359,7 +359,7 @@ public class ConfigurationMetadataGenerator {
                     hint.getValues().add(valueHint);
                 }
 
-                final boolean foundRequiredProperty = StreamSupport.stream(RelaxedNames.forCamelCase(propName).spliterator(), false)
+                final boolean foundRequiredProperty = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(propName).spliterator(), false)
                     .map(n -> ReflectionUtils.findField(clazz, n))
                     .anyMatch(f -> f != null && f.isAnnotationPresent(RequiredProperty.class));
 

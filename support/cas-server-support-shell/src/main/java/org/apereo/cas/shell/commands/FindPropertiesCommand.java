@@ -74,7 +74,7 @@ public class FindPropertiesCommand implements CommandMarker {
             } else {
                 LOGGER.info("Property: {}", k);
                 /*
-                final String relaxedName = StreamSupport.stream(RelaxedNames.forCamelCase(k).spliterator(), false)
+                final String relaxedName = StreamSupport.stream(RelaxedPropertyNames.forCamelCase(k).spliterator(), false)
                         .map(Object::toString)
                         .collect(Collectors.joining(","));
                 LOGGER.info("Synonyms: {}", relaxedName);
