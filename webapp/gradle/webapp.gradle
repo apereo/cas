@@ -2,6 +2,7 @@ import org.apache.tools.ant.taskdefs.condition.Os
 
 apply plugin: "war"
 apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
 apply plugin: "application"
 apply plugin: "com.moowork.node"
 
@@ -69,12 +70,8 @@ javadoc {
     task.enabled = false
 }
 
-springBoot {
-    mainClass = MAIN_CLASS
-}
-
-bootRepackage {
-    mainClass = MAIN_CLASS
+bootWar {
+    mainClassName = MAIN_CLASS
     enabled = !rootProject.publishingRelease
 }
 
@@ -87,7 +84,7 @@ bootRun {
         }
     }
 
-    addResources = true
+    sourceResources sourceSets.main
     systemProperties = System.properties
 
     def list = []

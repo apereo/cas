@@ -1,18 +1,18 @@
 package org.apereo.cas.redis.core;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.pool2.impl.GenericObjectPoolConfig;
 import org.apereo.cas.configuration.model.support.redis.BaseRedisProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisTicketRegistryProperties;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisNode;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
-import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
+import org.springframework.data.redis.connection.lettuce.LettucePoolingClientConfiguration;
 import org.springframework.util.StringUtils;
 
-import redis.clients.jedis.JedisPoolConfig;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is {@link RedisObjectFactory}.
@@ -30,8 +30,11 @@ public class RedisObjectFactory {
      * @return the redis connection factory
      */
     public RedisConnectionFactory newRedisConnectionFactory(final BaseRedisProperties redis) {
-        final JedisPoolConfig poolConfig = redis.getPool() != null ? jedisPoolConfig(redis) : new JedisPoolConfig();
-        final JedisConnectionFactory factory = new JedisConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
+        final LettucePoolingClientConfiguration poolConfig = redis.getPool() != null
+            ? redisPoolConfig(redis)
+            : LettucePoolingClientConfiguration.defaultConfiguration();
+
+        final LettuceConnectionFactory factory = new LettuceConnectionFactory(potentiallyGetSentinelConfig(redis), poolConfig);
         factory.setHostName(redis.getHost());
         factory.setPort(redis.getPort());
         if (redis.getPassword() != null) {
@@ -42,13 +45,12 @@ public class RedisObjectFactory {
             factory.setTimeout(redis.getTimeout());
         }
         factory.setUseSsl(redis.isUseSsl());
-        factory.setUsePool(redis.isUsePool());
 
         return factory;
     }
 
-    private JedisPoolConfig jedisPoolConfig(final BaseRedisProperties redis) {
-        final JedisPoolConfig config = new JedisPoolConfig();
+    private LettucePoolingClientConfiguration redisPoolConfig(final BaseRedisProperties redis) {
+        final GenericObjectPoolConfig config = new GenericObjectPoolConfig();
         final RedisTicketRegistryProperties.Pool props = redis.getPool();
         config.setMaxTotal(props.getMaxActive());
         config.setMaxIdle(props.getMaxIdle());
@@ -70,7 +72,9 @@ public class RedisObjectFactory {
         if (props.getSoftMinEvictableIdleTimeMillis() > 0) {
             config.setSoftMinEvictableIdleTimeMillis(props.getSoftMinEvictableIdleTimeMillis());
         }
-        return config;
+        return LettucePoolingClientConfiguration.builder()
+            .poolConfig(config)
+            .build();
     }
 
     private RedisSentinelConfiguration potentiallyGetSentinelConfig(final BaseRedisProperties redis) {

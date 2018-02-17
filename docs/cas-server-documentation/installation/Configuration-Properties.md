@@ -595,9 +595,9 @@ Control the CAS web application session behavior
 as it's treated by the underlying servlet container engine.
 
 ```properties
-# server.session.timeout=300
-# server.session.cookie.httpOnly=true
-# server.session.trackingModes=COOKIE
+# server.servlet.session.timeout=PT30S
+# server.servlet.session.cookie.httpOnly=true
+# server.servlet.session.trackingModes=COOKIE
 ```
 
 ## Views
@@ -651,7 +651,7 @@ To learn more about this topic, [please review this guide](Logging.html).
 
 ```properties
 # logging.config=file:/etc/cas/log4j2.xml
-server.contextParameters.isLog4jAutoInitializationDisabled=true
+server.servlet.contextParameters.isLog4jAutoInitializationDisabled=true
 
 # Control log levels via properties
 # logging.level.org.apereo.cas=DEBUG

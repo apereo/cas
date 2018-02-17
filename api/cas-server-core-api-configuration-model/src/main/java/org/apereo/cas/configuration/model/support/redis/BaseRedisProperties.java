@@ -60,11 +60,6 @@ public class BaseRedisProperties implements Serializable {
     private Sentinel sentinel;
 
     /**
-     * Whether or not to activate the pool configuration.
-     */
-    private boolean usePool = true;
-
-    /**
      * Whether or not to use SSL for connection factory.
      */
     private boolean useSsl;

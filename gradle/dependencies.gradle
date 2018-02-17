@@ -1087,7 +1087,7 @@ ext.libraries = [
                 }
         ],
         thymeleaf               : [
-                dependencies.create("org.thymeleaf:thymeleaf-spring4:$thymeleafVersion") {
+                dependencies.create("org.thymeleaf:thymeleaf-spring5:$thymeleafVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "org.javassist", module: "javassist")
                     exclude(group: "org.sourceforge.nekohtml", module: "nekohtml")
@@ -1365,35 +1365,35 @@ ext.libraries = [
                 dependencies.create("com.timgroup:java-statsd-client:$statsdVersion") {
                     force = true
                 },
-                dependencies.create("io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-                    force = true
-                },
-                dependencies.create("io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-                    force = true
-                },
-                dependencies.create("io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-                    force = true
-                },
-                dependencies.create("io.dropwizard.metrics:metrics-healthchecks:$dropwizardMetricsVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-                    force = true
-                },
-                dependencies.create("io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-healthchecks")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
-                    exclude(group: "joda-time", module: "joda-time")
-                },
+//                dependencies.create("io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion") {
+//                    exclude(group: "org.slf4j", module: "slf4j-api")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
+//                    force = true
+//                },
+//                dependencies.create("io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion") {
+//                    exclude(group: "org.slf4j", module: "slf4j-api")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
+//                    force = true
+//                },
+//                dependencies.create("io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion") {
+//                    exclude(group: "org.slf4j", module: "slf4j-api")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
+//                    force = true
+//                },
+//                dependencies.create("io.dropwizard.metrics:metrics-healthchecks:$dropwizardMetricsVersion") {
+//                    exclude(group: "org.slf4j", module: "slf4j-api")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
+//                    force = true
+//                },
+//                dependencies.create("io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion") {
+//                    exclude(group: "org.slf4j", module: "slf4j-api")
+//                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-healthchecks")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
+//                    exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
+//                    exclude(group: "joda-time", module: "joda-time")
+//                },
                 dependencies.create("com.ryantenney.metrics:metrics-spring:$dropwizardMetricsSpringVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
@@ -1811,7 +1811,6 @@ ext.libraries = [
             exclude(group: "commons-lang", module: "commons-lang")
             force = true
         },
-        /*
         springcomponentindexer: [
                 dependencies.create("org.springframework:spring-context-indexer:$springVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -1820,7 +1819,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-context")
                 }
         ],
-        */
         springbootconfigmetadata: [
                 dependencies.create("org.springframework.boot:spring-boot-configuration-processor:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
@@ -1981,6 +1979,18 @@ ext.libraries = [
                     force = true
                 },
                 dependencies.create("org.springframework.boot:spring-boot-devtools:$springBootVersion") {
+                    exclude(group: "org.hibernate", module: "hibernate-validator")
+                    exclude(group: "org.hibernate", module: "hibernate-core")
+                    exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-properties-migrator:$springBootVersion") {
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")

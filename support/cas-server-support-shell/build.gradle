@@ -1,5 +1,6 @@
 apply plugin: "application"
 apply plugin: "org.springframework.boot"
+apply plugin: "io.spring.dependency-management"
 
 def MAIN_CLASS = "org.apereo.cas.CasCommandLineShellApplication"
 
@@ -33,11 +34,11 @@ dependencies {
 }
 
 springBoot {
-    mainClass = MAIN_CLASS
+    mainClassName = MAIN_CLASS
 }
 
-bootRepackage {
-    mainClass = MAIN_CLASS
+bootJar {
+    mainClassName = MAIN_CLASS
     enabled = !rootProject.publishingRelease
 }
 
