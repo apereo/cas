@@ -26,6 +26,8 @@ import org.apereo.cas.util.io.CopyServletOutputStream;
 import org.apereo.cas.validation.Assertion;
 import org.apereo.cas.validation.DefaultAssertionBuilder;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -43,15 +45,14 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * This is {@link PersonDirectoryAttributeResolutionController}.
+ * This is {@link PersonDirectoryEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndpoint {
-
-
+@Endpoint(id="personDirectory")
+public class PersonDirectoryEndpoint extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final PrincipalResolver personDirectoryPrincipalResolver;
@@ -63,17 +64,17 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
     private final View cas2ServiceSuccessView;
     private final View cas1ServiceSuccessView;
 
-    public PersonDirectoryAttributeResolutionController(final CasConfigurationProperties casProperties,
-                                                        final ServicesManager servicesManager,
-                                                        final AuthenticationSystemSupport authenticationSystemSupport,
-                                                        final PrincipalResolver personDirectoryPrincipalResolver,
-                                                        final ServiceFactory<WebApplicationService> serviceFactory,
-                                                        final PrincipalFactory principalFactory,
-                                                        final View cas3ServiceSuccessView,
-                                                        final View cas3ServiceJsonView,
-                                                        final View cas2ServiceSuccessView,
-                                                        final View cas1ServiceSuccessView) {
-        super("attrresolution", "/attrresolution", casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties);
+    public PersonDirectoryEndpoint(final CasConfigurationProperties casProperties,
+                                   final ServicesManager servicesManager,
+                                   final AuthenticationSystemSupport authenticationSystemSupport,
+                                   final PrincipalResolver personDirectoryPrincipalResolver,
+                                   final ServiceFactory<WebApplicationService> serviceFactory,
+                                   final PrincipalFactory principalFactory,
+                                   final View cas3ServiceSuccessView,
+                                   final View cas3ServiceJsonView,
+                                   final View cas2ServiceSuccessView,
+                                   final View cas1ServiceSuccessView) {
+        super(casProperties.getMonitor().getEndpoints().getAttributeResolution(), casProperties);
         this.servicesManager = servicesManager;
         this.authenticationSystemSupport = authenticationSystemSupport;
         this.personDirectoryPrincipalResolver = personDirectoryPrincipalResolver;
@@ -93,6 +94,7 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
      * @return the model and view
      */
     @GetMapping
+    @ReadOperation
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
                                                  final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
@@ -111,6 +113,7 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
      */
     @PostMapping(value = "/resolveattrs")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> resolvePrincipalAttributes(@RequestParam final String uid,
                                                           final HttpServletRequest request,
                                                           final HttpServletResponse response) {
@@ -135,6 +138,7 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
      */
     @PostMapping(value = "/releaseattrs")
     @ResponseBody
+    @ReadOperation
     public Map<String, Object> releasePrincipalAttributes(@RequestParam final String username,
                                                           @RequestParam final String password,
                                                           @RequestParam final String service,
@@ -172,7 +176,7 @@ public class PersonDirectoryAttributeResolutionController extends BaseCasMvcEndp
         String copy = renderViewAndGetResult(this.cas1ServiceSuccessView, model, request, response).getKey().getCopy();
         resValidation.put("cas1Response", StringEscapeUtils.escapeXml11(copy));
 
-        if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
+        if (getCasProperties().getView().getCas2().isV3ForwardCompatible()) {
             copy = renderViewAndGetResult(this.cas3ServiceSuccessView, model, request, response).getKey().getCopy();
         } else {
             copy = renderViewAndGetResult(this.cas2ServiceSuccessView, model, request, response).getKey().getCopy();

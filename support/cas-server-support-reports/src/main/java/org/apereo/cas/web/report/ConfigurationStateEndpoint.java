@@ -10,7 +10,10 @@ import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.apereo.cas.web.report.util.ControllerUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
+import org.springframework.boot.actuate.env.EnvironmentEndpoint;
 import org.springframework.cloud.endpoint.RefreshEndpoint;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -29,14 +32,14 @@ import java.util.regex.Pattern;
 
 /**
  * Controller that exposes the CAS internal state and beans
- * as JSON. The report is available at {@code /status/config}.
+ * as JSON.
  *
  * @author Misagh Moayyed
  * @since 4.1
  */
 @Slf4j
-public class ConfigurationStateController extends BaseCasMvcEndpoint {
-
+@Endpoint(id = "configurationState")
+public class ConfigurationStateEndpoint extends BaseCasMvcEndpoint {
 
     private static final String VIEW_CONFIG = "monitoring/viewConfig";
 
@@ -56,8 +59,8 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     @Qualifier("configurationPropertiesEnvironmentManager")
     private CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
-    public ConfigurationStateController(final CasConfigurationProperties casProperties) {
-        super("configstate", "/config", casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties);
+    public ConfigurationStateEndpoint(final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getConfigurationState(), casProperties);
     }
 
     /**
@@ -68,6 +71,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      * @return the model and view
      */
     @GetMapping
+    @ReadOperation
     public ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = new HashMap<>();
@@ -79,8 +83,9 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
     }
 
     private Boolean isRefreshEnabled() {
-        return !casProperties.getEvents().isTrackConfigurationModifications() && refreshEndpoint != null && refreshEndpoint.isEnabled()
-            && environment.getProperty("spring.cloud.config.enabled", Boolean.class);
+        return !getCasProperties().getEvents().isTrackConfigurationModifications()
+            && refreshEndpoint != null
+            && isUpdateEnabled();
     }
 
     private Boolean isUpdateEnabled() {
@@ -96,16 +101,17 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      */
     @GetMapping("/getConfiguration")
     @ResponseBody
+    @ReadOperation
     public Map getConfiguration(final HttpServletRequest request, final HttpServletResponse response) {
         final Map results = new TreeMap();
         ensureEndpointAccessIsAuthorized(request, response);
-        if (environmentEndpoint == null || !environmentEndpoint.isEnabled()) {
+        if (environmentEndpoint == null) {
             LOGGER.warn("Environment endpoint is either undefined or disabled");
             return results;
         }
 
         final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
-        final Map<String, Object> environmentSettings = environmentEndpoint.invoke();
+        final Map<String, Object> environmentSettings = environmentEndpoint.environment(".+");
         environmentSettings.entrySet()
             .stream()
             .filter(entry -> pattern.matcher(entry.getKey()).matches())
@@ -132,6 +138,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
      */
     @PostMapping("/updateConfiguration")
     @ResponseBody
+    @WriteOperation
     public void updateConfiguration(@RequestBody final Map<String, Map<String, String>> jsonInput,
                                     final HttpServletRequest request,
                                     final HttpServletResponse response) {
@@ -139,7 +146,7 @@ public class ConfigurationStateController extends BaseCasMvcEndpoint {
         if (isUpdateEnabled()) {
             final Map<String, String> newData = jsonInput.get("new");
             configurationPropertiesEnvironmentManager.savePropertyForStandaloneProfile(Pair.of(newData.get("key"), newData.get("value")));
-            eventPublisher.publishEvent(new CasConfigurationModifiedEvent(this, !casProperties.getEvents().isTrackConfigurationModifications()));
+            eventPublisher.publishEvent(new CasConfigurationModifiedEvent(this, !getCasProperties().getEvents().isTrackConfigurationModifications()));
         }
     }
 }

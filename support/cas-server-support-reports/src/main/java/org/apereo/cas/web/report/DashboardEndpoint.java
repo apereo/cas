@@ -1,6 +1,7 @@
 package org.apereo.cas.web.report;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -8,21 +9,23 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.actuate.beans.BeansEndpoint;
+import org.springframework.boot.actuate.context.ShutdownEndpoint;
+import org.springframework.boot.actuate.context.properties.ConfigurationPropertiesReportEndpoint;
 import org.springframework.boot.actuate.endpoint.AbstractEndpoint;
-import org.springframework.boot.actuate.endpoint.AutoConfigurationReportEndpoint;
-import org.springframework.boot.actuate.endpoint.BeansEndpoint;
-import org.springframework.boot.actuate.endpoint.ConfigurationPropertiesReportEndpoint;
-import org.springframework.boot.actuate.endpoint.DumpEndpoint;
-import org.springframework.boot.actuate.endpoint.EnvironmentEndpoint;
-import org.springframework.boot.actuate.endpoint.HealthEndpoint;
-import org.springframework.boot.actuate.endpoint.InfoEndpoint;
-import org.springframework.boot.actuate.endpoint.RequestMappingEndpoint;
-import org.springframework.boot.actuate.endpoint.ShutdownEndpoint;
-import org.springframework.boot.actuate.endpoint.TraceEndpoint;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.env.EnvironmentEndpoint;
+import org.springframework.boot.actuate.health.HealthEndpoint;
+import org.springframework.boot.actuate.info.InfoEndpoint;
+import org.springframework.boot.actuate.management.ThreadDumpEndpoint;
+import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
+import org.springframework.boot.actuate.web.trace.HttpTraceEndpoint;
 import org.springframework.cloud.context.restart.RestartEndpoint;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.Serializable;
@@ -30,17 +33,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
 /**
- * This is {@link DashboardController}.
+ * This is {@link DashboardEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 @Getter
-public class DashboardController extends BaseCasMvcEndpoint {
+@Endpoint(id = "dashboard")
+public class DashboardEndpoint extends BaseCasMvcEndpoint {
 
     @Autowired(required = false)
     private RestartEndpoint restartEndpoint;
@@ -52,31 +55,31 @@ public class DashboardController extends BaseCasMvcEndpoint {
     private InfoEndpoint infoEndpoint;
 
     @Autowired
-    private AutoConfigurationReportEndpoint autoConfigurationReportEndpoint;
+    private ConfigurationPropertiesReportEndpoint autoConfigurationReportEndpoint;
 
     @Autowired
     private BeansEndpoint beansEndpoint;
 
     @Autowired
-    private DumpEndpoint dumpEndpoint;
+    private ThreadDumpEndpoint dumpEndpoint;
 
     @Autowired
     private ConfigurationPropertiesReportEndpoint configPropertiesEndpoint;
 
     @Autowired
-    private RequestMappingEndpoint requestMappingEndpoint;
+    private MappingsEndpoint requestMappingEndpoint;
 
     @Autowired
     private HealthEndpoint healthEndpoint;
 
     @Autowired
-    private TraceEndpoint traceEndpoint;
+    private HttpTraceEndpoint traceEndpoint;
 
     @Autowired
     private EnvironmentEndpoint environmentEndpoint;
 
-    public DashboardController(final CasConfigurationProperties casProperties) {
-        super("casdashboard", "/dashboard", casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
+    public DashboardEndpoint(final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
     }
 
     /**
@@ -87,6 +90,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
      * @return the model and view
      */
     @GetMapping
+    @ReadOperation
     public ModelAndView handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> model = getEndpointsModelMap();
@@ -102,6 +106,7 @@ public class DashboardController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/endpoints")
     @ResponseBody
+    @ReadOperation
     public Set<EndpointBean> getEndpoints(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Map<String, Object> endpointsModel = getEndpointsModelMap();
@@ -122,29 +127,29 @@ public class DashboardController extends BaseCasMvcEndpoint {
         final boolean endpointAvailable = model.entrySet().stream()
             .anyMatch(e -> e.getKey().endsWith("Enabled") && BooleanUtils.toBoolean(e.getValue().toString()));
         model.put("dashboardEndpointsEnabled", endpointAvailable);
-        model.put("actuatorEndpointsEnabled", casProperties.getAdminPagesSecurity().isActuatorEndpointsEnabled());
+        model.put("actuatorEndpointsEnabled", getCasProperties().getAdminPagesSecurity().isActuatorEndpointsEnabled());
         return model;
     }
 
     private void processCasProvidedEndpoints(final Map<String, Object> model) {
-        final MonitorProperties.Endpoints endpoints = casProperties.getMonitor().getEndpoints();
+        final MonitorProperties.Endpoints endpoints = getCasProperties().getMonitor().getEndpoints();
         model.put("trustedDevicesEnabled", this.applicationContext.containsBean("trustedDevicesController")
-            && isEndpointCapable(endpoints.getTrustedDevices(), casProperties));
+            && isEndpointCapable(endpoints.getTrustedDevices(), getCasProperties()));
         model.put("authenticationEventsRepositoryEnabled", this.applicationContext.containsBean("casEventRepository")
-            && isEndpointCapable(endpoints.getAuthenticationEvents(), casProperties));
-        model.put("singleSignOnReportEnabled", isEndpointCapable(endpoints.getSingleSignOnReport(), casProperties));
-        model.put("statisticsEndpointEnabled", isEndpointCapable(endpoints.getStatistics(), casProperties));
-        model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(endpoints.getSingleSignOnStatus(), casProperties));
-        model.put("springWebflowEndpointEnabled", isEndpointCapable(endpoints.getSpringWebflowReport(), casProperties));
-        model.put("auditLogEndpointEnabled", isEndpointCapable(endpoints.getAuditEvents(), casProperties));
-        model.put("configurationStateEnabled", isEndpointCapable(endpoints.getConfigurationState(), casProperties));
-        model.put("healthCheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), casProperties));
-        model.put("metricsEndpointEnabled", isEndpointCapable(endpoints.getMetrics(), casProperties));
-        model.put("servicesEndpointEnabled", isEndpointCapable(endpoints.getRegisteredServicesReport(), casProperties));
+            && isEndpointCapable(endpoints.getAuthenticationEvents(), getCasProperties()));
+        model.put("singleSignOnReportEnabled", isEndpointCapable(endpoints.getSingleSignOnReport(), getCasProperties()));
+        model.put("statisticsEndpointEnabled", isEndpointCapable(endpoints.getStatistics(), getCasProperties()));
+        model.put("singleSignOnStatusEndpointEnabled", isEndpointCapable(endpoints.getSingleSignOnStatus(), getCasProperties()));
+        model.put("springWebflowEndpointEnabled", isEndpointCapable(endpoints.getSpringWebflowReport(), getCasProperties()));
+        model.put("auditLogEndpointEnabled", isEndpointCapable(endpoints.getAuditEvents(), getCasProperties()));
+        model.put("configurationStateEnabled", isEndpointCapable(endpoints.getConfigurationState(), getCasProperties()));
+        model.put("healthCheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), getCasProperties()));
+        model.put("metricsEndpointEnabled", isEndpointCapable(endpoints.getMetrics(), getCasProperties()));
+        model.put("servicesEndpointEnabled", isEndpointCapable(endpoints.getRegisteredServicesReport(), getCasProperties()));
         model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar")
-            && isEndpointCapable(endpoints.getDiscovery(), casProperties));
-        model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), casProperties));
-        model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), casProperties));
+            && isEndpointCapable(endpoints.getDiscovery(), getCasProperties()));
+        model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), getCasProperties()));
+        model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), getCasProperties()));
     }
 
     private void processSpringBootEndpoints(final Map<String, Object> model) {

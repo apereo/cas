@@ -1365,46 +1365,25 @@ ext.libraries = [
                 dependencies.create("com.timgroup:java-statsd-client:$statsdVersion") {
                     force = true
                 },
-//                dependencies.create("io.dropwizard.metrics:metrics-annotation:$dropwizardMetricsVersion") {
-//                    exclude(group: "org.slf4j", module: "slf4j-api")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-//                    force = true
-//                },
-//                dependencies.create("io.dropwizard.metrics:metrics-core:$dropwizardMetricsVersion") {
-//                    exclude(group: "org.slf4j", module: "slf4j-api")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-//                    force = true
-//                },
-//                dependencies.create("io.dropwizard.metrics:metrics-jvm:$dropwizardMetricsVersion") {
-//                    exclude(group: "org.slf4j", module: "slf4j-api")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-//                    force = true
-//                },
-//                dependencies.create("io.dropwizard.metrics:metrics-healthchecks:$dropwizardMetricsVersion") {
-//                    exclude(group: "org.slf4j", module: "slf4j-api")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-//                    force = true
-//                },
-//                dependencies.create("io.dropwizard.metrics:metrics-servlets:$dropwizardMetricsVersion") {
-//                    exclude(group: "org.slf4j", module: "slf4j-api")
-//                    exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-healthchecks")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
-//                    exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
-//                    exclude(group: "joda-time", module: "joda-time")
-//                },
-                dependencies.create("com.ryantenney.metrics:metrics-spring:$dropwizardMetricsSpringVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-core")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-healthchecks")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-annotation")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-jvm")
-                    exclude(group: "io.dropwizard.metrics", module: "metrics-servlets")
-                    exclude(group: "org.springframework", module: "spring-core")
-                    exclude(group: "org.springframework", module: "spring-beans")
-                    exclude(group: "org.springframework", module: "spring-context-support")
-                    exclude(group: "org.springframework", module: "spring-aop")
+                dependencies.create("io.micrometer:micrometer-core:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-prometheus:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-graphite:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-ganglia:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-influx:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-statsd:$micrometerVersion") {
+                    force = true
+                },
+                dependencies.create("io.micrometer:micrometer-registry-atlas:$micrometerVersion") {
                     force = true
                 }
         ],

@@ -7,7 +7,9 @@ import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustR
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.boot.actuate.endpoint.annotation.WriteOperation;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,20 +23,20 @@ import java.time.LocalDate;
 import java.util.Set;
 
 /**
- * This is {@link TrustedDevicesController}.
+ * This is {@link MultifactorAuthenticationTrustedDevicesEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
 @Slf4j
-public class TrustedDevicesController extends BaseCasMvcEndpoint {
+@Endpoint(id = "multifactorAuthenticationTrustedDevices")
+public class MultifactorAuthenticationTrustedDevicesEndpoint extends BaseCasMvcEndpoint {
 
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
 
-    public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
-                                    final CasConfigurationProperties casProperties) {
-        super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties);
+    public MultifactorAuthenticationTrustedDevicesEndpoint(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
+                                                           final CasConfigurationProperties casProperties) {
+        super(casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties);
         this.mfaTrustEngine = mfaTrustEngine;
     }
 
@@ -46,8 +48,8 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @return the model and view
      */
     @GetMapping
-    protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) {
+    @ReadOperation
+    protected ModelAndView handleRequestInternal(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         return new ModelAndView("monitoring/viewTrustedDevices");
@@ -62,11 +64,12 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      */
     @GetMapping(value = "/getRecords")
     @ResponseBody
+    @ReadOperation
     public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
                                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
-        final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
+        final TrustedDevicesMultifactorProperties trusted = getCasProperties().getAuthn().getMfa().getTrusted();
         final LocalDate onOrAfter = LocalDate.now().minus(trusted.getExpiration(), DateTimeUtils.toChronoUnit(trusted.getTimeUnit()));
 
         this.mfaTrustEngine.expire(onOrAfter);
@@ -83,8 +86,8 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
-    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request,
-                                final HttpServletResponse response) {
+    @WriteOperation
+    public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         this.mfaTrustEngine.expire(key);

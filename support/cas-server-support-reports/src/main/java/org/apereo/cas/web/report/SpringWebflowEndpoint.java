@@ -6,6 +6,9 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.binding.expression.Expression;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -27,22 +30,26 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 /**
- * This is {@link SpringWebflowReportController}.
+ * This is {@link SpringWebflowEndpoint}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
-public class SpringWebflowReportController extends BaseCasMvcEndpoint {
+@Endpoint(id = "springWebflow")
+public class SpringWebflowEndpoint extends BaseCasMvcEndpoint {
 
-    
+    private final ApplicationContext applicationContext;
+
     /**
      * Instantiates a new Base cas mvc endpoint.
      *
-     * @param casProperties the cas properties
+     * @param casProperties      the cas properties
+     * @param applicationContext the application context
      */
-    public SpringWebflowReportController(final CasConfigurationProperties casProperties) {
-        super("swfReport", "/swf", casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties);
+    public SpringWebflowEndpoint(final CasConfigurationProperties casProperties, final ApplicationContext applicationContext) {
+        super(casProperties.getMonitor().getEndpoints().getSpringWebflowReport(), casProperties);
+        this.applicationContext = applicationContext;
     }
 
     /**
@@ -52,10 +59,11 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
      */
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
+    @ReadOperation
     public Map<?, ?> getReport() {
         final Map<String, Object> jsonMap = new HashMap<>();
         final Map<String, FlowDefinitionRegistry> map =
-                this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
+            this.applicationContext.getBeansOfType(FlowDefinitionRegistry.class, false, true);
 
         map.forEach((k, v) -> Arrays.stream(v.getFlowDefinitionIds()).forEach(id -> {
             final Map<String, Object> flowDetails = new HashMap<>();
@@ -75,8 +83,8 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
                 }
 
                 List acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
-                        .map(Object::toString)
-                        .collect(Collectors.toList());
+                    .map(Object::toString)
+                    .collect(Collectors.toList());
 
                 if (!acts.isEmpty()) {
                     stateMap.put("entryActions", acts);
@@ -90,16 +98,16 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
                     stateMap.put("isRedirect", ((ViewState) state).getRedirect());
 
                     acts = StreamSupport.stream(state.getEntryActionList().spliterator(), false)
-                            .map(Object::toString)
-                            .collect(Collectors.toList());
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
                         stateMap.put("renderActions", ((ViewState) state).getRenderActionList());
                     }
 
                     acts = Arrays.stream(((ViewState) state).getVariables())
-                            .map(value -> value.getName() + " -> " + value.getValueFactory().toString())
-                            .collect(Collectors.toList());
+                        .map(value -> value.getName() + " -> " + value.getValueFactory().toString())
+                        .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
                         stateMap.put("viewVariables", acts);
@@ -119,16 +127,16 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
                     final TransitionableState stDef = TransitionableState.class.cast(state);
 
                     acts = StreamSupport.stream(stDef.getExitActionList().spliterator(), false)
-                            .map(Object::toString)
-                            .collect(Collectors.toList());
+                        .map(Object::toString)
+                        .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
                         stateMap.put("exitActions", acts);
                     }
 
                     acts = Arrays.stream(stDef.getTransitions())
-                            .map(tr -> tr.getId() + " -> " + tr.getTargetStateId())
-                            .collect(Collectors.toList());
+                        .map(tr -> tr.getId() + " -> " + tr.getTargetStateId())
+                        .collect(Collectors.toList());
 
                     if (!acts.isEmpty()) {
                         stateMap.put("transitions", acts);
@@ -144,29 +152,29 @@ public class SpringWebflowReportController extends BaseCasMvcEndpoint {
 
 
             List acts = StreamSupport.stream(def.getEndActionList().spliterator(), false)
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+                .map(Object::toString)
+                .collect(Collectors.toList());
             if (!acts.isEmpty()) {
                 flowDetails.put("endActions", acts);
             }
 
             acts = StreamSupport.stream(def.getGlobalTransitionSet().spliterator(), false)
-                    .map(tr -> tr.getId() + " -> " + tr.getTargetStateId() + " @ " + tr.getExecutionCriteria().toString())
-                    .collect(Collectors.toList());
+                .map(tr -> tr.getId() + " -> " + tr.getTargetStateId() + " @ " + tr.getExecutionCriteria().toString())
+                .collect(Collectors.toList());
             if (!acts.isEmpty()) {
                 flowDetails.put("globalTransitions", acts);
             }
 
             acts = Arrays.stream(def.getExceptionHandlerSet().toArray())
-                    .map(Object::toString)
-                    .collect(Collectors.toList());
+                .map(Object::toString)
+                .collect(Collectors.toList());
             if (!acts.isEmpty()) {
                 flowDetails.put("exceptionHandlers", acts);
             }
 
             final String vars = Arrays.stream(def.getVariables())
-                    .map(FlowVariable::getName)
-                    .collect(Collectors.joining(","));
+                .map(FlowVariable::getName)
+                .collect(Collectors.joining(","));
 
             if (StringUtils.isNotBlank(vars)) {
                 flowDetails.put("variables", vars);
