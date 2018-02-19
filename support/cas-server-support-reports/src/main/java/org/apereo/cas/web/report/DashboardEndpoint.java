@@ -21,6 +21,7 @@ import org.springframework.boot.actuate.management.ThreadDumpEndpoint;
 import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
 import org.springframework.boot.actuate.web.trace.HttpTraceEndpoint;
 import org.springframework.cloud.context.restart.RestartEndpoint;
+import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -77,6 +78,9 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
     @Autowired
     private EnvironmentEndpoint environmentEndpoint;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     public DashboardEndpoint(final CasConfigurationProperties casProperties) {
         super(casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
     }
@@ -144,11 +148,11 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
         model.put("healthCheckEndpointEnabled", isEndpointCapable(endpoints.getHealthCheck(), getCasProperties()));
         model.put("metricsEndpointEnabled", isEndpointCapable(endpoints.getMetrics(), getCasProperties()));
         model.put("servicesEndpointEnabled", isEndpointCapable(endpoints.getRegisteredServicesReport(), getCasProperties()));
-        model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar"))
+        model.put("discoveryProfileEndpointEnabled", this.applicationContext.containsBean("casServerProfileRegistrar"));
         model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), getCasProperties()));
         model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), getCasProperties()));
     }
-
+    
     private void processSpringBootEndpoints(final Map<String, Object> model) {
         model.put("restartEndpointEnabled", isSpringBootEndpointEnabled(restartEndpoint));
         model.put("shutdownEndpointEnabled", isSpringBootEndpointEnabled(shutdownEndpoint));
@@ -165,6 +169,7 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
 
         model.put("serverFunctionsEnabled", isSpringBootEndpointEnabled(restartEndpoint) || isSpringBootEndpointEnabled(shutdownEndpoint));
     }
+
 
     /**
      * The Endpoint bean that holds info about each available endpoint.
