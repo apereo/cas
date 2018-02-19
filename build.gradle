@@ -152,20 +152,13 @@ subprojects {
         jcenter()
     }
 
-    if (!Boolean.getBoolean("skipErrorProneCompiler")) {
-        tasks.withType(JavaCompile) {
-            // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-            options.compilerArgs += ['-XepAllErrorsAsWarnings', '-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
-        }
-    }
-    
     test {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()
         scanForTestClasses = false
         ignoreFailures = Boolean.getBoolean("ignoreTestFailures")
         include "**/*Tests.*"
-        exclude "**/Abstract*.*","**/Base*.*"
+        exclude "**/Abstract*.*", "**/Base*.*"
         maxParallelForks = 1
         classpath = it.classpath + files("${projectDir}/src/main/resources") + files("${projectDir}/src/test/resources")
         testLogging {
@@ -224,9 +217,17 @@ subprojects {
     ext.buildDate = null
     ext.buildJarFile = new File(project.buildDir, "libs/${project.name}-${project.version}.jar")
 
-    compileJava.options.compilerArgs << '-parameters'
-    compileJava.options.fork = true
-    
+    [compileTestJava, compileJava].each {
+        it.options.fork = true
+        it.options.compilerArgs += [
+                '-XepAllErrorsAsWarnings',
+                '-Xep:MissingOverride:OFF',
+                '-Xep:ParameterName:OFF',
+                '--add-modules', 'java.xml.ws'
+        ]
+
+    }
+
     if (Boolean.getBoolean("enableIncremental")) {
         compileJava.options.incremental = true
     }

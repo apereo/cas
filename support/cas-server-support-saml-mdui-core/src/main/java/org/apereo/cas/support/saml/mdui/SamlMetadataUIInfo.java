@@ -8,7 +8,6 @@ import org.apereo.cas.web.flow.services.DefaultRegisteredServiceUserInterfaceInf
 import org.opensaml.core.xml.schema.XSString;
 import org.opensaml.core.xml.schema.XSURI;
 import org.opensaml.saml.ext.saml2mdui.UIInfo;
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -61,7 +60,7 @@ public class SamlMetadataUIInfo extends DefaultRegisteredServiceUserInterfaceInf
      * @param uiInfo            the ui info
      * @param registeredService the registered service
      */
-    public SamlMetadataUIInfo(@Nullable final UIInfo uiInfo, final RegisteredService registeredService) {
+    public SamlMetadataUIInfo(final UIInfo uiInfo, final RegisteredService registeredService) {
         super(registeredService);
         this.uiInfo = uiInfo;
     }

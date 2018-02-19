@@ -62,7 +62,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 
-import javax.xml.ws.Provider;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -125,7 +124,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public Provider transportSTSProviderBean() {
+    public SecurityTokenServiceProvider transportSTSProviderBean() {
         final SecurityTokenServiceProvider provider = new SecurityTokenServiceProvider();
         provider.setIssueOperation(transportIssueDelegate());
         provider.setValidateOperation(transportValidateDelegate());
