@@ -118,4 +118,9 @@ public class Pac4jSamlProperties implements Serializable {
      * Whether metadata should be marked to request sign assertions.
      */
     private boolean wantsAssertionsSigned;
+
+    /**
+     * Attribute consuming servie index.
+     */
+    private int attributeConsumingServiceIndex;
 }
