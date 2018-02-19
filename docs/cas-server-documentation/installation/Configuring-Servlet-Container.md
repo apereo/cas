@@ -15,7 +15,7 @@ There are is a wide range of servlet containers and servers on the menu. The sel
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
 - Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
-- Choose a technology that shows promisng results under *your expected load*, having run performance and stress tests.
+- Choose a technology that shows promising results under *your expected load*, having run performance and stress tests.
 - Choose a technology that does not depend on outside processes, systems and manual work as much as possible, is self-reliant and self contained.
 
 ## Production Quality
@@ -55,7 +55,8 @@ This is achieved via the build process of the deployment overlay where a launch 
  head -n X /path/to.cas.war
  ```
  
-Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. Other platforms such as Windows may require custom configuration.
+Note that running CAS as a standalone and fully executable web application is supported on most Linux and OS X distributions. 
+Other platforms such as Windows may require custom configuration.
 
 ### Apache Tomcat
 
@@ -129,7 +130,7 @@ java -jar /path/to/cas.war -Djava.util.logging.config.file=/path/to/logging.prop
 ## External
 
 A CAS deployment may be deployed to any number of external servlet containers. The container **MUST** support
-the servlet specification `v3.1.x` at a minimum. In these scenarios, the following vanilla CAS web application
+the servlet specification `v4.0.0` at a minimum. In these scenarios, the following vanilla CAS web application
 may be used, in the [WAR Overlay](Maven-Overlay-Installation.html) :
 
 ```xml

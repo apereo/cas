@@ -127,8 +127,8 @@ Also ensure that your container is configured to have enough memory available. F
 CATALINA_OPTS=-Xms1000m -Xmx2000m
 ```
 
-You will want to profile your server with something like [JVisualVM](http://visualvm.java.net/) which should 
-be [bundled with the JDK](https://docs.oracle.com/javase/7/docs/technotes/tools/share/jvisualvm.html).  This will help you see what is actually going on with your memory.
+You will want to profile your server with something like [JVisualVM](https://visualvm.github.io/). This will help you see what is actually 
+going on with your memory.
 
 You might also consider taking periodic heap dumps using the JMap tool or [YourKit Java profiler](http://www.yourkit.com/java/profiler/) 
 and analyzing offline using some analysis tool. 
