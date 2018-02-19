@@ -104,6 +104,11 @@ public class Pac4jSamlProperties implements Serializable {
      */
     private boolean wantsAssertionsSigned;
 
+    /**
+     * Attribute consuming servie index.
+     */
+    private int attributeConsumingServiceIndex;
+
     public String getDestinationBinding() {
         return destinationBinding;
     }
@@ -230,6 +235,14 @@ public class Pac4jSamlProperties implements Serializable {
 
     public void setClientName(final String clientName) {
         this.clientName = clientName;
+    }
+
+    public int getAttributeConsumingServiceIndex() {
+        return attributeConsumingServiceIndex;
+    }
+
+    public void setAttributeConsumingServiceIndex(final int attributeConsumingServiceIndex) {
+        this.attributeConsumingServiceIndex = attributeConsumingServiceIndex;
     }
 }
 
