@@ -2,12 +2,12 @@ package org.apereo.cas.monitor;
 
 import com.mongodb.CommandResult;
 import com.mongodb.DBCollection;
-import com.mongodb.client.MongoCollection;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+
 import java.io.StringWriter;
-import lombok.ToString;
 
 /**
  * This is {@link MongoDbCacheStatistics}.
@@ -19,11 +19,11 @@ import lombok.ToString;
 @ToString
 public class MongoDbCacheStatistics implements CacheStatistics {
 
-    private final MongoCollection collection;
+    private final DBCollection collection;
 
     private final CommandResult statistics;
 
-    public MongoDbCacheStatistics(final MongoCollection collection) {
+    public MongoDbCacheStatistics(final DBCollection collection) {
         this.collection = collection;
         this.statistics = collection.getStats();
     }
@@ -40,7 +40,7 @@ public class MongoDbCacheStatistics implements CacheStatistics {
 
     @Override
     public String getName() {
-        return this.collection.getNamespace().getCollectionName();
+        return this.collection.getName();
     }
 
     @Override

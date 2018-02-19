@@ -7,7 +7,6 @@ import org.apereo.cas.shell.cli.CasCommandLineEngine;
 import org.apereo.cas.shell.cli.CasCommandLineParser;
 import org.apereo.cas.util.spring.boot.DefaultCasBanner;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.cassandra.CassandraAutoConfiguration;
 import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
@@ -33,11 +32,18 @@ import lombok.NoArgsConstructor;
  * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
-@SpringBootApplication(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class, GroovyTemplateAutoConfiguration.class,
-    JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class, MongoAutoConfiguration.class,
-    MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class, DataSourceTransactionManagerAutoConfiguration.class,
-    MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
-
+@SpringBootApplication(exclude = {
+    HibernateJpaAutoConfiguration.class,
+    JerseyAutoConfiguration.class,
+    GroovyTemplateAutoConfiguration.class,
+    JmxAutoConfiguration.class,
+    DataSourceAutoConfiguration.class,
+    RedisAutoConfiguration.class,
+    MongoAutoConfiguration.class,
+    MongoDataAutoConfiguration.class,
+    CassandraAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class,
+    RedisRepositoriesAutoConfiguration.class})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableAsync
 @Slf4j

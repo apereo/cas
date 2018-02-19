@@ -34,7 +34,6 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
-import org.springframework.boot.actuate.endpoint.mvc.MvcEndpoint;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -225,7 +224,8 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
         @Bean
         @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
         @ConditionalOnEnabledEndpoint
-        public MultifactorAuthenticationTrustedDevicesEndpoint multifactorAuthenticationTrustedDevicesEndpoint(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
+        public MultifactorAuthenticationTrustedDevicesEndpoint multifactorAuthenticationTrustedDevicesEndpoint(
+            @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage mfaTrustEngine) {
             return new MultifactorAuthenticationTrustedDevicesEndpoint(mfaTrustEngine, casProperties);
         }
     }

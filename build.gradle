@@ -152,11 +152,13 @@ subprojects {
         jcenter()
     }
 
-    tasks.withType(JavaCompile) {
-        // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-        options.compilerArgs += ['-XepAllErrorsAsWarnings', '-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
+    if (!Boolean.getBoolean("skipErrorProneCompiler")) {
+        tasks.withType(JavaCompile) {
+            // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
+            options.compilerArgs += ['-XepAllErrorsAsWarnings', '-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
+        }
     }
-
+    
     test {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()
@@ -224,6 +226,7 @@ subprojects {
 
     compileJava.options.compilerArgs << '-parameters'
     compileJava.options.fork = true
+    
     if (Boolean.getBoolean("enableIncremental")) {
         compileJava.options.incremental = true
     }

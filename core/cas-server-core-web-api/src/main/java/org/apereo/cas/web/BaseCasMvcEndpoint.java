@@ -28,4 +28,13 @@ public abstract class BaseCasMvcEndpoint {
         this.casProperties = casProperties;
     }
 
+
+    protected Object isEndpointCapable(final MonitorProperties.BaseEndpoint endpoint, final CasConfigurationProperties casProperties) {
+        return false;
+    }
+
+
+    protected boolean isSpringBootEndpointEnabled(final Object endpoint) {
+        return false;
+    }
 }

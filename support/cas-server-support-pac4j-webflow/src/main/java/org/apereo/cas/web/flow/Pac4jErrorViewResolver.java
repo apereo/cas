@@ -3,7 +3,7 @@ package org.apereo.cas.web.flow;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.boot.autoconfigure.web.ErrorViewResolver;
+import org.springframework.boot.autoconfigure.web.servlet.error.ErrorViewResolver;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 
