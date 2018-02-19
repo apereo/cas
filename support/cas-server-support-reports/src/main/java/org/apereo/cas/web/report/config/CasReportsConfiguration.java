@@ -34,6 +34,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
+import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -123,9 +124,6 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     private ServerProperties serverProperties;
 
     @Autowired
-    private HealthEndpoint healthEndpoint;
-
-    @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -152,8 +150,10 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     }
 
     @Bean
+    @Autowired
     @ConditionalOnEnabledEndpoint
-    public StatusEndpoint statusEndpoint() {
+    @ConditionalOnEnabledHealthIndicator("health")
+    public StatusEndpoint statusEndpoint(final HealthEndpoint healthEndpoint) {
         return new StatusEndpoint(casProperties, healthEndpoint);
     }
 
