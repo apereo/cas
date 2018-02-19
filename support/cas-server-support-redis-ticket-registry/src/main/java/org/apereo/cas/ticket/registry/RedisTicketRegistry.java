@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.Ticket;
 import org.springframework.data.redis.core.RedisTemplate;
 
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.Set;
@@ -23,7 +22,6 @@ import java.util.stream.Collectors;
 public class RedisTicketRegistry extends AbstractTicketRegistry {
     private static final String CAS_TICKET_PREFIX = "CAS_TICKET:";
 
-    @NotNull
     private final RedisTemplate<String, Ticket> client;
 
     @Override
@@ -33,7 +31,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
         this.client.delete(redisKeys);
         return size;
     }
-    
+
     @Override
     public boolean deleteSingleTicket(final String ticketId) {
         try {
@@ -54,7 +52,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             // Encode first, then add
             final Ticket encodeTicket = this.encodeTicket(ticket);
             this.client.boundValueOps(redisKey)
-                    .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
+                .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
         } catch (final Exception e) {
             LOGGER.error("Failed to add [{}]", ticket, e);
         }
@@ -83,17 +81,17 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         return this.client.keys(getPatternTicketRedisKey()).stream()
-                .map(redisKey -> {
-                    final Ticket ticket = this.client.boundValueOps(redisKey).get();
-                    if (ticket == null) {
-                        this.client.delete(redisKey);
-                        return null;
-                    }
-                    return ticket;
-                })
-                .filter(Objects::nonNull)
-                .map(this::decodeTicket)
-                .collect(Collectors.toSet());
+            .map(redisKey -> {
+                final Ticket ticket = this.client.boundValueOps(redisKey).get();
+                if (ticket == null) {
+                    this.client.delete(redisKey);
+                    return null;
+                }
+                return ticket;
+            })
+            .filter(Objects::nonNull)
+            .map(this::decodeTicket)
+            .collect(Collectors.toSet());
     }
 
     @Override

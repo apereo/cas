@@ -1,6 +1,5 @@
 package org.apereo.cas.support.saml.services.idp.metadata.cache.resolver;
 
-import com.google.common.base.Function;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.auth.UsernamePasswordCredentials;
@@ -14,7 +13,6 @@ import org.apereo.cas.util.http.HttpClient;
 import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.metadata.resolver.impl.FunctionDrivenDynamicHTTPMetadataResolver;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -58,17 +56,13 @@ public class DynamicMetadataResolver extends BaseSamlRegisteredServiceMetadataRe
             resolver.setSupportedContentTypes(md.getSupportedContentTypes());
         }
 
-        resolver.setRequestURLBuilder(new Function<String, String>() {
-            @Nullable
-            @Override
-            public String apply(@Nullable final String input) {
-                if (StringUtils.isNotBlank(input)) {
-                    final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
-                    LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
-                    return metadataLocation;
-                }
-                return null;
+        resolver.setRequestURLBuilder(input -> {
+            if (StringUtils.isNotBlank(input)) {
+                final String metadataLocation = service.getMetadataLocation().replace("{0}", EncodingUtils.urlEncode(input));
+                LOGGER.info("Constructed dynamic metadata query [{}] for [{}]", metadataLocation, service.getName());
+                return metadataLocation;
             }
+            return null;
         });
         try {
             configureAndInitializeSingleMetadataResolver(resolver, service);
