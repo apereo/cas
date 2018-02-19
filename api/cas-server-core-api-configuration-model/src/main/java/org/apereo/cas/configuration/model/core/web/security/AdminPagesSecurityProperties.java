@@ -71,11 +71,6 @@ public class AdminPagesSecurityProperties implements Serializable {
     private Resource users;
 
     /**
-     * Whether Spring Boot's actuator endpoints should show up on the dashboard.
-     */
-    private boolean actuatorEndpointsEnabled;
-
-    /**
      * Enable Spring Security's JDBC authentication provider
      * for admin status authorization and access control.
      */
