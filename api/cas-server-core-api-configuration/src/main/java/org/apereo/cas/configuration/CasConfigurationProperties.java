@@ -11,7 +11,6 @@ import org.apereo.cas.configuration.model.core.authentication.HttpClientProperti
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.core.events.EventsProperties;
 import org.apereo.cas.configuration.model.core.logout.LogoutProperties;
-import org.apereo.cas.configuration.model.core.metrics.MetricsProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.configuration.model.core.rest.RestProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
@@ -130,12 +129,6 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private LogoutProperties logout = new LogoutProperties();
-
-    /**
-     * Metrics functionality.
-     */
-    @NestedConfigurationProperty
-    private MetricsProperties metrics = new MetricsProperties();
 
     /**
      * Monitoring functionality.
