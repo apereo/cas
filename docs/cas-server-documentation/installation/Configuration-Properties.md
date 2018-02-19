@@ -432,37 +432,8 @@ endpoint of CAS which provides administrative functionality and oversight into t
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
 ```properties
-# Globally control whether endpoints are enabled
-# or marked as sesitive to require authentication.
-# endpoints.enabled=true
-# endpoints.sensitive=true
-
-management.contextPath=/status
-management.security.enabled=true
-management.security.roles=ACTUATOR,ADMIN
-management.security.sessions=if_required
-
-# Each of the below endpoints can either be disabled
-# or can be marked as 'sensitive' (or not)
-# to enable authentication. The global flags above control
-# everything and individual settings below act as overrides.
-
-# endpoints.restart.enabled=false
-# endpoints.shutdown.enabled=false
-# endpoints.autoconfig.enabled=true
-# endpoints.beans.enabled=true
-# endpoints.bus.enabled=true
-# endpoints.configprops.enabled=true
-# endpoints.dump.enabled=true
-# endpoints.env.enabled=true
-# endpoints.health.enabled=true
-# endpoints.features.enabled=true
-# endpoints.info.enabled=true
-# endpoints.loggers.enabled=true
-# endpoints.logfile.enabled=true
-# endpoints.trace.enabled=true
-# endpoints.docs.enabled=false
-# endpoints.heapdump.enabled=true
+# management.endpoints.enabled-by-default=false
+# management.server.servlet.context-path=/status
 
 # IP address may be enough to protect all endpoints.
 # It's set to always protect the /status endpoint.
@@ -474,8 +445,6 @@ management.security.sessions=if_required
 # cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
 # cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
 # cas.adminPagesSecurity.adminRoles[0]=ROLE_ADMIN
-
-# cas.adminPagesSecurity.actuatorEndpointsEnabled=true
 ```
 
 The format of the `adminusers.properties` file which houses a list of authorized users to access the admin pages via CAS is:
