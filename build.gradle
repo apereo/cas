@@ -8,6 +8,7 @@ ext {
     sonatypeUsername = System.getProperty("sonatypeUsername")
     sonatypePassword = System.getProperty("sonatypePassword")
     forceBom = Boolean.getBoolean('forceBom')
+    skipErrorProneCompiler = Boolean.getBoolean("skipErrorProneCompiler")
     enableRemoteDebugging = Boolean.getBoolean("enableRemoteDebugging")
     continuousIntegrationBuild = Boolean.getBoolean("CI") || Boolean.getBoolean("TRAVIS") || Boolean.getBoolean("CONTINUOUS_INTEGRATION")
 
@@ -125,7 +126,7 @@ subprojects {
     apply plugin: "kotlin"
     apply plugin: "kotlin-spring"
     apply plugin: "java-library"
-    if (!Boolean.getBoolean("skipErrorProneCompiler")) {
+    if (!rootProject.skipErrorProneCompiler) {
         apply plugin: "net.ltgt.errorprone"
     }
     apply plugin: "checkstyle"
@@ -219,12 +220,17 @@ subprojects {
 
     [compileTestJava, compileJava].each {
         it.options.fork = true
-        it.options.compilerArgs += [
-                '-XepAllErrorsAsWarnings',
-                '-Xep:MissingOverride:OFF',
-                '-Xep:ParameterName:OFF',
-                '--add-modules', 'java.xml.ws'
-        ]
+
+        def casCompilerArgs = ["-parameters"]
+        if (!rootProject.skipErrorProneCompiler) {
+            casCompilerArgs.add("-XepAllErrorsAsWarnings")
+            casCompilerArgs.add("-Xep:MissingOverride:OFF")
+            casCompilerArgs.add("-Xep:ParameterName:OFF")
+        }
+        casCompilerArgs.add("--add-modules")
+        casCompilerArgs.add("java.xml.ws")
+
+        it.options.compilerArgs += casCompilerArgs
 
     }
 
@@ -259,7 +265,9 @@ subprojects {
 
     jar {
         manifest {
-            attributes("Implementation-Title": project.name,
+            attributes(
+                    "Automatic-Module-Name": project.name,
+                    "Implementation-Title": project.name,
                     "Implementation-Vendor": project.group,
                     "Created-By": project.group,
                     "Specification-Version": rootProject.currentRevision,

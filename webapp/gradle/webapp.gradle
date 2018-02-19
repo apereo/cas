@@ -99,7 +99,9 @@ war {
     def currentTime = java.time.ZonedDateTime.now()
 
     manifest {
-        attributes("Implementation-Title": project.name,
+        attributes(
+                "Automatic-Module-Name": project.name,
+                "Implementation-Title": project.name,
                 "Implementation-Vendor": project.group,
                 "Created-By": project.group,
                 "Implementation-Date": currentTime,
