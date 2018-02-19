@@ -18,7 +18,6 @@ import org.apereo.cas.config.CasCoreTicketsConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasFiltersConfiguration;
-import org.apereo.cas.config.CasMetricsConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.CasPropertiesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
@@ -59,7 +58,6 @@ import static org.junit.Assert.*;
 @SpringBootTest(
         classes = {CasApplicationContextConfiguration.class,
                 CasFiltersConfiguration.class,
-                CasMetricsConfiguration.class,
                 CasPropertiesConfiguration.class,
                 CasSecurityContextConfiguration.class,
                 CasWebAppConfiguration.class,

@@ -44,7 +44,7 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.thymeleaf.spring4.SpringTemplateEngine;
+import org.thymeleaf.spring5.SpringTemplateEngine;
 
 import javax.annotation.PostConstruct;
 
