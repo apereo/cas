@@ -72,7 +72,7 @@ allprojects {
     apply plugin: 'com.github.ben-manes.versions'
     apply plugin: "jacoco"
 
-    if (!rootProject.publishSnapshots) {
+    if (!rootProject.publishSnapshots && !Boolean.getBoolean("skipGradleLint")) {
         apply plugin: "nebula.lint"
         gradleLint.rules = ["dependency-parentheses", "dependency-tuple"]
     }
@@ -227,8 +227,11 @@ subprojects {
             casCompilerArgs.add("-Xep:MissingOverride:OFF")
             casCompilerArgs.add("-Xep:ParameterName:OFF")
         }
-        casCompilerArgs.add("--add-modules")
-        casCompilerArgs.add("java.xml.ws")
+
+        if (JavaVersion.toVersion(sourceCompatibility).isJava9Compatible()) {
+            casCompilerArgs.add("--add-modules")
+            casCompilerArgs.add("java.xml.ws")
+        }
 
         it.options.compilerArgs += casCompilerArgs
 

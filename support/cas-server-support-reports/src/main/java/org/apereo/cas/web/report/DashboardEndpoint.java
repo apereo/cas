@@ -9,18 +9,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.actuate.beans.BeansEndpoint;
-import org.springframework.boot.actuate.context.ShutdownEndpoint;
-import org.springframework.boot.actuate.context.properties.ConfigurationPropertiesReportEndpoint;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.boot.actuate.env.EnvironmentEndpoint;
-import org.springframework.boot.actuate.health.HealthEndpoint;
-import org.springframework.boot.actuate.info.InfoEndpoint;
-import org.springframework.boot.actuate.management.ThreadDumpEndpoint;
-import org.springframework.boot.actuate.web.mappings.MappingsEndpoint;
-import org.springframework.boot.actuate.web.trace.HttpTraceEndpoint;
-import org.springframework.cloud.context.restart.RestartEndpoint;
 import org.springframework.context.ApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -45,42 +35,9 @@ import java.util.stream.Collectors;
 @Endpoint(id = "dashboard")
 public class DashboardEndpoint extends BaseCasMvcEndpoint {
 
-    @Autowired(required = false)
-    private RestartEndpoint restartEndpoint;
-
-    @Autowired(required = false)
-    private ShutdownEndpoint shutdownEndpoint;
-
-    @Autowired
-    private InfoEndpoint infoEndpoint;
-
-    @Autowired
-    private ConfigurationPropertiesReportEndpoint autoConfigurationReportEndpoint;
-
-    @Autowired
-    private BeansEndpoint beansEndpoint;
-
-    @Autowired
-    private ThreadDumpEndpoint dumpEndpoint;
-
-    @Autowired
-    private ConfigurationPropertiesReportEndpoint configPropertiesEndpoint;
-
-    @Autowired
-    private MappingsEndpoint requestMappingEndpoint;
-
-    @Autowired
-    private HealthEndpoint healthEndpoint;
-
-    @Autowired
-    private HttpTraceEndpoint traceEndpoint;
-
-    @Autowired
-    private EnvironmentEndpoint environmentEndpoint;
-
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     public DashboardEndpoint(final CasConfigurationProperties casProperties) {
         super(casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
     }
@@ -152,22 +109,22 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
         model.put("attributeResolutionEndpointEnabled", isEndpointCapable(endpoints.getAttributeResolution(), getCasProperties()));
         model.put("configurationMetadataEndpointEnabled", isEndpointCapable(endpoints.getConfigurationMetadata(), getCasProperties()));
     }
-    
+
     private void processSpringBootEndpoints(final Map<String, Object> model) {
-        model.put("restartEndpointEnabled", isSpringBootEndpointEnabled(restartEndpoint));
-        model.put("shutdownEndpointEnabled", isSpringBootEndpointEnabled(shutdownEndpoint));
-        model.put("environmentEndpointEnabled", isSpringBootEndpointEnabled(environmentEndpoint));
-
-        model.put("autoConfigurationEndpointEnabled", isSpringBootEndpointEnabled(autoConfigurationReportEndpoint));
-        model.put("beansEndpointEnabled", isSpringBootEndpointEnabled(beansEndpoint));
-        model.put("mappingsEndpointEnabled", isSpringBootEndpointEnabled(requestMappingEndpoint));
-        model.put("configPropsEndpointEnabled", isSpringBootEndpointEnabled(configPropertiesEndpoint));
-        model.put("dumpEndpointEnabled", isSpringBootEndpointEnabled(dumpEndpoint));
-        model.put("infoEndpointEnabled", isSpringBootEndpointEnabled(infoEndpoint));
-        model.put("healthEndpointEnabled", isSpringBootEndpointEnabled(healthEndpoint));
-        model.put("traceEndpointEnabled", isSpringBootEndpointEnabled(traceEndpoint));
-
-        model.put("serverFunctionsEnabled", isSpringBootEndpointEnabled(restartEndpoint) || isSpringBootEndpointEnabled(shutdownEndpoint));
+//        model.put("restartEndpointEnabled", isSpringBootEndpointEnabled(restartEndpoint));
+//        model.put("shutdownEndpointEnabled", isSpringBootEndpointEnabled(shutdownEndpoint));
+//        model.put("environmentEndpointEnabled", isSpringBootEndpointEnabled(environmentEndpoint));
+//
+//        model.put("autoConfigurationEndpointEnabled", isSpringBootEndpointEnabled(autoConfigurationReportEndpoint));
+//        model.put("beansEndpointEnabled", isSpringBootEndpointEnabled(beansEndpoint));
+//        model.put("mappingsEndpointEnabled", isSpringBootEndpointEnabled(requestMappingEndpoint));
+//        model.put("configPropsEndpointEnabled", isSpringBootEndpointEnabled(configPropertiesEndpoint));
+//        model.put("dumpEndpointEnabled", isSpringBootEndpointEnabled(dumpEndpoint));
+//        model.put("infoEndpointEnabled", isSpringBootEndpointEnabled(infoEndpoint));
+//        model.put("healthEndpointEnabled", isSpringBootEndpointEnabled(healthEndpoint));
+//        model.put("traceEndpointEnabled", isSpringBootEndpointEnabled(traceEndpoint));
+//
+//        model.put("serverFunctionsEnabled", isSpringBootEndpointEnabled(restartEndpoint) || isSpringBootEndpointEnabled(shutdownEndpoint));
     }
 
 

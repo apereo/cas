@@ -70,9 +70,27 @@ javadoc {
     task.enabled = false
 }
 
+springBoot {
+    mainClassName = MAIN_CLASS
+}
+
 bootWar {
     mainClassName = MAIN_CLASS
     enabled = !rootProject.publishingRelease
+
+    def currentTime = java.time.ZonedDateTime.now()
+
+    manifest {
+        attributes(
+                "Automatic-Module-Name": project.name,
+                "Implementation-Title": project.name,
+                "Implementation-Vendor": project.group,
+                "Created-By": project.group,
+                "Implementation-Date": currentTime,
+                "Specification-Version": rootProject.currentRevision,
+                "Implementation-Version": project.version)
+    }
+    from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
 }
 
 bootRun {
@@ -93,23 +111,6 @@ bootRun {
     }
 
     jvmArgs = list
-}
-
-war {
-    def currentTime = java.time.ZonedDateTime.now()
-
-    manifest {
-        attributes(
-                "Automatic-Module-Name": project.name,
-                "Implementation-Title": project.name,
-                "Implementation-Vendor": project.group,
-                "Created-By": project.group,
-                "Implementation-Date": currentTime,
-                "Specification-Version": rootProject.currentRevision,
-                "Implementation-Version": project.version)
-    }
-    from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
-    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
 }
 
 dependencies {
