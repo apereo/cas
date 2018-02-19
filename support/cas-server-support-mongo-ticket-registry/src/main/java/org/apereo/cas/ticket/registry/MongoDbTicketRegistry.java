@@ -1,8 +1,5 @@
 package org.apereo.cas.ticket.registry;
 
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBCollection;
-import com.mongodb.WriteResult;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.result.DeleteResult;
 import lombok.extern.slf4j.Slf4j;
@@ -14,7 +11,9 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -32,9 +31,6 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
-
-
-    private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
     private final TicketCatalog ticketCatalog;
@@ -52,15 +48,15 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         LOGGER.info("Configured MongoDb Ticket Registry instance with available collections: [{}]", mongoTemplate.getCollectionNames());
     }
 
-    private DBCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
+    private MongoCollection createTicketCollection(final TicketDefinition ticket, final MongoDbConnectionFactory factory) {
         final String collectionName = ticket.getProperties().getStorageName();
         LOGGER.debug("Setting up MongoDb Ticket Registry instance [{}]", collectionName);
         factory.createCollection(mongoTemplate, collectionName, this.dropCollection);
 
         LOGGER.debug("Creating indices on collection [{}] to auto-expire documents...", collectionName);
         final MongoCollection collection = mongoTemplate.getCollection(collectionName);
-        collection.createIndex(new BasicDBObject(TicketHolder.FIELD_NAME_EXPIRE_AT, 1),
-                new BasicDBObject(FIELD_NAME_EXPIRE_AFTER_SECONDS, ticket.getProperties().getStorageTimeout()));
+        mongoTemplate.indexOps(TicketHolder.class)
+            .ensureIndex(new Index().on("expireAt", Sort.Direction.ASC).expire(ticket.getProperties().getStorageTimeout()));
         return collection;
     }
 
@@ -68,8 +64,8 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
         final Collection<TicketDefinition> definitions = ticketCatalog.findAll();
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         definitions.forEach(t -> {
-            final DBCollection c = createTicketCollection(t, factory);
-            LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getFullName());
+            final MongoCollection c = createTicketCollection(t, factory);
+            LOGGER.debug("Created MongoDb collection configuration for [{}]", c.getNamespace().getFullName());
         });
     }
 
@@ -160,11 +156,11 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public Collection<Ticket> getTickets() {
         return this.ticketCatalog.findAll().stream()
-                .map(this::getTicketCollectionInstanceByMetadata)
-                .map(map -> mongoTemplate.findAll(TicketHolder.class, map))
-                .flatMap(List::stream)
-                .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
-                .collect(Collectors.toSet());
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .map(map -> mongoTemplate.findAll(TicketHolder.class, map))
+            .flatMap(List::stream)
+            .map(ticket -> decodeTicket(deserializeTicketFromMongoDocument(ticket)))
+            .collect(Collectors.toSet());
     }
 
     @Override
@@ -187,14 +183,14 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         return this.ticketCatalog.findAll().stream()
-                .map(this::getTicketCollectionInstanceByMetadata)
-                .filter(StringUtils::isNotBlank)
-                .mapToLong(collectionName -> {
-                    final long countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
-                    mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
-                    return countTickets;
-                })
-                .sum();
+            .map(this::getTicketCollectionInstanceByMetadata)
+            .filter(StringUtils::isNotBlank)
+            .mapToLong(collectionName -> {
+                final long countTickets = this.mongoTemplate.count(SELECT_ALL_NAMES_QUERY, collectionName);
+                mongoTemplate.remove(SELECT_ALL_NAMES_QUERY, collectionName);
+                return countTickets;
+            })
+            .sum();
     }
 
     /**

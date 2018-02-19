@@ -10,6 +10,10 @@ import org.apache.catalina.valves.ExtendedAccessLogValve;
 import org.apache.catalina.valves.SSLValve;
 import org.apache.catalina.valves.rewrite.RewriteValve;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.coyote.ajp.AjpNio2Protocol;
+import org.apache.coyote.ajp.AjpNioProtocol;
+import org.apache.coyote.http11.Http11Nio2Protocol;
+import org.apache.coyote.http11.Http11NioProtocol;
 import org.apache.coyote.http2.Http2Protocol;
 import org.apache.tomcat.util.descriptor.web.LoginConfig;
 import org.apache.tomcat.util.descriptor.web.SecurityCollection;
@@ -29,20 +33,22 @@ import org.springframework.boot.autoconfigure.AutoConfigureBefore;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
-import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.web.embedded.tomcat.ConfigurableTomcatWebServerFactory;
+import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.io.Resource;
+import org.springframework.util.ReflectionUtils;
 import org.springframework.util.SocketUtils;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -54,7 +60,7 @@ import java.nio.charset.StandardCharsets;
 @Configuration("casEmbeddedContainerTomcatConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
-@AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
+@AutoConfigureBefore(ServletWebServerFactoryAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 
 @Slf4j
@@ -67,8 +73,8 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
     @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
     @Bean
-    public EmbeddedServletContainerFactory servletContainer() {
-        final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
+    public ConfigurableTomcatWebServerFactory servletContainer() {
+        final TomcatServletWebServerFactory tomcat = new TomcatServletWebServerFactory();
 
         configureAjp(tomcat);
         configureHttp(tomcat);
@@ -81,7 +87,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         return tomcat;
     }
 
-    private void configureBasicAuthn(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
         final CasEmbeddedApacheTomcatBasicAuthenticationProperties basic = casProperties.getServer().getBasicAuthn();
         if (basic.isEnabled()) {
             tomcat.addContextCustomizers(ctx -> {
@@ -104,11 +110,11 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureRewriteValve(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureRewriteValve(final TomcatServletWebServerFactory tomcat) {
         final Resource res = casProperties.getServer().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
             LOGGER.debug("Configuring rewrite valve at [{}]", res);
-                         
+
             final RewriteValve valve = new RewriteValve() {
                 @Override
                 @SneakyThrows
@@ -129,7 +135,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureExtendedAccessLogValve(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureExtendedAccessLogValve(final TomcatServletWebServerFactory tomcat) {
         final CasEmbeddedApacheTomcatExtendedAccessLogProperties ext = casProperties.getServer().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
@@ -153,7 +159,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureHttp(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureHttp(final TomcatServletWebServerFactory tomcat) {
         final CasEmbeddedApacheTomcatHttpProperties http = casProperties.getServer().getHttp();
         if (http.isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
@@ -174,7 +180,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureHttpProxy(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureHttpProxy(final TomcatServletWebServerFactory tomcat) {
         final CasEmbeddedApacheTomcatHttpProxyProperties proxy = casProperties.getServer().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
@@ -184,7 +190,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
 
                 if (StringUtils.isNotBlank(proxy.getProtocol())) {
                     LOGGER.debug("Setting HTTP proxying protocol to [{}]", proxy.getProtocol());
-                    connector.setProtocol(proxy.getProtocol());
+                    configureConnectorForProtocol(connector, proxy.getProtocol());
                 }
                 if (proxy.getRedirectPort() > 0) {
                     LOGGER.debug("Setting HTTP proxying redirect port to [{}]", proxy.getRedirectPort());
@@ -204,12 +210,11 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
-    private void configureAjp(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureAjp(final TomcatServletWebServerFactory tomcat) {
         final CasEmbeddedApacheTomcatAjpProperties ajp = casProperties.getServer().getAjp();
         if (ajp.isEnabled() && ajp.getPort() > 0) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
             final Connector ajpConnector = new Connector(ajp.getProtocol());
-            ajpConnector.setProtocol(ajp.getProtocol());
             ajpConnector.setPort(ajp.getPort());
             ajpConnector.setSecure(ajp.isSecure());
             ajpConnector.setAllowTrace(ajp.isAllowTrace());
@@ -239,9 +244,10 @@ public class CasEmbeddedContainerTomcatConfiguration {
      * Add SSLValve which reads X509 certificate from HTTP header.
      * SSLValve javadoc says it should be an engine valve but it doesn't work
      * so adding to context instead.
+     *
      * @param tomcat tomcat container factory
      */
-    private void configureSSLValve(final TomcatEmbeddedServletContainerFactory tomcat) {
+    private void configureSSLValve(final TomcatServletWebServerFactory tomcat) {
         final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getSslValve();
 
         if (valveConfig.isEnabled()) {
@@ -255,4 +261,27 @@ public class CasEmbeddedContainerTomcatConfiguration {
         }
     }
 
+
+    private static void configureConnectorForProtocol(final Connector connector, final String protocol) {
+        final Field field = ReflectionUtils.findField(connector.getClass(), "protocolHandler");
+        ReflectionUtils.makeAccessible(field);
+        switch (protocol) {
+            case "AJP/2":
+                ReflectionUtils.setField(field, connector, new AjpNio2Protocol());
+                break;
+            case "AJP/1.3":
+                ReflectionUtils.setField(field, connector, new AjpNioProtocol());
+                break;
+            case "HTTP/2":
+                ReflectionUtils.setField(field, connector, new Http2Protocol());
+                break;
+            case "HTTP/1.2":
+                ReflectionUtils.setField(field, connector, new Http11Nio2Protocol());
+                break;
+            case "HTTP/1.1":
+            default:
+                ReflectionUtils.setField(field, connector, new Http11NioProtocol());
+                break;
+        }
+    }
 }

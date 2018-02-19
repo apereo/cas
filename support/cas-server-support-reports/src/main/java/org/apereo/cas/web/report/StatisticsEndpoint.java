@@ -302,8 +302,6 @@ public class StatisticsEndpoint extends BaseCasMvcEndpoint {
     @ReadOperation
     public ModelAndView handleRequestInternal(final HttpServletRequest httpServletRequest,
                                               final HttpServletResponse httpServletResponse) {
-        ensureEndpointAccessIsAuthorized(httpServletRequest, httpServletResponse);
-
         final ModelAndView modelAndView = new ModelAndView(MONITORING_VIEW_STATISTICS);
         modelAndView.addObject("pageTitle", modelAndView.getViewName());
         modelAndView.addObject("availableProcessors", Runtime.getRuntime().availableProcessors());

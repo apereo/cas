@@ -26,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
@@ -110,7 +111,9 @@ public class ConfigurationStateEndpoint extends BaseCasMvcEndpoint {
         }
 
         final Pattern pattern = RegexUtils.createPattern("(configService:|applicationConfig:).+(application|cas).+");
-        final Map<String, Object> environmentSettings = environmentEndpoint.environment(".+");
+        
+        final Map<String, Object> environmentSettings = new LinkedHashMap<>();
+        //environmentEndpoint.environment(".+").getPropertySources().get(0).;
         environmentSettings.entrySet()
             .stream()
             .filter(entry -> pattern.matcher(entry.getKey()).matches())
