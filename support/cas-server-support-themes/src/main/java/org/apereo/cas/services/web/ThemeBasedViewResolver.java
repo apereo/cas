@@ -1,5 +1,6 @@
 package org.apereo.cas.services.web;
 
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -7,12 +8,11 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.springframework.web.servlet.ThemeResolver;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
-import javax.annotation.Nullable;
+
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
-import lombok.Setter;
 
 /**
  * {@link ThemeBasedViewResolver} is a View Resolver that takes the active theme into account to selectively choose
@@ -38,7 +38,6 @@ public class ThemeBasedViewResolver implements ViewResolver, Ordered {
         this.viewResolverFactory = viewResolverFactory;
     }
 
-    @Nullable
     @Override
     public View resolveViewName(final String viewName, final Locale locale) {
         final Optional<String> theme = Optional.of(RequestContextHolder.currentRequestAttributes())
