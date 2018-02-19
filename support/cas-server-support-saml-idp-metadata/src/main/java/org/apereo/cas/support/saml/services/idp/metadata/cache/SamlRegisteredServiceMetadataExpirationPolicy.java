@@ -12,7 +12,6 @@ import org.opensaml.saml.metadata.resolver.MetadataResolver;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 
-import javax.annotation.Nonnull;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -24,14 +23,14 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<SamlRegisteredService, MetadataResolver> {
     private final long defaultExpiration;
-    
+
     public SamlRegisteredServiceMetadataExpirationPolicy(final long metadataCacheExpirationMinutes) {
         this.defaultExpiration = TimeUnit.MINUTES.toNanos(metadataCacheExpirationMinutes);
     }
 
     @Override
-    public long expireAfterCreate(@Nonnull final SamlRegisteredService service, 
-                                  @Nonnull final MetadataResolver chainingMetadataResolver, 
+    public long expireAfterCreate(final SamlRegisteredService service,
+                                  final MetadataResolver chainingMetadataResolver,
                                   final long currentTime) {
         final long duration = getCacheDurationForServiceProvider(service, chainingMetadataResolver);
         if (duration >= 0) {
@@ -56,7 +55,7 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
                 LOGGER.debug("Located cache duration [{}] specified in SP metadata for [{}]", entitySp.getCacheDuration(), entitySp.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entitySp.getCacheDuration());
             }
-            
+
             set.clear();
             set.add(new EntityIdCriterion(service.getServiceId()));
             final EntityDescriptor entity = chainingMetadataResolver.resolveSingle(set);
@@ -64,22 +63,22 @@ public class SamlRegisteredServiceMetadataExpirationPolicy implements Expiry<Sam
                 LOGGER.debug("Located cache duration [{}] specified in entity metadata for [{}]", entity.getCacheDuration(), entity.getEntityID());
                 return TimeUnit.MILLISECONDS.toNanos(entity.getCacheDuration());
             }
-        } catch(final Exception e) {
+        } catch (final Exception e) {
             LOGGER.debug(e.getMessage(), e);
         }
         return -1;
     }
 
     @Override
-    public long expireAfterUpdate(@Nonnull final SamlRegisteredService service,
-                                  @Nonnull final MetadataResolver chainingMetadataResolver,
+    public long expireAfterUpdate(final SamlRegisteredService service,
+                                  final MetadataResolver chainingMetadataResolver,
                                   final long currentTime, final long currentDuration) {
         return currentDuration;
     }
 
     @Override
-    public long expireAfterRead(@Nonnull final SamlRegisteredService service, 
-                                @Nonnull final MetadataResolver chainingMetadataResolver, 
+    public long expireAfterRead(final SamlRegisteredService service,
+                                final MetadataResolver chainingMetadataResolver,
                                 final long currentTime, final long currentDuration) {
         return currentDuration;
     }
