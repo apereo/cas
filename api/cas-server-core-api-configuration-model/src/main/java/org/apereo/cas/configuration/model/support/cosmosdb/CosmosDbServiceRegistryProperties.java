@@ -17,7 +17,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties implements Serializable {
+public class CosmosDbServiceRegistryProperties extends BaseCosmosDbProperties {
 
     private static final long serialVersionUID = 6194689836396653458L;
 

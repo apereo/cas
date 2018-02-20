@@ -31,7 +31,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of ={"initToken", "nextToken", "principal"})
-public class SpnegoCredential implements Credential, Serializable {
+public class SpnegoCredential implements Credential {
 
     /**
      * Unique id for serialization.

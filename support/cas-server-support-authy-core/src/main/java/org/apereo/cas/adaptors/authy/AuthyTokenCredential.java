@@ -24,7 +24,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class AuthyTokenCredential implements Credential, Serializable {
+public class AuthyTokenCredential implements Credential {
     private static final long serialVersionUID = -7970600701132111037L;
 
     private String token;

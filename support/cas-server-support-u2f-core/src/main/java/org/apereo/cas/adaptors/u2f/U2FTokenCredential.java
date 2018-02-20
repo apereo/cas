@@ -23,7 +23,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class U2FTokenCredential implements Credential, Serializable {
+public class U2FTokenCredential implements Credential {
 
     private static final long serialVersionUID = -970682410132111037L;
 
