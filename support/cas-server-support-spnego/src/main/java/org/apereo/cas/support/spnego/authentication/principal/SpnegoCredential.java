@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.stream.IntStream;
 
 import lombok.ToString;
