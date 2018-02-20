@@ -47,20 +47,18 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
             return result;
         }
 
-        if (!context.getAuthentication().isPresent() || !context.getService().isPresent() || !context.getRegisteredService().isPresent()) {
-            throw new IllegalArgumentException("Authentication, service and registered service must be all present for enforcing principal access");
+        if (context.getService().isPresent() && context.getRegisteredService().isPresent() && context.getAuthentication().isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
+            try {
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
+                    context.getRegisteredService().get(),
+                    context.getAuthentication().get(),
+                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+            } catch (final PrincipalException e) {
+                result.setException(Optional.of(e));
+            }
+            return result;
         }
-
-        final AuditableExecutionResult result =
-            AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
-        try {
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
-                context.getRegisteredService().get(),
-                context.getAuthentication().get(),
-                context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
-        } catch (final PrincipalException e) {
-            result.setException(Optional.of(e));
-        }
-        return result;
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 }

@@ -181,15 +181,13 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         try {
-
             final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
                 .ticketGrantingTicket(Optional.of(proxyGrantingTicketObject))
-                .registeredService(Optional.of(registeredService))
+                .registeredService(registeredService == null ? Optional.empty() : Optional.of(registeredService))
                 .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
                 .build();
             final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
-
             RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, service, proxyGrantingTicketObject);
         } catch (final PrincipalException e) {
             throw new UnauthorizedSsoServiceException();
