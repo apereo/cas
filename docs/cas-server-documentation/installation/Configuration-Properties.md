@@ -2632,6 +2632,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 ```properties
 # cas.sso.missingService=true
 # cas.sso.renewedAuthn=true
+# cas.sso.proxyAuthnEnabled=true
 ```
 
 ## Warning Cookie
