@@ -25,7 +25,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"username"})
-public class DuoCredential implements Credential, Serializable {
+public class DuoCredential implements Credential {
 
     private static final long serialVersionUID = -7570600733132111037L;
 

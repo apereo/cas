@@ -23,7 +23,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class SwivelCredential implements Credential, Serializable {
+public class SwivelCredential implements Credential {
 
     private static final long serialVersionUID = 361318678073819595L;
 

@@ -38,7 +38,7 @@ Registered services present the following metadata:
 | `theme`                           | Optional theme name that may be used to customize the CAS UI when the service requests a ticket. See [this guide](User-Interface-Customization.html) for more details.
 | `proxyPolicy`                     | Determines whether the service is able to proxy authentication. See [this guide](Configuring-Service-Proxy-Policy.html) for more info.
 | `evaluationOrder`                 | Determines relative order of evaluation of registered services. This flag is particularly important in cases where two service URL expressions cover the same services; evaluation order determines which registration is evaluated first and acts as an internal sorting factor.
-| `requiredHandlers`                | Set of authentication handler names that must successfully authenticate credentials in order to access the service. If defined, only the selected required handlers are chosen to respond to authentication requests from this registered service.
+| `requiredHandlers`                | Set of authentication handler names that must successfully authenticate credentials in order to access the service. If defined, only the selected required handlers are chosen to respond to authentication requests from this registered service.  See [this guide](Configuring-Service-Required-AuthN.html) for more details.
 | `attributeReleasePolicy`          | The policy that describes the set of attributes allows to be released to the application, as well as any other filtering logic needed to weed some out. See [this guide](../integration/Attribute-Release.html) for more details on attribute release and filters.
 | `logoutType`                      | Defines how this service should be treated once the logout protocol is initiated. Acceptable values are `LogoutType.BACK_CHANNEL`, `LogoutType.FRONT_CHANNEL` or `LogoutType.NONE`. See [this guide](Logout-Single-Signout.html) for more details on logout.
 | `responseType`                      | Defines how  CAS should respond to requests for this service. Acceptable values are `POST`, `REDIRECT` or `HEADER`.
@@ -59,6 +59,10 @@ Registered services present the following metadata:
 ### Proxy Authentication Policy
 
 [See this guide](Configuring-Service-Proxy-Policy.html) for more info please.
+
+### Required Authentication
+
+[See this guide](Configuring-Service-Required-AuthN.html) for more details.
 
 ### Tags & Properties
 

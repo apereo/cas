@@ -23,7 +23,7 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class DuoDirectCredential implements Credential, Serializable {
+public class DuoDirectCredential implements Credential {
     private static final long serialVersionUID = -7570699733132111037L;
 
     private final Authentication authentication;

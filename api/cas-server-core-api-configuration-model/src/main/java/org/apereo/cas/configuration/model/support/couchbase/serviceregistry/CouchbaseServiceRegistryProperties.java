@@ -17,7 +17,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class CouchbaseServiceRegistryProperties extends BaseCouchbaseProperties implements Serializable {
+public class CouchbaseServiceRegistryProperties extends BaseCouchbaseProperties {
 
     private static final long serialVersionUID = -4975171412161962007L;
 }

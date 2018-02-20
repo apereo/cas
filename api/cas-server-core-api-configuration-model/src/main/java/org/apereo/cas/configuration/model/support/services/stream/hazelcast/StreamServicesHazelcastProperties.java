@@ -19,7 +19,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
+public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {
 
     private static final long serialVersionUID = -1583614089051161614L;
 

@@ -24,7 +24,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class BasicIdentifiableCredential implements Credential, Serializable {
+public class BasicIdentifiableCredential implements Credential {
 
     private static final long serialVersionUID = -700605020472810939L;
 
