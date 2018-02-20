@@ -47,6 +47,6 @@ public class HazelcastTicketRegistryTicketCatalogConfiguration extends CasCoreTi
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("proxyGrantingTicketsCache");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
+        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 }
