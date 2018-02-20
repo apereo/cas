@@ -29,4 +29,10 @@ public class SsoProperties implements Serializable {
      * Flag that indicates whether to allow SSO session with a missing target service.
      */
     private boolean missingService = true;
+
+    /**
+     * Indicates whether CAS proxy authentication/tickets
+     * are supported by this server implementation.
+     */
+    private boolean proxyAuthnEnabled = true;
 }

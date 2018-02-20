@@ -194,6 +194,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         try {
             prepareForTicketValidation(request, service, serviceTicketId);
+            prepareForTicketValidation(request, service, serviceTicketId);
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
@@ -251,13 +252,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
             throw new UnsatisfiedAuthenticationContextTicketValidationException(assertion.getService());
         }
         String proxyIou = null;
-        if (serviceCredential != null && this.proxyHandler.canHandle(serviceCredential)) {
+        if (serviceCredential != null && this.proxyHandler != null && this.proxyHandler.canHandle(serviceCredential)) {
             proxyIou = handleProxyIouDelivery(serviceCredential, proxyGrantingTicketId);
             if (StringUtils.isEmpty(proxyIou)) {
                 return generateErrorView(CasProtocolConstants.ERROR_CODE_INVALID_PROXY_CALLBACK, new Object[]{serviceCredential.getId()}, request, service);
             }
         } else {
-            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", this.proxyHandler.getClass().getSimpleName());
+            LOGGER.debug("No service credentials specified, and/or the proxy handler [{}] cannot handle credentials", this.proxyHandler);
         }
         onSuccessfulValidation(serviceTicketId, assertion);
         LOGGER.debug("Successfully validated service ticket [{}] for service [{}]", serviceTicketId, service.getId());
@@ -275,7 +276,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @param serviceTicketId the service ticket id
      * @param assertion       the assertion
      * @param service         the service
-     * @return true /false
+     * @return true/false
      */
     private boolean validateAssertion(final HttpServletRequest request, final String serviceTicketId, final Assertion assertion, final Service service) {
         for (final CasProtocolValidationSpecification s : this.validationSpecifications) {
