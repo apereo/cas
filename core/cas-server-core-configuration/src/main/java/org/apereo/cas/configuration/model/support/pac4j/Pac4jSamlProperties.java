@@ -104,6 +104,15 @@ public class Pac4jSamlProperties implements Serializable {
      */
     private boolean wantsAssertionsSigned;
 
+    /**
+     * AttributeConsumingServiceIndex attribute of AuthnRequest element.
+     * The given index points out a specific AttributeConsumingService structure, declared into the 
+     * Service Provider (SP)'s metadata, to be used to specify all the attributes that the Service Provider
+     * is asking to be released within the authentication assertion returned by the Identity Provider (IdP).
+     * This attribute won't be sent with the request unless a positive value (including 0) is defined.
+     */
+    private int attributeConsumingServiceIndex;
+
     public String getDestinationBinding() {
         return destinationBinding;
     }
@@ -230,6 +239,14 @@ public class Pac4jSamlProperties implements Serializable {
 
     public void setClientName(final String clientName) {
         this.clientName = clientName;
+    }
+
+    public int getAttributeConsumingServiceIndex() {
+        return attributeConsumingServiceIndex;
+    }
+
+    public void setAttributeConsumingServiceIndex(final int attributeConsumingServiceIndex) {
+        this.attributeConsumingServiceIndex = attributeConsumingServiceIndex;
     }
 }
 
