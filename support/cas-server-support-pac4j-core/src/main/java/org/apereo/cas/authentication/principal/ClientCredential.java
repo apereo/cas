@@ -24,7 +24,7 @@ import lombok.ToString;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ClientCredential implements Credential, Serializable {
+public class ClientCredential implements Credential {
 
     /***
      * The name of the client used to perform the authentication.

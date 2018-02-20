@@ -19,7 +19,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties implements Serializable {
+public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties {
 
     private static final long serialVersionUID = -7257332242368463818L;
 

@@ -15,7 +15,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
+public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
     /** Serialization version marker. */
     private static final long serialVersionUID = 8196868021183513898L;

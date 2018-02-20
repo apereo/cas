@@ -23,7 +23,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class RadiusTokenCredential implements Credential, Serializable {
+public class RadiusTokenCredential implements Credential {
 
     private static final long serialVersionUID = -7570675701132111037L;
 

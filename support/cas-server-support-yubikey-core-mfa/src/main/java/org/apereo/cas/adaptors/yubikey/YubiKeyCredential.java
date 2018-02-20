@@ -24,7 +24,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class YubiKeyCredential implements Credential, Serializable {
+public class YubiKeyCredential implements Credential {
 
     private static final long serialVersionUID = -7570600701132111037L;
 
