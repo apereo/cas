@@ -5,8 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.springframework.context.ApplicationEvent;
 
-import java.io.Serializable;
-
 /**
  * Base Spring {@code ApplicationEvent} representing a abstract single sign on action executed within running CAS server.
  * This event encapsulates {@link Authentication} that is associated with an SSO action
