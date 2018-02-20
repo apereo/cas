@@ -34,11 +34,13 @@ task compileSass(type: NpmTask) {
     args = ['run', 'gulp', '--silent']
 }
 
-if (!rootProject.publishingRelease) {
+if (!rootProject.publishingRelease && !Boolean.getBoolean("skipNpmLint")) {
     processResources.dependsOn npmLint
 }
 
-processResources.dependsOn compileSass
+if (!Boolean.getBoolean("skipSass")) {
+    processResources.dependsOn compileSass
+}
 
 clean.delete << new File(project(":webapp").projectDir, "node_modules")
 clean.delete << fileTree(dir: project(":webapp").projectDir.getPath() + '/resources/static/js' , include: '*-bundle.js')
