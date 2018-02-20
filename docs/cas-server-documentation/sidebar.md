@@ -136,6 +136,7 @@ layout: null
     *   [Contacts & Owners](/$version/installation/Configuring-Service-Contacts.html)
     *   [Expiration Policy](/$version/installation/Configuring-Service-Expiration-Policy.html)
     *   [Replication](/$version/installation/Configuring-Service-Replication.html)
+    *   [Required Authentication](/$version/installation/Configuring-Service-Required-AuthN.html)
     *   [Storage](#persistencesvcreg)
         *   [InMemory XML](/$version/installation/InMemory-Service-Management.html)
         *   [JSON](/$version/installation/JSON-Service-Management.html)
