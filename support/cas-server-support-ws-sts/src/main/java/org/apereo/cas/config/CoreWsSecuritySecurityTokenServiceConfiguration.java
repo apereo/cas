@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.sts.STSPropertiesMBean;
 import org.apache.cxf.sts.StaticSTSProperties;
 import org.apache.cxf.sts.claims.ClaimsAttributeStatementProvider;
@@ -139,8 +140,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
 
         final ClaimsManager claimsManager = new ClaimsManager();
         claimsManager.setClaimHandlers(CollectionUtils.wrap(new WrappingSecurityTokenServiceClaimsHandler(
-                idp.getRealmName(),
-                wsfed.getRealm().getIssuer())));
+            idp.getRealmName(),
+            wsfed.getRealm().getIssuer())));
 
         final TokenIssueOperation op = new TokenIssueOperation();
         op.setTokenProviders(transportTokenProviders());
@@ -186,12 +187,16 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @Bean
     public RealmProperties casRealm() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
-
         final RealmProperties realm = new RealmProperties();
         realm.setIssuer(wsfed.getRealm().getIssuer());
+        if (StringUtils.isBlank(wsfed.getRealm().getKeystoreFile())
+            || StringUtils.isBlank(wsfed.getRealm().getKeyPassword())
+            || StringUtils.isBlank(wsfed.getRealm().getKeystoreAlias())) {
+            throw new BeanCreationException("Keystore file, password or alias assigned to the realm must be defined");
+        }
+
         final Properties p = CryptoUtils.getSecurityProperties(wsfed.getRealm().getKeystoreFile(),
-                wsfed.getRealm().getKeystorePassword(),
-                wsfed.getRealm().getKeystoreAlias());
+            wsfed.getRealm().getKeystorePassword(), wsfed.getRealm().getKeystoreAlias());
         realm.setSignatureCryptoProperties(p);
         realm.setCallbackHandler(new RealmPasswordVerificationCallbackHandler(wsfed.getRealm().getKeyPassword()));
         return realm;
@@ -287,7 +292,7 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public SecurityTokenServiceClientBuilder securityTokenServiceClientBuilder() {
         return new SecurityTokenServiceClientBuilder(casProperties.getAuthn().getWsfedIdp(),
-                casProperties.getServer().getPrefix());
+            casProperties.getServer().getPrefix());
     }
 
     @ConditionalOnMissingBean(name = "securityTokenServiceAuthenticationMetaDataPopulator")
@@ -295,8 +300,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator securityTokenServiceAuthenticationMetaDataPopulator() {
         return new SecurityTokenServiceAuthenticationMetaDataPopulator(servicesManager,
-                wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
-                securityTokenServiceClientBuilder());
+            wsFederationAuthenticationServiceSelectionStrategy, securityTokenServiceCredentialCipherExecutor(),
+            securityTokenServiceClientBuilder());
     }
 
     @RefreshScope
@@ -304,8 +309,8 @@ public class CoreWsSecuritySecurityTokenServiceConfiguration {
     public CipherExecutor securityTokenServiceCredentialCipherExecutor() {
         final WsFederationProperties.SecurityTokenService wsfed = casProperties.getAuthn().getWsfedIdp().getSts();
         return new SecurityTokenServiceCredentialCipherExecutor(wsfed.getCrypto().getEncryption().getKey(),
-                wsfed.getCrypto().getSigning().getKey(),
-                wsfed.getCrypto().getAlg());
+            wsfed.getCrypto().getSigning().getKey(),
+            wsfed.getCrypto().getAlg());
     }
 
     @Bean
