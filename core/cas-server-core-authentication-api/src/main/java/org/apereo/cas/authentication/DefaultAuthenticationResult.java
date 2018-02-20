@@ -39,13 +39,4 @@ public class DefaultAuthenticationResult implements AuthenticationResult {
         this.service = service;
     }
 
-    /**
-     * Instantiates a new Default authentication result.
-     *
-     * @param authentication the authentication
-     */
-    public DefaultAuthenticationResult(final Authentication authentication) {
-        this(authentication, null);
-    }
-    
 }

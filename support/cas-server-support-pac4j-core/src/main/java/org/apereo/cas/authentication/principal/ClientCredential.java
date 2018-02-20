@@ -8,7 +8,6 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.pac4j.core.profile.UserProfile;
-import java.io.Serializable;
 import lombok.ToString;
 
 /**
@@ -24,7 +23,7 @@ import lombok.ToString;
 @NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @AllArgsConstructor
-public class ClientCredential implements Credential, Serializable {
+public class ClientCredential implements Credential {
 
     /***
      * The name of the client used to perform the authentication.

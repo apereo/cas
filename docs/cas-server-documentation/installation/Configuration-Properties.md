@@ -2540,6 +2540,9 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # Define whether metadata requires assertions signed
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
+
+# Specifies the AttributeConsumingServiceIndex attribute (positive values to enable)
+# cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
@@ -2629,6 +2632,7 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 ```properties
 # cas.sso.missingService=true
 # cas.sso.renewedAuthn=true
+# cas.sso.proxyAuthnEnabled=true
 ```
 
 ## Warning Cookie
