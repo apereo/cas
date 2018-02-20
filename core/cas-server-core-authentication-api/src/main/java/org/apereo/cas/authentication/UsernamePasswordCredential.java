@@ -25,7 +25,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class UsernamePasswordCredential implements Credential, Serializable {
+public class UsernamePasswordCredential implements Credential {
 
     /**
      * Authentication attribute name for password.

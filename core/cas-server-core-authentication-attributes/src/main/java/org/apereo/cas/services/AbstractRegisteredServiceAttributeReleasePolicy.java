@@ -36,7 +36,7 @@ import java.util.TreeMap;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy, Serializable {
+public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5325460875620586503L;
 

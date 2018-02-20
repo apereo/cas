@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @NoArgsConstructor
 @Getter
-public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider, Serializable {
+public class DefaultVariegatedMultifactorAuthenticationProvider extends AbstractMultifactorAuthenticationProvider implements VariegatedMultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148134156909L;
 

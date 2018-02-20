@@ -19,7 +19,7 @@ import java.io.Serializable;
  */
 @Slf4j
 @ToString
-public abstract class AbstractCasEvent extends ApplicationEvent implements Serializable {
+public abstract class AbstractCasEvent extends ApplicationEvent {
 
     private static final long serialVersionUID = 8059647975948452375L;
 
