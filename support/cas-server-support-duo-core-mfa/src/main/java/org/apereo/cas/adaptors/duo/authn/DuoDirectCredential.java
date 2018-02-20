@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 
-import java.io.Serializable;
-
 /**
  * This is {@link DuoDirectCredential}.
  *

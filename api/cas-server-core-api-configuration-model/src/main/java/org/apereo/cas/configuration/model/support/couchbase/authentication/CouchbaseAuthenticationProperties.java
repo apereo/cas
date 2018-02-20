@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 

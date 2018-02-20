@@ -13,7 +13,6 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;

@@ -17,7 +17,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.PostLoad;
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
