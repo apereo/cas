@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastPropert
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
