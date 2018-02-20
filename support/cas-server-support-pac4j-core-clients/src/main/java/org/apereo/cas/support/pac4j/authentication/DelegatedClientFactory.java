@@ -324,6 +324,7 @@ public class DelegatedClientFactory {
                 cfg.setForceAuth(saml.isForceAuth());
                 cfg.setPassive(saml.isPassive());
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
+                cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
 
                 if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
