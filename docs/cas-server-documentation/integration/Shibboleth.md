@@ -20,8 +20,7 @@ authenticate before the IdP proceeds with the requested action.
 ## SSO for Shibboleth IdP (External)
 
 This is a Shibboleth IdP external authentication plugin that delegates
-the authentication to CAS. The advantage of using
-this component over the plain `RemoteUser` solution is the ability to
+the authentication to CAS. This solution has the ability to
 utilize a full range of native CAS protocol features such as `renew` and `gateway`.
 
 The plugin is available for both
