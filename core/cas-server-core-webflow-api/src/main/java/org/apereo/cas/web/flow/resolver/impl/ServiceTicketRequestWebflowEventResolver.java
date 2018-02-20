@@ -27,7 +27,6 @@ import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -122,10 +121,10 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
             if (authn != null && registeredService != null) {
                 LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
 
-                final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
-                    .authentication(Optional.of(authn))
-                    .registeredService(Optional.of(registeredService))
-                    .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                final AuditableContext audit = AuditableContext.builder().service(service)
+                    .authentication(authn)
+                    .registeredService(registeredService)
+                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
                 final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();
