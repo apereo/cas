@@ -326,13 +326,15 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyGrantServiceTicketWithNoCredsAndSsoFalseAndSsoFalse() {
         final Service svc = getService("TestSsoFalse");
-        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
-
+        final AuthenticationResult ctx = mock(AuthenticationResult.class);
+        when(ctx.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(ctx.isCredentialProvided()).thenReturn(true);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final Service service = getService("eduPersonTest");
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         this.thrown.expect(UnauthorizedSsoServiceException.class);
+        when(ctx.isCredentialProvided()).thenReturn(false);
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
     }
 
