@@ -22,6 +22,7 @@ import java.util.Map;
 public class OAuth20DefaultUserProfileViewRenderer implements OAuth20UserProfileViewRenderer {
     private final OAuthProperties oauthProperties;
 
+
     @Override
     public String render(final Map<String, Object> model, final AccessToken accessToken) {
         final String value;

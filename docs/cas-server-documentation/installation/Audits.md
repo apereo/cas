@@ -80,7 +80,8 @@ Audit events may also be `POST`ed to an endpoint of your choosing. To activate t
 </dependency>
 ```
 
-The body of the HTTP request is a JSON representation of the audit record. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
+The body of the HTTP request is a JSON representation of the audit record. 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
 
 ## Audit Events
 
@@ -100,5 +101,11 @@ The following events are tracked and recorded in the audit log:
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
-| `SAML2_RESPONSE`                    | `CREATED`, `FAILED`
-| `SAML2_REQUEST`                        | `CREATED`, `FAILED`
+| `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
+| `SAML2_REQUEST`                       | `CREATED`, `FAILED`
+| `OAUTH2_USER_PROFILE_DATA`            | `CREATED`, `FAILED`
+| `OAUTH2_ACCESS_TOKEN_REQUEST`         | `CREATED`, `FAILED`
+| `REST_API_TICKET_GRANTING_TICKET`     | `CREATED`, `FAILED`
+| `REST_API_SERVICE_TICKET`             | `CREATED`, `FAILED`
+| `SERVICE_ACCESS_ENFORCEMENT` | `TRIGGERED`
+| `DELEGATED_CLIENT` | `SUCCESS`, `FAILURE`

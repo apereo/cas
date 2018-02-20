@@ -56,7 +56,7 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
 
     private final String authenticationFailureCode;
 
-    private final AuditTrailExecutionPlan auditTrailManager;
+    private final AuditTrailExecutionPlan auditTrailExecutionPlan;
 
     private final String applicationCode;
 
@@ -178,6 +178,6 @@ public abstract class AbstractThrottledSubmissionHandlerInterceptorAdapter exten
             clientInfo.getClientIpAddress(),
             clientInfo.getServerIpAddress());
         LOGGER.debug("Recording throttled audit action [{}}", context);
-        this.auditTrailManager.record(context);
+        this.auditTrailExecutionPlan.record(context);
     }
 }

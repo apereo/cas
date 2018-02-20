@@ -12,6 +12,8 @@ dependencies {
     implementation project(":support:cas-server-support-validation")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-configuration-api")
+
+    compileOnly project(":core:cas-server-core-rest")
     
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(":core:cas-server-core")

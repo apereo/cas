@@ -28,7 +28,6 @@ public abstract class AbstractArgumentExtractor implements ArgumentExtractor {
      */
     protected List<ServiceFactory<? extends WebApplicationService>> serviceFactories= new ArrayList<>();;
 
-
     @Override
     public WebApplicationService extractService(final HttpServletRequest request) {
         final WebApplicationService service = extractServiceInternal(request);

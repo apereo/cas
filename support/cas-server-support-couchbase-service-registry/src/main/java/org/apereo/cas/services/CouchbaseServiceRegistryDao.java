@@ -16,8 +16,8 @@ import org.apereo.cas.util.serialization.StringSerializer;
 import javax.annotation.PreDestroy;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -72,26 +72,23 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     }
 
     @Override
+    @SneakyThrows
     public RegisteredService save(final RegisteredService service) {
-        LOGGER.debug("Saving service [{}]", service);
-
+        LOGGER.debug("Saving service [{}]", service.getName());
         if (service.getId() == AbstractRegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) service).setId(service.hashCode());
+            service.setId(service.hashCode());
         }
-
-        final StringWriter stringWriter = new StringWriter();
-        this.registeredServiceJsonSerializer.to(stringWriter, service);
-
-        this.couchbase.getBucket().upsert(
-            RawJsonDocument.create(
-                String.valueOf(service.getId()),
-                0, stringWriter.toString()));
+        try (StringWriter stringWriter = new StringWriter()) {
+            this.registeredServiceJsonSerializer.to(stringWriter, service);
+            final RawJsonDocument document = RawJsonDocument.create(String.valueOf(service.getId()), 0, stringWriter.toString());
+            this.couchbase.getBucket().upsert(document);
+        }
         return service;
     }
 
     @Override
     public boolean delete(final RegisteredService service) {
-        LOGGER.debug("Deleting service [{}]", service);
+        LOGGER.debug("Deleting service [{}]", service.getName());
         this.couchbase.getBucket().remove(String.valueOf(service.getId()));
         return true;
     }
@@ -99,11 +96,9 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     @Override
     public List<RegisteredService> load() {
         try {
-            LOGGER.debug("Loading services");
             final ViewResult allKeys = executeViewQueryForAllServices();
             final List<RegisteredService> services = new ArrayList<>();
             for (final ViewRow row : allKeys) {
-
                 final RawJsonDocument document = row.document(RawJsonDocument.class);
                 if (document != null) {
                     final String json = document.content();
@@ -118,7 +113,7 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
             return services;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
-            return new ArrayList<>();
+            throw new IllegalArgumentException(e.getMessage(), e);
         }
     }
 

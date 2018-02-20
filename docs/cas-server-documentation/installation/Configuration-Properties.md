@@ -1808,8 +1808,30 @@ To fetch CRLs, the following options are available:
 # cas.authn.x509.serialNumberPrefix=SERIALNUMBER=
 # cas.authn.x509.refreshIntervalSeconds=3600
 # cas.authn.x509.maxPathLengthAllowUnspecified=false
+```
 
-# cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
+### X509 Certificate Extraction
+
+These settings can be used to turn on and configure CAS to
+extract an X509 certificate from a base64 encoded certificate
+on a HTTP request header (placed there by a proxy in front of CAS).
+If this is set to true, it is important that the proxy cannot
+be bypassed by users and that the proxy ensures the header
+never originates from the browser.
+
+```properties
+cas.authn.x509.extractCert=false
+cas.authn.x509.sslHeaderName=ssl_client_cert
+```
+
+The specific parsing logic for the certificate is compatible
+with the Tomcat SSLValve which can work with headers set by
+Apache HTTPD, Nginx, Haproxy, BigIP F5, etc.
+
+### X509 Principal Resolution
+
+```properties
+cas.authn.x509.principalType=SERIAL_NO|SERIAL_NO_DN|SUBJECT|SUBJECT_ALT_NAME|SUBJECT_DN
 ```
 
 Principal resolution and Person Directory settings for this feature are available [here](Configuration-Properties-Common.html#person-directory-principal-resolution) under the configuration key `cas.authn.x509.principal`.
@@ -2273,7 +2295,11 @@ Database settings for this feature are available [here](Configuration-Properties
 #### SAML Metadata MongoDb
 
  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.samlIdp.metadata`.
- 
+
+ #### SAML Metadata REST
+
+RESTful settings for this feature are available [here](Configuration-Properties-Common.html#restful-integrations) under the configuration key `cas.authn.samlIdp.metadata.rest`.
+
 ### SAML Logout
 
 ```properties
@@ -2354,8 +2380,11 @@ Configuration settings for all SAML2 service providers are [available here](Conf
 | Box               | `cas.samlSp.box` | `email`, `firstName`, `lastName`
 | Service Now               | `cas.samlSp.serviceNow` | `eduPersonPrincipalName`
 | Net Partner               | `cas.samlSp.netPartner` | `studentId`
-| Webex               | `cas.samlSp.webex` | `firstName`, `lastName` 
+| Webex               | `cas.samlSp.webex` | `firstName`, `lastName`
 | InCommon        |  `cas.samlSp.inCommon` | `eduPersonPrincipalName`
+| Amazon        |  `cas.samlSp.amazon` | `awsRoles`, `awsRoleSessionName`
+| Concur Solutions               | `cas.samlSp.concurSolutions` | `email`
+| PollEverywhere               | `cas.samlSp.pollEverywhere` | `email`
 
 **Note**: For InCommon and other metadata aggregates, multiple entity ids can be specified to filter [the InCommon metadata](https://spaces.internet2.edu/display/InCFederation/Metadata+Aggregates). EntityIds can be regular expression patterns and are mapped to CAS' `serviceId` field in the registry. The signature location MUST BE the public key used to sign the metadata. 
 

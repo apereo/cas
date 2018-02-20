@@ -23,9 +23,6 @@ import java.util.Map;
  */
 @Slf4j
 public class DefaultServiceTicketFactory implements ServiceTicketFactory {
-
-
-
     /**
      * The Cipher executor.
      */

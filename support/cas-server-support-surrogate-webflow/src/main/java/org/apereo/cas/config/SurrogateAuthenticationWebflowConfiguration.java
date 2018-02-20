@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.SurrogateAuthenticationException;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -40,6 +41,10 @@ import java.util.Set;
 @Slf4j
 public class SurrogateAuthenticationWebflowConfiguration {
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -99,7 +104,7 @@ public class SurrogateAuthenticationWebflowConfiguration {
     
     @Bean
     public Action surrogateAuthorizationCheck() {
-        return new SurrogateAuthorizationAction(servicesManager);
+        return new SurrogateAuthorizationAction(servicesManager, registeredServiceAccessStrategyEnforcer);
     }
     
     @PostConstruct

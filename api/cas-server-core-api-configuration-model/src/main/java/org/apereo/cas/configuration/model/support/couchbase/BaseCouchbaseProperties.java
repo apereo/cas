@@ -33,7 +33,7 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     /**
      * String representation of connection timeout.
      */
-    private String timeout = "PT10S";
+    private String timeout = "PT30S";
 
     /**
      * Password.

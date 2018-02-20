@@ -70,7 +70,7 @@ public class FortressAuthenticationHandler extends AbstractUsernamePasswordAuthe
                 LOGGER.debug("Fortress session result: [{}]", fortressXmlSession);
                 final Map<String, Object> attributes = new HashMap<>();
                 attributes.put(FORTRESS_SESSION_KEY, fortressXmlSession);
-                return createHandlerResult(c, principalFactory.createPrincipal(username, attributes), null);
+                return createHandlerResult(c, principalFactory.createPrincipal(username, attributes));
             } else {
                 LOGGER.warn("Could not establish a fortress session or session cannot authenticate");
             }

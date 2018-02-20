@@ -6,8 +6,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.RegexUtils;
+
+import javax.persistence.PostLoad;
 import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,7 +65,8 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     /**
      * The delegated authn policy.
      */
-    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy;
+    protected RegisteredServiceDelegatedAuthenticationPolicy delegatedAuthenticationPolicy =
+        new DefaultRegisteredServiceDelegatedAuthenticationPolicy();
 
     /**
      * Defines the attribute aggregation behavior when checking for required attributes.
@@ -131,6 +135,25 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         this.requiredAttributes = requiredAttributes;
     }
 
+    /**
+     * Post load.
+     */
+    @PostLoad
+    public void postLoad() {
+        this.delegatedAuthenticationPolicy = ObjectUtils.defaultIfNull(this.delegatedAuthenticationPolicy,
+            new DefaultRegisteredServiceDelegatedAuthenticationPolicy());
+    }
+
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    @Override
+    public Map<String, Set<String>> getRequiredAttributes() {
+        return requiredAttributes;
+    }
+
     @JsonIgnore
     @Override
     public boolean isServiceAccessAllowedForSso() {
@@ -190,7 +213,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         if (requiredAttributes.isEmpty()) {
             return true;
         }
-        return common(principalAttributes, requiredAttributes);
+        return requiredAttributesFoundInMap(principalAttributes, requiredAttributes);
     }
 
     /**
@@ -204,7 +227,7 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
         if (rejectedAttributes.isEmpty()) {
             return false;
         }
-        return common(principalAttributes, rejectedAttributes);
+        return requiredAttributesFoundInMap(principalAttributes, rejectedAttributes);
     }
 
     /**
@@ -249,19 +272,19 @@ public class DefaultRegisteredServiceAccessStrategy implements RegisteredService
     }
 
     /**
-     * Common boolean.
+     * Check whether required attributes are found in the given map.
      *
      * @param principalAttributes the principal attributes
-     * @param attributes          the attributes
+     * @param requiredAttributes  the attributes
      * @return the boolean
      */
-    protected boolean common(final Map<String, Object> principalAttributes, final Map<String, Set<String>> attributes) {
-        final Set<String> difference = attributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
-        if (this.requireAllAttributes && difference.size() < attributes.size()) {
+    protected boolean requiredAttributesFoundInMap(final Map<String, Object> principalAttributes, final Map<String, Set<String>> requiredAttributes) {
+        final Set<String> difference = requiredAttributes.keySet().stream().filter(a -> principalAttributes.keySet().contains(a)).collect(Collectors.toSet());
+        if (this.requireAllAttributes && difference.size() < requiredAttributes.size()) {
             return false;
         }
         return difference.stream().anyMatch(key -> {
-            final Set<String> values = attributes.get(key);
+            final Set<String> values = requiredAttributes.get(key);
             final Set<Object> availableValues = CollectionUtils.toCollection(principalAttributes.get(key));
             final Pattern pattern = RegexUtils.concatenate(values, this.caseInsensitive);
             if (pattern != RegexUtils.MATCH_NOTHING_PATTERN) {

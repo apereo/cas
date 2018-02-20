@@ -3,6 +3,9 @@ package org.apereo.cas.web.flow.resolver.impl;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
@@ -12,7 +15,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -30,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,13 +52,20 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
     private CasWebflowEventResolver selectiveResolver;
 
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     public InitialAuthenticationAttemptWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
-                                                            final CentralAuthenticationService centralAuthenticationService, final ServicesManager servicesManager,
-                                                            final TicketRegistrySupport ticketRegistrySupport, final CookieGenerator warnCookieGenerator,
+                                                            final CentralAuthenticationService centralAuthenticationService,
+                                                            final ServicesManager servicesManager,
+                                                            final TicketRegistrySupport ticketRegistrySupport,
+                                                            final CookieGenerator warnCookieGenerator,
                                                             final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
-                                                            final MultifactorAuthenticationProviderSelector selector) {
+                                                            final MultifactorAuthenticationProviderSelector selector,
+                                                            final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager, ticketRegistrySupport,
             warnCookieGenerator, authenticationSelectionStrategies, selector);
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+
     }
 
     @Override
@@ -106,8 +116,16 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
             registeredService = this.servicesManager.findServiceBy(service);
             LOGGER.debug("Locating authentication event in the request context...");
             final Authentication authn = WebUtils.getAuthentication(context);
+
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authn, false);
+
+            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
+                .authentication(Optional.of(authn))
+                .registeredService(Optional.of(registeredService))
+                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+                .build();
+            final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+            result.throwExceptionIfNeeded();
         }
         return registeredService;
     }

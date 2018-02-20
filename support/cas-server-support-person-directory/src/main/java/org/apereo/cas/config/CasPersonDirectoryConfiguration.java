@@ -58,8 +58,6 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasPersonDirectoryConfiguration {
-
-
     @Autowired
     private ApplicationContext applicationContext;
 

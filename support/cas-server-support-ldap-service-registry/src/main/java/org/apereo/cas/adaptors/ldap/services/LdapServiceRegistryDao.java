@@ -14,9 +14,11 @@ import org.ldaptive.LdapException;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+
 import lombok.ToString;
 
 /**
@@ -76,7 +78,7 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
         }
         return rs;
     }
-    
+
     /**
      * Update the ldap entry with the given registered service.
      *
@@ -147,10 +149,14 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
         try {
             final Response<SearchResult> response = getSearchResultResponse();
             if (LdapUtils.containsResultEntry(response)) {
-                response.getResult().getEntries().stream().map(this.ldapServiceMapper::mapToRegisteredService).filter(Objects::nonNull).forEach(s -> {
-                    publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
-                    list.add(s);
-                });
+                response.getResult().getEntries()
+                    .stream()
+                    .map(this.ldapServiceMapper::mapToRegisteredService)
+                    .filter(Objects::nonNull)
+                    .forEach(s -> {
+                        publishEvent(new CasRegisteredServiceLoadedEvent(this, s));
+                        list.add(s);
+                    });
             }
         } catch (final LdapException e) {
             LOGGER.error(e.getMessage(), e);

@@ -5,6 +5,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.DefaultCentralAuthenticationService;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
@@ -41,6 +42,10 @@ import java.util.List;
 @Slf4j
 public class CasCoreConfiguration {
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+    
     @Autowired
     private ApplicationEventPublisher applicationEventPublisher;
 
@@ -94,6 +99,6 @@ public class CasCoreConfiguration {
         @Qualifier("protocolTicketCipherExecutor") final CipherExecutor cipherExecutor) {
         return new DefaultCentralAuthenticationService(applicationEventPublisher,
             ticketRegistry, servicesManager, logoutManager, ticketFactory, selectionStrategies,
-            authenticationPolicyFactory(), principalFactory, cipherExecutor);
+            authenticationPolicyFactory(), principalFactory, cipherExecutor, registeredServiceAccessStrategyEnforcer);
     }
 }

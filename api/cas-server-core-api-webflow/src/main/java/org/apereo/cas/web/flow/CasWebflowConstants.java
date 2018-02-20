@@ -8,6 +8,11 @@ package org.apereo.cas.web.flow;
  */
 public interface CasWebflowConstants {
     /**
+     * The transition state 'stop'.
+     */
+    String TRANSITION_ID_STOP = "stop";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
@@ -52,6 +57,15 @@ public interface CasWebflowConstants {
     String STATE_ID_SUCCESS = "success";
 
     /**
+     * The state id 'stopWebflow'.
+     */
+    String STATE_ID_STOP_WEBFLOW = "stopWebflow";
+    /**
+     * The state id 'clientAction'.
+     */
+    String STATE_ID_CLIENT_ACTION = "clientAction";
+    
+    /**
      * The state id 'verifyTrustedDevice'.
      */
     String STATE_ID_VERIFY_TRUSTED_DEVICE = "verifyTrustedDevice";
@@ -60,6 +74,8 @@ public interface CasWebflowConstants {
      * The view id 'registerDeviceView'.
      */
     String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
+
+
 
     /**
      * The state id 'registerTrustedDevice'.
@@ -71,6 +87,10 @@ public interface CasWebflowConstants {
      */
     String STATE_ID_REAL_SUBMIT = "realSubmit";
 
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
 
     /**
      * The transition state 'successWithWarnings'.

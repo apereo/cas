@@ -27,7 +27,7 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CouchbaseServiceRegistryConfiguration {
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -42,15 +42,16 @@ public class CouchbaseServiceRegistryConfiguration {
         final CouchbaseServiceRegistryProperties couchbase = casProperties.getServiceRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
-                couchbase.getPassword(), Beans.newDuration(couchbase.getTimeout()).toMillis(),
-                CouchbaseServiceRegistryDao.UTIL_DOCUMENT,
-                CouchbaseServiceRegistryDao.ALL_VIEWS);
+            couchbase.getPassword(),
+            Beans.newDuration(couchbase.getTimeout()).toMillis(),
+            CouchbaseServiceRegistryDao.UTIL_DOCUMENT,
+            CouchbaseServiceRegistryDao.ALL_VIEWS);
     }
 
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
         return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer(),
-                casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
+            casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
     }
 }

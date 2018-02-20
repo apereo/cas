@@ -64,6 +64,12 @@ public class SamlIdPMetadataProperties implements Serializable {
     private JpaSamlMetadataProperties jpa = new JpaSamlMetadataProperties();
 
     /**
+     * Properties pertaining to REST metadata resolution.
+     */
+    @NestedConfigurationProperty
+    private RestSamlMetadataProperties rest = new RestSamlMetadataProperties();
+
+    /**
      * Algorithm name to use when generating private key.
      */
     private String privateKeyAlgName = "RSA";

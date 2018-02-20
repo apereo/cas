@@ -2,12 +2,14 @@ package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.DefaultAuthenticationResult;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
@@ -36,16 +38,18 @@ import java.util.Set;
 @Slf4j
 public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
 
-
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
     private final OAuth20CasAuthenticationBuilder authenticationBuilder;
 
     public AccessTokenPasswordGrantRequestExtractor(final ServicesManager servicesManager,
                                                     final TicketRegistry ticketRegistry,
                                                     final OAuth20CasAuthenticationBuilder authenticationBuilder,
                                                     final CentralAuthenticationService centralAuthenticationService,
-                                                    final OAuthProperties oAuthProperties) {
+                                                    final OAuthProperties oAuthProperties,
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer) {
         super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties);
         this.authenticationBuilder = authenticationBuilder;
+        this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
     }
 
     @Override
@@ -73,13 +77,20 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
 
         LOGGER.debug("Authenticating the OAuth request indicated by [{}]", service);
         final Authentication authentication = this.authenticationBuilder.build(uProfile, registeredService, context, service);
-        RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(service, registeredService, authentication);
+
+
+        final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
+            .authentication(Optional.of(authentication))
+            .registeredService(Optional.of(registeredService))
+            .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+            .build();
+        final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+        accessResult.throwExceptionIfNeeded();
 
         final AuthenticationResult result = new DefaultAuthenticationResult(authentication, requireServiceHeader ? service : null);
         final TicketGrantingTicket ticketGrantingTicket = this.centralAuthenticationService.createTicketGrantingTicket(result);
 
-        return new AccessTokenRequestDataHolder(service, authentication,
-                registeredService, ticketGrantingTicket, getGrantType(), scopes);
+        return new AccessTokenRequestDataHolder(service, authentication, registeredService, ticketGrantingTicket, getGrantType(), scopes);
     }
 
     @Override

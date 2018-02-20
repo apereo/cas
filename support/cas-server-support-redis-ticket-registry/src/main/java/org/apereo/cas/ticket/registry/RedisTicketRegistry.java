@@ -56,7 +56,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             this.client.boundValueOps(redisKey)
                     .set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
         } catch (final Exception e) {
-            LOGGER.error("Failed to add [{}]", ticket);
+            LOGGER.error("Failed to add [{}]", ticket, e);
         }
     }
 
@@ -105,7 +105,7 @@ public class RedisTicketRegistry extends AbstractTicketRegistry {
             this.client.boundValueOps(redisKey).set(encodeTicket, getTimeout(ticket), TimeUnit.SECONDS);
             return encodeTicket;
         } catch (final Exception e) {
-            LOGGER.error("Failed to update [{}]", ticket);
+            LOGGER.error("Failed to update [{}]", ticket, e);
         }
         return null;
     }

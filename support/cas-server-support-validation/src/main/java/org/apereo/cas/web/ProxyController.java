@@ -59,7 +59,7 @@ public class ProxyController extends AbstractDelegateController {
 
     private final ServiceFactory webApplicationServiceFactory;
 
-    private ApplicationContext context;
+    private final ApplicationContext context;
 
     @Override
     public boolean canHandle(final HttpServletRequest request, final HttpServletResponse response) {

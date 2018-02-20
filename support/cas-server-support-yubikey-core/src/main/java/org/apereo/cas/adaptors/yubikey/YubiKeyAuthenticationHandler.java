@@ -94,7 +94,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
             final ResponseStatus status = response.getStatus();
             if (status.compareTo(ResponseStatus.OK) == 0) {
                 LOGGER.debug("YubiKey response status [{}] at [{}]", status, response.getTimestamp());
-                return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid), null);
+                return createHandlerResult(yubiKeyCredential, this.principalFactory.createPrincipal(uid));
             }
             throw new FailedLoginException("Authentication failed with status: " + status);
         } catch (final YubicoVerificationException | YubicoValidationFailure e) {

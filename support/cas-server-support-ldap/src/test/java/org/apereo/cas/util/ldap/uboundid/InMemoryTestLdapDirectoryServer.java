@@ -125,7 +125,9 @@ public class InMemoryTestLdapDirectoryServer implements Closeable {
     }
 
     public void populateEntries(final InputStream rs) throws Exception {
-        populateEntries(getConnection(), rs);
+        try (LDAPConnection connection = getConnection()) {
+            populateEntries(connection, rs);
+        }
     }
 
     protected void populateEntries(final LDAPConnection c, final InputStream rs) throws Exception {

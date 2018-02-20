@@ -44,7 +44,7 @@ public class MongoDbAuditTrailManagerTests {
 
     @Autowired
     @Qualifier("auditTrailExecutionPlan")
-    private AuditTrailExecutionPlan auditTrailManager;
+    private AuditTrailExecutionPlan auditTrailExecutionPlan;
 
     @Test
     public void verify() {
@@ -52,9 +52,9 @@ public class MongoDbAuditTrailManagerTests {
         final AuditActionContext ctx = new AuditActionContext("casuser", "resource",
             "action", "appcode", since, "clientIp",
             "serverIp");
-        auditTrailManager.record(ctx);
+        auditTrailExecutionPlan.record(ctx);
 
-        final Set results = auditTrailManager.getAuditRecordsSince(LocalDate.now());
+        final Set results = auditTrailExecutionPlan.getAuditRecordsSince(LocalDate.now());
         assertFalse(results.isEmpty());
     }
 }

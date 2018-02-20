@@ -3,14 +3,22 @@ package org.apereo.cas.couchbase.core;
 import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
+import com.couchbase.client.java.bucket.BucketManager;
+import com.couchbase.client.java.error.DesignDocumentDoesNotExistException;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.message.BasicNameValuePair;
+import org.apereo.cas.util.HttpUtils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -28,19 +36,20 @@ import java.util.concurrent.TimeUnit;
 @Slf4j
 public class CouchbaseClientFactory {
     private static final int DEFAULT_TIMEOUT = 5;
+
     private Cluster cluster;
 
     private Bucket bucket;
     private final Collection<View> views;
     private final Set<String> nodes;
 
-    /* The name of the getBucket, will use the default getBucket unless otherwise specified. */
+    /* The name of the bucket, will use the default getBucket unless otherwise specified. */
     private String bucketName = "default";
 
-    /* Password for the getBucket if any. */
+    /* Password for the bucket if any. */
     private String bucketPassword = StringUtils.EMPTY;
 
-    /* Design document and views to create in the getBucket, if any. */
+    /* Design document and views to create in the bucket, if any. */
     private final String designDocument;
 
     private long timeout = DEFAULT_TIMEOUT;
@@ -62,13 +71,9 @@ public class CouchbaseClientFactory {
         this.bucketName = bucketName;
         this.bucketPassword = bucketPassword;
         this.timeout = timeout;
-
-        if (this.cluster == null) {
-            this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
-        }
-
         this.designDocument = documentName;
         this.views = views;
+        initializeCluster();
     }
 
     /**
@@ -83,24 +88,23 @@ public class CouchbaseClientFactory {
     }
 
     /**
-     * Authenticate.
-     *
-     * @param uid the uid
-     * @param psw the psw
-     */
-    public void authenticate(final String uid, final String psw) {
-        this.cluster = this.cluster.authenticate(uid, psw);
-    }
-    
-    /**
      * Inverse of connectBucket, shuts down the client, cancelling connection
      * task if not completed.
      */
     @SneakyThrows
     public void shutdown() {
         if (this.cluster != null) {
+            LOGGER.debug("Disconnecting from Couchbase cluster");
             this.cluster.disconnect();
         }
+    }
+
+    private void initializeCluster() {
+        if (this.cluster != null) {
+            shutdown();
+        }
+        LOGGER.debug("Initializing Couchbase cluster for nodes [{}]", this.nodes);
+        this.cluster = CouchbaseCluster.create(new ArrayList<>(this.nodes));
     }
 
     /**
@@ -109,28 +113,81 @@ public class CouchbaseClientFactory {
      * @return the getBucket.
      */
     public Bucket getBucket() {
-        if (this.bucket == null) {
-            if (StringUtils.isBlank(this.bucketName)) {
-                throw new IllegalArgumentException("Bucket name cannot be blank");
-            }
+        if (this.bucket != null) {
+            return this.bucket;
+        }
+        initializeBucket();
+        return this.bucket;
+    }
 
+    private void initializeBucket() {
+        openBucket();
+        createDesignDocumentAndViewIfNeeded();
+    }
+
+    private void createDesignDocumentAndViewIfNeeded() {
+        if (this.views != null && this.designDocument != null) {
+            LOGGER.debug("Ensure that indexes exist in bucket [{}]", this.bucket.name());
+            final BucketManager bucketManager = this.bucket.bucketManager();
+            final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
             try {
-                LOGGER.debug("Trying to connect to couchbase getBucket [{}]", this.bucketName);
-                this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.SECONDS);
-                LOGGER.info("Connected to Couchbase getBucket [{}]", this.bucketName);
-                if (this.views != null && this.designDocument != null) {
-                    LOGGER.debug("Ensure that indexes exist in getBucket [{}]", this.bucket.name());
-                    final DesignDocument newDocument = DesignDocument.create(this.designDocument, new ArrayList<>(views));
-                    if (!newDocument.equals(this.bucket.bucketManager().getDesignDocument(this.designDocument))) {
-                        LOGGER.warn("Missing indexes in getBucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
-                        this.bucket.bucketManager().upsertDesignDocument(newDocument);
-                    }
+                if (!newDocument.equals(bucketManager.getDesignDocument(this.designDocument))) {
+                    LOGGER.warn("Missing indexes in bucket [{}] for document [{}]", this.bucket.name(), this.designDocument);
+                    bucketManager.upsertDesignDocument(newDocument);
                 }
+            } catch (final DesignDocumentDoesNotExistException e) {
+                LOGGER.debug("Design document in bucket [{}] for document [{}] should be created", this.bucket.name(), this.designDocument);
+                bucketManager.upsertDesignDocument(newDocument);
             } catch (final Exception e) {
-                throw new IllegalArgumentException("Failed to connect to Couchbase getBucket", e);
+                throw new IllegalArgumentException(e.getMessage(), e);
             }
         }
-        return this.bucket;
+    }
+
+    private void openBucket() {
+        try {
+            LOGGER.debug("Trying to connect to couchbase bucket [{}]", this.bucketName);
+            if (StringUtils.isBlank(this.bucketPassword)) {
+                this.bucket = this.cluster.openBucket(this.bucketName, this.timeout, TimeUnit.MILLISECONDS);
+            } else {
+                this.bucket = this.cluster.openBucket(this.bucketName, this.bucketPassword, this.timeout, TimeUnit.MILLISECONDS);
+            }
+        } catch (final Exception e) {
+            throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
+        }
+        LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
+    }
+    
+    /**
+     * Create default bucket http servlet response.
+     *
+     * @return the http servlet response
+     */
+    @SneakyThrows
+    public static HttpResponse createDefaultBucket() {
+        final List postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("authType", "none"));
+        postParameters.add(new BasicNameValuePair("name", "default"));
+        postParameters.add(new BasicNameValuePair("bucketType", "couchbase"));
+        postParameters.add(new BasicNameValuePair("proxyPort", "11216"));
+        postParameters.add(new BasicNameValuePair("ramQuotaMB", "120"));
+        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
+        return HttpUtils.executePost("http://localhost:8091/pools/default/buckets", entity);
+    }
+
+    /**
+     * Create credentials http response.
+     *
+     * @return the http response
+     */
+    @SneakyThrows
+    public static HttpResponse createCredentials() {
+        final List postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("username", "Administrator"));
+        postParameters.add(new BasicNameValuePair("password", "password"));
+        postParameters.add(new BasicNameValuePair("port", "8091"));
+        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
+        return HttpUtils.executePost("http://localhost:8091/settings/web", entity);
     }
 }
 
