@@ -139,13 +139,14 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     public ServiceTicket grantServiceTicket(final String ticketGrantingTicketId, final Service service, final AuthenticationResult authenticationResult)
             throws AuthenticationException, AbstractTicketException {
 
+        final boolean credentialProvided = authenticationResult != null && authenticationResult.isCredentialProvided();
         final TicketGrantingTicket ticketGrantingTicket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
         final Service selectedService = resolveServiceFromAuthenticationRequest(service);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
         RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(selectedService, registeredService, ticketGrantingTicket, false);
 
         final Authentication currentAuthentication = evaluatePossibilityOfMixedPrincipals(authenticationResult, ticketGrantingTicket);
-        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket);
+        RegisteredServiceAccessStrategyUtils.ensureServiceSsoAccessIsAllowed(registeredService, selectedService, ticketGrantingTicket, credentialProvided);
         evaluateProxiedServiceIfNeeded(selectedService, ticketGrantingTicket, registeredService);
 
         // Perform security policy check by getting the authentication that satisfies the configured policy
@@ -155,8 +156,8 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         AuthenticationCredentialsLocalBinder.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = this.ticketFactory.get(ServiceTicket.class);
-        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service,
-                authenticationResult != null && authenticationResult.isCredentialProvided());
+       
+        final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, credentialProvided);
         this.ticketRegistry.updateTicket(ticketGrantingTicket);
         this.ticketRegistry.addTicket(serviceTicket);
 
