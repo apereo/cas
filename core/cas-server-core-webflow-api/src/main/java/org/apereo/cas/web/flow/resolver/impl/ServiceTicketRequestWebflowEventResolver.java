@@ -14,6 +14,7 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -39,6 +40,7 @@ import java.util.Set;
 @Slf4j
 public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflowEventResolver {
     private final AuditableExecution registeredServiceAccessStrategyEnforcer;
+    private final CasConfigurationProperties casProperties;
 
     public ServiceTicketRequestWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                     final CentralAuthenticationService centralAuthenticationService,
@@ -47,11 +49,13 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
                                                     final CookieGenerator warnCookieGenerator,
                                                     final AuthenticationServiceSelectionPlan authenticationSelectionStrategies,
                                                     final MultifactorAuthenticationProviderSelector selector,
-                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer) {
+                                                    final AuditableExecution registeredServiceAccessStrategyEnforcer,
+                                                    final CasConfigurationProperties casProperties) {
         super(authenticationSystemSupport, centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator,
             authenticationSelectionStrategies, selector);
         this.registeredServiceAccessStrategyEnforcer = registeredServiceAccessStrategyEnforcer;
+        this.casProperties = casProperties;
     }
 
     @Override
@@ -77,7 +81,9 @@ public class ServiceTicketRequestWebflowEventResolver extends AbstractCasWebflow
         final Service service = WebUtils.getService(context);
         LOGGER.debug("Located service [{}] from the request context", service);
 
-        final String renewParam = context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW);
+        final String renewParam = casProperties.getSso().isRenewAuthnEnabled()
+            ? context.getRequestParameters().get(CasProtocolConstants.PARAMETER_RENEW)
+            : StringUtils.EMPTY;
         LOGGER.debug("Provided value for [{}] request parameter is [{}]", CasProtocolConstants.PARAMETER_RENEW, renewParam);
 
         if (StringUtils.isNotBlank(ticketGrantingTicketId) && service != null) {

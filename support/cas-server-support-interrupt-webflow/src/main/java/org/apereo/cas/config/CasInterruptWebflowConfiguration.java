@@ -82,6 +82,8 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @RefreshScope
     public SingleSignOnParticipationStrategy singleSignOnParticipationStrategy() {
-        return new InterruptSingleSignOnParticipationStrategy(servicesManager, casProperties.getSso().isRenewedAuthn());
+        return new InterruptSingleSignOnParticipationStrategy(servicesManager,
+            casProperties.getSso().isCreateSsoCookieOnRenewAuthn(),
+            casProperties.getSso().isRenewAuthnEnabled());
     }
 }
