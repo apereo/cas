@@ -35,9 +35,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
 import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.servlet.ServletWebServerFactoryCustomizer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.boot.web.embedded.tomcat.ConfigurableTomcatWebServerFactory;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
+import org.springframework.boot.web.servlet.server.ConfigurableServletWebServerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -72,19 +73,22 @@ public class CasEmbeddedContainerTomcatConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Bean(name = "casTomcatEmbeddedServletContainerCustomizer")
-    public EmbeddedServletContainerCustomizer casTomcatEmbeddedServletContainerCustomizer() {
-        return configurableEmbeddedServletContainer -> {
-            if (configurableEmbeddedServletContainer instanceof TomcatEmbeddedServletContainerFactory) {
-                final TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) configurableEmbeddedServletContainer;
-                configureAjp(tomcat);
-                configureHttp(tomcat);
-                configureHttpProxy(tomcat);
-                configureExtendedAccessLogValve(tomcat);
-                configureRewriteValve(tomcat);
-                configureSSLValve(tomcat);
-                configureBasicAuthn(tomcat);
-            } else {
-                LOGGER.error("EmbeddedServletContainer [{}] does not support Tomcat!", configurableEmbeddedServletContainer);
+    public ServletWebServerFactoryCustomizer casTomcatEmbeddedServletContainerCustomizer() {
+        return new ServletWebServerFactoryCustomizer(serverProperties) {
+            @Override
+            public void customize(final ConfigurableServletWebServerFactory factory) {
+                if (factory instanceof TomcatServletWebServerFactory) {
+                    final TomcatServletWebServerFactory tomcat = (TomcatServletWebServerFactory) factory;
+                    configureAjp(tomcat);
+                    configureHttp(tomcat);
+                    configureHttpProxy(tomcat);
+                    configureExtendedAccessLogValve(tomcat);
+                    configureRewriteValve(tomcat);
+                    configureSSLValve(tomcat);
+                    configureBasicAuthn(tomcat);
+                } else {
+                    LOGGER.error("Servlet web server factory [{}] does not support Apache Tomcat and cannot be customized!", factory);
+                }
             }
         };
     }
