@@ -54,13 +54,17 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
 
     @Override
     public AuthenticationResultBuilder collect(final Authentication authentication) {
-        this.authentications.add(authentication);
+        if (authentication != null) {
+            this.authentications.add(authentication);
+        }
         return this;
     }
 
     @Override
     public AuthenticationResultBuilder collect(final Credential credential) {
-        this.providedCredentials.add(credential);
+        if (credential != null) {
+            this.providedCredentials.add(credential);
+        }
         return this;
     }
 

@@ -46,11 +46,12 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                                     final View jsonView, final View successView, 
                                     final View failureView, final String authnContextAttribute, 
                                     final ServerManager serverManager,
-                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
+                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
+                                    final boolean renewEnabled) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
             successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute);
+            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
         this.serverManager = serverManager;
     }
 
