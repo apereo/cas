@@ -25,43 +25,36 @@ public class AuditableContext {
     /**
      * Service.
      */
-    @Builder.Default
     private Service service;
 
     /**
      * RegisteredService.
      */
-    @Builder.Default
     private RegisteredService registeredService;
 
     /**
      * Authentication.
      */
-    @Builder.Default
     private Authentication authentication;
 
     /**
      * ServiceTicket.
      */
-    @Builder.Default
     private ServiceTicket serviceTicket;
 
     /**
      * AuthenticationResult.
      */
-    @Builder.Default
     private AuthenticationResult authenticationResult;
 
     /**
      * TicketGrantingTicket.
      */
-    @Builder.Default
     private TicketGrantingTicket ticketGrantingTicket;
 
     /**
      * retrievePrincipalAttributesFromReleasePolicy.
      */
-    @Builder.Default
     private Boolean retrievePrincipalAttributesFromReleasePolicy;
 
     /**

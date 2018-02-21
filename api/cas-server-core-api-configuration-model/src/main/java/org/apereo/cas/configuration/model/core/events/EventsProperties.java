@@ -83,12 +83,4 @@ public class EventsProperties implements Serializable {
             setDatabase("CasInfluxDbEvents");
         }
     }
-
-    public boolean isTrackGeolocation() {
-        return trackGeolocation;
-    }
-
-    public void setTrackGeolocation(final boolean trackGeolocation) {
-        this.trackGeolocation = trackGeolocation;
-    }
 }

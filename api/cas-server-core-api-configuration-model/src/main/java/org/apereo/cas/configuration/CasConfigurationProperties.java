@@ -328,12 +328,4 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private StandaloneConfigurationProperties standalone = new StandaloneConfigurationProperties();
-
-    public EventsProperties getEvents() {
-        return events;
-    }
-
-    public void setEvents(final EventsProperties events) {
-        this.events = events;
-    }
 }
