@@ -79,7 +79,7 @@ public class CasMetricsConfiguration extends MetricsConfigurerAdapter {
                 .convertRatesTo(TimeUnit.MILLISECONDS)
                 .convertDurationsTo(TimeUnit.MILLISECONDS)
                 .build())
-                .start(Beans.newDuration(casProperties.getMetrics().getRefreshInterval()).toMillis(), TimeUnit.SECONDS);
+                .start(Beans.newDuration(casProperties.getMetrics().getRefreshInterval()).getSeconds(), TimeUnit.SECONDS);
 
         registerReporter(JmxReporter.forRegistry(metricRegistry).build());
     }

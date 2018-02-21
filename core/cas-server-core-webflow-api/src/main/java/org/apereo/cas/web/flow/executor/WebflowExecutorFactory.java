@@ -46,7 +46,7 @@ public class WebflowExecutorFactory {
     private FlowExecutor buildFlowExecutorViaServerSessionBindingExecution() {
         final SessionBindingConversationManager conversationManager = new SessionBindingConversationManager();
         final WebflowSessionManagementProperties session = webflowProperties.getSession();
-        conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).toMillis());
+        conversationManager.setLockTimeoutSeconds((int) Beans.newDuration(session.getLockTimeout()).getSeconds());
         conversationManager.setMaxConversations(session.getMaxConversations());
 
         final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
