@@ -23,7 +23,6 @@ import java.util.Collection;
 @Slf4j
 public class DateTimeAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
 
-
     private final int windowInHours;
 
     public DateTimeAuthenticationRequestRiskCalculator(final CasEventRepository casEventRepository, final int windowInHours) {
