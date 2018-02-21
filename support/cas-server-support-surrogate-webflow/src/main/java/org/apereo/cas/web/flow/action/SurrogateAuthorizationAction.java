@@ -15,8 +15,6 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
-import java.util.Optional;
-
 /**
  * This is {@link SurrogateAuthorizationAction}.
  *
@@ -39,10 +37,10 @@ public class SurrogateAuthorizationAction extends AbstractAction {
             if (svc != null) {
                 AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
 
-                final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
-                    .authentication(Optional.of(authentication))
-                    .registeredService(Optional.of(svc))
-                    .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                final AuditableContext audit = AuditableContext.builder().service(service)
+                    .authentication(authentication)
+                    .registeredService(svc)
+                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
                 final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();

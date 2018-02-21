@@ -141,7 +141,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
 
     private void createSendTicketGrantingTicketAction(final Flow flow) {
         final ActionState action = createActionState(flow, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET,
-                createEvaluateAction(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET));
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_SEND_TICKET_GRANTING_TICKET));
         createTransitionForState(action, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SERVICE_CHECK);
     }
 
@@ -152,8 +152,8 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createGenerateServiceTicketAction(final Flow flow) {
         final ActionState handler = createActionState(flow,
-                CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
-                createEvaluateAction(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET));
+            CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_GENERATE_SERVICE_TICKET));
         createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_REDIRECT);
         createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_WARN, CasWebflowConstants.STATE_ID_WARN);
         createTransitionForState(handler, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
@@ -168,7 +168,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createHandleAuthenticationFailureAction(final Flow flow) {
         final ActionState handler = createActionState(flow, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE,
-                createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER));
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER));
         createTransitionForState(handler, AccountDisabledException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_DISABLED);
         createTransitionForState(handler, AccountLockedException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_ACCOUNT_LOCKED);
         createTransitionForState(handler, AccountPasswordMustChangeException.class.getSimpleName(), CasWebflowConstants.VIEW_ID_MUST_CHANGE_PASSWORD);
@@ -193,7 +193,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createRedirectToServiceActionState(final Flow flow) {
         final ActionState redirectToView = createActionState(flow, CasWebflowConstants.STATE_ID_REDIRECT,
-                createEvaluateAction(CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE));
+            createEvaluateAction(CasWebflowConstants.ACTION_ID_REDIRECT_TO_SERVICE));
         createTransitionForState(redirectToView, Response.ResponseType.POST.name().toLowerCase(), CasWebflowConstants.STATE_ID_POST_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.HEADER.name().toLowerCase(), CasWebflowConstants.STATE_ID_HEADER_VIEW);
         createTransitionForState(redirectToView, Response.ResponseType.REDIRECT.name().toLowerCase(), CasWebflowConstants.STATE_ID_REDIR_VIEW);
@@ -206,7 +206,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     private void createServiceAuthorizationCheckAction(final Flow flow) {
         final ActionState serviceAuthorizationCheck = createActionState(flow,
-                CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK, createEvaluateAction("serviceAuthorizationCheck"));
+            CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK, createEvaluateAction("serviceAuthorizationCheck"));
         createStateDefaultTransition(serviceAuthorizationCheck, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM);
     }
 
@@ -217,7 +217,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createGatewayServicesMgmtAction(final Flow flow) {
         final ActionState gatewayServicesManagementCheck = createActionState(flow,
-                CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK, createEvaluateAction("gatewayServicesManagementCheck"));
+            CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK, createEvaluateAction("gatewayServicesManagementCheck"));
         createTransitionForState(gatewayServicesManagementCheck, CasWebflowConstants.STATE_ID_SUCCESS, CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
@@ -228,7 +228,7 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createTerminateSessionAction(final Flow flow) {
         final ActionState terminateSession = createActionState(flow,
-                CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
+            CasWebflowConstants.STATE_ID_TERMINATE_SESSION, createEvaluateAction(CasWebflowConstants.ACTION_ID_TERMINATE_SESSION));
         createStateDefaultTransition(terminateSession, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK);
     }
 
@@ -350,9 +350,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createServiceUnauthorizedCheckDecisionState(final Flow flow) {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_SERVICE_UNAUTHZ_CHECK,
-                "flowScope.unauthorizedRedirectUrl != null",
-                CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL,
-                CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR);
+            "flowScope.unauthorizedRedirectUrl != null",
+            CasWebflowConstants.STATE_ID_VIEW_REDIR_UNAUTHZ_URL,
+            CasWebflowConstants.STATE_ID_VIEW_SERVICE_ERROR);
     }
 
     /**
@@ -362,9 +362,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createServiceCheckDecisionState(final Flow flow) {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_SERVICE_CHECK,
-                "flowScope.service != null",
-                CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
-                CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS);
+            "flowScope.service != null",
+            CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET,
+            CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS);
     }
 
     /**
@@ -374,9 +374,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createWarnDecisionState(final Flow flow) {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_WARN,
-                "flowScope.warnCookieValue",
-                CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
-                CasWebflowConstants.STATE_ID_REDIRECT);
+            "flowScope.warnCookieValue",
+            CasWebflowConstants.STATE_ID_SHOW_WARNING_VIEW,
+            CasWebflowConstants.STATE_ID_REDIRECT);
     }
 
     /**
@@ -386,9 +386,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createGatewayRequestCheckDecisionState(final Flow flow) {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_GATEWAY_REQUEST_CHECK,
-                "requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null",
-                CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK,
-                CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK);
+            "requestParameters.gateway != '' and requestParameters.gateway != null and flowScope.service != null",
+            CasWebflowConstants.STATE_ID_GATEWAY_SERVICES_MGMT_CHECK,
+            CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK);
     }
 
     /**
@@ -398,9 +398,9 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      */
     protected void createHasServiceCheckDecisionState(final Flow flow) {
         createDecisionState(flow, CasWebflowConstants.STATE_ID_HAS_SERVICE_CHECK,
-                "flowScope.service != null",
-                CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
-                CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS);
+            "flowScope.service != null",
+            CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
+            CasWebflowConstants.STATE_ID_VIEW_GENERIC_LOGIN_SUCCESS);
     }
 
     /**
@@ -409,11 +409,18 @@ public class DefaultLoginWebflowConfigurer extends AbstractCasWebflowConfigurer 
      * @param flow the flow
      */
     protected void createRenewCheckDecisionState(final Flow flow) {
-        final String renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
+        final String renewTestCondition;
+        if (casProperties.getSso().isRenewAuthnEnabled()) {
+            final String renewParam = "requestParameters." + CasProtocolConstants.PARAMETER_RENEW;
+            renewTestCondition = renewParam + " != '' and " + renewParam + " != null";
+        } else {
+            renewTestCondition = "true";
+        }
+
         createDecisionState(flow, CasWebflowConstants.STATE_ID_RENEW_REQUEST_CHECK,
-                renewParam + " != '' and " + renewParam + " != null",
-                CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
-                CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+            renewTestCondition,
+            CasWebflowConstants.STATE_ID_SERVICE_AUTHZ_CHECK,
+            CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
     }
 }
 

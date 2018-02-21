@@ -21,6 +21,7 @@ import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecut
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
 import org.apereo.cas.web.ServiceValidateController;
+import org.apereo.cas.web.view.attributes.Cas30ProtocolAttributesRenderer;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,7 +86,8 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas3SuccessView,
             cas3ServiceFailureView, "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan()
+            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
+            true
         );
     }
 
@@ -110,9 +112,11 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
 
-        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager, "attribute",
+        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager,
+            "attribute",
             viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
-            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
+            new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
+            new Cas30ProtocolAttributesRenderer());
         final MockHttpServletResponse resp = new MockHttpServletResponse();
         view.render(modelAndView.getModel(), req, resp);
         return (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
