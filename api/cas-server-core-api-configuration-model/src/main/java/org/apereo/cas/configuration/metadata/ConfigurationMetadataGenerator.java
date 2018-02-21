@@ -101,8 +101,8 @@ public class ConfigurationMetadataGenerator {
      * @throws Exception the exception
      */
     public static void main(final String[] args) throws Exception {
-        final String buildDir = args[0];
-        final String projectDir = args[1];
+        final String buildDir ="/Users/Misagh/Workspace/GitWorkspace/cas-server/api/cas-server-core-api-configuration-model/build";
+        final String projectDir = "/Users/Misagh/Workspace/GitWorkspace/cas-server/api/cas-server-core-api-configuration-model";
         new ConfigurationMetadataGenerator(buildDir, projectDir).execute();
     }
 
