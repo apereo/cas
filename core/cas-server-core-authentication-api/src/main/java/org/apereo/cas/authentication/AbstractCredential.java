@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import java.io.Serializable;
-import lombok.ToString;
 
 /**
  * Base class for CAS credentials that are safe for long-term storage.
@@ -15,7 +14,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-public abstract class AbstractCredential implements Credential, CredentialMetaData, Serializable {
+public abstract class AbstractCredential implements Credential, CredentialMetaData {
 
     /** Serialization version marker. */
     private static final long serialVersionUID = 8196868021183513898L;

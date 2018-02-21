@@ -141,6 +141,6 @@ public class SamlConfiguration {
                 authenticationContextValidator, cas3ServiceJsonView,
                 casSamlServiceSuccessView(), casSamlServiceFailureView(),
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(), 
-                validationAuthorizers);
+                validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
     }
 }

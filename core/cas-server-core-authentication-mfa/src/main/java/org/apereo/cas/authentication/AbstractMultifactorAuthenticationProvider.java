@@ -13,7 +13,6 @@ import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
 import org.springframework.webflow.execution.Event;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.CLOSED;
 import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.FailureModes.NOT_SET;
@@ -31,7 +30,7 @@ import static org.apereo.cas.services.RegisteredServiceMultifactorPolicy.Failure
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"order", "id"})
-public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider, Serializable {
+public abstract class AbstractMultifactorAuthenticationProvider implements MultifactorAuthenticationProvider {
 
     private static final long serialVersionUID = 4789727148134156909L;
 

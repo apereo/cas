@@ -54,11 +54,11 @@ public class EhcacheTicketRegistryConfiguration {
     public CacheReplicator ticketRMISynchronousCacheReplicator() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
-                cache.isReplicatePuts(),
-                cache.isReplicatePutsViaCopy(),
-                cache.isReplicateUpdates(),
-                cache.isReplicateUpdatesViaCopy(),
-                cache.isReplicateRemovals());
+            cache.isReplicatePuts(),
+            cache.isReplicatePutsViaCopy(),
+            cache.isReplicateUpdates(),
+            cache.isReplicateUpdatesViaCopy(),
+            cache.isReplicateRemovals());
     }
 
     @RefreshScope
@@ -67,13 +67,13 @@ public class EhcacheTicketRegistryConfiguration {
     public CacheReplicator ticketRMIAsynchronousCacheReplicator() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIAsynchronousCacheReplicator(
-                cache.isReplicatePuts(),
-                cache.isReplicatePutsViaCopy(),
-                cache.isReplicateUpdates(),
-                cache.isReplicateUpdatesViaCopy(),
-                cache.isReplicateRemovals(),
-                (int) Beans.newDuration(cache.getReplicationInterval()).toMillis(),
-                cache.getMaximumBatchSize());
+            cache.isReplicatePuts(),
+            cache.isReplicatePutsViaCopy(),
+            cache.isReplicateUpdates(),
+            cache.isReplicateUpdatesViaCopy(),
+            cache.isReplicateRemovals(),
+            (int) Beans.newDuration(cache.getReplicationInterval()).toMillis(),
+            cache.getMaximumBatchSize());
     }
 
     @RefreshScope
@@ -83,7 +83,7 @@ public class EhcacheTicketRegistryConfiguration {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
-    
+
     @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
@@ -115,11 +115,11 @@ public class EhcacheTicketRegistryConfiguration {
             bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator()));
             bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
         } else {
-            LOGGER.warn("Ehcache configuration file [{}] cannot be found so no cache event listeners will be configured to bootstrap. "
-                            + "The ticket registry will operate in standalone mode",
-                    cache.getConfigLocation());
+            LOGGER.warn("In registering ticket definition [{}], Ehcache configuration file [{}] cannot be found "
+                + "so no cache event listeners will be configured to bootstrap. "
+                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
         }
-
+                              
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());
@@ -150,7 +150,7 @@ public class EhcacheTicketRegistryConfiguration {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
 
-                
+
                 final CacheConfiguration config = ehcache.getCacheConfiguration();
                 LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
                 LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
