@@ -69,7 +69,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     public EmbeddedServletContainerCustomizer casTomcatEmbeddedServletContainerCustomizer() {
         return configurableEmbeddedServletContainer -> {
             if (configurableEmbeddedServletContainer instanceof TomcatEmbeddedServletContainerFactory) {
-                TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) configurableEmbeddedServletContainer;
+                final TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) configurableEmbeddedServletContainer;
                 configureAjp(tomcat);
                 configureHttp(tomcat);
                 configureHttpProxy(tomcat);
