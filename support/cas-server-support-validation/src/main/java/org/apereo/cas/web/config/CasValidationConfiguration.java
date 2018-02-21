@@ -213,7 +213,8 @@ public class CasValidationConfiguration {
             cas3ServiceSuccessView(),
             cas3ServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers
+            serviceValidationAuthorizers,
+            casProperties.getSso().isRenewAuthnEnabled()
         );
     }
 
@@ -238,7 +239,8 @@ public class CasValidationConfiguration {
             cas3ServiceSuccessView(),
             cas3ServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers
+            serviceValidationAuthorizers,
+            casProperties.getSso().isRenewAuthnEnabled()
         );
     }
 
@@ -262,7 +264,8 @@ public class CasValidationConfiguration {
                 cas3ServiceSuccessView(),
                 cas3ServiceFailureView,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                serviceValidationAuthorizers
+                serviceValidationAuthorizers,
+                casProperties.getSso().isRenewAuthnEnabled()
             );
         }
 
@@ -279,7 +282,8 @@ public class CasValidationConfiguration {
             cas2ServiceSuccessView(),
             cas2ServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers
+            serviceValidationAuthorizers,
+            casProperties.getSso().isRenewAuthnEnabled()
         );
     }
 
@@ -302,7 +306,8 @@ public class CasValidationConfiguration {
             cas1ServiceSuccessView(),
             cas1ServiceFailureView(),
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers
+            serviceValidationAuthorizers,
+            casProperties.getSso().isRenewAuthnEnabled()
         );
     }
 
@@ -326,7 +331,8 @@ public class CasValidationConfiguration {
                 cas3ServiceSuccessView(),
                 cas3ServiceFailureView,
                 casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                serviceValidationAuthorizers
+                serviceValidationAuthorizers,
+                casProperties.getSso().isRenewAuthnEnabled()
             );
         }
 
@@ -343,7 +349,8 @@ public class CasValidationConfiguration {
             cas2ServiceSuccessView(),
             cas2ServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serviceValidationAuthorizers
+            serviceValidationAuthorizers,
+            casProperties.getSso().isRenewAuthnEnabled()
         );
     }
 }

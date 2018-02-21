@@ -81,25 +81,13 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final ServicesManager servicesManager;
 
     private final CentralAuthenticationService centralAuthenticationService;
-
-    /**
-     * The proxy handler we want to use with the controller.
-     */
+    
     private ProxyHandler proxyHandler;
 
-    /**
-     * The view to redirect to on a successful validation.
-     */
     private final View successView;
 
-    /**
-     * The view to redirect to on a validation failure.
-     */
     private final View failureView;
 
-    /**
-     * Extracts parameters from Request object.
-     */
     private final ArgumentExtractor argumentExtractor;
 
     private final MultifactorTriggerSelectionStrategy multifactorTriggerSelectionStrategy;
@@ -109,8 +97,9 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
     private final View jsonView;
 
     private final String authnContextAttribute;
-    
 
+    private boolean renewEnabled = true;
+    
     /**
      * Overrideable method to determine which credentials to use to grant a
      * proxy granting ticket. Default is to use the pgtUrl.
@@ -142,31 +131,30 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
      * @return the pair
      */
     protected Pair<Boolean, Optional<MultifactorAuthenticationProvider>> validateAuthenticationContext(final Assertion assertion, final HttpServletRequest request) {
-        // Find the RegisteredService for this Assertion
         LOGGER.debug("Locating the primary authentication associated with this service request [{}]", assertion.getService());
         final RegisteredService service = this.servicesManager.findServiceBy(assertion.getService());
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
-        // Resolve MFA auth context for this request
         final Map<String, MultifactorAuthenticationProvider> providers = this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         final Authentication authentication = assertion.getPrimaryAuthentication();
         final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication.getPrincipal());
-        // No MFA auth context found
+
         if (!requestedContext.isPresent()) {
             LOGGER.debug("No particular authentication context is required for this request");
             return Pair.of(Boolean.TRUE, Optional.empty());
         }
-        // Validate the requested strategy
         return this.authenticationContextValidator.validate(authentication, requestedContext.get(), service);
     }
 
     /**
-     * Initialize the binder with the required fields. {@code renew} is required.
+     * Initialize the binder with the required fields.
      *
      * @param request the request
      * @param binder  the binder
      */
     protected void initBinder(final HttpServletRequest request, final ServletRequestDataBinder binder) {
-        binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
+        if (this.renewEnabled) {
+            binder.setRequiredFields(CasProtocolConstants.PARAMETER_RENEW);
+        }
     }
 
     /**

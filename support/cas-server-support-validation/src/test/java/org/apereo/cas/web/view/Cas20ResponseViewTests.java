@@ -61,7 +61,8 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas2SuccessView,
             cas2ServiceFailureView, "authenticationContext",
-            new DefaultServiceTicketValidationAuthorizersExecutionPlan()
+            new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
+            true
         );
     }
 

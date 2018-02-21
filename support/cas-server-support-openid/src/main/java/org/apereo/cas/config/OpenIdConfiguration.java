@@ -180,7 +180,7 @@ public class OpenIdConfiguration {
             authenticationContextValidator, cas3ServiceJsonView,
             casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
             casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-            serverManager(), validationAuthorizers);
+            serverManager(), validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
 
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));

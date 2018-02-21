@@ -36,11 +36,12 @@ public class V3ProxyValidateController extends V3ServiceValidateController {
                                     final View jsonView,
                                     final View successView, final View failureView,
                                     final String authnContextAttribute, 
-                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
+                                     final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
+                                     final boolean renewEnabled) {
         super(validationSpecification, authenticationSystemSupport, servicesManager,
                 centralAuthenticationService, proxyHandler, argumentExtractor,
                 multifactorTriggerSelectionStrategy, authenticationContextValidator,
-                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers);
+                jsonView, successView, failureView, authnContextAttribute, validationAuthorizers, renewEnabled);
     }
     /**
      * Handle model and view.

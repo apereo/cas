@@ -26,8 +26,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class LegacyValidateController extends AbstractServiceValidateController {
-
-
     public LegacyValidateController(final CasProtocolValidationSpecification validationSpecification,
                                     final AuthenticationSystemSupport authenticationSystemSupport,
                                     final ServicesManager servicesManager,
@@ -39,11 +37,12 @@ public class LegacyValidateController extends AbstractServiceValidateController 
                                     final View jsonView,
                                     final View successView, final View failureView,
                                     final String authnContextAttribute,
-                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers) {
+                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
+                                    final boolean renewEnabled) {
         super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
             authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
             successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
-            authenticationContextValidator, jsonView, authnContextAttribute);
+            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
     }
 
     /**

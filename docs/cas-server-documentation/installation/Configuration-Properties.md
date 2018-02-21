@@ -2630,9 +2630,10 @@ To learn more about this topic, [please review this guide](User-Interface-Custom
 ## Global SSO Behavior
 
 ```properties
-# cas.sso.missingService=true
-# cas.sso.renewedAuthn=true
+# cas.sso.allowMissingServiceParameter=true
+# cas.sso.createSsoCookieOnRenewAuthn=true
 # cas.sso.proxyAuthnEnabled=true
+# cas.sso.renewAuthnEnabled=true
 ```
 
 ## Warning Cookie

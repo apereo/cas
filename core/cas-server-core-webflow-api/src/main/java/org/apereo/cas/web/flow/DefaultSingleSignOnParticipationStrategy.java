@@ -22,10 +22,11 @@ import org.springframework.webflow.execution.RequestContext;
 public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnParticipationStrategy {
     private final ServicesManager servicesManager;
     private boolean createSsoSessionCookieOnRenewAuthentications = true;
+    private boolean renewEnabled=true;
 
     @Override
     public boolean isParticipating(final RequestContext ctx) {
-        if (ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
+        if (renewEnabled && ctx.getRequestParameters().contains(CasProtocolConstants.PARAMETER_RENEW)) {
             LOGGER.debug("[{}] is specified for the request. The authentication session will be considered renewed.",
                 CasProtocolConstants.PARAMETER_RENEW);
             return this.createSsoSessionCookieOnRenewAuthentications;
