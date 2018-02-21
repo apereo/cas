@@ -27,8 +27,6 @@ import java.util.Collection;
  */
 @Slf4j
 public class DuoAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
-
     
     private final VariegatedMultifactorAuthenticationProvider provider;
 
