@@ -78,7 +78,7 @@ public class ConnectionPoolingProperties implements Serializable {
     }
 
     public long getMaxWait() {
-        return Beans.newDuration(maxWait).toMillis();
+        return Beans.newDuration(maxWait).getSeconds();
     }
 
     public void setMaxWait(final String maxWait) {
