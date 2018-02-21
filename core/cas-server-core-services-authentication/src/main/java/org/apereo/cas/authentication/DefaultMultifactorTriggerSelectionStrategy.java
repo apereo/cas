@@ -50,10 +50,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 .collect(Collectors.toSet());
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
-        if (request != null) {
-            provider = Optional.ofNullable(request.getParameter(requestParameter))
-                    .filter(validProviderIds::contains);
-        }
+        provider = resolveRequestParameterTrigger(request, validProviderIds);
 
         // check for a RegisteredService configured trigger
         if (!provider.isPresent() && service != null) {
@@ -105,5 +102,15 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 .filter(String.class::isInstance)
                 .map(String.class::cast)
                 .anyMatch(attrValuePredicate);
+    }
+
+    /**
+     * Checks for an opt-in provider id parameter trigger, we only care about the first value.
+     */
+    private Optional<String> resolveRequestParameterTrigger(final HttpServletRequest request,
+                                                            final Set<String> providerIds) {
+        return Optional.ofNullable(request)
+                .map(r -> r.getParameter(requestParameter))
+                .filter(providerIds::contains);
     }
 }
