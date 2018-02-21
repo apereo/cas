@@ -84,7 +84,7 @@ import javax.annotation.PostConstruct;
         RefreshAutoConfiguration.class,
         CasCoreServicesConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
-@TestPropertySource(properties = "cas.sso.missingService=false")
+@TestPropertySource(properties = "cas.sso.allowMissingServiceParameter=false")
 @Slf4j
 public class InitialFlowSetupActionSsoTests {
 
