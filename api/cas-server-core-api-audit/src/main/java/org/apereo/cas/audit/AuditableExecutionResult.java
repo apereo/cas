@@ -1,7 +1,6 @@
 package org.apereo.cas.audit;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.apereo.cas.authentication.Authentication;
@@ -24,20 +23,50 @@ import java.util.TreeMap;
 @AllArgsConstructor
 @NoArgsConstructor
 @Setter
-@Getter
 public class AuditableExecutionResult {
-    private Optional<RegisteredService> registeredService = Optional.empty();
-    private Optional<Service> service = Optional.empty();
-    private Optional<ServiceTicket> serviceTicket = Optional.empty();
-    private Optional<Authentication> authentication = Optional.empty();
-    private Optional<RuntimeException> exception = Optional.empty();
-    private Optional<TicketGrantingTicket> ticketGrantingTicket = Optional.empty();
-    private Optional<AuthenticationResult> authenticationResult = Optional.empty();
 
+    /**
+     * RegisteredService.
+     */
+    private RegisteredService registeredService;
+
+    /**
+     * Service.
+     */
+    private Service service;
+
+    /**
+     * ServiceTicket.
+     */
+    private ServiceTicket serviceTicket;
+
+    /**
+     * Authentication.
+     */
+    private Authentication authentication;
+
+    /**
+     * RuntimeException.
+     */
+    private RuntimeException exception;
+
+    /**
+     * TicketGrantingTicket.
+     */
+    private TicketGrantingTicket ticketGrantingTicket;
+
+    /**
+     * AuthenticationResult.
+     */
+    private AuthenticationResult authenticationResult;
+
+    /**
+     * Properties.
+     */
     private Map<String, Object> properties = new TreeMap<>();
 
     public boolean isExecutionFailure() {
-        return exception.isPresent();
+        return getException().isPresent();
     }
 
     /**
@@ -45,7 +74,7 @@ public class AuditableExecutionResult {
      */
     public void throwExceptionIfNeeded() {
         if (isExecutionFailure()) {
-            throw this.exception.get();
+            throw getException().get();
         }
     }
 
@@ -58,13 +87,13 @@ public class AuditableExecutionResult {
      * @param registeredService the registered service
      * @return the auditable execution result
      */
-    public static AuditableExecutionResult of(final Optional<RuntimeException> e, final Authentication authentication,
+    public static AuditableExecutionResult of(final RuntimeException e, final Authentication authentication,
                                               final Service service, final RegisteredService registeredService) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        result.setAuthentication(Optional.of(authentication));
+        result.setAuthentication(authentication);
         result.setException(e);
-        result.setRegisteredService(Optional.of(registeredService));
-        result.setService(Optional.of(service));
+        result.setRegisteredService(registeredService);
+        result.setService(service);
         return result;
     }
 
@@ -78,7 +107,7 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final Authentication authentication,
                                               final Service service, final RegisteredService registeredService) {
-        return of(Optional.empty(), authentication, service, registeredService);
+        return of(null, authentication, service, registeredService);
     }
 
     /**
@@ -92,9 +121,9 @@ public class AuditableExecutionResult {
     public static AuditableExecutionResult of(final ServiceTicket serviceTicket, final AuthenticationResult authenticationResult,
                                               final RegisteredService registeredService) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        result.setServiceTicket(Optional.of(serviceTicket));
-        result.setAuthenticationResult(Optional.of(authenticationResult));
-        result.setRegisteredService(Optional.of(registeredService));
+        result.setServiceTicket(serviceTicket);
+        result.setAuthenticationResult(authenticationResult);
+        result.setRegisteredService(registeredService);
         return result;
     }
 
@@ -108,9 +137,9 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final Service service, final RegisteredService registeredService, final TicketGrantingTicket ticketGrantingTicket) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        result.setTicketGrantingTicket(Optional.of(ticketGrantingTicket));
-        result.setRegisteredService(Optional.of(registeredService));
-        result.setService(Optional.of(service));
+        result.setTicketGrantingTicket(ticketGrantingTicket);
+        result.setRegisteredService(registeredService);
+        result.setService(service);
         return result;
     }
 
@@ -122,13 +151,85 @@ public class AuditableExecutionResult {
      */
     public static AuditableExecutionResult of(final AuditableContext context) {
         final AuditableExecutionResult result = new AuditableExecutionResult();
-        context.getTicketGrantingTicket().ifPresent(obj -> result.setTicketGrantingTicket(Optional.of(obj)));
-        context.getAuthentication().ifPresent(obj -> result.setAuthentication(Optional.of(obj)));
-        context.getAuthenticationResult().ifPresent(obj -> result.setAuthenticationResult(Optional.of(obj)));
-        context.getRegisteredService().ifPresent(obj -> result.setRegisteredService(Optional.of(obj)));
-        context.getService().ifPresent(obj -> result.setService(Optional.of(obj)));
-        context.getServiceTicket().ifPresent(obj -> result.setServiceTicket(Optional.of(obj)));
+        context.getTicketGrantingTicket().ifPresent(result::setTicketGrantingTicket);
+        context.getAuthentication().ifPresent(result::setAuthentication);
+        context.getAuthenticationResult().ifPresent(result::setAuthenticationResult);
+        context.getRegisteredService().ifPresent(result::setRegisteredService);
+        context.getService().ifPresent(result::setService);
+        context.getServiceTicket().ifPresent(result::setServiceTicket);
         result.getProperties().putAll(context.getProperties());
         return result;
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional registered service
+     */
+    public Optional<RegisteredService> getRegisteredService() {
+        return Optional.ofNullable(registeredService);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional service
+     */
+    public Optional<Service> getService() {
+        return Optional.ofNullable(service);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional service ticket
+     */
+    public Optional<ServiceTicket> getServiceTicket() {
+        return Optional.ofNullable(serviceTicket);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional authentication
+     */
+    public Optional<Authentication> getAuthentication() {
+        return Optional.ofNullable(authentication);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional tgt
+     */
+    public Optional<TicketGrantingTicket> getTicketGrantingTicket() {
+        return Optional.ofNullable(ticketGrantingTicket);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional authentication result
+     */
+    public Optional<AuthenticationResult> getAuthenticationResult() {
+        return Optional.ofNullable(authenticationResult);
+    }
+
+    /**
+     * Get.
+     *
+     * @return optional exception
+     */
+    public Optional<RuntimeException> getException() {
+        return Optional.ofNullable(exception);
+    }
+
+    /**
+     * Get.
+     *
+     * @return properties
+     */
+    public Map<String, Object> getProperties() {
+        return properties;
     }
 }
