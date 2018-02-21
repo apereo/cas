@@ -85,7 +85,7 @@ public class CasCookieConfiguration {
     @RefreshScope
     public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
         final TicketGrantingCookieProperties tgc = casProperties.getTgc();
-        final int rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).toMillis();
+        final int rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).getSeconds();
         return new TGCCookieRetrievingCookieGenerator(cookieValueManager(cipherExecutor),
             tgc.getName(),
             tgc.getPath(),

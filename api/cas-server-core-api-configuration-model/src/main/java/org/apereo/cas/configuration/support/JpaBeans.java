@@ -76,7 +76,7 @@ public class JpaBeans {
         bean.setJdbcUrl(jpaProperties.getUrl());
         bean.setUsername(jpaProperties.getUser());
         bean.setPassword(jpaProperties.getPassword());
-        bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).toMillis());
+        bean.setLoginTimeout((int) Beans.newDuration(jpaProperties.getPool().getMaxWait()).getSeconds());
         bean.setMaximumPoolSize(jpaProperties.getPool().getMaxSize());
         bean.setMinimumIdle(jpaProperties.getPool().getMinSize());
         bean.setIdleTimeout((int) Beans.newDuration(jpaProperties.getIdleTimeout()).toMillis());
