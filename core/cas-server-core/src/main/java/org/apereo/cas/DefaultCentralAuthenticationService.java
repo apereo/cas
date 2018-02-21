@@ -59,7 +59,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * Concrete implementation of a {@link CentralAuthenticationService}, and also the
@@ -136,10 +135,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final Service selectedService = resolveServiceFromAuthenticationRequest(service);
         final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
 
-        final AuditableContext audit = AuditableContext.builder().service(Optional.of(selectedService))
-            .ticketGrantingTicket(Optional.of(ticketGrantingTicket))
-            .registeredService(Optional.of(registeredService))
-            .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+        final AuditableContext audit = AuditableContext.builder().service(selectedService)
+            .ticketGrantingTicket(ticketGrantingTicket)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
             .build();
         final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();
@@ -179,10 +178,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
 
         try {
-            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
-                .ticketGrantingTicket(Optional.of(proxyGrantingTicketObject))
-                .registeredService(registeredService == null ? Optional.empty() : Optional.of(registeredService))
-                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+            final AuditableContext audit = AuditableContext.builder().service(service)
+                .ticketGrantingTicket(proxyGrantingTicketObject)
+                .registeredService(registeredService)
+                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
             final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
@@ -236,9 +235,9 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         final RegisteredService registeredService = this.servicesManager.findServiceBy(serviceTicket.getService());
 
         final AuditableContext ctx = AuditableContext.builder()
-            .serviceTicket(Optional.of(serviceTicket))
-            .authenticationResult(Optional.of(authenticationResult))
-            .registeredService(Optional.of(registeredService))
+            .serviceTicket(serviceTicket)
+            .authenticationResult(authenticationResult)
+            .registeredService(registeredService)
             .build();
 
         final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(ctx);
@@ -331,10 +330,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             final Authentication finalAuthentication = builder.build();
 
-            final AuditableContext audit = AuditableContext.builder().service(Optional.of(selectedService))
-                .authentication(Optional.of(finalAuthentication))
-                .registeredService(Optional.of(registeredService))
-                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+            final AuditableContext audit = AuditableContext.builder().service(selectedService)
+                .authentication(finalAuthentication)
+                .registeredService(registeredService)
+                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
             final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
@@ -379,10 +378,10 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
             final RegisteredService registeredService = this.servicesManager.findServiceBy(selectedService);
 
-            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
-                .authentication(Optional.of(authentication))
-                .registeredService(Optional.of(registeredService))
-                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+            final AuditableContext audit = AuditableContext.builder().service(service)
+                .authentication(authentication)
+                .registeredService(registeredService)
+                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
             final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();

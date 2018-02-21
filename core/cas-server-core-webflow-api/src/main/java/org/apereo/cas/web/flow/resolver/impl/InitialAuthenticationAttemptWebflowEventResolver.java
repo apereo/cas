@@ -32,7 +32,6 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -119,10 +118,10 @@ public class InitialAuthenticationAttemptWebflowEventResolver extends AbstractCa
 
             LOGGER.debug("Enforcing access strategy policies for registered service [{}] and principal [{}]", registeredService, authn.getPrincipal());
 
-            final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
-                .authentication(Optional.of(authn))
-                .registeredService(Optional.of(registeredService))
-                .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.FALSE))
+            final AuditableContext audit = AuditableContext.builder().service(service)
+                .authentication(authn)
+                .registeredService(registeredService)
+                .retrievePrincipalAttributesFromReleasePolicy(Boolean.FALSE)
                 .build();
             final AuditableExecutionResult result = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             result.throwExceptionIfNeeded();

@@ -51,7 +51,7 @@ public class EventsProperties implements Serializable {
      * Track authentication events inside a mongodb instance.
      */
     private MongoDb mongo = new MongoDb();
-
+    
     @RequiresModule(name = "cas-server-support-events-jpa")
     @Getter
     @Setter
