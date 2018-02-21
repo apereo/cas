@@ -105,7 +105,7 @@ var loggingDashboard = (function () {
 
     var loggerTableAudit = function (jsonData) {
         var t = $('#auditLogTable').DataTable({
-            "autoWidth": false,
+            'autoWidth': false,
             'order': [[3, 'desc']],
             retrieve: true,
             columnDefs: [
@@ -153,7 +153,7 @@ var loggingDashboard = (function () {
 
     var loggerTable = function () {
         $('#loggersTable').DataTable({
-            "autoWidth": false,
+            'autoWidth': false,
             'order': [[1, 'desc']],
             data: json.loggers,
             'drawCallback': function () {
