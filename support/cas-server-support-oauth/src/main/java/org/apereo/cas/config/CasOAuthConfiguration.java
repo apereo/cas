@@ -271,8 +271,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     public ExpirationPolicy accessTokenExpirationPolicy() {
         final OAuthAccessTokenProperties oauth = casProperties.getAuthn().getOauth().getAccessToken();
         return new OAuthAccessTokenExpirationPolicy(
-            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toMillis(),
-            Beans.newDuration(oauth.getTimeToKillInSeconds()).toMillis()
+            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
+            Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
         );
     }
 
@@ -514,7 +514,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
         final OAuthRefreshTokenProperties rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
-        final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).toMillis();
+        final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
         return new OAuthRefreshTokenExpirationPolicy(timeout);
     }
 
