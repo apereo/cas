@@ -78,7 +78,7 @@ $('.ui.search').search({
                         html += '</div>';
                     }
 
-                    html += '<i class=\'fa fa-codepen\' />&nbsp;Type: <code>' + prop.type + '</code><br/>';
+                    html += '<i class=\'fab fa-codepen\' />&nbsp;Type: <code>' + prop.type + '</code><br/>';
                     if (prop.description != null) {
                         html += '<p>' + prop.description + '</p>';
                     }
