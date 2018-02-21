@@ -6,8 +6,6 @@ import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.inspektr.audit.annotation.Audit;
 
-import java.util.Optional;
-
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
  *
@@ -28,7 +26,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), context.getRegisteredService().get());
             } catch (final PrincipalException e) {
-                result.setException(Optional.of(e));
+                result.setException(e);
             }
             return result;
         }
@@ -42,7 +40,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     context.getTicketGrantingTicket().get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
-                result.setException(Optional.of(e));
+                result.setException(e);
             }
             return result;
         }
@@ -55,7 +53,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     context.getAuthentication().get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
-                result.setException(Optional.of(e));
+                result.setException(e);
             }
             return result;
         }

@@ -327,7 +327,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
         LOGGER.debug("Located registered service definition [{}] matching [{}]", registeredService, service);
         final AuditableContext context = AuditableContext.builder()
-            .registeredService(Optional.of(registeredService))
+            .registeredService(registeredService)
             .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client.getName()))
             .build();
         final AuditableExecutionResult result = delegatedAuthenticationPolicyEnforcer.execute(context);

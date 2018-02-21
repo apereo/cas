@@ -20,7 +20,6 @@ import org.springframework.context.ApplicationEventPublisher;
 import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
-import java.util.Optional;
 
 /**
  * This is {@link SurrogateAuthenticationPostProcessor}.
@@ -55,10 +54,10 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             if (transaction.getService() != null) {
                 final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
 
-                final AuditableContext audit = AuditableContext.builder().service(Optional.of(transaction.getService()))
-                    .authentication(Optional.of(authentication))
-                    .registeredService(Optional.of(svc))
-                    .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+                final AuditableContext audit = AuditableContext.builder().service(transaction.getService())
+                    .authentication(authentication)
+                    .registeredService(svc)
+                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
                     .build();
                 final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
                 accessResult.throwExceptionIfNeeded();
