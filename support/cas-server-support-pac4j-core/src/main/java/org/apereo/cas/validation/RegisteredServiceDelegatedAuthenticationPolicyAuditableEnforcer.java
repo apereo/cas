@@ -11,8 +11,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.inspektr.audit.annotation.Audit;
 import org.pac4j.core.client.Client;
 
-import java.util.Optional;
-
 /**
  * This is {@link RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer}.
  *
@@ -35,9 +33,10 @@ public class RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer ext
             final RegisteredServiceDelegatedAuthenticationPolicy policy = registeredService.getAccessStrategy().getDelegatedAuthenticationPolicy();
             if (policy != null) {
                 if (!policy.isProviderAllowed(clientName, registeredService)) {
-                    LOGGER.debug("Delegated authentication policy for [{}] allows for using client [{}]", registeredService, clientName);
+                    LOGGER.debug("Delegated authentication policy for [{}] does not allow for using client [{}]", registeredService,
+                            clientName);
                     final RuntimeException e = new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
-                    result.setException(Optional.of(e));
+                    result.setException(e);
                 }
             }
         }

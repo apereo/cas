@@ -23,10 +23,22 @@ public class SsoProperties implements Serializable {
     /**
      * Flag that indicates whether to create SSO session on re-newed authentication event.
      */
-    private boolean renewedAuthn = true;
+    private boolean createSsoCookieOnRenewAuthn = true;
 
     /**
      * Flag that indicates whether to allow SSO session with a missing target service.
      */
-    private boolean missingService = true;
+    private boolean allowMissingServiceParameter = true;
+
+    /**
+     * Indicates whether CAS proxy authentication/tickets
+     * are supported by this server implementation.
+     */
+    private boolean proxyAuthnEnabled = true;
+
+    /**
+     *  Indicates whether this server implementation should globally
+     *  support CAS protocol authentication requests that are tagged with "renew=true".
+     */
+    private boolean renewAuthnEnabled = true;
 }

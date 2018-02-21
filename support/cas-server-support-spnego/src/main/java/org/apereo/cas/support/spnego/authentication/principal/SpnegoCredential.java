@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.principal.Principal;
 
 import java.io.IOException;
-import java.io.Serializable;
 import java.util.stream.IntStream;
 
 import lombok.ToString;
@@ -31,7 +30,7 @@ import lombok.ToString;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of ={"initToken", "nextToken", "principal"})
-public class SpnegoCredential implements Credential, Serializable {
+public class SpnegoCredential implements Credential {
 
     /**
      * Unique id for serialization.

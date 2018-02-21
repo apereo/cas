@@ -48,6 +48,6 @@ public class DynamoDbTicketRegistryTicketCatalogConfiguration extends CasCoreTic
     protected void buildAndRegisterProxyGrantingTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("proxyGrantingTicketsTable");
         metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
-        super.buildAndRegisterTicketGrantingTicketDefinition(plan, metadata);
+        super.buildAndRegisterProxyGrantingTicketDefinition(plan, metadata);
     }
 }

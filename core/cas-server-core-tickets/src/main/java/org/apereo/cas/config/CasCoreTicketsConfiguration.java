@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
@@ -207,12 +208,14 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
     @ConditionalOnMissingBean(name = "proxy10Handler")
     @Bean
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy10Handler() {
         return new Cas10ProxyHandler();
     }
 
     @ConditionalOnMissingBean(name = "proxy20Handler")
     @Bean
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public ProxyHandler proxy20Handler() {
         return new Cas20ProxyHandler(httpClient, proxy20TicketUniqueIdGenerator());
     }

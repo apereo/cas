@@ -7,7 +7,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.validation.constraints.Size;
-import java.io.Serializable;
+
 import lombok.ToString;
 import lombok.Getter;
 
@@ -25,7 +25,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class UsernamePasswordCredential implements Credential, Serializable {
+public class UsernamePasswordCredential implements Credential {
 
     /**
      * Authentication attribute name for password.

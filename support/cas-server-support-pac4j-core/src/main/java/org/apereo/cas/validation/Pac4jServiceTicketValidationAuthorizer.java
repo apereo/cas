@@ -48,7 +48,7 @@ public class Pac4jServiceTicketValidationAuthorizer implements ServiceTicketVali
                     LOGGER.debug("Evaluating delegated authentication policy [{}] for client [{}] and service [{}]", policy, client, registeredService);
 
                     final AuditableContext context = AuditableContext.builder()
-                        .registeredService(Optional.of(registeredService))
+                        .registeredService(registeredService)
                         .properties(CollectionUtils.wrap(Client.class.getSimpleName(), client))
                         .build();
                     final AuditableExecutionResult result = delegatedAuthenticationPolicyEnforcer.execute(context);

@@ -10,8 +10,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Credential;
 
-import java.io.Serializable;
-
 /**
  * Represents the duo credential.
  *
@@ -25,7 +23,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = {"username"})
-public class DuoCredential implements Credential, Serializable {
+public class DuoCredential implements Credential {
 
     private static final long serialVersionUID = -7570600733132111037L;
 

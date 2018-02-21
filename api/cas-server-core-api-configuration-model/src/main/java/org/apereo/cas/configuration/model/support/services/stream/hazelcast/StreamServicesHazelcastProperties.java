@@ -5,7 +5,6 @@ import org.apereo.cas.configuration.model.support.hazelcast.BaseHazelcastPropert
 import org.apereo.cas.configuration.model.support.services.stream.BaseStreamServicesProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +18,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties implements Serializable {
+public class StreamServicesHazelcastProperties extends BaseStreamServicesProperties {
 
     private static final long serialVersionUID = -1583614089051161614L;
 

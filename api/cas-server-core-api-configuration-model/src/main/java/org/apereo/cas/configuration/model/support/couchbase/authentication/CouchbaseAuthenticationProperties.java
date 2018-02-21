@@ -6,7 +6,6 @@ import org.apereo.cas.configuration.model.core.authentication.PrincipalTransform
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -19,7 +18,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties implements Serializable {
+public class CouchbaseAuthenticationProperties extends BaseCouchbaseProperties {
 
     private static final long serialVersionUID = -7257332242368463818L;
 

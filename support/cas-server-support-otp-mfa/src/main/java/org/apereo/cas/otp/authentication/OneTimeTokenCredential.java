@@ -6,7 +6,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
-import java.io.Serializable;
 import lombok.ToString;
 import lombok.Getter;
 
@@ -23,7 +22,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class OneTimeTokenCredential implements Credential, Serializable {
+public class OneTimeTokenCredential implements Credential {
 
     private static final long serialVersionUID = -7570600701132111037L;
 

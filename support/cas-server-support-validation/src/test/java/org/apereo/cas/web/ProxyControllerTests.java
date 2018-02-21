@@ -80,7 +80,7 @@ public class ProxyControllerTests extends AbstractCentralAuthenticationServiceTe
         getTicketRegistry().addTicket(ticket);
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.addParameter(CasProtocolConstants.PARAMETER_PROXY_GRANTING_TICKET, ticket.getId());
-        request.addParameter("targetService", "service");
+        request.addParameter(CasProtocolConstants.PARAMETER_TARGET_SERVICE, "service");
 
         final Map<String, Object> map = this.proxyController.handleRequestInternal(request, new MockHttpServletResponse()).getModel();
         assertFalse(map.containsKey(CasProtocolConstants.PARAMETER_TICKET));

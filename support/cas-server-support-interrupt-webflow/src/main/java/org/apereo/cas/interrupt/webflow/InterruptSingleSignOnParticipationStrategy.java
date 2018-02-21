@@ -14,8 +14,9 @@ import org.springframework.webflow.execution.RequestContext;
  */
 @Slf4j
 public class InterruptSingleSignOnParticipationStrategy extends DefaultSingleSignOnParticipationStrategy {
-    public InterruptSingleSignOnParticipationStrategy(final ServicesManager servicesManager, final boolean createSsoOnRenewedAuthn) {
-        super(servicesManager, createSsoOnRenewedAuthn);
+    public InterruptSingleSignOnParticipationStrategy(final ServicesManager servicesManager, final boolean createSsoOnRenewedAuthn,
+                                                      final boolean renewEnabled) {
+        super(servicesManager, createSsoOnRenewedAuthn, renewEnabled);
     }
 
     @Override

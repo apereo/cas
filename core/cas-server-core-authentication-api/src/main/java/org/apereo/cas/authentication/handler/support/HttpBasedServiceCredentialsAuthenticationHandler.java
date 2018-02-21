@@ -29,9 +29,6 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public class HttpBasedServiceCredentialsAuthenticationHandler extends AbstractAuthenticationHandler {
-
-
-    
     /** Instance of Apache Commons HttpClient. */
     private final HttpClient httpClient;
 

@@ -6,8 +6,6 @@ import org.apereo.cas.audit.BaseAuditableExecution;
 import org.apereo.cas.authentication.PrincipalException;
 import org.apereo.inspektr.audit.annotation.Audit;
 
-import java.util.Optional;
-
 /**
  * This is {@link RegisteredServiceAccessStrategyAuditableEnforcer}.
  *
@@ -28,7 +26,7 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                 RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getServiceTicket().get(),
                     context.getAuthenticationResult().get(), context.getRegisteredService().get());
             } catch (final PrincipalException e) {
-                result.setException(Optional.of(e));
+                result.setException(e);
             }
             return result;
         }
@@ -42,25 +40,23 @@ public class RegisteredServiceAccessStrategyAuditableEnforcer extends BaseAudita
                     context.getTicketGrantingTicket().get(),
                     context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
             } catch (final PrincipalException e) {
-                result.setException(Optional.of(e));
+                result.setException(e);
             }
             return result;
         }
 
-        if (!context.getAuthentication().isPresent() || !context.getService().isPresent() || !context.getRegisteredService().isPresent()) {
-            throw new IllegalArgumentException("Authentication, service and registered service must be all present for enforcing principal access");
+        if (context.getService().isPresent() && context.getRegisteredService().isPresent() && context.getAuthentication().isPresent()) {
+            final AuditableExecutionResult result = AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
+            try {
+                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
+                    context.getRegisteredService().get(),
+                    context.getAuthentication().get(),
+                    context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
+            } catch (final PrincipalException e) {
+                result.setException(e);
+            }
+            return result;
         }
-
-        final AuditableExecutionResult result =
-            AuditableExecutionResult.of(context.getAuthentication().get(), context.getService().get(), context.getRegisteredService().get());
-        try {
-            RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(context.getService().get(),
-                context.getRegisteredService().get(),
-                context.getAuthentication().get(),
-                context.getRetrievePrincipalAttributesFromReleasePolicy().orElse(Boolean.TRUE));
-        } catch (final PrincipalException e) {
-            result.setException(Optional.of(e));
-        }
-        return result;
+        throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, "Service unauthorized");
     }
 }

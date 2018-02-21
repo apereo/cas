@@ -73,7 +73,7 @@ public class InitialFlowSetupAction extends AbstractAction {
                     WebUtils.putUnauthorizedRedirectUrl(context, accessStrategy.getUnauthorizedRedirectUrl());
                 }
             }
-        } else if (!casProperties.getSso().isMissingService()) {
+        } else if (!casProperties.getSso().isAllowMissingServiceParameter()) {
             LOGGER.warn("No service authentication request is available at [{}]. CAS is configured to disable the flow.",
                     WebUtils.getHttpServletRequestFromExternalWebflowContext(context).getRequestURL());
             throw new NoSuchFlowExecutionException(context.getFlowExecutionContext().getKey(),

@@ -6,7 +6,7 @@ title: CAS - Configuring Service Access Strategy
 # Configure Service Access Strategy
 
 The access strategy of a registered service provides fine-grained control over the service authorization rules.
-it describes whether the service is allowed to use the CAS server, allowed to participate in
+It describes whether the service is allowed to use the CAS server, allowed to participate in
 single sign-on authentication, etc. Additionally, it may be configured to require a certain set of principal
 attributes that must exist before access can be granted to the service. This behavior allows one to configure
 various attributes in terms of access roles for the application and define rules that would be enacted and

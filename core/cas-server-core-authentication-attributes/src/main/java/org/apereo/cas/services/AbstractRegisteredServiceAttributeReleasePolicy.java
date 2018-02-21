@@ -17,7 +17,6 @@ import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.springframework.context.ApplicationContext;
 
 import javax.persistence.PostLoad;
-import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -36,7 +35,7 @@ import java.util.TreeMap;
 @Setter
 @NoArgsConstructor
 @EqualsAndHashCode
-public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy, Serializable {
+public abstract class AbstractRegisteredServiceAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
 
     private static final long serialVersionUID = 5325460875620586503L;
 

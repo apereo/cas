@@ -9,8 +9,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.Credential;
 
-import java.io.Serializable;
-
 /**
  * This is {@link DuoDirectCredential}.
  *
@@ -23,7 +21,7 @@ import java.io.Serializable;
 @Getter
 @AllArgsConstructor
 @EqualsAndHashCode
-public class DuoDirectCredential implements Credential, Serializable {
+public class DuoDirectCredential implements Credential {
     private static final long serialVersionUID = -7570699733132111037L;
 
     private final Authentication authentication;

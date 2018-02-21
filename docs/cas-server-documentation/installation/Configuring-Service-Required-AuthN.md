@@ -15,6 +15,6 @@ As an example, if there are two authentication strategies defined in CAS where o
   "serviceId" : "https://app.example.org/.+",
   "name" : "ExampleApp",
   "id" : 1,
-  "requiredHandlers" : [ "java.util.ArrayList", [ "DatabaseAuthenticationHandler" ] ]
+  "requiredHandlers" : [ "java.util.HashSet", [ "DatabaseAuthenticationHandler" ] ]
 }
 ```

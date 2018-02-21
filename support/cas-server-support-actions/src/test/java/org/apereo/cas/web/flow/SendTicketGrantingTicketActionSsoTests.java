@@ -35,7 +35,7 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@TestPropertySource(properties = "cas.sso.renewedAuthn=false")
+@TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
 @Slf4j
 public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthenticationServiceTests {
 

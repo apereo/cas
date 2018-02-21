@@ -79,10 +79,10 @@ public class AccessTokenPasswordGrantRequestExtractor extends BaseAccessTokenGra
         final Authentication authentication = this.authenticationBuilder.build(uProfile, registeredService, context, service);
 
 
-        final AuditableContext audit = AuditableContext.builder().service(Optional.of(service))
-            .authentication(Optional.of(authentication))
-            .registeredService(Optional.of(registeredService))
-            .retrievePrincipalAttributesFromReleasePolicy(Optional.of(Boolean.TRUE))
+        final AuditableContext audit = AuditableContext.builder().service(service)
+            .authentication(authentication)
+            .registeredService(registeredService)
+            .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
             .build();
         final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
         accessResult.throwExceptionIfNeeded();

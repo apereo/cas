@@ -26,6 +26,8 @@ import org.springframework.webflow.core.collection.LocalAttributeMap;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.net.URI;
+
 /**
  * Action to generate a service ticket for a given Ticket Granting Ticket and
  * Service.
@@ -65,8 +67,7 @@ public class GenerateServiceTicketAction extends AbstractAction {
         try {
             final Authentication authentication = this.ticketRegistrySupport.getAuthenticationFrom(ticketGrantingTicket);
             if (authentication == null) {
-                throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket "
-                        + ticketGrantingTicket), ticketGrantingTicket);
+                throw new InvalidTicketException(new AuthenticationException("No authentication found for ticket " + ticketGrantingTicket), ticketGrantingTicket);
             }
 
             final Service selectedService = authenticationRequestServiceSelectionStrategies.resolveService(service);
@@ -76,11 +77,11 @@ public class GenerateServiceTicketAction extends AbstractAction {
             WebUtils.putService(context, service);
 
             if (registeredService != null) {
-                if (!StringUtils.isEmpty(registeredService.getAccessStrategy().getUnauthorizedRedirectUrl())) {
-                    LOGGER.debug("Registered service may redirect to [{}] for unauthorized access requests",
-                            registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+                final URI url = registeredService.getAccessStrategy().getUnauthorizedRedirectUrl();
+                if (url != null) {
+                    LOGGER.debug("Registered service may redirect to [{}] for unauthorized access requests", url);
                 }
-                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, registeredService.getAccessStrategy().getUnauthorizedRedirectUrl());
+                WebUtils.putUnauthorizedRedirectUrlIntoFlowScope(context, url);
             }
             if (WebUtils.getWarningCookie(context)) {
                 LOGGER.debug("Warning cookie is present in the request context. Routing result to [{}] state", CasWebflowConstants.STATE_ID_WARN);
