@@ -634,7 +634,8 @@ public final class LdapUtils {
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
         resolver.setUserFilter(l.getUserFilter());
-
+        resolver.setReferralHandler(new SearchReferralHandler());
+        
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
@@ -998,6 +999,7 @@ public final class LdapUtils {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
             entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
         }
+        entryResolver.setReferralHandler(new SearchReferralHandler());
         return entryResolver;
     }
 
