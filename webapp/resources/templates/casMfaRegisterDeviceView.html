@@ -2,30 +2,37 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.mfa.registerdevice.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.registerdevice.pagetitle}">CAS MFA Register Device View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="box fl-panel" id="login">
-        <h2 th:text="#{cas.mfa.registerdevice.label.title}"/>
-        <div th:text="#{cas.mfa.registerdevice.label.intro}"/>
-        <form method="post" id="registerform" class="fm-v clearfix">
-            <div class="row fl-controls-left">
-                <label for="deviceName" class="fl-label" th:utext="#{cas.mfa.registerdevice.label.name}"/>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <h2 th:text="#{cas.mfa.registerdevice.label.title}">Register Device</h2>
+        <div th:text="#{cas.mfa.registerdevice.label.intro}">Please name the current device.</div>
 
-                <input type="text" class="required" name="deviceName" id="deviceName" size="25" tabindex="1" autocomplete="off"/>
+        <form method="post" id="registerform" class="fm-v clearfix">
+            <div class="form-group">
+                <label for="deviceName" class="fl-label" th:utext="#{cas.mfa.registerdevice.label.name}">Name</label>
+
+                <input type="text" class="form-control" name="deviceName" id="deviceName" size="25"
+                       tabindex="1"
+                       autocomplete="off"
+                       required/>
                 <div>
                     <br/>
                     <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"/>
+                           th:value="#{cas.mfa.registerdevice.button.register}" tabindex="4" type="submit"
+                           value="Register"/>
                 </div>
             </div>
-            <div class="row btn-row">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            </div>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
     </div>
-</div>
+</main>
 </body>
 </html>
