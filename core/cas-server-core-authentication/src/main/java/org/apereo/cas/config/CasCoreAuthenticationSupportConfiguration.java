@@ -7,7 +7,6 @@ import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
 import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
-import org.apereo.cas.authentication.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.DefaultAuthenticationSystemSupport;
 import org.apereo.cas.authentication.PrincipalElectionStrategy;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
@@ -74,19 +73,11 @@ public class CasCoreAuthenticationSupportConfiguration {
         return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getIfAvailable());
     }
 
-    @Bean
-    @Lazy
-    @ConditionalOnMissingBean(name = "defaultAuthenticationHandlerResolver")
-    public AuthenticationHandlerResolver defaultAuthenticationHandlerResolver() {
-        return new DefaultAuthenticationHandlerResolver();
-    }
-
     @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
         return plan -> {
             plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
-            plan.registerAuthenticationHandlerResolver(defaultAuthenticationHandlerResolver());
         };
     }
 }

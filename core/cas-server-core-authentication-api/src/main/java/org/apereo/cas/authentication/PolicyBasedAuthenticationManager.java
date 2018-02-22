@@ -213,9 +213,11 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      */
     @SneakyThrows
     protected Set<AuthenticationHandler> getAuthenticationHandlersForThisTransaction(final AuthenticationTransaction transaction) {
-        final Set<AuthenticationHandler> handlers = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
-        final Collection<AuthenticationHandlerResolver> handlerResolvers = this.authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
-
+        final Set<AuthenticationHandler> handlers = authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
+        final Collection<AuthenticationHandlerResolver> handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
+        LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
+        
         final Set<AuthenticationHandler> resolvedHandlers = handlerResolvers.stream()
             .filter(r -> r.supports(handlers, transaction))
             .map(r -> r.resolve(handlers, transaction))
@@ -223,8 +225,17 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             .collect(Collectors.toSet());
 
         if (resolvedHandlers.isEmpty()) {
-            throw new GeneralSecurityException("No authentication handlers are registered to support this authentication transaction: " + transaction);
+            LOGGER.debug("Authentication handler resolvers produced no candidate authentication handler. Using the default handler resolver instead...");
+            final DefaultAuthenticationHandlerResolver defaultHandlerResolver = new DefaultAuthenticationHandlerResolver();
+            if (defaultHandlerResolver.supports(handlers, transaction)) {
+                resolvedHandlers.addAll(defaultHandlerResolver.resolve(handlers, transaction));
+            }
         }
+
+        if (resolvedHandlers.isEmpty()) {
+            throw new GeneralSecurityException("No authentication handlers could be resolved to support the authentication transaction");
+        }
+        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", handlerResolvers);
         return resolvedHandlers;
     }
 

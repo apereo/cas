@@ -10,7 +10,7 @@ import lombok.ToString;
 import lombok.Getter;
 
 /**
- * This is {@link SwivelCredential}.
+ * This is {@link SwivelTokenCredential}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -22,7 +22,7 @@ import lombok.Getter;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class SwivelCredential implements Credential {
+public class SwivelTokenCredential implements Credential {
 
     private static final long serialVersionUID = 361318678073819595L;
 
