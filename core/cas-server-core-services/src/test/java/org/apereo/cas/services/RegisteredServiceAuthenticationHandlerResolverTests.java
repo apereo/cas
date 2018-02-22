@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResolver;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Before;
@@ -51,9 +52,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
         this.defaultServicesManager.load();
 
         final AcceptUsersAuthenticationHandler handler1 = new AcceptUsersAuthenticationHandler("handler1");
-
         final AcceptUsersAuthenticationHandler handler2 = new AcceptUsersAuthenticationHandler("handler2");
-
         final AcceptUsersAuthenticationHandler handler3 = new AcceptUsersAuthenticationHandler("handler3");
 
         this.handlers = Stream.of(handler1, handler2, handler3).collect(Collectors.toSet());
@@ -72,8 +71,8 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
 
     @Test
     public void checkAuthenticationHandlerResolution() {
-        final RegisteredServiceAuthenticationHandlerResolver resolver =
-            new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
+        final DefaultAuthenticationHandlerResolver resolver =
+            new DefaultAuthenticationHandlerResolver();
         final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
