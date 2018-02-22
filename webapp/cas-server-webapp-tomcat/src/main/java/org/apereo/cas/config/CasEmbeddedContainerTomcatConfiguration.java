@@ -68,7 +68,6 @@ public class CasEmbeddedContainerTomcatConfiguration {
                 configureExtendedAccessLogValve(tomcat);
                 configureRewriteValve(tomcat);
                 configureSSLValve(tomcat);
-                configureBasicAuthn(tomcat);
             } else {
                 LOGGER.error("EmbeddedServletContainer [{}] does not support Tomcat!", configurableEmbeddedServletContainer);
             }
