@@ -12,7 +12,7 @@ services:
   - docker
 branches:
   only:
-  - travis-matrix
+  - master
 jdk:
 - oraclejdk8
 # - oraclejdk9
