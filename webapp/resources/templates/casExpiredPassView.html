@@ -2,13 +2,21 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.expiredpass.heading}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.expiredpass.heading}">CAS Expired Password View</title>
     <script type="text/javascript" th:src="@{/js/passwordMeter.js}"></script>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div th:replace="fragments/pwdupdateform(expiredPass='true')"/>
-</div>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div th:replace="fragments/pwdupdateform(expiredPass='true')">
+            <a href="fragments/pwdupdateform.html">pwdupdateform</a>
+        </div>
+    </div>
+</main>
 </body>
 </html>

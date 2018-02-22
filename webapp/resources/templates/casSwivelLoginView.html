@@ -2,42 +2,39 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.mfa.swivel.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.swivel.pagetitle}">Swivel Login View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="box fl-panel" id="login">
-        <h3 th:text="#{cas.mfa.swivel.label.header}"/>
-        
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <h3 th:text="#{cas.mfa.swivel.label.header}">Swivel Authentication</h3>
+
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
-            <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
-                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+            <div id="msg" class="alert alert-danger errors" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error message</span>
             </div>
 
-            <div class="row fl-controls-left">
-                <p align="center">
-                    <img th:src="@{/swivel/turingImage(principal=${principal})}"/>
+            <div class="form-group">
+                <p class="text-center">
+                    <img th:src="@{/swivel/turingImage(principal=${principal})}"
+                         src="http://via.placeholder.com/150x50"/>
                 </p>
-                
-                <br/>
 
-                <label for="token" class="fl-label" th:utext="#{cas.mfa.swivel.label.token}"/>
-
-                <input type="password" class="required" id="token" size="25" tabindex="1"
+                <label for="token" class="fl-label" th:utext="#{cas.mfa.swivel.label.token}">Token:</label>
+                <input type="password" class="form-control required" required id="token" size="25" tabindex="1"
                        th:field="*{token}"
                        th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
-                <div>
-                    <p/>
-                </div>
-                <input class="btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
             </div>
-            <div class="row btn-row">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            </div>
+            <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
+                   th:value="#{screen.welcome.button.login}" tabindex="4" type="submit" value="Login"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
     </div>
-</div>
+</main>
 </body>
 </html>

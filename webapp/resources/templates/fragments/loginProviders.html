@@ -1,57 +1,74 @@
-<div class="well well-lg hidden-xs" th:if="${pac4jUrls}">
-    <div id="list-providers">
-        <h3 th:utext="#{screen.welcome.label.loginwith}"/>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
-        <ul>
-            <li th:each="entry: ${pac4jUrls}" th:switch="${entry.type}">
-                <a class="btn btn-block btn-social"
-                   th:classappend="'btn-' + ${entry.type}"
-                   th:href="${entry.redirectUrl}"
-                   th:inline="text"
-                   th:title="${entry.name}">
+    <title>loginProviders Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+</head>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div th:fragment="loginProviders" th:remove="tag">
+        <div th:if="${pac4jUrls}" id="list-providers" class="card d-sm-none d-md-block bg-light">
+            <div class="card-body">
+                <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}">Or login with:</h3>
 
-                    <span th:case="twitter" class="fa fa-twitter-square"></span>
-                    <span th:case="foursquare" class="fa fa-foursquare"></span>
-                    <span th:case="windowslive" class="fa fa-windows"></span>
-                    <span th:case="yahoo" class="fa fa-yahoo"></span>
-                    <span th:case="bitbucket" class="fa fa-bitbucket"></span>
-                    <span th:case="wordpress" class="fa fa-wordpress"></span>
-                    <span th:case="google2" class="fa fa-google-plus"></span>
-                    <span th:case="github" class="fa fa-github-alt"></span>
-                    <span th:case="dropbox" class="fa fa-dropbox"></span>
-                    <span th:case="linkedin" class="fa fa-linkedin"></span>
-                    <span th:case="facebook" class="fa fa-facebook-square"></span>
-                    <span th:case="oidc" class="fa fa-openid"></span>
-                    <span th:case="saml2" th:class="${entry.cssClass}"></span>
-                    <span th:case="*" class="fa fa-sign-in"></span>
+                <div class="card-text">
+                    <ul>
+                        <li th:each="entry: ${pac4jUrls}" th:switch="${entry.type}">
+                            <a class="btn btn-block btn-social"
+                               th:classappend="'btn-' + ${entry.type}"
+                               th:href="${entry.redirectUrl}"
+                               th:inline="text"
+                               th:title="${entry.name}">
 
-                    [[${entry.name}]]
-                </a>
-            </li>
-        </ul>
+                                <span th:case="twitter" class="fab fa-twitter-square"></span>
+                                <span th:case="foursquare" class="fab fa-foursquare"></span>
+                                <span th:case="windowslive" class="fab fa-windows"></span>
+                                <span th:case="yahoo" class="fab fa-yahoo"></span>
+                                <span th:case="bitbucket" class="fab fa-bitbucket"></span>
+                                <span th:case="wordpress" class="fab fa-wordpress"></span>
+                                <span th:case="google2" class="fab fa-google-plus"></span>
+                                <span th:case="github" class="fab fa-github-alt"></span>
+                                <span th:case="dropbox" class="fab fa-dropbox"></span>
+                                <span th:case="linkedin" class="fab fa-linkedin"></span>
+                                <span th:case="facebook" class="fab fa-facebook-square"></span>
+                                <span th:case="oidc" class="fab fa-openid"></span>
+                                <span th:case="saml2" th:class="${entry.cssClass}"></span>
+                                <span th:case="*" class="fa fa-sign-in-alt"></span>
 
+                                [[${entry.name}]]
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${wsfedUrls}" id="list-providers" class="card d-sm-none d-md-block bg-light">
+            <div class="card-body">
+                <h3 class="card-title" th:utext="#{screen.welcome.label.loginwith}"/>
+                <div class="card-text">
+                    <ul>
+                        <li th:each="entry: ${wsfedUrls}">
+                            <a class="btn btn-block btn-social"
+                               th:classappend="btn-sm"
+                               th:href="${entry.redirectUrl}"
+                               th:inline="text"
+                               th:title="${entry.name}">
+
+                                <span class="fab fa-windows"></span>
+
+                                [[${entry.name}]]
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
-
-
-<div class="well well-lg hidden-xs" th:if="${wsfedUrls}">
-    <div id="list-providers">
-        <h3 th:utext="#{screen.welcome.label.loginwith}"/>
-
-        <ul>
-            <li th:each="entry: ${wsfedUrls}">
-                <a class="btn btn-block btn-social"
-                   th:classappend="btn-sm"
-                   th:href="${entry.redirectUrl}"
-                   th:inline="text"
-                   th:title="${entry.name}">
-
-                    <span class="fa fa-windows"></span>
-
-                    [[${entry.name}]]
-                </a>
-            </li>
-        </ul>
-
-    </div>
-</div>
+</main>
+</body>
+</html>

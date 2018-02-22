@@ -8,14 +8,14 @@
  * https://github.com/lipis/bootstrap-social
  */
 
-$bs-height-base: ($line-height-computed + $padding-base-vertical * 2) !default;
-$bs-height-lg:   (floor($font-size-large * $line-height-base) + $padding-large-vertical * 2) !default;
-$bs-height-sm:   (floor($font-size-small * 1.5) + $padding-small-vertical * 2) !default;
-$bs-height-xs:   (floor($font-size-small * 1.2) + $padding-small-vertical + 1) !default;
+$bs-height-base: (floor(($font-size-base * $line-height-base)) + $btn-padding-y * 2) !default;
+$bs-height-lg:   (floor($font-size-lg * $line-height-base) + $btn-padding-y-lg * 2) !default;
+$bs-height-sm:   (floor($font-size-sm * 1.5) + $btn-padding-y-sm * 2) !default;
+$bs-height-xs:   (floor($font-size-sm * 1.2) + $btn-padding-y-sm + 1) !default;
 
 .btn-social {
   position: relative;
-  padding-left: ($bs-height-base + $padding-base-horizontal);
+  padding-left: ($bs-height-base + $btn-padding-x);
   text-align: left;
   white-space: nowrap;
   overflow: hidden;
@@ -32,7 +32,7 @@ $bs-height-xs:   (floor($font-size-small * 1.2) + $padding-small-vertical + 1) !
     border-right: 1px solid rgba(0, 0, 0, 0.2);
   }
   &.btn-lg {
-    padding-left: ($bs-height-lg + $padding-large-horizontal);
+    padding-left: ($bs-height-lg + $btn-padding-x-lg);
     > :first-child {
       line-height: $bs-height-lg;
       width: $bs-height-lg;
@@ -40,7 +40,7 @@ $bs-height-xs:   (floor($font-size-small * 1.2) + $padding-small-vertical + 1) !
     }
   }
   &.btn-sm {
-    padding-left: ($bs-height-sm + $padding-small-horizontal);
+    padding-left: ($bs-height-sm + $btn-padding-y-sm);
     > :first-child {
       line-height: $bs-height-sm;
       width: $bs-height-sm;
@@ -48,7 +48,7 @@ $bs-height-xs:   (floor($font-size-small * 1.2) + $padding-small-vertical + 1) !
     }
   }
   &.btn-xs {
-    padding-left: ($bs-height-xs + $padding-small-horizontal);
+    padding-left: ($bs-height-xs + $btn-padding-y-sm);
     > :first-child {
       line-height: $bs-height-xs;
       width: $bs-height-xs;

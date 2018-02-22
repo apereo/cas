@@ -5,7 +5,7 @@
     <title>Authentication Events</title>
     <script th:inline="javascript">
         /*<![CDATA[*/
-        
+
         var urls = {
             getEvents: /*[[@{/status/authnEvents/getEvents}]]*/
         };
@@ -17,10 +17,10 @@
 
         function jqueryReady() {
             head.load(
-                    /*[[@{/css/authnEvents.css}]]*/
+                /*[[@{/css/authnEvents.css}]]*/
             );
             head.load(
-                    /*[[@{/js/authnEvents.js}]]*/
+                /*[[@{/js/authnEvents.js}]]*/
             );
         }
     </script>
@@ -30,18 +30,19 @@
 <div layout:fragment="content">
 
     <div id="authnEvents">
-        <h1>Manage Authentication Events</h1>
-        
-        <div class="tabsContainer row">
+        <h3>Manage Authentication Events</h3>
+
+        <div class="tabsContainer">
             <!-- Nav tabs -->
             <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#authnEvents" aria-controls="authnEvents" role="tab"
-                                                          data-toggle="tab">Authentication Events</a></li>
+                <li role="presentation" class="nav-item"><a class="nav-link active" href="#authnEvents"
+                                                            aria-controls="authnEvents" role="tab"
+                                                            data-toggle="tab">Authentication Events</a></li>
             </ul>
-                        
+
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="authnEventsTab">
-                    <table id="authnEventsTable" class="display table table-striped table-bordered">
+                    <table id="authnEventsTable" class="table table-striped table-bordered">
                         <thead>
                         <tr>
                             <th>Type</th>
@@ -62,7 +63,8 @@
                 </div>
             </div>
         </div>
-        <div th:replace="fragments/footerButtons"/>
+
+        <div th:replace="monitoring/fragments/footerButtons"/>
     </div>
 </div>
 </body>

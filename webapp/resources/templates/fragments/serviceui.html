@@ -1,4 +1,16 @@
-<div th:if="${registeredService}" id="serviceui" class="alert alert-info">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title>Service UI Fragment</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+</head>
+<body>
+<main role="main" class="container mt-3 mb-3">
+<div th:fragment="serviceUI" th:if="${registeredService}" id="serviceui" class="alert alert-info">
     <div th:if="${serviceUIMetadata}">
         <table>
             <tr>
@@ -18,11 +30,11 @@
                          th:height="${serviceUIMetadata.logoHeight}"/>
                 </td>
                 <td id="servicedesc">
-                    <h2 th:text="${serviceUIMetadata.displayName}"></h2>
-                    <p th:text="${serviceUIMetadata.description}"></p>
+                    <h2 th:text="${serviceUIMetadata.displayName}">serviceUIMetadata.displayName</h2>
+                    <p th:text="${serviceUIMetadata.description}">serviceUIMetadata.description</p>
 
-                    <p th:if="${serviceUIMetadata.informationURL}" th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}"/>
-                    <p th:if="${serviceUIMetadata.privacyStatementURL}" th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}"/>
+                    <p th:if="${serviceUIMetadata.informationURL}" th:utext="#{screen.mdui.infolink.text(${serviceUIMetadata.informationURL})}">screen.mdui.infolink.text</p>
+                    <p th:if="${serviceUIMetadata.privacyStatementURL}" th:utext="#{screen.mdui.privacylink.text(${serviceUIMetadata.privacyStatementURL})}">serviceUIMetadata.privacyStatementURL</p>
                 </td>
             </tr>
         </table>
@@ -36,10 +48,13 @@
                     <img th:src="@{images/webapp.png}" th:unless="${registeredService.logo}"/>
                 </td>
                 <td id="servicedesc">
-                    <h2 th:text="${registeredService.name}"></h2>
-                    <p th:text="${registeredService.description}"></p>
+                    <h2 th:text="${registeredService.name}">Registered Service Name</h2>
+                    <p th:text="${registeredService.description}">Registered Service Description</p>
                 </td>
             </tr>
         </table>
     </div>
 </div>
+</main>
+</body>
+</html>
