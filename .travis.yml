@@ -43,6 +43,7 @@ env:
   - MATRIX_JOB_TYPE=JAVADOC
   - MATRIX_JOB_TYPE=TEST
   - MATRIX_JOB_TYPE=SNAPSHOT
+  - MATRIX_JOB_TYPE=DEPUPDATE
 before_install:
 - chmod -R 777 ./ci/run-ldap-server.sh
 - ./ci/run-ldap-server.sh
