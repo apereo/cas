@@ -17,11 +17,11 @@ var Gauge = function (wrapper, percent, options) {
         total = 100,
         formatPercent = d3.format('.0%');
 
-    var colorScale = d3.scale.linear()
+    var colorScale = d3.scaleLinear()
         .domain([0, 0.40, 0.50, 1])
         .range(['green', 'green', 'goldenrod', 'red']);
 
-    var arc = d3.svg.arc()
+    var arc = d3.arc()
         .startAngle(0)
         .innerRadius(width * 0.4)
         .outerRadius(width * 0.5)
@@ -87,7 +87,7 @@ var Gauge = function (wrapper, percent, options) {
 
 
 function upTime(countTo, el) {
-    var wrapper = document.getElementById('uptime-panel');
+    var wrapper = document.getElementById('card-uptime');
     var element = document.getElementById(el);
     var difference = new Date(countTo*1000);
 
