@@ -53,9 +53,12 @@ public class SamlAuthenticationMetaDataPopulator extends BaseAuthenticationMetaD
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        final String credentialsClass = transaction.getCredential().getClass().getName();
-        final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
-        builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
+        transaction.getCredential().ifPresent(c -> {
+            final String credentialsClass = c.getClass().getName();
+            final String authenticationMethod = this.authenticationMethods.get(credentialsClass);
+            builder.addAttribute(ATTRIBUTE_AUTHENTICATION_METHOD, authenticationMethod);
+        });
+
     }
 
     @Override
