@@ -20,7 +20,7 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         fi
     else
         echo -e "*************************************************************"
-        echo -e "Publishing snapshots to Sonatype will be skipped.\n"
+        echo -e "Publishing snapshots to Sonatype will be skipped. The changeset is either a pull request, or not targeted at branch $branchName.\n"
         echo -e "*************************************************************"
     fi
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
@@ -45,7 +45,9 @@ if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
+     echo -e "******************************************************************"
     echo $tasks
+     echo -e "******************************************************************"
 
     waitRetVal=-1
     if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
