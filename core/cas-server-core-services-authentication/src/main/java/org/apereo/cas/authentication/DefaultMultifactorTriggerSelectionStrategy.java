@@ -52,13 +52,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         provider = resolveRequestParameterTrigger(request, validProviderIds);
 
         // check for a RegisteredService configured trigger
-        if (!provider.isPresent() && service != null) {
-            final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
-            if (shouldApplyRegisteredServiceMultifactorPolicy(policy, principal)) {
-                provider = policy.getMultifactorAuthenticationProviders().stream()
-                        .filter(validProviderIds::contains)
-                        .findFirst();
-            }
+        if (!provider.isPresent()) {
+            provider = resolveRegisteredServiceTrigger(service, principal, validProviderIds);
         }
 
         // check for Global principal attribute trigger
@@ -70,32 +65,6 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return provider;
     }
 
-    private static boolean shouldApplyRegisteredServiceMultifactorPolicy(final RegisteredServiceMultifactorPolicy policy, final Principal principal) {
-        final String attrName = policy.getPrincipalAttributeNameTrigger();
-        final String attrValue = policy.getPrincipalAttributeValueToMatch();
-
-        // Principal attribute name and/or value is not defined
-        if (!StringUtils.hasText(attrName) || !StringUtils.hasText(attrValue)) {
-            return true;
-        }
-
-        // no Principal, we should enforce policy
-        if (principal == null) {
-            return true;
-        }
-
-        // check to see if any of the specified attributes match the attrValue pattern
-        final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
-        return commaDelimitedListToSet(attrName).stream()
-                .map(principal.getAttributes()::get)
-                .filter(Objects::nonNull)
-                .map(CollectionUtils::toCollection)
-                .flatMap(Set::stream)
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
-                .anyMatch(attrValuePredicate);
-    }
-
     /**
      * Checks for an opt-in provider id parameter trigger, we only care about the first value.
      */
@@ -104,6 +73,51 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return Optional.ofNullable(request)
                 .map(r -> r.getParameter(requestParameter))
                 .filter(providerIds::contains);
+    }
+
+    private Optional<String> resolveRegisteredServiceTrigger(final RegisteredService service, final Principal principal,
+                                                             final Set<String> providerIds) {
+        // short-circuit if we don't have a RegisteredService to evaluate
+        if (service == null) {
+            return Optional.empty();
+        }
+
+        final RegisteredServiceMultifactorPolicy policy = service.getMultifactorPolicy();
+        final String attrName = policy.getPrincipalAttributeNameTrigger();
+        final String attrValue = policy.getPrincipalAttributeValueToMatch();
+
+        // Principal attribute name and/or value is not defined, enforce policy
+        if (!StringUtils.hasText(attrName) || !StringUtils.hasText(attrValue)) {
+            return resolveRegisteredServicePolicyTrigger(policy, providerIds);
+        }
+
+        // no Principal, enforce policy
+        if (principal == null) {
+            return resolveRegisteredServicePolicyTrigger(policy, providerIds);
+        }
+
+        // check the Principal to see if any of the specified attributes match the attrValue pattern
+        final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
+        if (commaDelimitedListToSet(attrName).stream()
+                .map(principal.getAttributes()::get)
+                .filter(Objects::nonNull)
+                .map(CollectionUtils::toCollection)
+                .flatMap(Set::stream)
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .anyMatch(attrValuePredicate)) {
+            return resolveRegisteredServicePolicyTrigger(policy, providerIds);
+        }
+
+        // default to an unenforced policy trigger
+        return Optional.empty();
+    }
+
+    private Optional<String> resolveRegisteredServicePolicyTrigger(final RegisteredServiceMultifactorPolicy policy,
+                                                                   final Set<String> providerIds) {
+        return policy.getMultifactorAuthenticationProviders().stream()
+                .filter(providerIds::contains)
+                .findFirst();
     }
 
     private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
