@@ -40,7 +40,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
-        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getCredential();
+        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getCredential().get();
         final String targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {

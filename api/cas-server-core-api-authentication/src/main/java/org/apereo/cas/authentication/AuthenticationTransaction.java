@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -11,6 +12,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @AllArgsConstructor
+@ToString
 public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;
@@ -58,11 +61,11 @@ public class AuthenticationTransaction implements Serializable {
      *
      * @return the credential
      */
-    public Credential getCredential() {
+    public Optional<Credential> getCredential() {
         if (!credentials.isEmpty()) {
-            return credentials.iterator().next();
+            return Optional.of(credentials.iterator().next());
         }
-        return null;
+        return Optional.empty();
     }
 
     /**
@@ -73,11 +76,14 @@ public class AuthenticationTransaction implements Serializable {
      */
     public boolean isCredentialOfType(final Class clazz) {
         try {
-            final Object object = clazz.cast(getCredential());
-            return object != null;
+            if (getCredential().isPresent()) {
+                final Object object = clazz.cast(getCredential().get());
+                return object != null;
+            }
         } catch (final Exception e) {
             return false;
         }
+        return false;
     }
 
     /**
@@ -90,8 +96,8 @@ public class AuthenticationTransaction implements Serializable {
     private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
         if (credentials != null && credentials.length > 0) {
             return Arrays.stream(credentials)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toCollection(LinkedHashSet::new));
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         }
         return new HashSet<>(0);
     }
