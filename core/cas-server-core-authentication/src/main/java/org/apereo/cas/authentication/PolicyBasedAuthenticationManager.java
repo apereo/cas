@@ -370,8 +370,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
                     if (!isSatisfied) {
                         LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
-                                        + "find authentication handler that supports [{}] of type [{}].",
-                                credential, credential.getClass().getSimpleName());
+                                + "find authentication handler that supports [{}] of type [{}]. Examine the configuration to "
+                                + "ensure a method of authentication is defined and analyze CAS logs at DEBUG level to trace "
+                                + "the authentication event.", credential, credential.getClass().getSimpleName());
                     }
                     return isSatisfied;
                 });
