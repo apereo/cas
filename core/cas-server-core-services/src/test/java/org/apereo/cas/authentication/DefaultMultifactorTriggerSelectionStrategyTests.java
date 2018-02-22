@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -33,6 +34,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_1 = mock(MultifactorAuthenticationProvider.class);
     private static final MultifactorAuthenticationProvider MFA_PROVIDER_2 = mock(MultifactorAuthenticationProvider.class);
     private static final Set<MultifactorAuthenticationProvider> VALID_PROVIDERS = Stream.of(MFA_PROVIDER_1, MFA_PROVIDER_2).collect(Collectors.toSet());
+    private static final Set<MultifactorAuthenticationProvider> SINGLE_PROVIDER = Collections.singleton(MFA_PROVIDER_1);
     private static final Set<MultifactorAuthenticationProvider> NO_PROVIDERS = new HashSet<>(0);
 
     private static final String REQUEST_PARAM = "authn_method_test";
@@ -126,6 +128,14 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, CoreAuthenticationTestUtils.mockPrincipal(P_ATTR_1, MFA_PROVIDER_ID_2)).orElse(null),
                 is(MFA_PROVIDER_ID_2));
         assertThat(strategy.resolve(VALID_PROVIDERS, null, null, CoreAuthenticationTestUtils.mockPrincipal(P_ATTR_1, MFA_INVALID)).isPresent(), is(false));
+    }
+
+    @Test
+    public void verifyPrincipalAttributeSingleTrigger() {
+        mfaConfiguration.setGlobalPrincipalAttributeValueRegex(VALUE_PATTERN);
+
+        assertThat(strategy.resolve(SINGLE_PROVIDER, null, null, CoreAuthenticationTestUtils.mockPrincipal(P_ATTR_1, VALUE_1)).orElse(null),
+                is(MFA_PROVIDER_ID_1));
     }
 
     @Test

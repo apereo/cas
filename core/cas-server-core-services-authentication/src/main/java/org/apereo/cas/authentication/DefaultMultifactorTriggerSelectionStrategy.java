@@ -115,9 +115,13 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
                                                               final Set<String> providerIds) {
         final String attrName = mfaProperties.getGlobalPrincipalAttributeNameTriggers();
-
         if (principal == null || !StringUtils.hasText(attrName)) {
             return Optional.empty();
+        }
+
+        final String attrValue = mfaProperties.getGlobalPrincipalAttributeValueRegex();
+        if (providerIds.size() == 1 && hasMatchingAttribute(principal.getAttributes(), attrName, attrValue)) {
+            return providerIds.stream().findAny();
         }
 
         return resolveAttributeTrigger(principal.getAttributes(), attrName, providerIds);
