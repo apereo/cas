@@ -16,32 +16,37 @@
             <ul class="list-group">
                 <li class="list-group-item">
                     <a th:href="@{/status/dashboard}" th:inline="text">
-                        <i class="fa fa-cogs"></i> [[#{cas.login.resources.dashboard}]]
+                        <i class="fa fa-cogs"></i>[[#{cas.login.resources.dashboard}]]
                     </a>
                 </li>
                 <li class="list-group-item" th:if="${attributeConsentEnabled}">
                     <a th:href="@{/consentReview}" th:inline="text">
-                        <i class="fa fa-cogs"></i> [[#{screen.consent.title}]]
+                        <i class="fa fa-cogs"></i>[[#{screen.consent.title}]]
                     </a>
                 </li>
                 <li class="list-group-item">
                     <a href="http://apereo.github.io/cas" th:inline="text">
-                        <i class="fa fa-file"></i> [[#{cas.login.resources.wiki}]]
+                        <i class="fa fa-file"></i>[[#{cas.login.resources.wiki}]]
                     </a>
                 </li>
                 <li class="list-group-item">
-                    <a href="https://github.com/apereo/cas/issues" th:inline="text">
-                        <i class="fa fa-bug"></i> [[#{cas.login.resources.issuetracker}]]
+                    <a href="https://github.com/apereo/cas/pulls" th:inline="text">
+                        <i class="fa fa-bug"></i>[[#{cas.login.resources.pulls}]]
+                    </a>
+                </li>
+                <li class="list-group-item">
+                    <a href="https://apereo.github.io/cas/developer/Contributor-Guidelines.html" th:inline="text">
+                        <i class="fa fa-bug"></i>[[#{cas.login.resources.contribguide}]]
                     </a>
                 </li>
                 <li class="list-group-item">
                     <a href="https://apereo.github.io/cas/Mailing-Lists.html" th:inline="text">
-                        <i class="fa fa-envelope"></i> [[#{cas.login.resources.mailinglist}]]
+                        <i class="fa fa-envelope"></i>[[#{cas.login.resources.mailinglist}]]
                     </a>
                 </li>
                 <li class="list-group-item">
                     <a href="https://gitter.im/apereo/cas" th:inline="text">
-                        <i class="far fa-comment-alt"></i> [[#{cas.login.resources.chat}]]
+                        <i class="far fa-comment-alt"></i>[[#{cas.login.resources.chat}]]
                     </a>
                 </li>
                 <li class="list-group-item">
