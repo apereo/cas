@@ -12,6 +12,7 @@ import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -62,16 +63,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             }
         }
 
-        // check for principal attribute trigger
-        if (!provider.isPresent() && principal != null
-                && StringUtils.hasText(globalPrincipalAttributeNameTriggers)) {
-            provider = StreamSupport.stream(ATTR_NAMES.split(globalPrincipalAttributeNameTriggers).spliterator(), false)
-                    // principal.getAttribute(name).values
-                    .map(principal.getAttributes()::get).filter(Objects::nonNull)
-                    .map(CollectionUtils::toCollection).flatMap(Set::stream)
-                    // validProviderIds.contains((String) value)
-                    .filter(String.class::isInstance).map(String.class::cast).filter(validProviderIds::contains)
-                    .findFirst();
+        // check for Global principal attribute trigger
+        if (!provider.isPresent()) {
+            provider = resolvePrincipalAttributeTrigger(principal, validProviderIds);
         }
 
         // return the resolved trigger
@@ -112,5 +106,26 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         return Optional.ofNullable(request)
                 .map(r -> r.getParameter(requestParameter))
                 .filter(providerIds::contains);
+    }
+
+    private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
+                                                              final Set<String> providerIds) {
+        if (principal != null && StringUtils.hasText(globalPrincipalAttributeNameTriggers)) {
+            return resolveAttributeTrigger(principal.getAttributes(), globalPrincipalAttributeNameTriggers,
+                    providerIds);
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
+                                                     final Set<String> providerIds) {
+        return StreamSupport.stream(ATTR_NAMES.split(names).spliterator(), false)
+                // principal.getAttribute(name).values
+                .map(attributes::get).filter(Objects::nonNull)
+                .map(CollectionUtils::toCollection).flatMap(Set::stream)
+                // validProviderIds.contains((String) value)
+                .filter(String.class::isInstance).map(String.class::cast).filter(providerIds::contains)
+                .findFirst();
     }
 }
