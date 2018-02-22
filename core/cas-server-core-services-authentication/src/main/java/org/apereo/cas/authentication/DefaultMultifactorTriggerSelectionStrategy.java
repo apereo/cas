@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
-import com.google.common.base.Splitter;
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -19,7 +20,6 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Default MFA Trigger selection strategy. This strategy looks for valid triggers in the following order: request
@@ -31,8 +31,6 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @AllArgsConstructor
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
-    private static final Splitter ATTR_NAMES = Splitter.on(',').trimResults().omitEmptyStrings();
-
     private final String globalPrincipalAttributeNameTriggers;
     private final String requestParameter;
 
@@ -88,7 +86,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
         // check to see if any of the specified attributes match the attrValue pattern
         final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
-        return StreamSupport.stream(ATTR_NAMES.split(attrName).spliterator(), false)
+        return commaDelimitedListToSet(attrName).stream()
                 .map(principal.getAttributes()::get)
                 .filter(Objects::nonNull)
                 .map(CollectionUtils::toCollection)
@@ -120,7 +118,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
     private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
                                                      final Set<String> providerIds) {
-        return StreamSupport.stream(ATTR_NAMES.split(names).spliterator(), false)
+        return commaDelimitedListToSet(names).stream()
                 // principal.getAttribute(name).values
                 .map(attributes::get).filter(Objects::nonNull)
                 .map(CollectionUtils::toCollection).flatMap(Set::stream)
