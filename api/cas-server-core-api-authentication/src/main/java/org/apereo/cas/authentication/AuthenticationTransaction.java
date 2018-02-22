@@ -2,6 +2,7 @@ package org.apereo.cas.authentication;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
@@ -23,6 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Getter
 @AllArgsConstructor
+@ToString
 public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;

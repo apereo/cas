@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPolicy;
 import org.apereo.cas.authentication.ContextualAuthenticationPolicyFactory;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
@@ -17,6 +18,7 @@ import org.apereo.cas.authentication.policy.UniquePrincipalAuthenticationPolicy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.authentication.AuthenticationPolicyProperties;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,10 +28,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ResourceLoader;
 import org.springframework.web.client.RestTemplate;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 /**
  * This is {@link CasCoreAuthenticationPolicyConfiguration}.
@@ -42,6 +40,9 @@ import java.util.List;
 @Slf4j
 public class CasCoreAuthenticationPolicyConfiguration {
 
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private ObjectProvider<TicketRegistry> ticketRegistry;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -56,58 +57,35 @@ public class CasCoreAuthenticationPolicyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name = "authenticationPolicy")
+    @ConditionalOnMissingBean(name = "authenticationPolicyExecutionPlanConfigurer")
     @Bean
-    public Collection<AuthenticationPolicy> authenticationPolicy() {
-        final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
-        final List<AuthenticationPolicy> policies = new ArrayList<>();
+    public AuthenticationEventExecutionPlanConfigurer authenticationPolicyExecutionPlanConfigurer() {
+        return plan -> {
+            final AuthenticationPolicyProperties police = casProperties.getAuthn().getPolicy();
 
-        if (police.getReq().isEnabled()) {
-            LOGGER.debug("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
-            policies.add(new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll()));
-            return policies;
-        }
-
-        if (police.getAll().isEnabled()) {
-            LOGGER.debug("Activating authentication policy [{}]", AllAuthenticationPolicy.class.getSimpleName());
-            policies.add(new AllAuthenticationPolicy());
-            return policies;
-        }
-
-        if (police.getNotPrevented().isEnabled()) {
-            LOGGER.debug("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
-            policies.add(new NotPreventedAuthenticationPolicy());
-            return policies;
-        }
-
-        if (police.getUniquePrincipal().isEnabled()) {
-            /*
-             * This is explicitly retrieved from the application context
-             * in order to avoid circular and leaking dependencies.
-             */
-            LOGGER.debug("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
-            final TicketRegistry ticketRegistry = this.applicationContext.getBean("ticketRegistry", TicketRegistry.class);
-            policies.add(new UniquePrincipalAuthenticationPolicy(ticketRegistry));
-            return policies;
-        }
-
-        if (!police.getGroovy().isEmpty()) {
-            LOGGER.debug("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
-            police.getGroovy().forEach(groovy -> policies.add(new GroovyScriptAuthenticationPolicy(resourceLoader, groovy.getScript())));
-            return policies;
-        }
-
-        if (!police.getRest().isEmpty()) {
-            LOGGER.debug("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
-            police.getRest().forEach(r -> policies.add(new RestfulAuthenticationPolicy(new RestTemplate(), r.getEndpoint())));
-            return policies;
-        }
-
-        if (police.getAny().isEnabled()) {
-            LOGGER.debug("Activating authentication policy [{}]", AnyAuthenticationPolicy.class.getSimpleName());
-            policies.add(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
-        }
-        return policies;
+            if (police.getReq().isEnabled()) {
+                LOGGER.debug("Activating authentication policy [{}]", RequiredHandlerAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(police.getReq().getHandlerName(), police.getReq().isTryAll()));
+            } else if (police.getAll().isEnabled()) {
+                LOGGER.debug("Activating authentication policy [{}]", AllAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new AllAuthenticationPolicy());
+            } else if (police.getNotPrevented().isEnabled()) {
+                LOGGER.debug("Activating authentication policy [{}]", NotPreventedAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(notPreventedAuthenticationPolicy());
+            } else if (police.getUniquePrincipal().isEnabled()) {
+                LOGGER.debug("Activating authentication policy [{}]", UniquePrincipalAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new UniquePrincipalAuthenticationPolicy(ticketRegistry.getIfAvailable()));
+            } else if (!police.getGroovy().isEmpty()) {
+                LOGGER.debug("Activating authentication policy [{}]", GroovyScriptAuthenticationPolicy.class.getSimpleName());
+                police.getGroovy().forEach(groovy -> plan.registerAuthenticationPolicy(new GroovyScriptAuthenticationPolicy(resourceLoader, groovy.getScript())));
+            } else if (!police.getRest().isEmpty()) {
+                LOGGER.debug("Activating authentication policy [{}]", RestfulAuthenticationPolicy.class.getSimpleName());
+                police.getRest().forEach(r -> plan.registerAuthenticationPolicy(new RestfulAuthenticationPolicy(new RestTemplate(), r.getEndpoint())));
+            } else if (police.getAny().isEnabled()) {
+                LOGGER.debug("Activating authentication policy [{}]", AnyAuthenticationPolicy.class.getSimpleName());
+                plan.registerAuthenticationPolicy(new AnyAuthenticationPolicy(police.getAny().isTryAll()));
+            }
+        };
     }
 
     @Bean
