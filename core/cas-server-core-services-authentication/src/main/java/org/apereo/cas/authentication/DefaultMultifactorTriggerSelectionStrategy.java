@@ -37,19 +37,18 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
                                     final HttpServletRequest request, final RegisteredService service,
-                                    final Principal principal) {
-        Optional<String> provider = Optional.empty();
-
+                                    final Authentication authentication) {
         // short-circuit if we don't have any available MFA providers
         if (providers == null || providers.isEmpty()) {
-            return provider;
+            return Optional.empty();
         }
         final Set<String> validProviderIds = providers.stream()
                 .map(MultifactorAuthenticationProvider::getId)
                 .collect(Collectors.toSet());
+        final Principal principal = authentication != null ? authentication.getPrincipal() : null;
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
-        provider = resolveRequestParameterTrigger(request, validProviderIds);
+        Optional<String> provider = resolveRequestParameterTrigger(request, validProviderIds);
 
         // check for a RegisteredService configured trigger
         if (!provider.isPresent()) {
@@ -59,6 +58,11 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         // check for Global principal attribute trigger
         if (!provider.isPresent()) {
             provider = resolvePrincipalAttributeTrigger(principal, validProviderIds);
+        }
+
+        // check for Global authentication attribute trigger
+        if (!provider.isPresent()) {
+            provider = resolveAuthenticationAttributeTrigger(authentication, validProviderIds);
         }
 
         // return the resolved trigger
@@ -112,19 +116,41 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 .findFirst();
     }
 
-    private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
-                                                              final Set<String> providerIds) {
-        final String attrName = mfaProperties.getGlobalPrincipalAttributeNameTriggers();
-        if (principal == null || !StringUtils.hasText(attrName)) {
+    private Optional<String> resolveAuthenticationAttributeTrigger(final Authentication authentication,
+                                                                   final Set<String> providerIds) {
+        if (authentication == null) {
             return Optional.empty();
         }
 
-        final String attrValue = mfaProperties.getGlobalPrincipalAttributeValueRegex();
-        if (providerIds.size() == 1 && hasMatchingAttribute(principal.getAttributes(), attrName, attrValue)) {
+        return resolveAttributeTrigger(authentication.getAttributes(),
+                mfaProperties.getGlobalAuthenticationAttributeNameTriggers(),
+                mfaProperties.getGlobalAuthenticationAttributeValueRegex(),
+                providerIds);
+    }
+
+    private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
+                                                              final Set<String> providerIds) {
+        if (principal == null) {
+            return Optional.empty();
+        }
+
+        return resolveAttributeTrigger(principal.getAttributes(),
+                mfaProperties.getGlobalPrincipalAttributeNameTriggers(),
+                mfaProperties.getGlobalPrincipalAttributeValueRegex(),
+                providerIds);
+    }
+
+    private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
+                                                     final String value, final Set<String> providerIds) {
+        if (!StringUtils.hasText(names)) {
+            return Optional.empty();
+        }
+
+        if (providerIds.size() == 1 && hasMatchingAttribute(attributes, names, value)) {
             return providerIds.stream().findAny();
         }
 
-        return resolveAttributeTrigger(principal.getAttributes(), attrName, providerIds);
+        return resolveAttributeTrigger(attributes, names, providerIds);
     }
 
     private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
