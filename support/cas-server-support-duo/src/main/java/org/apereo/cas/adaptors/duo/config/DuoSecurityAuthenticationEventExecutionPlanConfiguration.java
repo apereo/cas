@@ -5,12 +5,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
+import org.apereo.cas.adaptors.duo.authn.DuoCredential;
+import org.apereo.cas.adaptors.duo.authn.DuoDirectCredential;
 import org.apereo.cas.adaptors.duo.web.flow.action.DetermineDuoUserAccountAction;
 import org.apereo.cas.adaptors.duo.web.flow.action.PrepareDuoWebLoginFormAction;
 import org.apereo.cas.adaptors.duo.web.flow.config.DuoMultifactorWebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.DefaultVariegatedMultifactorAuthenticationProvider;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -131,17 +134,15 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler duoAuthenticationHandler() {
-        final DuoAuthenticationHandler h;
         final List<DuoSecurityMultifactorProperties> duos = casProperties.getAuthn().getMfa().getDuo();
-        if (!duos.isEmpty()) {
-            final String name = duos.get(0).getName();
-            if (duos.size() > 1) {
-                LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
-            }
-            h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
-        } else {
+        if (duos.isEmpty()) {
             throw new BeanCreationException("No configuration/settings could be found for Duo Security. Review settings and ensure the correct syntax is used");
         }
+        final String name = duos.get(0).getName();
+        if (duos.size() > 1) {
+            LOGGER.debug("Multiple Duo Security providers are available; Duo authentication handler is named after [{}]", name);
+        }
+        final DuoAuthenticationHandler h = new DuoAuthenticationHandler(name, servicesManager, duoPrincipalFactory(), duoMultifactorAuthenticationProvider());
         return h;
     }
 
@@ -165,6 +166,7 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             plan.registerAuthenticationHandler(duoAuthenticationHandler());
             plan.registerMetadataPopulator(duoAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(DuoCredential.class, DuoDirectCredential.class));
         };
     }
 }

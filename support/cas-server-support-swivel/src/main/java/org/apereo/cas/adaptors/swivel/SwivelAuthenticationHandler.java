@@ -43,7 +43,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     @Override
     protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
-        final SwivelCredential swivelCredential = (SwivelCredential) credential;
+        final SwivelTokenCredential swivelCredential = (SwivelTokenCredential) credential;
         if (swivelCredential == null || StringUtils.isBlank(swivelCredential.getToken())) {
             throw new IllegalArgumentException("No credential could be found or credential token is blank");
         }
@@ -61,7 +61,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         return sendAuthenticationRequestToSwivel(swivelCredential, uid);
     }
 
-    private AuthenticationHandlerExecutionResult sendAuthenticationRequestToSwivel(final SwivelCredential swivelCredential,
+    private AuthenticationHandlerExecutionResult sendAuthenticationRequestToSwivel(final SwivelTokenCredential swivelCredential,
                                                                                    final String uid) throws FailedLoginException {
         if (StringUtils.isBlank(swivelProperties.getSwivelUrl()) || StringUtils.isBlank(swivelProperties.getSharedSecret())) {
             throw new FailedLoginException("Swivel url/shared secret is not specified and cannot be blank.");
@@ -113,7 +113,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     @Override
     public boolean supports(final Credential credential) {
-        return SwivelCredential.class.isAssignableFrom(credential.getClass());
+        return SwivelTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 
     private static Map<String, String> createErrorCodeMap() {
