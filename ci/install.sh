@@ -1,18 +1,18 @@
 #!/bin/bash
 
 gradle="sudo ./gradlew $@"
-gradleBuild="assemble"
+gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true --parallel "
 
-if [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
+
+if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
+    gradleBuild="$gradleBuild assemble -x test -x javadoc -x check -DskipNpmLint=true "
+elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
-     gradleBuild="$gradleBuild -x test -x check -DskipNpmLint=true "
+     gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     gradleBuild="$gradleBuild test coveralls -x javadoc -x check -DskipNpmLint=true "
-elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
-    echo -e "The build is publishing snapshots; Skipping tests and checks...\n "
-    gradleBuild="$gradleBuild -x test -x check -x javadoc -DskipNpmLint=true "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
