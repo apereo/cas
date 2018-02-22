@@ -7,6 +7,7 @@ import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAuthenticationHandler;
+import org.apereo.cas.adaptors.yubikey.YubiKeyCredential;
 import org.apereo.cas.adaptors.yubikey.YubiKeyMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.yubikey.registry.JsonYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.registry.OpenYubiKeyAccountRegistry;
@@ -16,6 +17,7 @@ import org.apereo.cas.adaptors.yubikey.web.flow.YubiKeyAccountSaveRegistrationAc
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -172,6 +174,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
             if (yubi.getClientId() > 0 && StringUtils.isNotBlank(yubi.getSecretKey())) {
                 plan.registerAuthenticationHandler(yubikeyAuthenticationHandler());
                 plan.registerMetadataPopulator(yubikeyAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(YubiKeyCredential.class));
             }
         };
     }
