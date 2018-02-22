@@ -97,15 +97,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         // check the Principal to see if any of the specified attributes match the attrValue pattern
-        final Predicate<String> attrValuePredicate = Pattern.compile(attrValue).asPredicate();
-        if (commaDelimitedListToSet(attrName).stream()
-                .map(principal.getAttributes()::get)
-                .filter(Objects::nonNull)
-                .map(CollectionUtils::toCollection)
-                .flatMap(Set::stream)
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
-                .anyMatch(attrValuePredicate)) {
+        if (hasMatchingAttribute(principal.getAttributes(), attrName, attrValue)) {
             return resolveRegisteredServicePolicyTrigger(policy, providerIds);
         }
 
@@ -139,5 +131,24 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
                 // validProviderIds.contains((String) value)
                 .filter(String.class::isInstance).map(String.class::cast).filter(providerIds::contains)
                 .findFirst();
+    }
+
+    private boolean hasMatchingAttribute(final Map<String, Object> attributes, final String names, final String value) {
+        // if there isn't any attribute names or an attribute value to match, return that there isn't a matching
+        // attribute
+        if (!StringUtils.hasText(names) || !StringUtils.hasText(value)) {
+            return false;
+        }
+
+        // check to see if any of the specified attributes match the value pattern
+        final Predicate<String> valuePredicate = Pattern.compile(value).asPredicate();
+        return commaDelimitedListToSet(names).stream()
+                .map(attributes::get)
+                .filter(Objects::nonNull)
+                .map(CollectionUtils::toCollection)
+                .flatMap(Set::stream)
+                .filter(String.class::isInstance)
+                .map(String.class::cast)
+                .anyMatch(valuePredicate);
     }
 }
