@@ -7,10 +7,12 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorAuthenticationRequestBuilder;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.azure.AzureAuthenticatorTokenCredential;
 import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorGenerateTokenAction;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -131,6 +133,7 @@ public class AzureAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getAzure().getConfigDir())) {
                 plan.registerAuthenticationHandler(azureAuthenticatorAuthenticationHandler());
                 plan.registerMetadataPopulator(azureAuthenticatorAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(AzureAuthenticatorTokenCredential.class));
             }
         };
     }
