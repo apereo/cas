@@ -7,7 +7,7 @@ gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true --parallel "
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
-    gradleBuild="$gradleBuild build -x test -x jar -x javadoc -x check -DskipNpmLint=true "
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
@@ -24,15 +24,15 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         echo -e "*************************************************************"
     fi
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
-     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x jar -x test -x javadoc \
+     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true"
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
-     gradleBuild="$gradleBuild javadoc -x jar -x test -x check -DskipNpmLint=true \
+     gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    gradleBuild="$gradleBuild test coveralls -x jar -x javadoc -x check  \
+    gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 fi
