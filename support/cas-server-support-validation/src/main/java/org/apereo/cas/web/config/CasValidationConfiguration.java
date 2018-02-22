@@ -170,7 +170,8 @@ public class CasValidationConfiguration {
             authenticationContextAttribute,
             isReleaseProtocolAttributes,
             authenticationAttributeReleasePolicy,
-            selectionStrategies);
+            selectionStrategies,
+            cas3ProtocolAttributesRenderer());
     }
 
     @Bean
