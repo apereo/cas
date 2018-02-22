@@ -8,11 +8,17 @@ gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNeste
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     gradleBuild="$gradleBuild assemble -x test -x javadoc -x check -DskipNpmLint=true "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
-     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc "
+     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
+     -DskipGradleLint=true -DskipSass=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true"
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
-     gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true "
+     gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
+     -DskipGradleLint=true -DskipSass=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    gradleBuild="$gradleBuild test coveralls -x javadoc -x check -DskipNpmLint=true "
+    gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
