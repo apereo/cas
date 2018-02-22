@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
+if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
     echo "Pulling Couchbase docker image..."
