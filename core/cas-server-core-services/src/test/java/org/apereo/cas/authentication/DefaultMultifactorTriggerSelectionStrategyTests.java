@@ -1,6 +1,7 @@
 package org.apereo.cas.authentication;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultRegisteredServiceMultifactorPolicy;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegexRegisteredService;
@@ -34,7 +35,7 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final Set<MultifactorAuthenticationProvider> VALID_PROVIDERS = Stream.of(MFA_PROVIDER_1, MFA_PROVIDER_2).collect(Collectors.toSet());
     private static final Set<MultifactorAuthenticationProvider> NO_PROVIDERS = new HashSet<>(0);
 
-    private static final String REQUEST_PARAM = "authn_method";
+    private static final String REQUEST_PARAM = "authn_method_test";
 
     private static final String RS_ATTR_1 = "rs_attr1";
     private static final String RS_ATTR_2 = "rs_attr2";
@@ -49,11 +50,15 @@ public class DefaultMultifactorTriggerSelectionStrategyTests {
     private static final String VALUE_PATTERN = "^enforce.*$";
     private static final String VALUE_NOMATCH = "noop";
 
+    private MultifactorAuthenticationProperties mfaConfiguration;
     private DefaultMultifactorTriggerSelectionStrategy strategy;
 
     @Before
     public void setUp() {
-        strategy = new DefaultMultifactorTriggerSelectionStrategy(P_ATTRS_12, REQUEST_PARAM);
+        mfaConfiguration = new MultifactorAuthenticationProperties();
+        mfaConfiguration.setRequestParameter(REQUEST_PARAM);
+        mfaConfiguration.setGlobalPrincipalAttributeNameTriggers(P_ATTRS_12);
+        strategy = new DefaultMultifactorTriggerSelectionStrategy(mfaConfiguration);
 
         when(MFA_PROVIDER_1.getId()).thenReturn(MFA_PROVIDER_ID_1);
         when(MFA_PROVIDER_2.getId()).thenReturn(MFA_PROVIDER_ID_2);

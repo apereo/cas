@@ -5,6 +5,7 @@ import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
@@ -31,8 +32,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @AllArgsConstructor
 public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTriggerSelectionStrategy {
-    private final String globalPrincipalAttributeNameTriggers;
-    private final String requestParameter;
+    private final MultifactorAuthenticationProperties mfaProperties;
 
     @Override
     public Optional<String> resolve(final Collection<MultifactorAuthenticationProvider> providers,
@@ -71,7 +71,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     private Optional<String> resolveRequestParameterTrigger(final HttpServletRequest request,
                                                             final Set<String> providerIds) {
         return Optional.ofNullable(request)
-                .map(r -> r.getParameter(requestParameter))
+                .map(r -> r.getParameter(mfaProperties.getRequestParameter()))
                 .filter(providerIds::contains);
     }
 
@@ -114,12 +114,13 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
 
     private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
                                                               final Set<String> providerIds) {
-        if (principal != null && StringUtils.hasText(globalPrincipalAttributeNameTriggers)) {
-            return resolveAttributeTrigger(principal.getAttributes(), globalPrincipalAttributeNameTriggers,
-                    providerIds);
-        } else {
+        final String attrName = mfaProperties.getGlobalPrincipalAttributeNameTriggers();
+
+        if (principal == null || !StringUtils.hasText(attrName)) {
             return Optional.empty();
         }
+
+        return resolveAttributeTrigger(principal.getAttributes(), attrName, providerIds);
     }
 
     private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,

@@ -13,6 +13,7 @@ import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -82,7 +83,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             getCentralAuthenticationService(),
             getProxyHandler(),
             getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy("", ""),
+            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas3SuccessView,
             cas3ServiceFailureView, "authenticationContext",
