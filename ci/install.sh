@@ -1,53 +1,76 @@
 #!/bin/bash
 
-if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
-    echo -e "Skipping build since this is a pull request and we are not publishing snapshots.\n"
-    exit 0
-fi
+branchName="master"
 
 gradle="sudo ./gradlew $@"
-gradleBuild="assemble"
+gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true --parallel "
 
-if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
-    echo -e "The build will aggregate javadocs from all modules into one JAR file.\n"
-    gradleBuild="$gradleBuild checkstyleMain"
-    
-    if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip tests]"* ]]; then
-        echo -e "The build commit message indicates that tests should be skipped.\n"
-        gradleBuild="$gradleBuild -x test"
-    else
-        echo -e "The build indicates that tests along with coveralls test coverage should run.\n"
-        gradleBuild="$gradleBuild checkstyleTest test coveralls"
-        if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
-            gradleBuild="$gradleBuild -DshowStandardStreams=true"
+if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true "
+elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
+    if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
+        if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
+            echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+            gradleBuild=""
+        else
+            echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
+            gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check -DskipNpmLint=true \
+                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
         fi
+    else
+        echo -e "*************************************************************"
+        echo -e "Publishing snapshots to Sonatype will be skipped. The changeset is either a pull request, or not targeted at branch $branchName.\n"
+        echo -e "*************************************************************"
     fi
-else
-    echo -e "The build is publishing snapshots; Skipping tests and checks...\n"
-    gradleBuild="$gradleBuild -x test -x check -x javadoc  "
+elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
+     gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
+     -DskipGradleLint=true -DskipSass=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true"
+elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
+     gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
+     -DskipGradleLint=true -DskipSass=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
+    gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ]; then
+    gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 fi
 
-tasks="$gradle $gradleBuildOptions $gradleBuild"
-echo $tasks
-
-waitRetVal=-1
-if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
-    waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
-    eval $waitloop
-    waitRetVal=$?
+if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
+    gradleBuild="$gradleBuild -DshowStandardStreams=true"
 fi
 
-eval $tasks
-retVal=$?
-
-echo -e "******************************************************************"
-echo -e "Gradle build finished at `date` with exit code $retVal"
-echo -e "******************************************************************"
-
-if [ $retVal == 0 ]; then
-    echo "Gradle build finished successfully."
+if [ -z "$gradleBuild" ]; then
+    echo "Gradle build will be ignored since no commands are specified to run."
 else
-    echo "Gradle build did NOT finish successfully."
-    exit $retVal
+    tasks="$gradle $gradleBuildOptions $gradleBuild"
+     echo -e "******************************************************************"
+    echo $tasks
+     echo -e "******************************************************************"
+
+    waitRetVal=-1
+    if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
+        waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
+        eval $waitloop
+        waitRetVal=$?
+    fi
+
+    eval $tasks
+    retVal=$?
+
+    echo -e "******************************************************************"
+    echo -e "Gradle build finished at `date` with exit code $retVal"
+    echo -e "******************************************************************"
+
+    if [ $retVal == 0 ]; then
+        echo "Gradle build finished successfully."
+    else
+        echo "Gradle build did NOT finish successfully."
+        exit $retVal
+    fi
 fi
