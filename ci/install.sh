@@ -53,13 +53,10 @@ else
     echo $tasks
      echo -e "******************************************************************"
 
-    waitRetVal=-1
-    if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-        waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
-        eval $waitloop
-        waitRetVal=$?
-    fi
-
+    waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
+    eval $waitloop
+    waitRetVal=$?
+    
     eval $tasks
     retVal=$?
 
