@@ -13,7 +13,7 @@ bootRun {
 }
 
 war {
-    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease
 }
 
 springBoot  {
