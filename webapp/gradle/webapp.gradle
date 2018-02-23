@@ -110,7 +110,7 @@ war {
                 "Implementation-Version": project.version)
     }
     from "${project.buildDir}/generated-src/main/resources", { into "WEB-INF/classes" }
-    enabled = !rootProject.publishingRelease && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease
 }
 
 dependencies {
