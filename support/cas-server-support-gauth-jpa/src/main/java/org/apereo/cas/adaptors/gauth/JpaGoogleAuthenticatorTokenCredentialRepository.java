@@ -5,6 +5,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.SneakyThrows;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
@@ -27,13 +28,14 @@ import java.util.List;
 @Slf4j
 @ToString
 public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
-
     private final IGoogleAuthenticator googleAuthenticator;
 
     @PersistenceContext(unitName = "googleAuthenticatorEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator) {
+    public JpaGoogleAuthenticatorTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher,
+                                                           final IGoogleAuthenticator googleAuthenticator) {
+        super(tokenCredentialCipher);
         this.googleAuthenticator = googleAuthenticator;
     }
 
@@ -42,8 +44,10 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
         try {
             final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM "
                     + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username",
-                GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
-            return r;
+                GoogleAuthenticatorAccount.class)
+                .setParameter("username", username)
+                .getSingleResult();
+            return decode(r);
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
         }
@@ -70,9 +74,9 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
             ac.setValidationCode(account.getValidationCode());
             ac.setScratchCodes(account.getScratchCodes());
             ac.setSecretKey(account.getSecretKey());
-            this.entityManager.merge(ac);
+            this.entityManager.merge(encode(ac));
         } else {
-            this.entityManager.merge(account);
+            this.entityManager.merge(encode(account));
         }
 
     }

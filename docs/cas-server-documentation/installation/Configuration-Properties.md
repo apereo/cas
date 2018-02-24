@@ -2020,10 +2020,11 @@ This section controls how that process should behave.
 To learn more about this topic, [please review this guide](GoogleAuthenticator-Authentication.html).
 
 ```properties
-# cas.authn.mfa.gauth.windowSize=3
 # cas.authn.mfa.gauth.issuer=
-# cas.authn.mfa.gauth.codeDigits=6
 # cas.authn.mfa.gauth.label=
+
+# cas.authn.mfa.gauth.windowSize=3
+# cas.authn.mfa.gauth.codeDigits=6
 # cas.authn.mfa.gauth.timeStepSize=30
 # cas.authn.mfa.gauth.rank=0
 # cas.authn.mfa.gauth.trustedDeviceEnabled=false
@@ -2034,7 +2035,14 @@ To learn more about this topic, [please review this guide](GoogleAuthenticator-A
 # cas.authn.mfa.gauth.cleaner.schedule.repeatInterval=60000
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.gauth`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) 
+under the configuration key `cas.authn.mfa.gauth`.
+
+#### Signing & Encryption
+
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`.  Signing & encryption settings for this feature are 
+available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.gauth`.
 
 #### Google Authenticator JSON
 
@@ -2073,7 +2081,7 @@ To learn more about this topic, [please review this guide](YubiKey-Authenticatio
 # cas.authn.mfa.yubikey.name=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.yubikey`.
 
 #### YubiKey JSON Device Store
 
@@ -2108,7 +2116,7 @@ To learn more about this topic, [please review this guide](RADIUS-Authentication
 
 Radius  settings for this feature are available [here](Configuration-Properties-Common.html#radius-configuration) under the configuration key `cas.authn.mfa.radius`.
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.radius`.
 
 ### DuoSecurity
 
@@ -2134,7 +2142,7 @@ import os, hashlib
 print hashlib.sha1(os.urandom(32)).hexdigest()
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.duo[0]`.
 
 ### FIDO U2F
 
@@ -2150,7 +2158,11 @@ To learn more about this topic, [please review this guide](FIDO-U2F-Authenticati
 # cas.authn.mfa.u2f.expireDevicesTimeUnit=DAYS
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`. The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.u2f`.
+Multifactor authentication bypass settings for this provider are 
+available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.u2f`. 
+The signing key and the encryption key [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) 
+under the configuration key `cas.authn.mfa.u2f`.
 
 ### FIDO U2F JSON
 
@@ -2197,7 +2209,7 @@ To learn more about this topic, [please review this guide](SwivelSecure-Authenti
 # cas.authn.mfa.swivel.name=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.swivel`.
 
 ### Microsoft Azure
 
@@ -2213,7 +2225,7 @@ To learn more about this topic, [please review this guide](MicrosoftAzure-Authen
 # cas.authn.mfa.azure.allowInternationalCalls=false
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.azure`.
 
 ### Authy
 
@@ -2230,7 +2242,7 @@ To learn more about this topic, [please review this guide](AuthyAuthenticator-Au
 # cas.authn.mfa.authy.name=
 ```
 
-Multifacor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
+Multifactor authentication bypass settings for this provider are available [here](Configuration-Properties-Common.html#multifactor-authentication-bypass) under the configuration key `cas.authn.mfa.authy`.
 
 ## SAML Core
 
@@ -2663,7 +2675,9 @@ Created by CAS if and when users are to be warned when accessing CAS protected s
 
 ### Signing & Encryption
 
-The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.tgc`.
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`. 
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. 
+Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.tgc`.
 
 ## Logout
 
