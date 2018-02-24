@@ -1,22 +1,23 @@
 package org.apereo.cas.impl.mock;
 
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
-import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
-import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
+import org.apereo.cas.support.events.dao.CasEvent;
+import org.apereo.cas.support.events.ticket.CasTicketGrantingTicketCreatedEvent;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.serialization.TicketIdSanitizationUtils;
+
+import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.IntStream;
-import lombok.NoArgsConstructor;
 
 /**
  * This is {@link MockTicketGrantingTicketCreatedEventProducer}.
@@ -76,8 +77,7 @@ public class MockTicketGrantingTicketCreatedEventProducer {
         final CasEvent dto = new CasEvent();
         dto.setType(CasTicketGrantingTicketCreatedEvent.class.getName());
         dto.putTimestamp(new Date().getTime());
-        final int days = ThreadLocalRandom.current().nextInt(0, 30);
-        dto.setCreationTime(ZonedDateTime.now().minusDays(days).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
+        dto.setCreationTime(ZonedDateTime.now(ZoneOffset.UTC).minusDays(5).toString());
         dto.putId(TicketIdSanitizationUtils.sanitize("TGT-" + i + "-" + RandomStringUtils.randomAlphanumeric(16)));
         dto.setPrincipalId("casuser");
         dto.putClientIpAddress(getMockClientIpAddress());
