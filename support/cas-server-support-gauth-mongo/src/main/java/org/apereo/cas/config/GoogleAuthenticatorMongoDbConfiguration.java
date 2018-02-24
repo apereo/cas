@@ -2,7 +2,7 @@ package org.apereo.cas.config;
 
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenCredentialRepository;
+import org.apereo.cas.adaptors.gauth.MongoDbGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMongoDbTokenRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
@@ -57,7 +57,7 @@ public class GoogleAuthenticatorMongoDbConfiguration {
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry(@Qualifier("googleAuthenticatorInstance") 
                                                                                final IGoogleAuthenticator googleAuthenticatorInstance) {
         final GAuthMultifactorProperties.MongoDb mongo = casProperties.getAuthn().getMfa().getGauth().getMongo();
-        return new GoogleAuthenticatorMongoDbTokenCredentialRepository(
+        return new MongoDbGoogleAuthenticatorTokenCredentialRepository(
                 googleAuthenticatorInstance,
                 mongoDbGoogleAuthenticatorTemplate(),
                 mongo.getCollection()

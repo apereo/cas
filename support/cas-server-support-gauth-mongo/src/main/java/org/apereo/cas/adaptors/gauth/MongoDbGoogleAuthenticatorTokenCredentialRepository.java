@@ -15,7 +15,7 @@ import java.util.List;
 import lombok.ToString;
 
 /**
- * This is {@link GoogleAuthenticatorMongoDbTokenCredentialRepository}.
+ * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepository}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -23,7 +23,7 @@ import lombok.ToString;
 @Slf4j
 @ToString
 @AllArgsConstructor
-public class GoogleAuthenticatorMongoDbTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
+public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final IGoogleAuthenticator googleAuthenticator;
     private final MongoOperations mongoTemplate;
