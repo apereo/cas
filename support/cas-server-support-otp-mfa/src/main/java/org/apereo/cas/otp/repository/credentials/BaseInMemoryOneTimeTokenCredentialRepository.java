@@ -1,6 +1,7 @@
 package org.apereo.cas.otp.repository.credentials;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CipherExecutor;
 
 import java.util.List;
 import java.util.Map;
@@ -17,17 +18,15 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
 
     private final Map<String, OneTimeTokenAccount> accounts;
 
-    /**
-     * Instantiates a new In memory google authenticator account registry.
-     */
-    public BaseInMemoryOneTimeTokenCredentialRepository() {
+    public BaseInMemoryOneTimeTokenCredentialRepository(final CipherExecutor<String, String> tokenCredentialCipher) {
+        super(tokenCredentialCipher);
         this.accounts = new ConcurrentHashMap<>();
     }
 
     @Override
     public OneTimeTokenAccount get(final String userName) {
         if (contains(userName)) {
-            return this.accounts.get(userName);
+            return decode(this.accounts.get(userName));
         }
         return null;
     }
@@ -42,7 +41,7 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
 
     @Override
     public void update(final OneTimeTokenAccount account) {
-        this.accounts.put(account.getUsername(), account);
+        this.accounts.put(account.getUsername(), encode(account));
     }
 
     private boolean contains(final String username) {

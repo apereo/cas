@@ -6,6 +6,7 @@ import com.warrenstrange.googleauth.IGoogleAuthenticator;
 import com.warrenstrange.googleauth.KeyRepresentation;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
@@ -20,7 +21,9 @@ import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMeta
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
+import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccountCipherExecutor;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepository;
 import org.apereo.cas.otp.repository.token.OneTimeTokenRepositoryCleaner;
@@ -28,6 +31,7 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -71,7 +75,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Bean
     public IGoogleAuthenticator googleAuthenticatorInstance() {
         final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
@@ -89,7 +93,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationHandler googleAuthenticatorAuthenticationHandler() {
         return new GoogleAuthenticatorAuthenticationHandler(casProperties.getAuthn().getMfa().getGauth().getName(), servicesManager, googlePrincipalFactory(),
-                googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
+            googleAuthenticatorInstance(), oneTimeTokenAuthenticatorTokenRepository, googleAuthenticatorAccountRegistry);
     }
 
     @Bean
@@ -114,9 +118,9 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     public AuthenticationMetaDataPopulator googleAuthenticatorAuthenticationMetaDataPopulator() {
         return new AuthenticationContextAttributeMetaDataPopulator(
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                googleAuthenticatorAuthenticationHandler(),
-                googleAuthenticatorAuthenticationProvider()
+            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            googleAuthenticatorAuthenticationHandler(),
+            googleAuthenticatorAuthenticationProvider()
         );
     }
 
@@ -125,15 +129,15 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public Action googleAccountRegistrationAction() {
         final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         return new OneTimeTokenAccountCheckRegistrationAction(googleAuthenticatorAccountRegistry,
-                gauth.getLabel(),
-                gauth.getIssuer());
+            gauth.getLabel(),
+            gauth.getIssuer());
     }
 
     @ConditionalOnProperty(prefix = "cas.authn.mfa.gauth.cleaner", name = "enabled", havingValue = "true", matchIfMissing = true)
     @Bean
     @Autowired
     public OneTimeTokenRepositoryCleaner googleAuthenticatorTokenRepositoryCleaner(@Qualifier("oneTimeTokenAuthenticatorTokenRepository")
-                                                                                   final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
+                                                                                       final OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository) {
         return new GoogleAuthenticatorOneTimeTokenRepositoryCleaner(oneTimeTokenAuthenticatorTokenRepository);
     }
 
@@ -143,13 +147,31 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
     public OneTimeTokenCredentialRepository googleAuthenticatorAccountRegistry() {
         final GAuthMultifactorProperties gauth = casProperties.getAuthn().getMfa().getGauth();
         if (gauth.getJson().getLocation() != null) {
-            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance());
+            return new JsonGoogleAuthenticatorTokenCredentialRepository(gauth.getJson().getLocation(), googleAuthenticatorInstance(),
+                googleAuthenticatorAccountCipherExecutor());
         }
         if (StringUtils.isNotBlank(gauth.getRest().getEndpointUrl())) {
             return new RestGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance(),
-                    new RestTemplate(), gauth);
+                new RestTemplate(), gauth, googleAuthenticatorAccountCipherExecutor());
         }
-        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorInstance());
+        return new InMemoryGoogleAuthenticatorTokenCredentialRepository(googleAuthenticatorAccountCipherExecutor(), googleAuthenticatorInstance());
+    }
+
+    @ConditionalOnMissingBean(name = "googleAuthenticatorAccountCipherExecutor")
+    @Bean
+    @RefreshScope
+    public CipherExecutor googleAuthenticatorAccountCipherExecutor() {
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getGauth().getCrypto();
+        if (crypto.isEnabled()) {
+            return new OneTimeTokenAccountCipherExecutor(
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg(),
+                "Google Authenticator Token Account");
+        }
+        LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
+            + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
+        return NoOpCipherExecutor.getInstance();
     }
 
     @Bean
@@ -184,7 +206,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
 
         @Scheduled(initialDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.startDelay:PT30S}",
-                fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeatInterval:PT35S}")
+            fixedDelayString = "${cas.authn.mfa.gauth.cleaner.schedule.repeatInterval:PT35S}")
         @Override
         public void clean() {
             super.clean();
