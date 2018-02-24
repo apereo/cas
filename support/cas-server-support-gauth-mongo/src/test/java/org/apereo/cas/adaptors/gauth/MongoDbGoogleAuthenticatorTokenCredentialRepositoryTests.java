@@ -24,6 +24,7 @@ import org.apereo.cas.config.support.authentication.GoogleAuthenticatorAuthentic
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenCredentialRepository;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,12 +43,11 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import javax.annotation.PostConstruct;
-import java.util.Arrays;
 
 import static org.junit.Assert.*;
 
 /**
- * This is {@link GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests}.
+ * This is {@link MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
@@ -55,7 +55,7 @@ import static org.junit.Assert.*;
 @RunWith(SpringRunner.class)
 @SpringBootTest(
         classes = {
-                GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests.MongoTestConfiguration.class,
+                MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests.MongoTestConfiguration.class,
                 GoogleAuthenticatorMongoDbConfiguration.class,
                 CasCoreTicketsConfiguration.class,
                 CasCoreTicketCatalogConfiguration.class,
@@ -84,7 +84,7 @@ import static org.junit.Assert.*;
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
 @Slf4j
-public class GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests {
+public class MongoDbGoogleAuthenticatorTokenCredentialRepositoryTests {
 
     @Autowired
     @Qualifier("googleAuthenticatorAccountRegistry")
@@ -92,11 +92,25 @@ public class GoogleAuthenticatorMongoDbTokenCredentialRepositoryTests {
 
     @Test
     public void verifySave() {
-        registry.save("uid", "secret", 143211, Arrays.asList(1, 2, 3, 4, 5, 6));
+        registry.save("uid", "secret", 143211, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
         final OneTimeTokenAccount s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
     }
 
+    @Test
+    public void verifySaveAndUpdate() {
+        registry.save("casuser", "secret", 222222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
+        OneTimeTokenAccount s = registry.get("casuser");
+        assertNotNull(s.getRegistrationDate());
+        assertEquals(222222, s.getValidationCode());
+        s.setSecretKey("newSecret");
+        s.setValidationCode(999666);
+        registry.update(s);
+        s = registry.get("casuser");
+        assertEquals(999666, s.getValidationCode());
+        assertEquals("newSecret", s.getSecretKey());
+    }
+    
     @TestConfiguration
     public static class MongoTestConfiguration {
         @Autowired
