@@ -20,14 +20,19 @@ import java.util.List;
 @Slf4j
 public class GoogleAuthenticatorRestHttpRequestCredentialFactory implements RestHttpRequestCredentialFactory {
 
-
+    /**
+     * Parameter name expected in the request body to contain the GAuth token
+     * based on which credential will be created.
+     */
+    public static final String PARAMETER_NAME_GAUTH_OTP = "gauthotp";
+    
     @Override
     public List<Credential> fromRequestBody(final MultiValueMap<String, String> requestBody) {
-        final String gauthotp = requestBody.getFirst("gauthotp");
-        LOGGER.debug("Google authenticator token in the request body: [{}]", gauthotp);
-        if (StringUtils.isBlank(gauthotp)) {
+        final String token = requestBody.getFirst(PARAMETER_NAME_GAUTH_OTP);
+        LOGGER.debug("Google authenticator token in the request body: [{}]", token);
+        if (StringUtils.isBlank(token)) {
             return new ArrayList<>(0);
         }
-        return CollectionUtils.wrap(new GoogleAuthenticatorTokenCredential(gauthotp));
+        return CollectionUtils.wrap(new GoogleAuthenticatorTokenCredential(token));
     }
 }
