@@ -37,6 +37,7 @@ public interface OneTimeTokenCredentialRepository {
 
     /**
      * Update an existing account.
+     *
      * @param account the registration record
      */
     void update(OneTimeTokenAccount account);

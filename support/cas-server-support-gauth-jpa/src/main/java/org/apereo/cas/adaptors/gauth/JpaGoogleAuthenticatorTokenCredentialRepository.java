@@ -2,17 +2,19 @@ package org.apereo.cas.adaptors.gauth;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
+import lombok.SneakyThrows;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.gauth.repository.credentials.GoogleAuthenticatorAccount;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.List;
-import lombok.ToString;
 
 /**
  * This is {@link JpaGoogleAuthenticatorTokenCredentialRepository} that stores gauth data into a RDBMS database.
@@ -39,7 +41,7 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     public OneTimeTokenAccount get(final String username) {
         try {
             final GoogleAuthenticatorAccount r = this.entityManager.createQuery("SELECT r FROM "
-                + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username",
+                    + GoogleAuthenticatorAccount.class.getSimpleName() + " r where r.username = :username",
                 GoogleAuthenticatorAccount.class).setParameter("username", username).getSingleResult();
             return r;
         } catch (final NoResultException e) {
@@ -61,7 +63,17 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
     }
 
     @Override
+    @SneakyThrows
     public void update(final OneTimeTokenAccount account) {
-        this.entityManager.merge(account);
+        final OneTimeTokenAccount ac = get(account.getUsername());
+        if (ac != null) {
+            ac.setValidationCode(account.getValidationCode());
+            ac.setScratchCodes(account.getScratchCodes());
+            ac.setSecretKey(account.getSecretKey());
+            this.entityManager.merge(ac);
+        } else {
+            this.entityManager.merge(account);
+        }
+
     }
 }
