@@ -130,22 +130,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
 
     @Getter
     @Setter
-    public static class Jpa implements Serializable {
-
+    public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -2689797889546802618L;
-
-        /**
-         * Database instance where tokens are kept to prevent replay attacks.
-         */
-        private Database database = new Database();
-
-        public static class Database extends AbstractJpaProperties {
-
-            private static final long serialVersionUID = -7446381055350251885L;
-
-            public Database() {
-                super.setUrl("jdbc:hsqldb:mem:cas-gauth");
-            }
-        }
     }
 }
