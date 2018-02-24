@@ -56,7 +56,7 @@ public class GoogleAuthenticatorJpaConfiguration {
     
     @Bean
     public DataSource dataSourceGoogleAuthenticator() {
-        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
+        return JpaBeans.newDataSource(casProperties.getAuthn().getMfa().getGauth().getJpa());
     }
 
     @Bean
@@ -75,7 +75,7 @@ public class GoogleAuthenticatorJpaConfiguration {
                                 "jpaGoogleAuthenticatorContext",
                                 jpaPackagesToScanGoogleAuthenticator(),
                                 dataSourceGoogleAuthenticator()),
-                        casProperties.getAuthn().getMfa().getGauth().getJpa().getDatabase());
+                        casProperties.getAuthn().getMfa().getGauth().getJpa());
 
         return bean;
     }
