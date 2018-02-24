@@ -58,7 +58,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Column(nullable = false)
     private List<Integer> scratchCodes = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     public OneTimeTokenAccount() {
