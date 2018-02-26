@@ -12,7 +12,6 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
 import org.apereo.cas.services.InMemoryServiceRegistry;
@@ -65,12 +64,7 @@ public class CasCoreServicesConfiguration {
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-
-        final MultifactorAuthenticationProperties mfa = casProperties.getAuthn().getMfa();
-        final String attributeNameTriggers = mfa.getGlobalPrincipalAttributeNameTriggers();
-        final String requestParameter = mfa.getRequestParameter();
-
-        return new DefaultMultifactorTriggerSelectionStrategy(attributeNameTriggers, requestParameter);
+        return new DefaultMultifactorTriggerSelectionStrategy(casProperties.getAuthn().getMfa());
     }
 
     @RefreshScope

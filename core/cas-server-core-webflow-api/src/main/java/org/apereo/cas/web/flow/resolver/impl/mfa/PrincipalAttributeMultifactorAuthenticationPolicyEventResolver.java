@@ -109,8 +109,7 @@ public class PrincipalAttributeMultifactorAuthenticationPolicyEventResolver exte
                                                                 final Collection<MultifactorAuthenticationProvider> providers) {
         return resolveEventViaPrincipalAttribute(principal, attributeNames, service, context, providers,
             input -> providers.stream()
-                    .filter(provider -> input != null && provider.matches(input))
-                    .count() > 0);
+                    .anyMatch(provider -> input != null && provider.matches(input)));
     }
 
     /**
