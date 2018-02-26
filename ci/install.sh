@@ -7,7 +7,7 @@ gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true "
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
-    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel "
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel -DenableIncremental=true "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
@@ -15,8 +15,10 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
             gradleBuild=""
         else
             echo -e "The build will deploy snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
-            gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check -DskipNpmLint=true \
-                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} -DsonatypePassword=${SONATYPE_PWD}"
+            gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
+                -DenableIncremental=true -DskipNpmLint=true 
+                -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
+                -DsonatypePassword=${SONATYPE_PWD}"
         fi
     else
         echo -e "*************************************************************"
@@ -33,8 +35,8 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
