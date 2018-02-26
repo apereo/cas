@@ -108,13 +108,14 @@ public class JpaGoogleAuthenticatorTokenCredentialRepositoryTests {
         final OneTimeTokenAccount s = registry.get("uid");
         assertEquals("secret", s.getSecretKey());
     }
-
+    
     @Test
     public void verifySaveAndUpdate() {
         registry.save("casuser", "secret", 111222, CollectionUtils.wrapList(1, 2, 3, 4, 5, 6));
         OneTimeTokenAccount s = registry.get("casuser");
         assertNotNull(s.getRegistrationDate());
         assertEquals(111222, s.getValidationCode());
+        assertEquals("secret", s.getSecretKey());
         s.setSecretKey("newSecret");
         s.setValidationCode(999666);
         registry.update(s);
