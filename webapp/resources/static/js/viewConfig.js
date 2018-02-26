@@ -52,6 +52,7 @@
 
     var createDataTable = function () {
         $('#viewConfigsTable').DataTable({
+            'autoWidth': false,
             'initComplete': function (settings, json) {
                 if (!json) {
                     $('#loadingMessage').hide();

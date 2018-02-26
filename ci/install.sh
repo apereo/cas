@@ -4,10 +4,10 @@ branchName="master"
 
 gradle="sudo ./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true --parallel "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true "
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
-    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true "
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
@@ -26,19 +26,19 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true"
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
      -DskipGradleLint=true -DskipSass=true \
-     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 fi
 
 if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[show streams]"* ]]; then
@@ -53,13 +53,10 @@ else
     echo $tasks
      echo -e "******************************************************************"
 
-    waitRetVal=-1
-    if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-        waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
-        eval $waitloop
-        waitRetVal=$?
-    fi
-
+    waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
+    eval $waitloop
+    waitRetVal=$?
+    
     eval $tasks
     retVal=$?
 
