@@ -140,6 +140,41 @@ public class OAuth20ProfileControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    public void verifyOKWithExpiredTicketGrantingTicket() throws Exception {
+        final Map<String, Object> map = new HashMap<>();
+        map.put(NAME, VALUE);
+        final List<String> list = Arrays.asList(VALUE, VALUE);
+        map.put(NAME2, list);
+
+        final Principal principal = CoreAuthenticationTestUtils.getPrincipal(ID, map);
+        final Authentication authentication = getAuthentication(principal);
+        final AccessToken accessToken = accessTokenFactory.create(CoreAuthenticationTestUtils.getService(), authentication,
+                new MockTicketGrantingTicket("casuser"), new ArrayList<>());
+        accessToken.getTicketGrantingTicket().markTicketExpired();
+        this.ticketRegistry.addTicket(accessToken);
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(GET, CONTEXT + OAuth20Constants.PROFILE_URL);
+        mockRequest.setParameter(OAuth20Constants.ACCESS_TOKEN, accessToken.getId());
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+
+        final ResponseEntity<String> entity = oAuth20ProfileController.handleRequest(mockRequest, mockResponse);
+        assertEquals(HttpStatus.OK, entity.getStatusCode());
+        assertEquals(CONTENT_TYPE, mockResponse.getContentType());
+
+        final String expected = "{\"id\":\"" + ID + "\",\"attributes\":[{\"" + NAME + "\":\"" + VALUE + "\"},{\"" + NAME2
+                + "\":[\"" + VALUE + "\",\"" + VALUE + "\"]}]}";
+        final JsonNode expectedObj = MAPPER.readTree(expected);
+        final JsonNode receivedObj = MAPPER.readTree(entity.getBody());
+        assertEquals(expectedObj.get("id").asText(), receivedObj.get("id").asText());
+
+        final JsonNode expectedAttributes = expectedObj.get(ATTRIBUTES_PARAM);
+        final JsonNode receivedAttributes = receivedObj.get(ATTRIBUTES_PARAM);
+
+        assertEquals(expectedAttributes.findValue(NAME).asText(), receivedAttributes.findValue(NAME).asText());
+        assertEquals(expectedAttributes.findValues(NAME2), receivedAttributes.findValues(NAME2));
+    }
+
+    @Test
     public void verifyOKWithAuthorizationHeader() throws Exception {
         final Map<String, Object> map = new HashMap<>();
         map.put(NAME, VALUE);
