@@ -3,35 +3,30 @@ package org.apereo.cas.authentication;
 import com.codahale.metrics.annotation.Counted;
 import com.codahale.metrics.annotation.Metered;
 import com.codahale.metrics.annotation.Timed;
+import lombok.Getter;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.exceptions.UnresolvedPrincipalException;
-import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.principal.NullPrincipal;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPolicyFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationPrincipalResolvedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionFailureEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionStartedEvent;
 import org.apereo.cas.support.events.authentication.CasAuthenticationTransactionSuccessfulEvent;
-import org.apereo.cas.util.CollectionUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.core.OrderComparator;
 
 import java.lang.reflect.UndeclaredThrowableException;
 import java.security.GeneralSecurityException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -43,97 +38,15 @@ import java.util.stream.Collectors;
  * @since 5.0.0
  */
 @Slf4j
+@RequiredArgsConstructor
+@Getter
 public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
+    private final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
 
-    /**
-     * Plan to execute the authentication transaction.
-     */
-    protected final AuthenticationEventExecutionPlan authenticationEventExecutionPlan;
+    private final boolean principalResolutionFailureFatal;
 
-    /**
-     * The Authentication handler resolver.
-     */
-    protected final AuthenticationHandlerResolver authenticationHandlerResolver;
-
-    /**
-     * Indicate if principal resolution should totally fail
-     * and no fall back onto principal that is produced by the
-     * authentication handler.
-     */
-    protected boolean principalResolutionFailureFatal;
-
-    /**
-     * Authentication security policy.
-     */
-    protected Collection<AuthenticationPolicy> authenticationPolicies;
-
-    @Autowired
-    private ApplicationEventPublisher eventPublisher;
-
-    /**
-     * Creates a new authentication manager with a map of authentication handlers to the principal resolvers that
-     * should be used upon successful authentication if no principal is resolved by the authentication handler. If
-     * the order of evaluation of authentication handlers is important, a map that preserves insertion order
-     * (e.g. {@link LinkedHashMap}) should be used.
-     *
-     * @param authenticationEventExecutionPlan Describe the execution plan for this manager
-     * @param authenticationHandlerResolver    the authentication handler resolver
-     * @param authenticationPolicies           the authentication policies
-     */
-    protected PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-                                               final AuthenticationHandlerResolver authenticationHandlerResolver,
-                                               final Collection<AuthenticationPolicy> authenticationPolicies) {
-        this.authenticationPolicies = authenticationPolicies;
-        this.authenticationEventExecutionPlan = authenticationEventExecutionPlan;
-        this.authenticationHandlerResolver = authenticationHandlerResolver;
-    }
-
-    /**
-     * Instantiates a new Policy based authentication manager.
-     *
-     * @param authenticationEventExecutionPlan the execution plan
-     * @param authenticationHandlerResolver    the authentication handler resolver
-     * @param authenticationPolicies           the authentication policy
-     * @param principalResolutionFatal         the principal resolution fatal
-     */
-    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-                                            final AuthenticationHandlerResolver authenticationHandlerResolver,
-                                            final Collection<AuthenticationPolicy> authenticationPolicies,
-                                            final boolean principalResolutionFatal) {
-        this(authenticationEventExecutionPlan, authenticationHandlerResolver, authenticationPolicies);
-        this.principalResolutionFailureFatal = principalResolutionFatal;
-    }
-
-    /**
-     * Instantiates a new Policy based authentication manager.
-     *
-     * @param authenticationEventExecutionPlan the authentication event execution plan
-     * @param servicesManager                  the services manager
-     * @param authenticationPolicy             the authentication policy
-     */
-    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-                                            final ServicesManager servicesManager,
-                                            final Collection<AuthenticationPolicy> authenticationPolicy) {
-        this(authenticationEventExecutionPlan, new RegisteredServiceAuthenticationHandlerResolver(servicesManager), authenticationPolicy);
-    }
-
-    /**
-     * Instantiates a new Policy based authentication manager.
-     *
-     * @param authenticationEventExecutionPlan the authentication event execution plan
-     * @param servicesManager                  the services manager
-     */
-    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-                                            final ServicesManager servicesManager) {
-        this(authenticationEventExecutionPlan, servicesManager, CollectionUtils.wrap(new AnyAuthenticationPolicy(false)));
-    }
-
-    public PolicyBasedAuthenticationManager(final AuthenticationEventExecutionPlan authenticationEventExecutionPlan,
-                                            final ServicesManager servicesManager,
-                                            final AuthenticationPolicy policy) {
-        this(authenticationEventExecutionPlan, servicesManager, CollectionUtils.wrap(policy));
-    }
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * Populate authentication metadata attributes.
@@ -298,9 +211,32 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * @param transaction the transaction
      * @return the authentication handlers for this transaction
      */
+    @SneakyThrows
     protected Set<AuthenticationHandler> getAuthenticationHandlersForThisTransaction(final AuthenticationTransaction transaction) {
-        final Set<AuthenticationHandler> handlers = this.authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
-        return this.authenticationHandlerResolver.resolve(handlers, transaction);
+        final Set<AuthenticationHandler> handlers = authenticationEventExecutionPlan.getAuthenticationHandlersForTransaction(transaction);
+        LOGGER.debug("Candidate/Registered authentication handlers for this transaction are [{}]", handlers);
+        final Collection<AuthenticationHandlerResolver> handlerResolvers = authenticationEventExecutionPlan.getAuthenticationHandlerResolvers(transaction);
+        LOGGER.debug("Authentication handler resolvers for this transaction are [{}]", handlerResolvers);
+        
+        final Set<AuthenticationHandler> resolvedHandlers = handlerResolvers.stream()
+            .filter(r -> r.supports(handlers, transaction))
+            .map(r -> r.resolve(handlers, transaction))
+            .flatMap(Set::stream)
+            .collect(Collectors.toSet());
+
+        if (resolvedHandlers.isEmpty()) {
+            LOGGER.debug("Authentication handler resolvers produced no candidate authentication handler. Using the default handler resolver instead...");
+            final DefaultAuthenticationHandlerResolver defaultHandlerResolver = new DefaultAuthenticationHandlerResolver();
+            if (defaultHandlerResolver.supports(handlers, transaction)) {
+                resolvedHandlers.addAll(defaultHandlerResolver.resolve(handlers, transaction));
+            }
+        }
+
+        if (resolvedHandlers.isEmpty()) {
+            throw new GeneralSecurityException("No authentication handlers could be resolved to support the authentication transaction");
+        }
+        LOGGER.debug("Resolved and finalized authentication handlers to carry out this authentication transaction are [{}]", handlerResolvers);
+        return resolvedHandlers;
     }
 
     /**
@@ -363,7 +299,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             LOGGER.error("Resolved authentication handlers for this transaction are empty");
             throw new AuthenticationException(builder.getFailures(), builder.getSuccesses());
         }
-        
+
         try {
             final Iterator<Credential> it = credentials.iterator();
             AuthenticationCredentialsLocalBinder.clearInProgressAuthentication();
@@ -382,7 +318,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
                             AuthenticationCredentialsLocalBinder.bindInProgress(builder.build());
 
-                            final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build());
+                            final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build(), transaction);
                             proceedWithNextHandler = !failures.getKey();
                         } catch (final Exception e) {
                             LOGGER.error("Authentication has failed. Credentials may be incorrect or CAS cannot "
@@ -422,7 +358,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         final Authentication authentication = builder.build();
-        final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(authentication);
+        final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(authentication, transaction);
         if (!failures.getKey()) {
             publishEvent(new CasAuthenticationPolicyFailureEvent(this, builder.getFailures(), transaction, authentication));
             failures.getValue().forEach(e -> handleAuthenticationException(e, e.getClass().getSimpleName(), builder));
@@ -434,12 +370,14 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
      * Evaluate authentication policies.
      *
      * @param authentication the authentication
+     * @param transaction    the transaction
      * @return true /false
      */
-    protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication) {
+    protected Pair<Boolean, Set<Throwable>> evaluateAuthenticationPolicies(final Authentication authentication,
+                                                                           final AuthenticationTransaction transaction) {
         final Set<Throwable> failures = new LinkedHashSet<>();
-        final List<AuthenticationPolicy> policies = new ArrayList<>(this.authenticationPolicies);
-        OrderComparator.sort(policies);
+        final Collection<AuthenticationPolicy> policies = authenticationEventExecutionPlan.getAuthenticationPolicies(transaction);
+
         policies
             .stream()
             .forEach(p -> {

@@ -1,7 +1,6 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
@@ -26,9 +25,11 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * This this {@link RadiusConfiguration}.
@@ -41,7 +42,6 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class RadiusConfiguration {
-
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -71,8 +71,17 @@ public class RadiusConfiguration {
         final RadiusClientProperties client = casProperties.getAuthn().getRadius().getClient();
         final RadiusServerProperties server = casProperties.getAuthn().getRadius().getServer();
 
+        final Set<String> ips = getClientIps(client);
+        return getSingleRadiusServer(client, server, ips.iterator().next());
+    }
+
+    public static Set<String> getClientIps(final RadiusClientProperties client) {
+        return StringUtils.commaDelimitedListToSet(StringUtils.trimAllWhitespace(client.getInetAddress()));
+    }
+
+    private JRadiusServerImpl getSingleRadiusServer(final RadiusClientProperties client, final RadiusServerProperties server, final String clientInetAddress) {
         final RadiusClientFactory factory = new RadiusClientFactory(client.getAccountingPort(), client.getAuthenticationPort(), client.getSocketTimeout(),
-                client.getInetAddress(), client.getSharedSecret());
+                clientInetAddress, client.getSharedSecret());
 
         final RadiusProtocol protocol = RadiusProtocol.valueOf(server.getProtocol());
 
@@ -84,14 +93,18 @@ public class RadiusConfiguration {
     /**
      * Radius servers list.
      *
+     * Handles definition of several redundant servers provided on different IP addresses seprated by space.
+     *
      * @return the list
      */
     @RefreshScope
     @Bean
     public List<RadiusServer> radiusServers() {
-        final List<RadiusServer> list = new ArrayList<>();
-        list.add(radiusServer());
-        return list;
+        final RadiusClientProperties client = casProperties.getAuthn().getRadius().getClient();
+        final RadiusServerProperties server = casProperties.getAuthn().getRadius().getServer();
+
+        final Set<String> ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+        return ips.stream().map(ip->getSingleRadiusServer(client, server, ip)).collect(Collectors.toList());
     }
 
     @Bean
@@ -113,7 +126,8 @@ public class RadiusConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer radiusAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            if (StringUtils.isNotBlank(casProperties.getAuthn().getRadius().getClient().getInetAddress())) {
+            final Set<String> ips = getClientIps(casProperties.getAuthn().getRadius().getClient());
+            if (!ips.isEmpty()) {
                 plan.registerAuthenticationHandler(radiusAuthenticationHandler());
             } else {
                 LOGGER.warn("No RADIUS address is defined. RADIUS support will be disabled.");

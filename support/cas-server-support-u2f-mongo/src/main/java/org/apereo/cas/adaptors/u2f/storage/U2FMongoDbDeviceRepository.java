@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -48,9 +49,17 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
             final Query query = new Query();
             query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
             return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
-                    .stream()
-                    .map(r -> DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord())))
-                    .collect(Collectors.toList());
+                .stream()
+                .map(r -> {
+                    try {
+                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }

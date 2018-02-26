@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -67,10 +68,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import lombok.Setter;
 
 /**
  * The {@link AbstractCasWebflowConfigurer} is responsible for
@@ -224,7 +221,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         decisionState.getTransitionSet().add(elseTransition);
         return decisionState;
     }
-    
+
     @Override
     public void setStartState(final Flow flow, final String state) {
         flow.setStartState(state);
@@ -695,11 +692,11 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     public Action createEvaluateActionForExistingActionState(final Flow flow, final String actionStateId, final String evaluateActionId) {
         final ActionState action = getState(flow, actionStateId, ActionState.class);
-        final List<Action> actions = StreamSupport.stream(action.getActionList().spliterator(), false).collect(Collectors.toList());
+        final Action[] actions = action.getActionList().toArray();
+        Arrays.stream(actions).forEach(action.getActionList()::remove);
         final Action evaluateAction = createEvaluateAction(evaluateActionId);
-        actions.add(0, evaluateAction);
-        action.getActionList().forEach(a -> action.getActionList().remove(a));
-        actions.forEach(action.getActionList()::add);
+        action.getActionList().add(evaluateAction);
+        action.getActionList().addAll(actions);
         return evaluateAction;
     }
 

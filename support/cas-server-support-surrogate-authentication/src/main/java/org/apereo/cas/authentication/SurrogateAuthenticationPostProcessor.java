@@ -3,11 +3,13 @@ package org.apereo.cas.authentication;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.audit.AuditableContext;
+import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.support.events.authentication.surrogate.CasSurrogateAuthenticationFailureEvent;
@@ -32,13 +34,13 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
     private final SurrogateAuthenticationService surrogateAuthenticationService;
     private final ServicesManager servicesManager;
     private final ApplicationEventPublisher applicationEventPublisher;
-
+    private final AuditableExecution registeredServiceAccessStrategyEnforcer;
 
     @Override
     public void process(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) throws AuthenticationException {
         final Authentication authentication = builder.build();
         final Principal principal = authentication.getPrincipal();
-        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getCredential();
+        final SurrogateUsernamePasswordCredential surrogateCredentials = (SurrogateUsernamePasswordCredential) transaction.getCredential().get();
         final String targetUserId = surrogateCredentials.getSurrogateUsername();
 
         try {
@@ -51,7 +53,14 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
             LOGGER.debug("Authenticated [{}] will be checked for surrogate eligibility next...", principal);
             if (transaction.getService() != null) {
                 final RegisteredService svc = this.servicesManager.findServiceBy(transaction.getService());
-                RegisteredServiceAccessStrategyUtils.ensurePrincipalAccessIsAllowedForService(transaction.getService(), svc, authentication);
+
+                final AuditableContext audit = AuditableContext.builder().service(transaction.getService())
+                    .authentication(authentication)
+                    .registeredService(svc)
+                    .retrievePrincipalAttributesFromReleasePolicy(Boolean.TRUE)
+                    .build();
+                final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
+                accessResult.throwExceptionIfNeeded();
             }
 
             if (this.surrogateAuthenticationService.canAuthenticateAs(targetUserId, principal, transaction.getService())) {
@@ -66,7 +75,7 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
         } catch (final Exception e) {
             publishFailureEvent(principal, targetUserId);
             final Map<String, Throwable> map = CollectionUtils.wrap(getClass().getSimpleName(),
-                new SurrogateAuthenticationException("Principal " + principal+ " is unauthorized to authenticate as " + targetUserId));
+                new SurrogateAuthenticationException("Principal " + principal + " is unauthorized to authenticate as " + targetUserId));
             throw new AuthenticationException(map);
         }
     }

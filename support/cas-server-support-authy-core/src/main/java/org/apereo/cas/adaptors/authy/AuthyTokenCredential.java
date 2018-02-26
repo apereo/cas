@@ -9,8 +9,6 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 
-import java.io.Serializable;
-
 /**
  * This is {@link AuthyTokenCredential}.
  *
@@ -24,7 +22,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode
-public class AuthyTokenCredential implements Credential, Serializable {
+public class AuthyTokenCredential implements Credential {
     private static final long serialVersionUID = -7970600701132111037L;
 
     private String token;

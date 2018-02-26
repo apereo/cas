@@ -1,6 +1,6 @@
 package org.apereo.cas.services;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
@@ -62,10 +62,10 @@ public class DynamoDbServiceRegistryFacilitator {
 
     private final DynamoDbServiceRegistryProperties dynamoDbProperties;
 
-    private final AmazonDynamoDBClient amazonDynamoDBClient;
+    private final AmazonDynamoDB amazonDynamoDBClient;
 
     public DynamoDbServiceRegistryFacilitator(final DynamoDbServiceRegistryProperties dynamoDbProperties,
-                                              final AmazonDynamoDBClient amazonDynamoDBClient) {
+                                              final AmazonDynamoDB amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
         createServicesTable(dynamoDbProperties.isDropTablesOnStartup());
@@ -179,8 +179,9 @@ public class DynamoDbServiceRegistryFacilitator {
      */
     @SneakyThrows
     public void createServicesTable(final boolean deleteTables) {
+        LOGGER.debug("Attempting to create DynamoDb services table");
         final CreateTableRequest request = new CreateTableRequest().withAttributeDefinitions(
-            new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.N))
+            new AttributeDefinition(ColumnNames.ID.getColumnName(), ScalarAttributeType.S))
             .withKeySchema(new KeySchemaElement(ColumnNames.ID.getColumnName(), KeyType.HASH))
             .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
                 dynamoDbProperties.getWriteCapacity())).withTableName(dynamoDbProperties.getTableName());

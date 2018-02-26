@@ -31,7 +31,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.web.EmbeddedServletContainerAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.context.embedded.EmbeddedServletContainerFactory;
+import org.springframework.boot.context.embedded.EmbeddedServletContainerCustomizer;
 import org.springframework.boot.context.embedded.tomcat.TomcatEmbeddedServletContainerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -54,9 +54,9 @@ import java.nio.charset.StandardCharsets;
 @Configuration("casEmbeddedContainerTomcatConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnProperty(name = CasEmbeddedContainerUtils.EMBEDDED_CONTAINER_CONFIG_ACTIVE, havingValue = "true")
+@ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
 @AutoConfigureBefore(EmbeddedServletContainerAutoConfiguration.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
-
 @Slf4j
 public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
@@ -65,20 +65,22 @@ public class CasEmbeddedContainerTomcatConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnClass(value = {Tomcat.class, Http2Protocol.class})
-    @Bean
-    public EmbeddedServletContainerFactory servletContainer() {
-        final TomcatEmbeddedServletContainerFactory tomcat = new TomcatEmbeddedServletContainerFactory();
-
-        configureAjp(tomcat);
-        configureHttp(tomcat);
-        configureHttpProxy(tomcat);
-        configureExtendedAccessLogValve(tomcat);
-        configureRewriteValve(tomcat);
-        configureSSLValve(tomcat);
-        configureBasicAuthn(tomcat);
-
-        return tomcat;
+    @Bean(name = "casTomcatEmbeddedServletContainerCustomizer")
+    public EmbeddedServletContainerCustomizer casTomcatEmbeddedServletContainerCustomizer() {
+        return configurableEmbeddedServletContainer -> {
+            if (configurableEmbeddedServletContainer instanceof TomcatEmbeddedServletContainerFactory) {
+                final TomcatEmbeddedServletContainerFactory tomcat = (TomcatEmbeddedServletContainerFactory) configurableEmbeddedServletContainer;
+                configureAjp(tomcat);
+                configureHttp(tomcat);
+                configureHttpProxy(tomcat);
+                configureExtendedAccessLogValve(tomcat);
+                configureRewriteValve(tomcat);
+                configureSSLValve(tomcat);
+                configureBasicAuthn(tomcat);
+            } else {
+                LOGGER.error("EmbeddedServletContainer [{}] does not support Tomcat!", configurableEmbeddedServletContainer);
+            }
+        };
     }
 
     private void configureBasicAuthn(final TomcatEmbeddedServletContainerFactory tomcat) {

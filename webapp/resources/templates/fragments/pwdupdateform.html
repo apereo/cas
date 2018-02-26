@@ -1,72 +1,75 @@
-<script th:inline="javascript">
-    /*<![CDATA[*/
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
-    var policyPattern = /*[[${policyPattern}]]*/;
+    <title>Password Update Form</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
-    /*]]>*/
-</script>
+    <script th:inline="javascript">
+      /*<![CDATA[*/
 
-<div class="alert alert-info">
-    <h2 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}"/>
-    <p/>
-    <br/>
+      var policyPattern = /*[[${policyPattern}]]*/;
 
-    <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post" th:object="${password}">
-        <p>
-        <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
-            <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
-        </div>
-
-
-        <table>
-            <tr>
-                <td class="pm">
-                    <label for="password" th:utext="#{screen.pm.enterpsw}"/>&nbsp;
-                </td>
-                <td class="pm">
-                    <input class="required form-control form-control-lg" type="password" id="password" th:field="*{password}"/>
-                </td>
-            </tr>
-
-            <tr>
-                <td class="pm">
-                    <label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}"/>&nbsp;
-                </td>
-                <td class="pm">
-                    <input class="required form-control form-control-lg" type="password" id="confirmedPassword" th:field="*{confirmedPassword}"/>
-                </td>
-            </tr>
-        </table>
-     
-
-        <div>
-            <br/>
-            <div class="progress">
-                <div id="strengthProgressBar" class="progress-bar"></div>
+      /*]]>*/
+    </script>
+</head>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div class="alert alert-info">
+        <h3 th:utext="${expiredPass} ? #{screen.expiredpass.heading} : #{screen.mustchangepass.heading}">Change Password
+            Heading</h3>
+        <form id="passwordManagementForm" th:if="${passwordManagementEnabled}" method="post" th:object="${password}">
+            <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">Error text</span>
             </div>
-        </div>
-        </p>
-        <p id="password-strength-text"></p>
 
-        <p align="center">
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            <input type="hidden" name="_eventId" value="submit"/>
-            <input class="btn btn-success btn-lg"
-                   name="submit"
-                   accesskey="s"
-                   th:value="#{screen.pm.button.submit}"
-                   id="submit"
-                   type="submit" 
-                   disabled="true"/>
-            &nbsp;
-            <input
-                    class="btn btn-danger btn-lg"
-                    name="cancel"
-                    accesskey="c"
-                    th:value="#{screen.pm.button.cancel}"
-                    type="button"
-                    onclick="location.href = location.href;"/>
-        </p>
-    </form>
-    <p th:unless="${passwordManagementEnabled}" th:utext="${expiredPass} ? #{screen.expiredpass.message} : #{screen.mustchangepass.message}"/>
-</div>
+            <div class="form-group">
+                <label for="password" th:utext="#{screen.pm.enterpsw}">Enter Password:</label>&nbsp;
+                <input class="form-control" type="password" id="password" th:field="*{password}" required/>
+            </div>
+            <div class="form-group">
+                <label for="confirmedPassword" th:utext="#{screen.pm.confirmpsw}">Confirm Password:</label>&nbsp;
+                <input class="form-control" type="password" id="confirmedPassword" th:field="*{confirmedPassword}"
+                       required/>
+            </div>
+
+            <div class="form-group">
+                <div class="progress">
+                    <div id="strengthProgressBar" class="progress-bar">progress bar</div>
+                </div>
+                <p id="password-strength-text"/>
+            </div>
+
+
+            <div class="form-group text-center">
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="submit"/>
+                <input class="btn btn-submit"
+                       name="submit"
+                       accesskey="s"
+                       th:value="#{screen.pm.button.submit}"
+                       value="SUBMIT"
+                       id="submit"
+                       type="submit"
+                       disabled="true"/>
+                &nbsp;
+                <input
+                        class="btn btn-danger"
+                        name="cancel"
+                        accesskey="c"
+                        th:value="#{screen.pm.button.cancel}"
+                        value="CANCEL"
+                        type="button"
+                        onclick="location.href = location.href;"/>
+            </div>
+        </form>
+        <p th:unless="${passwordManagementEnabled}"
+           th:utext="${expiredPass} ? #{screen.expiredpass.message} : #{screen.mustchangepass.message}">Expired/Must
+            Change Password text</p>
+    </div>
+</main>
+</body>
+</html>

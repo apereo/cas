@@ -1,16 +1,17 @@
 package org.apereo.cas.configuration.model.support.x509;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
 import org.apereo.cas.configuration.model.support.ldap.AbstractLdapSearchProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link X509Properties}.
@@ -72,6 +73,15 @@ public class X509Properties implements Serializable {
      */
     private static final boolean DEFAULT_REQUIRE_KEYUSAGE = false;
 
+
+    /**
+     * Default name of header containing certificate from the proxy.
+     * 
+     * Format of header should be compatible with Tomcat SSLValve. 
+     */
+    private static final String DEFAULT_CERT_HEADER_NAME = "ssl_client_cert";
+
+    
     /**
      * The serial number prefix used for principal resolution
      * when type is set to {@link PrincipalTypes#SERIAL_NO_DN}.
@@ -287,6 +297,21 @@ public class X509Properties implements Serializable {
      */
     private String name;
 
+    /**
+     * Whether to extract certificate from request.
+     * 
+     * The default implementation extracts certificate from header via Tomcat SSLValve parsing logic
+     * and using the {@link #DEFAULT_CERT_HEADER_NAME} header.
+     * Must be false by default because if someone enables it they need to make sure they are
+     * behind proxy that won't let the header arrive directly from the browser.
+     */
+    private boolean extractCert;
+
+    /**
+     * The name of the header to consult for an X509 cert (e.g. when behind proxy).
+     */
+    private String sslHeaderName = DEFAULT_CERT_HEADER_NAME;
+
     @Getter
     @Setter
     public static class Ldap extends AbstractLdapSearchProperties {
@@ -298,4 +323,5 @@ public class X509Properties implements Serializable {
          */
         private String certificateAttribute = "certificateRevocationList";
     }
+
 }

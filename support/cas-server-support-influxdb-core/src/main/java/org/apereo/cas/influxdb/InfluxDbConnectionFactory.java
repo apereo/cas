@@ -11,7 +11,6 @@ import org.influxdb.dto.Point;
 import org.influxdb.dto.Query;
 import org.influxdb.dto.QueryResult;
 
-import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit;
  * @since 5.2.0
  */
 @Slf4j
-public class InfluxDbConnectionFactory implements Closeable {
+public class InfluxDbConnectionFactory implements AutoCloseable {
 
 
     /**

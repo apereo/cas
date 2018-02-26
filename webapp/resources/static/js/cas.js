@@ -71,17 +71,6 @@ function areCookiesEnabled() {
 
 }
 
-function animateCasMessageBoxes() {
-    //flash error box
-    $('#msg.errors').animate({backgroundColor: 'rgb(187,0,0)'}, 30).animate({backgroundColor: 'rgb(255,238,221)'}, 500);
-
-    //flash success box
-    $('#msg.success').animate({backgroundColor: 'rgb(51,204,0)'}, 30).animate({backgroundColor: 'rgb(221,255,170)'}, 500);
-
-    //flash confirm box
-    $('#msg.question').animate({backgroundColor: 'rgb(51,204,0)'}, 30).animate({backgroundColor: 'rgb(221,255,170)'}, 500);
-}
-
 function disableEmptyInputFormSubmission() {
     var fields = $('#fm1 input[name="username"],[name="password"]');
 
@@ -130,10 +119,8 @@ function resourceLoadedSuccessfully() {
             $('#cookiesDisabled').hide();
         } else {
             $('#cookiesDisabled').show();
-            $('#cookiesDisabled').animate({backgroundColor: 'rgb(187,0,0)'}, 30).animate({backgroundColor: 'rgb(255,238,221)'}, 500);
         }
 
-        animateCasMessageBoxes();
         disableEmptyInputFormSubmission();
         preserveAnchorTagOnForm();
 

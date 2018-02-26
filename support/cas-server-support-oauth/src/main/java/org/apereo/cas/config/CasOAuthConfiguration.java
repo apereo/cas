@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
 import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -35,7 +36,8 @@ import org.apereo.cas.support.oauth.validator.OAuth20TokenResponseTypeRequestVal
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
-import org.apereo.cas.support.oauth.web.audit.UserProfileDataAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
+import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
@@ -123,6 +125,11 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.CLIENT_SECRET;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -264,8 +271,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     public ExpirationPolicy accessTokenExpirationPolicy() {
         final OAuthAccessTokenProperties oauth = casProperties.getAuthn().getOauth().getAccessToken();
         return new OAuthAccessTokenExpirationPolicy(
-            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).toMillis(),
-            Beans.newDuration(oauth.getTimeToKillInSeconds()).toMillis()
+            Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
+            Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
         );
     }
 
@@ -334,12 +341,12 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         final BaseAccessTokenGrantRequestExtractor pswExt =
             new AccessTokenPasswordGrantRequestExtractor(servicesManager, ticketRegistry,
                 oauthCasAuthenticationBuilder(), centralAuthenticationService,
-                casProperties.getAuthn().getOauth());
+                casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         final BaseAccessTokenGrantRequestExtractor credsExt =
             new AccessTokenClientCredentialsGrantRequestExtractor(servicesManager, ticketRegistry,
                 oauthCasAuthenticationBuilder(), centralAuthenticationService,
-                casProperties.getAuthn().getOauth());
+                casProperties.getAuthn().getOauth(), registeredServiceAccessStrategyEnforcer);
 
         return CollectionUtils.wrapList(authzCodeExt, refreshTokenExt, pswExt, credsExt);
     }
@@ -487,7 +494,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             oauthPrincipalFactory(), webApplicationServiceFactory, defaultOAuthCodeFactory(),
             consentApprovalViewResolver(), profileScopeToAttributesFilter(), casProperties,
             ticketGrantingTicketCookieGenerator, oauthCasAuthenticationBuilder(),
-            oauthAuthorizationResponseBuilders(), oauthRequestValidators()
+            oauthAuthorizationResponseBuilders(), oauthRequestValidators(), registeredServiceAccessStrategyEnforcer
         );
     }
 
@@ -507,7 +514,7 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     private ExpirationPolicy refreshTokenExpirationPolicy() {
         final OAuthRefreshTokenProperties rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
-        final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).toMillis();
+        final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
         return new OAuthRefreshTokenExpirationPolicy(timeout);
     }
 
@@ -540,7 +547,12 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
         plan.registerAuditActionResolver("OAUTH2_USER_PROFILE_DATA_ACTION_RESOLVER",
             new DefaultAuditActionResolver("_CREATED", "_FAILED"));
         plan.registerAuditResourceResolver("OAUTH2_USER_PROFILE_DATA_RESOURCE_RESOLVER",
-            new UserProfileDataAuditResourceResolver());
+            new OAuth20UserProfileDataAuditResourceResolver());
+
+        plan.registerAuditActionResolver("OAUTH2_ACCESS_TOKEN_REQUEST_ACTION_RESOLVER",
+            new DefaultAuditActionResolver("_CREATED", "_FAILED"));
+        plan.registerAuditResourceResolver("OAUTH2_ACCESS_TOKEN_REQUEST_RESOURCE_RESOLVER",
+            new AccessTokenGrantRequestAuditResourceResolver());
     }
 
     @PostConstruct

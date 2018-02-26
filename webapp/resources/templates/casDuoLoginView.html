@@ -2,31 +2,37 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.mfa.duologin.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.duologin.pagetitle}">Duo Login View</title>
+    <script th:src="@{/js/duo/Duo-Web-v2.min.js}"></script>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <script th:src="@{/js/duo/Duo-Web-v2.min.js}"></script>
-    <form method="post" id="duo_form" class="fm-v clearfix" th:object="${credential}">
-        <div id="msg" class="errors" th:if="${#fields.hasErrors('*')}">
-            <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
-        </div>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <form method="post" id="duo_form" class="fm-v clearfix" th:object="${credential}">
+            <div id="msg" class="alert alert-danger" role="alert" th:if="${#fields.hasErrors('*')}">
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">this error block and text is only shown if there are errors</span>
+            </div>
 
-        <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-        <input type="hidden" name="_eventId" value="submit"/>
-        <input type="hidden" name="geolocation"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="_eventId" value="submit"/>
+            <input type="hidden" name="geolocation"/>
 
-        <div class="box fl-panel" id="login">
-            <iframe id="duo_iframe"
-                    width="620"
-                    height="330"
-                    frameborder="0"
-                    th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
-                    data-post-argument="signedDuoResponse">
-            </iframe>
-        </div>
-    </form>
-</div>
+            <div id="login">
+                <iframe id="duo_iframe"
+                        width="620"
+                        height="330"
+                        frameborder="0"
+                        th:attr="data-host=${apiHost},data-sig-request=${sigRequest}"
+                        data-post-argument="signedDuoResponse">
+                </iframe>
+            </div>
+        </form>
+    </div>
+</main>
 </body>
 </html>

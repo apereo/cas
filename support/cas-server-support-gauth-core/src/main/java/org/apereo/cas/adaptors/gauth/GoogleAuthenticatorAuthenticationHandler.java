@@ -85,7 +85,7 @@ public class GoogleAuthenticatorAuthenticationHandler extends AbstractPreAndPost
 
         if (isCodeValid) {
             this.tokenRepository.store(new GoogleAuthenticatorToken(otp, uid));
-            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid), null);
+            return createHandlerResult(tokenCredential, this.principalFactory.createPrincipal(uid));
         }
 
         throw new FailedLoginException("Failed to authenticate code " + otp);

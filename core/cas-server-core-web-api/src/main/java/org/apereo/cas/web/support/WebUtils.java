@@ -63,7 +63,7 @@ public class WebUtils {
      * Ticket-granting ticket id parameter used in various flow scopes.
      */
     public static final String PARAMETER_TICKET_GRANTING_TICKET_ID = "ticketGrantingTicketId";
-    
+
     private static final String PUBLIC_WORKSTATION_ATTRIBUTE = "publicWorkstation";
     private static final String PARAMETER_AUTHENTICATION = "authentication";
     private static final String PARAMETER_AUTHENTICATION_RESULT_BUILDER = "authenticationResultBuilder";
@@ -527,6 +527,16 @@ public class WebUtils {
      */
     public static GeoLocationRequest getHttpServletRequestGeoLocationFromRequestContext() {
         final HttpServletRequest servletRequest = getHttpServletRequestFromExternalWebflowContext();
+        return getHttpServletRequestGeoLocation(servletRequest);
+    }
+
+    /**
+     * Gets http servlet request geo location.
+     *
+     * @param servletRequest the servlet request
+     * @return the http servlet request geo location
+     */
+    public static GeoLocationRequest getHttpServletRequestGeoLocation(final HttpServletRequest servletRequest) {
         if (servletRequest != null) {
             return HttpRequestUtils.getHttpServletRequestGeoLocation(servletRequest);
         }

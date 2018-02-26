@@ -156,7 +156,6 @@ public abstract class AbstractTicketRegistry implements TicketRegistry {
      */
     protected int deleteChildren(final TicketGrantingTicket ticket) {
         final AtomicInteger count = new AtomicInteger(0);
-        // delete service tickets
         final Map<String, Service> services = ticket.getServices();
         if (services != null && !services.isEmpty()) {
             services.keySet().stream().forEach(ticketId -> {

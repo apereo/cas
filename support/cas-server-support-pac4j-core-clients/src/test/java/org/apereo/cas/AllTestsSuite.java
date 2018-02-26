@@ -3,12 +3,8 @@ package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.pac4j.authentication.handler.support.ClientAuthenticationHandlerTests;
-import org.apereo.cas.support.pac4j.web.flow.DelegatedClientAuthenticationActionTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.apereo.cas.support.pac4j.web.flow.IgnoreServiceRedirectUrlForSamlActionTests;
-import org.apereo.cas.support.pac4j.web.flow.SingleLogoutPreparationActionTests;
-import org.apereo.cas.support.pac4j.web.flow.LimitedTerminateSessionActionTests;
 
 /**
  * This is {@link AllTestsSuite}.
@@ -17,13 +13,7 @@ import org.apereo.cas.support.pac4j.web.flow.LimitedTerminateSessionActionTests;
  * @since 5.1.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({
-    ClientAuthenticationHandlerTests.class,
-    DelegatedClientAuthenticationActionTests.class,
-    IgnoreServiceRedirectUrlForSamlActionTests.class,
-    SingleLogoutPreparationActionTests.class,
-    LimitedTerminateSessionActionTests.class
-})
+@Suite.SuiteClasses(ClientAuthenticationHandlerTests.class)
 @Slf4j
 public class AllTestsSuite {
 }

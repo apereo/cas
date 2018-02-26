@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -325,13 +326,15 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
     @Test
     public void verifyGrantServiceTicketWithNoCredsAndSsoFalseAndSsoFalse() {
         final Service svc = getService("TestSsoFalse");
-        final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
-
+        final AuthenticationResult ctx = mock(AuthenticationResult.class);
+        when(ctx.getAuthentication()).thenReturn(CoreAuthenticationTestUtils.getAuthentication());
+        when(ctx.isCredentialProvided()).thenReturn(true);
         final TicketGrantingTicket ticketGrantingTicket = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final Service service = getService("eduPersonTest");
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), service, ctx);
 
         this.thrown.expect(UnauthorizedSsoServiceException.class);
+        when(ctx.isCredentialProvided()).thenReturn(false);
         getCentralAuthenticationService().grantServiceTicket(ticketGrantingTicket.getId(), svc, ctx);
     }
 
@@ -447,7 +450,8 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
         final DefaultCentralAuthenticationService cas = new DefaultCentralAuthenticationService(
             mock(ApplicationEventPublisher.class), registry, null, logoutManager,
             null, null,
-            null, null, null);
+            null, null, null,
+            mock(AuditableExecution.class));
         cas.destroyTicketGrantingTicket(tgt.getId());
     }
 

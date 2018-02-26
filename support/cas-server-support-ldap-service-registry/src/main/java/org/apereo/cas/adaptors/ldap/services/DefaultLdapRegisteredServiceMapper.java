@@ -3,7 +3,6 @@ package org.apereo.cas.adaptors.ldap.services;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
-import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.LdapUtils;
@@ -41,7 +40,7 @@ public class DefaultLdapRegisteredServiceMapper implements LdapRegisteredService
     public LdapEntry mapFromRegisteredService(final String dn, final RegisteredService svc) {
 
         if (svc.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) svc).setId(System.currentTimeMillis());
+            svc.setId(System.currentTimeMillis());
         }
         final String newDn = getDnForRegisteredService(dn, svc);
         LOGGER.debug("Creating entry DN [{}]", newDn);

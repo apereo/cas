@@ -101,10 +101,10 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
             return;
         }
 
-        final AccessTokenRequestDataHolder responseHolder;
+        final AccessTokenRequestDataHolder requestHolder;
         try {
-            responseHolder = examineAndExtractAccessTokenGrantRequest(request, response);
-            LOGGER.debug("Creating access token for [{}]", responseHolder);
+            requestHolder = examineAndExtractAccessTokenGrantRequest(request, response);
+            LOGGER.debug("Creating access token for [{}]", requestHolder);
         } catch (final Exception e) {
             LOGGER.error("Could not identify and extract access token request", e);
             OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_GRANT);
@@ -112,9 +112,9 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         }
 
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-        final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(responseHolder);
+        final Pair<AccessToken, RefreshToken> accessToken = accessTokenGenerator.generate(requestHolder);
         LOGGER.debug("Access token generated is: [{}]. Refresh token generated is [{}]", accessToken.getKey(), accessToken.getValue());
-        generateAccessTokenResponse(request, response, responseHolder, context, accessToken.getKey(), accessToken.getValue());
+        generateAccessTokenResponse(request, response, requestHolder, context, accessToken.getKey(), accessToken.getValue());
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
@@ -133,7 +133,7 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
 
 
     private void generateAccessTokenResponse(final HttpServletRequest request, final HttpServletResponse response,
-                                             final AccessTokenRequestDataHolder responseHolder,
+                                             final AccessTokenRequestDataHolder requestHolder,
                                              final J2EContext context, final AccessToken accessToken,
                                              final RefreshToken refreshToken) {
         LOGGER.debug("Generating access token response for [{}]", accessToken);
@@ -142,8 +142,8 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
         LOGGER.debug("Located response type as [{}]", type);
 
         this.accessTokenResponseGenerator.generate(request, response,
-            responseHolder.getRegisteredService(),
-            responseHolder.getService(),
+            requestHolder.getRegisteredService(),
+            requestHolder.getService(),
             accessToken, refreshToken,
             accessTokenExpirationPolicy.getTimeToLive(), type);
     }

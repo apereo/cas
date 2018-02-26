@@ -278,7 +278,7 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
     public RegisteredService save(final RegisteredService service) {
         if (service.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE && service instanceof AbstractRegisteredService) {
             LOGGER.debug("Service id not set. Calculating id based on system time...");
-            ((AbstractRegisteredService) service).setId(System.currentTimeMillis());
+            service.setId(System.currentTimeMillis());
         }
         final File f = getRegisteredServiceFileName(service);
         try (LockedOutputStream out = new LockedOutputStream(new FileOutputStream(f))) {

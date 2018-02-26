@@ -7,6 +7,7 @@ dependencies {
     implementation project(":core:cas-server-core-services-registry")
     
     testImplementation project(path: ":support:cas-server-support-ldap", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util-api", configuration: "tests")
     testImplementation project(":core:cas-server-core-authentication-api")
     testImplementation project(":support:cas-server-support-oauth-core")
     testImplementation project(":support:cas-server-support-oauth-services")

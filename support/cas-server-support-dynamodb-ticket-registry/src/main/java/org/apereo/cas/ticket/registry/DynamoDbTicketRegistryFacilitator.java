@@ -1,6 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
-import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClient;
+import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
 import com.amazonaws.services.dynamodbv2.model.AttributeValue;
 import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
@@ -20,6 +20,7 @@ import com.amazonaws.services.dynamodbv2.model.ScanResult;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbTicketRegistryProperties;
@@ -28,6 +29,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.util.CollectionUtils;
 import org.jooq.lambda.Unchecked;
+
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -35,7 +37,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import lombok.Getter;
 
 /**
  * This is {@link DynamoDbTicketRegistryFacilitator}.
@@ -47,7 +48,6 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class DynamoDbTicketRegistryFacilitator {
-
     @Getter
     private enum ColumnNames {
 
@@ -66,20 +66,20 @@ public class DynamoDbTicketRegistryFacilitator {
 
     private final DynamoDbTicketRegistryProperties dynamoDbProperties;
 
-    private final AmazonDynamoDBClient amazonDynamoDBClient;
-    
+    private final AmazonDynamoDB amazonDynamoDBClient;
 
     /**
      * Delete.
      *
-     * @param ticketId the ticket id
+     * @param ticketId        the ticket id
+     * @param encodedTicketId the encoded ticket id
      * @return the boolean
      */
-    public boolean delete(final String ticketId) {
+    public boolean delete(final String ticketId, final String encodedTicketId) {
         final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
             final DeleteItemRequest del = new DeleteItemRequest().withTableName(metadata.getProperties().getStorageName())
-                .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue(ticketId)));
+                .withKey(CollectionUtils.wrap(ColumnNames.ID.getColumnName(), new AttributeValue(encodedTicketId)));
             LOGGER.debug("Submitting delete request [{}] for ticket [{}]", del, ticketId);
             final DeleteItemResult res = amazonDynamoDBClient.deleteItem(del);
             LOGGER.debug("Delete request came back with result [{}]", res);
@@ -126,20 +126,25 @@ public class DynamoDbTicketRegistryFacilitator {
     /**
      * Get ticket.
      *
-     * @param ticketId the ticket id
+     * @param ticketId        the ticket id
+     * @param encodedTicketId the encoded ticket id
      * @return the ticket
      */
-    public Ticket get(final String ticketId) {
+    public Ticket get(final String ticketId, final String encodedTicketId) {
         final TicketDefinition metadata = this.ticketCatalog.find(ticketId);
         if (metadata != null) {
             final Map<String, AttributeValue> keys = new HashMap<>();
-            keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(ticketId));
+            keys.put(ColumnNames.ID.getColumnName(), new AttributeValue(encodedTicketId));
             final GetItemRequest request = new GetItemRequest().withKey(keys).withTableName(metadata.getProperties().getStorageName());
             LOGGER.debug("Submitting request [{}] to get ticket item [{}]", request, ticketId);
             final Map<String, AttributeValue> returnItem = amazonDynamoDBClient.getItem(request).getItem();
             if (returnItem != null) {
                 final Ticket ticket = deserializeTicket(returnItem);
                 LOGGER.debug("Located ticket [{}]", ticket);
+                if (ticket == null || ticket.isExpired()) {
+                    LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
+                    return null;
+                }
                 return ticket;
             }
         } else {
@@ -210,16 +215,12 @@ public class DynamoDbTicketRegistryFacilitator {
     public Map<String, AttributeValue> buildTableAttributeValuesMapFromTicket(final Ticket ticket, final Ticket encTicket) {
         final Map<String, AttributeValue> values = new HashMap<>();
         values.put(ColumnNames.ID.getColumnName(), new AttributeValue(encTicket.getId()));
-        values.put(ColumnNames.PREFIX.getColumnName(), new AttributeValue(encTicket.getPrefix()));
+        values.put(ColumnNames.PREFIX.getColumnName(), new AttributeValue(ticket.getPrefix()));
         values.put(ColumnNames.CREATION_TIME.getColumnName(), new AttributeValue(ticket.getCreationTime().toString()));
-        values.put(ColumnNames.COUNT_OF_USES.getColumnName(), new AttributeValue()
-            .withN(Integer.toString(ticket.getCountOfUses())));
-        values.put(ColumnNames.TIME_TO_LIVE.getColumnName(), new AttributeValue()
-            .withN(Long.toString(ticket.getExpirationPolicy().getTimeToLive())));
-        values.put(ColumnNames.TIME_TO_IDLE.getColumnName(), new AttributeValue()
-            .withN(Long.toString(ticket.getExpirationPolicy().getTimeToIdle())));
-        values.put(ColumnNames.ENCODED.getColumnName(), new AttributeValue()
-            .withB(ByteBuffer.wrap(SerializationUtils.serialize(encTicket))));
+        values.put(ColumnNames.COUNT_OF_USES.getColumnName(), new AttributeValue().withN(Integer.toString(ticket.getCountOfUses())));
+        values.put(ColumnNames.TIME_TO_LIVE.getColumnName(), new AttributeValue().withN(Long.toString(ticket.getExpirationPolicy().getTimeToLive())));
+        values.put(ColumnNames.TIME_TO_IDLE.getColumnName(), new AttributeValue().withN(Long.toString(ticket.getExpirationPolicy().getTimeToIdle())));
+        values.put(ColumnNames.ENCODED.getColumnName(), new AttributeValue().withB(ByteBuffer.wrap(SerializationUtils.serialize(encTicket))));
         LOGGER.debug("Created attribute values [{}] based on provided ticket [{}]", values, encTicket.getId());
         return values;
     }

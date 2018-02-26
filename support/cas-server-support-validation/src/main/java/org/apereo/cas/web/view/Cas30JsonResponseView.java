@@ -3,6 +3,7 @@ package org.apereo.cas.web.view;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
@@ -11,7 +12,9 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.Collection;
@@ -19,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import lombok.Setter;
 
 /**
  * Renders the model prepared by CAS in JSON format.
@@ -39,12 +41,17 @@ import lombok.Setter;
 @Setter
 public class Cas30JsonResponseView extends Cas30ResponseView {
 
-    public Cas30JsonResponseView(final boolean successResponse, final ProtocolAttributeEncoder protocolAttributeEncoder,
-                                 final ServicesManager servicesManager, final String authenticationContextAttribute,
-                                 final boolean releaseProtocolAttributes, final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
-                                 final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
+    public Cas30JsonResponseView(final boolean successResponse,
+                                 final ProtocolAttributeEncoder protocolAttributeEncoder,
+                                 final ServicesManager servicesManager,
+                                 final String authenticationContextAttribute,
+                                 final boolean releaseProtocolAttributes,
+                                 final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                                 final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                 final CasProtocolAttributesRenderer attributesRenderer) {
         super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-            createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy, serviceSelectionStrategy);
+            createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy,
+            serviceSelectionStrategy, attributesRenderer);
     }
 
     private static MappingJackson2JsonView createDelegatedView() {

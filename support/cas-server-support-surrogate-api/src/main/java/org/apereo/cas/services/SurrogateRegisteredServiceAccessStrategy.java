@@ -1,13 +1,13 @@
 package org.apereo.cas.services;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import lombok.Getter;
 
 /**
  * This is {@link SurrogateRegisteredServiceAccessStrategy}.
@@ -19,7 +19,7 @@ import lombok.Getter;
 @Getter
 @Setter
 @EqualsAndHashCode(callSuper = true)
-public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
+public class SurrogateRegisteredServiceAccessStrategy extends BaseSurrogateRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -1688944419711632962L;
 
@@ -55,15 +55,4 @@ public class SurrogateRegisteredServiceAccessStrategy extends DefaultRegisteredS
         }
         return true;
     }
-
-    /**
-     * Is surrogate authentication session?.
-     *
-     * @param attributes the attributes
-     * @return true /false
-     */
-    protected boolean isSurrogateAuthenticationSession(final Map<String, Object> attributes) {
-        return attributes.containsKey(SurrogateAuthenticationService.AUTHENTICATION_ATTR_SURROGATE_ENABLED);
-    }
-
 }

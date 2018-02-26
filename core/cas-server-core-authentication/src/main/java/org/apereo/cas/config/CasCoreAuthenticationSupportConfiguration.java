@@ -2,6 +2,7 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandlerResolver;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.AuthenticationTransactionManager;
@@ -12,6 +13,7 @@ import org.apereo.cas.authentication.RegisteredServiceAuthenticationHandlerResol
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -35,6 +37,17 @@ public class CasCoreAuthenticationSupportConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
+
+    @Autowired
+    @Qualifier("principalElectionStrategy")
+    private ObjectProvider<PrincipalElectionStrategy> principalElectionStrategy;
+
+    @Autowired
+    @Qualifier("authenticationTransactionManager")
+    private ObjectProvider<AuthenticationTransactionManager> authenticationTransactionManager;
 
     @RefreshScope
     @Bean
@@ -47,22 +60,24 @@ public class CasCoreAuthenticationSupportConfiguration {
         return new DefaultAuthenticationContextValidator(contextAttribute, failureMode, authnAttributeName);
     }
 
-    @Autowired
+    @Bean
+    public AuthenticationSystemSupport defaultAuthenticationSystemSupport() {
+        return new DefaultAuthenticationSystemSupport(authenticationTransactionManager.getIfAvailable(),
+            principalElectionStrategy.getIfAvailable());
+    }
+
     @Bean
     @Lazy
     @ConditionalOnMissingBean(name = "registeredServiceAuthenticationHandlerResolver")
-    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver(@Qualifier("servicesManager")
-                                                                                            final ServicesManager servicesManager) {
-        return new RegisteredServiceAuthenticationHandlerResolver(servicesManager);
+    public AuthenticationHandlerResolver registeredServiceAuthenticationHandlerResolver() {
+        return new RegisteredServiceAuthenticationHandlerResolver(servicesManager.getIfAvailable());
     }
 
-    @Autowired
+    @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
-    public AuthenticationSystemSupport defaultAuthenticationSystemSupport(@Qualifier("principalElectionStrategy")
-                                                                              final PrincipalElectionStrategy principalElectionStrategy,
-                                                                          @Qualifier("authenticationTransactionManager")
-                                                                          final AuthenticationTransactionManager authenticationTransactionManager) {
-        return new DefaultAuthenticationSystemSupport(authenticationTransactionManager, principalElectionStrategy);
+    public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
+        return plan -> {
+            plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
+        };
     }
-
 }

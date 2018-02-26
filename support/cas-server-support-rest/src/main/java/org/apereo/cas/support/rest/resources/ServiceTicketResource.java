@@ -68,7 +68,7 @@ public class ServiceTicketResource {
             final AuthenticationResult authenticationResult = builder.collect(authn).build(service);
             return this.serviceTicketResourceEntityResponseFactory.build(tgtId, service, authenticationResult);
         } catch (final InvalidTicketException e) {
-            return new ResponseEntity<>(e.getMessage() + " could not be found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(tgtId + " could not be found or is considered invalid", HttpStatus.NOT_FOUND);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
