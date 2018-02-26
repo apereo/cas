@@ -112,8 +112,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     
     @Override
     public boolean isExpired() {
-        final TicketGrantingTicket tgt = getTicketGrantingTicket();
-        return this.expirationPolicy.isExpired(this) || (tgt != null && tgt.isExpired()) || isExpiredInternal();
+        return this.expirationPolicy.isExpired(this) || isExpiredInternal();
     }
 
     @JsonIgnore
