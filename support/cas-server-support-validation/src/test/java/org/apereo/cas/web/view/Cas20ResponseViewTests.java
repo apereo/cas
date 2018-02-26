@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.DefaultAuthenticationAttributeReleasePolicy
 import org.apereo.cas.authentication.DefaultAuthenticationContextValidator;
 import org.apereo.cas.authentication.DefaultAuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.validation.DefaultServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.AbstractServiceValidateControllerTests;
@@ -57,7 +58,7 @@ public class Cas20ResponseViewTests extends AbstractServiceValidateControllerTes
             getCentralAuthenticationService(),
             getProxyHandler(),
             getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy("", ""),
+            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas2SuccessView,
             cas2ServiceFailureView, "authenticationContext",
