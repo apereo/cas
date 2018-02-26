@@ -136,7 +136,7 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(assertion.getService(), service);
         final Map<String, MultifactorAuthenticationProvider> providers = this.applicationContext.getBeansOfType(MultifactorAuthenticationProvider.class, false, true);
         final Authentication authentication = assertion.getPrimaryAuthentication();
-        final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication.getPrincipal());
+        final Optional<String> requestedContext = this.multifactorTriggerSelectionStrategy.resolve(providers.values(), request, service, authentication);
 
         if (!requestedContext.isPresent()) {
             LOGGER.debug("No particular authentication context is required for this request");
