@@ -19,9 +19,7 @@ import java.util.Map;
 @Slf4j
 public class SurrogateSessionExpirationPolicy extends BaseDelegatingExpirationPolicy {
     private static final long serialVersionUID = -2735975347698196127L;
-
-
-
+    
     /**
      * Policy types.
      */

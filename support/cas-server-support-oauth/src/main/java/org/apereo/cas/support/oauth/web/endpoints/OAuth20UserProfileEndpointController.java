@@ -66,7 +66,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.userProfileViewRenderer = userProfileViewRenderer;
-
         this.userProfileDataCreator = userProfileDataCreator;
     }
 
@@ -83,7 +82,7 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-            
+        
         final String accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
             LOGGER.error("Missing [{}]", OAuth20Constants.ACCESS_TOKEN);
@@ -96,11 +95,13 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
 
-        final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
-        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-            LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
-            this.ticketRegistry.deleteTicket(accessToken);
-            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+            final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
+            if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+                LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
+                this.ticketRegistry.deleteTicket(accessToken);
+                return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+            }
         }
         updateAccessTokenUsage(accessTokenTicket);
 

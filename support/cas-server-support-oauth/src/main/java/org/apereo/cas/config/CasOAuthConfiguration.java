@@ -24,7 +24,9 @@ import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilde
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UserAuthenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthorizationCodeResponseTypeRequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientCredentialsGrantTypeRequestValidator;
@@ -38,12 +40,10 @@ import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
-import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
-import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -270,7 +270,13 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "accessTokenExpirationPolicy")
     public ExpirationPolicy accessTokenExpirationPolicy() {
         final OAuthAccessTokenProperties oauth = casProperties.getAuthn().getOauth().getAccessToken();
-        return new OAuthAccessTokenExpirationPolicy(
+        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+            return new OAuthAccessTokenExpirationPolicy(
+                Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
+                Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
+            );
+        }
+        return new OAuthAccessTokenExpirationPolicy.OAuthAccessTokenSovereignExpirationPolicy(
             Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
             Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
         );
@@ -278,7 +284,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     private ExpirationPolicy oAuthCodeExpirationPolicy() {
         final OAuthProperties oauth = casProperties.getAuthn().getOauth();
-        return new OAuthCodeExpirationPolicy(oauth.getCode().getNumberOfUses(), oauth.getCode().getTimeToKillInSeconds());
+        return new OAuthCodeExpirationPolicy(oauth.getCode().getNumberOfUses(),
+            oauth.getCode().getTimeToKillInSeconds());
     }
 
     @Bean
@@ -515,7 +522,10 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     private ExpirationPolicy refreshTokenExpirationPolicy() {
         final OAuthRefreshTokenProperties rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
         final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
-        return new OAuthRefreshTokenExpirationPolicy(timeout);
+        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+            return new OAuthRefreshTokenExpirationPolicy(timeout);
+        }
+        return new OAuthRefreshTokenExpirationPolicy.OAuthRefreshTokenSovereignExpirationPolicy(timeout);
     }
 
     @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")

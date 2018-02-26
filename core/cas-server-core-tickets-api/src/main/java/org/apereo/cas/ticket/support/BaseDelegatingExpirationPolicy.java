@@ -81,7 +81,7 @@ public abstract class BaseDelegatingExpirationPolicy extends AbstractCasExpirati
         if (!match.isPresent()) {
             LOGGER.warn("No expiration policy was found for ticket state [{}]. "
                 + "Consider configuring a predicate that delegates to an expiration policy.", ticketState);
-            return false;
+            return super.isExpired(ticketState);
         }
         final ExpirationPolicy policy = match.get();
         LOGGER.debug("Activating expiration policy [{}] for ticket [{}]", policy, ticketState);

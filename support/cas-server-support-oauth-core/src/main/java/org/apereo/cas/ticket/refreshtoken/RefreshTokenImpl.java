@@ -36,8 +36,11 @@ public class RefreshTokenImpl extends OAuthCodeImpl implements RefreshToken {
      * @param scopes               the scopes
      * @throws IllegalArgumentException if the service or authentication are null.
      */
-    public RefreshTokenImpl(final String id, final Service service, final Authentication authentication, final ExpirationPolicy expirationPolicy,
-                            final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
+    public RefreshTokenImpl(final String id, final Service service,
+                            final Authentication authentication,
+                            final ExpirationPolicy expirationPolicy,
+                            final TicketGrantingTicket ticketGrantingTicket,
+                            final Collection<String> scopes) {
         super(id, service, authentication, expirationPolicy, ticketGrantingTicket, scopes);
     }
 
