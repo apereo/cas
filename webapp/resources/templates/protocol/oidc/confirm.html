@@ -49,12 +49,12 @@
             <h4 th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
         </strong>
         <p>
-            <a class="btn btn-success btn-lg" id="allow" name="allow"
+            <a class="btn btn-submit" id="allow" name="allow"
                th:href="@{${callbackUrl}}"
                th:utext="#{screen.oauth.confirm.allow}"/>
 
             <a th:if="${deniedApprovalUrl}"
-               class="btn btn-danger btn-lg" id="deny" name="deny"
+               class="btn btn-danger" id="deny" name="deny"
                th:href="@{${deniedApprovalUrl}}"
                th:utext="#{screen.oauth.confirm.deny}"/>
         </p>

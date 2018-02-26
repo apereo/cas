@@ -11,7 +11,7 @@
         <h2 th:text="#{screen.oauth.confirm.header}"/>
         <p th:text="#{screen.oauth.confirm.message(${serviceName})}"/>
         <p>
-            <a class="btn btn-success" id="allow" name="allow"
+            <a class="btn btn-submit" id="allow" name="allow"
                th:href="@{${callbackUrl}}"
                th:text="#{screen.oauth.confirm.allow}"/>
         </p>

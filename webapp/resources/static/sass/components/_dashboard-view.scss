@@ -1,6 +1,7 @@
 @import "variables";
 @import "mixins";
 
+$secondary-color: rgb(20, 144, 179);
 
 .viewDashboard {
 
@@ -46,7 +47,7 @@
         border: 5px solid #ccc;
         font-family: 'Lato', sans-serif;
         font-weight: 400;
-        font-size: 1.7rem;
+        font-size: 1.15rem;
         text-align: center;
         background-color: #efefef;
         border-radius: 50%;
@@ -100,8 +101,6 @@
     background-image: none; // Reset unusual Firefox-on-Android default style; see https://github.com/necolas/normalize.css/issues/214
     border: 1px solid transparent;
     white-space: nowrap;
-    @include button-size($padding-base-vertical, $padding-base-horizontal, $font-size-base, $line-height-base, $btn-border-radius-base);
-    //@include user-select(none);
 
     &,
     &:active,
@@ -115,7 +114,6 @@
     &:hover,
     &:focus,
     &.focus {
-      color: $btn-default-color;
       text-decoration: none;
     }
 
@@ -129,7 +127,7 @@
     &.disabled,
     &[disabled],
     fieldset[disabled] & {
-      cursor: $cursor-disabled;
+      cursor: not-allowed;
       @include opacity(.65);
       @include box-shadow(none);
     }
