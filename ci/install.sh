@@ -6,10 +6,12 @@ gradle="sudo ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true "
 
+isActiveBranchCommit=[ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]
+
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
     gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel -DenableIncremental=true "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
-    if [ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]; then
+    if [ isActiveBranchCommit ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
             echo -e "The build will skip deploying snapshot artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
             gradleBuild=""
@@ -37,7 +39,7 @@ elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
-elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ]; then
+elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ isActiveBranchCommit ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
