@@ -25,7 +25,7 @@ import org.apereo.cas.web.v3.V3ProxyValidateController;
 import org.apereo.cas.web.v3.V3ServiceValidateController;
 import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
-import org.apereo.cas.web.view.Cas30JsonResponseView;
+import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
 import org.apereo.cas.web.view.attributes.Cas30ProtocolAttributesRenderer;
 import org.springframework.beans.factory.ObjectProvider;
