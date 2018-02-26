@@ -1,8 +1,7 @@
-package org.apereo.cas.web.view;
+package org.apereo.cas.web.view.json;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +12,8 @@ import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.validation.CasProtocolAttributesRenderer;
+import org.apereo.cas.web.view.Cas30ResponseView;
+import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +41,24 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 public class Cas30JsonResponseView extends Cas30ResponseView {
+    /**
+     * Attribute name in the final model representing the service response.
+     */
+    public static final String ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE = "serviceResponse";
+
+    public Cas30JsonResponseView(final boolean successResponse,
+                                 final ProtocolAttributeEncoder protocolAttributeEncoder,
+                                 final ServicesManager servicesManager,
+                                 final String authenticationContextAttribute,
+                                 final View delegatedView,
+                                 final boolean releaseProtocolAttributes,
+                                 final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                                 final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                                 final CasProtocolAttributesRenderer attributesRenderer) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+            delegatedView, releaseProtocolAttributes, authenticationAttributeReleasePolicy,
+            serviceSelectionStrategy, attributesRenderer);
+    }
 
     public Cas30JsonResponseView(final boolean successResponse,
                                  final ProtocolAttributeEncoder protocolAttributeEncoder,
@@ -49,7 +68,7 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
                                  final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                                  final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
                                  final CasProtocolAttributesRenderer attributesRenderer) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
+        this(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
             createDelegatedView(), releaseProtocolAttributes, authenticationAttributeReleasePolicy,
             serviceSelectionStrategy, attributesRenderer);
     }
@@ -63,36 +82,36 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
 
     @Override
     protected void prepareMergedOutputModel(final Map<String, Object> model, final HttpServletRequest request, final HttpServletResponse response) {
-        final CasServiceResponse casResponse = new CasServiceResponse();
+        final CasJsonServiceResponse casResponse = new CasJsonServiceResponse();
         try {
             super.prepareMergedOutputModel(model, request, response);
             if (getAssertionFrom(model) != null) {
-                final CasServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
+                final CasJsonServiceResponseAuthenticationSuccess success = createAuthenticationSuccess(model);
                 casResponse.setAuthenticationSuccess(success);
             } else {
-                final CasServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
+                final CasJsonServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
                 casResponse.setAuthenticationFailure(failure);
             }
         } catch (final Exception e) {
-            final CasServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
+            final CasJsonServiceResponseAuthenticationFailure failure = createAuthenticationFailure(model);
             casResponse.setAuthenticationFailure(failure);
         } finally {
             final Map<String, Object> casModel = new HashMap<>();
-            casModel.put("serviceResponse", casResponse);
+            casModel.put(ATTRIBUTE_NAME_MODEL_SERVICE_RESPONSE, casResponse);
             model.clear();
             model.putAll(casModel);
         }
     }
 
-    private CasServiceResponseAuthenticationFailure createAuthenticationFailure(final Map<String, Object> model) {
-        final CasServiceResponseAuthenticationFailure failure = new CasServiceResponseAuthenticationFailure();
+    private CasJsonServiceResponseAuthenticationFailure createAuthenticationFailure(final Map<String, Object> model) {
+        final CasJsonServiceResponseAuthenticationFailure failure = new CasJsonServiceResponseAuthenticationFailure();
         failure.setCode(getErrorCodeFrom(model));
         failure.setDescription(getErrorDescriptionFrom(model));
         return failure;
     }
 
-    private CasServiceResponseAuthenticationSuccess createAuthenticationSuccess(final Map<String, Object> model) {
-        final CasServiceResponseAuthenticationSuccess success = new CasServiceResponseAuthenticationSuccess();
+    private CasJsonServiceResponseAuthenticationSuccess createAuthenticationSuccess(final Map<String, Object> model) {
+        final CasJsonServiceResponseAuthenticationSuccess success = new CasJsonServiceResponseAuthenticationSuccess();
         success.setAttributes(getModelAttributes(model));
         final Principal principal = getPrincipal(model);
         success.setUser(principal.getId());
@@ -105,37 +124,9 @@ public class Cas30JsonResponseView extends Cas30ResponseView {
         return success;
     }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    private static class CasServiceResponse {
 
-        private CasServiceResponseAuthenticationFailure authenticationFailure;
 
-        private CasServiceResponseAuthenticationSuccess authenticationSuccess;
-    }
 
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    private static class CasServiceResponseAuthenticationSuccess {
 
-        private String user;
 
-        private String proxyGrantingTicket;
-
-        private List proxies;
-
-        private Map attributes;
-    }
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    private static class CasServiceResponseAuthenticationFailure {
-
-        private String code;
-
-        private String description;
-    }
 }
