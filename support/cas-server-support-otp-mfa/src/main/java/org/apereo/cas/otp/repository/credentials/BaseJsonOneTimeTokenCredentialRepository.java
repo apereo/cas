@@ -69,18 +69,21 @@ public abstract class BaseJsonOneTimeTokenCredentialRepository extends BaseOneTi
     }
 
     @Override
-    public void update(final OneTimeTokenAccount account) {
+    public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         try {
             final TreeSet<OneTimeTokenAccount> accounts = readAccountsFromJsonRepository();
-
+            
             LOGGER.debug("Found [{}] account(s) and added google authenticator account for [{}]", accounts.size(), account.getUsername());
-            accounts.add(encode(account));
+            final OneTimeTokenAccount encoded = encode(account);
+            accounts.add(encoded);
 
             LOGGER.debug("Saving google authenticator accounts back to the JSON file at [{}]", this.location.getFile());
             this.serializer.to(this.location.getFile(), accounts);
+            return encoded;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
+        return null;
     }
 
     private TreeSet<OneTimeTokenAccount> readAccountsFromJsonRepository() throws IOException {

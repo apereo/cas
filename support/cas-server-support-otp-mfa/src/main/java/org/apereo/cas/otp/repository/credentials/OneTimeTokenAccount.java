@@ -49,7 +49,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String secretKey;
 
     @Column(nullable = false)

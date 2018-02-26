@@ -18,7 +18,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
 
     @Test
     public void verifyNoCredentials() {
-        GoogleAuthenticatorRestHttpRequestCredentialFactory f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
+        final GoogleAuthenticatorRestHttpRequestCredentialFactory f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
         final LinkedMultiValueMap body = new LinkedMultiValueMap<>();
         final List<Credential> results = f.fromRequestBody(body);
         assertTrue(results.isEmpty());
@@ -26,7 +26,7 @@ public class GoogleAuthenticatorRestHttpRequestCredentialFactoryTests {
 
     @Test
     public void verifyCredentials() {
-        GoogleAuthenticatorRestHttpRequestCredentialFactory f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
+        final GoogleAuthenticatorRestHttpRequestCredentialFactory f = new GoogleAuthenticatorRestHttpRequestCredentialFactory();
         final LinkedMultiValueMap body = new LinkedMultiValueMap<>();
         body.add(GoogleAuthenticatorRestHttpRequestCredentialFactory.PARAMETER_NAME_GAUTH_OTP, "132456");
         final List<Credential> results = f.fromRequestBody(body);

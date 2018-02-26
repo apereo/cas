@@ -47,9 +47,12 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
                 GoogleAuthenticatorAccount.class)
                 .setParameter("username", username)
                 .getSingleResult();
+            this.entityManager.detach(r);
             return decode(r);
         } catch (final NoResultException e) {
             LOGGER.debug("No record could be found for google authenticator id [{}]", username);
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
         }
         return null;
     }
@@ -68,16 +71,19 @@ public class JpaGoogleAuthenticatorTokenCredentialRepository extends BaseOneTime
 
     @Override
     @SneakyThrows
-    public void update(final OneTimeTokenAccount account) {
+    public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         final OneTimeTokenAccount ac = get(account.getUsername());
         if (ac != null) {
             ac.setValidationCode(account.getValidationCode());
             ac.setScratchCodes(account.getScratchCodes());
             ac.setSecretKey(account.getSecretKey());
-            this.entityManager.merge(encode(ac));
-        } else {
-            this.entityManager.merge(encode(account));
+            final OneTimeTokenAccount encoded = encode(ac);
+            this.entityManager.merge(encoded);
+            return encoded;
         }
+        final OneTimeTokenAccount encoded = encode(account);
+        this.entityManager.merge(encoded);
+        return encoded;
 
     }
 }
