@@ -40,8 +40,10 @@ public abstract class BaseInMemoryOneTimeTokenCredentialRepository extends BaseO
     }
 
     @Override
-    public void update(final OneTimeTokenAccount account) {
-        this.accounts.put(account.getUsername(), encode(account));
+    public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
+        final OneTimeTokenAccount encoded = encode(account);
+        this.accounts.put(account.getUsername(), encoded);
+        return encoded;
     }
 
     private boolean contains(final String username) {

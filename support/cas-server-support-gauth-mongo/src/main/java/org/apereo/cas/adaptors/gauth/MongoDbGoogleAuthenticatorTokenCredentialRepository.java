@@ -66,8 +66,9 @@ public class MongoDbGoogleAuthenticatorTokenCredentialRepository extends BaseOne
     }
 
     @Override
-    public void update(final OneTimeTokenAccount account) {
+    public OneTimeTokenAccount update(final OneTimeTokenAccount account) {
         final OneTimeTokenAccount encodedAccount = encode(account);
         this.mongoTemplate.save(encodedAccount, this.collectionName);
+        return encodedAccount;
     }
 }

@@ -70,7 +70,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     }
 
     @Override
-    public void update(final OneTimeTokenAccount accountToUpdate) {
+    public OneTimeTokenAccount update(final OneTimeTokenAccount accountToUpdate) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
         final OneTimeTokenAccount account = encode(accountToUpdate);
 
@@ -85,7 +85,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Boolean.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             LOGGER.debug("Posted google authenticator account successfully");
+            return account;
         }
         LOGGER.warn("Failed to save google authenticator account successfully");
+        return null;
     }
 }
