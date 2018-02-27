@@ -11,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collection;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistry}.
@@ -30,14 +32,14 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public JpaYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
         super(accountValidator);
     }
-    
+
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username"),
-                    YubiKeyAccount.class)
-                    .setParameter("username", uid)
-                    .getSingleResult() != null;
+                YubiKeyAccount.class)
+                .setParameter("username", uid)
+                .getSingleResult() != null;
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}]", uid);
         } catch (final Exception e) {
@@ -45,15 +47,15 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         }
         return false;
     }
-    
+
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         try {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username and r.publicId = :publicId"),
-                    YubiKeyAccount.class)
-                    .setParameter("username", uid)
-                    .setParameter("publicId", yubikeyPublicId)
-                    .getSingleResult() != null;
+                YubiKeyAccount.class)
+                .setParameter("username", uid)
+                .setParameter("publicId", yubikeyPublicId)
+                .getSingleResult() != null;
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
         } catch (final Exception e) {
@@ -74,4 +76,15 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         return false;
     }
 
+    @Override
+    public Collection<YubiKeyAccount> getAccounts() {
+        try {
+            return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class).getResultList();
+        } catch (final NoResultException e) {
+            LOGGER.debug("No registration record could be found");
+        } catch (final Exception e) {
+            LOGGER.debug(e.getMessage(), e);
+        }
+        return new ArrayList<>(0);
+    }
 }
