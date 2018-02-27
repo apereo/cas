@@ -101,6 +101,7 @@ public class JpaYubiKeyAccountRegistryTests {
     public void verifyAccountRegistered() {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvlud"));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
+        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
     }
 
     @TestConfiguration("JpaYubiKeyAccountRegistryTestConfiguration")
