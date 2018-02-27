@@ -63,19 +63,19 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     /**
      * The last time this ticket was used.
      */
-    @Column(name = "LAST_TIME_USED")
+    @Column(name = "LAST_TIME_USED", length = Integer.MAX_VALUE)
     private ZonedDateTime lastTimeUsed;
 
     /**
      * The previous last time this ticket was used.
      */
-    @Column(name = "PREVIOUS_LAST_TIME_USED")
+    @Column(name = "PREVIOUS_LAST_TIME_USED", length = Integer.MAX_VALUE)
     private ZonedDateTime previousTimeUsed;
 
     /**
      * The time the ticket was created.
      */
-    @Column(name = "CREATION_TIME")
+    @Column(name = "CREATION_TIME", length = Integer.MAX_VALUE)
     private ZonedDateTime creationTime;
 
     /**
@@ -109,7 +109,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
             state.update();
         }
     }
-    
+
     @Override
     public boolean isExpired() {
         return this.expirationPolicy.isExpired(this) || isExpiredInternal();
@@ -124,7 +124,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }
-    
+
     @Override
     public String toString() {
         return this.getId();

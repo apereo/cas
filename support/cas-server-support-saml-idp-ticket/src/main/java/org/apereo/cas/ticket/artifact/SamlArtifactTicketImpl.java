@@ -63,7 +63,7 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
      * The authenticated object for which this ticket was generated for.
      */
     @Lob
-    @Column(name = "AUTHENTICATION", nullable = false, length = 1000000)
+    @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
     
 
