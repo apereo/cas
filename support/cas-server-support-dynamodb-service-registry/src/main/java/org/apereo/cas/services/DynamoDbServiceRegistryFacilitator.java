@@ -193,7 +193,7 @@ public class DynamoDbServiceRegistryFacilitator {
     public void createServicesTable(final boolean deleteTables) {
         try {
             final CreateTableRequest request = new CreateTableRequest()
-                .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.N))
+                .withAttributeDefinitions(new AttributeDefinition(ColumnNames.ID.getName(), ScalarAttributeType.S))
                 .withKeySchema(new KeySchemaElement(ColumnNames.ID.getName(), KeyType.HASH))
                 .withProvisionedThroughput(new ProvisionedThroughput(dynamoDbProperties.getReadCapacity(),
                     dynamoDbProperties.getWriteCapacity()))
