@@ -15,7 +15,6 @@ import static org.junit.Assert.*;
  *
  * @since 5.3.0
  */
-
 @TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
 public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
     @Test
