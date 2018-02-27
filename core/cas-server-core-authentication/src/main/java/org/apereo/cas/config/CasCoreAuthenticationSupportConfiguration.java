@@ -76,8 +76,6 @@ public class CasCoreAuthenticationSupportConfiguration {
     @ConditionalOnMissingBean(name = "authenticationHandlerResolversExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer authenticationHandlerResolversExecutionPlanConfigurer() {
-        return plan -> {
-            plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
-        };
+        return plan -> plan.registerAuthenticationHandlerResolver(registeredServiceAuthenticationHandlerResolver());
     }
 }
