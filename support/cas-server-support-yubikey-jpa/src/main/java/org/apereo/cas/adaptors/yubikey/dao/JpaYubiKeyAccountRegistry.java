@@ -22,8 +22,6 @@ import javax.persistence.PersistenceContext;
 @Transactional(transactionManager = "transactionManagerYubiKey", readOnly = false)
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-
-
     private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
@@ -66,7 +64,6 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
-
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
             final YubiKeyAccount account = new YubiKeyAccount();

@@ -35,7 +35,7 @@ public class YubiKeyAccount {
     @Column(nullable = false)
     private String publicId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     public YubiKeyAccount() {
