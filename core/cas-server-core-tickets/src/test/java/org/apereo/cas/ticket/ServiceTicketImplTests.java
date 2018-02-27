@@ -104,14 +104,13 @@ public class ServiceTicketImplTests {
     }
 
     @Test
-    public void verifyIsExpiredTrueBecauseOfRoot() {
+    public void verifyTicketNeverExpires() {
         final TicketGrantingTicket t = new TicketGrantingTicketImpl(ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
         final ServiceTicket s = t.grantServiceTicket(idGenerator.getNewTicketId(ServiceTicket.PREFIX),
-                CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(), false, true);
-
+                CoreAuthenticationTestUtils.getService(), new NeverExpiresExpirationPolicy(),
+            false, true);
         t.markTicketExpired();
-
-        assertTrue(s.isExpired());
+        assertFalse(s.isExpired());
     }
 
     @Test
