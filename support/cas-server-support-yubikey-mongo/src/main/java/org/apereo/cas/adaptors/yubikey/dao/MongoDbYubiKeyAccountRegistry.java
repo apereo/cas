@@ -53,6 +53,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             account.setUsername(uid);
 
             this.mongoTemplate.save(account, this.collectionName);
+            return true;
         }
         return false;
     }
