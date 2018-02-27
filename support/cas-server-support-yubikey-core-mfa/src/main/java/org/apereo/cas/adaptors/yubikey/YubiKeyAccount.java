@@ -34,7 +34,7 @@ public class YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4096)
     private String publicId;
 
     @Column(nullable = false, unique = true)
