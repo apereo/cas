@@ -45,7 +45,7 @@ buildscript {
         classpath "io.franzbecker:gradle-lombok:1.11"
         classpath 'com.github.ben-manes:gradle-versions-plugin:0.17.0'
         classpath "io.spring.gradle:propdeps-plugin:0.0.10.RELEASE"
-        classpath "org.ajoberstar:grgit:2.1.0"
+        classpath "org.ajoberstar:grgit:2.1.1"
         classpath "net.ltgt.gradle:gradle-errorprone-plugin:0.0.13"
         classpath "io.spring.gradle:dependency-management-plugin:1.0.3.RELEASE"
         classpath "com.moowork.gradle:gradle-node-plugin:1.2.0"
