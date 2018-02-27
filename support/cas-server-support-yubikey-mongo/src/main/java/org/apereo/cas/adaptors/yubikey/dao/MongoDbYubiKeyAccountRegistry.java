@@ -9,6 +9,8 @@ import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import java.util.Collection;
+
 /**
  * This is {@link MongoDbYubiKeyAccountRegistry}.
  *
@@ -17,8 +19,6 @@ import org.springframework.data.mongodb.core.query.Query;
  */
 @Slf4j
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-
-    
     private final String collectionName;
     private final MongoOperations mongoTemplate;
 
@@ -56,5 +56,10 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public Collection<YubiKeyAccount> getAccounts() {
+        return this.mongoTemplate.findAll(YubiKeyAccount.class, this.collectionName);
     }
 }
