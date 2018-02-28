@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.accesstoken;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -26,8 +25,7 @@ public class OAuthAccessTokenExpirationPolicyTests extends BaseOAuthExpirationPo
     }
 
     @Test
-    @SneakyThrows
-    public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() {
+    public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws Exception {
         final OAuthAccessTokenExpirationPolicy policyWritten = new OAuthAccessTokenExpirationPolicy(1234L, 5678L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthAccessTokenExpirationPolicy.class);

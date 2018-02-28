@@ -1,6 +1,5 @@
 package org.apereo.cas.ticket.refreshtoken;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -28,9 +27,8 @@ public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationP
         assertTrue("Refresh token should not be expired when TGT is expired", rt.isExpired());
     }
 
-    @SneakyThrows
     @Test
-    public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() {
+    public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
         final OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);
