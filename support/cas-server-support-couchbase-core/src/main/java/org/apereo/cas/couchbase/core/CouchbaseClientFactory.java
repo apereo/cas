@@ -35,8 +35,8 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class CouchbaseClientFactory {
-    private static final int DEFAULT_TIMEOUT = 5;
-
+    private static final long DEFAULT_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(15);
+    
     private Cluster cluster;
 
     private Bucket bucket;
@@ -52,7 +52,7 @@ public class CouchbaseClientFactory {
     /* Design document and views to create in the bucket, if any. */
     private final String designDocument;
 
-    private long timeout = DEFAULT_TIMEOUT;
+    private long timeout = DEFAULT_TIMEOUT_MILLIS;
 
     /**
      * Instantiates a new Couchbase client factory.
@@ -84,7 +84,7 @@ public class CouchbaseClientFactory {
      * @param bucketPassword the bucket password
      */
     public CouchbaseClientFactory(final Set<String> nodes, final String bucketName, final String bucketPassword) {
-        this(nodes, bucketName, bucketPassword, DEFAULT_TIMEOUT, null, null);
+        this(nodes, bucketName, bucketPassword, DEFAULT_TIMEOUT_MILLIS, null, null);
     }
 
     /**
