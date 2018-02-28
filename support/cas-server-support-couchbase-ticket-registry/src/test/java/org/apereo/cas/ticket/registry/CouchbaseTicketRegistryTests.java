@@ -60,7 +60,8 @@ import java.util.Collection;
     CasCoreAuthenticationPrincipalConfiguration.class,
     CasCoreAuthenticationSupportConfiguration.class,
     CasPersonDirectoryConfiguration.class,
-    RefreshAutoConfiguration.class})
+    RefreshAutoConfiguration.class},
+        properties = {"cas.ticket.registry.couchbase.password=password", "cas.ticket.registry.couchbase.bucket=testbucket"})
 @Slf4j
 public class CouchbaseTicketRegistryTests extends AbstractTicketRegistryTests {
     @Autowired
