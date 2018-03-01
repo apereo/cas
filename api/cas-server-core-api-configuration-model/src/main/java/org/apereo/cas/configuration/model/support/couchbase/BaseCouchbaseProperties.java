@@ -34,11 +34,11 @@ public abstract class BaseCouchbaseProperties implements Serializable {
      * Password.
      */
     @RequiredProperty
-    private String password;
+    private String password = "password";
 
     /**
      * Bucket name.
      */
     @RequiredProperty
-    private String bucket = "default";
+    private String bucket = "testbucket";
 }

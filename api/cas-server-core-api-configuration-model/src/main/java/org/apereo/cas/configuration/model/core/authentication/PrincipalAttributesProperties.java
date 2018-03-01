@@ -45,7 +45,7 @@ public class PrincipalAttributesProperties implements Serializable {
     private int expirationTime = 30;
 
     /**
-     * Expiration caching timeunit for attributes.
+     * Expiration caching time unit for attributes.
      */
     private String expirationTimeUnit = TimeUnit.MINUTES.name();
 
@@ -101,6 +101,11 @@ public class PrincipalAttributesProperties implements Serializable {
      * Retrieve attributes from multiple JSON file repositories.
      */
     private List<JsonPrincipalAttributesProperties> json = new ArrayList();
+
+    /**
+     * Retrieve attributes from Couchbase repositories.
+     */
+    private CouchbasePrincipalAttributesProperties couchbase = new CouchbasePrincipalAttributesProperties();
 
     /**
      * Retrieve attributes from multiple scripted repositories.

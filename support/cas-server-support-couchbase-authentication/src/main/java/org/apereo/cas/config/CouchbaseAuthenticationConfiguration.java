@@ -11,12 +11,14 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
 import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -92,15 +94,24 @@ public class CouchbaseAuthenticationConfiguration {
         };
     }
 
+    @ConditionalOnMissingBean(name = "couchbasePersonAttributeDao")
+    @Bean
+    public IPersonAttributeDao couchbasePersonAttributeDao() {
+        final CouchbasePrincipalAttributesProperties couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
+        final CouchbasePersonAttributeDao cb = new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory());
+        cb.setOrder(couchbase.getOrder());
+        return cb;
+    }
+
     @ConditionalOnMissingBean(name = "couchbaseAttributeRepositoryPlanConfigurer")
     @Bean
     public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer() {
-        final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
+        final CouchbasePrincipalAttributesProperties couchbase = casProperties.getAuthn().getAttributeRepository().getCouchbase();
         return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
             @Override
             public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
                 if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
-                    plan.registerAttributeRepository(new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory()));
+                    plan.registerAttributeRepository(couchbasePersonAttributeDao());
                 }
             }
         };

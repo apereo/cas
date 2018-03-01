@@ -5,7 +5,7 @@ import com.couchbase.client.java.query.N1qlQueryResult;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
+import org.apereo.cas.configuration.model.core.authentication.CouchbasePrincipalAttributesProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.services.persondir.IPersonAttributes;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
     private final IUsernameAttributeProvider usernameAttributeProvider = new SimpleUsernameAttributeProvider();
-    private final CouchbaseAuthenticationProperties couchbaseProperties;
+    private final CouchbasePrincipalAttributesProperties couchbaseProperties;
     private final CouchbaseClientFactory couchbase;
 
     @Override
@@ -53,7 +53,8 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
                     final JsonObject value = (JsonObject) row.value().get(couchbase.getBucket().name());
                     return value.containsKey(couchbaseProperties.getUsernameAttribute());
                 })
-                .map(row -> couchbase.collectAttributesFromEntity(row.value(), s -> s.equals(couchbaseProperties.getUsernameAttribute())).entrySet())
+                .map(row -> (JsonObject) row.value().get(couchbase.getBucket().name()))
+                .map(entity -> couchbase.collectAttributesFromEntity(entity, s -> !s.equals(couchbaseProperties.getUsernameAttribute())).entrySet())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
         }
@@ -79,12 +80,12 @@ public class CouchbasePersonAttributeDao extends BasePersonAttributeDao {
 
     @Override
     public Set<String> getPossibleUserAttributeNames() {
-        return new LinkedHashSet<>();
+        return new LinkedHashSet<>(0);
     }
 
     @Override
     public Set<String> getAvailableQueryAttributes() {
-        return new LinkedHashSet<>();
+        return new LinkedHashSet<>(0);
     }
 
     private static Map<String, List<Object>> stuffAttributesIntoList(final Map<String, ?> personAttributesMap) {
