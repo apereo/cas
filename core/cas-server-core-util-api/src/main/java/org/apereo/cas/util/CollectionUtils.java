@@ -1,6 +1,7 @@
 package org.apereo.cas.util;
 
 import com.google.common.collect.Multimap;
+import lombok.SneakyThrows;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -43,6 +44,20 @@ public class CollectionUtils {
             return Optional.empty();
         }
         return Optional.of(object.iterator().next());
+    }
+
+    /**
+     * To collection t.
+     *
+     * @param <T>   the type parameter
+     * @param obj   the obj
+     * @param clazz the clazz
+     * @return the t
+     */
+    @SneakyThrows
+    public static <T extends Collection> T toCollection(final Object obj, final Class<T> clazz) {
+        final Set<Object> results = toCollection(obj);
+        return clazz.getDeclaredConstructor().newInstance(results);
     }
 
     /**

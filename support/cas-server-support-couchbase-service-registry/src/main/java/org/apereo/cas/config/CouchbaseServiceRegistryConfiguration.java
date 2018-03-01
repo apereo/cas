@@ -51,7 +51,6 @@ public class CouchbaseServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     public ServiceRegistryDao serviceRegistryDao() {
-        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer(),
-            casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
+        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
     }
 }
