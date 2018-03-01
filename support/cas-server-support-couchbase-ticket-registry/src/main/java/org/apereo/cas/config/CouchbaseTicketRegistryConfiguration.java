@@ -54,7 +54,6 @@ public class CouchbaseTicketRegistryConfiguration {
         final CouchbaseTicketRegistryProperties couchbase = casProperties.getTicket().getRegistry().getCouchbase();
         final CouchbaseTicketRegistry c = new CouchbaseTicketRegistry(ticketCatalog, ticketRegistryCouchbaseClientFactory());
         c.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(couchbase.getCrypto(), "couchbase"));
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(couchbase.isQueryEnabled()));
         return c;
     }
 

@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CouchbaseAuthenticationHandler;
@@ -20,7 +21,6 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.util.StringUtils;
 
 import java.util.Set;
 
@@ -58,7 +58,7 @@ public class CouchbaseAuthenticationConfiguration {
     @Bean
     public CouchbaseClientFactory authenticationCouchbaseClientFactory() {
         final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
-        final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
+        final Set<String> nodes = org.springframework.util.StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(), couchbase.getPassword());
     }
 
@@ -68,8 +68,9 @@ public class CouchbaseAuthenticationConfiguration {
     public AuthenticationHandler couchbaseAuthenticationHandler() {
         final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
         final CouchbaseAuthenticationHandler handler = new CouchbaseAuthenticationHandler(
-                servicesManager, couchbasePrincipalFactory(),
-                authenticationCouchbaseClientFactory(), couchbase);
+            servicesManager, couchbasePrincipalFactory(),
+            authenticationCouchbaseClientFactory(),
+            couchbase);
         handler.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(couchbase.getPrincipalTransformation()));
         handler.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(couchbase.getPasswordEncoder()));
         return handler;
@@ -78,6 +79,13 @@ public class CouchbaseAuthenticationConfiguration {
     @ConditionalOnMissingBean(name = "couchbaseAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer couchbaseAuthenticationEventExecutionPlanConfigurer() {
-        return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
+        return plan -> {
+            final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
+            if (StringUtils.isNotBlank(couchbase.getPasswordAttribute()) && StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
+                plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
+            } else {
+                LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
+            }
+        };
     }
 }

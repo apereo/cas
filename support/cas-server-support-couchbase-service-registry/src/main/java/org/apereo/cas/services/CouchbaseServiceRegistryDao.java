@@ -56,19 +56,10 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
-    /**
-     * Default constructor.
-     *
-     * @param couchbase             couchbase instance
-     * @param serviceJsonSerializer the JSON serializer to use.
-     * @param isQueryEnabled        the is query enabled
-     */
     public CouchbaseServiceRegistryDao(final CouchbaseClientFactory couchbase,
-                                       final StringSerializer<RegisteredService> serviceJsonSerializer,
-                                       final boolean isQueryEnabled) {
+                                       final StringSerializer<RegisteredService> serviceJsonSerializer) {
         this.couchbase = couchbase;
         this.registeredServiceJsonSerializer = serviceJsonSerializer;
-        System.setProperty("com.couchbase.queryEnabled", Boolean.toString(isQueryEnabled));
     }
 
     @Override

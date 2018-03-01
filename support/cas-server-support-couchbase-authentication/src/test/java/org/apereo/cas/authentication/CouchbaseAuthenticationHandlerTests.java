@@ -18,9 +18,7 @@ import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CouchbaseAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +37,7 @@ import static org.junit.Assert.*;
  * @since 5.3.0
  */
 @RunWith(ConditionalSpringRunner.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 @SpringBootTest(classes = {
     RefreshAutoConfiguration.class,
     CouchbaseAuthenticationConfiguration.class,
