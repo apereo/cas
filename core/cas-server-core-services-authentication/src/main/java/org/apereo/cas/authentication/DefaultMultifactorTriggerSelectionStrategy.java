@@ -43,8 +43,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             return Optional.empty();
         }
         final Set<String> validProviderIds = providers.stream()
-                .map(MultifactorAuthenticationProvider::getId)
-                .collect(Collectors.toSet());
+            .map(MultifactorAuthenticationProvider::getId)
+            .collect(Collectors.toSet());
         final Principal principal = authentication != null ? authentication.getPrincipal() : null;
 
         // check for an opt-in provider id parameter trigger, we only care about the first value
@@ -75,8 +75,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     private Optional<String> resolveRequestParameterTrigger(final HttpServletRequest request,
                                                             final Set<String> providerIds) {
         return Optional.ofNullable(request)
-                .map(r -> r.getParameter(mfaProperties.getRequestParameter()))
-                .filter(providerIds::contains);
+            .map(r -> r.getParameter(mfaProperties.getRequestParameter()))
+            .filter(providerIds::contains);
     }
 
     private Optional<String> resolveRegisteredServiceTrigger(final RegisteredService service, final Principal principal,
@@ -112,8 +112,8 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     private Optional<String> resolveRegisteredServicePolicyTrigger(final RegisteredServiceMultifactorPolicy policy,
                                                                    final Set<String> providerIds) {
         return policy.getMultifactorAuthenticationProviders().stream()
-                .filter(providerIds::contains)
-                .findFirst();
+            .filter(providerIds::contains)
+            .findFirst();
     }
 
     private Optional<String> resolveAuthenticationAttributeTrigger(final Authentication authentication,
@@ -123,9 +123,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         return resolveAttributeTrigger(authentication.getAttributes(),
-                mfaProperties.getGlobalAuthenticationAttributeNameTriggers(),
-                mfaProperties.getGlobalAuthenticationAttributeValueRegex(),
-                providerIds);
+            mfaProperties.getGlobalAuthenticationAttributeNameTriggers(),
+            mfaProperties.getGlobalAuthenticationAttributeValueRegex(),
+            providerIds);
     }
 
     private Optional<String> resolvePrincipalAttributeTrigger(final Principal principal,
@@ -135,9 +135,9 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         }
 
         return resolveAttributeTrigger(principal.getAttributes(),
-                mfaProperties.getGlobalPrincipalAttributeNameTriggers(),
-                mfaProperties.getGlobalPrincipalAttributeValueRegex(),
-                providerIds);
+            mfaProperties.getGlobalPrincipalAttributeNameTriggers(),
+            mfaProperties.getGlobalPrincipalAttributeValueRegex(),
+            providerIds);
     }
 
     private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
@@ -156,12 +156,16 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
     private Optional<String> resolveAttributeTrigger(final Map<String, Object> attributes, final String names,
                                                      final Set<String> providerIds) {
         return commaDelimitedListToSet(names).stream()
-                // principal.getAttribute(name).values
-                .map(attributes::get).filter(Objects::nonNull)
-                .map(CollectionUtils::toCollection).flatMap(Set::stream)
-                // validProviderIds.contains((String) value)
-                .filter(String.class::isInstance).map(String.class::cast).filter(providerIds::contains)
-                .findFirst();
+            // principal.getAttribute(name).values
+            .map(attributes::get)
+            .filter(Objects::nonNull)
+            .map(CollectionUtils::toCollection)
+            .flatMap(Set::stream)
+            // validProviderIds.contains((String) value)
+            .filter(String.class::isInstance)
+            .map(String.class::cast)
+            .filter(providerIds::contains)
+            .findFirst();
     }
 
     private boolean hasMatchingAttribute(final Map<String, Object> attributes, final String names, final String value) {
@@ -174,12 +178,12 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
         // check to see if any of the specified attributes match the value pattern
         final Predicate<String> valuePredicate = Pattern.compile(value).asPredicate();
         return commaDelimitedListToSet(names).stream()
-                .map(attributes::get)
-                .filter(Objects::nonNull)
-                .map(CollectionUtils::toCollection)
-                .flatMap(Set::stream)
-                .filter(String.class::isInstance)
-                .map(String.class::cast)
-                .anyMatch(valuePredicate);
+            .map(attributes::get)
+            .filter(Objects::nonNull)
+            .map(CollectionUtils::toCollection)
+            .flatMap(Set::stream)
+            .filter(String.class::isInstance)
+            .map(String.class::cast)
+            .anyMatch(valuePredicate);
     }
 }
