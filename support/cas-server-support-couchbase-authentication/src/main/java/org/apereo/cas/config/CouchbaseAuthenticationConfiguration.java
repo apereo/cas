@@ -13,6 +13,9 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.authentication.CouchbaseAuthenticationProperties;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
+import org.apereo.cas.persondir.support.CouchbasePersonAttributeDao;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -85,6 +88,20 @@ public class CouchbaseAuthenticationConfiguration {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(couchbaseAuthenticationHandler(), personDirectoryPrincipalResolver);
             } else {
                 LOGGER.debug("No couchbase username/password is defined, so couchbase authentication will not be registered in the execution plan");
+            }
+        };
+    }
+
+    @ConditionalOnMissingBean(name = "couchbaseAttributeRepositoryPlanConfigurer")
+    @Bean
+    public PersonDirectoryAttributeRepositoryPlanConfigurer couchbaseAttributeRepositoryPlanConfigurer() {
+        final CouchbaseAuthenticationProperties couchbase = casProperties.getAuthn().getCouchbase();
+        return new PersonDirectoryAttributeRepositoryPlanConfigurer() {
+            @Override
+            public void configureAttributeRepositoryPlan(final PersonDirectoryAttributeRepositoryPlan plan) {
+                if (StringUtils.isNotBlank(couchbase.getUsernameAttribute())) {
+                    plan.registerAttributeRepository(new CouchbasePersonAttributeDao(couchbase, authenticationCouchbaseClientFactory()));
+                }
             }
         };
     }
