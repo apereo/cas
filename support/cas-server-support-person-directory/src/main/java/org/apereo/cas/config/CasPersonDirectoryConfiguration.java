@@ -4,6 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -11,6 +12,9 @@ import org.apereo.cas.configuration.model.core.authentication.GrouperPrincipalAt
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -30,6 +34,7 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jooq.lambda.Unchecked;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,12 +62,15 @@ import java.util.concurrent.TimeUnit;
 @Configuration("casPersonDirectoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasPersonDirectoryConfiguration {
+public class CasPersonDirectoryConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ObjectProvider<List<PersonDirectoryAttributeRepositoryPlanConfigurer>> attributeRepositoryConfigurers;
 
     @ConditionalOnMissingBean(name = "attributeRepositories")
     @Bean
@@ -79,8 +87,13 @@ public class CasPersonDirectoryConfiguration {
         list.addAll(scriptedAttributeRepositories());
         list.addAll(stubAttributeRepositories());
 
-        OrderComparator.sort(list);
+        final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers =
+            ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>());
+        final PersonDirectoryAttributeRepositoryPlan plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
+        configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
+        list.addAll(plan.getAttributeRepositories());
 
+        OrderComparator.sort(list);
         LOGGER.debug("Final list of attribute repositories is [{}]", list);
         return list;
     }
