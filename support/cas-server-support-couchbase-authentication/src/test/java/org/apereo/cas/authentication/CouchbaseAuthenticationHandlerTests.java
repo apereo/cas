@@ -1,9 +1,5 @@
 package org.apereo.cas.authentication;
 
-import com.couchbase.client.java.Bucket;
-import com.couchbase.client.java.document.JsonDocument;
-import com.couchbase.client.java.document.json.JsonObject;
-import com.couchbase.client.java.query.util.IndexInfo;
 import lombok.SneakyThrows;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -21,21 +17,18 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.CouchbaseAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
-import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
 import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.*;
 
@@ -66,12 +59,13 @@ import static org.junit.Assert.*;
     CasAuthenticationEventExecutionPlanTestConfiguration.class,
     CasDefaultServiceTicketIdGeneratorsConfiguration.class,
     CasCoreAuthenticationPrincipalConfiguration.class
-})
+},
+    properties = {"cas.authn.couchbase.password=password", "cas.authn.couchbase.bucket=testbucket"})
 public class CouchbaseAuthenticationHandlerTests {
     @Autowired
     @Qualifier("couchbaseAuthenticationHandler")
     private AuthenticationHandler couchbaseAuthenticationHandler;
-    
+
     @Test
     @SneakyThrows
     public void verifyAccount() {
@@ -79,8 +73,9 @@ public class CouchbaseAuthenticationHandlerTests {
         final AuthenticationHandlerExecutionResult result = couchbaseAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals("casuser", result.getPrincipal().getId());
-        assertEquals(2, result.getPrincipal().getAttributes().size());
-        assertTrue(result.getPrincipal().getAttributes().containsKey("firstname"));
-        assertTrue(result.getPrincipal().getAttributes().containsKey("lastname"));
+        final Map<String, Object> attributes = result.getPrincipal().getAttributes();
+        assertEquals(2, attributes.size());
+        assertTrue(attributes.containsKey("firstname"));
+        assertTrue(attributes.containsKey("lastname"));
     }
 }
