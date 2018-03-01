@@ -28,7 +28,8 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
-@SpringBootTest(classes = {RefreshAutoConfiguration.class, CouchbaseServiceRegistryConfiguration.class})
+@SpringBootTest(classes = {RefreshAutoConfiguration.class, CouchbaseServiceRegistryConfiguration.class},
+        properties = {"cas.serviceRegistry.couchbase.password=password", "cas.serviceRegistry.couchbase.bucket=testbucket"})
 @Slf4j
 @RunWith(ConditionalSpringRunner.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
