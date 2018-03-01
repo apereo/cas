@@ -740,7 +740,7 @@ The following  options are shared and apply when CAS is configured to integrate 
 # ${configurationKey}.password=
 # ${configurationKey}.queryEnabled=true
 # ${configurationKey}.bucket=default
-# ${configurationKey}.timeout=10
+# ${configurationKey}.timeout=PT30S
 ```
 
 ## Memcached Integration Settings
