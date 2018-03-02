@@ -47,7 +47,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();
         }
-        final String fingerprint = deviceFingerprintGenerator.generateFingerprint(requestContext);
+        final String fingerprint = deviceFingerprintGenerator.generateFingerprint(principal, requestContext);
         LOGGER.debug("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream()
                 .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {

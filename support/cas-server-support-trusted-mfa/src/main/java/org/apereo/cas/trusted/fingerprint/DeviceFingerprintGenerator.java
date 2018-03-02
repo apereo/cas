@@ -14,8 +14,9 @@ public interface DeviceFingerprintGenerator {
     /**
      * Generate a unique browser/device fingerprint for the provided request.
      *
-     * @param context the request to generate the device fingerprint from.
+     * @param principal The principal uid we are generating a fingerprint for.
+     * @param context   the request to generate the device fingerprint from.
      * @return The generated fingerprint
      */
-    String generateFingerprint(@Nonnull RequestContext context);
+    String generateFingerprint(@Nonnull String principal, @Nonnull RequestContext context);
 }
