@@ -6,10 +6,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.support.couchbase.BaseCouchbaseProperties;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.SpringResourceProperties;
 
 /**
  * This is {@link CouchbasePrincipalAttributesProperties}.
+ *
  * @author Misagh Moayyed
  * @since 5.3.0
  */
