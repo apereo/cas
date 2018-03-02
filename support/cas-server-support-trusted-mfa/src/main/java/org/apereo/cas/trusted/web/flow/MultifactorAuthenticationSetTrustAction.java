@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
+import org.apereo.cas.trusted.fingerprint.DeviceFingerprintGenerator;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.action.AbstractAction;
@@ -26,8 +27,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
+    private final DeviceFingerprintGenerator deviceFingerprintGenerator;
     private final TrustedDevicesMultifactorProperties trustedProperties;
-
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -43,7 +44,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
             LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-                    MultifactorAuthenticationTrustUtils.generateGeography());
+                    MultifactorAuthenticationTrustUtils.generateGeography(),
+                    deviceFingerprintGenerator.generateFingerprint(requestContext));
 
             if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
                 final String deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
