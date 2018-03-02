@@ -33,8 +33,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public void expire(final String key) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.key = :key",
-                    MultifactorAuthenticationTrustRecord.class)
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordKey = :key")
                     .setParameter("key", key)
                     .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
@@ -46,8 +45,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public void expire(final LocalDate onOrBefore) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.date < :date",
-                    MultifactorAuthenticationTrustRecord.class)
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordDate <= :date")
                     .setParameter("date", onOrBefore)
                     .executeUpdate();
             LOGGER.info("Found and removed [{}] records", count);
@@ -60,7 +58,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     public Set<MultifactorAuthenticationTrustRecord> get(final LocalDate onOrAfterDate) {
         try {
             final List<MultifactorAuthenticationTrustRecord> results =
-                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.date >= :date",
+                    this.entityManager.createQuery("SELECT r FROM " + TABLE_NAME + " r where r.recordDate >= :date",
                             MultifactorAuthenticationTrustRecord.class).setParameter("date", onOrAfterDate).getResultList();
             return new HashSet<>(results);
         } catch (final NoResultException e) {
