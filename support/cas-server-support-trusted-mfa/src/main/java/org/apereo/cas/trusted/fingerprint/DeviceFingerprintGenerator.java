@@ -5,7 +5,8 @@ import org.springframework.webflow.execution.RequestContext;
 import javax.annotation.Nonnull;
 
 /**
- * Interface for generating a device fingerprint for usage within
+ * Interface for generating a device fingerprint for usage within.
+ *
  * @author Daniel Frett
  * @since 5.3.0
  */

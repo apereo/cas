@@ -63,6 +63,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
      * New instance of authentication trust record.
      *
      * @param principal   the principal
+     * @param geography   the geography
      * @param fingerprint the device fingerprint
      * @return the authentication trust record
      */
