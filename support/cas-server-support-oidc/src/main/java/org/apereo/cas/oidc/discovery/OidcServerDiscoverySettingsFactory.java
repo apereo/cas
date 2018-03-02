@@ -46,6 +46,7 @@ public class OidcServerDiscoverySettingsFactory implements FactoryBean<OidcServe
         discoveryProperties.setGrantTypesSupported(
                 CollectionUtils.wrapList(OAuth20GrantTypes.AUTHORIZATION_CODE.getType(),
                         OAuth20GrantTypes.PASSWORD.getType(),
+                        OAuth20GrantTypes.CLIENT_CREDENTIALS.getType(),
                         OAuth20GrantTypes.REFRESH_TOKEN.getType()));
 
         discoveryProperties.setIdTokenSigningAlgValuesSupported(CollectionUtils.wrapList("none", "RS256"));
