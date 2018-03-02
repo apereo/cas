@@ -33,7 +33,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public void expire(final String key) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.key = :key",
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordKey = :key",
                     MultifactorAuthenticationTrustRecord.class)
                     .setParameter("key", key)
                     .executeUpdate();
@@ -46,7 +46,7 @@ public class JpaMultifactorAuthenticationTrustStorage extends BaseMultifactorAut
     @Override
     public void expire(final LocalDate onOrBefore) {
         try {
-            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.date < :date",
+            final int count = this.entityManager.createQuery("DELETE FROM " + TABLE_NAME + " r where r.recordDate < :date",
                     MultifactorAuthenticationTrustRecord.class)
                     .setParameter("date", onOrBefore)
                     .executeUpdate();
