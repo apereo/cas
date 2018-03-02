@@ -31,6 +31,8 @@ public class MultifactorAuthenticationTrustUtils {
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
         final StringBuilder builder = new StringBuilder(r.getPrincipal());
         return builder.append('@')
+                .append(r.getRecordDate())
+                .append('@')
                 .append(r.getDeviceFingerprint())
                 .toString();
     }
