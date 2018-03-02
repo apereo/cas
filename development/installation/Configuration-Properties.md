@@ -2789,6 +2789,7 @@ under the configuration key `cas.audit.jdbc`.
 ```properties
 # cas.audit.jdbc.asynchronous=true
 # cas.audit.jdbc.maxAge=180
+# cas.audit.jdbc.columnLength=100
 # cas.audit.jdbc.isolationLevelName=ISOLATION_READ_COMMITTED
 # cas.audit.jdbc.propagationBehaviorName=PROPAGATION_REQUIRED
 ```
