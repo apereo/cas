@@ -14,7 +14,7 @@ import org.springframework.context.ApplicationEventPublisher;
  * @since 5.0.0
  */
 @Slf4j
-public class YamlServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryTests {
+public class YamlServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Before
     public void setup() {

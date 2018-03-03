@@ -1,6 +1,5 @@
 package org.apereo.cas.web.security;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
@@ -31,9 +30,8 @@ public abstract class BaseCasLdapUserDetailsManagerConfigurerTests {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @SneakyThrows
     @Test
-    public void verifyUserDetails() {
+    public void verifyUserDetails() throws Exception {
         final CasLdapUserDetailsManagerConfigurer cfg = new CasLdapUserDetailsManagerConfigurer(casProperties.getAdminPagesSecurity());
         final AuthenticationManagerBuilder builder = new AuthenticationManagerBuilder(new AuthenticationObjectPostProcessor());
         cfg.configure(builder);

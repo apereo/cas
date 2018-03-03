@@ -19,7 +19,7 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link CosmosDbServiceRegistryDaoTests}.
+ * This is {@link CosmosDbServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
 @IfProfileValue(name = "cosmosDbEnabled", value = "true")
 @TestPropertySource(locations = {"classpath:/cosmosdb.properties"})
 @Slf4j
-public class CosmosDbServiceRegistryDaoTests {
+public class CosmosDbServiceRegistryTests {
 
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")

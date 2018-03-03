@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Handles tests for {@link JpaServiceRegistryImpl}
+ * Handles tests for {@link JpaServiceRegistry}
  *
  * @author battags
  * @since 3.1.0
@@ -44,14 +44,14 @@ import static org.junit.Assert.*;
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
     JpaServiceRegistryConfiguration.class,
-    JpaServiceRegistryDaoImplTests.TimeAwareServicesManagerConfiguration.class,
+    JpaServiceRegistryTests.TimeAwareServicesManagerConfiguration.class,
     CasCoreServicesConfiguration.class})
 @DirtiesContext
 @Slf4j
-public class JpaServiceRegistryDaoImplTests {
+public class JpaServiceRegistryTests {
 
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier("jpaServiceRegistry")
     private ServiceRegistryDao serviceRegistryDao;
 
     @Autowired
