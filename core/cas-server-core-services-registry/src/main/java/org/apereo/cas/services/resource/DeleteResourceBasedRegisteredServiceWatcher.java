@@ -19,7 +19,7 @@ import java.util.List;
 public class DeleteResourceBasedRegisteredServiceWatcher extends BaseResourceBasedRegisteredServiceWatcher {
 
 
-    public DeleteResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistryDao serviceRegistryDao) {
+    public DeleteResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistry serviceRegistryDao) {
         super(serviceRegistryDao);
     }
 

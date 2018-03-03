@@ -2,7 +2,7 @@ package org.apereo.cas.adaptors.redis.services;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.services.AbstractServiceRegistryDao;
+import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.data.redis.core.RedisTemplate;
 import java.util.ArrayList;
@@ -20,7 +20,7 @@ import lombok.ToString;
 @Slf4j
 @ToString
 @AllArgsConstructor
-public class RedisServiceRegistryDao extends AbstractServiceRegistryDao {
+public class RedisServiceRegistry extends AbstractServiceRegistry {
 
     private static final String CAS_SERVICE_PREFIX = RegisteredService.class.getSimpleName() + ':';
 

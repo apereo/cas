@@ -3,7 +3,7 @@ package org.apereo.cas.adaptors.ldap.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
-import org.apereo.cas.services.AbstractServiceRegistryDao;
+import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import org.apereo.cas.util.CollectionUtils;
@@ -30,7 +30,7 @@ import lombok.ToString;
  */
 @Slf4j
 @ToString
-public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
+public class LdapServiceRegistry extends AbstractServiceRegistry {
 
     private final ConnectionFactory connectionFactory;
 
@@ -42,8 +42,8 @@ public class LdapServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private final String loadFilter;
 
-    public LdapServiceRegistryDao(final ConnectionFactory connectionFactory, final String baseDn,
-                                  final LdapRegisteredServiceMapper ldapServiceMapper, final LdapServiceRegistryProperties ldapProperties) {
+    public LdapServiceRegistry(final ConnectionFactory connectionFactory, final String baseDn,
+                               final LdapRegisteredServiceMapper ldapServiceMapper, final LdapServiceRegistryProperties ldapProperties) {
         this.connectionFactory = connectionFactory;
         this.baseDn = baseDn;
         if (ldapServiceMapper == null) {

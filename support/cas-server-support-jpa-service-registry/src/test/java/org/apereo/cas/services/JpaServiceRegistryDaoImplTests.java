@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * Handles tests for {@link JpaServiceRegistryDaoImpl}
+ * Handles tests for {@link JpaServiceRegistryImpl}
  *
  * @author battags
  * @since 3.1.0

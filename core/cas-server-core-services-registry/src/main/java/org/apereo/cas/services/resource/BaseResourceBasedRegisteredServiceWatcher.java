@@ -28,7 +28,7 @@ public abstract class BaseResourceBasedRegisteredServiceWatcher implements Consu
     /**
      * Service registry instance.
      */
-    protected AbstractResourceBasedServiceRegistryDao serviceRegistryDao;
+    protected AbstractResourceBasedServiceRegistry serviceRegistryDao;
 
     @Override
     public void accept(final File file) {

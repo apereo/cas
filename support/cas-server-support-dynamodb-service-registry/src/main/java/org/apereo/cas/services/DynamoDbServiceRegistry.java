@@ -7,14 +7,14 @@ import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 import java.util.List;
 
 /**
- * This is {@link DynamoDbServiceRegistryDao}.
+ * This is {@link DynamoDbServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.1.0
  */
 @Slf4j
 @AllArgsConstructor
-public class DynamoDbServiceRegistryDao extends AbstractServiceRegistryDao {
+public class DynamoDbServiceRegistry extends AbstractServiceRegistry {
     private final DynamoDbServiceRegistryFacilitator dbTableService;
 
     @Override
