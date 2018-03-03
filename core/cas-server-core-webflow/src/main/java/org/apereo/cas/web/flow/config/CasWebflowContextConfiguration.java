@@ -113,8 +113,8 @@ public class CasWebflowContextConfiguration {
     @Bean
     public HandlerAdapter logoutHandlerAdapter() {
         final FlowHandlerAdapter handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
-        handler.setFlowExecutor(loginFlowExecutor());
-        handler.setFlowUrlHandler(loginFlowUrlHandler());
+        handler.setFlowExecutor(logoutFlowExecutor());
+        handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
     }
 
