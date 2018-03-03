@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.JsonServiceRegistryDao;
+import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -34,7 +34,7 @@ public class OAuthRegisteredServiceTests {
     private final ServiceRegistryDao dao;
 
     public OAuthRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
+        this.dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
     }
 

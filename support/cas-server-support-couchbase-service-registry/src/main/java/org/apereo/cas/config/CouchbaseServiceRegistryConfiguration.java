@@ -5,8 +5,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.services.CouchbaseServiceRegistryDao;
+import org.apereo.cas.services.CouchbaseServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,7 +28,7 @@ import java.util.Set;
 @Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CouchbaseServiceRegistryConfiguration {
+public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -44,13 +46,18 @@ public class CouchbaseServiceRegistryConfiguration {
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
             couchbase.getPassword(),
             Beans.newDuration(couchbase.getTimeout()).toMillis(),
-            CouchbaseServiceRegistryDao.UTIL_DOCUMENT,
-            CouchbaseServiceRegistryDao.ALL_VIEWS);
+            CouchbaseServiceRegistry.UTIL_DOCUMENT,
+            CouchbaseServiceRegistry.ALL_VIEWS);
     }
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao serviceRegistryDao() {
-        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
+    public ServiceRegistryDao couchbaseServiceRegistry() {
+        return new CouchbaseServiceRegistry(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(couchbaseServiceRegistry());
     }
 }
