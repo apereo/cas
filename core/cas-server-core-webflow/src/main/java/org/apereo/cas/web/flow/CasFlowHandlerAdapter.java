@@ -9,7 +9,7 @@ import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public class CasFlowHandlerAdapter extends FlowHandlerAdapter  {
+public class CasFlowHandlerAdapter extends FlowHandlerAdapter {
     private final String supportedFlowId;
 
     public CasFlowHandlerAdapter(final String supportedFlowId) {
