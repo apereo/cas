@@ -4,14 +4,14 @@ import java.io.File;
 import java.util.Collection;
 
 /**
- * This is {@link ResourceBasedServiceRegistryDao},
+ * This is {@link ResourceBasedServiceRegistry},
  * which describes operations relevant to a service registry
  * that is backed by file-system resources.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface ResourceBasedServiceRegistryDao extends ServiceRegistryDao {
+public interface ResourceBasedServiceRegistry extends ServiceRegistryDao {
 
     /**
      * Update a single service instance.

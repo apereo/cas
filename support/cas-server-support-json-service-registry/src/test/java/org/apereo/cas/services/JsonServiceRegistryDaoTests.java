@@ -15,18 +15,18 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
- * Handles test cases for {@link JsonServiceRegistryDao}.
+ * Handles test cases for {@link JsonServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
 @Slf4j
-public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryDaoTests {
+public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Before
     public void setUp() {
         try {
-            this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
+            this.dao = new JsonServiceRegistry(RESOURCE, false,
                     mock(ApplicationEventPublisher.class),
                     new NoOpRegisteredServiceReplicationStrategy());
         } catch (final Exception e) {

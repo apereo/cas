@@ -8,9 +8,9 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.AbstractServiceRegistryDao;
+import org.apereo.cas.services.AbstractServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ResourceBasedServiceRegistryDao;
+import org.apereo.cas.services.ResourceBasedServiceRegistry;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.support.events.service.CasRegisteredServiceDeletedEvent;
@@ -49,14 +49,14 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
- * This is {@link AbstractResourceBasedServiceRegistryDao}.
+ * This is {@link AbstractResourceBasedServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
 @ToString
-public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractServiceRegistryDao implements ResourceBasedServiceRegistryDao {
+public abstract class AbstractResourceBasedServiceRegistry extends AbstractServiceRegistry implements ResourceBasedServiceRegistry {
 
     private static final String PATTERN_REGISTERED_SERVICE_FILE_NAME = "(\\w+)-(\\d+)\\.";
 
@@ -86,9 +86,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
 
     private RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy;
 
-    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
-                                                   final Collection<StringSerializer<RegisteredService>> serializers,
-                                                   final ApplicationEventPublisher eventPublisher) throws Exception {
+    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+                                                final Collection<StringSerializer<RegisteredService>> serializers,
+                                                final ApplicationEventPublisher eventPublisher) throws Exception {
         this(configDirectory, serializers, false, eventPublisher, new NoOpRegisteredServiceReplicationStrategy());
     }
 
@@ -101,9 +101,9 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
-                                                   final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
-                                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+    public AbstractResourceBasedServiceRegistry(final Path configDirectory, final StringSerializer<RegisteredService> serializer,
+                                                final boolean enableWatcher, final ApplicationEventPublisher eventPublisher,
+                                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
         this(configDirectory, CollectionUtils.wrap(serializer), enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
@@ -116,10 +116,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @param eventPublisher                       the event publisher
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      */
-    public AbstractResourceBasedServiceRegistryDao(final Path configDirectory,
-                                                   final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher,
-                                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
+    public AbstractResourceBasedServiceRegistry(final Path configDirectory,
+                                                final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                final ApplicationEventPublisher eventPublisher,
+                                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) {
         initializeRegistry(configDirectory, serializers, enableWatcher, eventPublisher, registeredServiceReplicationStrategy);
     }
 
@@ -133,10 +133,10 @@ public abstract class AbstractResourceBasedServiceRegistryDao extends AbstractSe
      * @param registeredServiceReplicationStrategy the registered service replication strategy
      * @throws Exception the exception
      */
-    public AbstractResourceBasedServiceRegistryDao(final Resource configDirectory,
-                                                   final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
-                                                   final ApplicationEventPublisher eventPublisher,
-                                                   final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
+    public AbstractResourceBasedServiceRegistry(final Resource configDirectory,
+                                                final Collection<StringSerializer<RegisteredService>> serializers, final boolean enableWatcher,
+                                                final ApplicationEventPublisher eventPublisher,
+                                                final RegisteredServiceReplicationStrategy registeredServiceReplicationStrategy) throws Exception {
         final Resource servicesDirectory = ResourceUtils.prepareClasspathResourceIfNeeded(configDirectory, true, getExtension());
         if (servicesDirectory == null) {
             throw new IllegalArgumentException("Could not determine the services configuration directory from " + configDirectory);

@@ -34,13 +34,13 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link AbstractResourceBasedServiceRegistryDaoTests}.
+ * This is {@link AbstractResourceBasedServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public abstract class AbstractResourceBasedServiceRegistryDaoTests {
+public abstract class AbstractResourceBasedServiceRegistryTests {
 
 
     public static final ClassPathResource RESOURCE = new ClassPathResource("services");

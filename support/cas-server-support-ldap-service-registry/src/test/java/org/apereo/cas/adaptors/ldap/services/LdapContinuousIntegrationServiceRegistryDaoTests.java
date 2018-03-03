@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.TestPropertySource;
 
 /**
- * Unit test for {@link LdapServiceRegistryDao} class.
+ * Unit test for {@link LdapServiceRegistry} class.
  *
  * @author Misagh Moayyed
  * @author Marvin S. Addison
