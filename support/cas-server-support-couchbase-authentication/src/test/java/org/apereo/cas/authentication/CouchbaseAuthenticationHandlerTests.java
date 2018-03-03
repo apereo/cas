@@ -1,6 +1,5 @@
 package org.apereo.cas.authentication;
 
-import lombok.SneakyThrows;
 import org.apereo.cas.config.CasAuthenticationEventExecutionPlanTestConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationServiceSelectionStrategyConfiguration;
@@ -67,8 +66,7 @@ public class CouchbaseAuthenticationHandlerTests {
     private AuthenticationHandler couchbaseAuthenticationHandler;
 
     @Test
-    @SneakyThrows
-    public void verifyAccount() {
+    public void verifyAccount() throws Exception {
         final UsernamePasswordCredential c = CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("casuser", "Mellon");
         final AuthenticationHandlerExecutionResult result = couchbaseAuthenticationHandler.authenticate(c);
         assertNotNull(result);

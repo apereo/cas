@@ -23,7 +23,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link CouchbaseServiceRegistryDaoTests}.
+ * This is {@link CouchbaseServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 @Slf4j
 @RunWith(ConditionalSpringRunner.class)
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-public class CouchbaseServiceRegistryDaoTests {
+public class CouchbaseServiceRegistryTests {
 
     private static final int LOAD_SIZE = 1;
 

@@ -20,7 +20,7 @@ import lombok.ToString;
 @Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
 @Slf4j
 @ToString
-public class JpaServiceRegistryImpl extends AbstractServiceRegistry {
+public class JpaServiceRegistry extends AbstractServiceRegistry {
 
     @PersistenceContext(unitName = "serviceEntityManagerFactory")
     private EntityManager entityManager;

@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
  * @since 4.1.0
  */
 @Slf4j
-public class JsonServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryTests {
+public class JsonServiceRegistryTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Before
     public void setUp() {
