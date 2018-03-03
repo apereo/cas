@@ -36,8 +36,8 @@ import java.util.List;
 @Configuration("casServiceRegistryInitializationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
-    "org.apereo.cas.services.JsonServiceRegistryDao",
-    "org.apereo.cas.services.YamlServiceRegistryDao"})
+    "org.apereo.cas.services.JsonServiceRegistry",
+    "org.apereo.cas.services.YamlServiceRegistry"})
 @Slf4j
 public class CasServiceRegistryInitializationConfiguration {
 

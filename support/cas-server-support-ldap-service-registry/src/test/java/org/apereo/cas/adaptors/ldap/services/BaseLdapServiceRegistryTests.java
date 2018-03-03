@@ -38,7 +38,7 @@ import java.util.Set;
 import static org.junit.Assert.*;
 
 /**
- * This is {@link BaseLdapServiceRegistryDaoTests}.
+ * This is {@link BaseLdapServiceRegistryTests}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
@@ -48,9 +48,9 @@ import static org.junit.Assert.*;
 @Slf4j
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
-public class BaseLdapServiceRegistryDaoTests {
+public class BaseLdapServiceRegistryTests {
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier("ldapServiceRegistry")
     private ServiceRegistryDao dao;
     
     @Before

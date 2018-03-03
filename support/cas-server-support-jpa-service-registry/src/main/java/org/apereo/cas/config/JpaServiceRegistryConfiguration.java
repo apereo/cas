@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.JpaServiceRegistryImpl;
+import org.apereo.cas.services.JpaServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
@@ -93,7 +93,7 @@ public class JpaServiceRegistryConfiguration implements ServiceRegistryExecution
     @Bean
     @RefreshScope
     public ServiceRegistryDao jpaServiceRegistry() {
-        return new JpaServiceRegistryImpl();
+        return new JpaServiceRegistry();
     }
 
     @Override
