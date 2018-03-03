@@ -47,7 +47,7 @@ public class RedisServiceRegistryDaoTests {
     private static RedisServer REDIS_SERVER;
 
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("serviceRegistry")
     private ServiceRegistryDao dao;
 
     @Before

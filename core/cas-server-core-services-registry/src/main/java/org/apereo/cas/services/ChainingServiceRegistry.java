@@ -6,6 +6,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link ChainingServiceRegistry}.
@@ -21,41 +23,76 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
-        return null;
+        serviceRegistries.forEach(registry -> registry.save(registeredService));
+        return registeredService;
     }
 
     @Override
     public boolean delete(final RegisteredService registeredService) {
-        return false;
+        return serviceRegistries.stream()
+            .map(registry -> registry.delete(registeredService))
+            .filter(result -> result)
+            .findAny()
+            .orElse(false);
     }
 
     @Override
     public List<RegisteredService> load() {
-        return null;
+        return serviceRegistries.stream()
+            .map(ServiceRegistryDao::load)
+            .filter(Objects::nonNull)
+            .flatMap(List::stream)
+            .collect(Collectors.toList());
     }
 
     @Override
     public RegisteredService findServiceById(final long id) {
-        return null;
+        return serviceRegistries.stream()
+            .map(registry -> registry.findServiceById(id))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
     public RegisteredService findServiceById(final String id) {
-        return null;
+        return serviceRegistries.stream()
+            .map(registry -> registry.findServiceById(id))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
     public RegisteredService findServiceByExactServiceId(final String id) {
-        return null;
+        return serviceRegistries.stream()
+            .map(registry -> registry.findServiceByExactServiceId(id))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
     public RegisteredService findServiceByExactServiceName(final String name) {
-        return null;
+        return serviceRegistries.stream()
+            .map(registry -> registry.findServiceByExactServiceName(name))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 
     @Override
     public long size() {
-        return 0;
+        return serviceRegistries.stream()
+            .map(ServiceRegistryDao::size)
+            .mapToLong(Long::longValue)
+            .sum();
+    }
+
+    @Override
+    public String getName() {
+        return serviceRegistries.stream()
+            .map(ServiceRegistryDao::getName)
+            .collect(Collectors.joining(","));
     }
 }

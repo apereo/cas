@@ -44,7 +44,7 @@ import static org.junit.Assert.*;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests {
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("serviceRegistry")
     private ServiceRegistryDao serviceRegistryDao;
 
     static {
