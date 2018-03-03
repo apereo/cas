@@ -13,6 +13,7 @@ import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -40,25 +41,32 @@ import java.util.List;
 @Slf4j
 public class CasServiceRegistryInitializationConfiguration {
 
-
     @Autowired
     private ApplicationEventPublisher eventPublisher;
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @RefreshScope
     @Autowired
-    @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("servicesManager") final ServicesManager servicesManager,
-                                                                 @Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        final ServiceRegistryProperties serviceRegistry = casProperties.getServiceRegistry();
-        final ServiceRegistryInitializer initializer =
-            new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao, servicesManager, serviceRegistry.isInitFromJson());
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
 
-        if (serviceRegistry.isInitFromJson()) {
+    @Autowired
+    @Qualifier("serviceRegistry")
+    private ObjectProvider<ServiceRegistryDao> serviceRegistry;
+
+    @RefreshScope
+    @Bean
+    public ServiceRegistryInitializer serviceRegistryInitializer() {
+        final ServiceRegistryProperties props = casProperties.getServiceRegistry();
+        final ServiceRegistryDao serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        final ServiceRegistryInitializer initializer =
+            new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryInstance,
+                servicesManager.getIfAvailable(), props.isInitFromJson());
+
+        if (props.isInitFromJson()) {
             LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
-                serviceRegistryDao.getName(),
+                serviceRegistryInstance.getName(),
                 getServiceRegistryInitializerServicesDirectoryResource());
         }
         initializer.initServiceRegistryIfNecessary();

@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
 public class JpaServiceRegistryDaoImplTests {
 
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("serviceRegistry")
     private ServiceRegistryDao serviceRegistryDao;
 
     @Autowired
@@ -244,7 +244,7 @@ public class JpaServiceRegistryDaoImplTests {
     public static class TimeAwareServicesManagerConfiguration {
 
         @Autowired
-        @Qualifier("serviceRegistryDao")
+        @Qualifier("serviceRegistry")
         private ServiceRegistryDao serviceRegistryDao;
 
         @Bean

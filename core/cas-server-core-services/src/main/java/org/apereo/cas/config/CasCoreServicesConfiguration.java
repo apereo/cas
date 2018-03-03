@@ -112,7 +112,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
     @RefreshScope
-    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+    public ServicesManager servicesManager(@Qualifier("serviceRegistry") final ServiceRegistryDao serviceRegistryDao) {
         switch (casProperties.getServiceRegistry().getManagementType()) {
             case DOMAIN:
                 LOGGER.debug("Managing CAS service definitions via domains");

@@ -38,7 +38,7 @@ public class CouchbaseServiceRegistryDaoTests {
     private static final int LOAD_SIZE = 1;
 
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("serviceRegistry")
     private ServiceRegistryDao serviceRegistryDao;
 
     @Before

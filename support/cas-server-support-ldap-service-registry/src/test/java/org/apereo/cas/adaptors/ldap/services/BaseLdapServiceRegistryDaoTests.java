@@ -50,7 +50,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {LdapServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 public class BaseLdapServiceRegistryDaoTests {
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("serviceRegistry")
     private ServiceRegistryDao dao;
     
     @Before
