@@ -43,11 +43,11 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = {"classpath:/svc-redis.properties"})
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class RedisServiceRegistryDaoTests {
+public class RedisServiceRegistryTests {
     private static RedisServer REDIS_SERVER;
 
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier("redisServiceRegistry")
     private ServiceRegistryDao dao;
 
     @Before

@@ -18,7 +18,7 @@ import org.springframework.test.context.TestPropertySource;
 @TestPropertySource(locations = "classpath:/ldapsvc.properties")
 @RunWith(ConditionalSpringRunner.class)
 @ConditionalIgnore(condition = RunningStandaloneCondition.class)
-public class LdapServiceRegistryDaoTests extends BaseLdapServiceRegistryDaoTests {
+public class LdapServiceRegistryTests extends BaseLdapServiceRegistryTests {
 
     @BeforeClass
     public static void bootstrap() throws Exception {

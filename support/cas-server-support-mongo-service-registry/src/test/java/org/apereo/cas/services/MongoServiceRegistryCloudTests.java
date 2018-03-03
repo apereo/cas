@@ -26,7 +26,7 @@ import static org.junit.Assert.*;
 
 
 /**
- * This is {@link MongoServiceRegistryDaoCloudTests}.
+ * This is {@link MongoServiceRegistryCloudTests}.
  *
  * @author Misagh Moayyed
  * @since 4.2.0
@@ -35,7 +35,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {MongoDbServiceRegistryConfiguration.class, RefreshAutoConfiguration.class})
 @TestPropertySource(locations = {"classpath:/mongoservices.properties"})
 @Slf4j
-public class MongoServiceRegistryDaoCloudTests {
+public class MongoServiceRegistryCloudTests {
 
     @Autowired
     @Qualifier("serviceRegistry")
