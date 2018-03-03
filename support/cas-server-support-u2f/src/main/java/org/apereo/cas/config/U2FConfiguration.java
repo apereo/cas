@@ -69,18 +69,18 @@ public class U2FConfiguration {
         if (u2f.getJson().getLocation() != null) {
             return new U2FJsonResourceDeviceRepository(requestStorage,
                     u2f.getJson().getLocation(),
-                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
+                    u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit());
         }
 
         if (u2f.getGroovy().getLocation() != null) {
             return new U2FGroovyResourceDeviceRepository(requestStorage,
                     u2f.getGroovy().getLocation(),
-                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit());
+                    u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit());
         }
         
         if (StringUtils.isNotBlank(u2f.getRest().getUrl())) {
             return new U2FRestResourceDeviceRepository(requestStorage,
-                    u2f.getExpireRegistrations(), u2f.getExpireDevicesTimeUnit(), u2f.getRest());
+                    u2f.getExpireDevices(), u2f.getExpireDevicesTimeUnit(), u2f.getRest());
         }
 
         final LoadingCache<String, Map<String, String>> userStorage =
