@@ -18,7 +18,6 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustController;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -65,11 +64,6 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @RefreshScope
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationSetTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
-    }
-
-    @Bean
-    public MultifactorAuthenticationTrustController mfaTrustController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationTrustController(storage, casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
