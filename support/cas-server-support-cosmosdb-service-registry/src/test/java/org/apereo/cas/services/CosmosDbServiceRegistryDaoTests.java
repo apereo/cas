@@ -33,7 +33,7 @@ import static org.junit.Assert.*;
 public class CosmosDbServiceRegistryDaoTests {
 
     @Autowired
-    @Qualifier("serviceRegistryDao")
+    @Qualifier("cosmosDbServiceRegistry")
     private ServiceRegistryDao serviceRegistryDao;
 
     private void deleteAll() {

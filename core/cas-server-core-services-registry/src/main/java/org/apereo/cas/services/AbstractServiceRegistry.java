@@ -7,7 +7,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import lombok.Setter;
 
 /**
- * This is {@link AbstractServiceRegistryDao}, that acts as the base parent class
+ * This is {@link AbstractServiceRegistry}, that acts as the base parent class
  * for all registry implementations, capturing common ops.
  *
  * @author Misagh Moayyed
@@ -15,7 +15,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-public abstract class AbstractServiceRegistryDao implements ServiceRegistryDao {
+public abstract class AbstractServiceRegistry implements ServiceRegistryDao {
 
     @Autowired
     private transient ApplicationEventPublisher eventPublisher;

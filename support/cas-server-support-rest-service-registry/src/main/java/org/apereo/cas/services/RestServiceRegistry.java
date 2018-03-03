@@ -15,14 +15,14 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 /**
- * This is {@link RestServiceRegistryDao}.
+ * This is {@link RestServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
 @AllArgsConstructor
-public class RestServiceRegistryDao extends AbstractServiceRegistryDao {
+public class RestServiceRegistry extends AbstractServiceRegistry {
     private final RestTemplate restTemplate;
     private final String url;
     private final MultiValueMap<String, String> headers;

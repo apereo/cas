@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegis
 import org.apereo.cas.services.ServiceRegistryDao;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
+import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
@@ -70,7 +70,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @SneakyThrows
     public ServiceRegistryDao embeddedJsonServiceRegistry() {
         final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
-        return new EmbeddedServiceRegistryDao(eventPublisher, location);
+        return new EmbeddedServiceRegistry(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
@@ -82,8 +82,8 @@ public class CasServiceRegistryInitializationConfiguration {
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.
      */
-    public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
+    public static class EmbeddedServiceRegistry extends AbstractResourceBasedServiceRegistry {
+        EmbeddedServiceRegistry(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
             super(location, getRegisteredServiceSerializers(), publisher);
         }
 

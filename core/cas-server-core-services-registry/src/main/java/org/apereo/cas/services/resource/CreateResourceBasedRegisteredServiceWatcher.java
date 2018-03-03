@@ -19,7 +19,7 @@ import java.util.Objects;
 public class CreateResourceBasedRegisteredServiceWatcher extends BaseResourceBasedRegisteredServiceWatcher {
 
     
-    public CreateResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistryDao serviceRegistryDao) {
+    public CreateResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistry serviceRegistryDao) {
         super(serviceRegistryDao);
     }
 

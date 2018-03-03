@@ -23,7 +23,7 @@ import lombok.ToString;
 @Slf4j
 @ToString
 @AllArgsConstructor
-public class MongoServiceRegistryDao extends AbstractServiceRegistryDao {
+public class MongoServiceRegistry extends AbstractServiceRegistry {
 
     private final MongoOperations mongoTemplate;
     private final String collectionName;

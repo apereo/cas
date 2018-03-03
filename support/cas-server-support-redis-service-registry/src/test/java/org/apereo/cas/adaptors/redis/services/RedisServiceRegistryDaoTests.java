@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
 import static org.junit.Assert.*;
 
 /**
- * Unit test for {@link RedisServiceRegistryDao} class.
+ * Unit test for {@link RedisServiceRegistry} class.
  *
  * @author Misagh Moayyed
  * @since 4.0.0

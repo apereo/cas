@@ -8,18 +8,18 @@ import org.junit.Before;
 import org.springframework.context.ApplicationEventPublisher;
 
 /**
- * Test cases for {@link YamlServiceRegistryDao}.
+ * Test cases for {@link YamlServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.0.0
  */
 @Slf4j
-public class YamlServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryDaoTests {
+public class YamlServiceRegistryDaoTests extends AbstractResourceBasedServiceRegistryTests {
 
     @Before
     public void setup() {
         try {
-            this.dao = new YamlServiceRegistryDao(RESOURCE, false, 
+            this.dao = new YamlServiceRegistry(RESOURCE, false,
                     mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         } catch (final Exception e) {
             throw new IllegalArgumentException(e);

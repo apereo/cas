@@ -21,7 +21,7 @@ import java.util.Collection;
 import java.util.List;
 
 /**
- * This is {@link CouchbaseServiceRegistryDao}.
+ * This is {@link CouchbaseServiceRegistry}.
  * A Service Registry storage backend which uses the memcached protocol.
  * This may seem like a weird idea until you realize that CouchBase is a
  * multi host NoSQL database with a memcached interface to persistent
@@ -33,7 +33,7 @@ import java.util.List;
  * @since 4.2.0
  */
 @Slf4j
-public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
+public class CouchbaseServiceRegistry extends AbstractServiceRegistry {
 
     /**
      * The utils document.
@@ -56,8 +56,8 @@ public class CouchbaseServiceRegistryDao extends AbstractServiceRegistryDao {
     private final CouchbaseClientFactory couchbase;
     private final StringSerializer<RegisteredService> registeredServiceJsonSerializer;
 
-    public CouchbaseServiceRegistryDao(final CouchbaseClientFactory couchbase,
-                                       final StringSerializer<RegisteredService> serviceJsonSerializer) {
+    public CouchbaseServiceRegistry(final CouchbaseClientFactory couchbase,
+                                    final StringSerializer<RegisteredService> serviceJsonSerializer) {
         this.couchbase = couchbase;
         this.registeredServiceJsonSerializer = serviceJsonSerializer;
     }

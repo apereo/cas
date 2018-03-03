@@ -22,13 +22,13 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * This is {@link CosmosDbServiceRegistryDao}.
+ * This is {@link CosmosDbServiceRegistry}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
  */
 @Slf4j
-public class CosmosDbServiceRegistryDao extends AbstractServiceRegistryDao {
+public class CosmosDbServiceRegistry extends AbstractServiceRegistry {
     private static final String PARTITION_KEY_FIELD_VALUE = "CasServices";
 
     private final DocumentDbTemplate documentDbTemplate;
@@ -38,8 +38,8 @@ public class CosmosDbServiceRegistryDao extends AbstractServiceRegistryDao {
 
     private final StringSerializer<RegisteredService> serializer;
 
-    public CosmosDbServiceRegistryDao(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
-                                      final String collectionName, final String databaseName) {
+    public CosmosDbServiceRegistry(final DocumentDbTemplate db, final DocumentDbFactory dbFactory,
+                                   final String collectionName, final String databaseName) {
         this.documentDbTemplate = db;
         this.collectionName = collectionName;
         this.documentDbFactory = dbFactory;

@@ -1,6 +1,8 @@
 description = "Apereo CAS DynamoDb Service Registry"
 
 dependencies {
+    api project(":api:cas-server-core-api-services")
+    
     implementation libraries.awsjavadynamodb
 
     implementation project(":support:cas-server-support-aws")
