@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow.config;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.actions.LogoutConversionService;
@@ -48,7 +49,6 @@ import org.springframework.webflow.executor.FlowExecutor;
 import org.springframework.webflow.executor.FlowExecutorImpl;
 import org.springframework.webflow.expression.spel.WebFlowSpringELExpressionParser;
 import org.springframework.webflow.mvc.builder.MvcViewFactoryCreator;
-import org.springframework.webflow.mvc.servlet.FlowHandler;
 import org.springframework.webflow.mvc.servlet.FlowHandlerAdapter;
 import org.springframework.webflow.mvc.servlet.FlowHandlerMapping;
 
@@ -92,8 +92,8 @@ public class CasWebflowContextConfiguration {
     @Bean
     public ExpressionParser expressionParser() {
         return new WebFlowSpringELExpressionParser(
-                new SpelExpressionParser(),
-                logoutConversionService());
+            new SpelExpressionParser(),
+            logoutConversionService());
     }
 
     @Bean
@@ -124,13 +124,7 @@ public class CasWebflowContextConfiguration {
     @RefreshScope
     @Bean
     public HandlerAdapter logoutHandlerAdapter() {
-        final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
-            @Override
-            public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGOUT);
-            }
-        };
+        final FlowHandlerAdapter handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGOUT);
         handler.setFlowExecutor(logoutFlowExecutor());
         handler.setFlowUrlHandler(logoutFlowUrlHandler());
         return handler;
@@ -149,7 +143,7 @@ public class CasWebflowContextConfiguration {
                 @Override
                 public void encrypt(final InputStream inputStream, final OutputStream outputStream) {
                     throw new IllegalArgumentException(
-                            new OperationNotSupportedException("Encrypting input stream is not supported"));
+                        new OperationNotSupportedException("Encrypting input stream is not supported"));
                 }
 
                 @Override
@@ -160,7 +154,7 @@ public class CasWebflowContextConfiguration {
                 @Override
                 public void decrypt(final InputStream inputStream, final OutputStream outputStream) {
                     throw new IllegalArgumentException(
-                            new OperationNotSupportedException("Decrypting input stream is not supported"));
+                        new OperationNotSupportedException("Decrypting input stream is not supported"));
                 }
             };
         } catch (final Exception e) {
@@ -189,13 +183,7 @@ public class CasWebflowContextConfiguration {
 
     @Bean
     public HandlerAdapter loginHandlerAdapter() {
-        final FlowHandlerAdapter handler = new FlowHandlerAdapter() {
-            @Override
-            public boolean supports(final Object handler) {
-                return super.supports(handler) && ((FlowHandler) handler)
-                        .getFlowId().equals(CasWebflowConfigurer.FLOW_ID_LOGIN);
-            }
-        };
+        final FlowHandlerAdapter handler = new CasFlowHandlerAdapter(CasWebflowConfigurer.FLOW_ID_LOGIN);
         handler.setFlowExecutor(loginFlowExecutor());
         handler.setFlowUrlHandler(loginFlowUrlHandler());
         return handler;
@@ -283,11 +271,11 @@ public class CasWebflowContextConfiguration {
 
         final FlowExecutionImplFactory executionFactory = new FlowExecutionImplFactory();
         final SerializedFlowExecutionSnapshotFactory flowExecutionSnapshotFactory =
-                new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry);
+            new SerializedFlowExecutionSnapshotFactory(executionFactory, loginFlowRegistry);
         flowExecutionSnapshotFactory.setCompress(casProperties.getWebflow().getSession().isCompress());
 
         final DefaultFlowExecutionRepository repository = new DefaultFlowExecutionRepository(conversationManager,
-                flowExecutionSnapshotFactory);
+            flowExecutionSnapshotFactory);
         executionFactory.setExecutionKeyFactory(repository);
         return new FlowExecutorImpl(loginFlowRegistry, executionFactory, repository);
     }
