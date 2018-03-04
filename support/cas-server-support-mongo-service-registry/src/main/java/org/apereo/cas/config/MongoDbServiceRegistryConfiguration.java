@@ -5,7 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoDbServiceRegistryProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.services.MongoServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecu
     }
     
     @Bean
-    public ServiceRegistryDao mongoDbServiceRegistry() {
+    public ServiceRegistry mongoDbServiceRegistry() {
         final MongoDbServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         return new MongoServiceRegistry(
                 mongoDbServiceRegistryTemplate(),

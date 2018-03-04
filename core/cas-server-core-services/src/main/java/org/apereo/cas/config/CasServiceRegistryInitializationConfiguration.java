@@ -6,7 +6,7 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
@@ -53,13 +53,13 @@ public class CasServiceRegistryInitializationConfiguration {
 
     @Autowired
     @Qualifier("serviceRegistry")
-    private ObjectProvider<ServiceRegistryDao> serviceRegistry;
+    private ObjectProvider<ServiceRegistry> serviceRegistry;
 
     @RefreshScope
     @Bean
     public ServiceRegistryInitializer serviceRegistryInitializer() {
         final ServiceRegistryProperties props = casProperties.getServiceRegistry();
-        final ServiceRegistryDao serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        final ServiceRegistry serviceRegistryInstance = serviceRegistry.getIfAvailable();
         final ServiceRegistryInitializer initializer =
             new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryInstance,
                 servicesManager.getIfAvailable(), props.isInitFromJson());
@@ -76,7 +76,7 @@ public class CasServiceRegistryInitializationConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public ServiceRegistryDao embeddedJsonServiceRegistry() {
+    public ServiceRegistry embeddedJsonServiceRegistry() {
         final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
         return new EmbeddedServiceRegistry(eventPublisher, location);
     }

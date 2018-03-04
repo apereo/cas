@@ -11,7 +11,7 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface ResourceBasedServiceRegistry extends ServiceRegistryDao {
+public interface ResourceBasedServiceRegistry extends ServiceRegistry {
 
     /**
      * Update a single service instance.

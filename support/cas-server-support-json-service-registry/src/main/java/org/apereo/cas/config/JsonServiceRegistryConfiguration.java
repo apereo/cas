@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.JsonServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
@@ -43,7 +43,7 @@ public class JsonServiceRegistryConfiguration implements ServiceRegistryExecutio
 
     @Bean
     @SneakyThrows
-    public ServiceRegistryDao jsonServiceRegistry() {
+    public ServiceRegistry jsonServiceRegistry() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         return new JsonServiceRegistry(registry.getJson().getLocation(),
             registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);

@@ -1,5 +1,7 @@
 package org.apereo.cas.services;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @Slf4j
 public class ChainingServiceRegistry extends AbstractServiceRegistry {
-    private final Collection<ServiceRegistryDao> serviceRegistries;
+    private final Collection<ServiceRegistry> serviceRegistries;
 
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
@@ -39,7 +41,7 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
     @Override
     public List<RegisteredService> load() {
         return serviceRegistries.stream()
-            .map(ServiceRegistryDao::load)
+            .map(ServiceRegistry::load)
             .filter(Objects::nonNull)
             .flatMap(List::stream)
             .collect(Collectors.toList());
@@ -83,16 +85,20 @@ public class ChainingServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public long size() {
+        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         return serviceRegistries.stream()
-            .map(ServiceRegistryDao::size)
+            .filter(filter::test)
+            .map(ServiceRegistry::size)
             .mapToLong(Long::longValue)
             .sum();
     }
 
     @Override
     public String getName() {
+        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
         return serviceRegistries.stream()
-            .map(ServiceRegistryDao::getName)
+            .filter(filter::test)
+            .map(ServiceRegistry::getName)
             .collect(Collectors.joining(","));
     }
 }
