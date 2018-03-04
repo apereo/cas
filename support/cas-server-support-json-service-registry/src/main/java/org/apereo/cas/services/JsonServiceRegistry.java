@@ -12,7 +12,7 @@ import java.nio.file.Path;
 import lombok.Getter;
 
 /**
- * Implementation of {@code ServiceRegistryDao} that reads services definition from JSON
+ * Implementation of {@code ServiceRegistry} that reads services definition from JSON
  * configuration file at the Spring Application Context initialization time. JSON files are
  * expected to be found inside a directory location and this registry will recursively look through
  * the directory structure to find relevant JSON files. Files are expected to have the

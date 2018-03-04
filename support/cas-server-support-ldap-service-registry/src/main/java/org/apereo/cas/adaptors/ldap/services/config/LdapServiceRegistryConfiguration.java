@@ -6,7 +6,7 @@ import org.apereo.cas.adaptors.ldap.services.LdapRegisteredServiceMapper;
 import org.apereo.cas.adaptors.ldap.services.LdapServiceRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.ldap.serviceregistry.LdapServiceRegistryProperties;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.util.LdapUtils;
@@ -41,7 +41,7 @@ public class LdapServiceRegistryConfiguration implements ServiceRegistryExecutio
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao ldapServiceRegistry() {
+    public ServiceRegistry ldapServiceRegistry() {
         final LdapServiceRegistryProperties ldap = casProperties.getServiceRegistry().getLdap();
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapServiceRegistry(connectionFactory, ldap.getBaseDn(), ldapServiceRegistryMapper(), ldap);
