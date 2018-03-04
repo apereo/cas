@@ -6,7 +6,7 @@ import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.Couc
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.services.CouchbaseServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
@@ -52,7 +52,7 @@ public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExe
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao couchbaseServiceRegistry() {
+    public ServiceRegistry couchbaseServiceRegistry() {
         return new CouchbaseServiceRegistry(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
     }
 

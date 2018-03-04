@@ -8,7 +8,7 @@ import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegist
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
 import org.apereo.cas.services.DynamoDbServiceRegistry;
 import org.apereo.cas.services.DynamoDbServiceRegistryFacilitator;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,7 @@ public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExec
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao dynamoDbServiceRegistry() {
+    public ServiceRegistry dynamoDbServiceRegistry() {
         return new DynamoDbServiceRegistry(dynamoDbServiceRegistryFacilitator());
     }
 

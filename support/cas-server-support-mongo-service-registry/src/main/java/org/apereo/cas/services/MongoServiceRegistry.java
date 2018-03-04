@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 import lombok.ToString;
 
 /**
- * <p>Implementation of {@code ServiceRegistryDao} that uses a MongoDb repository as the backend
+ * <p>Implementation of {@code ServiceRegistry} that uses a MongoDb repository as the backend
  * persistence mechanism. The repository is configured by the Spring application context. </p>
  * <p>The class will automatically create a default collection to use with services. The name
  * of the collection may be specified.

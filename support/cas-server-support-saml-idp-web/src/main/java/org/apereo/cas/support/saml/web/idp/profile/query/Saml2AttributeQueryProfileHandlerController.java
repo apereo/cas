@@ -5,6 +5,7 @@ import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -64,10 +65,11 @@ public class Saml2AttributeQueryProfileHandlerController extends AbstractSamlPro
                                                        final TicketRegistry ticketRegistry,
                                                        final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
                                                        final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-                                                       final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory) {
+                                                       final SamlAttributeQueryTicketFactory samlAttributeQueryTicketFactory,
+                                                       final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
                 webApplicationServiceFactory, metadataResolver, configBean,
-                responseBuilder, casProperties, samlObjectSignatureValidator);
+                responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.samlAttributeQueryTicketFactory = samlAttributeQueryTicketFactory;

@@ -9,7 +9,7 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 3.1
  */
-public interface ServiceRegistryDao {
+public interface ServiceRegistry {
 
     /**
      * Persist the service in the data store.

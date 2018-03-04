@@ -6,7 +6,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.services.RestServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
@@ -38,7 +38,7 @@ public class RestServiceRegistryConfiguration implements ServiceRegistryExecutio
     @Bean
     @RefreshScope
     @SneakyThrows
-    public ServiceRegistryDao restfulServiceRegistry() {
+    public ServiceRegistry restfulServiceRegistry() {
 
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         final RestTemplate restTemplate = new RestTemplate();

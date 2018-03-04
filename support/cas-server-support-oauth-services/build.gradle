@@ -2,7 +2,10 @@ description = "Apereo CAS OAuth Server Services Support"
 dependencies {
     implementation project(":core:cas-server-core-services-api")
     implementation project(":support:cas-server-support-oauth-api")
+    implementation project(":core:cas-server-core-services-registry")
+
     implementation libraries.pac4j
+
     testImplementation project(":core:cas-server-core-util")
     testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")

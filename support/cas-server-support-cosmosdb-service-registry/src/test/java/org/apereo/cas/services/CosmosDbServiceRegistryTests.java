@@ -34,33 +34,33 @@ public class CosmosDbServiceRegistryTests {
 
     @Autowired
     @Qualifier("cosmosDbServiceRegistry")
-    private ServiceRegistryDao serviceRegistryDao;
+    private ServiceRegistry serviceRegistry;
 
     private void deleteAll() {
-        final List<RegisteredService> services = this.serviceRegistryDao.load();
-        services.forEach(service -> this.serviceRegistryDao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistry.load();
+        services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
     public void verifySaveAndLoad() {
         deleteAll();
-        assertTrue(this.serviceRegistryDao.load().isEmpty());
-        assertTrue(this.serviceRegistryDao.size() == 0);
+        assertTrue(this.serviceRegistry.load().isEmpty());
+        assertTrue(this.serviceRegistry.size() == 0);
         
         final List<RegisteredService> list = new ArrayList<>();
         IntStream.range(0, 5).forEach(i -> {
             list.add(buildService(i));
-            this.serviceRegistryDao.save(list.get(i));
+            this.serviceRegistry.save(list.get(i));
         });
-        final List<RegisteredService> results = this.serviceRegistryDao.load();
+        final List<RegisteredService> results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         results.forEach(r -> {
-            final RegisteredService s1 = this.serviceRegistryDao.findServiceById(r.getId());
-            final RegisteredService s2 = this.serviceRegistryDao.findServiceById(r.getServiceId());
+            final RegisteredService s1 = this.serviceRegistry.findServiceById(r.getId());
+            final RegisteredService s2 = this.serviceRegistry.findServiceById(r.getServiceId());
             assertEquals(s1, s2);
         });
         deleteAll();
-        assertTrue(this.serviceRegistryDao.load().isEmpty());
+        assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
     private static RegisteredService buildService(final int i) {

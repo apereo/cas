@@ -10,7 +10,7 @@ import java.util.List;
 import lombok.ToString;
 
 /**
- * Implementation of the ServiceRegistryDao based on JPA.
+ * Implementation of the ServiceRegistry based on JPA.
  *
  * @author Scott Battaglia
  * @author Dmitriy Kopylenko

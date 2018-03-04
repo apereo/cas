@@ -9,7 +9,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
 import org.apereo.cas.services.CosmosDbServiceRegistry;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlan;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +42,7 @@ public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExec
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao cosmosDbServiceRegistry() {
+    public ServiceRegistry cosmosDbServiceRegistry() {
         final CosmosDbObjectFactory factory = new CosmosDbObjectFactory(this.applicationContext);
         final CosmosDbServiceRegistryProperties cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
         final DocumentDbFactory dbFactory = factory.createDocumentDbFactory(cosmosDb);

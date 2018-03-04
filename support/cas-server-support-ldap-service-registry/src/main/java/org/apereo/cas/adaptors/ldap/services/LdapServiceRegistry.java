@@ -22,7 +22,7 @@ import java.util.Objects;
 import lombok.ToString;
 
 /**
- * Implementation of the ServiceRegistryDao interface which stores the services in a LDAP Directory.
+ * Implementation of the ServiceRegistry interface which stores the services in a LDAP Directory.
  *
  * @author Misagh Moayyed
  * @author Marvin S. Addison

@@ -27,7 +27,7 @@ public class OidcRegisteredServiceTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistryDao dao;
+    private final ServiceRegistry dao;
 
     public OidcRegisteredServiceTests() throws Exception {
         this.dao = new JsonServiceRegistry(RESOURCE, false,

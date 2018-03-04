@@ -39,12 +39,12 @@ public class CouchbaseServiceRegistryTests {
 
     @Autowired
     @Qualifier("serviceRegistry")
-    private ServiceRegistryDao serviceRegistryDao;
+    private ServiceRegistry serviceRegistry;
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistryDao.load();
-        services.forEach(service -> this.serviceRegistryDao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistry.load();
+        services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
@@ -53,12 +53,12 @@ public class CouchbaseServiceRegistryTests {
         for (int i = 0; i < LOAD_SIZE; i++) {
             final RegisteredService svc = buildService(i);
             list.add(svc);
-            this.serviceRegistryDao.save(svc);
-            final RegisteredService svc2 = this.serviceRegistryDao.findServiceById(svc.getId());
+            this.serviceRegistry.save(svc);
+            final RegisteredService svc2 = this.serviceRegistry.findServiceById(svc.getId());
             assertNotNull(svc2);
-            this.serviceRegistryDao.delete(svc2);
+            this.serviceRegistry.delete(svc2);
         }
-        assertTrue(this.serviceRegistryDao.load().isEmpty());
+        assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
     private static RegisteredService buildService(final int i) {

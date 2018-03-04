@@ -17,8 +17,8 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class ServiceRegistryInitializer {
-    private final ServiceRegistryDao jsonServiceRegistryDao;
-    private final ServiceRegistryDao serviceRegistry;
+    private final ServiceRegistry jsonServiceRegistry;
+    private final ServiceRegistry serviceRegistry;
     private final ServicesManager servicesManager;
     private final boolean initFromJson;
 
@@ -43,7 +43,7 @@ public class ServiceRegistryInitializer {
                 + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
                 + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
-        final List<RegisteredService> servicesLoaded = this.jsonServiceRegistryDao.load();
+        final List<RegisteredService> servicesLoaded = this.jsonServiceRegistry.load();
         LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
 
         for (final RegisteredService r : servicesLoaded) {

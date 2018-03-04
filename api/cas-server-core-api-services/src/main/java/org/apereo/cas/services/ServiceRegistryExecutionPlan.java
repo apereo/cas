@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
 import java.util.Collection;
+import java.util.function.Predicate;
 
 /**
  * This is {@link ServiceRegistryExecutionPlan}.
@@ -15,12 +16,21 @@ public interface ServiceRegistryExecutionPlan {
      * @param registry the registry
      * @return the service registry execution plan
      */
-    ServiceRegistryExecutionPlan registerServiceRegistry(ServiceRegistryDao registry);
+    ServiceRegistryExecutionPlan registerServiceRegistry(ServiceRegistry registry);
 
     /**
      * Get service registries collection.
      *
      * @return the collection
      */
-    Collection<ServiceRegistryDao> getServiceRegistries();
+    Collection<ServiceRegistry> getServiceRegistries();
+
+    /**
+     * Get service registries collection.
+     *
+     * @param typeFilter the type filter
+     * @return the collection
+     */
+    Collection<ServiceRegistry> getServiceRegistries(Predicate<ServiceRegistry> typeFilter);
+
 }
