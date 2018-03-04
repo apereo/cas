@@ -16,6 +16,6 @@ public class DomainServicesManagerTests extends AbstractServicesManagerTests {
 
     @Override
     protected ServicesManager getServicesManagerInstance() {
-        return new DomainServicesManager(serviceRegistryDao, mock(ApplicationEventPublisher.class));
+        return new DomainServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class));
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -18,12 +20,13 @@ import org.apereo.cas.services.ChainingServiceRegistry;
 import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
+import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
@@ -112,16 +115,16 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
     @RefreshScope
-    public ServicesManager servicesManager(@Qualifier("serviceRegistry") final ServiceRegistryDao serviceRegistryDao) {
+    public ServicesManager servicesManager(@Qualifier("serviceRegistry") final ServiceRegistry serviceRegistry) {
         switch (casProperties.getServiceRegistry().getManagementType()) {
             case DOMAIN:
                 LOGGER.debug("Managing CAS service definitions via domains");
-                return new DomainServicesManager(serviceRegistryDao, eventPublisher);
+                return new DomainServicesManager(serviceRegistry, eventPublisher);
             case DEFAULT:
             default:
                 break;
         }
-        return new DefaultServicesManager(serviceRegistryDao, eventPublisher);
+        return new DefaultServicesManager(serviceRegistry, eventPublisher);
     }
 
     @Bean
@@ -140,7 +143,7 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "serviceRegistry")
     @Bean
     @RefreshScope
-    public ServiceRegistryDao serviceRegistry() {
+    public ServiceRegistry serviceRegistry() {
         final List<ServiceRegistryExecutionPlanConfigurer> configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(), new ArrayList<>(0));
         final DefaultServiceRegistryExecutionPlan plan = new DefaultServiceRegistryExecutionPlan();
         configurers.forEach(c -> {
@@ -149,7 +152,8 @@ public class CasCoreServicesConfiguration {
             c.configureServiceRegistry(plan);
         });
 
-        if (plan.getServiceRegistries().isEmpty()) {
+        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        if (plan.getServiceRegistries(filter).isEmpty()) {
             final List<RegisteredService> services = new ArrayList<>();
             LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
                 + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "

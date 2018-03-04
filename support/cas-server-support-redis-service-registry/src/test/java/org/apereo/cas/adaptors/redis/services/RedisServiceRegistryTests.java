@@ -7,7 +7,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceUsernameProvider;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.consent.DefaultRegisteredServiceConsentPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.AfterClass;
@@ -48,7 +48,7 @@ public class RedisServiceRegistryTests {
 
     @Autowired
     @Qualifier("redisServiceRegistry")
-    private ServiceRegistryDao dao;
+    private ServiceRegistry dao;
 
     @Before
     public void setUp() {

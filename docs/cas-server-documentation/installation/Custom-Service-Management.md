@@ -16,7 +16,7 @@ public class MyConfiguration {
 
   @Bean
   @RefreshScope
-  public ServiceRegistryDao serviceRegistryDao() {
+  public ServiceRegistryDao serviceRegistry() {
       ...
   }
 }

@@ -14,7 +14,7 @@ import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.apereo.cas.util.CollectionUtils;
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
 public class BaseLdapServiceRegistryTests {
     @Autowired
     @Qualifier("ldapServiceRegistry")
-    private ServiceRegistryDao dao;
+    private ServiceRegistry dao;
     
     @Before
     public void setUp() {

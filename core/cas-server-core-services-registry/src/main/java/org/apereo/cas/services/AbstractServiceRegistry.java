@@ -15,7 +15,7 @@ import lombok.Setter;
  */
 @Slf4j
 @Setter
-public abstract class AbstractServiceRegistry implements ServiceRegistryDao {
+public abstract class AbstractServiceRegistry implements ServiceRegistry {
 
     @Autowired
     private transient ApplicationEventPublisher eventPublisher;

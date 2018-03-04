@@ -52,7 +52,7 @@ public abstract class AbstractResourceBasedServiceRegistryTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    protected ServiceRegistryDao dao;
+    protected ServiceRegistry dao;
 
     @BeforeClass
     public static void prepTests() throws Exception {

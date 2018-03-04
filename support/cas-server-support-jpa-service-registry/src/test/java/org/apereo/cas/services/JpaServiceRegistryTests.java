@@ -52,7 +52,7 @@ public class JpaServiceRegistryTests {
 
     @Autowired
     @Qualifier("jpaServiceRegistry")
-    private ServiceRegistryDao serviceRegistryDao;
+    private ServiceRegistry serviceRegistry;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -60,8 +60,8 @@ public class JpaServiceRegistryTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistryDao.load();
-        services.forEach(service -> this.serviceRegistryDao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistry.load();
+        services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
@@ -73,8 +73,8 @@ public class JpaServiceRegistryTests {
         r.setDescription("description");
         r.setPublicKey(new RegisteredServicePublicKeyImpl("classpath:/test.pub", "RSA"));
 
-        final RegisteredService r2 = this.serviceRegistryDao.save(r);
-        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -92,8 +92,8 @@ public class JpaServiceRegistryTests {
         strategy.setDelegatedAuthenticationPolicy(
             new DefaultRegisteredServiceDelegatedAuthenticationPolicy(CollectionUtils.wrapList("one", "two")));
         r.setAccessStrategy(strategy);
-        final RegisteredService r2 = this.serviceRegistryDao.save(r);
-        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r2.getId());
+        final RegisteredService r2 = this.serviceRegistry.save(r);
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r2.getId());
 
         assertEquals(r, r2);
         assertEquals(r2, r3);
@@ -109,15 +109,15 @@ public class JpaServiceRegistryTests {
         r.setTheme("theme");
         r.setDescription("description");
 
-        this.serviceRegistryDao.save(r);
+        this.serviceRegistry.save(r);
 
-        final List<RegisteredService> services = this.serviceRegistryDao.load();
+        final List<RegisteredService> services = this.serviceRegistry.load();
         final RegisteredService r2 = services.get(0);
 
         r.setId(r2.getId());
-        this.serviceRegistryDao.save(r);
+        this.serviceRegistry.save(r);
 
-        final RegisteredService r3 = this.serviceRegistryDao.findServiceById(r.getId());
+        final RegisteredService r3 = this.serviceRegistry.findServiceById(r.getId());
 
         assertEquals(r, r2);
         assertEquals(r.getTheme(), r3.getTheme());
@@ -150,9 +150,9 @@ public class JpaServiceRegistryTests {
 
         r.setProperties(propertyMap);
 
-        this.serviceRegistryDao.save(r);
+        this.serviceRegistry.save(r);
 
-        final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
+        final RegisteredService r2 = this.serviceRegistry.load().get(0);
         assertEquals(2, r2.getProperties().size());
 
     }
@@ -173,8 +173,8 @@ public class JpaServiceRegistryTests {
         contacts.add(contact);
         r.setContacts(contacts);
 
-        this.serviceRegistryDao.save(r);
-        final RegisteredService r2 = this.serviceRegistryDao.load().get(0);
+        this.serviceRegistry.save(r);
+        final RegisteredService r2 = this.serviceRegistry.load().get(0);
         assertEquals(1, r2.getContacts().size());
     }
 
@@ -189,7 +189,7 @@ public class JpaServiceRegistryTests {
         r.setClientId("testoauthservice");
         r.setClientSecret("anothertest");
         r.setBypassApprovalPrompt(true);
-        final RegisteredService r2 = this.serviceRegistryDao.save(r);
+        final RegisteredService r2 = this.serviceRegistry.save(r);
         assertEquals(r, r2);
     }
 
@@ -207,7 +207,7 @@ public class JpaServiceRegistryTests {
         r.setMetadataCriteriaRemoveEmptyEntitiesDescriptors(true);
         r.setMetadataSignatureLocation("location");
         r.setRequiredAuthenticationContextClass("Testing");
-        final SamlRegisteredService r2 = (SamlRegisteredService) this.serviceRegistryDao.save(r);
+        final SamlRegisteredService r2 = (SamlRegisteredService) this.serviceRegistry.save(r);
         assertEquals(r, r2);
     }
 
@@ -245,16 +245,16 @@ public class JpaServiceRegistryTests {
 
         @Autowired
         @Qualifier("serviceRegistry")
-        private ServiceRegistryDao serviceRegistryDao;
+        private ServiceRegistry serviceRegistry;
 
         @Bean
         public ServicesManager servicesManager() {
-            return new TimeAwareServicesManager(serviceRegistryDao);
+            return new TimeAwareServicesManager(serviceRegistry);
         }
 
         public static class TimeAwareServicesManager extends DefaultServicesManager {
-            public TimeAwareServicesManager(final ServiceRegistryDao serviceRegistryDao) {
-                super(serviceRegistryDao, null);
+            public TimeAwareServicesManager(final ServiceRegistry serviceRegistry) {
+                super(serviceRegistry, null);
             }
 
             @Override
