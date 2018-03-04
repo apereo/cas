@@ -35,8 +35,6 @@ import java.util.HashMap;
  */
 @Slf4j
 public class WSFederationValidateRequestController extends BaseWSFederationRequestController {
-
-
     public WSFederationValidateRequestController(
         final ServicesManager servicesManager,
         final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -46,10 +44,12 @@ public class WSFederationValidateRequestController extends BaseWSFederationReque
         final SecurityTokenTicketFactory securityTokenTicketFactory,
         final TicketRegistry ticketRegistry,
         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-        final TicketRegistrySupport ticketRegistrySupport) {
+        final TicketRegistrySupport ticketRegistrySupport,
+        final Service callbackService) {
         super(servicesManager,
             webApplicationServiceFactory, casProperties, serviceSelectionStrategy, httpClient,
-            securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator, ticketRegistrySupport);
+            securityTokenTicketFactory, ticketRegistry,
+            ticketGrantingTicketCookieGenerator, ticketRegistrySupport, callbackService);
     }
 
     /**
