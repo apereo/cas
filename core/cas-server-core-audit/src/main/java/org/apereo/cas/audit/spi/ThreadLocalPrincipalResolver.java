@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.AuditPrincipalIdProvider;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.aspectj.lang.JoinPoint;
 
@@ -38,10 +38,10 @@ public class ThreadLocalPrincipalResolver implements PrincipalResolver {
     }
 
     private String getCurrentPrincipal(final Object returnValue, final Exception exception) {
-        final Authentication authn = AuthenticationCredentialsLocalBinder.getCurrentAuthentication();
+        final Authentication authn = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         String principal = this.auditPrincipalIdProvider.getPrincipalIdFrom(authn, returnValue, exception);
         if (principal == null) {
-            principal = AuthenticationCredentialsLocalBinder.getCurrentCredentialIdsAsString();
+            principal = AuthenticationCredentialsThreadLocalBinder.getCurrentCredentialIdsAsString();
         }
         return principal != null ? principal : UNKNOWN_USER;
     }
