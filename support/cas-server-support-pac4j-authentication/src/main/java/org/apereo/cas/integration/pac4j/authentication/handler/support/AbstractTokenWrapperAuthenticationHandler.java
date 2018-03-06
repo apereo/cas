@@ -19,15 +19,15 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public abstract class AbstractTokenWrapperAuthenticationHandler extends
-        AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
+    AbstractWrapperAuthenticationHandler<BasicIdentifiableCredential, TokenCredentials> {
 
-    
     /**
      * PrincipalNameTransformer to be used by subclasses to transform the principal name.
      */
-    private PrincipalNameTransformer principalNameTransformer = formUserId -> formUserId;
+    private final PrincipalNameTransformer principalNameTransformer;
 
-    public AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
+    public AbstractTokenWrapperAuthenticationHandler(final String name, final ServicesManager servicesManager,
+                                                     final PrincipalFactory principalFactory,
                                                      final Integer order, final PrincipalNameTransformer principalNameTransformer) {
         super(name, servicesManager, principalFactory, order);
         if (principalNameTransformer == null) {
@@ -39,14 +39,14 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
 
     @Override
     protected TokenCredentials convertToPac4jCredentials(final BasicIdentifiableCredential casCredential)
-            throws GeneralSecurityException {
+        throws GeneralSecurityException {
         LOGGER.debug("CAS credentials: [{}]", casCredential);
 
         final String id = this.principalNameTransformer.transform(casCredential.getId());
         if (id == null) {
             throw new AccountNotFoundException("Id is null.");
         }
-        final TokenCredentials credentials = new TokenCredentials(id, getClass().getSimpleName());
+        final TokenCredentials credentials = new TokenCredentials(id);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }
@@ -54,9 +54,5 @@ public abstract class AbstractTokenWrapperAuthenticationHandler extends
     @Override
     protected Class<BasicIdentifiableCredential> getCasCredentialsType() {
         return BasicIdentifiableCredential.class;
-    }
-
-    public PrincipalNameTransformer getPrincipalNameTransformer() {
-        return this.principalNameTransformer;
     }
 }

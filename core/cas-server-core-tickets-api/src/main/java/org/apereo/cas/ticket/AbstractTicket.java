@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.Authentication;
 
 import javax.persistence.Column;
 import javax.persistence.Id;
@@ -127,6 +128,16 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @Override
     public String toString() {
-        return this.getId();
+        return getId();
+    }
+
+    @Override
+    public Authentication getAuthentication() {
+        return getTicketGrantingTicket().getAuthentication();
+    }
+
+    @Override
+    public TicketGrantingTicket getTicketGrantingTicket() {
+        return null;
     }
 }

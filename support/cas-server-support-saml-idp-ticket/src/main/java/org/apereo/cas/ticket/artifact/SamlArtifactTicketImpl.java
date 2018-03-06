@@ -36,10 +36,10 @@ public class SamlArtifactTicketImpl extends AbstractTicket implements SamlArtifa
 
     private static final long serialVersionUID = 6276140828446447398L;
 
-    @Column(length = 500)
+    @Column(length = 5_000)
     private String issuer;
 
-    @Column(length = 500)
+    @Column(length = 5_000)
     private String relyingPartyId;
 
     @Column(length = 10_000)

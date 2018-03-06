@@ -1,6 +1,5 @@
 package org.apereo.cas.oidc.web.controllers;
 
-
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -37,8 +36,6 @@ import javax.servlet.http.HttpServletResponse;
  */
 @Slf4j
 public class OidcRevocationEndpointController extends BaseOAuth20Controller {
-
-
     public OidcRevocationEndpointController(final ServicesManager servicesManager,
                                             final TicketRegistry ticketRegistry,
                                             final OAuth20Validator validator,
@@ -64,7 +61,7 @@ public class OidcRevocationEndpointController extends BaseOAuth20Controller {
     public ResponseEntity<String> handleRequestInternal(final HttpServletRequest request,
                                                         final HttpServletResponse response) {
         try {
-            final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor(getClass().getSimpleName());
+            final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
             final UsernamePasswordCredentials credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");

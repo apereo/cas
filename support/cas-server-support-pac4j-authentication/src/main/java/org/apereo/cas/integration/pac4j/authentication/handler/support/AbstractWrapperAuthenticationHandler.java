@@ -17,7 +17,6 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.InitializableObject;
-import org.pac4j.core.util.InitializableWebObject;
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
 import lombok.Setter;
@@ -59,13 +58,10 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
             }
-            if (authenticator instanceof InitializableWebObject) {
-                ((InitializableWebObject) authenticator).init(getWebContext());
-            }
             authenticator.validate(credentials, getWebContext());
             final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
-            return createResult(new ClientCredential(credentials), profile);
+            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile);
         } catch (final Exception e) {
             LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());

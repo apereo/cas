@@ -3,9 +3,11 @@ package org.apereo.cas.support.pac4j.authentication;
 import com.github.scribejava.core.model.Verb;
 import com.nimbusds.jose.JWSAlgorithm;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcProperties;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.cas.config.CasProtocol;
@@ -28,6 +30,8 @@ import org.pac4j.oidc.client.AzureAdClient;
 import org.pac4j.oidc.client.GoogleOidcClient;
 import org.pac4j.oidc.client.KeycloakOidcClient;
 import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.AzureAdOidcConfiguration;
+import org.pac4j.oidc.config.KeycloakOidcConfiguration;
 import org.pac4j.oidc.config.OidcConfiguration;
 import org.pac4j.saml.client.SAML2Client;
 import org.pac4j.saml.client.SAML2ClientConfiguration;
@@ -61,6 +65,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
             setClientName(client, github.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -91,6 +96,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             final OrcidClient client = new OrcidClient(db.getId(), db.getSecret());
             setClientName(client, db.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -106,6 +112,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
             final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
             setClientName(client, live.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -121,6 +128,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
             final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
             setClientName(client, yahoo.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -136,6 +144,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
             final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
             setClientName(client, foursquare.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -154,6 +163,7 @@ public class DelegatedClientFactory {
             if (StringUtils.isNotBlank(google.getScope())) {
                 client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
             }
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -168,6 +178,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Facebook fb = pac4jProperties.getFacebook();
         if (StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
             final FacebookClient client = new FacebookClient(fb.getId(), fb.getSecret());
+
             setClientName(client, fb.getClientName());
             if (StringUtils.isNotBlank(fb.getScope())) {
                 client.setScope(fb.getScope());
@@ -191,6 +202,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             final LinkedIn2Client client = new LinkedIn2Client(ln.getId(), ln.getSecret());
             setClientName(client, ln.getClientName());
+
             if (StringUtils.isNotBlank(ln.getScope())) {
                 client.setScope(ln.getScope());
             }
@@ -213,6 +225,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
             final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
             setClientName(client, twitter.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -228,6 +241,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
             final WordPressClient client = new WordPressClient(wp.getId(), wp.getSecret());
             setClientName(client, wp.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -243,6 +257,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
             final BitbucketClient client = new BitbucketClient(bb.getId(), bb.getSecret());
             setClientName(client, bb.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -258,6 +273,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
             final PayPalClient client = new PayPalClient(paypal.getId(), paypal.getSecret());
             setClientName(client, paypal.getClientName());
+
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -288,6 +304,7 @@ public class DelegatedClientFactory {
             .forEach(cas -> {
                 final CasConfiguration cfg = new CasConfiguration(cas.getLoginUrl(), CasProtocol.valueOf(cas.getProtocol()));
                 final CasClient client = new CasClient(cfg);
+
                 final int count = index.intValue();
                 if (StringUtils.isNotBlank(cas.getClientName())) {
                     client.setName(cas.getClientName());
@@ -337,6 +354,7 @@ public class DelegatedClientFactory {
                     cfg.setNameIdPolicyFormat(saml.getNameIdPolicyFormat());
                 }
                 final SAML2Client client = new SAML2Client(cfg);
+
                 final int count = index.intValue();
                 if (saml.getClientName() != null) {
                     client.setName(saml.getClientName());
@@ -377,6 +395,7 @@ public class DelegatedClientFactory {
                 } else if (count > 0) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+
                 index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
                 properties.add(client);
@@ -394,38 +413,27 @@ public class DelegatedClientFactory {
             .stream()
             .filter(oidc -> StringUtils.isNotBlank(oidc.getId()) && StringUtils.isNotBlank(oidc.getSecret()))
             .forEach(oidc -> {
-
-                final OidcConfiguration cfg = new OidcConfiguration();
-                if (StringUtils.isNotBlank(oidc.getScope())) {
-                    cfg.setScope(oidc.getScope());
-                }
-                cfg.setUseNonce(oidc.isUseNonce());
-                cfg.setSecret(oidc.getSecret());
-                cfg.setClientId(oidc.getId());
-
-                if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
-                    cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
-                }
-                cfg.setMaxClockSkew(oidc.getMaxClockSkew());
-                cfg.setDiscoveryURI(oidc.getDiscoveryUri());
-                cfg.setCustomParams(oidc.getCustomParams());
-
                 final OidcClient client;
                 switch (oidc.getType().toUpperCase()) {
                     case "GOOGLE":
+                        final OidcConfiguration cfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
                         client = new GoogleOidcClient(cfg);
                         break;
                     case "AZURE":
-                        client = new AzureAdClient(cfg);
+                        final AzureAdOidcConfiguration azure = getOidcConfigurationForClient(oidc, AzureAdOidcConfiguration.class);
+                        client = new AzureAdClient(new AzureAdOidcConfiguration(azure));
                         break;
                     case "KEYCLOAK":
-                        client = new KeycloakOidcClient(cfg);
+                        final KeycloakOidcConfiguration keycfg = getOidcConfigurationForClient(oidc, KeycloakOidcConfiguration.class);
+                        client = new KeycloakOidcClient(keycfg);
                         break;
                     case "GENERIC":
                     default:
-                        client = new OidcClient(cfg);
+                        final OidcConfiguration gencfg = getOidcConfigurationForClient(oidc, OidcConfiguration.class);
+                        client = new OidcClient(gencfg);
                         break;
                 }
+
                 final int count = index.intValue();
                 if (StringUtils.isNotBlank(oidc.getClientName())) {
                     client.setName(oidc.getClientName());
@@ -436,6 +444,25 @@ public class DelegatedClientFactory {
                 LOGGER.debug("Created client [{}]", client);
                 properties.add(client);
             });
+    }
+
+    @SneakyThrows
+    private <T extends OidcConfiguration> T getOidcConfigurationForClient(final Pac4jOidcProperties oidc, final Class<T> clazz) {
+        final T cfg = clazz.getDeclaredConstructor().newInstance();
+        if (StringUtils.isNotBlank(oidc.getScope())) {
+            cfg.setScope(oidc.getScope());
+        }
+        cfg.setUseNonce(oidc.isUseNonce());
+        cfg.setSecret(oidc.getSecret());
+        cfg.setClientId(oidc.getId());
+
+        if (StringUtils.isNotBlank(oidc.getPreferredJwsAlgorithm())) {
+            cfg.setPreferredJwsAlgorithm(JWSAlgorithm.parse(oidc.getPreferredJwsAlgorithm().toUpperCase()));
+        }
+        cfg.setMaxClockSkew(oidc.getMaxClockSkew());
+        cfg.setDiscoveryURI(oidc.getDiscoveryUri());
+        cfg.setCustomParams(oidc.getCustomParams());
+        return cfg;
     }
 
     /**

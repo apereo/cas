@@ -94,8 +94,8 @@ public class RegisteredServiceResource {
         return false;
     }
 
-    private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
-        final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
+    private Authentication authenticateRequest(final HttpServletRequest request, final HttpServletResponse response) {
+        final BasicAuthExtractor extractor = new BasicAuthExtractor();
         final WebContext webContext = new J2EContext(request, response);
         final UsernamePasswordCredentials credentials = extractor.extract(webContext);
         if (credentials != null) {
