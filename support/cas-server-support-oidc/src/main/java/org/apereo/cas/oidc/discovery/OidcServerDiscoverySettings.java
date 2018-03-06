@@ -1,13 +1,15 @@
 package org.apereo.cas.oidc.discovery;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link OidcServerDiscoverySettings}.
@@ -44,10 +46,13 @@ public class OidcServerDiscoverySettings {
     @JsonProperty("introspection_endpoint_auth_methods_supported")
     private List<String> introspectionSupportedAuthenticationMethods;
 
+    @JsonIgnore
     private final CasConfigurationProperties casProperties;
 
+    @JsonIgnore
     private final String issuer;
 
+    @JsonIgnore
     private final String serverPrefix;
 
     public OidcServerDiscoverySettings(final CasConfigurationProperties casProperties, final String issuer) {
