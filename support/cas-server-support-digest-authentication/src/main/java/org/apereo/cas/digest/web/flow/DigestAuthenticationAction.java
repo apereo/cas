@@ -55,7 +55,7 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
-            final DigestAuthExtractor extractor = new DigestAuthExtractor(this.getClass().getSimpleName());
+            final DigestAuthExtractor extractor = new DigestAuthExtractor();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final DigestCredentials credentials = extractor.extract(webContext);

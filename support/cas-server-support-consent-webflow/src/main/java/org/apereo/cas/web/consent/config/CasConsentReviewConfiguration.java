@@ -89,11 +89,8 @@ public class CasConsentReviewConfiguration extends WebMvcConfigurerAdapter imple
         client.setName(CAS_CONSENT_CLIENT);
         client.setCallbackUrl(casProperties.getServer().getPrefix().concat("/consentReview/callback"));
         client.setAuthorizationGenerator(new DefaultCasAuthorizationGenerator<>());
-        client.setIncludeClientNameInCallbackUrl(false);
 
         final Clients clients = new Clients(client);
-        clients.setDefaultClient(client);
-
         final Config config = new Config(clients);
         config.setAuthorizer(new IsAuthenticatedAuthorizer());
         config.setCallbackLogic(new DefaultCallbackLogic());

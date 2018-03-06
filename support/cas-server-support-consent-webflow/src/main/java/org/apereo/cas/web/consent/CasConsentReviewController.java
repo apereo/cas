@@ -9,10 +9,11 @@ import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
+import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.CallbackLogic;
-import org.pac4j.core.http.J2ENopHttpActionAdapter;
+import org.pac4j.core.http.adapter.J2ENopHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -45,14 +46,8 @@ public class CasConsentReviewController {
 
     private static final String CONSENT_REVIEW_VIEW = "casConsentReviewView";
     private static final String CONSENT_LOGOUT_VIEW = "casConsentLogoutView";
-
-    /**
-     * The consent repository.
-     */
+    
     private final ConsentRepository consentRepository;
-    /**
-     * The consent engine.
-     */
     private final ConsentEngine consentEngine;
     private final Config pac4jConfig;
     private final CasConfigurationProperties casProperties;
@@ -145,7 +140,9 @@ public class CasConsentReviewController {
         
         final CallbackLogic logic = this.pac4jConfig.getCallbackLogic();
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final String defaultUrl = this.casProperties.getServer().getPrefix().concat("/consentReview");
+        final Client client = this.pac4jConfig.getClients().getClients().get(0);
         logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE,
-                this.casProperties.getServer().getPrefix().concat("/consentReview"), Boolean.FALSE, Boolean.FALSE);
+            defaultUrl, false, false, false, client.getName());
     }
 }

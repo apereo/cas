@@ -206,7 +206,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
     private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         try {
-            final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
+            final BasicAuthExtractor extractor = new BasicAuthExtractor();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {

@@ -54,11 +54,10 @@ public class ClientAuthenticationHandler extends AbstractPac4jAuthenticationHand
             LOGGER.debug("Located client credentials as [{}]", clientCredentials);
 
             final Credentials credentials = clientCredentials.getCredentials();
-            final String clientName = credentials.getClientName();
-            LOGGER.debug("Client name: [{}]", clientName);
+            LOGGER.debug("Client name: [{}]", clientCredentials.getClientName());
 
             // get client
-            final Client client = this.clients.findClient(clientName);
+            final Client client = this.clients.findClient(clientCredentials.getClientName());
             LOGGER.debug("Delegated client is: [{}]", client);
 
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext();
