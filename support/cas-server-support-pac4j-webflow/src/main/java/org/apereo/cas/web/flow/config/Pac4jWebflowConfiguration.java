@@ -7,12 +7,18 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
+import org.apereo.cas.web.flow.IgnoreServiceRedirectUrlForSamlAction;
+import org.apereo.cas.web.flow.LimitedTerminateSessionAction;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.SAML2ClientLogoutAction;
+import org.apereo.cas.web.flow.SingleLogoutPreparationAction;
+import org.apereo.cas.web.flow.logout.TerminateSessionAction;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -82,8 +88,28 @@ public class Pac4jWebflowConfiguration {
     private Action saml2ClientLogoutAction;
 
     @Autowired
+    @Qualifier("pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction")
+    private Action ignoreServiceRedirectForSamlSloAction;
+
+    @Autowired
+    @Qualifier("terminateSessionAction")
+    private TerminateSessionAction terminateSessionAction;
+
+    @Autowired
+    @Qualifier("pac4jLimitedTerminateSessionAction")
+    private Action limitedTerminateSessionAction;
+
+    @Autowired
     @Qualifier("logoutFlowRegistry")
     private FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+
+    @Autowired
+    @Qualifier("ticketGrantingTicketCookieGenerator")
+    private CookieRetrievingCookieGenerator tgtCookieGenerator;
+
+    @Autowired
+    @Qualifier("defaultTicketRegistrySupport")
+    private TicketRegistrySupport ticketRegistrySupport;
 
     @ConditionalOnMissingBean(name = "saml2ClientLogoutAction")
     @Bean
@@ -106,12 +132,36 @@ public class Pac4jWebflowConfiguration {
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
     }
 
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "pac4jSingleLogoutPreparationAction")
+    @Bean
+    @Lazy
+    public Action pac4jSingleLogoutPreparationAction() {
+        return new SingleLogoutPreparationAction(tgtCookieGenerator, ticketRegistrySupport);
+    }
+
+    @RefreshScope
+    @ConditionalOnMissingBean(name = "pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction")
+    @Bean
+    @Lazy
+    public Action pac4jIgnoreServiceRedirectUrlForSamlSingleLogoutAction() {
+        return new IgnoreServiceRedirectUrlForSamlAction(builtClients);
+    }
+
+    @ConditionalOnMissingBean(name = "pac4jLimitedTerminateSessionAction")
+    @Bean
+    @Lazy
+    public Action pac4jLimitedTerminateSessionAction() {
+        return new LimitedTerminateSessionAction();
+    }
+
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
         final CasWebflowConfigurer w = new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-            logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
+                logoutFlowDefinitionRegistry, saml2ClientLogoutAction, ignoreServiceRedirectForSamlSloAction, terminateSessionAction,
+                limitedTerminateSessionAction, applicationContext, casProperties);
         w.initialize();
         return w;
     }

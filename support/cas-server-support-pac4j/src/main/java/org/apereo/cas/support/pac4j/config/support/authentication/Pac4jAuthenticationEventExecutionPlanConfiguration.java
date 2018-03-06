@@ -42,6 +42,7 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class Pac4jAuthenticationEventExecutionPlanConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -56,6 +57,10 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     @Autowired
     @Qualifier("authenticationActionResolver")
     private AuditActionResolver authenticationActionResolver;
+
+    @Autowired
+    @Qualifier("builtClients")
+    private Clients builtClients;
 
     @Bean
     @ConditionalOnMissingBean(name = "pac4jDelegatedClientFactory")
@@ -92,16 +97,17 @@ public class Pac4jAuthenticationEventExecutionPlanConfiguration implements Audit
     public AuthenticationHandler clientAuthenticationHandler() {
         final Pac4jDelegatedAuthenticationProperties pac4j = casProperties.getAuthn().getPac4j();
         final ClientAuthenticationHandler h = new ClientAuthenticationHandler(pac4j.getName(), servicesManager,
-            clientPrincipalFactory(), builtClients());
+                clientPrincipalFactory(), builtClients);
         h.setTypedIdUsed(pac4j.isTypedIdUsed());
         return h;
     }
 
+    @RefreshScope
     @ConditionalOnMissingBean(name = "pac4jAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer pac4jAuthenticationEventExecutionPlanConfigurer() {
         return plan -> {
-            if (!builtClients().findAllClients().isEmpty()) {
+            if (!builtClients.findAllClients().isEmpty()) {
                 LOGGER.info("Registering delegated authentication clients...");
                 plan.registerAuthenticationHandlerWithPrincipalResolver(clientAuthenticationHandler(), personDirectoryPrincipalResolver);
                 plan.registerMetadataPopulator(clientAuthenticationMetaDataPopulator());

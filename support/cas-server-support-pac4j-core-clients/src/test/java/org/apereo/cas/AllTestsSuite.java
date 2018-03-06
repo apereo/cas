@@ -12,7 +12,6 @@ import org.junit.runners.Suite;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-
 @RunWith(Suite.class)
 @Suite.SuiteClasses(ClientAuthenticationHandlerTests.class)
 @Slf4j

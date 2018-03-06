@@ -39,6 +39,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
         return new RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer();
     }
 
+
     @Bean
     public ServiceTicketValidationAuthorizer pac4jServiceTicketValidationAuthorizer() {
         return new Pac4jServiceTicketValidationAuthorizer(this.servicesManager,

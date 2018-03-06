@@ -7,10 +7,7 @@ import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.context.J2EContext;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.exception.TechnicalException;
-import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.redirect.RedirectAction;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.action.AbstractAction;
@@ -19,7 +16,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 
 /**
  * This is {@link SAML2ClientLogoutAction}.
@@ -49,13 +45,15 @@ public class SAML2ClientLogoutAction extends AbstractAction {
 
             Client<?, ?> client;
             try {
-                final String currentClientName = findCurrentClientName(context);
+                final String currentClientName = Pac4jUtils.findCurrentClientName(context);
                 client = (currentClientName == null) ? null : clients.findClient(currentClientName);
-            } catch (final TechnicalException e) {
-                LOGGER.debug("No SAML2 client found: " + e.getMessage(), e);
+            } catch(final TechnicalException e) {
+                // this exception indicates that the SAML2Client is not in the list
+                LOGGER.debug("No SAML2 client found");
                 client = null;
             }
 
+            // Call logout on SAML2 clients only
             if (client instanceof SAML2Client) {
                 final SAML2Client saml2Client = (SAML2Client) client;
                 LOGGER.debug("Located SAML2 client [{}]", saml2Client);
@@ -69,19 +67,6 @@ public class SAML2ClientLogoutAction extends AbstractAction {
             LOGGER.warn(e.getMessage(), e);
         }
         return null;
-    }
-
-    /**
-     * Finds the current client name from the context, using the PAC4J Profile Manager. It is assumed that the context has previously been
-     * populated with the profile.
-     *
-     * @param webContext A web context (request + response).
-     * @return The currently used client's name or {@code null} if there is no active profile.
-     */
-    private String findCurrentClientName(final WebContext webContext) {
-        final ProfileManager<? extends CommonProfile> pm = Pac4jUtils.getPac4jProfileManager(webContext);
-        final Optional<? extends CommonProfile> profile = pm.get(true);
-        return profile.map(CommonProfile::getClientName).orElse(null);
     }
 
 }
