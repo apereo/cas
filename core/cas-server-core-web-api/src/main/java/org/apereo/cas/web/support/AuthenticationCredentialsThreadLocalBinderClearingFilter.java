@@ -1,7 +1,7 @@
 package org.apereo.cas.web.support;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -19,7 +19,7 @@ import java.io.IOException;
  * @since 5.0.0
  */
 @Slf4j
-public class AuthenticationCredentialsLocalBinderClearingFilter implements Filter {
+public class AuthenticationCredentialsThreadLocalBinderClearingFilter implements Filter {
 
     @Override
     public void doFilter(final ServletRequest servletRequest,
@@ -29,7 +29,7 @@ public class AuthenticationCredentialsLocalBinderClearingFilter implements Filte
         try {
             filterChain.doFilter(servletRequest, servletResponse);
         } finally {
-            AuthenticationCredentialsLocalBinder.clear();
+            AuthenticationCredentialsThreadLocalBinder.clear();
         }
     }
 

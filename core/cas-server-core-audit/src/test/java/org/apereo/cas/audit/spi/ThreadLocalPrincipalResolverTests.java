@@ -1,7 +1,7 @@
 package org.apereo.cas.audit.spi;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
 import org.junit.After;
@@ -23,7 +23,7 @@ public class ThreadLocalPrincipalResolverTests {
 
     @After
     public void cleanup() {
-        AuthenticationCredentialsLocalBinder.clear();
+        AuthenticationCredentialsThreadLocalBinder.clear();
     }
 
     @Test
@@ -33,13 +33,13 @@ public class ThreadLocalPrincipalResolverTests {
 
     @Test
     public void singleThreadSetsSingleCredential() {
-        AuthenticationCredentialsLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertResolvedPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME);
     }
 
     @Test
     public void singleThreadSetsMultipleCredentials() {
-        AuthenticationCredentialsLocalBinder.bindCurrent(
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword(),
             CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword("test2"));
 
@@ -48,7 +48,7 @@ public class ThreadLocalPrincipalResolverTests {
 
     @Test
     public void singleThreadSetsAuthentication() {
-        AuthenticationCredentialsLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(CoreAuthenticationTestUtils.getAuthentication());
         assertResolvedPrincipal(CoreAuthenticationTestUtils.CONST_USERNAME);
     }
 
