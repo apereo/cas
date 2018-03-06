@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationResultBuilder;
 import org.apereo.cas.authentication.Credential;
@@ -755,7 +755,7 @@ public class WebUtils {
             authentication = WebUtils.getAuthentication(context);
         }
         if (authentication == null) {
-            authentication = AuthenticationCredentialsLocalBinder.getInProgressAuthentication();
+            authentication = AuthenticationCredentialsThreadLocalBinder.getInProgressAuthentication();
         }
         return authentication;
     }

@@ -9,7 +9,7 @@ import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
@@ -105,7 +105,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final TicketGrantingTicket ticket = getTicket(ticketGrantingTicketId, TicketGrantingTicket.class);
             LOGGER.debug("Ticket found. Processing logout requests and then deleting the ticket...");
 
-            AuthenticationCredentialsLocalBinder.bindCurrent(ticket.getAuthentication());
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(ticket.getAuthentication());
 
             final List<LogoutRequest> logoutRequests = this.logoutManager.performLogout(ticket);
             deleteTicket(ticketGrantingTicketId);
@@ -151,7 +151,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
         getAuthenticationSatisfiedByPolicy(currentAuthentication, new ServiceContext(selectedService, registeredService));
 
         final Authentication latestAuthentication = ticketGrantingTicket.getRoot().getAuthentication();
-        AuthenticationCredentialsLocalBinder.bindCurrent(latestAuthentication);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(latestAuthentication);
         final Principal principal = latestAuthentication.getPrincipal();
         final ServiceTicketFactory factory = (ServiceTicketFactory) this.ticketFactory.get(ServiceTicket.class);
         final ServiceTicket serviceTicket = factory.create(ticketGrantingTicket, service, credentialProvided, ServiceTicket.class);
@@ -198,7 +198,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             new ServiceContext(service, registeredService));
 
         final Authentication authentication = proxyGrantingTicketObject.getRoot().getAuthentication();
-        AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
         final Principal principal = authentication.getPrincipal();
         final ProxyTicketFactory factory = (ProxyTicketFactory) this.ticketFactory.get(ProxyTicket.class);
@@ -225,7 +225,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
     public ProxyGrantingTicket createProxyGrantingTicket(final String serviceTicketId, final AuthenticationResult authenticationResult)
         throws AuthenticationException, AbstractTicketException {
 
-        AuthenticationCredentialsLocalBinder.bindCurrent(authenticationResult.getAuthentication());
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authenticationResult.getAuthentication());
         final ServiceTicket serviceTicket = this.ticketRegistry.getTicket(serviceTicketId, ServiceTicket.class);
 
         if (serviceTicket == null || serviceTicket.isExpired()) {
@@ -338,7 +338,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
             final AuditableExecutionResult accessResult = this.registeredServiceAccessStrategyEnforcer.execute(audit);
             accessResult.throwExceptionIfNeeded();
 
-            AuthenticationCredentialsLocalBinder.bindCurrent(finalAuthentication);
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(finalAuthentication);
 
             final Assertion assertion = new DefaultAssertionBuilder(finalAuthentication)
                 .with(selectedService)
@@ -370,7 +370,7 @@ public class DefaultCentralAuthenticationService extends AbstractCentralAuthenti
 
         final Authentication authentication = authenticationResult.getAuthentication();
         final Service service = authenticationResult.getService();
-        AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
         if (service != null) {
             final Service selectedService = resolveServiceFromAuthenticationRequest(service);

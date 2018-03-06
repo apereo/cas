@@ -1,4 +1,4 @@
-package org.apero.cas.config;
+package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.surrogate.SurrogateAuthenticationService;

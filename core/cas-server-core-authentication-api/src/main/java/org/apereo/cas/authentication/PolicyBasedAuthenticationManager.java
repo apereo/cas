@@ -133,9 +133,9 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
     @Metered(name = "AUTHENTICATE_METER")
     @Counted(name = "AUTHENTICATE_COUNT", monotonic = true)
     public Authentication authenticate(final AuthenticationTransaction transaction) throws AuthenticationException {
-        AuthenticationCredentialsLocalBinder.bindCurrent(transaction.getCredentials());
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(transaction.getCredentials());
         final AuthenticationBuilder builder = authenticateInternal(transaction);
-        AuthenticationCredentialsLocalBinder.bindCurrent(builder);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(builder);
 
         final Authentication authentication = builder.build();
         addAuthenticationMethodAttribute(builder, authentication);
@@ -149,7 +149,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
         LOGGER.info("Authenticated principal [{}] with attributes [{}] via credentials [{}].",
             principal.getId(), principal.getAttributes(), transaction.getCredentials());
-        AuthenticationCredentialsLocalBinder.bindCurrent(auth);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(auth);
 
         return auth;
     }
@@ -302,7 +302,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
 
         try {
             final Iterator<Credential> it = credentials.iterator();
-            AuthenticationCredentialsLocalBinder.clearInProgressAuthentication();
+            AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
             while (it.hasNext()) {
                 final Credential credential = it.next();
                 LOGGER.debug("Attempting to authenticate credential [{}]", credential);
@@ -316,7 +316,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
                             final PrincipalResolver resolver = getPrincipalResolverLinkedToHandlerIfAny(handler, transaction);
                             LOGGER.debug("Attempting authentication of [{}] using [{}]", credential.getId(), handler.getName());
                             authenticateAndResolvePrincipal(builder, credential, resolver, handler);
-                            AuthenticationCredentialsLocalBinder.bindInProgress(builder.build());
+                            AuthenticationCredentialsThreadLocalBinder.bindInProgress(builder.build());
 
                             final Pair<Boolean, Set<Throwable>> failures = evaluateAuthenticationPolicies(builder.build(), transaction);
                             proceedWithNextHandler = !failures.getKey();
@@ -337,7 +337,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
             evaluateFinalAuthentication(builder, transaction);
             return builder;
         } finally {
-            AuthenticationCredentialsLocalBinder.clearInProgressAuthentication();
+            AuthenticationCredentialsThreadLocalBinder.clearInProgressAuthentication();
         }
     }
 

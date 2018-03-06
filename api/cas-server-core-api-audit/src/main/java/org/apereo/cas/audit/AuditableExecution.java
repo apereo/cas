@@ -1,11 +1,11 @@
 package org.apereo.cas.audit;
 
 /**
- * This is {@link AuditableExecution}. This is a strategy interface which acts as a façade to be used by
- * upstream components that need to call into APIs that require auditing and yet are not managed by Spring.
+ * This is {@link AuditableExecution}. This is a strategy interface which acts as an abstraction for audit trail execution
+ * at various audit points throughout CAS server and its various modules.
  * <p>
- * Implementors of this API are used as Spring-managed beans injected into their consumers thus eligible
- * for Spring container services like AOP proxies for audits, transactions, etc.
+ * Implementors of this API are typically annotated with <i>Inspektr's</i> auditing library <code>Audit</code> annotation
+ * to capture data at any particular audit point and make it available to main Inspektr's engine for processing that audit trail data.
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko

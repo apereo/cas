@@ -63,7 +63,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
         final Credential c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
             final String username = c.getId();
-            final Collection surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            final Collection<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);

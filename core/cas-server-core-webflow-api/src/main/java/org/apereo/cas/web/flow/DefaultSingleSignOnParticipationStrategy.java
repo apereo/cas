@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -37,15 +37,15 @@ public class DefaultSingleSignOnParticipationStrategy implements SingleSignOnPar
         if (service != null) {
             final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
             if (registeredService != null) {
-                final Authentication ca = AuthenticationCredentialsLocalBinder.getCurrentAuthentication();
+                final Authentication ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
                 try {
-                    AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
+                    AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
                     final boolean isAllowedForSso = registeredService.getAccessStrategy().isServiceAccessAllowedForSso();
                     LOGGER.debug("Located [{}] in registry. Service access to participate in SSO is set to [{}]",
                         registeredService.getServiceId(), isAllowedForSso);
                     return isAllowedForSso;
                 } finally {
-                    AuthenticationCredentialsLocalBinder.bindCurrent(ca);
+                    AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
                 }
             }
         }
