@@ -3,14 +3,22 @@ package org.apereo.cas.web.flow.config;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.audit.AuditableExecution;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
+import org.apereo.cas.ticket.DefaultDelegatedAuthenticationRequestTicketFactory;
+import org.apereo.cas.ticket.DelegatedAuthenticationRequestTicketFactory;
+import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
+import org.apereo.cas.web.DelegatedClientNavigationController;
+import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
-import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.SAML2ClientLogoutAction;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.pac4j.core.client.Clients;
@@ -29,6 +37,8 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * This is {@link Pac4jWebflowConfiguration}.
  *
@@ -39,7 +49,14 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class Pac4jWebflowConfiguration {
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
 
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+    
     @Autowired
     @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
     private AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
@@ -51,6 +68,10 @@ public class Pac4jWebflowConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("ticketRegistry")
+    private TicketRegistry ticketRegistry;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -92,6 +113,7 @@ public class Pac4jWebflowConfiguration {
         return new SAML2ClientLogoutAction(builtClients);
     }
 
+
     @RefreshScope
     @Bean
     @Lazy
@@ -99,11 +121,18 @@ public class Pac4jWebflowConfiguration {
         return new DelegatedClientAuthenticationAction(builtClients,
             authenticationSystemSupport,
             centralAuthenticationService,
-            casProperties.getTheme().getParamName(),
-            casProperties.getLocale().getParamName(),
             casProperties.getAuthn().getPac4j().isAutoRedirect(),
             servicesManager,
-            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer);
+            registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
+            delegatedClientWebflowManager());
+    }
+
+    @Bean
+    public DelegatedAuthenticationRequestTicketFactory delegatedAuthenticationRequestTicketFactory() {
+        final long delegatedAuthenticationTimeoutMins = 3;
+        return new DefaultDelegatedAuthenticationRequestTicketFactory(
+            new HardTimeoutExpirationPolicy(TimeUnit.MINUTES.toSeconds(delegatedAuthenticationTimeoutMins))
+        );
     }
 
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
@@ -122,7 +151,23 @@ public class Pac4jWebflowConfiguration {
     }
 
     @Bean
+    public DelegatedClientWebflowManager delegatedClientWebflowManager() {
+        return new DelegatedClientWebflowManager(ticketRegistry, delegatedAuthenticationRequestTicketFactory(),
+            casProperties.getTheme().getParamName(),
+            casProperties.getLocale().getParamName(),
+            webApplicationServiceFactory,
+            casProperties.getServer().getLoginUrl(),
+            authenticationRequestServiceSelectionStrategies
+        );
+    }
+
+    @Bean
     public Saml2ClientMetadataController saml2ClientMetadataController() {
         return new Saml2ClientMetadataController(builtClients, configBean);
+    }
+
+    @Bean
+    public DelegatedClientNavigationController delegatedClientNavigationController() {
+        return new DelegatedClientNavigationController(builtClients, delegatedClientWebflowManager());
     }
 }

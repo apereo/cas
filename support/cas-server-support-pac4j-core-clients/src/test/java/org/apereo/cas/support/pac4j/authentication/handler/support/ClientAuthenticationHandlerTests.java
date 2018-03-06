@@ -31,7 +31,6 @@ import static org.mockito.Mockito.*;
  *
  * @author Jerome Leleu
  * @since 4.1.0
- *
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
 @Slf4j
@@ -54,8 +53,8 @@ public class ClientAuthenticationHandlerTests {
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
-        final Credentials credentials = new OAuth20Credentials(null, fbClient.getName());
-        this.clientCredential = new ClientCredential(credentials);
+        final Credentials credentials = new OAuth20Credentials(null);
+        this.clientCredential = new ClientCredential(credentials, fbClient.getName());
         ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
     }
 

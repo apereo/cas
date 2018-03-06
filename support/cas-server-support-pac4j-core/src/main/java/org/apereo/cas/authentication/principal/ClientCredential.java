@@ -47,6 +47,11 @@ public class ClientCredential implements Credential {
      */
     private final org.pac4j.core.credentials.Credentials credentials;
 
+    /**
+     * Name of the client that established the credential.
+     */
+    private final String clientName;
+
     @Override
     public String getId() {
         if (this.userProfile != null) {

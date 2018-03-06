@@ -5,7 +5,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.http.UrlResolver;
+import org.pac4j.core.http.url.UrlResolver;
 
 import java.util.Optional;
 
@@ -19,12 +19,12 @@ import java.util.Optional;
 @AllArgsConstructor
 public class OAuth20CasCallbackUrlResolver implements UrlResolver {
     private final String callbackUrl;
-    
+
     private static Optional<URIBuilder.BasicNameValuePair> getQueryParameter(final WebContext context, final String name) {
         final URIBuilder builderContext = new URIBuilder(context.getFullRequestURL());
         return builderContext.getQueryParams()
-                .stream().filter(p -> p.getName().equalsIgnoreCase(name))
-                .findFirst();
+            .stream().filter(p -> p.getName().equalsIgnoreCase(name))
+            .findFirst();
     }
 
     @Override

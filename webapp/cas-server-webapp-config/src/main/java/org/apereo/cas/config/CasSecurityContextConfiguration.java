@@ -70,7 +70,7 @@ public class CasSecurityContextConfiguration extends WebMvcConfigurerAdapter {
         final IpClient ipClient = new IpClient(authn);
 
         final Set<String> headerNames = org.springframework.util.StringUtils.commaDelimitedListToSet(secProps.getAlternateIpHeaderName());
-        final IpExtractor credentialsExtractor = new IpExtractor(ipClient.getClass().getSimpleName(), headerNames.toArray(new String[]{}));
+        final IpExtractor credentialsExtractor = new IpExtractor(headerNames.toArray(new String[]{}));
         ipClient.setCredentialsExtractor(credentialsExtractor);
         return new CasSecurityInterceptor(new Config(ipClient), ipClient.getClass().getSimpleName());
     }

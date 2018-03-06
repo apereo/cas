@@ -3,7 +3,6 @@ package org.apereo.cas.ticket.registry;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.logout.LogoutManager;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
@@ -67,14 +66,9 @@ public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Seri
         if (ticket instanceof TicketGrantingTicket) {
             LOGGER.debug("Cleaning up expired ticket-granting ticket [{}]", ticket.getId());
             logoutManager.performLogout((TicketGrantingTicket) ticket);
-            return ticketRegistry.deleteTicket(ticket.getId());
         }
-        if (ticket instanceof ServiceTicket) {
-            LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
-            return ticketRegistry.deleteTicket(ticket.getId());
-        }
-        LOGGER.warn("Unknown ticket type [{}] found to clean", ticket.getClass().getSimpleName());
-        return 0;
+        LOGGER.debug("Cleaning up expired service ticket [{}]", ticket.getId());
+        return ticketRegistry.deleteTicket(ticket.getId());
     }
 
     /**
