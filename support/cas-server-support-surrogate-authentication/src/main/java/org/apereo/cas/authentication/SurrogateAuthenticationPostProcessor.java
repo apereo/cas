@@ -21,7 +21,6 @@ import javax.security.auth.login.CredentialNotFoundException;
 import javax.security.auth.login.FailedLoginException;
 import java.util.Map;
 
-import static com.google.common.collect.ImmutableMap.of;
 
 /**
  * This is {@link SurrogateAuthenticationPostProcessor}.
@@ -73,14 +72,13 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 publishSuccessEvent(principal, targetUserId);
 
                 final AuditableContext surrogateEligibleAudit = AuditableContext.builder()
-                        .service(transaction.getService())
-                        .authentication(authentication)
-                        .properties(of("targetUserId", targetUserId, "eligible", true))
-                        .build();
+                    .service(transaction.getService())
+                    .authentication(authentication)
+                    .properties(CollectionUtils.wrap("targetUserId", targetUserId, "eligible", true))
+                    .build();
 
-                //We don't care about capturing audit execution result here
+                // We don't care about capturing audit execution result here
                 this.surrogateEligibilityAuditableExecution.execute(surrogateEligibleAudit);
-
                 return;
             }
             LOGGER.error("Principal [{}] is unable/unauthorized to authenticate as [{}]", principal, targetUserId);
@@ -91,13 +89,12 @@ public class SurrogateAuthenticationPostProcessor implements AuthenticationPostP
                 new SurrogateAuthenticationException("Principal " + principal + " is unauthorized to authenticate as " + targetUserId));
 
             final AuditableContext surrogateIneligibleAudit = AuditableContext.builder()
-                    .service(transaction.getService())
-                    .authentication(authentication)
-                    .build();
+                .service(transaction.getService())
+                .authentication(authentication)
+                .build();
 
             //We don't care about capturing audit execution result here
             this.surrogateEligibilityAuditableExecution.execute(surrogateIneligibleAudit);
-
             throw new AuthenticationException(map);
         }
     }

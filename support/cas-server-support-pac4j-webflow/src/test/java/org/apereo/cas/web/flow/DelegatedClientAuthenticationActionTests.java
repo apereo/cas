@@ -19,9 +19,11 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
+import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.pac4j.core.client.Clients;
+import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.oauth.client.FacebookClient;
 import org.pac4j.oauth.client.TwitterClient;
@@ -93,9 +95,8 @@ public class DelegatedClientAuthenticationActionTests {
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients,
             null, mock(CentralAuthenticationService.class),
-            ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             false, getServicesManagerWith(service),
-            enforcer);
+            enforcer, mock(DelegatedClientWebflowManager.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -114,7 +115,7 @@ public class DelegatedClientAuthenticationActionTests {
     @Test
     public void verifyFinishAuthentication() throws Exception {
         final MockHttpServletRequest mockRequest = new MockHttpServletRequest();
-        mockRequest.setParameter(Clients.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
+        mockRequest.setParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER, "FacebookClient");
 
         final MockHttpSession mockSession = new MockHttpSession();
         mockSession.setAttribute(ThemeChangeInterceptor.DEFAULT_PARAM_NAME, MY_THEME);
@@ -134,7 +135,7 @@ public class DelegatedClientAuthenticationActionTests {
         final FacebookClient facebookClient = new FacebookClient() {
             @Override
             protected OAuth20Credentials retrieveCredentials(final WebContext context) {
-                return new OAuth20Credentials("fakeVerifier", FacebookClient.class.getSimpleName());
+                return new OAuth20Credentials("fakeVerifier");
             }
         };
         facebookClient.setName(FacebookClient.class.getSimpleName());
@@ -156,8 +157,7 @@ public class DelegatedClientAuthenticationActionTests {
         final AuditableExecution enforcer = mock(AuditableExecution.class);
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-            "theme", "locale", false,
-            getServicesManagerWith(service), enforcer);
+            false, getServicesManagerWith(service), enforcer, mock(DelegatedClientWebflowManager.class));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());

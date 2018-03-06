@@ -20,7 +20,7 @@
                         <li th:each="entry: ${pac4jUrls}" th:switch="${entry.type}">
                             <a class="btn btn-block btn-social"
                                th:classappend="'btn-' + ${entry.type}"
-                               th:href="${entry.redirectUrl}"
+                               th:href="@{${entry.redirectUrl}}"
                                th:inline="text"
                                th:title="${entry.name}">
 
