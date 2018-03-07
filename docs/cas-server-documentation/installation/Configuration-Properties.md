@@ -2105,6 +2105,12 @@ Multifactor authentication bypass settings for this provider are available [here
 # cas.authn.mfa.yubikey.allowedDevices.uid2=yubikeyPublicId2
 ```
 
+#### YubiKey Registration Records Encryption and Signing
+```properties
+# cas.authn.mfa.yubikey.crypto.enabled=true
+# cas.authn.mfa.yubikey.crypto.encryption.key=
+# cas.authn.mfa.yubikey.crypto.signing.key=
+```
 ### YubiKey JPA Device Store
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.gauth.yubikey`.
