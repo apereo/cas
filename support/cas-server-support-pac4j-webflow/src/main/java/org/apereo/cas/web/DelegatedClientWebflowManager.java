@@ -15,8 +15,7 @@ import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.WebContext;
-import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.profile.CommonProfile;
+import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.util.LinkedHashMap;
@@ -80,8 +79,8 @@ public class DelegatedClientWebflowManager {
      * @param client         the client
      * @return the service
      */
-    public Service retrieve(final RequestContext requestContext, final WebContext webContext, final BaseClient<Credentials, CommonProfile> client) {
-        final String clientId = getDelegatedClientId(webContext);
+    public Service retrieve(final RequestContext requestContext, final WebContext webContext, final BaseClient client) {
+        final String clientId = getDelegatedClientId(webContext, client);
         final DelegatedAuthenticationRequestTicket ticket = this.ticketRegistry.getTicket(clientId, DelegatedAuthenticationRequestTicket.class);
         if (ticket == null) {
             LOGGER.error("Delegated client identifier cannot be located in the authentication request");
@@ -92,25 +91,32 @@ public class DelegatedClientWebflowManager {
             this.ticketRegistry.deleteTicket(ticket.getId());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
+        LOGGER.debug("Located delegated client identifier as [{}]", ticket.getId());
+        restoreDelegatedAuthenticationRequest(requestContext, webContext, ticket);
+        LOGGER.debug("Removing delegated client identifier [{}} from registry", ticket.getId());
+        this.ticketRegistry.deleteTicket(ticket.getId());
+        return ticket.getService();
+    }
 
-
+    private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext, final DelegatedAuthenticationRequestTicket ticket) {
         final Service service = ticket.getService();
+        LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
+
         requestContext.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
+        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
         webContext.setRequestAttribute(this.themeParamName, ticket.getProperties().get(this.themeParamName));
         webContext.setRequestAttribute(this.localParamName, ticket.getProperties().get(this.localParamName));
-        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD,
-            ticket.getProperties().get(CasProtocolConstants.PARAMETER_METHOD));
-
-        this.ticketRegistry.deleteTicket(ticket.getId());
+        webContext.setRequestAttribute(CasProtocolConstants.PARAMETER_METHOD, ticket.getProperties().get(CasProtocolConstants.PARAMETER_METHOD));
         return service;
     }
 
-    private String getDelegatedClientId(final WebContext webContext) {
+    private String getDelegatedClientId(final WebContext webContext, final BaseClient client) {
         String clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
-        if (StringUtils.isBlank(clientId)) {
+        if (StringUtils.isBlank(clientId) && client instanceof SAML2Client) {
+            LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");
             clientId = webContext.getRequestParameter("RelayState");
         }
+        LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);
         return clientId;
     }
-
 }
