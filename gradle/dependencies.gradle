@@ -639,6 +639,11 @@ ext.libraries = [
                     force = true
                 }
         ],
+        hibernate_ogm_couchdb           : [
+                dependencies.create("org.hibernate.ogm:hibernate-ogm-couchdb:$hibernateOgmVersion"){
+                    exclude(group: "org.jboss.logging", module: "jboss-logging-processor")
+                },
+        ],
         httpclient              : [
                 dependencies.create("org.apache.httpcomponents:httpclient:$httpclientVersion") {
                     exclude(group: "commons-codec", module: "commons-codec")

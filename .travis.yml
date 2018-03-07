@@ -10,6 +10,7 @@ language: java
 sudo: required
 services:
   - docker
+  - couchdb
 branches:
   only:
   - master
