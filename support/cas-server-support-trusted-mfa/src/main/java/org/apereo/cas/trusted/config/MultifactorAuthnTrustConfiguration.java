@@ -18,8 +18,8 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.fingerprint.DeviceFingerprintGenerator;
-import org.apereo.cas.trusted.fingerprint.GeographyDeviceFingerprintGenerator;
+import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
+import org.apereo.cas.trusted.web.flow.GeographyDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
@@ -62,23 +62,23 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name = "deviceFingerprintGenerator")
+    @ConditionalOnMissingBean(name = "deviceFingerprintStrategy")
     @Bean
-    public DeviceFingerprintGenerator deviceFingerprintGenerator() {
-        return new GeographyDeviceFingerprintGenerator();
+    public DeviceFingerprintStrategy deviceFingerprintStrategy() {
+        return new GeographyDeviceFingerprintStrategy();
     }
 
     @Bean
     @RefreshScope
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintGenerator(),
+        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy(),
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintGenerator(),
+        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy(),
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 

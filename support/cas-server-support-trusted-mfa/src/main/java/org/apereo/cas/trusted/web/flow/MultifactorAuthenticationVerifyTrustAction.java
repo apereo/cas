@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
-import org.apereo.cas.trusted.fingerprint.DeviceFingerprintGenerator;
 import org.apereo.cas.trusted.util.MultifactorAuthenticationTrustUtils;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.web.support.WebUtils;
@@ -28,7 +27,7 @@ import java.util.Set;
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     private final MultifactorAuthenticationTrustStorage storage;
-    private final DeviceFingerprintGenerator deviceFingerprintGenerator;
+    private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
 
     @Override
@@ -47,7 +46,7 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();
         }
-        final String fingerprint = deviceFingerprintGenerator.generateFingerprint(principal, requestContext);
+        final String fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext);
         LOGGER.debug("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream()
                 .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
