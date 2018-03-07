@@ -143,7 +143,7 @@ your CAS overlay to be able to resolve dependencies:
 </repositories>
 ```
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
 
 ### SAML Services
 
@@ -242,7 +242,7 @@ Attribute name formats can be specified per relying party in the service registr
 ```
 
 You may also have the option to define attributes and their relevant name format globally
-via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#saml-idp).
+via CAS properties. To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
 
 ### Attribute Friendly Names
 
@@ -266,26 +266,26 @@ specially if the original attribute is *mapped* to a different name.
 
 ### Attribute Release
 
-Attribute filtering and release policies are defined per SAML service. See [this guide](Configuring-SAML2-Attribute-Release.html) for more info.
+Attribute filtering and release policies are defined per SAML service. See [this guide](Configuring-SAML2-Attribute-Release.md) for more info.
 
 ### Name ID Selection
 
 Each service may specify a required Name ID format. If left undefined, the metadata will be consulted to find the right format.
 The Name ID value is always simply the authenticated user that is designed to be returned to this service. In other words, if you
 decide to configure CAS to return a particular attribute as
-[the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.html),
+[the authenticated user name for this service](../integration/Attribute-Release-PrincipalId.md),
 that value will then be used to construct the Name ID along with the right format.
 
 ### Dynamic Metadata
 
 In addition to the more traditional means of managing service provider metadata such as direct XML files or URLs, CAS 
 provides support for a number of other strategies to fetch metadata more dynamically with the likes of MDQ and more.
-To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.html).
+To learn more, please [review this guide](Configuring-SAML2-DynamicMetadata.md).
 
 ## SP Integrations
 
 A number of SAML2 service provider integrations are provided natively by CAS. To learn more,
-please [review this guide](../integration/Configuring-SAML-SP-Integrations.html).
+please [review this guide](../integration/Configuring-SAML-SP-Integrations.md).
 
 ## Client Libraries
 
