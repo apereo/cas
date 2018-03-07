@@ -169,7 +169,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     private static void clearOidcStateFromSession(final HttpSession session) {
         Object fromSession = session.getAttribute(OIDC_CLIENT_STATES);
-        if (fromSession != null && fromSession instanceof List) {
+        if (fromSession instanceof List) {
             List<String> oidcClientStatesFromSession = (List<String>) fromSession;
             oidcClientStatesFromSession.forEach(session::removeAttribute);
         }
@@ -253,7 +253,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * Azure AD OidcClient does not send client_name query param back with reply URL
      * so save the client_name with state to session
      */
-    private void handleOidcClient(final IndirectClient<Credentials, CommonProfile> client, final HttpSession session, final WebContext webContext, List<String> oidcClientStates) {
+    private void handleOidcClient(final IndirectClient<Credentials, CommonProfile> client, final HttpSession session, final WebContext webContext, final List<String> oidcClientStates) {
         if (client instanceof OidcClient) {
             State state = (State) webContext.getSessionAttribute(OidcConfiguration.STATE_SESSION_ATTRIBUTE);
             session.setAttribute(state.getValue(), client.getName());
