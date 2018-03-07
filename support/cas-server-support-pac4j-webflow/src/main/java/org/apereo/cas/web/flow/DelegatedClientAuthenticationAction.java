@@ -143,19 +143,21 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         return error();
     }
 
-    private String resolveClientNameFromRequest(HttpServletRequest request) {
+    private String resolveClientNameFromRequest(final HttpServletRequest request) {
         String clientName = request.getParameter(this.clients.getClientNameParameter());
-        HttpSession session = request.getSession();
+        final HttpSession session = request.getSession();
         if (StringUtils.isBlank(clientName)) {
             String state = request.getParameter(OidcConfiguration.STATE);
             if (StringUtils.isNotBlank(state)) {
                 LOGGER.debug("Resolving client_name from Oidc state {}", state);
                 Object fromSession = session.getAttribute(OIDC_CLIENT_STATES);
-                if (fromSession != null && fromSession instanceof List) {
+                if (fromSession instanceof List) {
                     List<String> oidcClientStatesFromSession = (List<String>) fromSession;
                     if (oidcClientStatesFromSession != null && oidcClientStatesFromSession.contains(state)) {
                         clientName = (String) session.getAttribute(state);
                     }
+                } else {
+                    LOGGER.warn("Invalid value {} stored with attribute {}", String.valueOf(fromSession), OIDC_CLIENT_STATES);
                 }
             } else {
                 LOGGER.debug("No state query param present");
@@ -165,7 +167,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         return clientName;
     }
 
-    private static void clearOidcStateFromSession(HttpSession session) {
+    private static void clearOidcStateFromSession(final HttpSession session) {
         Object fromSession = session.getAttribute(OIDC_CLIENT_STATES);
         if (fromSession != null && fromSession instanceof List) {
             List<String> oidcClientStatesFromSession = (List<String>) fromSession;
@@ -174,7 +176,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         session.removeAttribute(OIDC_CLIENT_STATES);
     }
 
-	private Service restoreAuthenticationRequestInContext(final RequestContext context, final HttpServletRequest request) {
+    private Service restoreAuthenticationRequestInContext(final RequestContext context, final HttpServletRequest request) {
         final HttpSession session = request.getSession();
         final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
         context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
@@ -251,7 +253,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      * Azure AD OidcClient does not send client_name query param back with reply URL
      * so save the client_name with state to session
      */
-    private void handleOidcClient(IndirectClient<Credentials, CommonProfile> client, HttpSession session, WebContext webContext, List<String> oidcClientStates) {
+    private void handleOidcClient(final IndirectClient<Credentials, CommonProfile> client, final HttpSession session, final WebContext webContext, List<String> oidcClientStates) {
         if (client instanceof OidcClient) {
             State state = (State) webContext.getSessionAttribute(OidcConfiguration.STATE_SESSION_ATTRIBUTE);
             session.setAttribute(state.getValue(), client.getName());
