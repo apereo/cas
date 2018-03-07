@@ -9,7 +9,6 @@ import org.apereo.cas.consent.ConsentEngine;
 import org.apereo.cas.consent.ConsentRepository;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.inspektr.common.spi.PrincipalResolver;
-import org.pac4j.core.client.Client;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.CallbackLogic;
@@ -141,8 +140,7 @@ public class CasConsentReviewController {
         final CallbackLogic logic = this.pac4jConfig.getCallbackLogic();
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
         final String defaultUrl = this.casProperties.getServer().getPrefix().concat("/consentReview");
-        final Client client = this.pac4jConfig.getClients().getClients().get(0);
         logic.perform(context, this.pac4jConfig, J2ENopHttpActionAdapter.INSTANCE,
-            defaultUrl, false, false, false, client.getName());
+            defaultUrl, false, false, false, null);
     }
 }
