@@ -148,6 +148,9 @@ subprojects {
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
+        maven { url "https://raw.github.com/tduehr/hibernate-ogm-cassandra/mvn-repo/" }
+        maven { url "https://raw.github.com/tduehr/hibernate-ogm/mvn-repo/" }
+        maven { url "http://snapshots.jboss.org/maven2/" }
         jcenter()
     }
 
