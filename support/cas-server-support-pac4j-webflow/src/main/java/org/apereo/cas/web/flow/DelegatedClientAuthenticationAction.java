@@ -22,16 +22,19 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.DelegatedClientNavigationController;
+import org.apereo.cas.web.DelegatedClientWebflowManager;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.J2EContext;
+import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
-import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
-import org.pac4j.core.redirect.RedirectAction;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -41,7 +44,6 @@ import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -79,45 +81,47 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final CentralAuthenticationService centralAuthenticationService;
 
-    private final String themeParamName;
-    private final String localParamName;
-
     private final boolean autoRedirect;
     private final ServicesManager servicesManager;
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
+    private final DelegatedClientWebflowManager delegatedClientWebflowManager;
+    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
-
-        final String clientName = request.getParameter(this.clients.getClientNameParameter());
+        final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             return stopWebflow();
         }
 
-        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
         if (StringUtils.isNotBlank(clientName)) {
-            final Service service = restoreAuthenticationRequestInContext(context, request);
+            final Service service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             final BaseClient<Credentials, CommonProfile> client = findDelegatedClientByName(request, clientName, service);
 
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
                 LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
+                if (credentials == null) {
+                    throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
+                }
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
                 return stopWebflow();
             }
 
             if (credentials != null) {
-                return establishDelegatedAuthenticationSession(context, service, credentials);
+                return establishDelegatedAuthenticationSession(context, service, credentials, client);
             }
         }
 
         prepareForLoginPage(context);
+
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
         }
@@ -136,18 +140,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         return error();
     }
 
-    private Service restoreAuthenticationRequestInContext(final RequestContext context, final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        final Service service = (Service) session.getAttribute(CasProtocolConstants.PARAMETER_SERVICE);
-        context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
-        restoreRequestAttribute(request, session, this.themeParamName);
-        restoreRequestAttribute(request, session, this.localParamName);
-        restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
-        return service;
-    }
-
-    private Event establishDelegatedAuthenticationSession(final RequestContext context, final Service service, final Credentials credentials) {
-        final ClientCredential clientCredential = new ClientCredential(credentials);
+    private Event establishDelegatedAuthenticationSession(final RequestContext context, final Service service,
+                                                          final Credentials credentials, final BaseClient client) {
+        final ClientCredential clientCredential = new ClientCredential(credentials, client.getName());
         final AuthenticationResult authenticationResult =
             this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, clientCredential);
         final TicketGrantingTicket tgt = this.centralAuthenticationService.createTicketGrantingTicket(authenticationResult);
@@ -157,8 +152,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
     private BaseClient<Credentials, CommonProfile> findDelegatedClientByName(final HttpServletRequest request, final String clientName, final Service service) {
         final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-        LOGGER.debug("Delegated authentication client is [{}]", client);
-        LOGGER.debug("Retrieve service: [{}]", service);
+        LOGGER.debug("Delegated authentication client is [{}] with service [{}}", client, service);
         if (service != null) {
             request.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service.getId());
             if (!isDelegatedClientAuthorizedForService(client, service)) {
@@ -179,8 +173,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
         final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-
-        rememberAuthenticationRequest(service, request);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
         this.clients.findAllClients()
@@ -204,40 +196,16 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext) {
-        try {
-            final String name = client.getName();
-            final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
-            final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
-            final String redirectionUrl;
-            final RedirectAction action = client.getRedirectAction(webContext);
-            if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
-                final String content = StringUtils.removeAll(action.getContent(), "\n");
-                redirectionUrl = String.format("javascript:document.write('%1$s');document.close();", content);
-            } else {
-                redirectionUrl = action.getLocation();
-            }
-            LOGGER.debug("[{}] -> [{}]", name, redirectionUrl);
-            final ProviderLoginPageConfiguration p = new ProviderLoginPageConfiguration(name, redirectionUrl, type, getCssClass(name));
-            return Optional.of(p);
-        } catch (final HttpAction e) {
-            if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
-                LOGGER.debug("Authentication request was denied from the provider [{}]", client.getName());
-            } else {
-                LOGGER.warn(e.getMessage(), e);
-            }
-        }
-        return Optional.empty();
-
+        final String name = client.getName();
+        final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
+        final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
+        final String redirectUrl = DelegatedClientNavigationController.ENDPOINT_REDIRECT
+            + "?" + Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER + "=" + name;
+        final ProviderLoginPageConfiguration p = new ProviderLoginPageConfiguration(name,
+            redirectUrl, type, getCssClass(name));
+        return Optional.of(p);
     }
 
-    private void rememberAuthenticationRequest(final Service service, final HttpServletRequest request) {
-        final HttpSession session = request.getSession();
-        LOGGER.debug("Save service: [{}]", service);
-        session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE, service);
-        saveRequestParameter(request, session, this.themeParamName);
-        saveRequestParameter(request, session, this.localParamName);
-        saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
-    }
 
     /**
      * Get a valid CSS class for the given provider name.
@@ -251,32 +219,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
         LOGGER.debug("cssClass for [{}] is [{}]", name, computedCssClass);
         return computedCssClass;
-    }
-
-    /**
-     * Restore an attribute in web session as an attribute in request.
-     *
-     * @param request The HTTP request
-     * @param session The HTTP session
-     * @param name    The name of the parameter
-     */
-    private static void restoreRequestAttribute(final HttpServletRequest request, final HttpSession session, final String name) {
-        final String value = (String) session.getAttribute(name);
-        request.setAttribute(name, value);
-    }
-
-    /**
-     * Save a request parameter in the web session.
-     *
-     * @param request The HTTP request
-     * @param session The HTTP session
-     * @param name    The name of the parameter
-     */
-    private static void saveRequestParameter(final HttpServletRequest request, final HttpSession session, final String name) {
-        final String value = request.getParameter(name);
-        if (value != null) {
-            session.setAttribute(name, value);
-        }
     }
 
     private Event stopWebflow() {
@@ -315,7 +257,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     private boolean isDelegatedClientAuthorizedForService(final Client client, final Service service) {
-        if (service == null) {
+        if (service == null || StringUtils.isBlank(service.getId())) {
             LOGGER.debug("Can not evaluate delegated authentication policy since no service was provided in the request while processing client [{}]", client);
             return true;
         }
@@ -337,6 +279,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
         LOGGER.warn("Delegated authentication policy for [{}] refuses access to client [{}]", registeredService.getServiceId(), client);
         return false;
+    }
+
+    private Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
+                                                          final J2EContext webContext,
+                                                          final String clientName) {
+        delegatedSessionCookieManager.restore(webContext);
+        final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
+        final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
+        return service;
     }
 
     /**

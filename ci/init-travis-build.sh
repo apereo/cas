@@ -10,19 +10,13 @@ echo -e "Repo slug: ${TRAVIS_REPO_SLUG}"
 echo -e "OS name: ${TRAVIS_OS_NAME}"
 echo -e "Pull Request: ${TRAVIS_PULL_REQUEST}"
 echo -e "Commit Message: ${TRAVIS_COMMIT_MESSAGE}"
-echo -e "Publish Snapshots: ${PUBLISH_SNAPSHOTS}"
+echo -e "Job Type: ${MATRIX_JOB_TYPE}"
 
 if [ "$TRAVIS_SECURE_ENV_VARS" == "false" ]
 then
   echo -e "Secure environment variables are NOT available...\n"
 else
   echo -e "Secure environment variables are available...\n"
-  #echo -e "GH_TOKEN -> ${GH_TOKEN}"
-fi
-
-if [ "$TRAVIS_PULL_REQUEST" != "false" ] && [ "$PUBLISH_SNAPSHOTS" == "true" ]; then
-    echo -e "Skipping build since this is a pull request and we are not publishing snapshots.\n"
-    exit 0
 fi
 
 echo -e "Setting build environment...\n"
@@ -40,7 +34,9 @@ chmod -R 777 ./gradlew
 # sudo apt-get update  -qq > /dev/null
 # sudo apt-get install -y nodejs -qq > /dev/null
 
-echo -e "Installing NPM...\n"
-sudo ./gradlew npmInstall --stacktrace -q
+if [ "$MATRIX_JOB_TYPE" == "BUILD" ] || [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
+    echo -e "Installing NPM...\n"
+    sudo ./gradlew npmInstall --stacktrace -q
+fi
 
 echo -e "Configured build environment\n"

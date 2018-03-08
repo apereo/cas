@@ -6,8 +6,10 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
 import org.apereo.cas.services.AbstractRegisteredService;
-import org.apereo.cas.services.JpaServiceRegistryDaoImpl;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.JpaServiceRegistry;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.reflections.Reflections;
 import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
@@ -42,7 +44,7 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
-public class JpaServiceRegistryConfiguration {
+public class JpaServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -56,9 +58,9 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     public List<String> jpaServicePackagesToScan() {
         final Reflections reflections =
-                new Reflections(new ConfigurationBuilder()
-                        .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
-                        .setScanners(new SubTypesScanner(false)));
+            new Reflections(new ConfigurationBuilder()
+                .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
+                .setScanners(new SubTypesScanner(false)));
         final Set<Class<? extends AbstractRegisteredService>> subTypes = reflections.getSubTypesOf(AbstractRegisteredService.class);
         return subTypes.stream().map(t -> t.getPackage().getName()).collect(Collectors.toList());
     }
@@ -67,12 +69,12 @@ public class JpaServiceRegistryConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean serviceEntityManagerFactory() {
         return JpaBeans.newHibernateEntityManagerFactoryBean(
-                new JpaConfigDataHolder(
-                        jpaServiceVendorAdapter(),
-                        "jpaServiceRegistryContext",
-                        jpaServicePackagesToScan(),
-                        dataSourceService()),
-                casProperties.getServiceRegistry().getJpa());
+            new JpaConfigDataHolder(
+                jpaServiceVendorAdapter(),
+                "jpaServiceRegistryContext",
+                jpaServicePackagesToScan(),
+                dataSourceService()),
+            casProperties.getServiceRegistry().getJpa());
     }
 
     @Autowired
@@ -89,7 +91,13 @@ public class JpaServiceRegistryConfiguration {
     }
 
     @Bean
-    public ServiceRegistryDao serviceRegistryDao() {
-        return new JpaServiceRegistryDaoImpl();
+    @RefreshScope
+    public ServiceRegistry jpaServiceRegistry() {
+        return new JpaServiceRegistry();
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(jpaServiceRegistry());
     }
 }

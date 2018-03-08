@@ -4,8 +4,10 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.services.YamlServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.YamlServiceRegistry;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,9 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("yamlServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class YamlServiceRegistryConfiguration {
-
-
+public class YamlServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -40,11 +40,14 @@ public class YamlServiceRegistryConfiguration {
     @Bean
     @RefreshScope
     @SneakyThrows
-    public ServiceRegistryDao serviceRegistryDao() {
-
+    public ServiceRegistry yamlServiceRegistry() {
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
-        return new YamlServiceRegistryDao(registry.getYaml().getLocation(),
+        return new YamlServiceRegistry(registry.getYaml().getLocation(),
             registry.isWatcherEnabled(), eventPublisher, registeredServiceReplicationStrategy);
+    }
 
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(yamlServiceRegistry());
     }
 }

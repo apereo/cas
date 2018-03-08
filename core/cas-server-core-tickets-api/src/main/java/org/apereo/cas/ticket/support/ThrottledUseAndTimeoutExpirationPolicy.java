@@ -48,7 +48,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
         final ZonedDateTime killTime = lastTimeUsed.plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
         if (ticketState.getCountOfUses() == 0 && currentTime.isBefore(killTime)) {
             LOGGER.debug("Ticket is not expired due to a count of zero and the time being less " + "than the timeToKillInSeconds");
-            return false;
+            return super.isExpired(ticketState);
         }
         if (currentTime.isAfter(killTime)) {
             LOGGER.debug("Ticket is expired due to the time being greater than the timeToKillInSeconds");
@@ -59,7 +59,7 @@ public class ThrottledUseAndTimeoutExpirationPolicy extends AbstractCasExpiratio
             LOGGER.warn("Ticket is expired due to the time being less than the waiting period.");
             return true;
         }
-        return false;
+        return super.isExpired(ticketState);
     }
 
     @Override

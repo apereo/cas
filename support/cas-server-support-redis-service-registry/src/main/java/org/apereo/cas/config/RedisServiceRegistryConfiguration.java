@@ -1,12 +1,14 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.adaptors.redis.services.RedisServiceRegistryDao;
+import org.apereo.cas.adaptors.redis.services.RedisServiceRegistry;
 import org.apereo.cas.adaptors.redis.services.RegisteredServiceRedisTemplate;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.redis.RedisServiceRegistryProperties;
 import org.apereo.cas.redis.core.RedisObjectFactory;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -24,7 +26,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 @Configuration("redisServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class RedisServiceRegistryConfiguration {
+public class RedisServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -45,7 +47,12 @@ public class RedisServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao serviceRegistryDao() {
-        return new RedisServiceRegistryDao(registeredServiceRedisTemplate());
+    public ServiceRegistry redisServiceRegistry() {
+        return new RedisServiceRegistry(registeredServiceRedisTemplate());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(redisServiceRegistry());
     }
 }

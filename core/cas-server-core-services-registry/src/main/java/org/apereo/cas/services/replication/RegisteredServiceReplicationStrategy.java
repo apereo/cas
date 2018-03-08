@@ -2,7 +2,7 @@ package org.apereo.cas.services.replication;
 
 import org.apereo.cas.DistributedCacheObject;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 
 import java.util.List;
 import java.util.function.Predicate;
@@ -19,11 +19,11 @@ public interface RegisteredServiceReplicationStrategy {
      *
      * @param service            the service
      * @param id                 the id
-     * @param serviceRegistryDao the service registry dao
+     * @param serviceRegistry the service registry dao
      * @return the registered service from cache if any
      */
     default RegisteredService getRegisteredServiceFromCacheIfAny(final RegisteredService service, final String id,
-                                                                 final ServiceRegistryDao serviceRegistryDao) {
+                                                                 final ServiceRegistry serviceRegistry) {
         return service;
     }
 
@@ -32,11 +32,11 @@ public interface RegisteredServiceReplicationStrategy {
      *
      * @param service            the service
      * @param id                 the id
-     * @param serviceRegistryDao the service registry dao
+     * @param serviceRegistry the service registry dao
      * @return the registered service from cache if any
      */
     default RegisteredService getRegisteredServiceFromCacheIfAny(final RegisteredService service, final long id,
-                                                                 final ServiceRegistryDao serviceRegistryDao) {
+                                                                 final ServiceRegistry serviceRegistry) {
         return service;
     }
 
@@ -45,12 +45,12 @@ public interface RegisteredServiceReplicationStrategy {
      *
      * @param service            the service
      * @param predicate          the predicate
-     * @param serviceRegistryDao the service registry dao
+     * @param serviceRegistry the service registry dao
      * @return the registered service from cache by predicate
      */
     default RegisteredService getRegisteredServiceFromCacheByPredicate(final RegisteredService service,
                                                                        final Predicate<DistributedCacheObject<RegisteredService>> predicate,
-                                                                       final ServiceRegistryDao serviceRegistryDao) {
+                                                                       final ServiceRegistry serviceRegistry) {
         return service;
     }
 
@@ -58,11 +58,11 @@ public interface RegisteredServiceReplicationStrategy {
      * Update loaded registered services from cache list.
      *
      * @param services           the services
-     * @param serviceRegistryDao the service registry dao
+     * @param serviceRegistry the service registry dao
      * @return the list
      */
     default List<RegisteredService> updateLoadedRegisteredServicesFromCache(final List<RegisteredService> services,
-                                                                            final ServiceRegistryDao serviceRegistryDao) {
+                                                                            final ServiceRegistry serviceRegistry) {
         return services;
     }
 }

@@ -1,39 +1,34 @@
+// Bootstrap and its default variables
+//@import "../../../node_modules/bootstrap/scss/bootstrap";
+
 @import 'https://fonts.googleapis.com/css?family=PT+Mono';
 
 #loggingDashboard {
-
-  .tabsContainer {
-    padding: 0 20px;
+  .tab-pane {
+    padding: 20px 10px;
+    border: 1px solid #ddd;
+    border-top: none;
   }
+
   .btn .caret {
     margin-left: 5px;
   }
 }
 
-#error-retrieving-data {
-}
-
 #loggersTable {
   td.details-control span {
     cursor: pointer;
-    font-family: FontAwesome;
+    font-family: "Font Awesome 5 Free";
+    font-weight: 900;
     font-size: 10pt;
     color: #337ab7;
   }
   td.details-control span:after {
     content: "\f067";
-    /*content: "\002B"; - thinner plus sign */
   }
   tr.shown td.details-control span:after {
     content: "\f068";
-    /*content: "\002D"; - thinner minus sign */
   }
-}
-
-.tab-pane {
-  padding: 20px 10px;
-  border: 1px solid #ddd;
-  border-top: none;
 }
 
 .additive {
@@ -60,6 +55,7 @@
   color: #39e600;
 }
 
-#container {
-  width: 95%;
+main.container {
+  max-width: 95%;
 }
+

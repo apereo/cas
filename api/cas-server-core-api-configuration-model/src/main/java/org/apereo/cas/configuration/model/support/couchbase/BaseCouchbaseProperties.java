@@ -20,11 +20,6 @@ public abstract class BaseCouchbaseProperties implements Serializable {
     private static final long serialVersionUID = 6550895842866988551L;
 
     /**
-     * Flag to indicate if query is enabled.
-     */
-    private boolean queryEnabled = true;
-
-    /**
      * Nodeset name.
      */
     @RequiredProperty
@@ -39,11 +34,11 @@ public abstract class BaseCouchbaseProperties implements Serializable {
      * Password.
      */
     @RequiredProperty
-    private String password;
+    private String password = "password";
 
     /**
      * Bucket name.
      */
     @RequiredProperty
-    private String bucket = "default";
+    private String bucket = "testbucket";
 }

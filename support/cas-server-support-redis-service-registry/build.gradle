@@ -1,5 +1,7 @@
 description = "Apereo CAS Redis Service Registry Support"
 dependencies {
+    api project(":api:cas-server-core-api-services")
+
     implementation libraries.springbootredis
     
     implementation project(":core:cas-server-core-services")

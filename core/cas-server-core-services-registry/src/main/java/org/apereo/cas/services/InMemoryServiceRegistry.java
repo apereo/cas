@@ -22,7 +22,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
+public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
     

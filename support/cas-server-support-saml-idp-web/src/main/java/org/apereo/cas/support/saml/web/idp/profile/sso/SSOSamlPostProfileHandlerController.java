@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.xml.ParserPool;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -50,7 +51,8 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
                                                final SamlProfileObjectBuilder<Response> responseBuilder,
                                                final CasConfigurationProperties casProperties,
                                                final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                                               final SSOSamlHttpRequestExtractor samlHttpRequestExtractor) {
+                                               final SSOSamlHttpRequestExtractor samlHttpRequestExtractor,
+                                               final Service callbackService) {
         super(samlObjectSigner,
             parserPool,
             authenticationSystemSupport,
@@ -60,7 +62,8 @@ public class SSOSamlPostProfileHandlerController extends AbstractSamlProfileHand
             configBean,
             responseBuilder,
             casProperties,
-            samlObjectSignatureValidator);
+            samlObjectSignatureValidator,
+            callbackService);
         this.samlHttpRequestExtractor = samlHttpRequestExtractor;
     }
 

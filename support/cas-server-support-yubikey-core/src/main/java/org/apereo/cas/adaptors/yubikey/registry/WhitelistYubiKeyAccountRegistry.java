@@ -2,9 +2,12 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
+import java.util.Collection;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * This is {@link WhitelistYubiKeyAccountRegistry}.
@@ -14,7 +17,9 @@ import java.util.Map;
  */
 @Slf4j
 public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
-    /** Device registrations. */
+    /**
+     * Device registrations.
+     */
     protected final Map<String, String> devices;
 
     public WhitelistYubiKeyAccountRegistry(final Map<String, String> devices,
@@ -41,5 +46,12 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
             return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
         }
         return false;
+    }
+
+    @Override
+    public Collection<YubiKeyAccount> getAccounts() {
+        return this.devices.entrySet().stream()
+            .map(entry -> new YubiKeyAccount(System.currentTimeMillis(), entry.getValue(), entry.getKey()))
+            .collect(Collectors.toSet());
     }
 }
