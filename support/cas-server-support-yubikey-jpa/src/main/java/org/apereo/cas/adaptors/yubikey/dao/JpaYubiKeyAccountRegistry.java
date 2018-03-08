@@ -13,6 +13,9 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toList;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistry}.
@@ -24,6 +27,7 @@ import java.util.Collection;
 @Transactional(transactionManager = "transactionManagerYubiKey", readOnly = false)
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
+
     private static final String SELECT_QUERY = "SELECT r from YubiKeyAccount r ";
 
     @PersistenceContext(unitName = "yubiKeyEntityManagerFactory")
@@ -54,7 +58,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
             return this.entityManager.createQuery(SELECT_QUERY.concat("where r.username = :username and r.publicId = :publicId"),
                 YubiKeyAccount.class)
                 .setParameter("username", uid)
-                .setParameter("publicId", yubikeyPublicId)
+                .setParameter("publicId", getCipherExecutor().encode(yubikeyPublicId))
                 .getSingleResult() != null;
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found for id [{}] and public id [{}]", uid, yubikeyPublicId);
@@ -69,7 +73,7 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
             final YubiKeyAccount account = new YubiKeyAccount();
-            account.setPublicId(yubikeyPublicId);
+            account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
             return this.entityManager.merge(account) != null;
         }
@@ -79,7 +83,14 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public Collection<YubiKeyAccount> getAccounts() {
         try {
-            return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class).getResultList();
+            return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class)
+                    .getResultList()
+                    .stream()
+                    .map(it -> {
+                        it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
+                        return it;
+                    })
+                    .collect(toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found");
         } catch (final Exception e) {
