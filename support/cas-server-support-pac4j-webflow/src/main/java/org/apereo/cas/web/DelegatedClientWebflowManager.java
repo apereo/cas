@@ -13,8 +13,13 @@ import org.apereo.cas.ticket.DelegatedAuthenticationRequestTicket;
 import org.apereo.cas.ticket.DelegatedAuthenticationRequestTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CollectionUtils;
+import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.context.WebContext;
+import org.pac4j.oauth.client.OAuth20Client;
+import org.pac4j.oauth.config.OAuth20Configuration;
+import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -48,9 +53,10 @@ public class DelegatedClientWebflowManager {
      * Store.
      *
      * @param webContext the web context
+     * @param client     the client
      * @return the ticket
      */
-    public Ticket store(final WebContext webContext) {
+    public Ticket store(final WebContext webContext, final BaseClient client) {
         final Map<String, Object> properties = new LinkedHashMap<>();
 
         final String serviceParameter =
@@ -68,6 +74,23 @@ public class DelegatedClientWebflowManager {
             ticket.getId(), ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
         webContext.setRequestAttribute(PARAMETER_CLIENT_ID, ticket.getId());
+
+        if (client instanceof SAML2Client) {
+            webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
+        }
+        if (client instanceof OAuth20Client) {
+            final OAuth20Client oauthClient = (OAuth20Client) client;
+            oauthClient.getConfiguration().setWithState(true);
+            oauthClient.getConfiguration().setStateData(ticket.getId());
+        }
+        if (client instanceof OidcClient) {
+            final OidcClient oidcClient = (OidcClient) client;
+            oidcClient.getConfiguration().setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticket.getId()));
+        }
+        if (client instanceof CasClient) {
+            final CasClient casClient = (CasClient) client;
+            casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
+        }
         return ticket;
     }
 
@@ -83,7 +106,7 @@ public class DelegatedClientWebflowManager {
         final String clientId = getDelegatedClientId(webContext, client);
         final DelegatedAuthenticationRequestTicket ticket = this.ticketRegistry.getTicket(clientId, DelegatedAuthenticationRequestTicket.class);
         if (ticket == null) {
-            LOGGER.error("Delegated client identifier cannot be located in the authentication request");
+            LOGGER.error("Delegated client identifier cannot be located in the authentication request [{}]", webContext.getFullRequestURL());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
         }
         if (ticket.isExpired()) {
@@ -112,9 +135,15 @@ public class DelegatedClientWebflowManager {
 
     private String getDelegatedClientId(final WebContext webContext, final BaseClient client) {
         String clientId = webContext.getRequestParameter(PARAMETER_CLIENT_ID);
-        if (StringUtils.isBlank(clientId) && client instanceof SAML2Client) {
-            LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");
-            clientId = webContext.getRequestParameter("RelayState");
+        if (StringUtils.isBlank(clientId)) {
+            if (client instanceof SAML2Client) {
+                LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at relay-state for the SAML2 client");
+                clientId = webContext.getRequestParameter("RelayState");
+            }
+            if (client instanceof OAuth20Client || client instanceof OidcClient) {
+                LOGGER.debug("Client identifier could not found as part of the request parameters. Looking at state for the OAuth2/Oidc client");
+                clientId = webContext.getRequestParameter(OAuth20Configuration.STATE_REQUEST_PARAMETER);
+            }
         }
         LOGGER.debug("Located delegated client identifier for this request as [{}]", clientId);
         return clientId;

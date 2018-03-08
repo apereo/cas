@@ -6,7 +6,6 @@ import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.Pac4jUtils;
 import org.jasig.cas.client.util.URIBuilder;
-import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
 import org.pac4j.core.context.Pac4jConstants;
@@ -15,9 +14,6 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.redirect.RedirectAction;
-import org.pac4j.oauth.client.OAuth20Client;
-import org.pac4j.oidc.client.OidcClient;
-import org.pac4j.saml.client.SAML2Client;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -65,21 +61,14 @@ public class DelegatedClientNavigationController {
         try {
             final IndirectClient client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
-            final Ticket ticket = delegatedClientWebflowManager.store(webContext);
+            final Ticket ticket = delegatedClientWebflowManager.store(webContext, client);
 
-            if (client instanceof SAML2Client) {
-                webContext.getSessionStore().set(webContext, SAML2Client.SAML_RELAY_STATE_ATTRIBUTE, ticket.getId());
-            }
             final RedirectAction action = client.getRedirectAction(webContext);
             if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
                 return new DynamicHtmlView(action.getContent());
             }
 
             final URIBuilder builder = new URIBuilder(action.getLocation());
-            if (client instanceof CasClient || client instanceof OAuth20Client || client instanceof OidcClient) {
-                builder.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
-            }
-
             final String url = builder.toString();
             LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
 
