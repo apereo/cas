@@ -1,12 +1,14 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link Pac4jDelegatedAuthenticationProperties}.
@@ -124,6 +126,12 @@ public class Pac4jDelegatedAuthenticationProperties implements Serializable {
      */
     private String name;
 
+    /**
+     * Indicates settings related to tracking the delegation cookie.
+     */
+    @NestedConfigurationProperty
+    private Pac4jDelegatedSessionCookieProperties cookie = new Pac4jDelegatedSessionCookieProperties();
+    
     @RequiresModule(name = "cas-server-support-pac4j-webflow")
     @Getter
     @Setter

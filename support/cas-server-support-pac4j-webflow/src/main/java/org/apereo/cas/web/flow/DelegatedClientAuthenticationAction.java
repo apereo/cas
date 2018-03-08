@@ -24,11 +24,13 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.BaseClient;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
@@ -83,6 +85,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final ServicesManager servicesManager;
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
+    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
 
     @Override
     protected Event doExecute(final RequestContext context) throws Exception {
@@ -95,15 +98,18 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             return stopWebflow();
         }
 
-        final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
         if (StringUtils.isNotBlank(clientName)) {
-            final Service service = restoreAuthenticationRequestInContext(context, webContext, request, clientName);
+            final Service service = restoreAuthenticationRequestInContext(context, webContext, clientName);
             final BaseClient<Credentials, CommonProfile> client = findDelegatedClientByName(request, clientName, service);
 
             final Credentials credentials;
             try {
                 credentials = client.getCredentials(webContext);
                 LOGGER.debug("Retrieved credentials from client as [{}]", credentials);
+                if (credentials == null) {
+                    throw new IllegalArgumentException("Unable to determine credentials from the context with client " + client.getName());
+                }
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
                 return stopWebflow();
@@ -276,9 +282,9 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     }
 
     private Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
-                                                          final WebContext webContext,
-                                                          final HttpServletRequest request,
+                                                          final J2EContext webContext,
                                                           final String clientName) {
+        delegatedSessionCookieManager.restore(webContext);
         final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
         final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
         return service;

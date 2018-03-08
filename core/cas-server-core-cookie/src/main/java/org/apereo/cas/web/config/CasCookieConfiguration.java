@@ -17,7 +17,6 @@ import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.cas.web.support.NoOpCookieValueManager;
 import org.apereo.cas.web.support.TGCCookieRetrievingCookieGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -48,11 +47,10 @@ public class CasCookieConfiguration {
     }
 
     @ConditionalOnMissingBean(name = "cookieValueManager")
-    @Autowired
     @Bean
-    public CookieValueManager cookieValueManager(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
+    public CookieValueManager cookieValueManager() {
         if (casProperties.getTgc().getCrypto().isEnabled()) {
-            return new DefaultCasCookieValueManager(cipherExecutor);
+            return new DefaultCasCookieValueManager(cookieCipherExecutor());
         }
         return new NoOpCookieValueManager();
     }
@@ -80,13 +78,12 @@ public class CasCookieConfiguration {
         return NoOpCipherExecutor.getInstance();
     }
 
-    @Autowired
     @Bean
     @RefreshScope
-    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator(@Qualifier("cookieCipherExecutor") final CipherExecutor cipherExecutor) {
+    public CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator() {
         final TicketGrantingCookieProperties tgc = casProperties.getTgc();
         final int rememberMeMaxAge = (int) Beans.newDuration(tgc.getRememberMeMaxAge()).getSeconds();
-        return new TGCCookieRetrievingCookieGenerator(cookieValueManager(cipherExecutor),
+        return new TGCCookieRetrievingCookieGenerator(cookieValueManager(),
             tgc.getName(),
             tgc.getPath(),
             tgc.getDomain(),
