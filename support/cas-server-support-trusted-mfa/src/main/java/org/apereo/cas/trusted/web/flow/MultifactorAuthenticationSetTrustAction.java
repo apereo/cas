@@ -26,8 +26,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
+    private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
-
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -43,7 +43,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
             LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-                    MultifactorAuthenticationTrustUtils.generateGeography());
+                    MultifactorAuthenticationTrustUtils.generateGeography(),
+                    deviceFingerprintStrategy.determineFingerprint(principal, requestContext));
 
             if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
                 final String deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);

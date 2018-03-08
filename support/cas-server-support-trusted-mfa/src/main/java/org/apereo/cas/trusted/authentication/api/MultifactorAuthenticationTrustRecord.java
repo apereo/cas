@@ -43,7 +43,7 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     private String principal;
 
     @Column(nullable = false)
-    private String geography;
+    private String deviceFingerprint;
 
     @Column(nullable = false, columnDefinition = "TIMESTAMP")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
@@ -62,15 +62,16 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     /**
      * New instance of authentication trust record.
      *
-     * @param principal the principal
-     * @param geography the geography
+     * @param principal   the principal
+     * @param geography   the geography
+     * @param fingerprint the device fingerprint
      * @return the authentication trust record
      */
-    public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography) {
+    public static MultifactorAuthenticationTrustRecord newInstance(final String principal, final String geography, final String fingerprint) {
         final MultifactorAuthenticationTrustRecord r = new MultifactorAuthenticationTrustRecord();
         r.setRecordDate(LocalDate.now());
         r.setPrincipal(principal);
-        r.setGeography(geography);
+        r.setDeviceFingerprint(fingerprint);
         r.setName(principal.concat("-").concat(LocalDate.now().toString()).concat("-").concat(geography));
         return r;
     }
