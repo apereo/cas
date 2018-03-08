@@ -6,18 +6,25 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategyConfigurer;
 import org.apereo.cas.authentication.SecurityTokenServiceClientBuilder;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.RegexRegisteredService;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
+import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
+import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.authentication.WSFederationAuthenticationServiceSelectionStrategy;
 import org.apereo.cas.ws.idp.metadata.WSFederationMetadataController;
 import org.apereo.cas.ws.idp.services.DefaultRelyingPartyTokenProducer;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
+import org.apereo.cas.ws.idp.services.WSFederationServiceRegistry;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestCallbackController;
 import org.apereo.cas.ws.idp.web.WSFederationValidateRequestController;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
@@ -40,7 +47,8 @@ import org.springframework.context.annotation.Lazy;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ImportResource(locations = {"classpath:META-INF/cxf/cxf.xml"})
 @Slf4j
-public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer {
+public class CoreWsSecurityIdentityProviderConfiguration implements AuthenticationServiceSelectionStrategyConfigurer,
+    ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("casClientTicketValidator")
@@ -83,7 +91,7 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
         return new WSFederationValidateRequestController(servicesManager,
             webApplicationServiceFactory, casProperties, wsFederationAuthenticationServiceSelectionStrategy(),
             httpClient, securityTokenTicketFactory, ticketRegistry, ticketGrantingTicketCookieGenerator,
-            ticketRegistrySupport);
+            ticketRegistrySupport, wsFederationCallbackService());
     }
 
     @Lazy
@@ -96,7 +104,13 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
             wsFederationAuthenticationServiceSelectionStrategy(),
             httpClient, securityTokenTicketFactory, ticketRegistry,
             ticketGrantingTicketCookieGenerator,
-            ticketRegistrySupport, casClientTicketValidator);
+            ticketRegistrySupport, casClientTicketValidator,
+            wsFederationCallbackService());
+    }
+
+    @Bean
+    public Service wsFederationCallbackService() {
+        return this.webApplicationServiceFactory.createService(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
     }
 
     @Lazy
@@ -124,5 +138,21 @@ public class CoreWsSecurityIdentityProviderConfiguration implements Authenticati
     @Override
     public void configureAuthenticationServiceSelectionStrategy(final AuthenticationServiceSelectionPlan plan) {
         plan.registerStrategy(wsFederationAuthenticationServiceSelectionStrategy());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        final Service callbackService = wsFederationCallbackService();
+        LOGGER.debug("Initializing callback service [{}]", callbackService);
+
+        final RegexRegisteredService service = new RegexRegisteredService();
+        service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        service.setEvaluationOrder(0);
+        service.setName(service.getClass().getSimpleName());
+        service.setDescription("WS-Federation Authentication Request");
+        service.setServiceId(callbackService.getId().concat(".+"));
+
+        LOGGER.debug("Saving callback service [{}] into the registry", service);
+        plan.registerServiceRegistry(new WSFederationServiceRegistry(service));
     }
 }

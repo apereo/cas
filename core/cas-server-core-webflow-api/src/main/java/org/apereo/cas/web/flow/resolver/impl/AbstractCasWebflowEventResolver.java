@@ -137,6 +137,7 @@ public abstract class AbstractCasWebflowEventResolver implements CasWebflowEvent
             .defaultText(warning.getDefaultMessage())
             .args((Object[]) warning.getParams());
         context.addMessage(builder.build());
+
     }
 
     /**

@@ -6,7 +6,7 @@ import org.apereo.cas.audit.AuditableContext;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.audit.AuditableExecutionResult;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
@@ -29,13 +29,13 @@ public class SurrogateAuthorizationAction extends AbstractAction {
 
     @Override
     protected Event doExecute(final RequestContext requestContext) {
-        final Authentication ca = AuthenticationCredentialsLocalBinder.getCurrentAuthentication();
+        final Authentication ca = AuthenticationCredentialsThreadLocalBinder.getCurrentAuthentication();
         try {
             final Service service = WebUtils.getService(requestContext);
             final Authentication authentication = WebUtils.getAuthentication(requestContext);
             final RegisteredService svc = WebUtils.getRegisteredService(requestContext);
             if (svc != null) {
-                AuthenticationCredentialsLocalBinder.bindCurrent(authentication);
+                AuthenticationCredentialsThreadLocalBinder.bindCurrent(authentication);
 
                 final AuditableContext audit = AuditableContext.builder().service(service)
                     .authentication(authentication)
@@ -49,7 +49,7 @@ public class SurrogateAuthorizationAction extends AbstractAction {
             }
             return null;
         } finally {
-            AuthenticationCredentialsLocalBinder.bindCurrent(ca);
+            AuthenticationCredentialsThreadLocalBinder.bindCurrent(ca);
         }
     }
 }

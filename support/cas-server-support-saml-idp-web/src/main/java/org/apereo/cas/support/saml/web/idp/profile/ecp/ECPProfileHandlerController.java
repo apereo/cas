@@ -83,12 +83,13 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
                                        final SamlProfileObjectBuilder<org.opensaml.saml.saml2.ecp.Response> responseBuilder,
                                        final SamlProfileObjectBuilder<? extends SAMLObject> samlEcpFaultResponseBuilder,
                                        final CasConfigurationProperties casProperties,
-                                       final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+                                       final SamlObjectSignatureValidator samlObjectSignatureValidator,
+                                       final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
             servicesManager, webApplicationServiceFactory,
             samlRegisteredServiceCachingMetadataResolver,
             configBean, responseBuilder, casProperties,
-            samlObjectSignatureValidator);
+            samlObjectSignatureValidator, callbackService);
         this.samlEcpFaultResponseBuilder = samlEcpFaultResponseBuilder;
     }
 
@@ -205,7 +206,7 @@ public class ECPProfileHandlerController extends AbstractSamlProfileHandlerContr
     private Credential extractBasicAuthenticationCredential(final HttpServletRequest request,
                                                             final HttpServletResponse response) {
         try {
-            final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
+            final BasicAuthExtractor extractor = new BasicAuthExtractor();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {

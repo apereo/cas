@@ -58,10 +58,11 @@ public class Saml1ArtifactResolutionProfileHandlerController extends AbstractSam
                                                            final SamlObjectSignatureValidator samlObjectSignatureValidator,
                                                            final TicketRegistry ticketRegistry,
                                                            final SamlArtifactTicketFactory artifactTicketFactory,
-                                                           final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder) {
+                                                           final SamlProfileObjectBuilder<? extends SAMLObject> samlFaultResponseBuilder,
+                                                           final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport, servicesManager,
                 webApplicationServiceFactory, samlRegisteredServiceCachingMetadataResolver, configBean,
-                responseBuilder, casProperties, samlObjectSignatureValidator);
+                responseBuilder, casProperties, samlObjectSignatureValidator, callbackService);
         this.ticketRegistry = ticketRegistry;
         this.artifactTicketFactory = artifactTicketFactory;
         this.samlFaultResponseBuilder = samlFaultResponseBuilder;

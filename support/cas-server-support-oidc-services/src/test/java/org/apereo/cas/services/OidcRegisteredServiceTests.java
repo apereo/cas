@@ -27,10 +27,10 @@ public class OidcRegisteredServiceTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistryDao dao;
+    private final ServiceRegistry dao;
 
     public OidcRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false, 
+        this.dao = new JsonServiceRegistry(RESOURCE, false,
                 mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
     }
 

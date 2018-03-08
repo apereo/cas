@@ -94,7 +94,7 @@ public class OidcIntrospectionEndpointController extends BaseOAuth20Controller {
     public ResponseEntity<OidcIntrospectionAccessTokenResponse> handlePostRequest(final HttpServletRequest request,
                                                                                   final HttpServletResponse response) {
         try {
-            final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor(getClass().getSimpleName());
+            final CredentialsExtractor<UsernamePasswordCredentials> authExtractor = new BasicAuthExtractor();
             final UsernamePasswordCredentials credentials = authExtractor.extract(Pac4jUtils.getPac4jJ2EContext(request, response));
             if (credentials == null) {
                 throw new IllegalArgumentException("No credentials are provided to verify introspection on the access token");

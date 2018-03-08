@@ -15,7 +15,8 @@ import org.apereo.cas.authentication.Credential;
 public class AuthenticationCredentialTypeMetaDataPopulator extends BaseAuthenticationMetaDataPopulator {
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        builder.mergeAttribute(Credential.CREDENTIAL_TYPE_ATTRIBUTE, transaction.getCredential().getClass().getSimpleName());
+        transaction.getCredential().ifPresent(c -> builder.mergeAttribute(Credential.CREDENTIAL_TYPE_ATTRIBUTE, c.getClass().getSimpleName()));
+
     }
 
     @Override

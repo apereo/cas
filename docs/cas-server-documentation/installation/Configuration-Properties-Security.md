@@ -119,7 +119,7 @@ vault read secret/cas/native
 ```
 
 All settings and secrets that are stored inside Vault may be reloaded at any given time.
-To lean more about CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
+To lean more about how CAS allows you to reload configuration changes, please [review this guide](Configuration-Management-Reload.html).
 To lean more about how configuration is managed and profiled by CAS, please [review this guide](Configuration-Management.html).
 
 ### Troubleshooting

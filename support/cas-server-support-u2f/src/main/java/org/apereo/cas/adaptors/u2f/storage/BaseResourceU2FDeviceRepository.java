@@ -48,12 +48,13 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
             if (!devices.isEmpty()) {
                 final List<U2FDeviceRegistration> devs = devices.get(MAP_KEY_SERVICES);
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
+                LOGGER.debug("Filtering devices for [{}] based on device expiration date [{}]", username, expirationDate);
                 final List<U2FDeviceRegistration> list = devs
                     .stream()
-                    .filter(d -> d.getUsername().equals(username)
-                        && (d.getCreatedDate().isEqual(expirationDate) || d.getCreatedDate().isAfter(expirationDate)))
+                    .filter(d -> d.getUsername().equals(username) && (d.getCreatedDate().isAfter(expirationDate)))
                     .collect(Collectors.toList());
 
+                LOGGER.debug("There are [{}] device(s) remaining in repository for [{}]", list.size(), username);
                 return list.stream()
                     .map(r -> {
                         try {
@@ -130,7 +131,7 @@ public abstract class BaseResourceU2FDeviceRepository extends BaseU2FDeviceRepos
                 final LocalDate expirationDate = LocalDate.now().minus(this.expirationTime, DateTimeUtils.toChronoUnit(this.expirationTimeUnit));
                 LOGGER.debug("Filtering devices based on device expiration date [{}]", expirationDate);
                 final List<U2FDeviceRegistration> list = devs.stream()
-                    .filter(d -> d.getCreatedDate().isEqual(expirationDate) || d.getCreatedDate().isBefore(expirationDate))
+                    .filter(d -> d.getCreatedDate().isAfter(expirationDate))
                     .collect(Collectors.toList());
 
                 LOGGER.debug("There are [{}] device(s) remaining in repository. Storing...", list.size());

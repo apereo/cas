@@ -54,7 +54,7 @@ public class UsernamePasswordWrapperAuthenticationHandler extends AbstractWrappe
             throw new AccountNotFoundException("Username is null.");
         }
         final String password = this.passwordEncoder.encode(casCredential.getPassword());
-        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password, getClass().getSimpleName());
+        final UsernamePasswordCredentials credentials = new UsernamePasswordCredentials(username, password);
         LOGGER.debug("pac4j credentials: [{}]", credentials);
         return credentials;
     }

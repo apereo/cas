@@ -9,4 +9,6 @@ dependencies {
     implementation project(":support:cas-server-support-otp-mfa")
 
     compileOnly project(":core:cas-server-core-rest")
+
+    testImplementation project(":core:cas-server-core-rest")
 }

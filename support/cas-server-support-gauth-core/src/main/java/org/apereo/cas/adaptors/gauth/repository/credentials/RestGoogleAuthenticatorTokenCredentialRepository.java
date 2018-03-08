@@ -2,9 +2,9 @@ package org.apereo.cas.adaptors.gauth.repository.credentials;
 
 import com.warrenstrange.googleauth.GoogleAuthenticatorKey;
 import com.warrenstrange.googleauth.IGoogleAuthenticator;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.support.mfa.GAuthMultifactorProperties;
 import org.apereo.cas.otp.repository.credentials.BaseOneTimeTokenCredentialRepository;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
@@ -27,13 +27,20 @@ import java.util.stream.Collectors;
  * @since 5.1.0
  */
 @Slf4j
-@AllArgsConstructor
 @Getter
 public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTimeTokenCredentialRepository {
 
     private final IGoogleAuthenticator googleAuthenticator;
     private final RestTemplate restTemplate;
     private final GAuthMultifactorProperties gauth;
+
+    public RestGoogleAuthenticatorTokenCredentialRepository(final IGoogleAuthenticator googleAuthenticator, final RestTemplate restTemplate,
+                                                            final GAuthMultifactorProperties gauth, final CipherExecutor<String, String> tokenCredentialCipher) {
+        super(tokenCredentialCipher);
+        this.googleAuthenticator = googleAuthenticator;
+        this.restTemplate = restTemplate;
+        this.gauth = gauth;
+    }
 
     @Override
     public OneTimeTokenAccount get(final String username) {
@@ -45,7 +52,7 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<OneTimeTokenAccount> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.GET, entity, OneTimeTokenAccount.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
-            return result.getBody();
+            return decode(result.getBody());
         }
         return null;
     }
@@ -63,8 +70,10 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
     }
 
     @Override
-    public void update(final OneTimeTokenAccount account) {
+    public OneTimeTokenAccount update(final OneTimeTokenAccount accountToUpdate) {
         final GAuthMultifactorProperties.Rest rest = gauth.getRest();
+        final OneTimeTokenAccount account = encode(accountToUpdate);
+
         final HttpHeaders headers = new HttpHeaders();
         headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
         headers.put("username", CollectionUtils.wrap(account.getUsername()));
@@ -76,7 +85,9 @@ public class RestGoogleAuthenticatorTokenCredentialRepository extends BaseOneTim
         final ResponseEntity<Boolean> result = restTemplate.exchange(rest.getEndpointUrl(), HttpMethod.POST, entity, Boolean.class);
         if (result.getStatusCodeValue() == HttpStatus.OK.value()) {
             LOGGER.debug("Posted google authenticator account successfully");
+            return account;
         }
         LOGGER.warn("Failed to save google authenticator account successfully");
+        return null;
     }
 }

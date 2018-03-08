@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.otp.repository.credentials.OneTimeTokenAccount;
+import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -47,7 +48,8 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
         if (JSON_FILE.exists()) {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
-        final JsonGoogleAuthenticatorTokenCredentialRepository repo = new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google);
+        final JsonGoogleAuthenticatorTokenCredentialRepository repo =
+            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, NoOpCipherExecutor.getInstance());
         final OneTimeTokenAccount acct = repo.create("casuser");
         assertNotNull(acct);
     }
@@ -57,7 +59,8 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
         if (JSON_FILE.exists()) {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
-        final JsonGoogleAuthenticatorTokenCredentialRepository repo = new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google);
+        final JsonGoogleAuthenticatorTokenCredentialRepository repo =
+            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, NoOpCipherExecutor.getInstance());
         OneTimeTokenAccount acct = repo.get("casuser");
         assertNull(acct);
         acct = repo.create("casuser");

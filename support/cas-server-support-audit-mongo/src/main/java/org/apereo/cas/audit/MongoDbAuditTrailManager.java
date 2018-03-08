@@ -41,9 +41,7 @@ public class MongoDbAuditTrailManager implements AuditTrailManager {
     @Override
     public void record(final AuditActionContext audit) {
         if (this.asynchronous) {
-            this.executorService.execute(() -> {
-                saveAuditRecord(audit);
-            });
+            this.executorService.execute(() -> saveAuditRecord(audit));
         } else {
             saveAuditRecord(audit);
         }

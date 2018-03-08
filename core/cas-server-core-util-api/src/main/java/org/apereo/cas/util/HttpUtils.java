@@ -78,7 +78,7 @@ public class HttpUtils {
     }
 
     /**
-     * Execute http request and produce a response.
+     * Execute http response.
      *
      * @param url               the url
      * @param method            the method
@@ -93,6 +93,27 @@ public class HttpUtils {
                                        final String basicAuthPassword,
                                        final Map<String, String> parameters,
                                        final Map<String, String> headers) {
+        return execute(url, method, basicAuthUsername, basicAuthPassword, parameters, headers, null);
+    }
+    
+    /**
+     * Execute http request and produce a response.
+     *
+     * @param url               the url
+     * @param method            the method
+     * @param basicAuthUsername the basic auth username
+     * @param basicAuthPassword the basic auth password
+     * @param parameters        the parameters
+     * @param headers           the headers
+     * @param entity            the entity
+     * @return the http response
+     */
+    public static HttpResponse execute(final String url, final String method,
+                                       final String basicAuthUsername,
+                                       final String basicAuthPassword,
+                                       final Map<String, String> parameters,
+                                       final Map<String, String> headers,
+                                       final String entity) {
         try {
             final HttpClient client = buildHttpClient(basicAuthUsername, basicAuthPassword);
             final URI uri = buildHttpUri(url, parameters);
@@ -100,6 +121,10 @@ public class HttpUtils {
             switch (method.toLowerCase()) {
                 case "post":
                     request = new HttpPost(uri);
+                    if (StringUtils.isNotBlank(entity)) {
+                        final StringEntity stringEntity = new StringEntity(entity);
+                        ((HttpPost) request).setEntity(stringEntity);
+                    }
                     break;
                 case "delete":
                     request = new HttpDelete(uri);
@@ -110,6 +135,7 @@ public class HttpUtils {
                     break;
             }
             headers.forEach(request::addHeader);
+
             return client.execute(request);
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

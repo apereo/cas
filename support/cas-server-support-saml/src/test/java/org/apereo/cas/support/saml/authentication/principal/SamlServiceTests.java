@@ -8,7 +8,7 @@ import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.saml.AbstractOpenSamlTests;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -42,7 +42,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         final SamlService impl = new SamlServiceFactory().createService(request);
 
         final Response response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistryDao.class), mock(ApplicationEventPublisher.class))).build(impl, "ticketId",
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class))).build(impl, "ticketId",
             CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
@@ -64,7 +64,7 @@ public class SamlServiceTests extends AbstractOpenSamlTests {
         request.setParameter(SamlProtocolConstants.CONST_PARAM_TARGET, "service");
         final SamlService impl = new SamlServiceFactory().createService(request);
         final Response response = new SamlServiceResponseBuilder(
-            new DefaultServicesManager(mock(ServiceRegistryDao.class), mock(ApplicationEventPublisher.class)))
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
             .build(impl, null, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());

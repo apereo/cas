@@ -51,6 +51,7 @@ public class CasSupportJdbcAuditConfiguration {
         t.setCleanupCriteria(auditCleanupCriteria());
         t.setDataSource(inspektrAuditTrailDataSource());
         t.setAsynchronous(jdbc.isAsynchronous());
+        t.setColumnLength(jdbc.getColumnLength());
         String tableName = AuditTrailEntity.AUDIT_TRAIL_TABLE_NAME;
         if (StringUtils.isNotBlank(jdbc.getDefaultSchema())) {
             tableName = jdbc.getDefaultSchema() + '.' + tableName;

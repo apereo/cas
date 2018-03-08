@@ -8,8 +8,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.cosmosdb.CosmosDbServiceRegistryProperties;
 import org.apereo.cas.cosmosdb.CosmosDbObjectFactory;
-import org.apereo.cas.services.CosmosDbServiceRegistryDao;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.CosmosDbServiceRegistry;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -26,9 +28,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("cosmosDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CosmosDbServiceRegistryConfiguration {
-
-
+public class CosmosDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
     /**
      * Partition key field name.
      */
@@ -42,7 +42,7 @@ public class CosmosDbServiceRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao serviceRegistryDao() {
+    public ServiceRegistry cosmosDbServiceRegistry() {
         final CosmosDbObjectFactory factory = new CosmosDbObjectFactory(this.applicationContext);
         final CosmosDbServiceRegistryProperties cosmosDb = casProperties.getServiceRegistry().getCosmosDb();
         final DocumentDbFactory dbFactory = factory.createDocumentDbFactory(cosmosDb);
@@ -60,6 +60,11 @@ public class CosmosDbServiceRegistryConfiguration {
             }
         }
         db.createCollectionIfNotExists(cosmosDb.getCollection(), PARTITION_KEY_FIELD_NAME, cosmosDb.getThroughput());
-        return new CosmosDbServiceRegistryDao(db, dbFactory, cosmosDb.getCollection(), cosmosDb.getDatabase());
+        return new CosmosDbServiceRegistry(db, dbFactory, cosmosDb.getCollection(), cosmosDb.getDatabase());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(cosmosDbServiceRegistry());
     }
 }

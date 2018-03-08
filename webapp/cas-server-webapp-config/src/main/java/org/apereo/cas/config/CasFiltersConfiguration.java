@@ -13,7 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.web.support.RegisteredServiceResponseHeadersEnforcementFilter;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.support.ArgumentExtractor;
-import org.apereo.cas.web.support.AuthenticationCredentialsLocalBinderClearingFilter;
+import org.apereo.cas.web.support.AuthenticationCredentialsThreadLocalBinderClearingFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -154,7 +154,7 @@ public class CasFiltersConfiguration {
     @Bean
     public FilterRegistrationBean currentCredentialsAndAuthenticationClearingFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        bean.setFilter(new AuthenticationCredentialsLocalBinderClearingFilter());
+        bean.setFilter(new AuthenticationCredentialsThreadLocalBinderClearingFilter());
         bean.setUrlPatterns(CollectionUtils.wrap("/*"));
         bean.setName("currentCredentialsAndAuthenticationClearingFilter");
         bean.setAsyncSupported(true);

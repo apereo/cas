@@ -47,7 +47,7 @@ public class OneTimeTokenAuthenticationConfiguration {
 
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
-    
+
     @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
@@ -67,7 +67,7 @@ public class OneTimeTokenAuthenticationConfiguration {
     @Autowired(required = false)
     @Qualifier("multifactorAuthenticationProviderSelector")
     private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-            new RankedMultifactorAuthenticationProviderSelector();
+        new RankedMultifactorAuthenticationProviderSelector();
 
     @Autowired
     @Qualifier("warnCookieGenerator")
@@ -81,12 +81,12 @@ public class OneTimeTokenAuthenticationConfiguration {
     @RefreshScope
     public CasWebflowEventResolver oneTimeTokenAuthenticationWebflowEventResolver() {
         return new OneTimeTokenAuthenticationWebflowEventResolver(authenticationSystemSupport,
-                centralAuthenticationService,
-                servicesManager,
-                ticketRegistrySupport,
-                warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                multifactorAuthenticationProviderSelector);
+            centralAuthenticationService,
+            servicesManager,
+            ticketRegistrySupport,
+            warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector);
     }
 
     @Bean
@@ -104,14 +104,17 @@ public class OneTimeTokenAuthenticationConfiguration {
     @Bean
     public OneTimeTokenRepository oneTimeTokenAuthenticatorTokenRepository() {
         final LoadingCache<String, Collection<OneTimeToken>> storage = Caffeine.newBuilder()
-                .initialCapacity(INITIAL_CACHE_SIZE)
-                .maximumSize(MAX_CACHE_SIZE)
-                .recordStats()
-                .expireAfterWrite(EXPIRE_TOKENS_IN_SECONDS, TimeUnit.SECONDS)
-                .build(s -> {
-                    LOGGER.error("Load operation of the cache is not supported.");
-                    return null;
-                });
+            .initialCapacity(INITIAL_CACHE_SIZE)
+            .maximumSize(MAX_CACHE_SIZE)
+            .recordStats()
+            .expireAfterWrite(EXPIRE_TOKENS_IN_SECONDS, TimeUnit.SECONDS)
+            .build(s -> {
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
         return new CachingOneTimeTokenRepository(storage);
     }
+
+
 }
+

@@ -1,10 +1,10 @@
 package org.apereo.cas.integration.pac4j.authentication.handler.support;
 
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.handler.support.AbstractPac4jAuthenticationHandler;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
@@ -17,10 +17,9 @@ import org.pac4j.core.profile.UserProfile;
 import org.pac4j.core.profile.creator.AuthenticatorProfileCreator;
 import org.pac4j.core.profile.creator.ProfileCreator;
 import org.pac4j.core.util.InitializableObject;
-import org.pac4j.core.util.InitializableWebObject;
+
 import javax.security.auth.login.FailedLoginException;
 import java.security.GeneralSecurityException;
-import lombok.Setter;
 
 /**
  * Abstract pac4j authentication handler which uses a pac4j authenticator and profile creator.
@@ -59,13 +58,10 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
             if (authenticator instanceof InitializableObject) {
                 ((InitializableObject) authenticator).init();
             }
-            if (authenticator instanceof InitializableWebObject) {
-                ((InitializableWebObject) authenticator).init(getWebContext());
-            }
             authenticator.validate(credentials, getWebContext());
             final UserProfile profile = this.profileCreator.create(credentials, getWebContext());
             LOGGER.debug("profile: [{}]", profile);
-            return createResult(new ClientCredential(credentials), profile);
+            return createResult(new ClientCredential(credentials, authenticator.getClass().getSimpleName()), profile);
         } catch (final Exception e) {
             LOGGER.error("Failed to validate credentials", e);
             throw new FailedLoginException("Failed to validate credentials: " + e.getMessage());
@@ -78,7 +74,8 @@ public abstract class AbstractWrapperAuthenticationHandler<I extends Credential,
      * @return the web context
      */
     protected static WebContext getWebContext() {
-        return Pac4jUtils.getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
+        return Pac4jUtils.getPac4jJ2EContext(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(),
+            HttpRequestUtils.getHttpServletResponseFromRequestAttributes());
     }
 
     /**

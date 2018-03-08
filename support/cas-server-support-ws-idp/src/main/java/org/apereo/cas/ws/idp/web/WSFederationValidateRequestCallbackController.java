@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -59,12 +60,13 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final TicketRegistry ticketRegistry,
                                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                          final TicketRegistrySupport ticketRegistrySupport,
-                                                         final TicketValidator ticketValidator) {
+                                                         final TicketValidator ticketValidator,
+                                                         final Service callbackService) {
         super(servicesManager,
                 webApplicationServiceFactory, casProperties,
                 serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
                 ticketRegistry, ticketGrantingTicketCookieGenerator,
-                ticketRegistrySupport);
+                ticketRegistrySupport, callbackService);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
         this.ticketValidator = ticketValidator;
     }

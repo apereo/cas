@@ -33,6 +33,13 @@ public class AuditJdbcProperties extends AbstractJpaProperties {
     private int maxAgeDays = 180;
 
     /**
+     * Allows one to trim the audit data by the specified length.
+     * A negative value disables the trimming process where the audit
+     * functionality no longer substrings the audit record.
+     */
+    private int columnLength = 100;
+    
+    /**
      * Defines the isolation level for transactions.
      *
      * @see org.springframework.transaction.TransactionDefinition

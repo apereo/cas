@@ -544,6 +544,39 @@ public class OAuth20AccessTokenControllerTests extends AbstractOAuth20Tests {
     }
 
     @Test
+    public void verifyRefreshTokenOKWithExpiredTicketGrantingTicket() throws Exception {
+        final Principal principal = createPrincipal();
+        final RegisteredService service = addRegisteredService();
+        final RefreshToken refreshToken = addRefreshToken(principal, service);
+
+        refreshToken.getTicketGrantingTicket().markTicketExpired();
+
+        final MockHttpServletRequest mockRequest = new MockHttpServletRequest(HttpMethod.GET.name(), CONTEXT + OAuth20Constants.ACCESS_TOKEN_URL);
+        mockRequest.setParameter(OAuth20Constants.GRANT_TYPE, OAuth20GrantTypes.REFRESH_TOKEN.name().toLowerCase());
+        mockRequest.setParameter(OAuth20Constants.CLIENT_ID, CLIENT_ID);
+        mockRequest.setParameter(OAuth20Constants.CLIENT_SECRET, CLIENT_SECRET);
+        mockRequest.setParameter(OAuth20Constants.REFRESH_TOKEN, refreshToken.getId());
+        final MockHttpServletResponse mockResponse = new MockHttpServletResponse();
+        requiresAuthenticationInterceptor.preHandle(mockRequest, mockResponse, null);
+        oAuth20AccessTokenController.handleRequest(mockRequest, mockResponse);
+        assertEquals(HttpStatus.SC_OK, mockResponse.getStatus());
+        assertEquals("text/plain", mockResponse.getContentType());
+        final String body = mockResponse.getContentAsString();
+
+        assertTrue(body.contains(OAuth20Constants.ACCESS_TOKEN + '='));
+        assertFalse(body.contains(OAuth20Constants.REFRESH_TOKEN + '='));
+        assertTrue(body.contains(OAuth20Constants.EXPIRES_IN + '='));
+
+        final String accessTokenId = StringUtils.substringBetween(body, OAuth20Constants.ACCESS_TOKEN + '=', "&");
+
+        final AccessToken accessToken = this.ticketRegistry.getTicket(accessTokenId, AccessToken.class);
+        assertEquals(principal, accessToken.getAuthentication().getPrincipal());
+
+        final int timeLeft = getTimeLeft(body, false, false);
+        assertTrue(timeLeft >= TIMEOUT - 10 - DELTA);
+    }
+
+    @Test
     public void verifyRefreshTokenOK() throws Exception {
         final OAuthRegisteredService service = addRegisteredService();
         internalVerifyRefreshTokenOk(service, false);

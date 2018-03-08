@@ -39,7 +39,7 @@ public class BasicAuthenticationAction extends AbstractNonInteractiveCredentials
         try {
             final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
             final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
-            final BasicAuthExtractor extractor = new BasicAuthExtractor(this.getClass().getSimpleName());
+            final BasicAuthExtractor extractor = new BasicAuthExtractor();
             final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final UsernamePasswordCredentials credentials = extractor.extract(webContext);
             if (credentials != null) {

@@ -1,10 +1,7 @@
 #!/bin/bash
 
-if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
+if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-
-    echo "Pulling InfluxDb docker image..."
-    docker pull store/influxdata/influxdb:1.2.2
 
     echo "Running InfluxDb docker image..."
     docker run -d -p 8083:8083 -p 8086:8086 --name="influxdb-server" store/influxdata/influxdb:1.2.2

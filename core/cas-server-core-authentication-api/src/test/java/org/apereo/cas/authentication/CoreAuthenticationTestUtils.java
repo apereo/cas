@@ -167,4 +167,16 @@ public class CoreAuthenticationTestUtils {
         return PRINCIPAL_FACTORY.createPrincipal("user",
             Collections.singletonMap(attrName, attrValues.length == 1 ? attrValues[0] : Arrays.asList(attrValues)));
     }
+
+    public static AuthenticationBuilder getAuthenticationBuilder() {
+        return getAuthenticationBuilder(getPrincipal());
+    }
+
+    public static AuthenticationBuilder getAuthenticationBuilder(final Principal principal) {
+        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
+        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
+        return new DefaultAuthenticationBuilder(principal)
+            .addCredential(meta)
+            .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
+    }
 }

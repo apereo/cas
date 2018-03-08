@@ -17,10 +17,8 @@ import java.util.Objects;
  */
 @Slf4j
 public class ModifyResourceBasedRegisteredServiceWatcher extends BaseResourceBasedRegisteredServiceWatcher {
-
-    
-    public ModifyResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistryDao serviceRegistryDao) {
-        super(serviceRegistryDao);
+    public ModifyResourceBasedRegisteredServiceWatcher(final AbstractResourceBasedServiceRegistry registry) {
+        super(registry);
     }
 
     @Override

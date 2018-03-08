@@ -15,13 +15,11 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
-import org.apereo.cas.support.saml.SamlIdPConstants;
 import org.apereo.cas.support.saml.SamlIdPUtils;
 import org.apereo.cas.support.saml.SamlProtocolConstants;
 import org.apereo.cas.support.saml.SamlUtils;
@@ -33,7 +31,6 @@ import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlIdPObjectSig
 import org.apereo.cas.support.saml.web.idp.profile.builders.enc.SamlObjectSignatureValidator;
 import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.cas.util.EncodingUtils;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.authentication.AttributePrincipalImpl;
@@ -57,7 +54,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
@@ -108,11 +104,6 @@ public abstract class AbstractSamlProfileHandlerController {
     protected final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
 
     /**
-     * Callback service.
-     */
-    protected Service callbackService;
-
-    /**
      * The Saml registered service caching metadata resolver.
      */
     protected final SamlRegisteredServiceCachingMetadataResolver samlRegisteredServiceCachingMetadataResolver;
@@ -138,14 +129,9 @@ public abstract class AbstractSamlProfileHandlerController {
     protected final SamlObjectSignatureValidator samlObjectSignatureValidator;
 
     /**
-     * Post constructor placeholder for additional
-     * extensions. This method is called after
-     * the object has completely initialized itself.
+     * Callback service.
      */
-    @PostConstruct
-    protected void initialize() {
-        this.callbackService = registerCallback(SamlIdPConstants.ENDPOINT_SAML2_SSO_PROFILE_POST_CALLBACK);
-    }
+    protected final Service callbackService;
 
     /**
      * Gets saml metadata adaptor for service.
@@ -198,32 +184,6 @@ public abstract class AbstractSamlProfileHandlerController {
         }
         LOGGER.error("CAS has found a match for service [{}] in registry but the match is not defined as a SAML service", serviceId);
         throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE);
-    }
-
-    /**
-     * Initialize callback service.
-     *
-     * @param callbackUrl the callback url
-     * @return the service
-     */
-    protected Service registerCallback(final String callbackUrl) {
-        final Service callbackService = this.webApplicationServiceFactory.createService(
-            casProperties.getServer().getPrefix().concat(callbackUrl.concat(".+")));
-        if (!this.servicesManager.matchesExistingService(callbackService)) {
-            LOGGER.debug("Initializing callback service [{}]", callbackService);
-
-            final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-            service.setEvaluationOrder(0);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("SAML Authentication Request");
-            service.setServiceId(callbackService.getId());
-
-            LOGGER.debug("Saving callback service [{}] into the registry", service);
-            this.servicesManager.save(service);
-            this.servicesManager.load();
-        }
-        return callbackService;
     }
 
     /**
@@ -284,7 +244,7 @@ public abstract class AbstractSamlProfileHandlerController {
             null, DateTimeUtils.dateOf(ZonedDateTime.now()), attributes);
     }
 
-    
+
     /**
      * Log cas validation assertion.
      *

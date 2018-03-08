@@ -80,7 +80,7 @@ public class AuthenticationExceptionHandlerAction extends AbstractAction {
         if (e instanceof AbstractTicketException) {
             return handleAbstractTicketException((AbstractTicketException) e, requestContext);
         }
-
+        
         LOGGER.trace("Unable to translate errors of the authentication exception [{}]. Returning [{}]", e, UNKNOWN);
         final String messageCode = this.messageBundlePrefix + UNKNOWN;
         messageContext.addMessage(new MessageBuilder().error().code(messageCode).build());

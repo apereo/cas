@@ -7,7 +7,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.services.DefaultServicesManager;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Before;
@@ -74,7 +74,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
 
             final Response response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL,
                 serverManager, centralAuthenticationService,
-                new DefaultServicesManager(mock(ServiceRegistryDao.class), mock(ApplicationEventPublisher.class)))
+                new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
                 .build(openIdService, "something", CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 
@@ -83,7 +83,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
             assertEquals(OPEN_ID_PREFIX_URL, response.getAttributes().get(OpenIdProtocolConstants.OPENID_IDENTITY));
 
             final Response response2 = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
-                centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistryDao.class), mock(ApplicationEventPublisher.class)))
+                centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
                 .build(openIdService, null, CoreAuthenticationTestUtils.getAuthentication());
             assertEquals("cancel", response2.getAttributes().get(OpenIdProtocolConstants.OPENID_MODE));
         } catch (final Exception e) {
@@ -111,7 +111,7 @@ public class OpenIdServiceTests extends AbstractOpenIdTests {
                 }
             }
             final Response response = new OpenIdServiceResponseBuilder(OPEN_ID_PREFIX_URL, serverManager,
-                centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistryDao.class), mock(ApplicationEventPublisher.class)))
+                centralAuthenticationService, new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
                 .build(openIdService, st, CoreAuthenticationTestUtils.getAuthentication());
             assertNotNull(response);
 

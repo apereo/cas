@@ -15,4 +15,5 @@ dependencies {
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-authentication-attributes")
     implementation project(":support:cas-server-support-pac4j-core")
+    implementation project(":core:cas-server-core-services-registry")
 }

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationCredentialsLocalBinder;
+import org.apereo.cas.authentication.AuthenticationCredentialsThreadLocalBinder;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -26,8 +26,8 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
     private static final String PARAM_NAME_DEVICE_NAME = "deviceName";
 
     private final MultifactorAuthenticationTrustStorage storage;
+    private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
-
 
     @Override
     public Event doExecute(final RequestContext requestContext) {
@@ -37,13 +37,14 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             return error();
         }
 
-        AuthenticationCredentialsLocalBinder.bindCurrent(c);
+        AuthenticationCredentialsThreadLocalBinder.bindCurrent(c);
 
         final String principal = c.getPrincipal().getId();
         if (!MultifactorAuthenticationTrustUtils.isMultifactorAuthenticationTrustedInScope(requestContext)) {
             LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
-                    MultifactorAuthenticationTrustUtils.generateGeography());
+                    MultifactorAuthenticationTrustUtils.generateGeography(),
+                    deviceFingerprintStrategy.determineFingerprint(principal, requestContext));
 
             if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
                 final String deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);

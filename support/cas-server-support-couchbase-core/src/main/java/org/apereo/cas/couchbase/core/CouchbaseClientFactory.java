@@ -4,23 +4,29 @@ import com.couchbase.client.java.Bucket;
 import com.couchbase.client.java.Cluster;
 import com.couchbase.client.java.CouchbaseCluster;
 import com.couchbase.client.java.bucket.BucketManager;
+import com.couchbase.client.java.document.json.JsonObject;
 import com.couchbase.client.java.error.DesignDocumentDoesNotExistException;
+import com.couchbase.client.java.query.N1qlQuery;
+import com.couchbase.client.java.query.N1qlQueryResult;
+import com.couchbase.client.java.query.Select;
+import com.couchbase.client.java.query.SimpleN1qlQuery;
+import com.couchbase.client.java.query.Statement;
+import com.couchbase.client.java.query.dsl.Expression;
 import com.couchbase.client.java.view.DesignDocument;
 import com.couchbase.client.java.view.View;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.NameValuePair;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
-import org.apache.http.message.BasicNameValuePair;
-import org.apereo.cas.util.HttpUtils;
+import org.apache.commons.lang3.tuple.Pair;
 
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * A factory class which produces a client for a particular Couchbase getBucket.
@@ -35,7 +41,7 @@ import java.util.concurrent.TimeUnit;
  */
 @Slf4j
 public class CouchbaseClientFactory {
-    private static final int DEFAULT_TIMEOUT = 5;
+    private static final long DEFAULT_TIMEOUT_MILLIS = TimeUnit.SECONDS.toMillis(15);
 
     private Cluster cluster;
 
@@ -52,7 +58,11 @@ public class CouchbaseClientFactory {
     /* Design document and views to create in the bucket, if any. */
     private final String designDocument;
 
-    private long timeout = DEFAULT_TIMEOUT;
+    private long timeout = DEFAULT_TIMEOUT_MILLIS;
+
+    static {
+        System.setProperty("com.couchbase.queryEnabled", "true");
+    }
 
     /**
      * Instantiates a new Couchbase client factory.
@@ -84,7 +94,7 @@ public class CouchbaseClientFactory {
      * @param bucketPassword the bucket password
      */
     public CouchbaseClientFactory(final Set<String> nodes, final String bucketName, final String bucketPassword) {
-        this(nodes, bucketName, bucketPassword, DEFAULT_TIMEOUT, null, null);
+        this(nodes, bucketName, bucketPassword, DEFAULT_TIMEOUT_MILLIS, null, null);
     }
 
     /**
@@ -118,6 +128,44 @@ public class CouchbaseClientFactory {
         }
         initializeBucket();
         return this.bucket;
+    }
+
+    /**
+     * Query and get a result by username.
+     *
+     * @param usernameAttribute the username attribute
+     * @param usernameValue     the username value
+     * @return the n1ql query result
+     * @throws GeneralSecurityException the general security exception
+     */
+    public N1qlQueryResult query(final String usernameAttribute, final String usernameValue) throws GeneralSecurityException {
+        final Statement statement = Select.select("*")
+            .from(Expression.i(getBucket().name()))
+            .where(Expression.x(usernameAttribute).eq('\'' + usernameValue + '\''));
+
+        LOGGER.debug("Running query [{}] on bucket [{}]", statement.toString(), getBucket().name());
+
+        final SimpleN1qlQuery query = N1qlQuery.simple(statement);
+        final N1qlQueryResult result = getBucket().query(query, timeout, TimeUnit.MILLISECONDS);
+        if (!result.finalSuccess()) {
+            LOGGER.error("Couchbase query failed with [{}]", result.errors().stream().map(JsonObject::toString).collect(Collectors.joining(",")));
+            throw new GeneralSecurityException("Could not locate account for user " + usernameValue);
+        }
+        return result;
+    }
+
+    /**
+     * Collect attributes from entity map.
+     *
+     * @param couchbaseEntity the couchbase entity
+     * @param filter          the filter
+     * @return the map
+     */
+    public Map<String, Object> collectAttributesFromEntity(final JsonObject couchbaseEntity, final Predicate<String> filter) {
+        return couchbaseEntity.getNames().stream()
+            .filter(filter)
+            .map(name -> Pair.of(name, couchbaseEntity.get(name)))
+            .collect(Collectors.toMap(Pair::getKey, Pair::getValue));
     }
 
     private void initializeBucket() {
@@ -156,38 +204,6 @@ public class CouchbaseClientFactory {
             throw new IllegalArgumentException("Failed to connect to Couchbase bucket " + this.bucketName, e);
         }
         LOGGER.info("Connected to Couchbase bucket [{}]", this.bucketName);
-    }
-    
-    /**
-     * Create default bucket http servlet response.
-     *
-     * @return the http servlet response
-     */
-    @SneakyThrows
-    public static HttpResponse createDefaultBucket() {
-        final List postParameters = new ArrayList<NameValuePair>();
-        postParameters.add(new BasicNameValuePair("authType", "none"));
-        postParameters.add(new BasicNameValuePair("name", "default"));
-        postParameters.add(new BasicNameValuePair("bucketType", "couchbase"));
-        postParameters.add(new BasicNameValuePair("proxyPort", "11216"));
-        postParameters.add(new BasicNameValuePair("ramQuotaMB", "120"));
-        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
-        return HttpUtils.executePost("http://localhost:8091/pools/default/buckets", entity);
-    }
-
-    /**
-     * Create credentials http response.
-     *
-     * @return the http response
-     */
-    @SneakyThrows
-    public static HttpResponse createCredentials() {
-        final List postParameters = new ArrayList<NameValuePair>();
-        postParameters.add(new BasicNameValuePair("username", "Administrator"));
-        postParameters.add(new BasicNameValuePair("password", "password"));
-        postParameters.add(new BasicNameValuePair("port", "8091"));
-        final UrlEncodedFormEntity entity = new UrlEncodedFormEntity(postParameters, "UTF-8");
-        return HttpUtils.executePost("http://localhost:8091/settings/web", entity);
     }
 }
 

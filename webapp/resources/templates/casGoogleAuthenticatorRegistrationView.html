@@ -2,40 +2,44 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.mfa.googleauth.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.googleauth.pagetitle}">Google Authentication Registration Review View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
 <body id="cas">
-<div layout:fragment="content">
-    <div class="box fl-panel" id="login">
-        <h3 th:text="#{screen.authentication.gauth.register}"/>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <h3 th:text="#{screen.authentication.gauth.register}">Your account is not registered. Use the below settings to
+            register your device with CAS.</h3>
 
         <form method="post" id="fm1" class="fm-v clearfix">
-            <div class="row fl-controls-left">
+            <div class="form-group">
                 <img th:src="@{/otp/qrgen(key=${keyUri})}"/>
                 <br/>
                 <div>
-                    <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}"></p>
+                    <p th:utext="#{screen.authentication.gauth.key(${key.getSecretKey()})}">Secret key to register is
+                        ...</p>
                 </div>
-                
-                <p>Scratch Codes:
+
+                <p>Scratch Codes:</p>
                 <ul>
-                    <li th:each="code : ${key.getScratchCodes()}" th:text="${code}"/>
+                    <li th:each="code : ${key.getScratchCodes()}" th:text="${code}">code</li>
                 </ul>
-                </p>
                 <input type="hidden" name="_eventId" value="submit"/>
-                <input class="btn btn-submit btn-lg" name="submit" accesskey="l"
-                       th:value="#{screen.welcome.button.register}" tabindex="4" type="submit"/>
-                <input class="btn btn-info btn-lg" name="print" accesskey="p"
+                <input class="btn btn-submit" name="submit" accesskey="l"
+                       th:value="#{screen.welcome.button.register}" tabindex="4" type="submit" value="Register"/>
+                <input class="btn btn-info" name="print" accesskey="p"
                        th:value="#{screen.welcome.button.print}"
                        tabindex="5" type="button"
+                       value="Print"
                        onclick="window.print();"/>
             </div>
-            <div class="row btn-row">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-            </div>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
         </form>
     </div>
-</div>
+</main>
 </body>
 </html>

@@ -1,10 +1,11 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
-import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
+import org.apereo.cas.adaptors.yubikey.dao.JpaYubiKeyAccountRegistry;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -30,6 +31,7 @@ import java.util.List;
  * This is {@link JpaYubiKeyConfiguration}.
  *
  * @author Misagh Moayyed
+ * @author Dmitriy Kopylenko
  * @since 5.2.0
  */
 @Configuration("jpaYubiKeyConfiguration")
@@ -43,6 +45,10 @@ public class JpaYubiKeyConfiguration {
     @Autowired
     @Qualifier("yubiKeyAccountValidator")
     private YubiKeyAccountValidator yubiKeyAccountValidator;
+
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
 
     @RefreshScope
     @Bean
@@ -71,19 +77,21 @@ public class JpaYubiKeyConfiguration {
     @Bean
     public LocalContainerEntityManagerFactoryBean yubiKeyEntityManagerFactory() {
         final LocalContainerEntityManagerFactoryBean bean =
-                JpaBeans.newHibernateEntityManagerFactoryBean(
-                        new JpaConfigDataHolder(
-                                jpaYubiKeyVendorAdapter(),
-                                "jpaYubiKeyRegistryContext",
-                                jpaYubiKeyPackagesToScan(),
-                                dataSourceYubiKey()),
-                        casProperties.getAuthn().getMfa().getYubikey().getJpa());
+            JpaBeans.newHibernateEntityManagerFactoryBean(
+                new JpaConfigDataHolder(
+                    jpaYubiKeyVendorAdapter(),
+                    "jpaYubiKeyRegistryContext",
+                    jpaYubiKeyPackagesToScan(),
+                    dataSourceYubiKey()),
+                casProperties.getAuthn().getMfa().getYubikey().getJpa());
 
         return bean;
     }
 
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
-        return new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
+        final JpaYubiKeyAccountRegistry registry = new JpaYubiKeyAccountRegistry(yubiKeyAccountValidator);
+        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        return registry;
     }
 }

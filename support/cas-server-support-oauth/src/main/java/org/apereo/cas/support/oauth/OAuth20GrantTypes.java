@@ -14,13 +14,16 @@ public enum OAuth20GrantTypes {
     /**
      * For the authorization grant type.
      */
-    AUTHORIZATION_CODE("authorization_code"), /**
+    AUTHORIZATION_CODE("authorization_code"),
+    /**
      * For the resource owner password grant type.
      */
-    PASSWORD("password"), /**
+    PASSWORD("password"),
+    /**
      * For the client credentials grant type.
      */
-    CLIENT_CREDENTIALS("client_credentials"), /**
+    CLIENT_CREDENTIALS("client_credentials"),
+    /**
      * For the refresh token grant type.
      */
     REFRESH_TOKEN("refresh_token");

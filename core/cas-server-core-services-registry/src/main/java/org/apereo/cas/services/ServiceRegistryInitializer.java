@@ -17,8 +17,8 @@ import java.util.List;
 @Slf4j
 @AllArgsConstructor
 public class ServiceRegistryInitializer {
-    private final ServiceRegistryDao jsonServiceRegistryDao;
-    private final ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistry jsonServiceRegistry;
+    private final ServiceRegistry serviceRegistry;
     private final ServicesManager servicesManager;
     private final boolean initFromJson;
 
@@ -26,7 +26,7 @@ public class ServiceRegistryInitializer {
      * Init service registry if necessary.
      */
     public void initServiceRegistryIfNecessary() {
-        final long size = this.serviceRegistryDao.size();
+        final long size = this.serviceRegistry.size();
         LOGGER.debug("Service registry contains [{}] service definitions", size);
 
         if (!this.initFromJson) {
@@ -34,16 +34,16 @@ public class ServiceRegistryInitializer {
                     + "If the service registry database ends up empty, CAS will refuse to authenticate services "
                     + "until service definitions are added to the registry. To auto-initialize the service registry, "
                     + "set 'cas.serviceRegistry.initFromJson=true' in your CAS settings.",
-                    this.serviceRegistryDao.getName());
+                    this.serviceRegistry.getName());
             return;
         }
 
         LOGGER.warn("Service registry [{}] will be auto-initialized from JSON service definitions. "
                 + "This behavior is only useful for testing purposes and MAY NOT be appropriate for production. "
                 + "Consider turning off this behavior via the setting [cas.serviceRegistry.initFromJson=false] "
-                + "and explicitly register definitions in the services registry.", this.serviceRegistryDao.getName());
+                + "and explicitly register definitions in the services registry.", this.serviceRegistry.getName());
 
-        final List<RegisteredService> servicesLoaded = this.jsonServiceRegistryDao.load();
+        final List<RegisteredService> servicesLoaded = this.jsonServiceRegistry.load();
         LOGGER.debug("Loading JSON services are [{}]", servicesLoaded);
 
         for (final RegisteredService r : servicesLoaded) {
@@ -51,25 +51,25 @@ public class ServiceRegistryInitializer {
                 continue;
             }
             LOGGER.debug("Initializing service registry with the [{}] JSON service definition...", r);
-            this.serviceRegistryDao.save(r);
+            this.serviceRegistry.save(r);
         }
         this.servicesManager.load();
-        LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistryDao.getName(), this.servicesManager.count());
+        LOGGER.info("Service registry [{}] contains [{}] service definitions", this.serviceRegistry.getName(), this.servicesManager.count());
 
     }
 
     private boolean findExistingMatchForService(final RegisteredService r) {
-        RegisteredService match = this.serviceRegistryDao.findServiceById(r.getServiceId());
+        RegisteredService match = this.serviceRegistry.findServiceById(r.getServiceId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
             return true;
         }
-        match = this.serviceRegistryDao.findServiceByExactServiceId(r.getServiceId());
+        match = this.serviceRegistry.findServiceByExactServiceId(r.getServiceId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching service [{}] is found in the registry", r.getName(), match.getName());
             return true;
         }
-        match = this.serviceRegistryDao.findServiceById(r.getId());
+        match = this.serviceRegistry.findServiceById(r.getId());
         if (match != null) {
             LOGGER.warn("Skipping [{}] JSON service definition as a matching id [{}] is found in the registry", r.getName(), match.getId());
             return true;

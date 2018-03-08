@@ -6,7 +6,7 @@ package org.apereo.cas.adaptors.yubikey;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@SuppressWarnings("ALL")
+@FunctionalInterface
 public interface YubiKeyAccountValidator {
 
     /**

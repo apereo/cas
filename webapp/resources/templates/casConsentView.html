@@ -2,7 +2,11 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{screen.consent.title}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.consent.title}">Consent View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <link rel="stylesheet" th:href="@{#{webjars.datatables.bootstrapmin.css}}"/>
     <script th:src="@{#{webjars.datatables.jquery.datatablesmin.js}}"></script>
@@ -10,6 +14,15 @@
 
     <link rel="stylesheet" th:href="@{#{webjars.bootstrap-selectmin.css}}">
     <script th:src="@{#{webjars.bootstrap-selectmin.js}}"></script>
+
+
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
 
     <script th:inline="javascript">
         /*<![CDATA[*/
@@ -31,55 +44,87 @@
     </script>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
 
-    <form method="post" id="fm1">
-        <div class="alert alert-info">
-            <h1 th:text="#{screen.consent.title}"></h1>
+        <form method="post" id="fm1">
+            <div class="alert alert-info">
+                <h2 th:text="#{screen.consent.title}">Attribute Consent</h2>
 
+                <ul class="nav nav-tabs" id="consentTabs" role="tablist">
+                    <li class="nav-item">
+                        <a class="nav-link active" id="attributes-tab" data-toggle="tab" href="#attributesPanel"
+                           role="tab" aria-controls="attributes" aria-selected="true"
+                           th:text="#{screen.consent.attributes}">Attributes</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" id="options-tab" data-toggle="tab" href="#optionsPanel" role="tab"
+                           aria-controls="options" aria-selected="false" th:text="#{screen.consent.options}">Options</a>
+                    </li>
+                </ul>
 
-            <ul class="nav nav-tabs">
-                <li class="active"><a data-toggle="tab" href="#attributesPanel" th:text="#{screen.consent.attributes}"/></li>
-                <li><a data-toggle="tab" href="#optionsPanel" th:text="#{screen.consent.options}"/></li>
-            </ul>
+                <div class="mb-4 tab-content" id="consentTabsContent">
+                    <div class="tab-pane fade show active bg-white p-4" id="attributesPanel" role="tabpanel"
+                         aria-labelledby="attributes-tab">
+                        <p th:utext="#{screen.consent.attributes.header(${service.id})}">The following attributes will
+                            be released to</p>
+                        <table id="attributesTable" class="display table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th th:text="#{screen.consent.attributes.attribute}">Attribute</th>
+                                <th th:text="#{screen.consent.attributes.values}">Value(s)</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>abc</td>
+                                <td>123</td>
+                            </tr>
+                            <tr>
+                                <td>xyz</td>
+                                <td>456</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
 
-            <div class="tab-content clearfix">
-                <div class="tab-pane active" id="attributesPanel">
-                    <br/>
-                    <p th:utext="#{screen.consent.attributes.header(${service.id})}"/>
-                    <table id="attributesTable" class="display table table-striped table-bordered">
-                        <thead>
-                        <tr>
-                            <th th:text="#{screen.consent.attributes.attribute}"/>
-                            <th th:text="#{screen.consent.attributes.values}"/>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-                <div id="optionsPanel" class="tab-pane">
-
-                    <div class="panel panel-primary">
-
-                        <div class="panel-heading" th:text="#{screen.consent.options.header}"/>
-                        <div class="panel-body">
-                            <div class="radio">
-                                <label><input type="radio" name="option" value="0" th:checked="${option == 0}" onclick="optionSelected()"
-                                              th:utext="#{screen.consent.options.always}"/>
-                                <span class="help-block" th:text="#{screen.consent.options.desc.always(${service.id})}"/>
+                    <div class="tab-pane fade bg-white p-4" id="optionsPanel" role="tabpanel"
+                         aria-labelledby="options-tab">
+                        <div class="card mb-4">
+                            <div class="card-header bg-info text-white" th:text="#{screen.consent.options.header}">How
+                                should I be prompted
+                                for consent again?
                             </div>
-                            <div class="radio">
-                                <label><input type="radio" name="option" value="1" th:checked="${option == 1}" onclick="optionSelected()"
-                                              th:utext="#{screen.consent.options.attributename}"/>
-                                <span class="help-block" th:text="#{screen.consent.options.desc.attributename(${service.id})}"/>
-                        </span>
-                            </div>
-                            <div class="radio">
-                                <label><input type="radio" name="option" value="2" th:checked="${option == 2}" onclick="optionSelected()"
-                                              th:utext="#{screen.consent.options.attributevalue}"/>
-                                <span class="help-block" th:utext="#{screen.consent.options.desc.attributevalue.intro} +
+                            <div class="card-body">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="option" id="optionAlways"
+                                           value="0"
+                                           th:checked="${option == 0}"
+                                           onclick="optionSelected()"/>
+                                    <label class="form-check-label" for="optionAlways"
+                                           th:utext="#{screen.consent.options.always}">Always</label>
+                                    <span class="help-block"
+                                          th:text="#{screen.consent.options.desc.always(${service.id})}">help block</span>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="option" id="optionAttributeName"
+                                           value="1"
+                                           th:checked="${option == 1}"
+                                           onclick="optionSelected()"/>
+                                    <label class="form-check-label" for="optionAttributeName"
+                                           th:utext="#{screen.consent.options.attributename}">Attribute Name</label>
+                                    <span class="help-block"
+                                          th:text="#{screen.consent.options.desc.attributename(${service.id})}">help block</span>
+                                    </span>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" name="option" value="2"
+                                           th:checked="${option == 2}"
+                                           onclick="optionSelected()"
+                                    <label class="form-check-label" th:utext="#{screen.consent.options.attributevalue}">Attribute
+                                        Value</label>
+                                    <span class="help-block" th:utext="#{screen.consent.options.desc.attributevalue.intro} +
                                       '<ul><li>' +
                                       #{screen.consent.options.desc.attributevalue.first(${service.id})} +
                                       '</li><li>' +
@@ -87,65 +132,83 @@
                                       '</li><li>' +
                                       #{screen.consent.options.desc.attributevalue.third(${service.id})} +
                                       '</li><ul>'"/>
+
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div id="reminderPanel" class="panel panel-primary">
-                        <div class="panel-heading" th:text="#{screen.consent.options.reminder.header}"/>
-                        <div class="panel-body">
-                            <span th:text="#{screen.consent.options.reminder.expl(${service.id})}"/> <p/>
-                            </span>
-                            <table>
-                                <tr>
-                                    <td>
-                                        <input name="reminder" id="reminder"
-                                               class="form-control" type="number" th:value="${reminder}">
-                                    </td>
-                                    <td>
-                                        <select name="reminderTimeUnit" id="reminderTimeUnit" class="selectpicker">
-                                            <option value="seconds" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}"
-                                                    th:text="#{screen.consent.options.timeunit.seconds}"/>
-                                            <option value="minutes" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'minutes'}"
-                                                    th:text="#{screen.consent.options.timeunit.minutes}"/>
-                                            <option value="hours" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'hours'}"
-                                                    th:text="#{screen.consent.options.timeunit.hours}"/>
-                                            <option value="days" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'days'}"
-                                                    th:text="#{screen.consent.options.timeunit.days}"/>
-                                            <option value="weeks" th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'weeks'}"
-                                                    th:text="#{screen.consent.options.timeunit.weeks}"/>
-                                            <option value="months" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'months'}"
-                                                    th:text="#{screen.consent.options.timeunit.months}"/>
-                                            <option value="years" th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'years'}"
-                                                    th:text="#{screen.consent.options.timeunit.years}"/>
-                                        </select>
-                                    </td>
-                                </tr>
-                            </table>
+                        <div id="reminderPanel" class="card">
+                            <div class="card-header bg-info text-white"
+                                 th:text="#{screen.consent.options.reminder.header}">How often should I be reminded to
+                                consent again?
+                            </div>
+                            <div class="card-body">
+                                <p th:text="#{screen.consent.options.reminder.expl(${service.id})}">Show the consent
+                                    screen, as a
+                                    reminder, in the event that there is no change to the collection of attributes
+                                    released to
+                                    {0}.</p>
 
+                                <table>
+                                    <tr>
+                                        <td>
+                                            <input name="reminder" id="reminder" class="form-control" type="number"
+                                                   th:value="${reminder}">
+                                        </td>
+                                        <td>
+                                            <select name="reminderTimeUnit" id="reminderTimeUnit" class="form-control">
+                                                <option value="seconds"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'seconds'}"
+                                                        th:text="#{screen.consent.options.timeunit.seconds}">Seconds
+                                                </option>
+                                                <option value="minutes"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'minutes'}"
+                                                        th:text="#{screen.consent.options.timeunit.minutes}">Minutes
+                                                </option>
+                                                <option value="hours"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'hours'}"
+                                                        th:text="#{screen.consent.options.timeunit.hours}">Hours
+                                                </option>
+                                                <option value="days"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'days'}"
+                                                        th:text="#{screen.consent.options.timeunit.days}">Days
+                                                </option>
+                                                <option value="weeks"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit) == 'weeks'}"
+                                                        th:text="#{screen.consent.options.timeunit.weeks}">Weeks
+                                                </option>
+                                                <option value="months"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'months'}"
+                                                        th:text="#{screen.consent.options.timeunit.months}">Months
+                                                </option>
+                                                <option value="years"
+                                                        th:selected="${#strings.toLowerCase(reminderTimeUnit)  == 'years'}"
+                                                        th:text="#{screen.consent.options.timeunit.years}">Years
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
                         </div>
-                    </div>
+                    </div> <!-- end Options Panel -->
                 </div>
 
             </div>
-
-            <div align="center">
-
+            <div class="text-center form-group">
                 <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 <input type="hidden" name="_eventId" value="confirm"/>
-                <input class="btn btn-primary btn-lg"
+                <input class="btn btn-submit"
                        name="confirm"
                        accesskey="l"
                        th:value="#{screen.consent.confirm}"
+                       value="Confirm"
                        type="submit"/>
-                &nbsp;
-                <a class="btn btn-success btn-lg" id="cancel" name="cancel"
-                   th:href="@{/login}" th:text="#{screen.consent.cancel}"/>
-
+                <a class="btn btn-default" id="cancel" name="cancel"
+                   th:href="@{/login}" th:text="#{screen.consent.cancel}">Cancel</a>
             </div>
-
-        </div>
-    </form>
-</div>
+        </form>
+    </div>
+</main>
 </body>
 </html>

@@ -8,6 +8,7 @@ import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.OAuth20Constants;
+import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
 import org.apereo.cas.support.oauth.validator.OAuth20Validator;
 import org.apereo.cas.support.oauth.web.views.OAuth20CallbackAuthorizeViewResolver;
@@ -18,7 +19,7 @@ import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.engine.DefaultCallbackLogic;
-import org.pac4j.core.http.J2ENopHttpActionAdapter;
+import org.pac4j.core.http.adapter.J2ENopHttpActionAdapter;
 import org.pac4j.core.profile.ProfileManager;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -50,7 +51,7 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
                                                       final CasConfigurationProperties casProperties,
                                                       final CookieRetrievingCookieGenerator cookieGenerator) {
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
-                webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
+            webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.oAuth20CallbackAuthorizeViewResolver = oAuth20CallbackAuthorizeViewResolver;
         this.oauthConfig = config;
     }
@@ -66,8 +67,9 @@ public class OAuth20CallbackAuthorizeEndpointController extends BaseOAuth20Contr
     public ModelAndView handleRequest(final HttpServletRequest request, final HttpServletResponse response) {
         final J2EContext context = new J2EContext(request, response, this.oauthConfig.getSessionStore());
         final DefaultCallbackLogic callback = new DefaultCallbackLogic();
-        callback.perform(context, oauthConfig, J2ENopHttpActionAdapter.INSTANCE, null, false, false);
-
+        callback.perform(context, oauthConfig, J2ENopHttpActionAdapter.INSTANCE,
+            null, false, false,
+            false, Authenticators.CAS_OAUTH_CLIENT);
         final String url = StringUtils.remove(response.getHeader("Location"), "redirect:");
         final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
         return oAuth20CallbackAuthorizeViewResolver.resolve(context, manager, url);

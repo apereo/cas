@@ -67,7 +67,7 @@ public class MultiTimeUseOrTimeoutExpirationPolicy extends AbstractCasExpiration
                 systemTime, lastTimeUsed, this.timeToKillInSeconds);
             return true;
         }
-        return false;
+        return super.isExpired(ticketState);
     }
 
     /**

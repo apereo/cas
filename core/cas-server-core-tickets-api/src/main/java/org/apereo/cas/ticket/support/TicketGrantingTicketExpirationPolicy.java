@@ -78,7 +78,7 @@ public class TicketGrantingTicketExpirationPolicy extends AbstractCasExpirationP
             LOGGER.debug("Ticket is expired because the time since last use is greater than timeToKillInSeconds");
             return true;
         }
-        return false;
+        return super.isExpired(ticketState);
     }
 
     /**

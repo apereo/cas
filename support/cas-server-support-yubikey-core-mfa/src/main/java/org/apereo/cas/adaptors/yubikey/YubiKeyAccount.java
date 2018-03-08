@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.Column;
@@ -24,6 +25,7 @@ import lombok.Setter;
 @ToString
 @Getter
 @Setter
+@AllArgsConstructor
 public class YubiKeyAccount {
 
     @Id
@@ -32,10 +34,10 @@ public class YubiKeyAccount {
     @GenericGenerator(name = "native", strategy = "native")
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 4096)
     private String publicId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
 
     public YubiKeyAccount() {

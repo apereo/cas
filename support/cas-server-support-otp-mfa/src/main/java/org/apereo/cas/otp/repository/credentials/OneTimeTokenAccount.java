@@ -21,6 +21,8 @@ import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import java.io.Serializable;
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,7 +49,7 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id = -1;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 2048)
     private String secretKey;
 
     @Column(nullable = false)
@@ -58,8 +60,11 @@ public class OneTimeTokenAccount implements Serializable, Comparable<OneTimeToke
     @Column(nullable = false)
     private List<Integer> scratchCodes = new ArrayList<>();
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String username;
+
+    @Column
+    private ZonedDateTime registrationDate = ZonedDateTime.now(ZoneOffset.UTC);
 
     public OneTimeTokenAccount() {
         setId(java.lang.System.currentTimeMillis());

@@ -27,8 +27,6 @@ import java.util.stream.IntStream;
 @Slf4j
 public class CasReloadableMessageBundle extends ReloadableResourceBundleMessageSource {
 
-
-
     private String[] basenames;
 
     @Override

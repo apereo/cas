@@ -3,9 +3,11 @@ package org.apereo.cas.config.support.authentication;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.u2f.U2FAuthenticationHandler;
 import org.apereo.cas.adaptors.u2f.U2FMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.u2f.U2FTokenCredential;
 import org.apereo.cas.adaptors.u2f.storage.U2FDeviceRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -92,6 +94,7 @@ public class U2FAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             plan.registerAuthenticationHandler(u2fAuthenticationHandler());
             plan.registerMetadataPopulator(u2fAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(U2FTokenCredential.class));
         };
     }
 }

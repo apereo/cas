@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -58,17 +59,19 @@ public class SSOSamlProfileCallbackHandlerController extends AbstractSamlProfile
                                                    final SamlProfileObjectBuilder<Response> responseBuilder,
                                                    final CasConfigurationProperties casProperties,
                                                    final SamlObjectSignatureValidator samlObjectSignatureValidator,
-                                                   final AbstractUrlBasedTicketValidator ticketValidator) {
+                                                   final AbstractUrlBasedTicketValidator ticketValidator,
+                                                   final Service callbackService) {
         super(samlObjectSigner,
-                parserPool,
-                authenticationSystemSupport,
-                servicesManager,
-                webApplicationServiceFactory,
-                samlRegisteredServiceCachingMetadataResolver,
-                configBean,
-                responseBuilder,
-                casProperties,
-                samlObjectSignatureValidator);
+            parserPool,
+            authenticationSystemSupport,
+            servicesManager,
+            webApplicationServiceFactory,
+            samlRegisteredServiceCachingMetadataResolver,
+            configBean,
+            responseBuilder,
+            casProperties,
+            samlObjectSignatureValidator,
+            callbackService);
         this.ticketValidator = ticketValidator;
     }
 

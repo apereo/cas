@@ -1,28 +1,34 @@
 package org.apereo.cas.ticket.refreshtoken;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.*;
 
 /**
- * @author Misagh Moayyed
- * @since 4.1
+ * This is {@link OAuthRefreshTokenExpirationPolicyTests}.
+ *
+ * @since 5.3.0
  */
-@Slf4j
-public class OAuthRefreshTokenExpirationPolicyTests {
+@TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
+public class OAuthRefreshTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
+    @Test
+    public void verifyRefreshTokenExpiryWhenTgtIsExpired() {
+        final TicketGrantingTicket tgt = newTicketGrantingTicket();
+        final AccessToken at = newAccessToken(tgt);
+        final RefreshToken rt = newRefreshToken(at);
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthRefreshTokenExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+        assertFalse("Refresh token should not be expired", rt.isExpired());
+        tgt.markTicketExpired();
+        assertTrue("Refresh token should not be expired when TGT is expired", rt.isExpired());
+    }
 
     @Test
-    public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws IOException {
+    public void verifySerializeAnOAuthRefreshTokenExpirationPolicyToJson() throws Exception {
         final OAuthRefreshTokenExpirationPolicy policyWritten = new OAuthRefreshTokenExpirationPolicy(1234L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthRefreshTokenExpirationPolicy.class);

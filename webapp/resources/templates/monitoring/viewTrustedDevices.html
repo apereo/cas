@@ -36,13 +36,13 @@
         <div class="tabsContainer row">
             <!-- Nav tabs -->
             <ul id="myTabs" class="nav nav-tabs" role="tablist">
-                <li role="presentation" class="active"><a href="#trustedDevices" aria-controls="trustedDevices" role="tab"
+                <li role="presentation" class="nav-item"><a class="nav-link active" href="#trustedDevices" aria-controls="trustedDevices" role="tab"
                                                           data-toggle="tab">Trusted Devices</a></li>
             </ul>
                         
             <div class="tab-content">
                 <div role="tabpanel" class="tab-pane active" id="trustedDevicesTab">
-                    <table id="trustedDevicesTable" class="display table table-striped table-bordered">
+                    <table id="trustedDevicesTable" class="table table-striped table-bordered">
                         <thead>
                         <tr>
                             <th>Name</th>
@@ -58,7 +58,7 @@
                 </div>
             </div>
         </div>
-        <div th:replace="fragments/footerButtons"/>
+        <div th:replace="monitoring/fragments/footerButtons"/>
     </div>
 
 

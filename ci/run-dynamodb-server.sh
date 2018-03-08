@@ -1,10 +1,7 @@
 #!/bin/bash
 
-if [ "$PUBLISH_SNAPSHOTS" == "false" ]; then
+if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
-
-    echo "Pulling DynamoDb docker image..."
-    docker pull ryanratcliff/dynamodb
 
     echo "Running DynamoDb docker image..."
     docker run -d -p 8000:8000 --name "dynamodb-server" ryanratcliff/dynamodb

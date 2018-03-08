@@ -1,6 +1,7 @@
 package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.dao.MongoDbYubiKeyAccountRegistry;
@@ -34,6 +35,10 @@ public class MongoDbYubiKeyConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
+
     @RefreshScope
     @Bean
     public PersistenceExceptionTranslationPostProcessor persistenceExceptionTranslationPostProcessor() {
@@ -54,8 +59,10 @@ public class MongoDbYubiKeyConfiguration {
     @Bean
     public YubiKeyAccountRegistry yubiKeyAccountRegistry() {
         final YubiKeyMultifactorProperties yubi = casProperties.getAuthn().getMfa().getYubikey();
-        return new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
+        final MongoDbYubiKeyAccountRegistry registry = new MongoDbYubiKeyAccountRegistry(yubiKeyAccountValidator,
                 mongoYubiKeyTemplate(),
                 yubi.getMongo().getCollection());
+        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        return registry;
     }
 }

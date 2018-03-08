@@ -145,7 +145,7 @@ in which case the items in the list are tried on-by-one until one succeeds. This
 branch, for instance, when you might want to align the config label with your branch,
 but make it optional (e.g. `spring.cloud.config.label=myfeature,develop`).
 
-To lean more about CAS allows you to reload configuration changes,
+To lean more about how CAS allows you to reload configuration changes,
 please [review this guide](Configuration-Management-Reload.html).
 
 #### Profiles
@@ -399,7 +399,7 @@ To learn how sensitive CAS settings can be secured via encryption, [please revie
 
 ## Reloading Changes
 
-To lean more about CAS allows you to reload configuration changes,
+To lean more about how CAS allows you to reload configuration changes,
 please [review this guide](Configuration-Management-Reload.html).
 
 ## Clustered Deployments

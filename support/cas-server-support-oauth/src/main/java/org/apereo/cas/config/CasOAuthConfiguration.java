@@ -17,14 +17,18 @@ import org.apereo.cas.configuration.model.support.oauth.OAuthRefreshTokenPropert
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.RegexRegisteredService;
-import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.oauth.authenticator.Authenticators;
 import org.apereo.cas.support.oauth.authenticator.OAuth20CasAuthenticationBuilder;
 import org.apereo.cas.support.oauth.authenticator.OAuth20ClientAuthenticator;
 import org.apereo.cas.support.oauth.authenticator.OAuth20UserAuthenticator;
 import org.apereo.cas.support.oauth.profile.DefaultOAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.profile.OAuth20ProfileScopeToAttributesFilter;
+import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
+import org.apereo.cas.support.oauth.services.OAuth20ServiceRegistry;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.support.oauth.validator.OAuth20AuthorizationCodeResponseTypeRequestValidator;
 import org.apereo.cas.support.oauth.validator.OAuth20ClientCredentialsGrantTypeRequestValidator;
@@ -38,12 +42,10 @@ import org.apereo.cas.support.oauth.web.OAuth20CasCallbackUrlResolver;
 import org.apereo.cas.support.oauth.web.OAuth20HandlerInterceptorAdapter;
 import org.apereo.cas.support.oauth.web.audit.AccessTokenGrantRequestAuditResourceResolver;
 import org.apereo.cas.support.oauth.web.audit.OAuth20UserProfileDataAuditResourceResolver;
-import org.apereo.cas.support.oauth.profile.DefaultOAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AccessTokenEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20AuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20CallbackAuthorizeEndpointController;
 import org.apereo.cas.support.oauth.web.endpoints.OAuth20UserProfileEndpointController;
-import org.apereo.cas.support.oauth.profile.OAuth2UserProfileDataCreator;
 import org.apereo.cas.support.oauth.web.response.OAuth20CasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.OAuth20DefaultCasClientRedirectActionBuilder;
 import org.apereo.cas.support.oauth.web.response.accesstoken.AccessTokenResponseGenerator;
@@ -87,7 +89,7 @@ import org.pac4j.cas.config.CasConfiguration;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.credentials.UsernamePasswordCredentials;
 import org.pac4j.core.credentials.authenticator.Authenticator;
-import org.pac4j.core.http.UrlResolver;
+import org.pac4j.core.http.url.UrlResolver;
 import org.pac4j.http.client.direct.DirectBasicAuthClient;
 import org.pac4j.http.client.direct.DirectFormClient;
 import org.pac4j.springframework.web.SecurityInterceptor;
@@ -101,7 +103,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.annotation.PostConstruct;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
@@ -124,7 +125,7 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.CLIENT_SECRET;
 @Configuration("oauthConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
+public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConfigurer, ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -270,7 +271,13 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @ConditionalOnMissingBean(name = "accessTokenExpirationPolicy")
     public ExpirationPolicy accessTokenExpirationPolicy() {
         final OAuthAccessTokenProperties oauth = casProperties.getAuthn().getOauth().getAccessToken();
-        return new OAuthAccessTokenExpirationPolicy(
+        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+            return new OAuthAccessTokenExpirationPolicy(
+                Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
+                Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
+            );
+        }
+        return new OAuthAccessTokenExpirationPolicy.OAuthAccessTokenSovereignExpirationPolicy(
             Beans.newDuration(oauth.getMaxTimeToLiveInSeconds()).getSeconds(),
             Beans.newDuration(oauth.getTimeToKillInSeconds()).getSeconds()
         );
@@ -278,7 +285,8 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
 
     private ExpirationPolicy oAuthCodeExpirationPolicy() {
         final OAuthProperties oauth = casProperties.getAuthn().getOauth();
-        return new OAuthCodeExpirationPolicy(oauth.getCode().getNumberOfUses(), oauth.getCode().getTimeToKillInSeconds());
+        return new OAuthCodeExpirationPolicy(oauth.getCode().getNumberOfUses(),
+            oauth.getCode().getTimeToKillInSeconds());
     }
 
     @Bean
@@ -313,10 +321,15 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     @RefreshScope
     public OAuth20CallbackAuthorizeEndpointController callbackAuthorizeController() {
         return new OAuth20CallbackAuthorizeEndpointController(servicesManager, ticketRegistry,
-            oAuthValidator(), defaultAccessTokenFactory(), oauthPrincipalFactory(),
+            oAuthValidator(),
+            defaultAccessTokenFactory(),
+            oauthPrincipalFactory(),
             webApplicationServiceFactory,
-            oauthSecConfig(), callbackAuthorizeViewResolver(),
-            profileScopeToAttributesFilter(), casProperties, ticketGrantingTicketCookieGenerator);
+            oauthSecConfig(),
+            callbackAuthorizeViewResolver(),
+            profileScopeToAttributesFilter(),
+            casProperties,
+            ticketGrantingTicketCookieGenerator);
     }
 
     @ConditionalOnMissingBean(name = "oauthTokenGenerator")
@@ -515,7 +528,10 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
     private ExpirationPolicy refreshTokenExpirationPolicy() {
         final OAuthRefreshTokenProperties rtProps = casProperties.getAuthn().getOauth().getRefreshToken();
         final long timeout = Beans.newDuration(rtProps.getTimeToKillInSeconds()).getSeconds();
-        return new OAuthRefreshTokenExpirationPolicy(timeout);
+        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+            return new OAuthRefreshTokenExpirationPolicy(timeout);
+        }
+        return new OAuthRefreshTokenExpirationPolicy.OAuthRefreshTokenSovereignExpirationPolicy(timeout);
     }
 
     @ConditionalOnMissingBean(name = "oauthCasAuthenticationBuilder")
@@ -555,25 +571,22 @@ public class CasOAuthConfiguration implements AuditTrailRecordResolutionPlanConf
             new AccessTokenGrantRequestAuditResourceResolver());
     }
 
-    @PostConstruct
-    public void initializeServletApplicationContext() {
+    @Bean
+    public Service oauthCallbackService() {
         final String oAuthCallbackUrl = casProperties.getServer().getPrefix()
             + BASE_OAUTH20_URL + '/' + CALLBACK_AUTHORIZE_URL_DEFINITION;
+        return this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
+    }
 
-        final Service callbackService = this.webApplicationServiceFactory.createService(oAuthCallbackUrl);
-        final RegisteredService svc = servicesManager.findServiceBy(callbackService);
-
-        if (svc == null || !svc.getServiceId().equals(oAuthCallbackUrl)) {
-            final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
-            service.setEvaluationOrder(0);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("OAuth Authentication Callback Request URL");
-            service.setServiceId(oAuthCallbackUrl);
-            service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
-
-            servicesManager.save(service);
-            servicesManager.load();
-        }
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        final RegexRegisteredService service = new RegexRegisteredService();
+        service.setId(Math.abs(RandomUtils.getNativeInstance().nextLong()));
+        service.setEvaluationOrder(0);
+        service.setName(service.getClass().getSimpleName());
+        service.setDescription("OAuth Authentication Callback Request URL");
+        service.setServiceId(oauthCallbackService().getId());
+        service.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
+        plan.registerServiceRegistry(new OAuth20ServiceRegistry(service));
     }
 }

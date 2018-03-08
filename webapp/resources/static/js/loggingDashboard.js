@@ -105,6 +105,7 @@ var loggingDashboard = (function () {
 
     var loggerTableAudit = function (jsonData) {
         var t = $('#auditLogTable').DataTable({
+            'autoWidth': false,
             'order': [[3, 'desc']],
             retrieve: true,
             columnDefs: [
@@ -152,6 +153,7 @@ var loggingDashboard = (function () {
 
     var loggerTable = function () {
         $('#loggersTable').DataTable({
+            'autoWidth': false,
             'order': [[1, 'desc']],
             data: json.loggers,
             'drawCallback': function () {
@@ -165,12 +167,12 @@ var loggingDashboard = (function () {
             },
             'initComplete': function (settings) {
                 if (!settings.aoData || settings.aoData.length == 0) {
-                    $('#loadingMessage').addClass('hidden');
-                    $('#errorLoadingData').removeClass('hidden');
+                    $('#loadingMessage').addClass('d-none');
+                    $('#errorLoadingData').removeClass('d-none');
                 } else {
-                    $('#loadingMessage').addClass('hidden');
-                    $('#errorLoadingData').addClass('hidden');
-                    $('#loggingDashboard .tabsContainer').removeClass('hidden');
+                    $('#loadingMessage').addClass('d-none');
+                    $('#errorLoadingData').addClass('d-none');
+                    $('#loggingDashboard .tabsContainer').removeClass('d-none');
                 }
             },
             'processing': true,

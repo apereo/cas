@@ -2,34 +2,35 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.mfa.radius.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.radius.pagetitle}">Radius Login View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="box fl-panel" id="login">
-
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
         <form method="post" id="fm1" class="fm-v clearfix" th:object="${credential}">
             <div class="alert alert-danger" th:if="${#fields.hasErrors('*')}">
-                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}"/>
+                <span th:each="err : ${#fields.errors('*')}" th:utext="${err}">error message</span>
             </div>
 
-            <div class="row fl-controls-left">
-                <label for="password" class="fl-label" th:utext="#{screen.welcome.label.password}"/>
+            <div class="form-group">
+                <label for="token" class="fl-label" th:utext="#{screen.welcome.label.password}"><span class="accesskey">P</span>assword:</label>
 
-                <input type="password" class="required" id="token" size="25" tabindex="1"
+                <input type="password" class="form-control required" id="token" size="25" tabindex="1"
                        th:field="*{token}"
                        th:accesskey="#{screen.welcome.label.password.accesskey}" autocomplete="off"/>
-                <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.welcome.button.login}" tabindex="4" type="submit"/>
             </div>
-            <div class="row btn-row">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-                <input type="hidden" name="geolocation"/>
-            </div>
+            <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
+                   th:value="#{screen.welcome.button.login}" tabindex="4" type="submit" value="Login"/>
+            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            <input type="hidden" name="geolocation"/>
         </form>
     </div>
-</div>
+</main>
 </body>
 </html>
 
