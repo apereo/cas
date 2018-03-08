@@ -17,6 +17,7 @@ import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -37,14 +38,10 @@ import java.util.Map;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @Entity
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
-@Table(name = "DELEGATEDAUTHENTICATIONREQUESTTICKET")
+@Table(name = "TRANSIENTSESSIONTICKET")
 @DiscriminatorColumn(name = "TYPE")
-@DiscriminatorValue(DelegatedAuthenticationRequestTicket.PREFIX)
-public class DelegatedAuthenticationRequestTicket extends AbstractTicket {
-    /**
-     * Ticket prefix for the delegated authentication request.
-     */
-    public static final String PREFIX = "DART";
+@DiscriminatorValue(TransientSessionTicket.PREFIX)
+public class TransientSessionTicketImpl extends AbstractTicket implements TransientSessionTicket {
 
     /**
      * The constant serialVersionUID.
@@ -63,15 +60,15 @@ public class DelegatedAuthenticationRequestTicket extends AbstractTicket {
      */
     @Lob
     @Column(name = "PROPERTIES", nullable = false)
-    private Map<String, Object> properties = new LinkedHashMap<>();
+    private Map<String, Serializable> properties = new LinkedHashMap<>();
 
-    public DelegatedAuthenticationRequestTicket(final String id, final ExpirationPolicy expirationPolicy, final Service service) {
+    public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy, final Service service) {
         super(id, expirationPolicy);
         this.service = service;
     }
 
-    public DelegatedAuthenticationRequestTicket(final String id, final ExpirationPolicy expirationPolicy,
-                                                final Service service, final Map<String, Object> properties) {
+    public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy,
+                                      final Service service, final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
         this.properties = properties;
@@ -82,60 +79,31 @@ public class DelegatedAuthenticationRequestTicket extends AbstractTicket {
         return PREFIX;
     }
 
-    /**
-     * Put property.
-     *
-     * @param name  the name
-     * @param value the value
-     */
-    public void put(final String name, final Object value) {
+    @Override
+    public void put(final String name, final Serializable value) {
         this.properties.put(name, value);
     }
 
-    /**
-     * Put all properties.
-     *
-     * @param props the props
-     */
-    public void putAll(final Map<String, Object> props) {
+    @Override
+    public void putAll(final Map<String, Serializable> props) {
         this.properties.putAll(props);
     }
 
-    /**
-     * Contains property boolean.
-     *
-     * @param name the name
-     * @return the boolean
-     */
+    @Override
     public boolean contains(final String name) {
         return this.properties.containsKey(name);
     }
 
-    /**
-     * Gets property.
-     *
-     * @param <T>   the type parameter
-     * @param name  the name
-     * @param clazz the clazz
-     * @return the property
-     */
-    public <T> T get(final String name, final Class<T> clazz) {
+    @Override
+    public <T extends Serializable> T get(final String name, final Class<T> clazz) {
         if (contains(name)) {
             return clazz.cast(this.properties.get(name));
         }
         return null;
     }
 
-    /**
-     * Gets property.
-     *
-     * @param <T>          the type parameter
-     * @param name         the name
-     * @param clazz        the clazz
-     * @param defaultValue the default value
-     * @return the property
-     */
-    public <T> T get(final String name, final Class<T> clazz, final T defaultValue) {
+    @Override
+    public <T extends Serializable> T get(final String name, final Class<T> clazz, final T defaultValue) {
         if (contains(name)) {
             return clazz.cast(this.properties.getOrDefault(name, defaultValue));
         }

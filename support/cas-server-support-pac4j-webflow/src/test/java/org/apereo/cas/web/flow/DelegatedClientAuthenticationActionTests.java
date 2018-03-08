@@ -21,7 +21,7 @@ import org.apereo.cas.services.DefaultRegisteredServiceAccessStrategy;
 import org.apereo.cas.services.DefaultRegisteredServiceDelegatedAuthenticationPolicy;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.ticket.DefaultDelegatedAuthenticationRequestTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
@@ -31,6 +31,8 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.pac4j.core.client.BaseClient;
@@ -104,7 +106,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         final DefaultTicketRegistry ticketRegistry = new DefaultTicketRegistry();
         final DelegatedClientWebflowManager manager = new DelegatedClientWebflowManager(ticketRegistry,
-            new DefaultDelegatedAuthenticationRequestTicketFactory(new HardTimeoutExpirationPolicy(60)),
+            new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             new WebApplicationServiceFactory(), "https://cas.example.org",
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
@@ -113,7 +115,8 @@ public class DelegatedClientAuthenticationActionTests {
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, null,
             mock(CentralAuthenticationService.class),
-            false, getServicesManagerWith(service, facebookClient), enforcer, manager);
+            false, getServicesManagerWith(service, facebookClient), enforcer, manager,
+            new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("error", event.getId());
@@ -176,7 +179,7 @@ public class DelegatedClientAuthenticationActionTests {
         when(enforcer.execute(any())).thenReturn(new AuditableExecutionResult());
         final DefaultTicketRegistry ticketRegistry = new DefaultTicketRegistry();
         final DelegatedClientWebflowManager manager = new DelegatedClientWebflowManager(ticketRegistry,
-            new DefaultDelegatedAuthenticationRequestTicketFactory(new HardTimeoutExpirationPolicy(60)),
+            new DefaultTransientSessionTicketFactory(new HardTimeoutExpirationPolicy(60)),
             ThemeChangeInterceptor.DEFAULT_PARAM_NAME, LocaleChangeInterceptor.DEFAULT_PARAM_NAME,
             new WebApplicationServiceFactory(), "https://cas.example.org",
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()));
@@ -184,7 +187,8 @@ public class DelegatedClientAuthenticationActionTests {
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-            false, getServicesManagerWith(service, facebookClient), enforcer, manager);
+            false, getServicesManagerWith(service, facebookClient), enforcer, manager,
+            new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)));
 
         final Event event = action.execute(mockRequestContext);
         assertEquals("success", event.getId());
