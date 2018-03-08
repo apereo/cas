@@ -132,10 +132,10 @@ public class YubiKeyConfiguration {
                     crypto.getSigning().getKey(),
                     crypto.getAlg());
         }
-        LOGGER.info("Yubikey account encryption/signing is turned off and "
+        LOGGER.info("YubiKey account encryption/signing is turned off and "
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
-                + "Yubikey accounts for MFA");
+                + "YubiKey accounts for MFA");
         return NoOpCipherExecutor.getInstance();
     }
 

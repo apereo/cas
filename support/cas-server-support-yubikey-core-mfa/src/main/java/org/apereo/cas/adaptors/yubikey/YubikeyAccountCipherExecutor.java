@@ -16,7 +16,7 @@ public class YubikeyAccountCipherExecutor extends BaseStringCipherExecutor {
 
     @Override
     public String getName() {
-        return "Yubikey Authentication";
+        return "YubiKey Authentication";
     }
 
     @Override

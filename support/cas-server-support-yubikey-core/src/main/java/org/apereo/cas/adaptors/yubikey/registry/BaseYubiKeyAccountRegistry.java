@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.yubikey.registry;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
@@ -22,21 +23,18 @@ import java.io.Serializable;
 @Slf4j
 @ToString
 @NoArgsConstructor(force = true)
+@RequiredArgsConstructor
 @Getter
 @Setter
 public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegistry {
-
-    /**
-     * CipherExecutor.
-     */
-    private CipherExecutor<Serializable, String> cipherExecutor;
 
     /**
      * Account validator.
      */
     protected final YubiKeyAccountValidator accountValidator;
 
-    public BaseYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator) {
-        this.accountValidator = accountValidator;
-    }
+    /**
+     * CipherExecutor.
+     */
+    private CipherExecutor<Serializable, String> cipherExecutor;
 }
