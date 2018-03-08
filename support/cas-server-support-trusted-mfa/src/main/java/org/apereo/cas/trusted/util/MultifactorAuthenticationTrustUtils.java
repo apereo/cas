@@ -26,12 +26,14 @@ public class MultifactorAuthenticationTrustUtils {
      * Generate key.
      *
      * @param r the r
-     * @return the geography
+     * @return the key for this trust record
      */
     public static String generateKey(final MultifactorAuthenticationTrustRecord r) {
         final StringBuilder builder = new StringBuilder(r.getPrincipal());
         return builder.append('@')
-                .append(r.getGeography())
+                .append(r.getRecordDate())
+                .append('@')
+                .append(r.getDeviceFingerprint())
                 .toString();
     }
 

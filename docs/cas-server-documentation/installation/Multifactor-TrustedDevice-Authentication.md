@@ -129,10 +129,10 @@ Response payload may produce a collection of objects that contain:
 [
     {
       "principal": "casuser",
-      "geography": "...",
-      "date": "YYYY-MM-dd",
+      "deviceFingerprint": "...",
+      "recordDate": "YYYY-MM-dd",
       "name": "Office",
-      "key": "..."
+      "recordKey": "..."
     }
 ]
 ```
@@ -150,10 +150,10 @@ curl -H "Content-Type: application/json" -X POST -d '${json}' ${endpointUrl}
 ```json
 {
     "principal": "...",
-    "geography": "...",
-    "date": "...",
+    "deviceFingerprint": "...",
+    "recordDate": "...",
     "name": "...",
-    "key": "..."
+    "recordKey": "..."
 }
 ```
 
