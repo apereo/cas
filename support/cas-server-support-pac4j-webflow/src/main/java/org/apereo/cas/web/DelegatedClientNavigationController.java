@@ -5,11 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.jasig.cas.client.util.URIBuilder;
 import org.pac4j.core.client.Clients;
 import org.pac4j.core.client.IndirectClient;
+import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.context.Pac4jConstants;
-import org.pac4j.core.context.WebContext;
 import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
@@ -45,6 +46,7 @@ public class DelegatedClientNavigationController {
 
     private final Clients clients;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
+    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
 
     /**
      * Redirect to provider. Receive the client name from the request and then try to determine and build the endpoint url
@@ -60,19 +62,21 @@ public class DelegatedClientNavigationController {
         final String clientName = request.getParameter(Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER);
         try {
             final IndirectClient client = (IndirectClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
-            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
+            final J2EContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
             final Ticket ticket = delegatedClientWebflowManager.store(webContext, client);
 
+            final View result;
             final RedirectAction action = client.getRedirectAction(webContext);
             if (RedirectAction.RedirectType.SUCCESS.equals(action.getType())) {
-                return new DynamicHtmlView(action.getContent());
+                result = new DynamicHtmlView(action.getContent());
+            } else {
+                final URIBuilder builder = new URIBuilder(action.getLocation());
+                final String url = builder.toString();
+                LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
+                result = new RedirectView(url);
             }
-
-            final URIBuilder builder = new URIBuilder(action.getLocation());
-            final String url = builder.toString();
-            LOGGER.debug("Redirecting client [{}] to [{}] based on identifier [{}]", client.getName(), url, ticket.getId());
-
-            return new RedirectView(url);
+            this.delegatedSessionCookieManager.store(webContext);
+            return result;
         } catch (final HttpAction e) {
             if (e.getCode() == HttpStatus.UNAUTHORIZED.value()) {
                 LOGGER.debug("Authentication request was denied from the provider [{}]", clientName);

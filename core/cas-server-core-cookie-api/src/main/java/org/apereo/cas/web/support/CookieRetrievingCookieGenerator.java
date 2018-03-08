@@ -41,33 +41,19 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
      **/
     private final CookieValueManager casCookieValueManager;
 
-    /**
-     * Instantiates a new cookie retrieving cookie generator
-     * with a default cipher of {@link NoOpCookieValueManager}.
-     *
-     * @param name     cookie name
-     * @param path     cookie path
-     * @param maxAge   cookie max age
-     * @param secure   if cookie is only for HTTPS
-     * @param domain   cookie domain
-     * @param httpOnly the http only
-     */
-    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge, final boolean secure, final String domain, final boolean httpOnly) {
-        this(name, path, maxAge, secure, domain, new NoOpCookieValueManager(), DEFAULT_REMEMBER_ME_MAX_AGE, httpOnly);
+    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
+                                           final boolean secure, final String domain, final boolean httpOnly) {
+        this(name, path, maxAge, secure, domain, new NoOpCookieValueManager(),
+            DEFAULT_REMEMBER_ME_MAX_AGE, httpOnly);
     }
 
-    /**
-     * Instantiates a new Cookie retrieving cookie generator.
-     *
-     * @param name                  cookie name
-     * @param path                  cookie path
-     * @param maxAge                cookie max age
-     * @param secure                if cookie is only for HTTPS
-     * @param domain                cookie domain
-     * @param casCookieValueManager the cookie manager
-     * @param rememberMeMaxAge      cookie rememberMe max age
-     * @param httpOnly              the http only
-     */
+    public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge,
+                                           final boolean secure, final String domain, final boolean httpOnly,
+                                           final CookieValueManager cookieValueManager) {
+        this(name, path, maxAge, secure, domain, cookieValueManager,
+            DEFAULT_REMEMBER_ME_MAX_AGE, httpOnly);
+    }
+
     public CookieRetrievingCookieGenerator(final String name, final String path, final int maxAge, final boolean secure,
                                            final String domain, final CookieValueManager casCookieValueManager,
                                            final int rememberMeMaxAge, final boolean httpOnly) {
@@ -104,6 +90,19 @@ public class CookieRetrievingCookieGenerator extends CookieGenerator {
             LOGGER.debug("Creating cookie [{}]", getCookieName());
             super.addCookie(response, theCookieValue);
         }
+    }
+
+    /**
+     * Add cookie.
+     *
+     * @param request     the request
+     * @param response    the response
+     * @param cookieValue the cookie value
+     */
+    public void addCookie(final HttpServletRequest request, final HttpServletResponse response, final String cookieValue) {
+        final String theCookieValue = this.casCookieValueManager.buildCookieValue(cookieValue, request);
+        LOGGER.debug("Creating cookie [{}]", getCookieName());
+        super.addCookie(response, theCookieValue);
     }
 
     private boolean isRememberMeAuthentication(final RequestContext requestContext) {

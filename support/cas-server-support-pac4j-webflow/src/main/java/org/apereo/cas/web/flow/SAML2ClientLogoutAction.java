@@ -3,6 +3,7 @@ package org.apereo.cas.web.flow;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.Pac4jUtils;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.support.WebUtils;
 import org.pac4j.core.client.Client;
 import org.pac4j.core.client.Clients;
@@ -39,7 +40,8 @@ import java.util.Optional;
 @AllArgsConstructor
 public class SAML2ClientLogoutAction extends AbstractAction {
     private final Clients clients;
-
+    private final DelegatedSessionCookieManager delegatedSessionCookieManager;
+    
     @Override
     protected Event doExecute(final RequestContext requestContext) {
         try {
