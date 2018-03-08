@@ -1,17 +1,19 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.core.io.Resource;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link YubiKeyMultifactorProperties}.
@@ -75,6 +77,11 @@ public class YubiKeyMultifactorProperties extends BaseMultifactorProviderPropert
      * Keep device registration records inside a MongoDb resource.
      */
     private MongoDb mongo = new MongoDb();
+
+    /**
+     * Crypto settings that sign/encrypt the yubikey registration records.
+     */
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
 
     public YubiKeyMultifactorProperties() {
         setId(DEFAULT_IDENTIFIER);
