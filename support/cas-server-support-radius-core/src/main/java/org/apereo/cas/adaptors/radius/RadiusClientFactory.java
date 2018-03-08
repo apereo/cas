@@ -55,17 +55,11 @@ public class RadiusClientFactory {
             DEFAULT_SOCKET_TIMEOUT, inetAddress, sharedSecret);
     }
 
+
     /**
-     * @param accountingPort     Sets the RADIUS server accounting port.
-     * @param authenticationPort Sets the RADIUS server authentication port.
-     * @param socketTimeout      Sets the RADIUS server UDP socket timeout.
-     * @param inetAddress        RADIUS server network address.
-     * @param sharedSecret       RADIUS server authentication shared secret.
-     */
-    /**
-     * Creates a new RADIUS client instance using factory configuration settings.
+     * New instance radius client.
      *
-     * @return New radius client instance.
+     * @return the radius client
      */
     @SneakyThrows
     public RadiusClient newInstance() {

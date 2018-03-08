@@ -27,6 +27,7 @@ import java.util.Set;
 public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
 
     private final MultifactorAuthenticationTrustStorage storage;
+    private final DeviceFingerprintStrategy deviceFingerprintStrategy;
     private final TrustedDevicesMultifactorProperties trustedProperties;
 
     @Override
@@ -45,15 +46,15 @@ public class MultifactorAuthenticationVerifyTrustAction extends AbstractAction {
             LOGGER.debug("No valid trusted authentication records could be found for [{}]", principal);
             return no();
         }
-        final String geography = MultifactorAuthenticationTrustUtils.generateGeography();
-        LOGGER.debug("Retrieving authentication records for [{}] that match [{}]", principal, geography);
+        final String fingerprint = deviceFingerprintStrategy.determineFingerprint(principal, requestContext);
+        LOGGER.debug("Retrieving authentication records for [{}] that matches [{}]", principal, fingerprint);
         if (results.stream()
-                .noneMatch(entry -> entry.getGeography().equals(geography))) {
-            LOGGER.debug("No trusted authentication records could be found for [{}] to match the current geography", principal);
+                .noneMatch(entry -> entry.getDeviceFingerprint().equals(fingerprint))) {
+            LOGGER.debug("No trusted authentication records could be found for [{}] to match the current device fingerprint", principal);
             return no();
         }
 
-        LOGGER.debug("Trusted authentication records found for [{}] that matches the current geography", principal);
+        LOGGER.debug("Trusted authentication records found for [{}] that matches the current device fingerprint", principal);
 
         MultifactorAuthenticationTrustUtils.setMultifactorAuthenticationTrustedInScope(requestContext);
         MultifactorAuthenticationTrustUtils.trackTrustedMultifactorAuthenticationAttribute(

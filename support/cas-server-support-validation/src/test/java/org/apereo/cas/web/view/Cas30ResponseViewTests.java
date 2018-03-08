@@ -13,7 +13,9 @@ import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
+import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.web.view.AbstractCasView;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.crypto.PrivateKeyFactoryBean;
@@ -56,11 +58,9 @@ import static org.junit.Assert.*;
 @TestPropertySource(properties = {"cas.clearpass.cacheCredential=true", "cas.clearpass.crypto.enabled=false"})
 @Slf4j
 public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTests {
-
-
     @Autowired
     @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
+    protected ServicesManager servicesManager;
 
     @Autowired
     @Qualifier("cas3ServiceJsonView")
@@ -82,7 +82,7 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             getCentralAuthenticationService(),
             getProxyHandler(),
             getArgumentExtractor(),
-            new DefaultMultifactorTriggerSelectionStrategy("", ""),
+            new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
             cas3ServiceJsonView, cas3SuccessView,
             cas3ServiceFailureView, "authenticationContext",
@@ -91,9 +91,9 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
         );
     }
 
-    private Map<?, ?> renderView() throws Exception {
+    protected Map<?, ?> renderView() throws Exception {
         final ModelAndView modelAndView = this.getModelAndViewUponServiceValidationWithSecurePgtUrl();
-        LOGGER.warn("Retrieved model and view [{}]", modelAndView.getModel());
+        LOGGER.debug("Retrieved model and view [{}]", modelAndView.getModel());
 
         final MockHttpServletRequest req = new MockHttpServletRequest(new MockServletContext());
         req.setAttribute(RequestContext.WEB_APPLICATION_CONTEXT_ATTRIBUTE, new GenericWebApplicationContext(req.getServletContext()));
@@ -112,14 +112,22 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             }
         };
 
-        final Cas30ResponseView view = new Cas30ResponseView(true, encoder, servicesManager,
+        final AbstractCasView view = getCasViewToRender(encoder, viewDelegated);
+        final MockHttpServletResponse resp = new MockHttpServletResponse();
+        view.render(modelAndView.getModel(), req, resp);
+        return getRenderedViewModelMap(req);
+    }
+
+    protected Map getRenderedViewModelMap(final MockHttpServletRequest req) {
+        return (Map) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
+    }
+
+    protected AbstractCasView getCasViewToRender(final ProtocolAttributeEncoder encoder, final View viewDelegated) {
+        return new Cas30ResponseView(true, encoder, servicesManager,
             "attribute",
             viewDelegated, true, new DefaultAuthenticationAttributeReleasePolicy(),
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy()),
             new Cas30ProtocolAttributesRenderer());
-        final MockHttpServletResponse resp = new MockHttpServletResponse();
-        view.render(modelAndView.getModel(), req, resp);
-        return (Map<?, ?>) req.getAttribute(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES);
     }
 
     @Test

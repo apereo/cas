@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.code;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
@@ -21,7 +22,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import java.util.Collection;
 import java.util.HashSet;
-import lombok.NoArgsConstructor;
 
 /**
  * An OAuth code implementation.
@@ -61,22 +61,15 @@ public class OAuthCodeImpl extends AbstractTicket implements OAuthCode {
      * The authenticated object for which this ticket was generated for.
      */
     @Lob
-    @Column(name = "AUTHENTICATION", nullable = false, length = 1000000)
+    @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
 
-    /**
-     * Constructs a new OAuth code with unique id for a service and authentication.
-     *
-     * @param id                   the unique identifier for the ticket.
-     * @param service              the service this ticket is for.
-     * @param authentication       the authentication.
-     * @param expirationPolicy     the expiration policy.
-     * @param ticketGrantingTicket the ticket granting ticket
-     * @param scopes               the scopes
-     * @throws IllegalArgumentException if the service or authentication are null.
-     */
-    public OAuthCodeImpl(final String id, @NonNull final Service service, @NonNull final Authentication authentication, final ExpirationPolicy expirationPolicy,
-                         final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
+    public OAuthCodeImpl(final String id,
+                         @NonNull final Service service,
+                         @NonNull final Authentication authentication,
+                         final ExpirationPolicy expirationPolicy,
+                         final TicketGrantingTicket ticketGrantingTicket,
+                         final Collection<String> scopes) {
         super(id, expirationPolicy);
         this.service = service;
         this.authentication = authentication;

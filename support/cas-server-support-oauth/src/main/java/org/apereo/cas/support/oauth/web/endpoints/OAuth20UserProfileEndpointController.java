@@ -66,7 +66,6 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         super(servicesManager, ticketRegistry, validator, accessTokenFactory, principalFactory,
                 webApplicationServiceServiceFactory, scopeToAttributesFilter, casProperties, cookieGenerator);
         this.userProfileViewRenderer = userProfileViewRenderer;
-
         this.userProfileDataCreator = userProfileDataCreator;
     }
 
@@ -83,24 +82,31 @@ public class OAuth20UserProfileEndpointController extends BaseOAuth20Controller 
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
         final J2EContext context = Pac4jUtils.getPac4jJ2EContext(request, response);
-            
+        
         final String accessToken = getAccessTokenFromRequest(request);
         if (StringUtils.isBlank(accessToken)) {
-            LOGGER.error("Missing [{}]", OAuth20Constants.ACCESS_TOKEN);
+            LOGGER.error("Missing [{}] from the request", OAuth20Constants.ACCESS_TOKEN);
             return buildUnauthorizedResponseEntity(OAuth20Constants.MISSING_ACCESS_TOKEN);
         }
 
         final AccessToken accessTokenTicket = this.ticketRegistry.getTicket(accessToken, AccessToken.class);
-        if (accessTokenTicket == null || accessTokenTicket.isExpired()) {
-            LOGGER.error("Expired/Missing access token: [{}]", accessToken);
+        if (accessTokenTicket == null) {
+            LOGGER.error("Access token [{}] cannot be found in the ticket registry.", accessToken);
+            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+        }
+        if (accessTokenTicket.isExpired()) {
+            LOGGER.error("Access token [{}] has expired and will be removed from the ticket registry", accessToken);
+            this.ticketRegistry.deleteTicket(accessToken);
             return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
         }
 
-        final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
-        if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
-            LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
-            this.ticketRegistry.deleteTicket(accessToken);
-            return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+        if (casProperties.getLogout().isRemoveDescendantTickets()) {
+            final TicketGrantingTicket ticketGrantingTicket = accessTokenTicket.getTicketGrantingTicket();
+            if (ticketGrantingTicket == null || ticketGrantingTicket.isExpired()) {
+                LOGGER.error("Ticket granting ticket [{}] parenting access token [{}] has expired or is not found", ticketGrantingTicket, accessTokenTicket);
+                this.ticketRegistry.deleteTicket(accessToken);
+                return buildUnauthorizedResponseEntity(OAuth20Constants.EXPIRED_ACCESS_TOKEN);
+            }
         }
         updateAccessTokenUsage(accessTokenTicket);
 

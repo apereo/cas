@@ -1,6 +1,10 @@
 package org.apereo.cas.config;
 
+import com.google.common.base.Predicate;
+import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.DefaultMultifactorTriggerSelectionStrategy;
 import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
@@ -12,20 +16,24 @@ import org.apereo.cas.authentication.principal.ShibbolethCompatiblePersistentIdG
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.authentication.principal.WebApplicationServiceResponseBuilder;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mfa.MultifactorAuthenticationProperties;
+import org.apereo.cas.services.ChainingServiceRegistry;
+import org.apereo.cas.services.DefaultServiceRegistryExecutionPlan;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DomainServicesManager;
+import org.apereo.cas.services.ImmutableServiceRegistry;
 import org.apereo.cas.services.InMemoryServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyAuditableEnforcer;
 import org.apereo.cas.services.RegisteredServiceCipherExecutor;
 import org.apereo.cas.services.RegisteredServicesEventListener;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.replication.RegisteredServiceReplicationStrategy;
 import org.apereo.cas.services.util.DefaultRegisteredServiceCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -62,15 +70,13 @@ public class CasCoreServicesConfiguration {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    private ObjectProvider<List<ServiceRegistryExecutionPlanConfigurer>> serviceRegistryDaoConfigurers;
+
     @RefreshScope
     @Bean
     public MultifactorTriggerSelectionStrategy defaultMultifactorTriggerSelectionStrategy() {
-
-        final MultifactorAuthenticationProperties mfa = casProperties.getAuthn().getMfa();
-        final String attributeNameTriggers = mfa.getGlobalPrincipalAttributeNameTriggers();
-        final String requestParameter = mfa.getRequestParameter();
-
-        return new DefaultMultifactorTriggerSelectionStrategy(attributeNameTriggers, requestParameter);
+        return new DefaultMultifactorTriggerSelectionStrategy(casProperties.getAuthn().getMfa());
     }
 
     @RefreshScope
@@ -109,16 +115,16 @@ public class CasCoreServicesConfiguration {
     @ConditionalOnMissingBean(name = "servicesManager")
     @Bean
     @RefreshScope
-    public ServicesManager servicesManager(@Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
+    public ServicesManager servicesManager(@Qualifier("serviceRegistry") final ServiceRegistry serviceRegistry) {
         switch (casProperties.getServiceRegistry().getManagementType()) {
             case DOMAIN:
                 LOGGER.debug("Managing CAS service definitions via domains");
-                return new DomainServicesManager(serviceRegistryDao, eventPublisher);
+                return new DomainServicesManager(serviceRegistry, eventPublisher);
             case DEFAULT:
             default:
                 break;
         }
-        return new DefaultServicesManager(serviceRegistryDao, eventPublisher);
+        return new DefaultServicesManager(serviceRegistry, eventPublisher);
     }
 
     @Bean
@@ -134,19 +140,31 @@ public class CasCoreServicesConfiguration {
         return new NoOpRegisteredServiceReplicationStrategy();
     }
 
-    @ConditionalOnMissingBean(name = "serviceRegistryDao")
+    @ConditionalOnMissingBean(name = "serviceRegistry")
     @Bean
     @RefreshScope
-    public ServiceRegistryDao serviceRegistryDao() {
-        LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
-            + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
-            + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
+    public ServiceRegistry serviceRegistry() {
+        final List<ServiceRegistryExecutionPlanConfigurer> configurers = ObjectUtils.defaultIfNull(serviceRegistryDaoConfigurers.getIfAvailable(), new ArrayList<>(0));
+        final DefaultServiceRegistryExecutionPlan plan = new DefaultServiceRegistryExecutionPlan();
+        configurers.forEach(c -> {
+            final String name = StringUtils.removePattern(c.getClass().getSimpleName(), "\\$.+");
+            LOGGER.debug("Configuring service registry [{}]", name);
+            c.configureServiceRegistry(plan);
+        });
 
-        final List<RegisteredService> services = new ArrayList<>();
-        if (applicationContext.containsBean("inMemoryRegisteredServices")) {
-            services.addAll(applicationContext.getBean("inMemoryRegisteredServices", List.class));
-            LOGGER.debug("Found a list of registered services in the application context. Registering services [{}]", services);
+        final Predicate filter = Predicates.not(Predicates.instanceOf(ImmutableServiceRegistry.class));
+        if (plan.getServiceRegistries(filter).isEmpty()) {
+            final List<RegisteredService> services = new ArrayList<>();
+            LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and persisting service definitions. "
+                + "Changes that are made to service definitions during runtime WILL be LOST when the web server is restarted. "
+                + "Ideally for production, you need to choose a storage option (JDBC, etc) to store and track service definitions.");
+            if (applicationContext.containsBean("inMemoryRegisteredServices")) {
+                services.addAll(applicationContext.getBean("inMemoryRegisteredServices", List.class));
+                LOGGER.debug("Found a list of registered services in the application context. Registering services [{}]", services);
+            }
+            plan.registerServiceRegistry(new InMemoryServiceRegistry(services));
         }
-        return new InMemoryServiceRegistry(services);
+        
+        return new ChainingServiceRegistry(plan.getServiceRegistries());
     }
 }

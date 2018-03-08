@@ -19,8 +19,8 @@ public class DefaultServicesManager extends AbstractServicesManager {
 
     private Set<RegisteredService> orderedServices = new ConcurrentSkipListSet<>();
 
-    public DefaultServicesManager(final ServiceRegistryDao serviceRegistryDao, final ApplicationEventPublisher eventPublisher) {
-        super(serviceRegistryDao, eventPublisher);
+    public DefaultServicesManager(final ServiceRegistry serviceRegistry, final ApplicationEventPublisher eventPublisher) {
+        super(serviceRegistry, eventPublisher);
     }
 
     @Override

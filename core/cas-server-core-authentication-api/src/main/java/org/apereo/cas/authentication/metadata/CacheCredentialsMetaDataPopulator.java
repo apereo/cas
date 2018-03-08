@@ -32,13 +32,14 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        final Credential credential = transaction.getCredential();
-        LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
-        final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
-        final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());
-        builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
-        LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
-            UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+        transaction.getCredential().ifPresent(credential -> {
+            LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
+            final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
+            final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());
+            builder.addAttribute(UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD, psw);
+            LOGGER.debug("Credential is added as the authentication attribute [{}] to the authentication",
+                UsernamePasswordCredential.AUTHENTICATION_ATTRIBUTE_PASSWORD);
+        });
     }
 
     @Override

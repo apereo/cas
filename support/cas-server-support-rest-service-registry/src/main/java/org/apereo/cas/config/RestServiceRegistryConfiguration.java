@@ -5,8 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
-import org.apereo.cas.services.RestServiceRegistryDao;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.RestServiceRegistry;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.EncodingUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,16 +31,14 @@ import java.nio.charset.StandardCharsets;
 @Configuration("restServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class RestServiceRegistryConfiguration {
-
-
+public class RestServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
     @SneakyThrows
-    public ServiceRegistryDao serviceRegistryDao() {
+    public ServiceRegistry restfulServiceRegistry() {
 
         final ServiceRegistryProperties registry = casProperties.getServiceRegistry();
         final RestTemplate restTemplate = new RestTemplate();
@@ -51,7 +51,12 @@ public class RestServiceRegistryConfiguration {
             final String authHeader = "Basic " + new String(encodedAuth, StandardCharsets.UTF_8);
             headers.put("Authorization", CollectionUtils.wrap(authHeader));
         }
-        return new RestServiceRegistryDao(restTemplate, registry.getRest().getUrl(), headers);
+        return new RestServiceRegistry(restTemplate, registry.getRest().getUrl(), headers);
 
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(restfulServiceRegistry());
     }
 }

@@ -39,15 +39,15 @@ public abstract class AbstractServicesManager implements ServicesManager {
     
     private static final long serialVersionUID = -8581398063126547772L;
 
-    private final ServiceRegistryDao serviceRegistryDao;
+    private final ServiceRegistry serviceRegistry;
 
     private final transient ApplicationEventPublisher eventPublisher;
 
     private Map<Long, RegisteredService> services = new ConcurrentHashMap<>();
 
-    public AbstractServicesManager(final ServiceRegistryDao serviceRegistryDao,
+    public AbstractServicesManager(final ServiceRegistry serviceRegistry,
                                    final ApplicationEventPublisher eventPublisher) {
-        this.serviceRegistryDao = serviceRegistryDao;
+        this.serviceRegistry = serviceRegistry;
         this.eventPublisher = eventPublisher;
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     public synchronized RegisteredService delete(final RegisteredService service) {
         if (service != null) {
             publishEvent(new CasRegisteredServicePreDeleteEvent(this, service));
-            this.serviceRegistryDao.delete(service);
+            this.serviceRegistry.delete(service);
             this.services.remove(service.getId());
             deleteInternal(service);
             publishEvent(new CasRegisteredServiceDeletedEvent(this, service));
@@ -169,7 +169,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     public synchronized RegisteredService save(final RegisteredService registeredService, final boolean publishEvent) {
         publishEvent(new CasRegisteredServicePreSaveEvent(this, registeredService));
-        final RegisteredService r = this.serviceRegistryDao.save(registeredService);
+        final RegisteredService r = this.serviceRegistry.save(registeredService);
         this.services.put(r.getId(), r);
         saveInternal(registeredService);
 
@@ -187,8 +187,8 @@ public abstract class AbstractServicesManager implements ServicesManager {
     @Override
     @PostConstruct
     public void load() {
-        LOGGER.debug("Loading services from [{}]", this.serviceRegistryDao);
-        this.services = this.serviceRegistryDao.load()
+        LOGGER.debug("Loading services from [{}]", this.serviceRegistry);
+        this.services = this.serviceRegistry.load()
                 .stream()
                 .collect(Collectors.toConcurrentMap(r -> {
                     LOGGER.debug("Adding registered service [{}]", r.getServiceId());
@@ -197,7 +197,7 @@ public abstract class AbstractServicesManager implements ServicesManager {
         loadInternal();
         publishEvent(new CasRegisteredServicesLoadedEvent(this, getAllServices()));
         evaluateExpiredServiceDefinitions();
-        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistryDao.getName());
+        LOGGER.info("Loaded [{}] service(s) from [{}].", this.services.size(), this.serviceRegistry.getName());
     }
 
     private void evaluateExpiredServiceDefinitions() {

@@ -28,7 +28,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
 
     @Override
     public ModelAndView resolve(final J2EContext context, final OAuthRegisteredService service) {
-        final Object bypassApprovalParameter = context.getSessionAttribute(OAuth20Constants.BYPASS_APPROVAL_PROMPT);
+        final Object bypassApprovalParameter = context.getSessionStore().get(context, OAuth20Constants.BYPASS_APPROVAL_PROMPT);
         LOGGER.debug("Bypassing approval prompt for service [{}]: [{}]", service, bypassApprovalParameter);
 
         /*
@@ -60,7 +60,7 @@ public class OAuth20ConsentApprovalViewResolver implements ConsentApprovalViewRe
      */
     protected ModelAndView redirectToApproveView(final J2EContext ctx, final OAuthRegisteredService svc) {
         final String callbackUrl = ctx.getFullRequestURL();
-        ctx.setSessionAttribute(OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE);
+        ctx.getSessionStore().set(ctx, OAuth20Constants.BYPASS_APPROVAL_PROMPT, Boolean.TRUE);
         LOGGER.debug("callbackUrl: [{}]", callbackUrl);
 
         final Map<String, Object> model = new HashMap<>();

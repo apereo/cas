@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import java.util.Collection;
+
 /**
  * General contract that allows one to determine whether
  * a particular YubiKey account
@@ -37,4 +39,11 @@ public interface YubiKeyAccountRegistry {
      * @return the boolean
      */
     boolean registerAccountFor(String uid, String token);
+    
+    /**
+     * Gets accounts for all users.
+     *
+     * @return the accounts
+     */
+    Collection<YubiKeyAccount> getAccounts();
 }

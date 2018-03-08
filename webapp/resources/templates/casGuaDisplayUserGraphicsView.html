@@ -2,17 +2,21 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.login.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.login.pagetitle}">Gua Display User Graphics View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
-    <div class="box fl-panel" id="login">
-
-        <div class="alert alert-warning fade in" role="alert">
-            <h4 th:text="${guaUsername}"/>
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <div class="alert alert-warning" role="alert">
+            <h4 th:text="${guaUsername}">guaUsername</h4>
             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-            <strong th:utext="#{screen.gua.confirm.message}"/>
+            <strong th:utext="#{screen.gua.confirm.message}">If you do not recognize this image as yours, do NOT
+                continue.</strong>
         </div>
 
         <div align="middle">
@@ -24,20 +28,18 @@
             <div>
                 <p/>
             </div>
-            
+
             <form method="post" id="fm1" class="fm-v clearfix">
-                <input class="btn-submit" name="_eventId_submit" accesskey="l"
-                       th:value="#{screen.button.continue}" tabindex="4" type="submit"/>
+                <input class="btn btn-submit" name="_eventId_submit" accesskey="l"
+                       th:value="#{screen.button.continue}" tabindex="4" type="submit" value="Continue"/>
                 <div class="row btn-row">
                     <input type="hidden" name="username" th:value="${guaUsername}"/>
                     <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
                 </div>
             </form>
         </div>
-
-        
     </div>
-</div>
+</main>
 </body>
 
 </html>

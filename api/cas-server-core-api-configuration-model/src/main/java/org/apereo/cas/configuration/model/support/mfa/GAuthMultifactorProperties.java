@@ -1,16 +1,18 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link GAuthMultifactorProperties}.
@@ -83,6 +85,12 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
     private Rest rest = new Rest();
 
     /**
+     * Crypto settings that sign/encrypt the records.
+     */
+    @NestedConfigurationProperty
+    private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+    /**
      * Control how stale expired tokens should be cleared from the underlying store.
      */
     @NestedConfigurationProperty
@@ -130,22 +138,7 @@ public class GAuthMultifactorProperties extends BaseMultifactorProviderPropertie
 
     @Getter
     @Setter
-    public static class Jpa implements Serializable {
-
+    public static class Jpa extends AbstractJpaProperties {
         private static final long serialVersionUID = -2689797889546802618L;
-
-        /**
-         * Database instance where tokens are kept to prevent replay attacks.
-         */
-        private Database database = new Database();
-
-        public static class Database extends AbstractJpaProperties {
-
-            private static final long serialVersionUID = -7446381055350251885L;
-
-            public Database() {
-                super.setUrl("jdbc:hsqldb:mem:cas-gauth");
-            }
-        }
     }
 }

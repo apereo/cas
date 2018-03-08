@@ -6,13 +6,14 @@ import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.services.ServiceRegistryProperties;
 import org.apereo.cas.configuration.model.support.services.json.JsonServiceRegistryProperties;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
 import org.apereo.cas.services.ServiceRegistryInitializer;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistryDao;
+import org.apereo.cas.services.resource.AbstractResourceBasedServiceRegistry;
 import org.apereo.cas.services.util.CasAddonsRegisteredServicesJsonSerializer;
 import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.apereo.cas.util.CollectionUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingClass;
@@ -35,11 +36,10 @@ import java.util.List;
 @Configuration("casServiceRegistryInitializationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @ConditionalOnMissingClass(value = {
-    "org.apereo.cas.services.JsonServiceRegistryDao",
-    "org.apereo.cas.services.YamlServiceRegistryDao"})
+    "org.apereo.cas.services.JsonServiceRegistry",
+    "org.apereo.cas.services.YamlServiceRegistry"})
 @Slf4j
 public class CasServiceRegistryInitializationConfiguration {
-
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -47,18 +47,26 @@ public class CasServiceRegistryInitializationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @RefreshScope
     @Autowired
-    @Bean
-    public ServiceRegistryInitializer serviceRegistryInitializer(@Qualifier("servicesManager") final ServicesManager servicesManager,
-                                                                 @Qualifier("serviceRegistryDao") final ServiceRegistryDao serviceRegistryDao) {
-        final ServiceRegistryProperties serviceRegistry = casProperties.getServiceRegistry();
-        final ServiceRegistryInitializer initializer =
-            new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryDao, servicesManager, serviceRegistry.isInitFromJson());
+    @Qualifier("servicesManager")
+    private ObjectProvider<ServicesManager> servicesManager;
 
-        if (serviceRegistry.isInitFromJson()) {
+    @Autowired
+    @Qualifier("serviceRegistry")
+    private ObjectProvider<ServiceRegistry> serviceRegistry;
+
+    @RefreshScope
+    @Bean
+    public ServiceRegistryInitializer serviceRegistryInitializer() {
+        final ServiceRegistryProperties props = casProperties.getServiceRegistry();
+        final ServiceRegistry serviceRegistryInstance = serviceRegistry.getIfAvailable();
+        final ServiceRegistryInitializer initializer =
+            new ServiceRegistryInitializer(embeddedJsonServiceRegistry(), serviceRegistryInstance,
+                servicesManager.getIfAvailable(), props.isInitFromJson());
+
+        if (props.isInitFromJson()) {
             LOGGER.info("Attempting to initialize the service registry [{}] from service definition resources found at [{}]",
-                serviceRegistryDao.getName(),
+                serviceRegistryInstance.getName(),
                 getServiceRegistryInitializerServicesDirectoryResource());
         }
         initializer.initServiceRegistryIfNecessary();
@@ -68,9 +76,9 @@ public class CasServiceRegistryInitializationConfiguration {
     @RefreshScope
     @Bean
     @SneakyThrows
-    public ServiceRegistryDao embeddedJsonServiceRegistry() {
+    public ServiceRegistry embeddedJsonServiceRegistry() {
         final Resource location = getServiceRegistryInitializerServicesDirectoryResource();
-        return new EmbeddedServiceRegistryDao(eventPublisher, location);
+        return new EmbeddedServiceRegistry(eventPublisher, location);
     }
 
     private Resource getServiceRegistryInitializerServicesDirectoryResource() {
@@ -82,8 +90,8 @@ public class CasServiceRegistryInitializationConfiguration {
      * The embedded service registry that processes built-in JSON service files
      * on the classpath.
      */
-    public static class EmbeddedServiceRegistryDao extends AbstractResourceBasedServiceRegistryDao {
-        EmbeddedServiceRegistryDao(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
+    public static class EmbeddedServiceRegistry extends AbstractResourceBasedServiceRegistry {
+        EmbeddedServiceRegistry(final ApplicationEventPublisher publisher, final Resource location) throws Exception {
             super(location, getRegisteredServiceSerializers(), publisher);
         }
 

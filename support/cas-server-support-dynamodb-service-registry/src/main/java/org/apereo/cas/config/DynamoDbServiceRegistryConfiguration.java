@@ -6,9 +6,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.dynamodb.DynamoDbServiceRegistryProperties;
 import org.apereo.cas.dynamodb.AmazonDynamoDbClientFactory;
-import org.apereo.cas.services.DynamoDbServiceRegistryDao;
+import org.apereo.cas.services.DynamoDbServiceRegistry;
 import org.apereo.cas.services.DynamoDbServiceRegistryFacilitator;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -24,7 +26,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration("dynamoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class DynamoDbServiceRegistryConfiguration {
+public class DynamoDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -36,8 +38,14 @@ public class DynamoDbServiceRegistryConfiguration {
     }
 
     @Bean
-    public ServiceRegistryDao serviceRegistryDao() {
-        return new DynamoDbServiceRegistryDao(dynamoDbServiceRegistryFacilitator());
+    @RefreshScope
+    public ServiceRegistry dynamoDbServiceRegistry() {
+        return new DynamoDbServiceRegistry(dynamoDbServiceRegistryFacilitator());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(dynamoDbServiceRegistry());
     }
 
     @RefreshScope
