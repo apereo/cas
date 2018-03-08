@@ -9,8 +9,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.ticket.DefaultDelegatedAuthenticationRequestTicketFactory;
-import org.apereo.cas.ticket.DelegatedAuthenticationRequestTicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.web.DelegatedClientNavigationController;
@@ -20,6 +20,7 @@ import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
 import org.apereo.cas.web.flow.SAML2ClientLogoutAction;
+import org.apereo.cas.web.pac4j.DelegatedSessionCookieManager;
 import org.apereo.cas.web.saml2.Saml2ClientMetadataController;
 import org.pac4j.core.client.Clients;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class Pac4jWebflowConfiguration {
     @Autowired
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
+
     @Autowired
     @Qualifier("registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer")
     private AuditableExecution registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
@@ -99,6 +100,10 @@ public class Pac4jWebflowConfiguration {
     private ApplicationContext applicationContext;
 
     @Autowired
+    @Qualifier("pac4jDelegatedSessionCookieManager")
+    private DelegatedSessionCookieManager delegatedSessionCookieManager;
+
+    @Autowired
     @Qualifier("saml2ClientLogoutAction")
     private Action saml2ClientLogoutAction;
 
@@ -110,9 +115,8 @@ public class Pac4jWebflowConfiguration {
     @Bean
     @Lazy
     public Action saml2ClientLogoutAction() {
-        return new SAML2ClientLogoutAction(builtClients);
+        return new SAML2ClientLogoutAction(builtClients, delegatedSessionCookieManager);
     }
-
 
     @RefreshScope
     @Bean
@@ -124,13 +128,14 @@ public class Pac4jWebflowConfiguration {
             casProperties.getAuthn().getPac4j().isAutoRedirect(),
             servicesManager,
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
-            delegatedClientWebflowManager());
+            delegatedClientWebflowManager(),
+            delegatedSessionCookieManager);
     }
 
     @Bean
-    public DelegatedAuthenticationRequestTicketFactory delegatedAuthenticationRequestTicketFactory() {
+    public TransientSessionTicketFactory delegatedAuthenticationRequestTicketFactory() {
         final long delegatedAuthenticationTimeoutMins = 3;
-        return new DefaultDelegatedAuthenticationRequestTicketFactory(
+        return new DefaultTransientSessionTicketFactory(
             new HardTimeoutExpirationPolicy(TimeUnit.MINUTES.toSeconds(delegatedAuthenticationTimeoutMins))
         );
     }
@@ -168,6 +173,6 @@ public class Pac4jWebflowConfiguration {
 
     @Bean
     public DelegatedClientNavigationController delegatedClientNavigationController() {
-        return new DelegatedClientNavigationController(builtClients, delegatedClientWebflowManager());
+        return new DelegatedClientNavigationController(builtClients, delegatedClientWebflowManager(), delegatedSessionCookieManager);
     }
 }

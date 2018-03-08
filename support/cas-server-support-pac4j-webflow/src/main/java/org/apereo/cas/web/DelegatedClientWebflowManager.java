@@ -9,8 +9,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
-import org.apereo.cas.ticket.DelegatedAuthenticationRequestTicket;
-import org.apereo.cas.ticket.DelegatedAuthenticationRequestTicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
@@ -23,6 +23,7 @@ import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
 import org.springframework.webflow.execution.RequestContext;
 
+import java.io.Serializable;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,7 +42,7 @@ public class DelegatedClientWebflowManager {
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
 
     private final TicketRegistry ticketRegistry;
-    private final DelegatedAuthenticationRequestTicketFactory delegatedAuthenticationRequestTicketFactory;
+    private final TransientSessionTicketFactory transientSessionTicketFactory;
     private final String themeParamName;
     private final String localParamName;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
@@ -57,11 +58,9 @@ public class DelegatedClientWebflowManager {
      * @return the ticket
      */
     public Ticket store(final WebContext webContext, final BaseClient client) {
-        final Map<String, Object> properties = new LinkedHashMap<>();
+        final Map<String, Serializable> properties = new LinkedHashMap<>();
 
-        final String serviceParameter =
-            StringUtils.defaultIfBlank(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
-        final Service service = this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
+        final Service service = determineService(webContext);
         properties.put(CasProtocolConstants.PARAMETER_SERVICE, service);
 
         properties.put(this.themeParamName, StringUtils.defaultString(webContext.getRequestParameter(this.themeParamName)));
@@ -69,7 +68,7 @@ public class DelegatedClientWebflowManager {
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
-        final DelegatedAuthenticationRequestTicket ticket = this.delegatedAuthenticationRequestTicketFactory.create(service, properties);
+        final TransientSessionTicket ticket = this.transientSessionTicketFactory.create(service, properties);
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticket.getId(), ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
@@ -86,12 +85,19 @@ public class DelegatedClientWebflowManager {
         if (client instanceof OidcClient) {
             final OidcClient oidcClient = (OidcClient) client;
             oidcClient.getConfiguration().setCustomParams(CollectionUtils.wrap(PARAMETER_CLIENT_ID, ticket.getId()));
+            oidcClient.getConfiguration().setWithState(true);
+            oidcClient.getConfiguration().setStateData(ticket.getId());
         }
         if (client instanceof CasClient) {
             final CasClient casClient = (CasClient) client;
             casClient.getConfiguration().addCustomParam(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
         }
         return ticket;
+    }
+
+    private Service determineService(final WebContext ctx) {
+        final String serviceParameter = StringUtils.defaultIfBlank(ctx.getRequestParameter(CasProtocolConstants.PARAMETER_SERVICE), casLoginEndpoint);
+        return this.authenticationRequestServiceSelectionStrategies.resolveService(webApplicationServiceFactory.createService(serviceParameter));
     }
 
     /**
@@ -104,7 +110,7 @@ public class DelegatedClientWebflowManager {
      */
     public Service retrieve(final RequestContext requestContext, final WebContext webContext, final BaseClient client) {
         final String clientId = getDelegatedClientId(webContext, client);
-        final DelegatedAuthenticationRequestTicket ticket = this.ticketRegistry.getTicket(clientId, DelegatedAuthenticationRequestTicket.class);
+        final TransientSessionTicket ticket = this.ticketRegistry.getTicket(clientId, TransientSessionTicket.class);
         if (ticket == null) {
             LOGGER.error("Delegated client identifier cannot be located in the authentication request [{}]", webContext.getFullRequestURL());
             throw new UnauthorizedServiceException(UnauthorizedServiceException.CODE_UNAUTHZ_SERVICE, StringUtils.EMPTY);
@@ -121,7 +127,8 @@ public class DelegatedClientWebflowManager {
         return ticket.getService();
     }
 
-    private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext, final DelegatedAuthenticationRequestTicket ticket) {
+    private Service restoreDelegatedAuthenticationRequest(final RequestContext requestContext, final WebContext webContext,
+                                                          final TransientSessionTicket ticket) {
         final Service service = ticket.getService();
         LOGGER.debug("Restoring requested service [{}] back in the authentication flow", service);
 
