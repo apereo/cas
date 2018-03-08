@@ -13,7 +13,6 @@ import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
 
@@ -84,13 +83,13 @@ public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     public Collection<YubiKeyAccount> getAccounts() {
         try {
             return this.entityManager.createQuery(SELECT_QUERY, YubiKeyAccount.class)
-                    .getResultList()
-                    .stream()
-                    .map(it -> {
-                        it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
-                        return it;
-                    })
-                    .collect(toList());
+                .getResultList()
+                .stream()
+                .map(it -> {
+                    it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
+                    return it;
+                })
+                .collect(toList());
         } catch (final NoResultException e) {
             LOGGER.debug("No registration record could be found");
         } catch (final Exception e) {
