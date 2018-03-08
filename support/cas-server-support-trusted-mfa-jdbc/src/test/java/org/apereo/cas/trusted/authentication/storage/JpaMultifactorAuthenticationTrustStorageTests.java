@@ -50,6 +50,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
     private static final String PRINCIPAL = "principal";
     private static final String PRINCIPAL2 = "principal2";
     private static final String GEOGRAPHY = "geography";
+    private static final String DEVICE_FINGERPRINT = "deviceFingerprint";
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -61,8 +62,8 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
     @Test
     public void verifyExpireByKey() {
         // create 2 records
-        mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY));
-        mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY));
+        mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
+        mfaTrustEngine.set(MultifactorAuthenticationTrustRecord.newInstance(PRINCIPAL, GEOGRAPHY, DEVICE_FINGERPRINT));
         final Set<MultifactorAuthenticationTrustRecord> records = mfaTrustEngine.get(PRINCIPAL);
         assertEquals(2, records.size());
 
@@ -79,7 +80,7 @@ public class JpaMultifactorAuthenticationTrustStorageTests {
         Stream.of(PRINCIPAL, PRINCIPAL2).forEach(p -> {
             for (int offset = 0; offset < 3; offset++) {
                 final MultifactorAuthenticationTrustRecord record =
-                        MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY);
+                        MultifactorAuthenticationTrustRecord.newInstance(p, GEOGRAPHY, DEVICE_FINGERPRINT);
                 record.setRecordDate(LocalDate.now().minusDays(offset));
                 mfaTrustEngine.set(record);
             }
