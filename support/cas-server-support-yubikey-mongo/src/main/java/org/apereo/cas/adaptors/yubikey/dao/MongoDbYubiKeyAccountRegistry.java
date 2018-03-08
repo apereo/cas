@@ -11,6 +11,8 @@ import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Collection;
 
+import static java.util.stream.Collectors.toList;
+
 /**
  * This is {@link MongoDbYubiKeyAccountRegistry}.
  *
@@ -19,13 +21,14 @@ import java.util.Collection;
  */
 @Slf4j
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
+
     private final String collectionName;
+
     private final MongoOperations mongoTemplate;
 
     public MongoDbYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator,
                                          final MongoOperations mongoTemplate, final String collectionName) {
         super(accountValidator);
-
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
@@ -40,7 +43,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
         final Query query = new Query();
-        query.addCriteria(Criteria.where("username").is(uid).and("publicId").is(yubikeyPublicId));
+        query.addCriteria(Criteria.where("username").is(uid).and("publicId").is(getCipherExecutor().encode(yubikeyPublicId)));
         return this.mongoTemplate.count(query, YubiKeyAccount.class, this.collectionName) > 0;
     }
 
@@ -49,7 +52,7 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
             final YubiKeyAccount account = new YubiKeyAccount();
-            account.setPublicId(yubikeyPublicId);
+            account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
 
             this.mongoTemplate.save(account, this.collectionName);
@@ -60,6 +63,12 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     @Override
     public Collection<YubiKeyAccount> getAccounts() {
-        return this.mongoTemplate.findAll(YubiKeyAccount.class, this.collectionName);
+        return this.mongoTemplate.findAll(YubiKeyAccount.class, this.collectionName)
+                .stream()
+                .map(it -> {
+                    it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
+                    return it;
+                })
+                .collect(toList());
     }
 }
