@@ -22,7 +22,6 @@ import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.GeographyDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -129,7 +128,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "trusted authentication records for MFA");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
