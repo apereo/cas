@@ -32,6 +32,8 @@ import org.pac4j.core.credentials.Credentials;
 import org.pac4j.core.exception.HttpAction;
 import org.pac4j.core.profile.CommonProfile;
 import org.pac4j.core.redirect.RedirectAction;
+import org.pac4j.oidc.client.OidcClient;
+import org.pac4j.oidc.config.OidcConfiguration;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
@@ -39,12 +41,16 @@ import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
+import com.nimbusds.oauth2.sdk.id.State;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -71,6 +77,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      */
     public static final String PAC4J_URLS = "pac4jUrls";
 
+    private static final String OIDC_CLIENT_STATES = "oidcClientStates";
     private static final Pattern PAC4J_CLIENT_SUFFIX_PATTERN = Pattern.compile("Client\\d*");
     private static final Pattern PAC4J_CLIENT_CSS_CLASS_SUBSTITUTION_PATTERN = Pattern.compile("\\W");
 
@@ -92,7 +99,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
 
-        final String clientName = request.getParameter(this.clients.getClientNameParameter());
+        final String clientName = resolveClientNameFromRequest(request);
         LOGGER.debug("Delegated authentication is handled by client name [{}]", clientName);
         if (hasDelegationRequestFailed(request, response.getStatus()).isPresent()) {
             return stopWebflow();
@@ -134,6 +141,39 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
             }
         }
         return error();
+    }
+
+    private String resolveClientNameFromRequest(final HttpServletRequest request) {
+        String clientName = request.getParameter(this.clients.getClientNameParameter());
+        final HttpSession session = request.getSession();
+        if (StringUtils.isBlank(clientName)) {
+            String state = request.getParameter(OidcConfiguration.STATE);
+            if (StringUtils.isNotBlank(state)) {
+                LOGGER.debug("Resolving client_name from Oidc state {}", state);
+                Object fromSession = session.getAttribute(OIDC_CLIENT_STATES);
+                if (fromSession instanceof List) {
+                    List<String> oidcClientStatesFromSession = (List<String>) fromSession;
+                    if (oidcClientStatesFromSession != null && oidcClientStatesFromSession.contains(state)) {
+                        clientName = (String) session.getAttribute(state);
+                    }
+                } else {
+                    LOGGER.warn("Invalid value {} stored with attribute {}", String.valueOf(fromSession), OIDC_CLIENT_STATES);
+                }
+            } else {
+                LOGGER.debug("No state query param present");
+            }
+        }
+        clearOidcStateFromSession(session);
+        return clientName;
+    }
+
+    private static void clearOidcStateFromSession(final HttpSession session) {
+        Object fromSession = session.getAttribute(OIDC_CLIENT_STATES);
+        if (fromSession instanceof List) {
+            List<String> oidcClientStatesFromSession = (List<String>) fromSession;
+            oidcClientStatesFromSession.forEach(session::removeAttribute);
+        }
+        session.removeAttribute(OIDC_CLIENT_STATES);
     }
 
     private Service restoreAuthenticationRequestInContext(final RequestContext context, final HttpServletRequest request) {
@@ -183,6 +223,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         rememberAuthenticationRequest(service, request);
 
         final Set<ProviderLoginPageConfiguration> urls = new LinkedHashSet<>();
+        List<String> oidcClientStates = new ArrayList<>();
+        final HttpSession session = request.getSession();
         this.clients.findAllClients()
             .stream()
             .filter(client -> client instanceof IndirectClient && isDelegatedClientAuthorizedForService(client, service))
@@ -191,10 +233,14 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
                 try {
                     final Optional<ProviderLoginPageConfiguration> provider = buildProviderConfiguration(client, webContext);
                     provider.ifPresent(urls::add);
+                    handleOidcClient(client, session, webContext, oidcClientStates);
                 } catch (final Exception e) {
                     LOGGER.error("Cannot process client [{}]", client, e);
                 }
             });
+        if (!oidcClientStates.isEmpty()) {
+            session.setAttribute(OIDC_CLIENT_STATES, oidcClientStates);
+        }
         if (!urls.isEmpty()) {
             context.getFlowScope().put(PAC4J_URLS, urls);
         } else if (response.getStatus() != HttpStatus.UNAUTHORIZED.value()) {
@@ -203,7 +249,19 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         }
     }
 
-    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient client, final WebContext webContext) {
+    /**
+     * Azure AD OidcClient does not send client_name query param back with reply URL
+     * so save the client_name with state to session
+     */
+    private void handleOidcClient(final IndirectClient<Credentials, CommonProfile> client, final HttpSession session, final WebContext webContext, final List<String> oidcClientStates) {
+        if (client instanceof OidcClient) {
+            State state = (State) webContext.getSessionAttribute(OidcConfiguration.STATE_SESSION_ATTRIBUTE);
+            session.setAttribute(state.getValue(), client.getName());
+            oidcClientStates.add(state.getValue());
+        }
+    }
+
+    private Optional<ProviderLoginPageConfiguration> buildProviderConfiguration(final IndirectClient<Credentials, CommonProfile> client, final WebContext webContext) {
         try {
             final String name = client.getName();
             final Matcher matcher = PAC4J_CLIENT_SUFFIX_PATTERN.matcher(client.getClass().getSimpleName());
