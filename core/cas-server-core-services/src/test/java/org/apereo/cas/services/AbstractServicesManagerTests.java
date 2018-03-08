@@ -22,7 +22,7 @@ public abstract class AbstractServicesManagerTests {
 
 
     private static final String TEST = "test";
-    protected ServiceRegistryDao serviceRegistryDao;
+    protected ServiceRegistry serviceRegistry;
     protected ServicesManager servicesManager;
     protected final List<RegisteredService> listOfDefaultServices = new ArrayList<>();
 
@@ -37,16 +37,16 @@ public abstract class AbstractServicesManagerTests {
 
     @Before
     public void setUp() {
-        this.serviceRegistryDao = getServiceRegistryInstance();
+        this.serviceRegistry = getServiceRegistryInstance();
         this.servicesManager = getServicesManagerInstance();
         this.servicesManager.load();
     }
 
     protected ServicesManager getServicesManagerInstance() {
-        return new DefaultServicesManager(serviceRegistryDao, mock(ApplicationEventPublisher.class));
+        return new DefaultServicesManager(serviceRegistry, mock(ApplicationEventPublisher.class));
     }
 
-    protected ServiceRegistryDao getServiceRegistryInstance() {
+    protected ServiceRegistry getServiceRegistryInstance() {
         return new InMemoryServiceRegistry(listOfDefaultServices);
     }
 

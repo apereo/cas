@@ -73,10 +73,14 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
     @Getter
     private enum SsoSessionAttributeKeys {
 
-        AUTHENTICATED_PRINCIPAL("authenticated_principal"), PRINCIPAL_ATTRIBUTES("principal_attributes"),
-        AUTHENTICATION_DATE("authentication_date"), AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
-        TICKET_GRANTING_TICKET("ticket_granting_ticket"), AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
-        PROXIED_BY("proxied_by"), AUTHENTICATED_SERVICES("authenticated_services"),
+        AUTHENTICATED_PRINCIPAL("authenticated_principal"),
+        PRINCIPAL_ATTRIBUTES("principal_attributes"),
+        AUTHENTICATION_DATE("authentication_date"),
+        AUTHENTICATION_DATE_FORMATTED("authentication_date_formatted"),
+        TICKET_GRANTING_TICKET("ticket_granting_ticket"),
+        AUTHENTICATION_ATTRIBUTES("authentication_attributes"),
+        PROXIED_BY("proxied_by"),
+        AUTHENTICATED_SERVICES("authenticated_services"),
         IS_PROXIED("is_proxied"),
         NUMBER_OF_USES("number_of_uses");
 
@@ -115,23 +119,23 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
                 final Authentication authentication = tgt.getAuthentication();
                 final Principal principal = authentication.getPrincipal();
                 final Map<String, Object> sso = new HashMap<>(SsoSessionAttributeKeys.values().length);
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString(), principal.getId());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.toString(), authentication.getAuthenticationDate());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.toString(),
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey(), principal.getId());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE.getAttributeKey(), authentication.getAuthenticationDate());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_DATE_FORMATTED.getAttributeKey(),
                     dateFormat.format(DateTimeUtils.dateOf(authentication.getAuthenticationDate())));
-                sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.toString(), tgt.getCountOfUses());
-                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString(), tgt.getId());
-                sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.toString(), principal.getAttributes());
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.toString(), authentication.getAttributes());
+                sso.put(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey(), tgt.getCountOfUses());
+                sso.put(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey(), tgt.getId());
+                sso.put(SsoSessionAttributeKeys.PRINCIPAL_ATTRIBUTES.getAttributeKey(), principal.getAttributes());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATION_ATTRIBUTES.getAttributeKey(), authentication.getAttributes());
                 if (option != SsoSessionReportOptions.DIRECT) {
                     if (tgt.getProxiedBy() != null) {
-                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.TRUE);
-                        sso.put(SsoSessionAttributeKeys.PROXIED_BY.toString(), tgt.getProxiedBy().getId());
+                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.TRUE);
+                        sso.put(SsoSessionAttributeKeys.PROXIED_BY.getAttributeKey(), tgt.getProxiedBy().getId());
                     } else {
-                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.toString(), Boolean.FALSE);
+                        sso.put(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey(), Boolean.FALSE);
                     }
                 }
-                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.toString(), tgt.getServices());
+                sso.put(SsoSessionAttributeKeys.AUTHENTICATED_SERVICES.getAttributeKey(), tgt.getServices());
                 activeSessions.add(sso);
             });
         return activeSessions;
@@ -170,21 +174,21 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
             long totalUsageCount = 0;
             final Set<String> uniquePrincipals = new HashSet<>();
             for (final Map<String, Object> activeSsoSession : activeSsoSessions) {
-                if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.toString())) {
-                    final Boolean isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.toString()).toString());
+                if (activeSsoSession.containsKey(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey())) {
+                    final Boolean isProxied = Boolean.valueOf(activeSsoSession.get(SsoSessionAttributeKeys.IS_PROXIED.getAttributeKey()).toString());
                     if (isProxied) {
                         totalProxyGrantingTickets++;
                     } else {
                         totalTicketGrantingTickets++;
-                        final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                        final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey()).toString();
                         uniquePrincipals.add(principal);
                     }
                 } else {
                     totalTicketGrantingTickets++;
-                    final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.toString()).toString();
+                    final String principal = activeSsoSession.get(SsoSessionAttributeKeys.AUTHENTICATED_PRINCIPAL.getAttributeKey()).toString();
                     uniquePrincipals.add(principal);
                 }
-                totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.toString()).toString());
+                totalUsageCount += Long.parseLong(activeSsoSession.get(SsoSessionAttributeKeys.NUMBER_OF_USES.getAttributeKey()).toString());
             }
             sessionsMap.put("totalProxyGrantingTickets", totalProxyGrantingTickets);
             sessionsMap.put("totalTicketGrantingTickets", totalTicketGrantingTickets);
@@ -243,7 +247,7 @@ public class SingleSignOnSessionsEndpoint extends BaseCasMvcEndpoint {
         final Map<String, String> failedTickets = new HashMap<>();
         final SsoSessionReportOptions option = SsoSessionReportOptions.valueOf(type);
         final Collection<Map<String, Object>> collection = getActiveSsoSessions(option);
-        collection.stream().map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.toString()).toString()).forEach(ticketGrantingTicket -> {
+        collection.stream().map(sso -> sso.get(SsoSessionAttributeKeys.TICKET_GRANTING_TICKET.getAttributeKey()).toString()).forEach(ticketGrantingTicket -> {
             try {
                 this.centralAuthenticationService.destroyTicketGrantingTicket(ticketGrantingTicket);
             } catch (final Exception e) {

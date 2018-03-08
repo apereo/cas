@@ -44,8 +44,8 @@ import static org.junit.Assert.*;
 @ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests {
     @Autowired
-    @Qualifier("serviceRegistryDao")
-    private ServiceRegistryDao serviceRegistryDao;
+    @Qualifier("serviceRegistry")
+    private ServiceRegistry serviceRegistry;
 
     static {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
@@ -54,8 +54,8 @@ public class DynamoDbServiceRegistryTests {
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistryDao.load();
-        services.forEach(service -> this.serviceRegistryDao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistry.load();
+        services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
@@ -63,13 +63,13 @@ public class DynamoDbServiceRegistryTests {
         final List<RegisteredService> list = new ArrayList<>();
         IntStream.range(0, 10).forEach(i -> {
             list.add(buildService(i));
-            this.serviceRegistryDao.save(list.get(i));
+            this.serviceRegistry.save(list.get(i));
         });
-        final List<RegisteredService> results = this.serviceRegistryDao.load();
+        final List<RegisteredService> results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         IntStream.range(0, 10).forEach(i -> list.contains(results.get(i)));
-        IntStream.range(0, 10).forEach(i -> this.serviceRegistryDao.delete(results.get(i)));
-        assertTrue(this.serviceRegistryDao.load().isEmpty());
+        IntStream.range(0, 10).forEach(i -> this.serviceRegistry.delete(results.get(i)));
+        assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
     private static RegisteredService buildService(final int i) {

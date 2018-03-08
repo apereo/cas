@@ -9,6 +9,9 @@ dependencies {
     implementation project(":support:cas-server-support-pac4j-core")
     implementation project(":support:cas-server-support-pac4j-core-clients")
     implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-cookie-api")
+    implementation project(":support:cas-server-support-pac4j-authentication")
     
     implementation libraries.pac4j
     implementation libraries.opensaml

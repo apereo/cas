@@ -7,6 +7,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -75,12 +76,13 @@ public class IdPInitiatedProfileHandlerController extends AbstractSamlProfileHan
                                                 final OpenSamlConfigBean configBean,
                                                 final SamlProfileObjectBuilder<Response> responseBuilder,
                                                 final CasConfigurationProperties casProperties,
-                                                final SamlObjectSignatureValidator samlObjectSignatureValidator) {
+                                                final SamlObjectSignatureValidator samlObjectSignatureValidator,
+                                                final Service callbackService) {
         super(samlObjectSigner, parserPool, authenticationSystemSupport,
                 servicesManager, webApplicationServiceFactory,
                 samlRegisteredServiceCachingMetadataResolver,
                 configBean, responseBuilder, casProperties,
-                samlObjectSignatureValidator);
+                samlObjectSignatureValidator, callbackService);
     }
 
     /**

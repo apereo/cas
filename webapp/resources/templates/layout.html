@@ -3,57 +3,37 @@
 <head>
     <meta charset="UTF-8"/>
     <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
 
     <title layout:title-pattern="$CONTENT_TITLE - $LAYOUT_TITLE">CAS &#8211; Central Authentication Service</title>
 
-
     <link rel="stylesheet" th:href="@{#{webjars.fontawesomemin.css}}"/>
-    <link type="text/css" rel="stylesheet" th:href="@{#{webjars.bootstrapmin.css}}"/>
     <link type="text/css" rel="stylesheet" th:href="@{#{webjars.latomin.css}}"/>
 
-    <link rel="stylesheet" th:href="@{${#themes.code('standard.custom.css.file')}}"/>
+    <!--/* Core CAS CSS */-->
+    <link rel="stylesheet" href="../static/css/cas.css" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon"/>
 
-    <script type="text/javascript" th:src="@{#{webjars.zxcvbn.js}}"></script>
     <script type="text/javascript" th:src="@{#{webjars.jquerymin.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.jqueryui.js}}"></script>
-    <script type="text/javascript" th:src="@{#{webjars.jquerycookie.js}}"></script>
-    <script src="//www.google.com/recaptcha/api.js" async defer th:if="${recaptchaSiteKey}"></script>
-    <script th:src="@{#{webjars.bootstrapmin.js}}"></script>
 
-    <script th:inline="javascript">
-        /*<![CDATA[*/
-
-        var trackGeoLocation = /*[[${trackGeoLocation}]]*/ === "true";
-
-        var googleAnalyticsTrackingId = /*[[${googleAnalyticsTrackingId}]]*/;
-
-        if (googleAnalyticsTrackingId != null && googleAnalyticsTrackingId != '') {
-            (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-                        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-                    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-            })(window, document, 'script', 'https://www.google-analytics.com/analytics.js', 'ga');
-
-            ga('create', googleAnalyticsTrackingId, 'auto');
-            ga('send', 'pageview');
-        }
-
-        /*]]>*/
-    </script>
 </head>
 
 <body>
-<div id="container" class="container">
-    <div th:replace="fragments/logo"/>
-    <div layout:fragment="content" id="content">
-        <h1/>
-        <p/>
-    </div>
-    <div th:replace="fragments/footer"/>
+<div th:replace="fragments/header :: header">
+    <a href="fragments/header.html">Header</a> fragment will go here
 </div>
-<div th:insert="fragments/bottom"/>
 
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="content">
+        CAS content will go here
+    </div>
+</main>
+
+<div th:replace="fragments/footer :: footer">
+    <a href="fragments/footer.html">Footer</a> fragment will go here
+</div>
+
+<script th:replace="fragments/scripts"/>
 </body>
 </html>

@@ -2,39 +2,48 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
     <title th:text="#{cas.acceptableusagepolicyview.pagetitle}"></title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
 </head>
 
 <body id="cas">
-<div layout:fragment="content">
-    <div id="login" style="width: 100%;">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login" class="card">
         <form method="post" id="fm1">
-
-            <h2>Acceptable Usage Policy</h2>
-            <div>
-                The purpose of this policy is to establish acceptable and unacceptable use of electronic devices and network resources
-                in conjunction with the established culture of ethical and lawful behavior, openness, trust, and integrity.
-                <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
+            <div class="card-header text-center">
+                <h3 th:text="screen.aup.heading">Acceptable Usage Policy</h3>
             </div>
+            <div class="card-body">
+                <div>
+                    The purpose of this policy is to establish acceptable and unacceptable use of electronic devices and
+                    network resources in conjunction with the established culture of ethical and lawful behavior,
+                    openness, trust, and
+                    integrity.
+                    <p>By using these resources, you agree to abide by the Acceptable Usage Policy.</p>
+                </div>
 
-            <section class="row btn-row">
-                <input type="hidden" name="execution" th:value="${flowExecutionKey}" />
-                <input type="hidden" name="_eventId" value="submit" />
-                <input class="btn-submit"
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+                <input type="hidden" name="_eventId" value="submit"/>
+                <input class="btn btn-primary"
                        name="submit"
                        accesskey="s"
                        th:value="#{screen.aup.button.accept}"
-                       type="submit" />
+                       value="ACCEPT"
+                       type="submit"/>
                 <input
-                        class="btn-reset"
+                        class="btn btn-default"
                         name="cancel"
                         accesskey="c"
                         th:value="#{screen.aup.button.cancel}"
+                        value="CANCEL"
                         type="button"
-                        onclick="location.href = location.href;" />
-            </section>
+                        onclick="location.href = location.href;"/>
+            </div>
         </form>
     </div>
-</div>
+</main>
 </body>
 </html>

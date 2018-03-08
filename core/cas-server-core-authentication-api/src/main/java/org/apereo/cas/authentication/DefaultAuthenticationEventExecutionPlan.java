@@ -23,6 +23,10 @@ import java.util.Set;
 public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEventExecutionPlan {
     private final List<AuthenticationMetaDataPopulator> authenticationMetaDataPopulatorList = new ArrayList<>();
     private final List<AuthenticationPostProcessor> authenticationPostProcessors = new ArrayList<>();
+
+    private final List<AuthenticationPolicy> authenticationPolicies = new ArrayList<>();
+    private final List<AuthenticationHandlerResolver> authenticationHandlerResolvers = new ArrayList<>();
+
     private final Map<AuthenticationHandler, PrincipalResolver> authenticationHandlerPrincipalResolverMap = new LinkedHashMap<>();
 
     @Override
@@ -94,6 +98,32 @@ public class DefaultAuthenticationEventExecutionPlan implements AuthenticationEv
         final List<AuthenticationPostProcessor> list = new ArrayList(this.authenticationPostProcessors);
         OrderComparator.sort(list);
         LOGGER.debug("Sorted and registered authentication post processors for this transaction are [{}]", list);
+        return list;
+    }
+
+    @Override
+    public void registerAuthenticationPolicy(final AuthenticationPolicy authenticationPolicy) {
+        this.authenticationPolicies.add(authenticationPolicy);
+    }
+
+    @Override
+    public void registerAuthenticationHandlerResolver(final AuthenticationHandlerResolver handlerResolver) {
+        this.authenticationHandlerResolvers.add(handlerResolver);
+    }
+
+    @Override
+    public Collection<AuthenticationPolicy> getAuthenticationPolicies(final AuthenticationTransaction transaction) {
+        final List<AuthenticationPolicy> list = new ArrayList(this.authenticationPolicies);
+        OrderComparator.sort(list);
+        LOGGER.debug("Sorted and registered authentication policies for this transaction are [{}]", list);
+        return list;
+    }
+
+    @Override
+    public Collection<AuthenticationHandlerResolver> getAuthenticationHandlerResolvers(final AuthenticationTransaction transaction) {
+        final List<AuthenticationHandlerResolver> list = new ArrayList(this.authenticationHandlerResolvers);
+        OrderComparator.sort(list);
+        LOGGER.debug("Sorted and registered authentication handler resolvers for this transaction are [{}]", list);
         return list;
     }
 }

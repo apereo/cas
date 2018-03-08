@@ -69,6 +69,10 @@ public class SurrogateAuthenticationConfiguration {
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
     private AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
+    @Qualifier("surrogateEligibilityAuditableExecution")
+    private AuditableExecution surrogateEligibilityAuditableExecution;
     
     @Bean
     public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
@@ -107,8 +111,13 @@ public class SurrogateAuthenticationConfiguration {
 
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
-        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService(),
-            servicesManager, eventPublisher, registeredServiceAccessStrategyEnforcer);
+        return new SurrogateAuthenticationPostProcessor(
+                new DefaultPrincipalFactory(),
+                surrogateAuthenticationService(),
+                servicesManager,
+                eventPublisher,
+                registeredServiceAccessStrategyEnforcer,
+                surrogateEligibilityAuditableExecution);
     }
 
     @Bean

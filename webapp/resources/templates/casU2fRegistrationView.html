@@ -2,26 +2,30 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
 
 <head>
-    <title th:text="#{cas.mfa.u2f.pagetitle}"></title>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{cas.mfa.u2f.pagetitle}">U2f Registration View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
     <script th:src="@{/js/u2f/u2f-api.js}"></script>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
 
         setTimeout(function () {
-            var appId =  /*[[${u2fReg.appId}]]*/ ;
-            
-            var version =  /*[[${u2fReg.version}]]*/ ;
-            
-            var challenge =  /*[[${u2fReg.challenge}]]*/ ;
-            
+            var appId =  /*[[${u2fReg.appId}]]*/;
+
+            var version =  /*[[${u2fReg.version}]]*/;
+
+            var challenge =  /*[[${u2fReg.challenge}]]*/;
+
             var registerRequests = [{version: version, challenge: challenge}];
             console.log(appId, registerRequests);
             u2f.register(appId, registerRequests, [], function (data) {
                 var form = document.getElementById('form');
                 var reg = document.getElementById('tokenResponse');
                 if (data.errorCode) {
-                    console.log("U2F failed: error " + data.errorCode);
+                    console.log('U2F failed: error ' + data.errorCode);
                     return;
                 }
                 reg.value = JSON.stringify(data);
@@ -34,28 +38,24 @@
 
 </head>
 
-<body id="cas">
-<div layout:fragment="content">
+<body>
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content" id="login">
+        <div class="alert alert-info">
+            <h3 th:text="cas.mfa.u2f.register.device">Register Device</h3>
+            <div th:utext="cas.mfa.u2f.authentication.device.message" th:replace="tag">
+                <p><strong>Please touch the flashing U2F device now.</strong></p>
+                <p> You may be prompted to allow the site permission to access your security keys. After granting
+                    permission, the device will start to blink.</p>
+            </div>
 
-
-    <div class="alert alert-info" id="login">
-        <h3>Register Device</h3>
-        <p>
-            <strong>Please touch the flashing U2F device now.</strong>
-        <p>
-            You may be prompted to allow the site permission to access your security keys. After granting permission, the device will start to blink.
-        </p>
-        </p>
-
-        <form method="POST" id="form">
-            <input type="hidden" name="tokenResponse" id="tokenResponse"/>
-            <input type="hidden" name="_eventId" value="submit"/>
-            <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
-        </form>
+            <form method="POST" id="form">
+                <input type="hidden" name="tokenResponse" id="tokenResponse"/>
+                <input type="hidden" name="_eventId" value="submit"/>
+                <input type="hidden" name="execution" th:value="${flowExecutionKey}"/>
+            </form>
+        </div>
     </div>
-
-    
-   
-</div>
+</main>
 </body>
 </html>

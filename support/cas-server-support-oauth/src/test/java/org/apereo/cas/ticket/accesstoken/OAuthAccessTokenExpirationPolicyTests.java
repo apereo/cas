@@ -1,13 +1,10 @@
 package org.apereo.cas.ticket.accesstoken;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.FileUtils;
+import org.apereo.cas.ticket.BaseOAuthExpirationPolicyTests;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.junit.Test;
-
-import java.io.File;
-import java.io.IOException;
+import org.springframework.test.context.TestPropertySource;
 
 import static org.junit.Assert.*;
 
@@ -15,14 +12,20 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Slf4j
-public class OAuthAccessTokenExpirationPolicyTests {
+@TestPropertySource(properties = "cas.logout.removeDescendantTickets=true")
+public class OAuthAccessTokenExpirationPolicyTests extends BaseOAuthExpirationPolicyTests {
+    @Test
+    public void verifyAccessTokenExpiryWhenTgtIsExpired() {
+        final TicketGrantingTicket tgt = newTicketGrantingTicket();
+        final AccessToken at = newAccessToken(tgt);
 
-    private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oAuthAccessTokenExpirationPolicy.json");
-    private static final ObjectMapper MAPPER = new ObjectMapper();
+        assertFalse("Access token should not be expired", at.isExpired());
+        tgt.markTicketExpired();
+        assertTrue("Access token should not be expired when TGT is expired", at.isExpired());
+    }
 
     @Test
-    public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws IOException {
+    public void verifySerializeAnOAuthAccessTokenExpirationPolicyToJson() throws Exception {
         final OAuthAccessTokenExpirationPolicy policyWritten = new OAuthAccessTokenExpirationPolicy(1234L, 5678L);
         MAPPER.writeValue(JSON_FILE, policyWritten);
         final ExpirationPolicy policyRead = MAPPER.readValue(JSON_FILE, OAuthAccessTokenExpirationPolicy.class);

@@ -36,8 +36,7 @@ public class DefaultOAuthCodeFactory implements OAuthCodeFactory {
     public DefaultOAuthCodeFactory(final ExpirationPolicy expirationPolicy) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
     }
-
-
+    
     @Override
     public OAuthCode create(final Service service, final Authentication authentication,
                             final TicketGrantingTicket ticketGrantingTicket, final Collection<String> scopes) {
