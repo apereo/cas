@@ -63,7 +63,7 @@ public class SpengoWebflowConfigurer extends AbstractCasWebflowConfigurer {
         transitions.add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
         transitions.add(createTransition(CasWebflowConstants.TRANSITION_ID_ERROR, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
         transitions.add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
-        spnego.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
+        spnego.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
         return spnego;
     }
 

@@ -34,7 +34,7 @@ public class TrustedAuthenticationWebflowConfigurer extends AbstractCasMultifact
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_SUCCESS, CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET);
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_ERROR, getStartState(flow).getId());
             createTransitionForState(actionState, CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, CasWebflowConstants.STATE_ID_HANDLE_AUTHN_FAILURE);
-            actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
+            actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
 
             setStartState(flow, actionState);
         }
