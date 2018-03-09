@@ -7,6 +7,8 @@ import org.apereo.cas.support.oauth.web.flow.OAuth20RegisteredServiceUIAction;
 import org.apereo.cas.support.oauth.web.flow.OAuth20WebflowConfigurer;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -28,7 +30,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casOAuthWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasOAuthWebflowConfiguration {
+public class CasOAuthWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -59,10 +61,9 @@ public class CasOAuthWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer oauth20LogoutWebflowConfigurer() {
-        final OAuth20WebflowConfigurer c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, 
+        final OAuth20WebflowConfigurer c = new OAuth20WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 oauth20RegisteredServiceUIAction(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(this.logoutFlowDefinitionRegistry);
-        c.initialize();
         return c;
     }
 
@@ -70,5 +71,10 @@ public class CasOAuthWebflowConfiguration {
     @Bean
     public Action oauth20RegisteredServiceUIAction() {
         return new OAuth20RegisteredServiceUIAction(this.servicesManager, oauth20AuthenticationServiceSelectionStrategy);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(oauth20LogoutWebflowConfigurer());
     }
 }
