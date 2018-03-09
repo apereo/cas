@@ -258,4 +258,8 @@ public interface CasWebflowConfigurer extends Ordered {
      * @return the flow
      */
     Flow buildFlow(String location, String id);
+
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

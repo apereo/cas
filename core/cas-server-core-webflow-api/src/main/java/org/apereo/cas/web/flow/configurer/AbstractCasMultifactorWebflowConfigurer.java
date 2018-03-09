@@ -7,6 +7,7 @@ import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.springframework.binding.mapping.Mapper;
 import org.springframework.binding.mapping.impl.DefaultMapping;
 import org.springframework.context.ApplicationContext;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.definition.FlowDefinition;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.Flow;
@@ -35,6 +36,7 @@ public abstract class AbstractCasMultifactorWebflowConfigurer extends AbstractCa
                                                    final ApplicationContext applicationContext,
                                                    final CasConfigurationProperties casProperties) {
         super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        setOrder(Ordered.LOWEST_PRECEDENCE);
     }
 
     /**

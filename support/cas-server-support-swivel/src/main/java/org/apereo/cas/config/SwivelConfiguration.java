@@ -141,17 +141,20 @@ public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.swivel", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("swivelMultifactorTrustConfiguration")
-    public class SwivelMultifactorTrustConfiguration {
+    public class SwivelMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "swivelMultifactorTrustWebflowConfigurer")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer swivelMultifactorTrustWebflowConfigurer() {
-            final CasWebflowConfigurer w = new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new SwivelMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(),
                 swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
-            w.initialize();
-            return w;
+        }
+
+        @Override
+        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+            plan.registerWebflowConfigurer(swivelMultifactorTrustWebflowConfigurer());
         }
     }
 }

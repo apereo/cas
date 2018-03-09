@@ -150,17 +150,20 @@ public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.yubikey", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("yubiMultifactorTrustConfiguration")
-    public class YubiKeyMultifactorTrustConfiguration {
+    public class YubiKeyMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "yubiMultifactorTrustConfiguration")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer yubiMultifactorTrustConfiguration() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            final CasWebflowConfigurer w = new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new YubiKeyMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 deviceRegistrationEnabled, loginFlowDefinitionRegistry, applicationContext, casProperties);
-            w.initialize();
-            return w;
+        }
+
+        @Override
+        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+            plan.registerWebflowConfigurer(yubiMultifactorTrustConfiguration());
         }
     }
 }

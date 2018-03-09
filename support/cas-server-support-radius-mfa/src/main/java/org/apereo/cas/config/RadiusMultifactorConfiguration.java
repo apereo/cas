@@ -129,18 +129,21 @@ public class RadiusMultifactorConfiguration implements CasWebflowExecutionPlanCo
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.radius", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("radiusMultifactorTrustConfiguration")
-    public class RadiusMultifactorTrustConfiguration {
+    public class RadiusMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "radiusMultifactorTrustConfiguration")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer radiusMultifactorTrustConfiguration() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            final CasWebflowConfigurer w = new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new RadiusMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, deviceRegistrationEnabled,
                 loginFlowDefinitionRegistry, applicationContext, casProperties);
-            w.initialize();
-            return w;
+        }
+
+        @Override
+        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+            plan.registerWebflowConfigurer(radiusMultifactorTrustConfiguration());
         }
     }
 }
