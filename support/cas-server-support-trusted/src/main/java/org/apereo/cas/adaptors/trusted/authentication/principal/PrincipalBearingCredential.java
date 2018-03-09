@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.NonNull;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -25,6 +26,7 @@ import org.apereo.cas.authentication.principal.Principal;
  */
 @Slf4j
 @Getter
+@ToString(callSuper = true)
 public class PrincipalBearingCredential extends AbstractCredential {
 
     /** Serialization version marker. */

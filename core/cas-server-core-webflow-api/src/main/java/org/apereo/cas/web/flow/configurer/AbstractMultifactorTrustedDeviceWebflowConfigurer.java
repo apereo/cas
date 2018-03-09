@@ -36,9 +36,8 @@ public abstract class AbstractMultifactorTrustedDeviceWebflowConfigurer extends 
     public AbstractMultifactorTrustedDeviceWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
                                                              final FlowDefinitionRegistry loginFlowDefinitionRegistry,
                                                              final boolean enableDeviceRegistration, final ApplicationContext applicationContext,
-                                                             final CasConfigurationProperties casProperties,
-                                                             final CasMultifactorWebflowExecutionPlan webflowExecutionPlan) {
-        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties, webflowExecutionPlan);
+                                                             final CasConfigurationProperties casProperties) {
+        super(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
         this.enableDeviceRegistration = enableDeviceRegistration;
     }
 
