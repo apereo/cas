@@ -77,7 +77,8 @@ public class DynamoDbTicketRegistryFacilitator {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
 
-        createTicketTables(dynamoDbProperties.isDropTablesOnStartup());
+        if(!dynamoDbProperties.isPreventTableCreationOnStartup())
+            createTicketTables(dynamoDbProperties.isDropTablesOnStartup());
     }
 
     /**
