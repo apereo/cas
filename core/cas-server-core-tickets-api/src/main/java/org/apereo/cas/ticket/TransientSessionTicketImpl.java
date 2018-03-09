@@ -22,7 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * This is {@link DelegatedAuthenticationRequestTicket}, issued when a delegated authentication
+ * This is {@link TransientSessionTicketImpl}, issued when a delegated authentication
  * request comes in that needs to be handed off to an identity provider. This ticket represents the state
  * of the CAS server at that moment.
  *
