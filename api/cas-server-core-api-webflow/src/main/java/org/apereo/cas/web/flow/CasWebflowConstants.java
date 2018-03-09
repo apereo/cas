@@ -150,6 +150,11 @@ public interface CasWebflowConstants {
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
+    /**
+     * 'finishMfaTrustedAuth' state id.
+     */
+    String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
+
 
     /**
      * The transition state 'warn'.
@@ -397,6 +402,12 @@ public interface CasWebflowConstants {
      * Action id 'initialFlowSetupAction'.
      */
     String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+
+
+    /**
+     * Action id 'remoteAuthenticate'.
+     */
+    String ACTION_ID_REMOTE_TRUSTED_AUTHENTICATION = "remoteAuthenticate";
 
     /**
      * Action id 'generateServiceTicketAction'.
