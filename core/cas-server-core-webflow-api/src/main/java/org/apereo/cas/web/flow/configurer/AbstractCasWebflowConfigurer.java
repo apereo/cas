@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow.configurer;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
@@ -22,6 +23,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
+import org.springframework.core.Ordered;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
@@ -79,13 +81,18 @@ import java.util.Optional;
 @Slf4j
 @Setter
 @Getter
+@RequiredArgsConstructor
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
-
     /**
      * The logout flow definition registry.
      */
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
 
+    /**
+     * Flow builder services.
+     */
+    protected final FlowBuilderServices flowBuilderServices;
+    
     /**
      * The Login flow definition registry.
      */
@@ -101,20 +108,8 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * Flow builder services.
-     */
-    protected final FlowBuilderServices flowBuilderServices;
-
-    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry, final ApplicationContext applicationContext,
-                                        final CasConfigurationProperties casProperties) {
-        this.flowBuilderServices = flowBuilderServices;
-        this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
-        this.applicationContext = applicationContext;
-        this.casProperties = casProperties;
-    }
-
+    private int order = Ordered.LOWEST_PRECEDENCE;
+    
     @Override
     public void initialize() {
         try {
@@ -771,4 +766,6 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
         return null;
     }
+
+
 }

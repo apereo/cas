@@ -9,6 +9,8 @@ import org.apereo.cas.scim.v1.Scim1Provisioner;
 import org.apereo.cas.scim.v2.Scim2PrincipalAttributeMapper;
 import org.apereo.cas.scim.v2.Scim2Provisioner;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.PrincipalScimProvisionerAction;
 import org.apereo.cas.web.flow.ScimWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +36,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Slf4j
-public class CasScimConfiguration {
+public class CasScimConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -52,9 +54,7 @@ public class CasScimConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer scimWebflowConfigurer() {
-        final CasWebflowConfigurer w = new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new ScimWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -84,5 +84,10 @@ public class CasScimConfiguration {
     @Bean
     public Action principalScimProvisionerAction() {
         return new PrincipalScimProvisionerAction(scimProvisioner());
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(scimWebflowConfigurer());
     }
 }

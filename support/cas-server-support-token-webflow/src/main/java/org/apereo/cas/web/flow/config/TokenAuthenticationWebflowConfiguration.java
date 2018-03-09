@@ -7,6 +7,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.DefaultTokenRequestExtractor;
 import org.apereo.cas.web.TokenRequestExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.TokenAuthenticationAction;
 import org.apereo.cas.web.flow.TokenWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -32,7 +34,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("tokenAuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class TokenAuthenticationWebflowConfiguration {
+public class TokenAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -54,7 +56,7 @@ public class TokenAuthenticationWebflowConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("initialAuthenticationAttemptWebflowEventResolver")
     private CasDelegatingWebflowEventResolver initialAuthenticationAttemptWebflowEventResolver;
@@ -67,9 +69,7 @@ public class TokenAuthenticationWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer tokenWebflowConfigurer() {
-        final CasWebflowConfigurer w = new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new TokenWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -82,8 +82,13 @@ public class TokenAuthenticationWebflowConfiguration {
     @ConditionalOnMissingBean(name = "tokenAuthenticationAction")
     public Action tokenAuthenticationAction() {
         return new TokenAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy,
-                tokenRequestExtractor(), servicesManager);
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy,
+            tokenRequestExtractor(), servicesManager);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(tokenWebflowConfigurer());
     }
 }

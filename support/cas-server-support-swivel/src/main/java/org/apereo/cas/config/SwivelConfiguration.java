@@ -16,6 +16,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +46,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("swivelConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SwivelConfiguration {
+public class SwivelConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -100,10 +102,8 @@ public class SwivelConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer swivelMultifactorWebflowConfigurer() {
-        final CasWebflowConfigurer w = new SwivelMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new SwivelMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             swivelAuthenticatorFlowRegistry(), applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @Bean
@@ -122,6 +122,11 @@ public class SwivelConfiguration {
     public SwivelTuringImageGeneratorController swivelTuringImageGeneratorController() {
         final SwivelMultifactorProperties swivel = this.casProperties.getAuthn().getMfa().getSwivel();
         return new SwivelTuringImageGeneratorController(swivel);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(swivelMultifactorWebflowConfigurer());
     }
 
     @Bean

@@ -14,6 +14,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +44,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("authyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class AuthyConfiguration {
+public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -111,11 +113,8 @@ public class AuthyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer authyMultifactorWebflowConfigurer() {
-        final CasWebflowConfigurer w = new AuthyMultifactorWebflowConfigurer(flowBuilderServices,
+        return new AuthyMultifactorWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
-
-        w.initialize();
-        return w;
     }
 
     @RefreshScope
@@ -124,6 +123,10 @@ public class AuthyConfiguration {
         return new AuthyAuthenticationWebflowAction(authyAuthenticationWebflowEventResolver());
     }
 
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(authyMultifactorWebflowConfigurer());
+    }
 
     /**
      * The Authy multifactor trust configuration.

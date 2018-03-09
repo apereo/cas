@@ -18,6 +18,8 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,13 +44,12 @@ import org.springframework.webflow.execution.Action;
  *
  * @author Misagh Moayyed
  * @author Dmitriy Kopylenko
- *
  * @since 5.0.0
  */
 @Configuration("yubikeyConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class YubiKeyConfiguration {
+public class YubiKeyConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("loginFlowRegistry")
@@ -110,10 +111,8 @@ public class YubiKeyConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer yubikeyMultifactorWebflowConfigurer() {
-        final CasWebflowConfigurer w = new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices,
+        return new YubiKeyMultifactorWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, yubikeyFlowRegistry(), applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @Bean
@@ -122,20 +121,25 @@ public class YubiKeyConfiguration {
             warnCookieGenerator, authenticationRequestServiceSelectionStrategies, multifactorAuthenticationProviderSelector);
     }
 
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(yubikeyMultifactorWebflowConfigurer());
+    }
+
     @Bean
     @RefreshScope
     public CipherExecutor yubikeyAccountCipherExecutor() {
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getYubikey().getCrypto();
         if (crypto.isEnabled()) {
             return new YubikeyAccountCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
         }
         LOGGER.info("YubiKey account encryption/signing is turned off and "
-                + "MAY NOT be safe in a production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "YubiKey accounts for MFA");
+            + "MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "YubiKey accounts for MFA");
         return NoOpCipherExecutor.getInstance();
     }
 

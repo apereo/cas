@@ -9,10 +9,10 @@ import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -41,13 +41,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Slf4j
-public class ElectronicFenceWebflowConfiguration {
-
-
-
-    @Autowired
-    @Qualifier("communicationsManager")
-    private CommunicationsManager communicationsManager;
+public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("authenticationRiskMitigator")
@@ -85,10 +79,6 @@ public class ElectronicFenceWebflowConfiguration {
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
 
     @Autowired
-    @Qualifier("casEventRepository")
-    private CasEventRepository casEventRepository;
-
-    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
@@ -106,14 +96,14 @@ public class ElectronicFenceWebflowConfiguration {
     @Bean
     @Autowired
     @RefreshScope
-    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport") 
-                                                                               final AuthenticationSystemSupport authenticationSystemSupport) {
+    public CasWebflowEventResolver riskAwareAuthenticationWebflowEventResolver(@Qualifier("defaultAuthenticationSystemSupport")
+                                                                                   final AuthenticationSystemSupport authenticationSystemSupport) {
         final CasWebflowEventResolver r = new RiskAwareAuthenticationWebflowEventResolver(authenticationSystemSupport, centralAuthenticationService,
-                servicesManager,
-                ticketRegistrySupport, warnCookieGenerator,
-                authenticationRequestServiceSelectionStrategies,
-                multifactorAuthenticationProviderSelector, authenticationRiskEvaluator,
-                authenticationRiskMitigator, casProperties);
+            servicesManager,
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector, authenticationRiskEvaluator,
+            authenticationRiskMitigator, casProperties);
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r, 0);
         return r;
     }
@@ -123,9 +113,11 @@ public class ElectronicFenceWebflowConfiguration {
     @RefreshScope
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-                applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(riskAwareAuthenticationWebflowConfigurer());
     }
 }

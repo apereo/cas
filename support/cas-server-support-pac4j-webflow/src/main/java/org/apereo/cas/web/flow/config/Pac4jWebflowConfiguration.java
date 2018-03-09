@@ -16,6 +16,8 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
@@ -49,7 +51,7 @@ import java.util.concurrent.TimeUnit;
 @Configuration("pac4jWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class Pac4jWebflowConfiguration {
+public class Pac4jWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
@@ -144,13 +146,12 @@ public class Pac4jWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
     public ErrorViewResolver pac4jErrorViewResolver() {
         return new Pac4jErrorViewResolver();
     }
@@ -174,5 +175,10 @@ public class Pac4jWebflowConfiguration {
     @Bean
     public DelegatedClientNavigationController delegatedClientNavigationController() {
         return new DelegatedClientNavigationController(builtClients, delegatedClientWebflowManager(), delegatedSessionCookieManager);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
     }
 }

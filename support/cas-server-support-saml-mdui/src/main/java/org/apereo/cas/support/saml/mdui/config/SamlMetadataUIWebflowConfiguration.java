@@ -11,6 +11,8 @@ import org.apereo.cas.support.saml.mdui.MetadataResolverAdapter;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIParserAction;
 import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -33,7 +35,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("samlMetadataUIWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class SamlMetadataUIWebflowConfiguration {
+public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -65,10 +67,8 @@ public class SamlMetadataUIWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        final CasWebflowConfigurer w = new SamlMetadataUIWebflowConfigurer(flowBuilderServices,
+        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, samlMetadataUIParserAction(), applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
@@ -76,5 +76,10 @@ public class SamlMetadataUIWebflowConfiguration {
     public Action samlMetadataUIParserAction() {
         final String parameter = StringUtils.defaultIfEmpty(casProperties.getSamlMetadataUi().getParameter(), SamlProtocolConstants.PARAMETER_ENTITY_ID);
         return new SamlMetadataUIParserAction(parameter, chainingSamlMetadataUIMetadataResolverAdapter, serviceFactory, servicesManager);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(samlMetadataUIWebConfigurer());
     }
 }
