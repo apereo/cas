@@ -88,7 +88,7 @@ public interface CipherExecutor<I, O> {
     /**
      * Factory method.
      *
-     * @return Strongly-typed Noop <code>CipherExecutor Serializable -> Serializable</code>
+     * @return Strongly-typed Noop {@code CipherExecutor Serializable -> Serializable}
      */
     static CipherExecutor<Serializable, Serializable> noOp() {
         return NoOpCipherExecutor.getInstance();
@@ -97,7 +97,7 @@ public interface CipherExecutor<I, O> {
     /**
      * Factory method.
      *
-     * @return Strongly-typed Noop <code>CipherExecutor String -> String</code>
+     * @return Strongly-typed Noop {@code CipherExecutor String -> String}
      */
     static CipherExecutor<String, String> noOpOfStringToString() {
         return NoOpCipherExecutor.getInstance();
@@ -106,7 +106,7 @@ public interface CipherExecutor<I, O> {
     /**
      * Factory method.
      *
-     * @return Strongly-typed Noop <code>CipherExecutor Serializable -> String</code>
+     * @return Strongly-typed Noop {@code CipherExecutor Serializable -> String}
      */
     static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
         return NoOpCipherExecutor.getInstance();
