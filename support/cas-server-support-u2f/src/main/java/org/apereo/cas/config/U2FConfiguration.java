@@ -16,7 +16,6 @@ import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.U2FMultifactorProperties;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -127,6 +126,6 @@ public class U2FConfiguration {
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "U2F registration records for MFA");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 }

@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.registry.queue.BaseMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.DeleteTicketsMessageQueueCommand;
 import org.apereo.cas.ticket.registry.queue.UpdateTicketMessageQueueCommand;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.springframework.jms.core.JmsTemplate;
 
 /**
@@ -31,7 +30,7 @@ public class JmsTicketRegistry extends DefaultTicketRegistry {
     private final StringBean id;
 
     public JmsTicketRegistry(final JmsTemplate jmsTemplate, final StringBean id) {
-        this(jmsTemplate, id, NoOpCipherExecutor.getInstance());
+        this(jmsTemplate, id, CipherExecutor.noOp());
     }
     
     public JmsTicketRegistry(final JmsTemplate jmsTemplate, final StringBean id, final CipherExecutor cipherExecutor) {

@@ -17,7 +17,6 @@ import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.AlwaysExpiresExpirationPolicy;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -78,7 +77,7 @@ public abstract class AbstractTicketRegistryTests {
                 new EncryptionRandomizedSigningJwtCryptographyProperties(), "[tests]");
             registry.setCipherExecutor(cipher);
         } else {
-            registry.setCipherExecutor(NoOpCipherExecutor.getInstance());
+            registry.setCipherExecutor(CipherExecutor.noOp());
         }
     }
 
