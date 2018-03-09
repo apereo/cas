@@ -10,6 +10,8 @@ import org.apereo.cas.interrupt.webflow.InterruptWebflowConfigurer;
 import org.apereo.cas.interrupt.webflow.actions.PrepareInterruptViewAction;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -33,7 +35,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casInterruptWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasInterruptWebflowConfiguration {
+public class CasInterruptWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -59,9 +61,7 @@ public class CasInterruptWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer interruptWebflowConfigurer() {
-        final CasWebflowConfigurer w = new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new InterruptWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
     
     @Bean
@@ -85,5 +85,10 @@ public class CasInterruptWebflowConfiguration {
         return new InterruptSingleSignOnParticipationStrategy(servicesManager,
             casProperties.getSso().isCreateSsoCookieOnRenewAuthn(),
             casProperties.getSso().isRenewAuthnEnabled());
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(interruptWebflowConfigurer());
     }
 }

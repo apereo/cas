@@ -10,6 +10,8 @@ import org.apereo.cas.gua.impl.StaticUserGraphicalAuthenticationRepository;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.AcceptUserGraphicsForAuthenticationAction;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DisplayUserGraphicsBeforeAuthenticationAction;
 import org.apereo.cas.web.flow.GraphicalUserAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.PrepareForGraphicalAuthenticationAction;
@@ -35,7 +37,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("graphicalUserAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class GraphicalUserAuthenticationConfiguration {
+public class GraphicalUserAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -50,7 +52,7 @@ public class GraphicalUserAuthenticationConfiguration {
 
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
@@ -58,30 +60,25 @@ public class GraphicalUserAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer graphicalUserAuthenticationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices, 
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new GraphicalUserAuthenticationWebflowConfigurer(flowBuilderServices,
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
     @ConditionalOnMissingBean(name = "userGraphicalAuthenticationRepository")
     public UserGraphicalAuthenticationRepository userGraphicalAuthenticationRepository() {
-
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
         if (gua.getResource().getLocation() != null) {
             return new StaticUserGraphicalAuthenticationRepository();
         }
 
         if (StringUtils.isNotBlank(gua.getLdap().getLdapUrl())
-                && StringUtils.isNotBlank(gua.getLdap().getSearchFilter())
-                && StringUtils.isNotBlank(gua.getLdap().getBaseDn())
-                && StringUtils.isNotBlank(gua.getLdap().getImageAttribute())) {
+            && StringUtils.isNotBlank(gua.getLdap().getSearchFilter())
+            && StringUtils.isNotBlank(gua.getLdap().getBaseDn())
+            && StringUtils.isNotBlank(gua.getLdap().getImageAttribute())) {
             return new LdapUserGraphicalAuthenticationRepository();
         }
-
         throw new BeanCreationException("A repository instance must be configured to locate user-defined graphics");
-
     }
 
     @Bean
@@ -92,13 +89,17 @@ public class GraphicalUserAuthenticationConfiguration {
 
     @Autowired
     @Bean
-    public Action displayUserGraphicsBeforeAuthenticationAction(@Qualifier("userGraphicalAuthenticationRepository")
-                                                                final UserGraphicalAuthenticationRepository repository) {
+    public Action displayUserGraphicsBeforeAuthenticationAction(@Qualifier("userGraphicalAuthenticationRepository") final UserGraphicalAuthenticationRepository repository) {
         return new DisplayUserGraphicsBeforeAuthenticationAction(repository);
     }
 
     @Bean
     public Action initializeLoginAction() {
         return new PrepareForGraphicalAuthenticationAction(servicesManager);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(graphicalUserAuthenticationWebflowConfigurer());
     }
 }

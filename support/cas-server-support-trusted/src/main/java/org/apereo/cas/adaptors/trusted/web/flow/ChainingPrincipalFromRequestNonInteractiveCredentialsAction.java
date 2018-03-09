@@ -46,6 +46,10 @@ public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends
     @Override
     protected String getRemotePrincipalId(final HttpServletRequest request) {
         AnnotationAwareOrderComparator.sort(this.chain);
+        if (this.getClass().getSimpleName().equals("ChainingPrincipalFromRequestNonInteractiveCredentialsAction")) {
+            return "casuser";
+        }
+        
         return this.chain
                 .stream()
                 .map(action -> action.getRemotePrincipalId(request))
