@@ -31,7 +31,6 @@ import org.apereo.cas.otp.web.flow.OneTimeTokenAccountCheckRegistrationAction;
 import org.apereo.cas.otp.web.flow.OneTimeTokenAccountSaveRegistrationAction;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -171,7 +170,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
         }
         LOGGER.warn("Google Authenticator one-time token account encryption/signing is turned off. "
             + "Consider turning on encryption, signing to securely and safely store one-time token accounts.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @Bean

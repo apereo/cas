@@ -12,7 +12,6 @@ import org.apereo.cas.pm.PasswordResetTokenCipherExecutor;
 import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.impl.JsonResourcePasswordManagementService;
 import org.apereo.cas.pm.impl.NoOpPasswordManagementService;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
@@ -64,7 +63,7 @@ public class PasswordManagementConfiguration implements AuditTrailRecordResoluti
                     crypto.getSigning().getKey(),
                     crypto.getAlg());
         }
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "passwordValidationService")
