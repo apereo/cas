@@ -152,7 +152,7 @@ subprojects {
 
     tasks.withType(JavaCompile) {
         // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-        options.compilerArgs += ['-XepAllErrorsAsWarnings', '-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
+        options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
     }
 
     test {

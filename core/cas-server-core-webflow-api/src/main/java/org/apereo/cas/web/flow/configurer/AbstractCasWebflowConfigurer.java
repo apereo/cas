@@ -731,6 +731,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
+     * Gets state.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the state
+     */
+    public TransitionableState getState(final Flow flow, final String stateId) {
+        return getState(flow, stateId, TransitionableState.class);
+    }
+
+    /**
      * Gets transitionable state.
      *
      * @param <T>     the type parameter
