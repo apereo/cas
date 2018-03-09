@@ -56,7 +56,7 @@ public class RestConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpSerializableToString());
+        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
         final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
         final Service svc = RegisteredServiceTestUtils.getService();
         final ConsentDecision decision = builder.build(svc,

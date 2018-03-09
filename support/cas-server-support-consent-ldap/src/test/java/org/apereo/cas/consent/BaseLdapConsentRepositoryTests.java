@@ -39,7 +39,7 @@ import static org.junit.Assert.*;
 @SpringBootTest(classes = {CasConsentLdapConfiguration.class, RefreshAutoConfiguration.class})
 public abstract class BaseLdapConsentRepositoryTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-    private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpSerializableToString());
+    private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
 
     private static final String ATTR_NAME = "description";
     private static final String USER_CN = "consentTest";

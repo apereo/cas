@@ -95,7 +95,7 @@ public class DefaultCasAttributeEncoderTests {
     @Test
     public void checkNoPublicKeyDefined() {
         final Service service = RegisteredServiceTestUtils.getService("testDefault");
-        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpStringToString());
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(this.attributes.size() - 2, encoded.size());
     }
@@ -103,7 +103,7 @@ public class DefaultCasAttributeEncoderTests {
     @Test
     public void checkAttributesEncodedCorrectly() {
         final Service service = RegisteredServiceTestUtils.getService("testencryption");
-        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpStringToString());
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);

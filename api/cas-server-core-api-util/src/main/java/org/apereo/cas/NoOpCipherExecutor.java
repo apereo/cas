@@ -41,12 +41,12 @@ class NoOpCipherExecutor<I, O> implements CipherExecutor<I, O> {
     @Override
     @SuppressWarnings("unchecked")
     public O encode(final I value) {
-        return (O)value;
+        return (O) value;
     }
 
     @Override
     @SuppressWarnings("unchecked")
     public O decode(final I value) {
-        return (O)value;
+        return (O) value;
     }
 }

@@ -49,7 +49,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
         final JsonGoogleAuthenticatorTokenCredentialRepository repo =
-            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpStringToString());
+            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
         final OneTimeTokenAccount acct = repo.create("casuser");
         assertNotNull(acct);
     }
@@ -60,7 +60,7 @@ public class JsonGoogleAuthenticatorTokenCredentialRepositoryTests {
             FileUtils.forceDelete(JSON_FILE.getFile());
         }
         final JsonGoogleAuthenticatorTokenCredentialRepository repo =
-            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpStringToString());
+            new JsonGoogleAuthenticatorTokenCredentialRepository(JSON_FILE, google, CipherExecutor.noOpOfStringToString());
         OneTimeTokenAccount acct = repo.get("casuser");
         assertNull(acct);
         acct = repo.create("casuser");

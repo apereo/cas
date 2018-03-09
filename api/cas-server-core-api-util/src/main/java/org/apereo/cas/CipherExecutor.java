@@ -99,7 +99,7 @@ public interface CipherExecutor<I, O> {
      *
      * @return Strongly-typed Noop <code>CipherExecutor String -> String</code>
      */
-    static CipherExecutor<String, String> noOpStringToString() {
+    static CipherExecutor<String, String> noOpOfStringToString() {
         return NoOpCipherExecutor.getInstance();
     }
 
@@ -108,7 +108,7 @@ public interface CipherExecutor<I, O> {
      *
      * @return Strongly-typed Noop <code>CipherExecutor Serializable -> String</code>
      */
-    static CipherExecutor<Serializable, String> noOpSerializableToString() {
+    static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
         return NoOpCipherExecutor.getInstance();
     }
 

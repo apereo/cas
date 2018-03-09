@@ -31,7 +31,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public class JpaConsentRepositoryTests {
 
-    private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpSerializableToString());
+    private static final DefaultConsentDecisionBuilder BUILDER = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
     private static final Service SVC = RegisteredServiceTestUtils.getService();
     private static final AbstractRegisteredService REG_SVC = RegisteredServiceTestUtils.getRegisteredService(SVC.getId());
     private static final Map<String, Object> ATTR = CollectionUtils.wrap("attribute", "value");

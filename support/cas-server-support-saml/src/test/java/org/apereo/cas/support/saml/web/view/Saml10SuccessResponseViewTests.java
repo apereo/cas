@@ -64,7 +64,7 @@ public class Saml10SuccessResponseViewTests extends AbstractOpenSamlTests {
         final ServicesManager mgmr = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         mgmr.load();
 
-        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpStringToString()),
+        this.response = new Saml10SuccessResponseView(new DefaultCasProtocolAttributeEncoder(mgmr, CipherExecutor.noOpOfStringToString()),
                 mgmr, "attribute", new Saml10ObjectBuilder(configBean),
                 new DefaultArgumentExtractor(new SamlServiceFactory()), StandardCharsets.UTF_8.name(), 1000, 30,
                 "testIssuer", "whatever", new DefaultAuthenticationAttributeReleasePolicy());
