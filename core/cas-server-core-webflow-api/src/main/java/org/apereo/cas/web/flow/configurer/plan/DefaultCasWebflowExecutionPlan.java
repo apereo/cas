@@ -7,7 +7,6 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.springframework.core.OrderComparator;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
