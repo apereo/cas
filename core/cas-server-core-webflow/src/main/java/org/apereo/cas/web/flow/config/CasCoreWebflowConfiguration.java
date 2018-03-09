@@ -26,6 +26,7 @@ import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
@@ -357,7 +358,7 @@ public class CasCoreWebflowConfiguration {
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "clearWebflowCredentialsAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS)
     @RefreshScope
     public Action clearWebflowCredentialsAction() {
         return new ClearWebflowCredentialAction();
