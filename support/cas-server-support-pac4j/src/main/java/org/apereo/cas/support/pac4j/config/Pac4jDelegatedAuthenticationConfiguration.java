@@ -7,7 +7,6 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedSessionCookieProperties;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.validation.Pac4jServiceTicketValidationAuthorizer;
 import org.apereo.cas.validation.RegisteredServiceDelegatedAuthenticationPolicyAuditableEnforcer;
 import org.apereo.cas.validation.ServiceTicketValidationAuthorizer;
@@ -78,7 +77,7 @@ public class Pac4jDelegatedAuthenticationConfiguration implements ServiceTicketV
             + "MAY NOT be safe in a production environment. "
             + "Consider using other choices to handle encryption, signing and verification of "
             + "delegated authentication cookie.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @Bean
