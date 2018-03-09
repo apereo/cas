@@ -31,7 +31,7 @@ public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends
                                                                        final PrincipalFactory principalFactory,
                                                                        final RemoteRequestPrincipalAttributesExtractor extractor) {
         super(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, principalFactory, extractor);
+            adaptiveAuthenticationPolicy, principalFactory, extractor);
     }
 
     /**
@@ -46,15 +46,11 @@ public class ChainingPrincipalFromRequestNonInteractiveCredentialsAction extends
     @Override
     protected String getRemotePrincipalId(final HttpServletRequest request) {
         AnnotationAwareOrderComparator.sort(this.chain);
-        if (this.getClass().getSimpleName().equals("ChainingPrincipalFromRequestNonInteractiveCredentialsAction")) {
-            return "casuser";
-        }
-        
         return this.chain
-                .stream()
-                .map(action -> action.getRemotePrincipalId(request))
-                .filter(Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+            .stream()
+            .map(action -> action.getRemotePrincipalId(request))
+            .filter(Objects::nonNull)
+            .findFirst()
+            .orElse(null);
     }
 }
