@@ -6,7 +6,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.model.core.util.EncryptionRandomizedSigningJwtCryptographyProperties;
 import org.apereo.cas.util.cipher.DefaultTicketCipherExecutor;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 
 /**
  * This is {@link CoreTicketUtils}.
@@ -62,6 +61,6 @@ public class CoreTicketUtils {
         LOGGER.info("Ticket registry encryption/signing is turned off. This MAY NOT be safe in a clustered production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "ticket registry tickets, and verify the chosen ticket registry does support this behavior.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 }

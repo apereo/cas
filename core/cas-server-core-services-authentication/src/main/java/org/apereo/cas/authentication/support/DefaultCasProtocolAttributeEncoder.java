@@ -40,7 +40,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
      * @param cacheCredentialCipherExecutor the cache credential cipher executor
      */
     public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
-                                              final CipherExecutor cacheCredentialCipherExecutor) {
+                                              final CipherExecutor<String, String> cacheCredentialCipherExecutor) {
         this(servicesManager, new DefaultRegisteredServiceCipherExecutor(), cacheCredentialCipherExecutor);
     }
 
@@ -53,7 +53,7 @@ public class DefaultCasProtocolAttributeEncoder extends AbstractProtocolAttribut
      */
     public DefaultCasProtocolAttributeEncoder(final ServicesManager servicesManager,
                                               final RegisteredServiceCipherExecutor cipherExecutor,
-                                              final CipherExecutor cacheCredentialCipherExecutor) {
+                                              final CipherExecutor<String, String> cacheCredentialCipherExecutor) {
         super(servicesManager, cipherExecutor);
         this.cacheCredentialCipherExecutor = cacheCredentialCipherExecutor;
     }
