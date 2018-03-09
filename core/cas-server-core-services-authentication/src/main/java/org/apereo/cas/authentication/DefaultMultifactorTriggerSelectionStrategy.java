@@ -1,7 +1,5 @@
 package org.apereo.cas.authentication;
 
-import static org.springframework.util.StringUtils.commaDelimitedListToSet;
-
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -21,6 +19,8 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static org.springframework.util.StringUtils.commaDelimitedListToSet;
 
 /**
  * Default MFA Trigger selection strategy. This strategy looks for valid triggers in the following order: request
@@ -47,25 +47,20 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             .collect(Collectors.toSet());
         final Principal principal = authentication != null ? authentication.getPrincipal() : null;
 
-        // check for an opt-in provider id parameter trigger, we only care about the first value
         Optional<String> provider = resolveRequestParameterTrigger(request, validProviderIds);
 
-        // check for a RegisteredService configured trigger
         if (!provider.isPresent()) {
             provider = resolveRegisteredServiceTrigger(service, principal, validProviderIds);
         }
 
-        // check for Global principal attribute trigger
         if (!provider.isPresent()) {
             provider = resolvePrincipalAttributeTrigger(principal, validProviderIds);
         }
 
-        // check for Global authentication attribute trigger
         if (!provider.isPresent()) {
             provider = resolveAuthenticationAttributeTrigger(authentication, validProviderIds);
         }
 
-        // return the resolved trigger
         return provider;
     }
 
@@ -79,9 +74,7 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             .filter(providerIds::contains);
     }
 
-    private Optional<String> resolveRegisteredServiceTrigger(final RegisteredService service, final Principal principal,
-                                                             final Set<String> providerIds) {
-        // short-circuit if we don't have a RegisteredService to evaluate
+    private Optional<String> resolveRegisteredServiceTrigger(final RegisteredService service, final Principal principal, final Set<String> providerIds) {
         if (service == null) {
             return Optional.empty();
         }
@@ -168,9 +161,16 @@ public class DefaultMultifactorTriggerSelectionStrategy implements MultifactorTr
             .findFirst();
     }
 
+    /**
+     * Has matching attribute.
+     * If there isn't any attribute names or an attribute value to match, return that there isn't a matching attribute
+     *
+     * @param attributes the attributes
+     * @param names      the names
+     * @param value      the value
+     * @return the boolean
+     */
     private boolean hasMatchingAttribute(final Map<String, Object> attributes, final String names, final String value) {
-        // if there isn't any attribute names or an attribute value to match, return that there isn't a matching
-        // attribute
         if (!StringUtils.hasText(names) || !StringUtils.hasText(value)) {
             return false;
         }

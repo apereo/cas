@@ -113,7 +113,7 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     private int order = Ordered.HIGHEST_PRECEDENCE;
 
     private String name = getClass().getSimpleName();
-    
+
     @Override
     public void initialize() {
         try {
@@ -770,5 +770,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
         return null;
     }
-    
+
+    /**
+     * Create transitions for state.
+     *
+     * @param flow               the flow
+     * @param stateId            the state id
+     * @param criteriaAndTargets the criteria and targets
+     */
+    public void createTransitionsForState(final Flow flow, final String stateId, final Map<String, String> criteriaAndTargets) {
+        if (containsFlowState(flow, stateId)) {
+            final TransitionableState state = getState(flow, stateId);
+            criteriaAndTargets.forEach((k, v) -> createTransitionForState(state, k, v));
+        }
+    }
+
 }

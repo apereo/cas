@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Optional;
 
 /**
- * Log files tailing service which acts as apache.common.io <code>Tailer</code> listener
+ * Log files tailing service which acts as apache.common.io {@code Tailer} listener
  * and publishes each received log output line of text to websocket-based in-memory STOMP broker destination.
  *
  * @author Dmitriy Kopylenko
