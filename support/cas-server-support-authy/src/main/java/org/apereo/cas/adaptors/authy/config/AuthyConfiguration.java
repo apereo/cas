@@ -134,18 +134,21 @@ public class AuthyConfiguration implements CasWebflowExecutionPlanConfigurer {
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.authy", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("authyMultifactorTrustConfiguration")
-    public class AuthyMultifactorTrustConfiguration {
+    public class AuthyMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "authyMultifactorTrustWebflowConfigurer")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer authyMultifactorTrustWebflowConfigurer() {
             final boolean deviceRegistrationEnabled = casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled();
-            final CasWebflowConfigurer w = new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices,
+            return new AuthyMultifactorTrustWebflowConfigurer(flowBuilderServices,
                 loginFlowDefinitionRegistry, deviceRegistrationEnabled,
                 authyAuthenticatorFlowRegistry(), applicationContext, casProperties);
-            w.initialize();
-            return w;
+        }
+
+        @Override
+        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+            plan.registerWebflowConfigurer(authyMultifactorTrustWebflowConfigurer());
         }
     }
 }
