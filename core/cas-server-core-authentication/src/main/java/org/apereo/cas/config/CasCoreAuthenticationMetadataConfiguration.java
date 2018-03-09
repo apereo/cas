@@ -11,7 +11,6 @@ import org.apereo.cas.authentication.metadata.RememberMeAuthenticationMetaDataPo
 import org.apereo.cas.authentication.metadata.SuccessfulHandlerMetaDataPopulator;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.clearpass.ClearpassProperties;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,7 +56,7 @@ public class CasCoreAuthenticationMetadataConfiguration {
             LOGGER.warn("Cas is configured to capture and cache credentials via Clearpass yet crypto operations for the cached password are "
                 + "turned off. Consider enabling the crypto configuration in CAS settings that allow the system to sign & encrypt the captured credential.");
         }
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "authenticationCredentialTypeMetaDataPopulator")

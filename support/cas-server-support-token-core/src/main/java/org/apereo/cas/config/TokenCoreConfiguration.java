@@ -9,7 +9,6 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.token.JWTTokenTicketBuilder;
 import org.apereo.cas.token.TokenTicketBuilder;
 import org.apereo.cas.token.cipher.TokenTicketCipherExecutor;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -65,7 +64,7 @@ public class TokenCoreConfiguration {
         LOGGER.info("Token cookie encryption/signing is turned off. This "
                 + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
                 + "signing and verification of generated tokens.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @RefreshScope

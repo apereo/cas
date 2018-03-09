@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 import org.apereo.cas.config.CasCoreAuthenticationPrincipalConfiguration;
@@ -23,7 +22,6 @@ import org.apereo.cas.config.support.authentication.YubiKeyAuthenticationEventEx
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.web.config.CasThemesConfiguration;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
@@ -41,7 +39,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 /**
  * This is {@link JpaYubiKeyAccountRegistryTests}.
@@ -112,12 +112,6 @@ public class JpaYubiKeyAccountRegistryTests {
         @RefreshScope
         public YubiKeyAccountValidator yubiKeyAccountValidator() {
             return (uid, token) -> !token.equals(BAD_TOKEN);
-        }
-
-        @Bean
-        @RefreshScope
-        public CipherExecutor yubikeyAccountCipherExecutor() {
-            return NoOpCipherExecutor.getInstance();
         }
     }
 }
