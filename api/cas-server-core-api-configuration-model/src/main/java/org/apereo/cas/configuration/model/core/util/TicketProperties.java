@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.model.core.ticket.ProxyGrantingTicketPropert
 import org.apereo.cas.configuration.model.core.ticket.ProxyTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.ServiceTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.TicketGrantingTicketProperties;
+import org.apereo.cas.configuration.model.core.ticket.TransientSessionTicketProperties;
 import org.apereo.cas.configuration.model.core.ticket.registry.TicketRegistryProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
@@ -25,6 +26,12 @@ import lombok.Setter;
 public class TicketProperties implements Serializable {
 
     private static final long serialVersionUID = 5586947805593202037L;
+
+    /**
+     * Properties and settings related to session-transient tickets.
+     */
+    @NestedConfigurationProperty
+    private TransientSessionTicketProperties tst = new TransientSessionTicketProperties();
 
     /**
      * Properties and settings related to proxy-granting tickets.

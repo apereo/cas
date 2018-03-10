@@ -3328,8 +3328,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ## Service Tickets Behavior
 
-Controls the expiration policy of service tickets, as well as other properties
-applicable to STs.
+Controls the expiration policy of service tickets, as well as other properties applicable to STs.
 
 ```properties
 # cas.ticket.st.maxLength=20
@@ -3349,6 +3348,13 @@ applicable to STs.
 ```properties
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
+```
+
+
+## Transient Session Tickets Behavior
+
+```properties
+# cas.ticket.tst.timeToKillInSeconds=300
 ```
 
 ## Ticket Granting Tickets Behavior

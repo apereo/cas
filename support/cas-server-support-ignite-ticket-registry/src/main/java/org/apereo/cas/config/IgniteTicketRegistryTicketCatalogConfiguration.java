@@ -54,7 +54,7 @@ public class IgniteTicketRegistryTicketCatalogConfiguration extends CasCoreTicke
     @Override
     protected void buildAndRegisterTransientSessionTicketDefinition(final TicketCatalog plan, final TicketDefinition metadata) {
         metadata.getProperties().setStorageName("transientSessionTicketsCache");
-        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTgt().getMaxTimeToLiveInSeconds());
+        metadata.getProperties().setStorageTimeout(casProperties.getTicket().getTst().getTimeToKillInSeconds());
         super.buildAndRegisterTransientSessionTicketDefinition(plan, metadata);
     }
 }
