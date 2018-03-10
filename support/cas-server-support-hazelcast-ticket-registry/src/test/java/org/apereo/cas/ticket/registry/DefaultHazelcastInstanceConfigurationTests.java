@@ -77,8 +77,6 @@ import static org.junit.Assert.*;
 @DirtiesContext
 @Slf4j
 public class DefaultHazelcastInstanceConfigurationTests {
-
-
     @Autowired
     @Qualifier("hazelcast")
     private HazelcastInstance hzInstance;
@@ -106,7 +104,7 @@ public class DefaultHazelcastInstanceConfigurationTests {
         assertEquals(Arrays.asList("localhost"), config.getNetworkConfig().getJoin().getTcpIpConfig().getMembers());
         assertTrue(config.getNetworkConfig().isPortAutoIncrement());
         assertEquals(5701, config.getNetworkConfig().getPort());
-        assertEquals(4, config.getMapConfigs().size());
+        assertEquals(5, config.getMapConfigs().size());
     }
 
     @After
