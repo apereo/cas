@@ -86,13 +86,12 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     private int countOfUses;
 
     /**
-     * Constructs a new Ticket with a unique id, a possible parent Ticket (can
-     * be null) and a specified Expiration Policy.
-     *
-     * @param id               the unique identifier for the ticket
-     * @param expirationPolicy the expiration policy for the ticket.
-     * @throws IllegalArgumentException if the id or expiration policy is null.
+     * Flag to enforce manual expiration.
      */
+    @Column(name = "EXPIRED", nullable = false)
+    private Boolean expired = Boolean.FALSE;
+
+
     public AbstractTicket(@NonNull final String id, @NonNull final ExpirationPolicy expirationPolicy) {
         this.id = id;
         this.creationTime = ZonedDateTime.now(ZoneOffset.UTC);
@@ -118,7 +117,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
 
     @JsonIgnore
     protected boolean isExpiredInternal() {
-        return false;
+        return this.expired;
     }
 
     @Override
@@ -140,4 +139,10 @@ public abstract class AbstractTicket implements Ticket, TicketState {
     public TicketGrantingTicket getTicketGrantingTicket() {
         return null;
     }
+
+    @Override
+    public void markTicketExpired() {
+        this.expired = Boolean.TRUE;
+    }
+
 }

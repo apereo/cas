@@ -58,13 +58,7 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
     @Lob
     @Column(name = "AUTHENTICATION", nullable = false, length = Integer.MAX_VALUE)
     private Authentication authentication;
-
-    /**
-     * Flag to enforce manual expiration.
-     */
-    @Column(name = "EXPIRED", nullable = false)
-    private Boolean expired = Boolean.FALSE;
-
+    
     /**
      * Service that produced a proxy-granting ticket.
      */
@@ -200,11 +194,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
         return this.getTicketGrantingTicket() == null;
     }
 
-    @Override
-    public void markTicketExpired() {
-        this.expired = Boolean.TRUE;
-    }
-
     @JsonIgnore
     @Override
     public TicketGrantingTicket getRoot() {
@@ -213,17 +202,6 @@ public class TicketGrantingTicketImpl extends AbstractTicket implements TicketGr
             return this;
         }
         return parent.getRoot();
-    }
-
-    /**
-     * Return if the TGT is expired.
-     *
-     * @return if the TGT is expired.
-     */
-    @Override
-    @JsonIgnore
-    public boolean isExpiredInternal() {
-        return this.expired;
     }
 
     @JsonIgnore

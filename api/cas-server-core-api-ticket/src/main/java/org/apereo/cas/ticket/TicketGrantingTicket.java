@@ -67,11 +67,6 @@ public interface TicketGrantingTicket extends Ticket {
     void removeAllServices();
 
     /**
-     * Mark a ticket as expired.
-     */
-    void markTicketExpired();
-
-    /**
      * Convenience method to determine if the TicketGrantingTicket is the root
      * of the hierarchy of tickets.
      *
