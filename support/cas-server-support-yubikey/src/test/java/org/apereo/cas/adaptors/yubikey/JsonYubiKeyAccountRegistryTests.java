@@ -90,8 +90,8 @@ public class JsonYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
+        assertFalse(yubiKeyAccountRegistry.registerAccountFor("baduser", BAD_TOKEN));
+        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("baduser"));
     }
 
     @Test

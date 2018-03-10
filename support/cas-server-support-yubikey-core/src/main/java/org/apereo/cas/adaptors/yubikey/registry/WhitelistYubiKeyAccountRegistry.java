@@ -35,15 +35,17 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
-        return devices.containsKey(uid) && devices.get(uid).equals(yubikeyPublicId);
+        final String pubId = getCipherExecutor().encode(yubikeyPublicId);
+        return devices.containsKey(uid) && devices.get(uid).equals(pubId);
     }
 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
-            devices.put(uid, yubikeyPublicId);
-            return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
+            final String pubId = getCipherExecutor().encode(yubikeyPublicId);
+            devices.put(uid, pubId);
+            return isYubiKeyRegisteredFor(uid, pubId);
         }
         return false;
     }
@@ -51,7 +53,9 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public Collection<YubiKeyAccount> getAccounts() {
         return this.devices.entrySet().stream()
-            .map(entry -> new YubiKeyAccount(System.currentTimeMillis(), entry.getValue(), entry.getKey()))
+            .map(entry -> new YubiKeyAccount(System.currentTimeMillis(),
+                entry.getKey(),
+                getCipherExecutor().decode(entry.getValue())))
             .collect(Collectors.toSet());
     }
 }

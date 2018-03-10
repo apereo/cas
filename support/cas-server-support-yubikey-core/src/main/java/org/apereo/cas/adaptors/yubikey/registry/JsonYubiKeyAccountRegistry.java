@@ -35,7 +35,7 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
         if (accountValidator.isValid(uid, token)) {
             final String yubikeyPublicId = YubicoClient.getPublicId(token);
             final File file = jsonResource.getFile();
-            this.devices.put(uid, yubikeyPublicId);
+            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
             return true;
         }
