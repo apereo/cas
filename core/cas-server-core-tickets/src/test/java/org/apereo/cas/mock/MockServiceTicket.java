@@ -1,6 +1,8 @@
 package org.apereo.cas.mock;
 
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -11,10 +13,9 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Mock service ticket.
@@ -25,7 +26,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-@EqualsAndHashCode(of ={"id"})
+@EqualsAndHashCode(of = {"id"})
 public class MockServiceTicket implements ServiceTicket, TicketState {
 
     private static final long serialVersionUID = 8203377063087967768L;
@@ -37,7 +38,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     private final Service service;
 
     private ExpirationPolicy expiration = new NeverExpiresExpirationPolicy();
-
+    private boolean expired;
     private final TicketGrantingTicket parent;
 
     public MockServiceTicket(final String id, final Service service, final TicketGrantingTicket parent) {
@@ -74,7 +75,7 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
 
     @Override
     public boolean isExpired() {
-        return this.expiration.isExpired(this);
+        return this.expired || this.expiration.isExpired(this);
     }
 
     @Override
@@ -114,5 +115,10 @@ public class MockServiceTicket implements ServiceTicket, TicketState {
     @Override
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
+    }
+
+    @Override
+    public void markTicketExpired() {
+        this.expired = true;
     }
 }
