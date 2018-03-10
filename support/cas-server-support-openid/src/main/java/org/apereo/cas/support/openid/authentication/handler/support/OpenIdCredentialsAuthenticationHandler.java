@@ -38,8 +38,7 @@ public class OpenIdCredentialsAuthenticationHandler extends AbstractAuthenticati
     public AuthenticationHandlerExecutionResult authenticate(final Credential credential) throws GeneralSecurityException {
         final OpenIdCredential c = (OpenIdCredential) credential;
 
-        final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(),
-                        TicketGrantingTicket.class);
+        final TicketGrantingTicket t = this.ticketRegistry.getTicket(c.getTicketGrantingTicketId(), TicketGrantingTicket.class);
 
         if (t == null || t.isExpired()) {
             throw new FailedLoginException("TGT is null or expired.");

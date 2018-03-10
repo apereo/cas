@@ -84,8 +84,10 @@ public class Cas30ResponseViewTests extends AbstractServiceValidateControllerTes
             getArgumentExtractor(),
             new DefaultMultifactorTriggerSelectionStrategy(new MultifactorAuthenticationProperties()),
             new DefaultAuthenticationContextValidator("", "OPEN", "test"),
-            cas3ServiceJsonView, cas3SuccessView,
-            cas3ServiceFailureView, "authenticationContext",
+            cas3ServiceJsonView,
+            cas3SuccessView,
+            cas3ServiceFailureView,
+            "authenticationContext",
             new DefaultServiceTicketValidationAuthorizersExecutionPlan(),
             true
         );
