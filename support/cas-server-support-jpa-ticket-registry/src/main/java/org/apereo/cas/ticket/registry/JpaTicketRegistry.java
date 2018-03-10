@@ -30,7 +30,7 @@ import java.util.stream.Stream;
  * @since 3.2.1
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 

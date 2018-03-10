@@ -18,7 +18,7 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -60,7 +60,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
      */
     @Lob
     @Column(name = "PROPERTIES", nullable = false)
-    private Map<String, Serializable> properties = new LinkedHashMap<>();
+    private HashMap<String, Serializable> properties = new HashMap<>();
 
     public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy, final Service service) {
         super(id, expirationPolicy);
@@ -71,7 +71,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
                                       final Service service, final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
-        this.properties = properties;
+        this.properties = new HashMap<>(properties);
     }
 
     @Override

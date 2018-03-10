@@ -9,6 +9,7 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.services.UnauthorizedServiceException;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.Ticket;
@@ -21,6 +22,7 @@ import org.pac4j.oauth.client.OAuth20Client;
 import org.pac4j.oauth.config.OAuth20Configuration;
 import org.pac4j.oidc.client.OidcClient;
 import org.pac4j.saml.client.SAML2Client;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.webflow.execution.RequestContext;
 
 import java.io.Serializable;
@@ -35,6 +37,7 @@ import java.util.Map;
  */
 @RequiredArgsConstructor
 @Slf4j
+@Transactional(transactionManager = "ticketTransactionManager")
 public class DelegatedClientWebflowManager {
     /**
      * Client identifier associated with this session/request.
@@ -42,7 +45,7 @@ public class DelegatedClientWebflowManager {
     public static final String PARAMETER_CLIENT_ID = "delegatedclientid";
 
     private final TicketRegistry ticketRegistry;
-    private final TransientSessionTicketFactory transientSessionTicketFactory;
+    private final TicketFactory ticketFactory;
     private final String themeParamName;
     private final String localParamName;
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
@@ -68,7 +71,8 @@ public class DelegatedClientWebflowManager {
         properties.put(CasProtocolConstants.PARAMETER_METHOD,
             StringUtils.defaultString(webContext.getRequestParameter(CasProtocolConstants.PARAMETER_METHOD)));
 
-        final TransientSessionTicket ticket = this.transientSessionTicketFactory.create(service, properties);
+        final TransientSessionTicketFactory transientFactory = (TransientSessionTicketFactory) this.ticketFactory.get(TransientSessionTicket.class);
+        final TransientSessionTicket ticket = transientFactory.create(service, properties);
         LOGGER.debug("Storing delegated authentication request ticket [{}] for service [{}] with properties [{}]",
             ticket.getId(), ticket.getService(), ticket.getProperties());
         this.ticketRegistry.addTicket(ticket);
