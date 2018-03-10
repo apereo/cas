@@ -155,7 +155,7 @@ public abstract class AbstractCentralAuthenticationService implements CentralAut
         return this.ticketRegistry.getTickets().stream().filter(predicate).collect(Collectors.toSet());
     }
 
-    @Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+    @Transactional(transactionManager = "ticketTransactionManager")
     @Timed(name = "DELETE_TICKET_TIMER")
     @Metered(name = "DELETE_TICKET_METER")
     @Counted(name = "DELETE_TICKET_COUNTER", monotonic = true)

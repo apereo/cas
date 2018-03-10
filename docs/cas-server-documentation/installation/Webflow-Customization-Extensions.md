@@ -79,7 +79,7 @@ package org.example.something;
 
 @Configuration("somethingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class SomethingConfiguration {
+public class SomethingConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -97,12 +97,15 @@ public class SomethingConfiguration {
     @ConditionalOnMissingBean(name = "somethingWebflowConfigurer")
     @Bean
     public CasWebflowConfigurer somethingWebflowConfigurer() {
-        final SomethingWebflowConfigurer w = new SomethingWebflowConfigurer(flowBuilderServices, 
+        return new SomethingWebflowConfigurer(flowBuilderServices,
                     loginFlowDefinitionRegistry, applicationContext, casProperties);
-        ...
-        w.initialize();
-        return w;
     }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(somethingWebflowConfigurer());
+    }
+
 }
 ```
 

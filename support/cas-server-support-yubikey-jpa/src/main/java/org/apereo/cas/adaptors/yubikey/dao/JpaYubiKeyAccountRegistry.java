@@ -23,7 +23,7 @@ import static java.util.stream.Collectors.toList;
  * @since 5.2.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "transactionManagerYubiKey", readOnly = false)
+@Transactional(transactionManager = "transactionManagerYubiKey")
 @Slf4j
 public class JpaYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 

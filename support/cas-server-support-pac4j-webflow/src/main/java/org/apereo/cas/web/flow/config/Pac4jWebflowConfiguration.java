@@ -9,10 +9,8 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
@@ -40,8 +38,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * This is {@link Pac4jWebflowConfiguration}.
  *
@@ -52,6 +48,10 @@ import java.util.concurrent.TimeUnit;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class Pac4jWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    private TicketFactory ticketFactory;
+
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
@@ -134,14 +134,6 @@ public class Pac4jWebflowConfiguration implements CasWebflowExecutionPlanConfigu
             delegatedSessionCookieManager);
     }
 
-    @Bean
-    public TransientSessionTicketFactory delegatedAuthenticationRequestTicketFactory() {
-        final long delegatedAuthenticationTimeoutMins = 3;
-        return new DefaultTransientSessionTicketFactory(
-            new HardTimeoutExpirationPolicy(TimeUnit.MINUTES.toSeconds(delegatedAuthenticationTimeoutMins))
-        );
-    }
-
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
@@ -158,7 +150,8 @@ public class Pac4jWebflowConfiguration implements CasWebflowExecutionPlanConfigu
 
     @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
-        return new DelegatedClientWebflowManager(ticketRegistry, delegatedAuthenticationRequestTicketFactory(),
+        return new DelegatedClientWebflowManager(ticketRegistry,
+            ticketFactory,
             casProperties.getTheme().getParamName(),
             casProperties.getLocale().getParamName(),
             webApplicationServiceFactory,
