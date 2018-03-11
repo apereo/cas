@@ -30,7 +30,6 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
     /**
      * This option is used to set the flag that all messages sent through the SimpleTcpCluster uses.
      * The flag decides how the messages are sent, and is a simple logical OR.
-     * <p>
      * <ul>
      * <li>2: {@code SEND_OPTIONS_SYNCHRONIZED_ACK}</li>
      * <li>4: {@code SEND_OPTIONS_USE_ACK}</li>
@@ -39,8 +38,7 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      */
     private int channelSendOptions = 8;
     /**
-     * The listen port for incoming data. The default value is 4000. To avoid port conflicts the receiver will automatically bind to a free port within the range
-     * of port <= bindPort < port+autoBind
+     * The listen port for incoming data. The default value is 4000. To avoid port conflicts the receiver will automatically bind to a free port.
      * So for example, if port is 4000, and autoBind is set to 10, then the receiver will open up a server socket on the first available port in the range 4000-4009.
      */
     private int receiverPort = 4000;
@@ -59,7 +57,7 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      */
     private int receiverMaxThreads = 6;
     /**
-     * The address (network interface) to listen for incoming traffic
+     * The address (network interface) to listen for incoming traffic.
      */
     private String receiverAddress = "auto";
     /**
