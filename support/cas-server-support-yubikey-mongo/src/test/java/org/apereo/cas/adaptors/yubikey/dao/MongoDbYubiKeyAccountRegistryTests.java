@@ -102,7 +102,7 @@ public class MongoDbYubiKeyAccountRegistryTests {
     public void verifyAccountRegistered() {
         assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
+        assertEquals(2, yubiKeyAccountRegistry.getAccounts().size());
     }
 
     @Test
