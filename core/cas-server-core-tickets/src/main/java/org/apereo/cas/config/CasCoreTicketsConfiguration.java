@@ -127,7 +127,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(casProperties.getServer().getPrefix());
+        final String prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
+        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(prefix);
         final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
@@ -221,10 +222,10 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public TicketFactory defaultTicketFactory() {
         final DefaultTicketFactory factory = new DefaultTicketFactory();
         factory.addTicketFactory(TransientSessionTicket.class, defaultTransientSessionTicketFactory())
-                    .addTicketFactory(ProxyGrantingTicket.class, defaultProxyGrantingTicketFactory())
-                    .addTicketFactory(TicketGrantingTicket.class, defaultTicketGrantingTicketFactory())
-                    .addTicketFactory(ServiceTicket.class, defaultServiceTicketFactory())
-                    .addTicketFactory(ProxyTicket.class, defaultProxyTicketFactory());
+            .addTicketFactory(ProxyGrantingTicket.class, defaultProxyGrantingTicketFactory())
+            .addTicketFactory(TicketGrantingTicket.class, defaultTicketGrantingTicketFactory())
+            .addTicketFactory(ServiceTicket.class, defaultServiceTicketFactory())
+            .addTicketFactory(ProxyTicket.class, defaultProxyTicketFactory());
         return factory;
     }
 
