@@ -76,7 +76,6 @@ import static org.junit.Assert.*;
 @Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-json.properties"})
 public class JsonYubiKeyAccountRegistryTests {
-
     private static final String BAD_TOKEN = "123456";
 
     @Autowired
