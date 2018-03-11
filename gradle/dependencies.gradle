@@ -2026,8 +2026,10 @@ ext.libraries = [
                 },
                 dependencies.create("org.apache.tomcat.embed:tomcat-embed-jasper:$springBootTomcatVersion") {
                     force = true
+                },
+                dependencies.create("org.apache.tomcat:tomcat-catalina-ha:$springBootTomcatVersion") {
+                    force = true
                 }
-
         ],
         springbootjetty         : [
                 dependencies.create("org.springframework.boot:spring-boot-starter-jetty:$springBootVersion") {
@@ -2830,6 +2832,9 @@ ext.libraries = [
         ],
         webjars                 : [
                 dependencies.create("org.webjars:headjs:$headjsVersion") {
+                    force = true
+                },
+                dependencies.create("org.webjars:store.js:$storejsVersion") {
                     force = true
                 },
                 dependencies.create("org.webjars:font-awesome:$fontAwesomeVersion") {
