@@ -83,7 +83,7 @@ public class YubiKeyAuthenticationHandlerTests {
     }
 
     @Test
-    public void checkEncryptedAccount() throws Exception {
+    public void checkEncryptedAccount() {
         final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(), (uid, token) -> true);
         registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
             "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
