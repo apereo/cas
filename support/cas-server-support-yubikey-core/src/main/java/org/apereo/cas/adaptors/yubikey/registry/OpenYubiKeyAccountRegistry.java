@@ -5,6 +5,8 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * This is {@link OpenYubiKeyAccountRegistry}.
@@ -27,6 +29,11 @@ public class OpenYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public boolean registerAccountFor(final String uid, final String yubikeyPublicId) {
         return true;
+    }
+
+    @Override
+    public Optional<YubiKeyAccount> getAccount(final String uid) {
+        return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), UUID.randomUUID().toString(), uid));
     }
 
     @Override

@@ -1,6 +1,10 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import org.apereo.cas.CipherExecutor;
+
+import java.io.Serializable;
 import java.util.Collection;
+import java.util.Optional;
 
 /**
  * General contract that allows one to determine whether
@@ -39,11 +43,33 @@ public interface YubiKeyAccountRegistry {
      * @return the boolean
      */
     boolean registerAccountFor(String uid, String token);
-    
+
     /**
      * Gets accounts for all users.
      *
      * @return the accounts
      */
     Collection<YubiKeyAccount> getAccounts();
+
+    /**
+     * Gets account.
+     *
+     * @param uid the uid
+     * @return the account
+     */
+    Optional<YubiKeyAccount> getAccount(String uid);
+
+    /**
+     * Gets account validator.
+     *
+     * @return the account validator
+     */
+    YubiKeyAccountValidator getAccountValidator();
+
+    /**
+     * Gets cipher executor.
+     *
+     * @return the cipher executor
+     */
+    CipherExecutor<Serializable, String> getCipherExecutor();
 }

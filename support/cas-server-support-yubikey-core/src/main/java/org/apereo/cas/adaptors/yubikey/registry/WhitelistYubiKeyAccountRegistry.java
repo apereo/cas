@@ -6,6 +6,7 @@ import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -43,8 +44,8 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
-        if (accountValidator.isValid(uid, token)) {
-            final String yubikeyPublicId = accountValidator.getTokenPublicId(token);
+        if (getAccountValidator().isValid(uid, token)) {
+            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
             final String pubId = getCipherExecutor().encode(yubikeyPublicId);
             devices.put(uid, pubId);
             return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
@@ -59,5 +60,14 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
                 entry.getKey(),
                 getCipherExecutor().decode(entry.getValue())))
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Optional<YubiKeyAccount> getAccount(final String uid) {
+        if (devices.containsKey(uid)) {
+            final String publicId = getCipherExecutor().decode(devices.get(uid));
+            return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), publicId, uid));
+        }
+        return Optional.empty();
     }
 }
