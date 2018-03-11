@@ -60,7 +60,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
         this(StringUtils.EMPTY, null, null,
-            client, new OpenYubiKeyAccountRegistry());
+            client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
     }
 
     @Override

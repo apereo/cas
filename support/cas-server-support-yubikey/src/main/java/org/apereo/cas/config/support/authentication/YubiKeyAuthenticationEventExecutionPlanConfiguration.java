@@ -159,7 +159,7 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
         LOGGER.warn("All credentials are considered eligible for YubiKey authentication. "
                 + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
-        final OpenYubiKeyAccountRegistry registry = new OpenYubiKeyAccountRegistry();
+        final OpenYubiKeyAccountRegistry registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
         registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
         return registry;
     }

@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
@@ -24,14 +23,13 @@ import java.util.Optional;
  */
 @Slf4j
 @ToString
-@NoArgsConstructor(force = true)
 @RequiredArgsConstructor
 @Getter
 @Setter
 public abstract class BaseYubiKeyAccountRegistry implements YubiKeyAccountRegistry {
 
     private final YubiKeyAccountValidator accountValidator;
-    private CipherExecutor<Serializable, String> cipherExecutor;
+    private CipherExecutor<Serializable, String> cipherExecutor = CipherExecutor.noOpOfSerializableToString();
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid) {
