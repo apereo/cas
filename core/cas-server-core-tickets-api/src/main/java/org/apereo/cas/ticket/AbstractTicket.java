@@ -39,7 +39,6 @@ import java.time.ZonedDateTime;
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @Slf4j
-@Getter
 @NoArgsConstructor
 @EqualsAndHashCode(of = {"id"})
 @Setter
@@ -52,6 +51,7 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      **/
     @Lob
     @Column(name = "EXPIRATION_POLICY", length = Integer.MAX_VALUE, nullable = false)
+    @Getter
     private ExpirationPolicy expirationPolicy;
 
     /**
@@ -59,30 +59,35 @@ public abstract class AbstractTicket implements Ticket, TicketState {
      */
     @Id
     @Column(name = "ID", nullable = false)
+    @Getter
     private String id;
 
     /**
      * The last time this ticket was used.
      */
     @Column(name = "LAST_TIME_USED", length = Integer.MAX_VALUE)
+    @Getter
     private ZonedDateTime lastTimeUsed;
 
     /**
      * The previous last time this ticket was used.
      */
     @Column(name = "PREVIOUS_LAST_TIME_USED", length = Integer.MAX_VALUE)
+    @Getter
     private ZonedDateTime previousTimeUsed;
 
     /**
      * The time the ticket was created.
      */
     @Column(name = "CREATION_TIME", length = Integer.MAX_VALUE)
+    @Getter
     private ZonedDateTime creationTime;
 
     /**
      * The number of times this was used.
      */
     @Column(name = "NUMBER_OF_TIMES_USED")
+    @Getter
     private int countOfUses;
 
     /**
