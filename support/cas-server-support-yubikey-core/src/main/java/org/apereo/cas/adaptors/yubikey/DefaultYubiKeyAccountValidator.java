@@ -22,7 +22,7 @@ public class DefaultYubiKeyAccountValidator implements YubiKeyAccountValidator {
     @Override
     public boolean isValid(final String uid, final String token) {
         try {
-            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+            final String yubikeyPublicId = getTokenPublicId(token);
             if (StringUtils.isNotBlank(yubikeyPublicId)) {
                 final VerificationResponse response = this.client.verify(token);
                 final ResponseStatus status = response.getStatus();

@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -35,17 +34,20 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
-        final String pubId = getCipherExecutor().encode(yubikeyPublicId);
-        return devices.containsKey(uid) && devices.get(uid).equals(pubId);
+        if (devices.containsKey(uid)) {
+            final String pubId = devices.get(uid);
+            return getCipherExecutor().decode(pubId).equals(yubikeyPublicId);
+        }
+        return false;
     }
 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
         if (accountValidator.isValid(uid, token)) {
-            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+            final String yubikeyPublicId = accountValidator.getTokenPublicId(token);
             final String pubId = getCipherExecutor().encode(yubikeyPublicId);
             devices.put(uid, pubId);
-            return isYubiKeyRegisteredFor(uid, pubId);
+            return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
         }
         return false;
     }

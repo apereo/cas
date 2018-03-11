@@ -34,9 +34,6 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
-
-
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
