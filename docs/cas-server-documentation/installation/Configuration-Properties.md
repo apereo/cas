@@ -347,8 +347,8 @@ that this header doesn't originate with the client (e.g. the browser).
 # cas.server.sslValve.sslCipherUserKeySizeHeader=ssl_cipher_usekeysize
 ```
 
-Example HAProxy Configuration (snippet)
-Configure SSL frontend with cert optional, redirect to cas, if cert provided, put it on header
+Example HAProxy Configuration (snippet): Configure SSL frontend with cert optional, redirect to cas, if cert provided, put it on header.
+
 ```
 frontend web-vip
   bind 192.168.2.10:443 ssl crt /var/lib/haproxy/certs/www.example.com.pem ca-file /var/lib/haproxy/certs/ca.pem verify optional
@@ -399,6 +399,34 @@ Enable basic authentication for the embedded Apache Tomcat.
 # cas.server.basicAuthn.securityRoles[0]=admin
 # cas.server.basicAuthn.authRoles[0]=admin
 # cas.server.basicAuthn.patterns[0]=/*
+```
+
+#### Session Clustering & Replication
+
+Enable session replication to replicate web application session deltas.
+
+```properties
+# cas.server.clustering.enabled=false
+# cas.server.clustering.clusterMembers=ip-address:port:index
+
+# cas.server.clustering.expireSessionsOnShutdown=false
+# cas.server.clustering.channelSendOptions=8
+
+# cas.server.clustering.receiverPort=4000
+# cas.server.clustering.receiverTimeout=5000
+# cas.server.clustering.receiverMaxThreads=6
+# cas.server.clustering.receiverAddress=auto
+# cas.server.clustering.receiverAutoBind=100
+
+# cas.server.clustering.membershipPort=45564
+# cas.server.clustering.membershipAddress=228.0.0.4
+# cas.server.clustering.membershipFrequency=500
+# cas.server.clustering.membershipDropTime=3000
+# cas.server.clustering.membershipRecoveryEnabled=true
+# cas.server.clustering.membershipLocalLoopbackDisabled=false
+# cas.server.clustering.membershipRecoveryCounter=10
+
+# cas.server.clustering.managerType=DELTA|BACKUP
 ```
 
 ## CAS Server
@@ -1287,6 +1315,7 @@ To learn more about this topic, [please review this guide](Cassandra-Authenticat
 # cas.authn.cassandra.tableName=
 # cas.authn.cassandra.username=
 # cas.authn.cassandra.password=
+# cas.authn.cassandra.query=SELECT * FROM %s WHERE %s = ? ALLOW FILTERING
 
 # cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
 # cas.authn.cassandra.keyspace=
@@ -3759,6 +3788,14 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 ```properties
 # cas.authn.fortress.rbaccontext=HOME
+```
+
+## CAS Client
+
+Configure settings relevant to the Java CAS client configured to handle inbound ticket validation operations, etc.
+
+```properties
+# cas.client.prefix=https://sso.example.org/cas
 ```
 
 ## Password Management

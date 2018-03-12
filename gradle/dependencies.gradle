@@ -175,7 +175,6 @@ ext.libraries = [
         cassandra               : [
                 dependencies.create("com.datastax.cassandra:cassandra-driver-core:$cassandraDriverVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")
-                    exclude(group: "io.netty", module: "netty-handler")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-databind")
                     exclude(group: "com.fasterxml.jackson.core", module: "jackson-core")
                     exclude(group: "io.dropwizard.metrics", module: "metrics-core")
