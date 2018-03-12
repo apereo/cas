@@ -1,6 +1,8 @@
 package org.apereo.cas.support.wsfederation.web.flow;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
@@ -26,6 +28,7 @@ import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.action.EventFactorySupport;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.Serializable;
@@ -33,8 +36,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This class represents an action in the webflow to retrieve WsFederation information on the callback url which is
@@ -46,37 +47,28 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class WsFederationAction extends AbstractAction {
-
-    private static final String LOCALE = "locale";
-
-    private static final String METHOD = "method";
-
-    private static final String PROVIDERURL = "WsFederationIdentityProviderUrl";
+    /**
+     * Provider url variable.
+     */
+    public static final String PROVIDERURL = "WsFederationIdentityProviderUrl";
 
     private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";
 
-    private static final String THEME = "theme";
-
     private static final String WA = "wa";
-
     private static final String WRESULT = "wresult";
-
     private static final String WSIGNIN = "wsignin1.0";
-
     private static final String WCTX = "wctx";
 
     private final WsFederationHelper wsFederationHelper;
-
     private final Collection<WsFederationConfiguration> configuration;
-
     private final CentralAuthenticationService centralAuthenticationService;
-
     private final AuthenticationSystemSupport authenticationSystemSupport;
-
     private final ServicesManager servicesManager;
 
+    private final String themeParamName;
+    private final String localParamName;
 
     /**
      * Executes the webflow action.
@@ -126,9 +118,9 @@ public class WsFederationAction extends AbstractAction {
         if (service != null) {
             session.setAttribute(CasProtocolConstants.PARAMETER_SERVICE + "-" + requestUUID.toString(), service);
         }
-        saveRequestParameter(request, session, THEME);
-        saveRequestParameter(request, session, LOCALE);
-        saveRequestParameter(request, session, METHOD);
+        saveRequestParameter(request, session, this.themeParamName);
+        saveRequestParameter(request, session, this.localParamName);
+        saveRequestParameter(request, session, CasProtocolConstants.PARAMETER_METHOD);
         final String url = String.format(getAuthorizationUrl(config), getRelyingPartyIdentifier(service, context, config), requestUUID.toString());
         LOGGER.info("Preparing to redirect to the IdP [{}]", url);
         context.getFlowScope().put(PROVIDERURL, url);
@@ -192,9 +184,9 @@ public class WsFederationAction extends AbstractAction {
                 return error();
             }
             context.getFlowScope().put(CasProtocolConstants.PARAMETER_SERVICE, service);
-            restoreRequestAttribute(request, session, THEME);
-            restoreRequestAttribute(request, session, LOCALE);
-            restoreRequestAttribute(request, session, METHOD);
+            restoreRequestAttribute(request, session, this.themeParamName);
+            restoreRequestAttribute(request, session, this.localParamName);
+            restoreRequestAttribute(request, session, CasProtocolConstants.PARAMETER_METHOD);
             LOGGER.debug("Creating final authentication result based on the given credential");
             final AuthenticationResult authenticationResult = this.authenticationSystemSupport.handleAndFinalizeSingleAuthenticationTransaction(service, credential);
             LOGGER.debug("Attempting to create a ticket-granting ticket for the authentication result");
