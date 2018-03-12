@@ -121,6 +121,19 @@ public class CasEmbeddedApacheTomcatClusteringProperties implements Serializable
      * When localLoopbackDisabled==true multicast messages will not reach other nodes on the same local machine. The default is false.
      */
     private int membershipRecoveryCounter = 10;
+
+    /**
+     * Accepted values are: {@code DELTA, BACKUP}.
+     * Enable all-to-all session replication using the DeltaManager to replicate session deltas.
+     * By all-to-all we mean that the session gets replicated to all the other nodes in the cluster.
+     * This works great for smaller cluster but we don't recommend it for larger clusters(a lot of Tomcat nodes).
+     * Also when using the delta manager it will replicate to all nodes, even nodes that don't have the application deployed.
+     * To get around this problem, you'll want to use the BackupManager. This manager only replicates the session data
+     * to one backup node, and only to nodes that have the application deployed.
+     * Downside of the BackupManager: not quite as battle tested as the delta manager.
+     */
+    private String managerType = "DELTA";
+
     /**
      * Enable tomcat session clustering.
      */
