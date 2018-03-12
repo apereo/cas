@@ -46,6 +46,9 @@ public class WsFederationAuthenticationConfiguration {
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
+    @Autowired
+    private CasConfigurationProperties casProperties;
+
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
@@ -57,12 +60,13 @@ public class WsFederationAuthenticationConfiguration {
     @Autowired
     @Bean
     @RefreshScope
-    public Action wsFederationAction(@Qualifier("wsFederationConfigurations")
-                                         final Collection<WsFederationConfiguration> wsFederationConfigurations) {
+    public Action wsFederationAction(@Qualifier("wsFederationConfigurations") final Collection<WsFederationConfiguration> wsFederationConfigurations) {
         return new WsFederationAction(wsFederationHelper(),
             wsFederationConfigurations,
             centralAuthenticationService,
             authenticationSystemSupport,
-            servicesManager);
+            servicesManager,
+            casProperties.getTheme().getParamName(),
+            casProperties.getLocale().getParamName());
     }
 }
