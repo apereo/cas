@@ -15,12 +15,9 @@ if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
         exit $retVal
     fi
 
-#    echo "Waiting for Cassandra server to come online..."
-#    until $(curl --output /dev/null --silent --head --fail http://localhost:9042); do
-#        printf '.'
-#        sleep 1
-#    done
-
+    echo "Waiting for Cassandra server to come online..."
+    sleep 10
+    
     echo "Creating Cassandra keyspace: cas"
     docker exec -it cassandra cqlsh -e "CREATE KEYSPACE cas WITH REPLICATION = {'class' : 'SimpleStrategy', 'replication_factor' : 1}"
 
