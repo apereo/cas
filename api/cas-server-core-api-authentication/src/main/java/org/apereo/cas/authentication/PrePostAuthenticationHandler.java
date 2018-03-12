@@ -6,6 +6,7 @@ package org.apereo.cas.authentication;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface PrePostAuthenticationHandler extends AuthenticationHandler {
 
     /**
