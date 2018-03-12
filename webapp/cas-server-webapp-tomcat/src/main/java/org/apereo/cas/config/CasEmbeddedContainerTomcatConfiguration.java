@@ -6,6 +6,8 @@ import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.authenticator.BasicAuthenticator;
 import org.apache.catalina.connector.Connector;
+import org.apache.catalina.ha.session.BackupManager;
+import org.apache.catalina.ha.session.ClusterManagerBase;
 import org.apache.catalina.ha.session.ClusterSessionListener;
 import org.apache.catalina.ha.session.DeltaManager;
 import org.apache.catalina.ha.session.JvmRouteBinderValve;
@@ -120,19 +122,32 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureContextForSessionClustering(final TomcatEmbeddedServletContainerFactory tomcat) {
-        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getClustering();
         if (!isSessionClusteringEnabled()) {
             LOGGER.debug("Tomcat session clustering/replication is turned off");
             return;
         }
 
         tomcat.addContextCustomizers((TomcatContextCustomizer) context -> {
-            final DeltaManager manager = new DeltaManager();
-            manager.setExpireSessionsOnShutdown(props.isExpireSessionsOnShutdown());
-            manager.setNotifyListenersOnReplication(true);
+            final ClusterManagerBase manager = getClusteringManagerInstance();
             context.setManager(manager);
             context.setDistributable(true);
         });
+    }
+
+    private ClusterManagerBase getClusteringManagerInstance() {
+        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getClustering();
+        switch (props.getManagerType().toUpperCase()) {
+            case "DELTA":
+                final DeltaManager manager = new DeltaManager();
+                manager.setExpireSessionsOnShutdown(props.isExpireSessionsOnShutdown());
+                manager.setNotifyListenersOnReplication(true);
+                return manager;
+            default:
+                final BackupManager backupManager = new BackupManager();
+                backupManager.setNotifyListenersOnReplication(true);
+                return backupManager;
+        }
+
     }
 
     private void configureBasicAuthn(final TomcatEmbeddedServletContainerFactory tomcat) {
@@ -313,9 +328,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
         final SimpleTcpCluster cluster = new SimpleTcpCluster();
         cluster.setChannelSendOptions(props.getChannelSendOptions());
 
-        final DeltaManager manager = new DeltaManager();
-        manager.setExpireSessionsOnShutdown(props.isExpireSessionsOnShutdown());
-        manager.setNotifyListenersOnReplication(true);
+        final ClusterManagerBase manager = getClusteringManagerInstance();
         cluster.setManagerTemplate(manager);
 
         final GroupChannel channel = new GroupChannel();

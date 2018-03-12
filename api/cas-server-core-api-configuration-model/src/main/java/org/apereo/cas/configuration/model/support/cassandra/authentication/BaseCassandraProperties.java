@@ -34,7 +34,7 @@ public abstract class BaseCassandraProperties implements Serializable {
     /**
      * Cassandra protocol version.
      */
-    private String protocolVersion = "V3";
+    private String protocolVersion = "V4";
 
     /**
      * Keyspace address to use where the cluster would connect.
@@ -84,7 +84,7 @@ public abstract class BaseCassandraProperties implements Serializable {
      * Protocol compression options.
      * Accepted options are {@code NONE, SNAPPY, LZ4}.
      */
-    private String compression = "LZ4";
+    private String compression = "NONE";
 
     /**
      * Query option consistency level.
