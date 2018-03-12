@@ -61,10 +61,8 @@ public class CassandraAuthenticationConfiguration {
         final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
     }
-
-
+    
     @Bean
-    @RefreshScope
     public AuthenticationHandler cassandraAuthenticationHandler() {
         final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
         final CassandraAuthenticationHandler handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,
