@@ -1,13 +1,14 @@
 package org.apereo.cas.configuration.model.support.wsfed;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RequiredProperty;
-import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.model.core.authentication.PersonDirectoryPrincipalResolverProperties;
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
+import java.io.Serializable;
 
 /**
  * This is {@link WsFederationDelegationProperties}.
@@ -59,7 +60,7 @@ public class WsFederationDelegationProperties implements Serializable {
     private String tolerance = "PT10S";
 
     /**
-     * Indicates how attributes should be recorded into the principal object. 
+     * Indicates how attributes should be recorded into the principal object.
      * Useful if you wish to additionally resolve attributes on top of what wsfed provides.
      * Accepted values are {@code CAS,WSFED,BOTH}.
      */
@@ -101,4 +102,10 @@ public class WsFederationDelegationProperties implements Serializable {
      * Name of the authentication handler.
      */
     private String name;
+
+    /**
+     * Signing/encryption settings related to managing the cookie that is used to keep track of the session.
+     */
+    @NestedConfigurationProperty
+    private WsFederationDelegatedCookieProperties cookie = new WsFederationDelegatedCookieProperties();
 }
