@@ -40,7 +40,7 @@ public class DelegatedClientNavigationController {
     /**
      * Endpoint path controlled by this controller to make the redirect.
      */
-    public static final String ENDPOINT_REDIRECT = "/clientredirect";
+    public static final String ENDPOINT_REDIRECT = "clientredirect";
 
     private final Clients clients;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;

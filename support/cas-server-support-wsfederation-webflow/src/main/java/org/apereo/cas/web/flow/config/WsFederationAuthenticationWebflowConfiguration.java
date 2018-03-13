@@ -1,21 +1,32 @@
 package org.apereo.cas.web.flow.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
+import org.apereo.cas.support.wsfederation.WsFederationHelper;
+import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.apereo.cas.web.flow.WsFederationAction;
 import org.apereo.cas.web.flow.WsFederationWebflowConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
+import org.springframework.webflow.execution.Action;
+
+import java.util.Collection;
 
 /**
  * This is {@link WsFederationAuthenticationWebflowConfiguration}.
@@ -29,11 +40,15 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 public class WsFederationAuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
+
+    @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("loginFlowRegistry")
     private FlowDefinitionRegistry loginFlowDefinitionRegistry;
@@ -41,12 +56,45 @@ public class WsFederationAuthenticationWebflowConfiguration implements CasWebflo
     @Autowired
     private FlowBuilderServices flowBuilderServices;
 
+    @Autowired
+    @Qualifier("wsFederationCookieManager")
+    private WsFederationCookieManager wsFederationCookieManager;
+
+    @Autowired
+    @Qualifier("centralAuthenticationService")
+    private CentralAuthenticationService centralAuthenticationService;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("wsFederationConfigurations")
+    private Collection<WsFederationConfiguration> wsFederationConfigurations;
+
+    @Autowired
+    @Qualifier("wsFederationHelper")
+    private WsFederationHelper wsFederationHelper;
+
     @ConditionalOnMissingBean(name = "wsFederationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
         return new WsFederationWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, applicationContext, casProperties);
+            loginFlowDefinitionRegistry, applicationContext, casProperties);
+    }
+
+    @Bean
+    @RefreshScope
+    public Action wsFederationAction() {
+        return new WsFederationAction(wsFederationHelper,
+            wsFederationConfigurations,
+            centralAuthenticationService,
+            authenticationSystemSupport,
+            servicesManager,
+            casProperties.getTheme().getParamName(),
+            casProperties.getLocale().getParamName(),
+            wsFederationCookieManager);
     }
 
     @Override

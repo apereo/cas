@@ -17,7 +17,7 @@ public class DelegatedSessionCookieCipherExecutor extends BaseStringCipherExecut
 
     @Override
     public String getName() {
-        return "Pac4j Delegated Authentication";
+        return "Delegated Authentication";
     }
 
     @Override
