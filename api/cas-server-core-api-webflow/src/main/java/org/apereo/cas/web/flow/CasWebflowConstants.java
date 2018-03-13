@@ -16,6 +16,10 @@ public interface CasWebflowConstants {
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+    /**
+     * Transition id 'redirect' .
+     */
+    String TRANSITION_ID_REDIRECT = "redirect";
 
     /**
      * Propagate transition id.
@@ -91,6 +95,11 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
 
+    /**
+     * The view state 'casWsFedStopWebflow'.
+     */
+    String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+    
     /**
      * The transition state 'successWithWarnings'.
      */

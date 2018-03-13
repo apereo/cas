@@ -2,11 +2,14 @@ package org.apereo.cas.support.wsfederation.config.support.authentication;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
+import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegatedCookieProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationDelegationProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
@@ -14,6 +17,9 @@ import org.apereo.cas.support.wsfederation.WsFederationAttributeMutator;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.authentication.handler.support.WsFederationAuthenticationHandler;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredentialsToPrincipalResolver;
+import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
+import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
+import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -67,18 +73,36 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
         config.setRelyingPartyIdentifier(wsfed.getRelyingPartyIdentifier());
 
         org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getSigningCertificateResources())
-                .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
+            .forEach(s -> config.getSigningCertificateResources().add(this.resourceLoader.getResource(s)));
 
         org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionPrivateKey())
-                .forEach(s -> config.setEncryptionPrivateKey(this.resourceLoader.getResource(s)));
+            .forEach(s -> config.setEncryptionPrivateKey(this.resourceLoader.getResource(s)));
 
         org.springframework.util.StringUtils.commaDelimitedListToSet(wsfed.getEncryptionCertificate())
-                .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
+            .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
 
         config.setEncryptionPrivateKeyPassword(wsfed.getEncryptionPrivateKeyPassword());
         config.setAttributeMutator(this.attributeMutator);
         config.setAutoRedirect(wsfed.isAutoRedirect());
         config.setName(wsfed.getName());
+
+
+        final WsFederationDelegatedCookieProperties cookie = wsfed.getCookie();
+        final EncryptionJwtSigningJwtCryptographyProperties crypto = cookie.getCrypto();
+        final CipherExecutor cipher;
+        if (crypto.isEnabled()) {
+            cipher = new WsFederationCookieCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
+        } else {
+            LOGGER.info("WsFederation delegated authentication cookie encryption/signing is turned off and "
+                + "MAY NOT be safe in a production environment. "
+                + "Consider using other choices to handle encryption, signing and verification of "
+                + "delegated authentication cookie.");
+            cipher = CipherExecutor.noOp();
+        }
+        config.setCookieGenerator(new WsFederationCookieGenerator(new DefaultCasCookieValueManager(cipher),
+            cookie.getName(), cookie.getPath(), cookie.getMaxAge(),
+            cookie.isSecure(), cookie.getDomain(), cookie.isHttpOnly()));
+        
         config.initialize();
 
         return config;
@@ -108,21 +132,21 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Bean
     public AuthenticationEventExecutionPlanConfigurer wsfedAuthenticationEventExecutionPlanConfigurer() {
         return plan -> casProperties.getAuthn().getWsfed()
-                .stream()
-                .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
-                        && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
-                .forEach(wsfed -> {
-                    final AuthenticationHandler handler =
-                            new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
-                    if (!wsfed.isAttributeResolverEnabled()) {
-                        plan.registerAuthenticationHandler(handler);
-                    } else {
-                        final WsFederationCredentialsToPrincipalResolver r =
-                                new WsFederationCredentialsToPrincipalResolver(attributeRepository, adfsPrincipalFactory(),
-                                        wsfed.getPrincipal().isReturnNull(), wsfed.getPrincipal().getPrincipalAttribute(),
-                                        getWsFederationConfiguration(wsfed));
-                        plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
-                    }
-                });
+            .stream()
+            .filter(wsfed -> StringUtils.isNotBlank(wsfed.getIdentityProviderUrl())
+                && StringUtils.isNotBlank(wsfed.getIdentityProviderIdentifier()))
+            .forEach(wsfed -> {
+                final AuthenticationHandler handler =
+                    new WsFederationAuthenticationHandler(wsfed.getName(), servicesManager, adfsPrincipalFactory());
+                if (!wsfed.isAttributeResolverEnabled()) {
+                    plan.registerAuthenticationHandler(handler);
+                } else {
+                    final WsFederationCredentialsToPrincipalResolver r =
+                        new WsFederationCredentialsToPrincipalResolver(attributeRepository, adfsPrincipalFactory(),
+                            wsfed.getPrincipal().isReturnNull(), wsfed.getPrincipal().getPrincipalAttribute(),
+                            getWsFederationConfiguration(wsfed));
+                    plan.registerAuthenticationHandlerWithPrincipalResolver(handler, r);
+                }
+            });
     }
 }

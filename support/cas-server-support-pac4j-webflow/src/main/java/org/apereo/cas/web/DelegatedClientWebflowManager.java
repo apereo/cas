@@ -51,8 +51,7 @@ public class DelegatedClientWebflowManager {
     private final ServiceFactory<WebApplicationService> webApplicationServiceFactory;
     private final String casLoginEndpoint;
     private final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-
-
+    
     /**
      * Store.
      *
