@@ -42,9 +42,9 @@ The process of working with an overlay, whether Maven or Gradle, can be summariz
 
 - Start with and build the provided basic vanilla build/deployment.
 - Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `target` or `build` directory for Maven or Gradle, respectively.
-- Copy the identified artifiacts from the identified above directories over to the `src` directory.
+- Copy the identified artifacts from the identified above directories over to the `src` directory.
 1. Create the `src` directory and all of its children, if they don't already exist.
-2. Copied paths and filenames **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
+2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
