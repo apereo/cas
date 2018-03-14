@@ -112,6 +112,9 @@ public class SamlRegisteredService extends RegexRegisteredService {
     @Column
     private String signingCredentialType;
 
+    @Column
+    private String assertionAudiences;
+
     @ElementCollection
     @CollectionTable(name = "SamlRegisteredService_AttributeNameFormats")
     @MapKeyColumn(name = "key")
@@ -158,6 +161,7 @@ public class SamlRegisteredService extends RegexRegisteredService {
         setSkipGeneratingSubjectConfirmationNotOnOrAfter(service.skipGeneratingSubjectConfirmationNotOnOrAfter);
         setSkipGeneratingSubjectConfirmationRecipient(service.skipGeneratingSubjectConfirmationRecipient);
         setSigningCredentialType(service.getSigningCredentialType());
+        setAssertionAudiences(service.getAssertionAudiences());
     }
 
     @JsonIgnore
