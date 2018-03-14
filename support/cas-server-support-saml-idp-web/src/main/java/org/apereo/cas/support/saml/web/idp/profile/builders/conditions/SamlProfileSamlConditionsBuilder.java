@@ -1,6 +1,7 @@
 package org.apereo.cas.support.saml.web.idp.profile.builders.conditions;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlException;
@@ -16,6 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This is {@link SamlProfileSamlConditionsBuilder}.
@@ -35,12 +39,12 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
     }
 
     @Override
-    public Conditions build(final RequestAbstractType authnRequest, final HttpServletRequest request, 
+    public Conditions build(final RequestAbstractType authnRequest, final HttpServletRequest request,
                             final HttpServletResponse response,
                             final Object assertion, final SamlRegisteredService service,
                             final SamlRegisteredServiceServiceProviderMetadataFacade adaptor,
                             final String binding)
-            throws SamlException {
+        throws SamlException {
         return buildConditions(authnRequest, assertion, service, adaptor);
     }
 
@@ -55,8 +59,7 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
      * @throws SamlException the saml exception
      */
     protected Conditions buildConditions(final RequestAbstractType authnRequest,
-                                         final Object assertion,
-                                         final SamlRegisteredService service,
+                                         final Object assertion, final SamlRegisteredService service,
                                          final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         final ZonedDateTime currentDateTime = ZonedDateTime.now(ZoneOffset.UTC);
@@ -65,9 +68,15 @@ public class SamlProfileSamlConditionsBuilder extends AbstractSaml20ObjectBuilde
             skewAllowance = casProperties.getSamlCore().getSkewAllowance();
         }
 
+        final List<String> audienceUrls = new ArrayList<>();
+        audienceUrls.add(adaptor.getEntityId());
+        if (StringUtils.isNotBlank(service.getAssertionAudiences())) {
+            final Set<String> audiences = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getAssertionAudiences());
+            audienceUrls.addAll(audiences);
+        }
         final Conditions conditions = newConditions(currentDateTime,
-                currentDateTime.plusSeconds(skewAllowance),
-                adaptor.getEntityId());
+            currentDateTime.plusSeconds(skewAllowance),
+            audienceUrls.toArray(new String[]{}));
         return conditions;
     }
 }

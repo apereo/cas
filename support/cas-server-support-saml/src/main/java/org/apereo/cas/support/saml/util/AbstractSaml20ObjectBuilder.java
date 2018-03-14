@@ -38,6 +38,7 @@ import java.net.InetAddress;
 import java.security.SecureRandom;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -309,16 +310,18 @@ public abstract class AbstractSaml20ObjectBuilder extends AbstractSamlObjectBuil
      * @param audienceUri  the service id
      * @return the conditions
      */
-    public Conditions newConditions(final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter, final String audienceUri) {
+    public Conditions newConditions(final ZonedDateTime notBefore, final ZonedDateTime notOnOrAfter, final String... audienceUri) {
         LOGGER.debug("Building conditions for audience [{}] that enforce not-before [{}] and not-after [{}]", audienceUri, notBefore, notOnOrAfter);
         final Conditions conditions = newSamlObject(Conditions.class);
         conditions.setNotBefore(DateTimeUtils.dateTimeOf(notBefore));
         conditions.setNotOnOrAfter(DateTimeUtils.dateTimeOf(notOnOrAfter));
 
         final AudienceRestriction audienceRestriction = newSamlObject(AudienceRestriction.class);
-        final Audience audience = newSamlObject(Audience.class);
-        audience.setAudienceURI(audienceUri);
-        audienceRestriction.getAudiences().add(audience);
+        Arrays.stream(audienceUri).forEach(audienceEntry -> {
+            final Audience audience = newSamlObject(Audience.class);
+            audience.setAudienceURI(audienceEntry);
+            audienceRestriction.getAudiences().add(audience);
+        });
         conditions.getAudienceRestrictions().add(audienceRestriction);
         return conditions;
     }
