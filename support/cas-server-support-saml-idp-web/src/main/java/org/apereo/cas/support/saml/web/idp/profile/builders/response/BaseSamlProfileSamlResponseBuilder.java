@@ -210,12 +210,12 @@ public abstract class BaseSamlProfileSamlResponseBuilder<T extends XMLObject>
                                           final SamlRegisteredServiceServiceProviderMetadataFacade adaptor) throws SamlException {
 
         if (service.isEncryptAssertions()) {
-            LOGGER.info("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
+            LOGGER.debug("SAML service [{}] requires assertions to be encrypted", adaptor.getEntityId());
             final EncryptedAssertion encryptedAssertion =
                 this.samlObjectEncrypter.encode(assertion, service, adaptor, response, request);
             return encryptedAssertion;
         }
-        LOGGER.info("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
+        LOGGER.debug("SAML registered service [{}] does not require assertions to be encrypted", adaptor.getEntityId());
         return assertion;
 
     }
