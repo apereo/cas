@@ -1,11 +1,10 @@
 package org.apereo.cas.configuration.model.support.pac4j;
 
-import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.support.RequiresModule;
-import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 
 /**
  * This is {@link Pac4jCasProperties}.
@@ -17,7 +16,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jCasProperties implements Serializable {
+public class Pac4jCasProperties extends Pac4jBaseClientProperties {
 
     private static final long serialVersionUID = -2738631545437677447L;
 
@@ -33,9 +32,4 @@ public class Pac4jCasProperties implements Serializable {
      */
     @RequiredProperty
     private String protocol;
-
-    /**
-     * Name of the client mostly for UI purposes and uniqueness.
-     */
-    private String clientName;
 }
