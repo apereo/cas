@@ -5,7 +5,8 @@ title: CAS - YubiKey Authentication
 
 # YubiKey Authentication
 
-Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the configuration optionis available to use YubiKey devices as a primary authentication source that CAS server could use to authenticate users.
+Yubico is a cloud-based service that enables strong, easy-to-use and affordable two-factor authentication with one-time passwords through their flagship product, YubiKey. Once Yubico `clientId` and `secretKey` are obtained, then the 
+configuration options available to use YubiKey devices as a primary authentication source that CAS server could use to authenticate users.
 
 To configure YubiKey accounts and obtain API keys, [refer to the documentation](https://upgrade.yubico.com/getapikey/).
 
@@ -40,7 +41,7 @@ The JSON structure is a simple map of user id to yubikey public id representing 
 
 ### Whitelist
 
-Registration records may be specificied statically via CAS settings in form of a map that links registered usernames with the public id of the YubiKey device. See [review this guide](Configuration-Properties.html#yubikey) for more info.
+Registration records may be specified statically via CAS settings in form of a map that links registered usernames with the public id of the YubiKey device. See [review this guide](Configuration-Properties.html#yubikey) for more info.
 
 ### JPA
 
