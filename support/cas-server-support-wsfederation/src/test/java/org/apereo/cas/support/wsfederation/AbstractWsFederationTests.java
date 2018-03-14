@@ -81,7 +81,6 @@ import org.springframework.test.context.junit4.SpringRunner;
         CasCoreValidationConfiguration.class,
         CasCoreConfiguration.class,
         CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        SamlConfiguration.class,
         CasPersonDirectoryConfiguration.class,
         CasCoreUtilConfiguration.class})
 @TestPropertySource(locations = {"classpath:/wsfed.properties"})
