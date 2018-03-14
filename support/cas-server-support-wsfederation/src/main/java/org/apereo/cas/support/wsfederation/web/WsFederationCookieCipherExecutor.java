@@ -3,7 +3,7 @@ package org.apereo.cas.support.wsfederation.web;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**
- * This is {@link DelegatedSessionCookieCipherExecutor}.
+ * This is {@link WsFederationCookieCipherExecutor}.
  *
  * @author Misagh Moayyed
  * @since 5.3.0
