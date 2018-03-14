@@ -62,10 +62,7 @@ public class AuthenticationTransaction implements Serializable {
      * @return the credential
      */
     public Optional<Credential> getCredential() {
-        if (!credentials.isEmpty()) {
-            return Optional.of(credentials.iterator().next());
-        }
-        return Optional.empty();
+        return credentials.stream().findFirst();
     }
 
     /**
@@ -75,15 +72,9 @@ public class AuthenticationTransaction implements Serializable {
      * @return true/false
      */
     public boolean isCredentialOfType(final Class clazz) {
-        try {
-            if (getCredential().isPresent()) {
-                final Object object = clazz.cast(getCredential().get());
-                return object != null;
-            }
-        } catch (final Exception e) {
-            return false;
-        }
-        return false;
+        return getCredential()
+                .filter(clazz::isInstance)
+                .isPresent();
     }
 
     /**

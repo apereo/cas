@@ -9,12 +9,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorAuthenticationHandler;
 import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorMultifactorAuthenticationProvider;
+import org.apereo.cas.adaptors.gauth.GoogleAuthenticatorTokenCredential;
 import org.apereo.cas.adaptors.gauth.repository.credentials.InMemoryGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.JsonGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.adaptors.gauth.repository.credentials.RestGoogleAuthenticatorTokenCredentialRepository;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
 import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
@@ -192,6 +194,7 @@ public class GoogleAuthenticatorAuthenticationEventExecutionPlanConfiguration {
             if (StringUtils.isNotBlank(casProperties.getAuthn().getMfa().getGauth().getIssuer())) {
                 plan.registerAuthenticationHandler(googleAuthenticatorAuthenticationHandler());
                 plan.registerMetadataPopulator(googleAuthenticatorAuthenticationMetaDataPopulator());
+                plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(GoogleAuthenticatorTokenCredential.class));
             }
         };
     }
