@@ -3,12 +3,11 @@ package org.apereo.cas.configuration.model.support.pac4j;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
-import java.io.Serializable;
 import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This is {@link Pac4jGenericClientProperties}.
+ * This is {@link Pac4jIdentifiableClientProperties}.
  *
  * @author Misagh Moayyed
  * @since 5.2.0
@@ -17,7 +16,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jGenericClientProperties implements Serializable {
+public class Pac4jIdentifiableClientProperties extends Pac4jBaseClientProperties {
 
     private static final long serialVersionUID = 3007013267786902465L;
 
@@ -32,9 +31,4 @@ public class Pac4jGenericClientProperties implements Serializable {
      */
     @RequiredProperty
     private String secret;
-
-    /**
-     * Name of the client mostly for UI purposes and uniqueness.
-     */
-    private String clientName;
 }

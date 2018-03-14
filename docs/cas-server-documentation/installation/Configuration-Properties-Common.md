@@ -836,14 +836,16 @@ The parameters passed are as follows:
 
 ## Delegated Authentication Settings
 
-The following  options are shared and apply when CAS is configured to delegate authentication to an external provider such as Yahoo, given the provider's *configuration key*:
+The following  options are shared and apply when CAS is configured to delegate authentication 
+to an external provider such as Yahoo, given the provider's *configuration key*:
 
 ```properties
-#${configurationKey}.id=
-#${configurationKey}.secret=
-# (Optional) Friendly name, e.g. "This Organization" or "That Organization"
-#${configurationKey}.clientName=My Provider
+# ${configurationKey}.id=
+# ${configurationKey}.secret=
+# ${configurationKey}.clientName=My Provider
+# ${configurationKey}.autoRedirect=false
 ```
+
 
 ## LDAP Connection Settings
 
