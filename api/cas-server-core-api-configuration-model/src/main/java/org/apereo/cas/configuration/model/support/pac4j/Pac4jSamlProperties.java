@@ -118,4 +118,10 @@ public class Pac4jSamlProperties extends Pac4jBaseClientProperties {
      * This attribute won't be sent with the request unless a positive value (including 0) is defined.
      */
     private int attributeConsumingServiceIndex;
+
+    /**
+     * Allows the SAML client to select a specific ACS url from the metadata, if defined.
+     * A negative value de-activates the selection process and is the default.
+     */
+    private int assertionConsumerServiceIndex = -1;
 }

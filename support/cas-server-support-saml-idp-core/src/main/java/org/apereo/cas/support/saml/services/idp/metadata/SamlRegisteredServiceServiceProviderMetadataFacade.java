@@ -83,12 +83,11 @@ public class SamlRegisteredServiceServiceProviderMetadataFacade {
     @SneakyThrows
     private static Optional<SamlRegisteredServiceServiceProviderMetadataFacade> get(final SamlRegisteredServiceCachingMetadataResolver resolver,
                                                                                     final SamlRegisteredService registeredService,
-                                                                                    final String entityID,
-                                                                                    final CriteriaSet criterions) {
-        LOGGER.info("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
+                                                                                    final String entityID, final CriteriaSet criterions) {
+        LOGGER.debug("Adapting SAML metadata for CAS service [{}] issued by [{}]", registeredService.getName(), entityID);
 
         criterions.add(new EntityIdCriterion(entityID), true);
-        LOGGER.info("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
+        LOGGER.debug("Locating metadata for entityID [{}] by attempting to run through the metadata chain...", entityID);
         final MetadataResolver chainingMetadataResolver = resolver.resolve(registeredService);
         LOGGER.info("Resolved metadata chain for service [{}]. Filtering the chain by entity ID [{}]",
             registeredService.getServiceId(), entityID);
