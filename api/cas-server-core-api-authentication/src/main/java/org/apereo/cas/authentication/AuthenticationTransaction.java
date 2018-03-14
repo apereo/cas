@@ -61,7 +61,7 @@ public class AuthenticationTransaction implements Serializable {
      *
      * @return the credential
      */
-    public Optional<Credential> getCredential() {
+    public Optional<Credential> getPrimaryCredential() {
         return credentials.stream().findFirst();
     }
 
@@ -71,7 +71,7 @@ public class AuthenticationTransaction implements Serializable {
      * @param type the credential type to check for
      * @return true if this AuthenticationTransaction contains a credential of the specified type
      */
-    public boolean isCredentialOfType(final Class<? extends Credential> type) {
+    public boolean hasCredentialOfType(final Class<? extends Credential> type) {
         return credentials.stream()
                 .anyMatch(type::isInstance);
     }
