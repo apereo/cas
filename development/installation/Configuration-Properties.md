@@ -337,7 +337,7 @@ Enable AJP connections for the embedded Tomcat container,
 
 The Tomcat SSLValve is a way to get a client certificate from an SSL proxy (e.g. HAProxy or BigIP F5)
 running in front of Tomcat via an HTTP header. If you enable this, make sure your proxy is ensuring
-that this header doesn't originate with the client (e.g. the browser).
+that this header does not originate with the client (e.g. the browser).
 
 ```properties
 # cas.server.sslValve.enabled=false
@@ -461,7 +461,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 ```properties
 # Globally control whether endpoints are enabled
-# or marked as sesitive to require authentication.
+# or marked as sensitive to require authentication.
 # endpoints.enabled=true
 # endpoints.sensitive=true
 
@@ -2592,6 +2592,7 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
+# cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
