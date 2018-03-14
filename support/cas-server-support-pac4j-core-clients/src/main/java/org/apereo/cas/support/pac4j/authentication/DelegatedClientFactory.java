@@ -344,6 +344,9 @@ public class DelegatedClientFactory {
                 cfg.setPassive(saml.isPassive());
                 cfg.setWantsAssertionsSigned(saml.isWantsAssertionsSigned());
                 cfg.setAttributeConsumingServiceIndex(saml.getAttributeConsumingServiceIndex());
+                if (saml.getAssertionConsumerServiceIndex() >= 0) {
+                    cfg.setAssertionConsumerServiceIndex(saml.getAssertionConsumerServiceIndex());
+                }
 
                 if (StringUtils.isNotBlank(saml.getAuthnContextClassRef())) {
                     cfg.setComparisonType(saml.getAuthnContextComparisonType().toUpperCase());
