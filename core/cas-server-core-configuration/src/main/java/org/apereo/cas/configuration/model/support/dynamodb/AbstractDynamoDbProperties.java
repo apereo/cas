@@ -166,7 +166,7 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
         return preventTableCreationOnStartup;
     }
 
-    public void setPreventTableCreationOnStartup(final boolean PreventTableCreationOnStartup) {
+    public void setPreventTableCreationOnStartup(final boolean preventTableCreationOnStartup) {
         this.preventTableCreationOnStartup = preventTableCreationOnStartup;
     }
 

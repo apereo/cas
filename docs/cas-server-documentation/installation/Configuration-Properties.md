@@ -4561,7 +4561,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Service-Mana
 # cas.serviceRegistry.dynamoDb.serviceNameIntern=
 
 # cas.serviceRegistry.dynamoDb.dropTablesOnStartup=false
-# cas.serviceRegistry.dynamoDb.preventTableCreationOnStartup=true
+# cas.serviceRegistry.dynamoDb.preventTableCreationOnStartup=false
 # cas.serviceRegistry.dynamoDb.timeOffset=0
 
 # cas.serviceRegistry.dynamoDb.readCapacity=10
@@ -5041,7 +5041,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.serviceNameIntern=
 
 # cas.ticket.registry.dynamoDb.dropTablesOnStartup=false
-# cas.ticket.registry.dynamoDb.preventTableCreationOnStartup=true
+# cas.ticket.registry.dynamoDb.preventTableCreationOnStartup=false
 # cas.ticket.registry.dynamoDb.timeOffset=0
 
 # cas.ticket.registry.dynamoDb.readCapacity=10
