@@ -127,7 +127,6 @@ public class Pac4jWebflowConfiguration implements CasWebflowExecutionPlanConfigu
         return new DelegatedClientAuthenticationAction(builtClients,
             authenticationSystemSupport,
             centralAuthenticationService,
-            casProperties.getAuthn().getPac4j().isAutoRedirect(),
             servicesManager,
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
             delegatedClientWebflowManager(),

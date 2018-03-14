@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.configuration.model.support.pac4j.Pac4jBaseClientProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jDelegatedAuthenticationProperties;
 import org.apereo.cas.configuration.model.support.pac4j.Pac4jOidcProperties;
 import org.pac4j.cas.client.CasClient;
@@ -64,7 +65,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Github github = pac4jProperties.getGithub();
         if (StringUtils.isNotBlank(github.getId()) && StringUtils.isNotBlank(github.getSecret())) {
             final GitHubClient client = new GitHubClient(github.getId(), github.getSecret());
-            setClientName(client, github.getClientName());
+            configureClient(client, github);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -80,7 +81,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Dropbox db = pac4jProperties.getDropbox();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             final DropBoxClient client = new DropBoxClient(db.getId(), db.getSecret());
-            setClientName(client, db.getClientName());
+            configureClient(client, db);
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
         }
@@ -95,7 +96,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Orcid db = pac4jProperties.getOrcid();
         if (StringUtils.isNotBlank(db.getId()) && StringUtils.isNotBlank(db.getSecret())) {
             final OrcidClient client = new OrcidClient(db.getId(), db.getSecret());
-            setClientName(client, db.getClientName());
+            configureClient(client, db);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -111,7 +112,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.WindowsLive live = pac4jProperties.getWindowsLive();
         if (StringUtils.isNotBlank(live.getId()) && StringUtils.isNotBlank(live.getSecret())) {
             final WindowsLiveClient client = new WindowsLiveClient(live.getId(), live.getSecret());
-            setClientName(client, live.getClientName());
+            configureClient(client, live);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -127,7 +128,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Yahoo yahoo = pac4jProperties.getYahoo();
         if (StringUtils.isNotBlank(yahoo.getId()) && StringUtils.isNotBlank(yahoo.getSecret())) {
             final YahooClient client = new YahooClient(yahoo.getId(), yahoo.getSecret());
-            setClientName(client, yahoo.getClientName());
+            configureClient(client, yahoo);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -143,7 +144,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Foursquare foursquare = pac4jProperties.getFoursquare();
         if (StringUtils.isNotBlank(foursquare.getId()) && StringUtils.isNotBlank(foursquare.getSecret())) {
             final FoursquareClient client = new FoursquareClient(foursquare.getId(), foursquare.getSecret());
-            setClientName(client, foursquare.getClientName());
+            configureClient(client, foursquare);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -159,7 +160,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Google google = pac4jProperties.getGoogle();
         final Google2Client client = new Google2Client(google.getId(), google.getSecret());
         if (StringUtils.isNotBlank(google.getId()) && StringUtils.isNotBlank(google.getSecret())) {
-            setClientName(client, google.getClientName());
+            configureClient(client, google);
             if (StringUtils.isNotBlank(google.getScope())) {
                 client.setScope(Google2Client.Google2Scope.valueOf(google.getScope().toUpperCase()));
             }
@@ -179,7 +180,7 @@ public class DelegatedClientFactory {
         if (StringUtils.isNotBlank(fb.getId()) && StringUtils.isNotBlank(fb.getSecret())) {
             final FacebookClient client = new FacebookClient(fb.getId(), fb.getSecret());
 
-            setClientName(client, fb.getClientName());
+            configureClient(client, fb);
             if (StringUtils.isNotBlank(fb.getScope())) {
                 client.setScope(fb.getScope());
             }
@@ -201,7 +202,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.LinkedIn ln = pac4jProperties.getLinkedIn();
         if (StringUtils.isNotBlank(ln.getId()) && StringUtils.isNotBlank(ln.getSecret())) {
             final LinkedIn2Client client = new LinkedIn2Client(ln.getId(), ln.getSecret());
-            setClientName(client, ln.getClientName());
+            configureClient(client, ln);
 
             if (StringUtils.isNotBlank(ln.getScope())) {
                 client.setScope(ln.getScope());
@@ -224,7 +225,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Twitter twitter = pac4jProperties.getTwitter();
         if (StringUtils.isNotBlank(twitter.getId()) && StringUtils.isNotBlank(twitter.getSecret())) {
             final TwitterClient client = new TwitterClient(twitter.getId(), twitter.getSecret());
-            setClientName(client, twitter.getClientName());
+            configureClient(client, twitter);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -240,7 +241,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Wordpress wp = pac4jProperties.getWordpress();
         if (StringUtils.isNotBlank(wp.getId()) && StringUtils.isNotBlank(wp.getSecret())) {
             final WordPressClient client = new WordPressClient(wp.getId(), wp.getSecret());
-            setClientName(client, wp.getClientName());
+            configureClient(client, wp);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -256,7 +257,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Bitbucket bb = pac4jProperties.getBitbucket();
         if (StringUtils.isNotBlank(bb.getId()) && StringUtils.isNotBlank(bb.getSecret())) {
             final BitbucketClient client = new BitbucketClient(bb.getId(), bb.getSecret());
-            setClientName(client, bb.getClientName());
+            configureClient(client, bb);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -272,7 +273,7 @@ public class DelegatedClientFactory {
         final Pac4jDelegatedAuthenticationProperties.Paypal paypal = pac4jProperties.getPaypal();
         if (StringUtils.isNotBlank(paypal.getId()) && StringUtils.isNotBlank(paypal.getSecret())) {
             final PayPalClient client = new PayPalClient(paypal.getId(), paypal.getSecret());
-            setClientName(client, paypal.getClientName());
+            configureClient(client, paypal);
 
             LOGGER.debug("Created client [{}] with identifier [{}]", client.getName(), client.getKey());
             properties.add(client);
@@ -282,13 +283,14 @@ public class DelegatedClientFactory {
     /**
      * Sets client name.
      *
-     * @param client     the client
-     * @param clientName the client name
+     * @param client the client
+     * @param props  the props
      */
-    protected void setClientName(final BaseClient client, final String clientName) {
-        if (StringUtils.isNotBlank(clientName)) {
-            client.setName(clientName);
+    protected void configureClient(final BaseClient client, final Pac4jBaseClientProperties props) {
+        if (StringUtils.isNotBlank(props.getClientName())) {
+            client.setName(props.getClientName());
         }
+        client.getCustomProperties().put("autoRedirect", props.isAutoRedirect());
     }
 
     /**
@@ -306,11 +308,11 @@ public class DelegatedClientFactory {
                 final CasClient client = new CasClient(cfg);
 
                 final int count = index.intValue();
-                if (StringUtils.isNotBlank(cas.getClientName())) {
-                    client.setName(cas.getClientName());
-                } else if (count > 0) {
+                if (StringUtils.isBlank(cas.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                configureClient(client, cas);
+
                 index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
                 properties.add(client);
@@ -356,11 +358,10 @@ public class DelegatedClientFactory {
                 final SAML2Client client = new SAML2Client(cfg);
 
                 final int count = index.intValue();
-                if (saml.getClientName() != null) {
-                    client.setName(saml.getClientName());
-                } else if (count > 0) {
+                if (StringUtils.isBlank(saml.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                configureClient(client, saml);
 
                 index.incrementAndGet();
                 LOGGER.debug("Created delegated client [{}]", client);
@@ -390,11 +391,10 @@ public class DelegatedClientFactory {
                 client.setAuthUrl(oauth.getAuthUrl());
                 client.setCustomParams(oauth.getCustomParams());
                 final int count = index.intValue();
-                if (StringUtils.isNotBlank(oauth.getClientName())) {
-                    client.setName(oauth.getClientName());
-                } else if (count > 0) {
+                if (StringUtils.isBlank(oauth.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                configureClient(client, oauth);
 
                 index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
@@ -435,11 +435,10 @@ public class DelegatedClientFactory {
                 }
 
                 final int count = index.intValue();
-                if (StringUtils.isNotBlank(oidc.getClientName())) {
-                    client.setName(oidc.getClientName());
-                } else if (count > 0) {
+                if (StringUtils.isBlank(oidc.getClientName())) {
                     client.setName(client.getClass().getSimpleName() + count);
                 }
+                configureClient(client, oidc);
                 index.incrementAndGet();
                 LOGGER.debug("Created client [{}]", client);
                 properties.add(client);

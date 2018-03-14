@@ -6,8 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.support.RequiredProperty;
 import org.apereo.cas.configuration.support.RequiresModule;
 
-import java.io.Serializable;
-
 /**
  * This is {@link Pac4jSamlProperties}.
  *
@@ -18,7 +16,7 @@ import java.io.Serializable;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jSamlProperties implements Serializable {
+public class Pac4jSamlProperties extends Pac4jBaseClientProperties {
 
     private static final long serialVersionUID = -862819796533384951L;
 
@@ -71,14 +69,6 @@ public class Pac4jSamlProperties implements Serializable {
      */
     @RequiredProperty
     private String serviceProviderMetadataPath;
-
-    /**
-     * Name of the SAML client mostly for UI purposes and uniqueness.
-     * This name, with 'nonword' characters converted to '-' (e.g. "This Org (New)" becomes "This-Org--New-")
-     * is added to the "class" atribute of the redirect link on the login page, to allow for
-     * custom styling of individual IdPs (e.g. for an organization logo).
-     */
-    private String clientName;
 
     /**
      * Whether authentication requests should be tagged as forced auth.
