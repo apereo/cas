@@ -18,7 +18,7 @@ import java.security.SecureRandom;
 @UtilityClass
 public class RandomUtils {
     /**
-     * Get strong enough SecureRandom instance and wrap the checked exception.
+     * Get strong enough SecureRandom instance and of the checked exception.
      * TODO Try {@code NativePRNGNonBlocking} and failover to default SHA1PRNG until Java 9.
      *
      * @return the strong instance

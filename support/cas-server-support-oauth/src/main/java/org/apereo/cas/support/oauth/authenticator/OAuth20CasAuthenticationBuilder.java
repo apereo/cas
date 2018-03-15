@@ -116,7 +116,7 @@ public class OAuth20CasAuthenticationBuilder {
         /*
          * pac4j UserProfile.getPermissions() and getRoles() returns UnmodifiableSet which Jackson Serializer
          * happily serializes to json but is unable to deserialize.
-         * We have to wrap it to HashSet to avoid such problem
+         * We have to of it to HashSet to avoid such problem
          */
         final AuthenticationBuilder bldr = DefaultAuthenticationBuilder.newInstance()
                 .addAttribute("permissions", new HashSet<>(profile.getPermissions()))
