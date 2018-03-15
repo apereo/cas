@@ -100,7 +100,7 @@ public class JdbcThrottledSubmissionHandlerInterceptorAdapterTests extends
         throttle.preHandle(request, response, null);
 
         try {
-            authenticationManager.authenticate(AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
+            authenticationManager.authenticate(AuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(), badCredentials(username)));
         } catch (final AuthenticationException e) {
             throttle.postHandle(request, response, null, null);
             return response;
