@@ -117,7 +117,7 @@ public class RegisteredServiceResourceTests {
 
         @Override
         public boolean matches(final AuthenticationTransaction t) {
-            return t != null && t.getCredential().get().getId().equalsIgnoreCase(this.id);
+            return t != null && t.getPrimaryCredential().get().getId().equalsIgnoreCase(this.id);
         }
     }
 }

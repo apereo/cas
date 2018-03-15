@@ -21,7 +21,7 @@ public class ClientAuthenticationMetaDataPopulator extends BaseAuthenticationMet
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        transaction.getCredential().ifPresent(clientCredential -> {
+        transaction.getPrimaryCredential().ifPresent(clientCredential -> {
             final ClientCredential credentials = ClientCredential.class.cast(clientCredential);
             builder.addAttribute(ClientCredential.AUTHENTICATION_ATTRIBUTE_CLIENT_NAME, credentials.getClientName());
         });
