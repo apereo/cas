@@ -49,10 +49,10 @@ public class MultifactorAuthenticationTrustRecord implements Comparable<Multifac
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate recordDate;
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 10_000, nullable = false)
     private String recordKey;
 
-    @Column(length = 500, nullable = false)
+    @Column(length = 10_000, nullable = false)
     private String name;
 
     public MultifactorAuthenticationTrustRecord() {

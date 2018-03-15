@@ -349,7 +349,7 @@ To see the relevant list of CAS properties for this feature, please [review this
 
 #### CAS Server Cloud Configuration
 
-The cloud configuration modules provided above on this page by the CAS project directky may also be used verbaitm inside a CAS server overlay. Remember that the primary objective for these modules is to simply retrieve settings and properties from a source. While they are mostly and primarily useful when activated inside the Spring Cloud Configuration server and can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to simply fetch settings from a source while running in standalone mode. In such scenarios, all sources of configuration regardless of format or syntax will work alongside each other to retrieve settings and you can certainly mix and match as you see fit.
+The cloud configuration modules provided above on this page by the CAS project directly may also be used verbatim inside a CAS server overlay. Remember that the primary objective for these modules is to simply retrieve settings and properties from a source. While they are mostly and primarily useful when activated inside the Spring Cloud Configuration server and can be set to honor profiles and such, they nonetheless may also be used inside a CAS server overlay directly to simply fetch settings from a source while running in standalone mode. In such scenarios, all sources of configuration regardless of format or syntax will work alongside each other to retrieve settings and you can certainly mix and match as you see fit.
 
 #### Composite Sources
 

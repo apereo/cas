@@ -1,6 +1,7 @@
 package org.apereo.cas.support.openid.authentication.handler.support;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
@@ -8,11 +9,12 @@ import org.apereo.cas.support.openid.authentication.principal.OpenIdCredential;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import javax.security.auth.login.FailedLoginException;
 
@@ -32,9 +34,11 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     public ExpectedException thrown = ExpectedException.none();
 
     @Autowired
-    private OpenIdCredentialsAuthenticationHandler openIdCredentialsAuthenticationHandler;
+    @Qualifier("openIdCredentialsAuthenticationHandler")
+    private AuthenticationHandler openIdCredentialsAuthenticationHandler;
 
     @Autowired
+    @Qualifier("ticketRegistry")
     private TicketRegistry ticketRegistry;
 
     @Test
@@ -57,12 +61,9 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
         final OpenIdCredential c = new OpenIdCredential(TGT_ID, USERNAME);
         final TicketGrantingTicket t = getTicketGrantingTicket();
         this.ticketRegistry.addTicket(t);
-
         t.markTicketExpired();
-
+        this.ticketRegistry.updateTicket(t);
         this.thrown.expect(FailedLoginException.class);
-
-
         this.openIdCredentialsAuthenticationHandler.authenticate(c);
     }
 
@@ -79,6 +80,6 @@ public class OpenIdCredentialsAuthenticationHandlerTests extends AbstractOpenIdT
     }
 
     private TicketGrantingTicket getTicketGrantingTicket() {
-        return new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new NeverExpiresExpirationPolicy());
+        return new TicketGrantingTicketImpl(TGT_ID, CoreAuthenticationTestUtils.getAuthentication(), new HardTimeoutExpirationPolicy(10));
     }
 }

@@ -17,7 +17,7 @@ import lombok.ToString;
  * @since 3.1
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "transactionManagerServiceReg", readOnly = false)
+@Transactional(transactionManager = "transactionManagerServiceReg")
 @Slf4j
 @ToString
 public class JpaServiceRegistry extends AbstractServiceRegistry {

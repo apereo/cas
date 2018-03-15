@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
-import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
 
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -35,14 +35,19 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
 
     @Override
     public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
-        return devices.containsKey(uid) && devices.get(uid).equals(yubikeyPublicId);
+        if (devices.containsKey(uid)) {
+            final String pubId = devices.get(uid);
+            return getCipherExecutor().decode(pubId).equals(yubikeyPublicId);
+        }
+        return false;
     }
 
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
-        if (accountValidator.isValid(uid, token)) {
-            final String yubikeyPublicId = YubicoClient.getPublicId(token);
-            devices.put(uid, yubikeyPublicId);
+        if (getAccountValidator().isValid(uid, token)) {
+            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
+            final String pubId = getCipherExecutor().encode(yubikeyPublicId);
+            devices.put(uid, pubId);
             return isYubiKeyRegisteredFor(uid, yubikeyPublicId);
         }
         return false;
@@ -51,7 +56,18 @@ public class WhitelistYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry 
     @Override
     public Collection<YubiKeyAccount> getAccounts() {
         return this.devices.entrySet().stream()
-            .map(entry -> new YubiKeyAccount(System.currentTimeMillis(), entry.getValue(), entry.getKey()))
+            .map(entry -> new YubiKeyAccount(System.currentTimeMillis(),
+                entry.getKey(),
+                getCipherExecutor().decode(entry.getValue())))
             .collect(Collectors.toSet());
+    }
+
+    @Override
+    public Optional<YubiKeyAccount> getAccount(final String uid) {
+        if (devices.containsKey(uid)) {
+            final String publicId = getCipherExecutor().decode(devices.get(uid));
+            return Optional.of(new YubiKeyAccount(System.currentTimeMillis(), publicId, uid));
+        }
+        return Optional.empty();
     }
 }

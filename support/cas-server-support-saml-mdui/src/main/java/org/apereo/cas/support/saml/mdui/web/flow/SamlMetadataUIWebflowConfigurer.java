@@ -19,7 +19,6 @@ import org.springframework.webflow.execution.Action;
  */
 @Slf4j
 public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
     private final Action samlMetadataUIParserAction;
 
     public SamlMetadataUIWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,

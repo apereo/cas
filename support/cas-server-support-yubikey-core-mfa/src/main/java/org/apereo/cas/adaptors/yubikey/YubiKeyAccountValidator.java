@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.yubikey;
 
+import com.yubico.client.v2.YubicoClient;
+
 /**
  * This is {@link YubiKeyAccountValidator}.
  *
@@ -17,4 +19,14 @@ public interface YubiKeyAccountValidator {
      * @return the boolean
      */
     boolean isValid(String uid, String token);
+
+    /**
+     * Gets token public id.
+     *
+     * @param token the token
+     * @return the token public id
+     */
+    default String getTokenPublicId(final String token) {
+        return YubicoClient.getPublicId(token);
+    }
 }

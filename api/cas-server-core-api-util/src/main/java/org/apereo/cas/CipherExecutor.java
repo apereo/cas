@@ -4,6 +4,7 @@ import org.jose4j.jwe.ContentEncryptionAlgorithmIdentifiers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -83,4 +84,35 @@ public interface CipherExecutor<I, O> {
     default String getName() {
         return getClass().getSimpleName();
     }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly-typed Noop {@code CipherExecutor Serializable -> Serializable}
+     */
+    static CipherExecutor<Serializable, Serializable> noOp() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly-typed Noop {@code CipherExecutor String -> String}
+     */
+    static CipherExecutor<String, String> noOpOfStringToString() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+    /**
+     * Factory method.
+     *
+     * @return Strongly-typed Noop {@code CipherExecutor Serializable -> String}
+     */
+    static CipherExecutor<Serializable, String> noOpOfSerializableToString() {
+        return NoOpCipherExecutor.getInstance();
+    }
+
+
+
+
 }

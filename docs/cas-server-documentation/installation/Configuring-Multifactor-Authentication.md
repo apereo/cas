@@ -5,7 +5,7 @@ title: CAS - Multifactor Authentication
 
 # Multifactor Authentication (MFA)
 
-CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should be the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a susccessful multifactor authentication event.
+CAS provides support for a variety of multifactor authentication providers and options, while allowing one to design their own. The secondary authentication factor always kicks in *after* the primary step and existing authentication sessions will be asked to step-up to the needed multifactor authentication factor, should be the request or trigger require it. The satisfied authentication context is communicated back to the application as well to denote a successful multifactor authentication event.
 
 At a minimum, you need answer the following questions:
 
@@ -71,7 +71,7 @@ The following failure modes are supported:
 | `PHANTOM`            | Authentication proceeds and requested MFA is communicated to the client if provider is unavailable.
 | `NONE`               | Do not contact the provider at all to check for availability. Assume the provider is available.
 
-A default failure mode can also be specified globally via CAS properties and may be overriden individually by CAS registered services.
+A default failure mode can also be specified globally via CAS properties and may be overridden individually by CAS registered services.
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#multifactor-authentication).
 
 ## Multiple Provider Selection

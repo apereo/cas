@@ -28,7 +28,8 @@ Note that a Consul Agent client must be available to all CAS server nodes. By de
 
 ### Configuration Management
 
-Consul provides a [Key/Value Store](https://consul.io/docs/agent/http/kv.html) for storing configuration and other metadata. Configuration is loaded into the CAS environment during the special "bootstrap" phase at runtime. Configuration is stored in the `/config` folder by default. Multiple `PropertySource` instances are created based on the application’s name and the active profiles that mimicks the Spring Cloud Config order of resolving properties. For example, an application with the name `cas` and with the `dev` profile will have the following property sources created:
+Consul provides a [Key/Value Store](https://consul.io/docs/agent/http/kv.html) for storing configuration and other metadata. Configuration is loaded into the CAS environment during the special "bootstrap" phase at runtime. Configuration is stored in the `/config` folder by default. Multiple `PropertySource` instances are created based on the application’s name and the active profiles that mimics 
+the Spring Cloud Config order of resolving properties. For example, an application with the name `cas` and with the `dev` profile will have the following property sources created:
 
 ```bash
 config/cas,dev/

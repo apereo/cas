@@ -80,7 +80,7 @@ import static org.junit.Assert.*;
 @Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-mongo.properties"})
 public class MongoDbYubiKeyAccountRegistryTests {
-
+    private static final String OTP = "cccccccvlidcnlednilgctgcvcjtivrjidfbdgrefcvi";
     private static final String BAD_TOKEN = "123456";
 
     @Autowired
@@ -100,9 +100,15 @@ public class MongoDbYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountRegistered() {
-        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", "cccccccvlidchlffblbghhckbctgethcrtdrruchvlud"));
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor("casuser", OTP));
         assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
-        assertEquals(1, yubiKeyAccountRegistry.getAccounts().size());
+        assertEquals(2, yubiKeyAccountRegistry.getAccounts().size());
+    }
+
+    @Test
+    public void verifyEncryptedAccount() {
+        assertTrue(yubiKeyAccountRegistry.registerAccountFor("encrypteduser", OTP));
+        assertTrue(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("encrypteduser", yubiKeyAccountRegistry.getAccountValidator().getTokenPublicId(OTP)));
     }
 
     @TestConfiguration("MongoDbYubiKeyAccountRegistryTestConfiguration")

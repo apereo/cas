@@ -38,6 +38,7 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://repo.spring.io/libs-milestone" }
     }
 
     dependencies {
@@ -148,11 +149,17 @@ subprojects {
         maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://repo.spring.io/milestone/" }
+        maven { url "https://repo.spring.io/libs-milestone" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
         jcenter()
     }
 
+    tasks.withType(JavaCompile) {
+        // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
+        options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
+    }
+    
     test {
         enabled = !Boolean.getBoolean("skipTests")
         useJUnit()

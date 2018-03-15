@@ -1,13 +1,13 @@
 package org.apereo.cas.configuration.model.support.cassandra.authentication;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.authentication.PasswordEncoderProperties;
 import org.apereo.cas.configuration.model.core.authentication.PrincipalTransformationProperties;
-import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.RequiredProperty;
+import org.apereo.cas.configuration.support.RequiresModule;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link CassandraAuthenticationProperties}.
@@ -50,6 +50,11 @@ public class CassandraAuthenticationProperties extends BaseCassandraProperties {
      */
     @RequiredProperty
     private String tableName;
+
+    /**
+     * The authentication query to use when searching for users.
+     */
+    private String query = "SELECT * FROM %s WHERE %s = ? ALLOW FILTERING";
 
     /**
      * Password encoding settings for this authentication.

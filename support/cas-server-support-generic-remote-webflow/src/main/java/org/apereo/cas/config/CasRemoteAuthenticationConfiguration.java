@@ -13,6 +13,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.RemoteAddressAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.RemoteAddressWebflowConfigurer;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -39,7 +41,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casRemoteAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class CasRemoteAuthenticationConfiguration {
+public class CasRemoteAuthenticationConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("servicesManager")
@@ -78,10 +80,7 @@ public class CasRemoteAuthenticationConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer remoteAddressWebflowConfigurer() {
-        final CasWebflowConfigurer w = new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
-            applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new RemoteAddressWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -107,11 +106,15 @@ public class CasRemoteAuthenticationConfiguration {
     public PrincipalFactory remoteAddressPrincipalFactory() {
         return new DefaultPrincipalFactory();
     }
-
-
+    
     @ConditionalOnMissingBean(name = "remoteAddressAuthenticationEventExecutionPlanConfigurer")
     @Bean
     public AuthenticationEventExecutionPlanConfigurer remoteAddressAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(remoteAddressAuthenticationHandler(), personDirectoryPrincipalResolver);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(remoteAddressWebflowConfigurer());
     }
 }

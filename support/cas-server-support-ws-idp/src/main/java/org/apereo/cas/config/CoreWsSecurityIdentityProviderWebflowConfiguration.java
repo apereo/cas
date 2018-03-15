@@ -5,6 +5,8 @@ import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
 import org.apereo.cas.ws.idp.web.flow.WSFederationMetadataUIAction;
 import org.apereo.cas.ws.idp.web.flow.WSFederationWebflowConfigurer;
@@ -32,7 +34,7 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 @AutoConfigureAfter(CasCoreWebflowConfiguration.class)
-public class CoreWsSecurityIdentityProviderWebflowConfiguration {
+public class CoreWsSecurityIdentityProviderWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -54,7 +56,7 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Autowired
     @Qualifier("wsFederationAuthenticationServiceSelectionStrategy")
     private AuthenticationServiceSelectionStrategy wsFederationAuthenticationServiceSelectionStrategy;
-    
+
     @Bean
     @RefreshScope
     public Action wsFederationMetadataUIAction() {
@@ -65,9 +67,12 @@ public class CoreWsSecurityIdentityProviderWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer wsFederationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new WSFederationWebflowConfigurer(flowBuilderServices,
+        return new WSFederationWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, wsFederationMetadataUIAction(), applicationContext, casProperties);
-        w.initialize();
-        return w;
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(wsFederationWebflowConfigurer());
     }
 }

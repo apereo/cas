@@ -34,9 +34,6 @@ import java.security.GeneralSecurityException;
  */
 @Slf4j
 public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-
-
-
     private final YubiKeyAccountRegistry registry;
     private final YubicoClient client;
 
@@ -63,7 +60,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
 
     public YubiKeyAuthenticationHandler(final YubicoClient client) {
         this(StringUtils.EMPTY, null, null,
-            client, new OpenYubiKeyAccountRegistry());
+            client, new OpenYubiKeyAccountRegistry(new AcceptAllYubiKeyAccountValidator()));
     }
 
     @Override
@@ -83,7 +80,7 @@ public class YubiKeyAuthenticationHandler extends AbstractPreAndPostProcessingAu
         }
         final Principal principal = authentication.getPrincipal();
         final String uid = principal.getId();
-        final String publicId = YubicoClient.getPublicId(otp);
+        final String publicId = registry.getAccountValidator().getTokenPublicId(otp);
         if (!this.registry.isYubiKeyRegisteredFor(uid, publicId)) {
             LOGGER.debug("YubiKey public id [{}] is not registered for user [{}]", publicId, uid);
             throw new AccountNotFoundException("YubiKey id is not recognized in registry");

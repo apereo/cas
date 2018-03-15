@@ -107,7 +107,7 @@ public class CentralAuthenticationServiceImplTests extends AbstractCentralAuthen
 
     @Test
     public void verifyGrantingOfServiceTicketUsingDefaultTicketIdGen() {
-        final Service mockService = CoreAuthenticationTestUtils.getService("testDefault");
+        final Service mockService = RegisteredServiceTestUtils.getService("testDefault");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), mockService);
         final TicketGrantingTicket ticketId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
         final ServiceTicket serviceTicketId = getCentralAuthenticationService().grantServiceTicket(ticketId.getId(), mockService, ctx);

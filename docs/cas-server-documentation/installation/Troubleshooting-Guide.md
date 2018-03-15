@@ -57,7 +57,7 @@ To find out what `SNAPSHOT` version applies to your deployment, you can either l
 
 ## Configuring SSL Behind Load Balancer/Proxy
 
-You might be running CAS inside a [servlet container](Configuring-Servlet-Container.html) such as Apache Tomcat beind some sort of proxy such as haproxy, Apache httpd, etc where the proxy is handling the SSL termination. The connections to the user are secured via `https`, yet those between the proxy and CAS service are just `http`. 
+You might be running CAS inside a [servlet container](Configuring-Servlet-Container.html) such as Apache Tomcat behind some sort of proxy such as haproxy, Apache httpd, etc where the proxy is handling the SSL termination. The connections to the user are secured via `https`, yet those between the proxy and CAS service are just `http`. 
 
 With this setup, the CAS login screen may still warn you about a non-secure connection. There is no setting in CAS that would allow you to control/adjust this, as this is entirely controlled by the container itself. All CAS cares about is whether the incoming connection request identifies itself as a secure connection. So to remove the warning, you will need to look into your container's configuration and docs to see how the connection may be secured between the proxy and CAS. 
 

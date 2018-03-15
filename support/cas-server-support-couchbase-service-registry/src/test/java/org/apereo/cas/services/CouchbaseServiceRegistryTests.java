@@ -38,7 +38,7 @@ public class CouchbaseServiceRegistryTests {
     private static final int LOAD_SIZE = 1;
 
     @Autowired
-    @Qualifier("serviceRegistry")
+    @Qualifier("couchbaseServiceRegistry")
     private ServiceRegistry serviceRegistry;
 
     @Before

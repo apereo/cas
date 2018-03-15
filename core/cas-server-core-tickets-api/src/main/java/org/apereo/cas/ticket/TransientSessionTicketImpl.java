@@ -18,11 +18,11 @@ import javax.persistence.Entity;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.util.LinkedHashMap;
+import java.util.HashMap;
 import java.util.Map;
 
 /**
- * This is {@link DelegatedAuthenticationRequestTicket}, issued when a delegated authentication
+ * This is {@link TransientSessionTicketImpl}, issued when a delegated authentication
  * request comes in that needs to be handed off to an identity provider. This ticket represents the state
  * of the CAS server at that moment.
  *
@@ -60,7 +60,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
      */
     @Lob
     @Column(name = "PROPERTIES", nullable = false)
-    private Map<String, Serializable> properties = new LinkedHashMap<>();
+    private HashMap<String, Serializable> properties = new HashMap<>();
 
     public TransientSessionTicketImpl(final String id, final ExpirationPolicy expirationPolicy, final Service service) {
         super(id, expirationPolicy);
@@ -71,7 +71,7 @@ public class TransientSessionTicketImpl extends AbstractTicket implements Transi
                                       final Service service, final Map<String, Serializable> properties) {
         super(id, expirationPolicy);
         this.service = service;
-        this.properties = properties;
+        this.properties = new HashMap<>(properties);
     }
 
     @Override

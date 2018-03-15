@@ -49,12 +49,17 @@ import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.ticket.TransientSessionTicket;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
 import org.apereo.cas.validation.Assertion;
@@ -177,17 +182,10 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
 
         final TicketGrantingTicket tgtMock2 = createMockTicketGrantingTicket(TGT2_ID, stMock2, false, tgtRootMock, authnListMock);
 
-        //Mock TicketRegistry
         mockTicketRegistry(stMock, tgtMock, stMock2, tgtMock2);
-
-        //Mock ServicesManager
         final ServicesManager smMock = getServicesManager(service1, service2);
+        final TicketFactory factory = getTicketFactory();
 
-        final DefaultTicketFactory factory = new DefaultTicketFactory(
-            new DefaultProxyGrantingTicketFactory(null, null, null),
-            new DefaultTicketGrantingTicketFactory(null, null, null),
-            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null),
-            new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
         final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies =
             new DefaultAuthenticationServiceSelectionPlan(new DefaultAuthenticationServiceSelectionStrategy());
         final AuditableExecution enforcer = mock(AuditableExecution.class);
@@ -199,6 +197,21 @@ public class CentralAuthenticationServiceImplWithMockitoTests {
             new DefaultPrincipalFactory(), null,
             enforcer);
         this.cas.setApplicationEventPublisher(mock(ApplicationEventPublisher.class));
+    }
+
+    private TicketFactory getTicketFactory() {
+        final DefaultTicketFactory factory = new DefaultTicketFactory();
+        factory.addTicketFactory(ProxyGrantingTicket.class,
+            new DefaultProxyGrantingTicketFactory(null, null, null));
+        factory.addTicketFactory(TicketGrantingTicket.class,
+            new DefaultTicketGrantingTicketFactory(null, null, null));
+        factory.addTicketFactory(ServiceTicket.class,
+            new DefaultServiceTicketFactory(new NeverExpiresExpirationPolicy(), new HashMap<>(0), false, null));
+        factory.addTicketFactory(ProxyTicket.class,
+            new DefaultProxyTicketFactory(null, new HashMap<>(0), null, true));
+        factory.addTicketFactory(TransientSessionTicket.class,
+            new DefaultTransientSessionTicketFactory(new NeverExpiresExpirationPolicy()));
+        return factory;
     }
 
     private AuthenticationResult getAuthenticationContext() {

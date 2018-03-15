@@ -57,7 +57,7 @@ public class X509WebflowConfigurer extends AbstractCasWebflowConfigurer {
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE,
                     CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM));
 
-            actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
+            actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
             final ActionState state = getState(flow, CasWebflowConstants.STATE_ID_INIT_LOGIN_FORM, ActionState.class);

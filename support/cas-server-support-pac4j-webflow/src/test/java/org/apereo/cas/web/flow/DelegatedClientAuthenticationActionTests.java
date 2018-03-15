@@ -115,7 +115,7 @@ public class DelegatedClientAuthenticationActionTests {
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, null,
             mock(CentralAuthenticationService.class),
-            false, getServicesManagerWith(service, facebookClient), enforcer, manager,
+             getServicesManagerWith(service, facebookClient), enforcer, manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)));
 
         final Event event = action.execute(mockRequestContext);
@@ -187,7 +187,7 @@ public class DelegatedClientAuthenticationActionTests {
 
         mockRequest.addParameter(DelegatedClientWebflowManager.PARAMETER_CLIENT_ID, ticket.getId());
         final DelegatedClientAuthenticationAction action = new DelegatedClientAuthenticationAction(clients, support, casImpl,
-            false, getServicesManagerWith(service, facebookClient), enforcer, manager,
+             getServicesManagerWith(service, facebookClient), enforcer, manager,
             new DelegatedSessionCookieManager(mock(CookieRetrievingCookieGenerator.class)));
 
         final Event event = action.execute(mockRequestContext);

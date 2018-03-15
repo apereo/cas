@@ -36,7 +36,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
 
     public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra) {
         this.cluster = initializeCassandraCluster(cassandra);
-        this.session = cluster.connect(cassandra.getKeyspace());
+        this.session = StringUtils.isBlank(cassandra.getKeyspace()) ? cluster.connect() : cluster.connect(cassandra.getKeyspace());
     }
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {

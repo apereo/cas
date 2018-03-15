@@ -31,9 +31,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.client.ProxyAuthenticationStrategy;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
-import javax.annotation.PreDestroy;
 import javax.net.ssl.HostnameVerifier;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
@@ -55,7 +55,7 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 @Setter
-public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient> {
+public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient>, DisposableBean {
 
     /**
      * Max connections per route.
@@ -249,7 +249,7 @@ public class SimpleHttpClientFactoryBean implements FactoryBean<SimpleHttpClient
     /**
      * Destroy.
      */
-    @PreDestroy
+    @Override
     public void destroy() {
         if (this.executorService != null) {
             this.executorService.shutdownNow();

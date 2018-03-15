@@ -11,7 +11,7 @@ import static org.apache.commons.lang3.builder.ToStringStyle.NO_CLASS_NAME_STYLE
 
 /**
  * The {@link AccessTokenGrantRequestAuditResourceResolver} for audit advice
- * weaved at <code>BaseAccessTokenGrantRequestExtractor#extract</code> joinpoint.
+ * weaved at {@code BaseAccessTokenGrantRequestExtractor#extract} joinpoint.
  *
  * @author Dmitriy Kopylenko
  * @since 5.3.0

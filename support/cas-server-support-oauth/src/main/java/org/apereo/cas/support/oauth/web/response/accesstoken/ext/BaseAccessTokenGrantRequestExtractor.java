@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 @EnableTransactionManagement(proxyTargetClass = true)
-@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @AllArgsConstructor
 public abstract class BaseAccessTokenGrantRequestExtractor {

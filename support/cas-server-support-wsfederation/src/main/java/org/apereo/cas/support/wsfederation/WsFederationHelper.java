@@ -1,11 +1,16 @@
 package org.apereo.cas.support.wsfederation;
 
-import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
+import org.apereo.cas.services.RegisteredServiceProperty;
+import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.saml.SamlUtils;
 import org.apereo.cas.support.wsfederation.authentication.principal.WsFederationCredential;
@@ -80,10 +85,11 @@ import java.util.stream.IntStream;
  */
 @Slf4j
 @Setter
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class WsFederationHelper {
 
-    private OpenSamlConfigBean configBean;
+    private final OpenSamlConfigBean configBean;
+    private final ServicesManager servicesManager;
 
     /**
      * createCredentialFromToken converts a SAML 1.1 assertion to a WSFederationCredential.
@@ -177,9 +183,13 @@ public class WsFederationHelper {
             LOGGER.debug("Security token is an assertion.");
             final Assertion assertion = Assertion.class.cast(securityToken);
             LOGGER.debug("Extracted assertion successfully: [{}]", assertion);
-            final WsFederationConfiguration cfg = config.stream().filter(c -> c.getIdentityProviderIdentifier().equals(assertion.getIssuer())).findFirst().orElse(null);
+            final WsFederationConfiguration cfg = config.stream()
+                .filter(c -> c.getIdentityProviderIdentifier().equals(assertion.getIssuer()))
+                .findFirst()
+                .orElse(null);
             if (cfg == null) {
-                throw new IllegalArgumentException("Could not locate wsfed configuration for security token provided");
+                throw new IllegalArgumentException("Could not locate wsfed configuration for security token provided. The assertion issuer "
+                    + assertion.getIssuer() + "does not match any of the identity provider identifiers defined in the configuration");
             }
             return Pair.of(assertion, cfg);
         }
@@ -261,6 +271,26 @@ public class WsFederationHelper {
         }
         SamlUtils.logSamlObject(this.configBean, assertion.getKey());
         return valid;
+    }
+
+    /**
+     * Get the relying party id for a service.
+     *
+     * @param service       the service to get an id for
+     * @param configuration the configuration
+     * @return relying party id
+     */
+    public String getRelyingPartyIdentifier(final Service service, final WsFederationConfiguration configuration) {
+        String relyingPartyIdentifier = configuration.getRelyingPartyIdentifier();
+        if (service != null) {
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(service);
+            RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
+            if (RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.isAssignedTo(registeredService)) {
+                relyingPartyIdentifier = RegisteredServiceProperty.RegisteredServiceProperties.WSFED_RELYING_PARTY_ID.getPropertyValue(registeredService).getValue();
+            }
+        }
+        LOGGER.debug("Determined relying party identifier for [{}] to be [{}]", service, relyingPartyIdentifier);
+        return relyingPartyIdentifier;
     }
 
     /**

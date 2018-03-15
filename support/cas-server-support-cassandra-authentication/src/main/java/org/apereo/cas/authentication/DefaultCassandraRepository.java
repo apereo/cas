@@ -21,16 +21,11 @@ import java.util.Map;
 @Slf4j
 public class DefaultCassandraRepository implements CassandraRepository {
 
-    private static final String SELECT_USER_BY_UID_QUERY = "SELECT * FROM %s WHERE %s = ?";
-
     private final Session session;
     private final PreparedStatement selectUserQuery;
 
-    public DefaultCassandraRepository(final CassandraAuthenticationProperties cassandraProperties,
-                                      final CassandraSessionFactory cassandraSessionFactory) {
-        final String query = String.format(SELECT_USER_BY_UID_QUERY, cassandraProperties.getTableName(),
-                cassandraProperties.getUsernameAttribute());
-
+    public DefaultCassandraRepository(final CassandraAuthenticationProperties cassandraProperties, final CassandraSessionFactory cassandraSessionFactory) {
+        final String query = String.format(cassandraProperties.getQuery(), cassandraProperties.getTableName(), cassandraProperties.getUsernameAttribute());
         this.session = cassandraSessionFactory.getSession();
         this.selectUserQuery = session.prepare(query);
     }

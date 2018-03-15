@@ -2,7 +2,6 @@ package org.apereo.cas.web.flow;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -38,7 +37,6 @@ import org.pac4j.core.profile.CommonProfile;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.webflow.action.AbstractAction;
-import org.springframework.webflow.context.ExternalContext;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
 
@@ -81,14 +79,13 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
     private final AuthenticationSystemSupport authenticationSystemSupport;
     private final CentralAuthenticationService centralAuthenticationService;
 
-    private final boolean autoRedirect;
     private final ServicesManager servicesManager;
     private final AuditableExecution delegatedAuthenticationPolicyEnforcer;
     private final DelegatedClientWebflowManager delegatedClientWebflowManager;
     private final DelegatedSessionCookieManager delegatedSessionCookieManager;
 
     @Override
-    protected Event doExecute(final RequestContext context) throws Exception {
+    protected Event doExecute(final RequestContext context) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(context);
 
@@ -124,18 +121,6 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
 
         if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
             return stopWebflow();
-        }
-
-        if (this.autoRedirect) {
-            final Set<ProviderLoginPageConfiguration> urls = context.getFlowScope().get(PAC4J_URLS, Set.class);
-            if (urls != null && urls.size() == 1) {
-                final ProviderLoginPageConfiguration cfg = urls.stream().findFirst().get();
-                LOGGER.debug("Auto-redirecting to client url [{}]", cfg.getRedirectUrl());
-                response.sendRedirect(cfg.getRedirectUrl());
-                final ExternalContext externalContext = context.getExternalContext();
-                externalContext.recordResponseComplete();
-                return stopWebflow();
-            }
         }
         return error();
     }
@@ -201,8 +186,8 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         final String type = matcher.replaceAll(StringUtils.EMPTY).toLowerCase();
         final String redirectUrl = DelegatedClientNavigationController.ENDPOINT_REDIRECT
             + "?" + Pac4jConstants.DEFAULT_CLIENT_NAME_PARAMETER + "=" + name;
-        final ProviderLoginPageConfiguration p = new ProviderLoginPageConfiguration(name,
-            redirectUrl, type, getCssClass(name));
+        final boolean autoRedirect = (Boolean) client.getCustomProperties().getOrDefault("autoRedirect", Boolean.FALSE);
+        final ProviderLoginPageConfiguration p = new ProviderLoginPageConfiguration(name, redirectUrl, type, getCssClass(name), autoRedirect);
         return Optional.of(p);
     }
 
@@ -281,9 +266,7 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
         return false;
     }
 
-    private Service restoreAuthenticationRequestInContext(final RequestContext requestContext,
-                                                          final J2EContext webContext,
-                                                          final String clientName) {
+    private Service restoreAuthenticationRequestInContext(final RequestContext requestContext, final J2EContext webContext, final String clientName) {
         delegatedSessionCookieManager.restore(webContext);
         final BaseClient<Credentials, CommonProfile> client = (BaseClient<Credentials, CommonProfile>) this.clients.findClient(clientName);
         final Service service = delegatedClientWebflowManager.retrieve(requestContext, webContext, client);
@@ -295,18 +278,15 @@ public class DelegatedClientAuthenticationAction extends AbstractAction {
      */
     @AllArgsConstructor
     @Getter
-    @Setter
     @ToString
     public static class ProviderLoginPageConfiguration implements Serializable {
 
         private static final long serialVersionUID = 6216882278086699364L;
 
         private final String name;
-
         private final String redirectUrl;
-
         private final String type;
-
         private final String cssClass;
+        private final boolean autoRedirect;
     }
 }

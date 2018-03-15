@@ -9,13 +9,13 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
-import org.apereo.cas.ticket.TransientSessionTicketFactory;
-import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
+import org.apereo.cas.ticket.TicketFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.web.DelegatedClientNavigationController;
 import org.apereo.cas.web.DelegatedClientWebflowManager;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.DelegatedAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.DelegatedClientAuthenticationAction;
 import org.apereo.cas.web.flow.Pac4jErrorViewResolver;
@@ -38,8 +38,6 @@ import org.springframework.webflow.definition.registry.FlowDefinitionRegistry;
 import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 import org.springframework.webflow.execution.Action;
 
-import java.util.concurrent.TimeUnit;
-
 /**
  * This is {@link Pac4jWebflowConfiguration}.
  *
@@ -49,7 +47,11 @@ import java.util.concurrent.TimeUnit;
 @Configuration("pac4jWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class Pac4jWebflowConfiguration {
+public class Pac4jWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
+    @Autowired
+    @Qualifier("defaultTicketFactory")
+    private TicketFactory ticketFactory;
+
     @Autowired
     @Qualifier("webApplicationServiceFactory")
     private ServiceFactory webApplicationServiceFactory;
@@ -125,39 +127,30 @@ public class Pac4jWebflowConfiguration {
         return new DelegatedClientAuthenticationAction(builtClients,
             authenticationSystemSupport,
             centralAuthenticationService,
-            casProperties.getAuthn().getPac4j().isAutoRedirect(),
             servicesManager,
             registeredServiceDelegatedAuthenticationPolicyAuditableEnforcer,
             delegatedClientWebflowManager(),
             delegatedSessionCookieManager);
     }
 
-    @Bean
-    public TransientSessionTicketFactory delegatedAuthenticationRequestTicketFactory() {
-        final long delegatedAuthenticationTimeoutMins = 3;
-        return new DefaultTransientSessionTicketFactory(
-            new HardTimeoutExpirationPolicy(TimeUnit.MINUTES.toSeconds(delegatedAuthenticationTimeoutMins))
-        );
-    }
-
     @ConditionalOnMissingBean(name = "delegatedAuthenticationWebflowConfigurer")
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer delegatedAuthenticationWebflowConfigurer() {
-        final CasWebflowConfigurer w = new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new DelegatedAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             logoutFlowDefinitionRegistry, saml2ClientLogoutAction, applicationContext, casProperties);
-        w.initialize();
-        return w;
     }
 
     @Bean
+    @ConditionalOnMissingBean(name = "pac4jErrorViewResolver")
     public ErrorViewResolver pac4jErrorViewResolver() {
         return new Pac4jErrorViewResolver();
     }
 
     @Bean
     public DelegatedClientWebflowManager delegatedClientWebflowManager() {
-        return new DelegatedClientWebflowManager(ticketRegistry, delegatedAuthenticationRequestTicketFactory(),
+        return new DelegatedClientWebflowManager(ticketRegistry,
+            ticketFactory,
             casProperties.getTheme().getParamName(),
             casProperties.getLocale().getParamName(),
             webApplicationServiceFactory,
@@ -174,5 +167,10 @@ public class Pac4jWebflowConfiguration {
     @Bean
     public DelegatedClientNavigationController delegatedClientNavigationController() {
         return new DelegatedClientNavigationController(builtClients, delegatedClientWebflowManager(), delegatedSessionCookieManager);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(delegatedAuthenticationWebflowConfigurer());
     }
 }

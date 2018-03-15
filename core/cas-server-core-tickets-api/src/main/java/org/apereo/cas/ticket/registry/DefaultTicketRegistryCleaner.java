@@ -16,7 +16,7 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-@Transactional(transactionManager = "ticketTransactionManager", readOnly = false)
+@Transactional(transactionManager = "ticketTransactionManager")
 @Slf4j
 @AllArgsConstructor
 public class DefaultTicketRegistryCleaner implements TicketRegistryCleaner, Serializable {

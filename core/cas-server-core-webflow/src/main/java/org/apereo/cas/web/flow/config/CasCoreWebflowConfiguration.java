@@ -24,8 +24,8 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceForPrincipalException;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.WebflowConversationStateCipherExecutor;
+import org.apereo.cas.web.flow.CasWebflowConstants;
 import org.apereo.cas.web.flow.DefaultSingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
 import org.apereo.cas.web.flow.actions.AuthenticationExceptionHandlerAction;
@@ -48,12 +48,13 @@ import org.apereo.cas.web.flow.resolver.impl.mfa.PredicatedPrincipalAttributeMul
 import org.apereo.cas.web.flow.resolver.impl.mfa.PrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RegisteredServiceMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RegisteredServicePrincipalAttributeMultifactorAuthenticationPolicyEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestHeaderMultifactorAuthenticationPolicyEventResolver;
-import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestParameterMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.RestEndpointMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.adaptive.AdaptiveMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.adaptive.TimedMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestHeaderMultifactorAuthenticationPolicyEventResolver;
+import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestParameterMultifactorAuthenticationPolicyEventResolver;
 import org.apereo.cas.web.flow.resolver.impl.mfa.request.RequestSessionAttributeMultifactorAuthenticationPolicyEventResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -78,11 +79,9 @@ import java.util.Set;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class CasCoreWebflowConfiguration {
-
-
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("geoLocationService")
-    private GeoLocationService geoLocationService;
+    private ObjectProvider<GeoLocationService> geoLocationService;
 
     @Autowired
     @Qualifier("authenticationContextValidator")
@@ -133,8 +132,11 @@ public class CasCoreWebflowConfiguration {
     public CasWebflowEventResolver adaptiveAuthenticationPolicyWebflowEventResolver() {
         return new AdaptiveMultifactorAuthenticationPolicyEventResolver(authenticationSystemSupport,
             centralAuthenticationService, servicesManager,
-            ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector, casProperties, geoLocationService);
+            ticketRegistrySupport, warnCookieGenerator,
+            authenticationRequestServiceSelectionStrategies,
+            multifactorAuthenticationProviderSelector,
+            casProperties,
+            geoLocationService.getIfAvailable());
     }
 
     @ConditionalOnMissingBean(name = "timedAuthenticationPolicyWebflowEventResolver")
@@ -351,11 +353,11 @@ public class CasCoreWebflowConfiguration {
         LOGGER.warn("Webflow encryption/signing is turned off. This "
             + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
             + "signing and verification of webflow state.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @Bean
-    @ConditionalOnMissingBean(name = "clearWebflowCredentialsAction")
+    @ConditionalOnMissingBean(name = CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS)
     @RefreshScope
     public Action clearWebflowCredentialsAction() {
         return new ClearWebflowCredentialAction();

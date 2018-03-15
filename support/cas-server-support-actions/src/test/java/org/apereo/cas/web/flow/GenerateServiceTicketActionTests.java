@@ -35,6 +35,7 @@ import static org.mockito.Mockito.*;
 public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String SERVICE_PARAM = "service";
+
     @Autowired
     @Qualifier("generateServiceTicketAction")
     private Action action;
@@ -105,8 +106,8 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
-
         this.ticketGrantingTicket.markTicketExpired();
+        getTicketRegistry().updateTicket(this.ticketGrantingTicket);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
     
