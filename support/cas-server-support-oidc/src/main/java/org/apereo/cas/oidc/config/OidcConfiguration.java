@@ -77,6 +77,8 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.serialization.StringSerializer;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.authentication.RankedMultifactorAuthenticationProviderSelector;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -119,7 +121,7 @@ import java.util.stream.Stream;
 @Configuration("oidcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class OidcConfiguration extends WebMvcConfigurerAdapter {
+public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("registeredServiceAccessStrategyEnforcer")
@@ -283,9 +285,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     @Bean
     public OidcIdTokenGeneratorService oidcIdTokenGenerator() {
         return new OidcIdTokenGeneratorService(
-                casProperties,
-                oidcTokenSigningAndEncryptionService(),
-                servicesManager);
+            casProperties,
+            oidcTokenSigningAndEncryptionService(),
+            servicesManager);
     }
 
     @Bean
@@ -434,7 +436,6 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
         final OidcWebflowConfigurer cfg = new OidcWebflowConfigurer(flowBuilderServices,
             loginFlowDefinitionRegistry, oidcRegisteredServiceUIAction(), applicationContext, casProperties);
         cfg.setLogoutFlowDefinitionRegistry(logoutFlowDefinitionRegistry);
-        cfg.initialize();
         return cfg;
     }
 
@@ -525,5 +526,10 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter {
     public OAuth20AuthorizationResponseBuilder oidcImplicitIdTokenCallbackUrlBuilder() {
         return new OidcImplicitIdTokenAuthorizationResponseBuilder(oidcIdTokenGenerator(), oauthTokenGenerator,
             accessTokenExpirationPolicy, grantingTicketExpirationPolicy);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(oidcWebflowConfigurer());
     }
 }

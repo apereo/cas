@@ -1,7 +1,9 @@
 package org.apereo.cas.web.flow.configurer;
 
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,6 +24,7 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.expression.BeanExpressionContextAccessor;
 import org.springframework.context.expression.EnvironmentAccessor;
 import org.springframework.context.expression.MapAccessor;
+import org.springframework.core.Ordered;
 import org.springframework.expression.spel.SpelParserConfiguration;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.ReflectivePropertyAccessor;
@@ -79,12 +82,18 @@ import java.util.Optional;
 @Slf4j
 @Setter
 @Getter
+@RequiredArgsConstructor
+@ToString(of = "name")
 public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigurer {
-
     /**
      * The logout flow definition registry.
      */
     protected FlowDefinitionRegistry logoutFlowDefinitionRegistry;
+
+    /**
+     * Flow builder services.
+     */
+    protected final FlowBuilderServices flowBuilderServices;
 
     /**
      * The Login flow definition registry.
@@ -101,19 +110,9 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
      */
     protected final CasConfigurationProperties casProperties;
 
-    /**
-     * Flow builder services.
-     */
-    protected final FlowBuilderServices flowBuilderServices;
+    private int order = Ordered.HIGHEST_PRECEDENCE;
 
-    public AbstractCasWebflowConfigurer(final FlowBuilderServices flowBuilderServices,
-                                        final FlowDefinitionRegistry loginFlowDefinitionRegistry, final ApplicationContext applicationContext,
-                                        final CasConfigurationProperties casProperties) {
-        this.flowBuilderServices = flowBuilderServices;
-        this.loginFlowDefinitionRegistry = loginFlowDefinitionRegistry;
-        this.applicationContext = applicationContext;
-        this.casProperties = casProperties;
-    }
+    private String name = getClass().getSimpleName();
 
     @Override
     public void initialize() {
@@ -731,6 +730,17 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
     }
 
     /**
+     * Gets state.
+     *
+     * @param flow    the flow
+     * @param stateId the state id
+     * @return the state
+     */
+    public TransitionableState getState(final Flow flow, final String stateId) {
+        return getState(flow, stateId, TransitionableState.class);
+    }
+
+    /**
      * Gets transitionable state.
      *
      * @param <T>     the type parameter
@@ -760,4 +770,19 @@ public abstract class AbstractCasWebflowConfigurer implements CasWebflowConfigur
         }
         return null;
     }
+
+    /**
+     * Create transitions for state.
+     *
+     * @param flow               the flow
+     * @param stateId            the state id
+     * @param criteriaAndTargets the criteria and targets
+     */
+    public void createTransitionsForState(final Flow flow, final String stateId, final Map<String, String> criteriaAndTargets) {
+        if (containsFlowState(flow, stateId)) {
+            final TransitionableState state = getState(flow, stateId);
+            criteriaAndTargets.forEach((k, v) -> createTransitionForState(state, k, v));
+        }
+    }
+
 }

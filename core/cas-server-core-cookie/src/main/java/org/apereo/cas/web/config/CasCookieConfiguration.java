@@ -8,7 +8,6 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.configuration.model.support.cookie.TicketGrantingCookieProperties;
 import org.apereo.cas.configuration.model.support.cookie.WarningCookieProperties;
 import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.TicketGrantingCookieCipherExecutor;
 import org.apereo.cas.web.WarningCookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
@@ -75,7 +74,7 @@ public class CasCookieConfiguration {
         LOGGER.warn("Ticket-granting cookie encryption/signing is turned off. This "
             + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
             + "signing and verification of ticket-granting cookies.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @Bean

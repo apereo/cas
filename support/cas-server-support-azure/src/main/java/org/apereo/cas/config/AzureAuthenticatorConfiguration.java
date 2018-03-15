@@ -7,6 +7,8 @@ import org.apereo.cas.adaptors.azure.web.flow.AzureAuthenticatorMultifactorWebfl
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -32,7 +34,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableScheduling
 @Slf4j
-public class AzureAuthenticatorConfiguration {
+public class AzureAuthenticatorConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -59,10 +61,13 @@ public class AzureAuthenticatorConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer azureAuthenticatorMultifactorWebflowConfigurer() {
-        final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+        return new AzureAuthenticatorMultifactorWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
             azureAuthenticatorFlowRegistry(), applicationContext, casProperties);
-        w.initialize();
-        return w;
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(azureAuthenticatorMultifactorWebflowConfigurer());
     }
 
     /**
@@ -71,17 +76,20 @@ public class AzureAuthenticatorConfiguration {
     @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
     @ConditionalOnProperty(prefix = "cas.authn.mfa.azure", name = "trustedDeviceEnabled", havingValue = "true", matchIfMissing = true)
     @Configuration("azureMultifactorTrustConfiguration")
-    public class AzureAuthenticatorMultifactorTrustConfiguration {
+    public class AzureAuthenticatorMultifactorTrustConfiguration implements CasWebflowExecutionPlanConfigurer {
 
         @ConditionalOnMissingBean(name = "azureMultifactorTrustWebflowConfigurer")
         @Bean
         @DependsOn("defaultWebflowConfigurer")
         public CasWebflowConfigurer azureMultifactorTrustWebflowConfigurer() {
-            final CasWebflowConfigurer w = new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
+            return new AzureAuthenticatorMultifactorTrustWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry,
                 casProperties.getAuthn().getMfa().getTrusted().isDeviceRegistrationEnabled(), azureAuthenticatorFlowRegistry(),
                 applicationContext, casProperties);
-            w.initialize();
-            return w;
+        }
+
+        @Override
+        public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+            plan.registerWebflowConfigurer(azureMultifactorTrustWebflowConfigurer());
         }
     }
 

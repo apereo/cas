@@ -1,21 +1,21 @@
 package org.apereo.cas.support.wsfederation.config;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
+import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.saml.OpenSamlConfigBean;
 import org.apereo.cas.support.wsfederation.WsFederationConfiguration;
 import org.apereo.cas.support.wsfederation.WsFederationHelper;
-import org.apereo.cas.support.wsfederation.web.flow.WsFederationAction;
+import org.apereo.cas.support.wsfederation.web.WsFederationCookieManager;
+import org.apereo.cas.support.wsfederation.web.WsFederationNavigationController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.webflow.execution.Action;
 
 import java.util.Collection;
 
@@ -31,38 +31,47 @@ import java.util.Collection;
 public class WsFederationAuthenticationConfiguration {
 
     @Autowired
-    @Qualifier("servicesManager")
-    private ServicesManager servicesManager;
-
-    @Autowired
     @Qualifier("shibboleth.OpenSAMLConfig")
     private OpenSamlConfigBean configBean;
 
     @Autowired
-    @Qualifier("centralAuthenticationService")
-    private CentralAuthenticationService centralAuthenticationService;
+    @Qualifier("servicesManager")
+    private ServicesManager servicesManager;
 
     @Autowired
-    @Qualifier("defaultAuthenticationSystemSupport")
-    private AuthenticationSystemSupport authenticationSystemSupport;
+    @Qualifier("wsFederationConfigurations")
+    private Collection<WsFederationConfiguration> wsFederationConfigurations;
+
+    @Autowired
+    @Qualifier("authenticationServiceSelectionPlan")
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory webApplicationServiceFactory;
+
+    @Autowired
+    private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
     public WsFederationHelper wsFederationHelper() {
-        final WsFederationHelper h = new WsFederationHelper();
-        h.setConfigBean(this.configBean);
-        return h;
+        return new WsFederationHelper(this.configBean, servicesManager);
     }
 
-    @Autowired
     @Bean
-    @RefreshScope
-    public Action wsFederationAction(@Qualifier("wsFederationConfigurations")
-                                         final Collection<WsFederationConfiguration> wsFederationConfigurations) {
-        return new WsFederationAction(wsFederationHelper(),
+    public WsFederationCookieManager wsFederationCookieManager() {
+        return new WsFederationCookieManager(wsFederationConfigurations,
+            casProperties.getTheme().getParamName(), casProperties.getLocale().getParamName());
+    }
+
+    @Bean
+    public WsFederationNavigationController wsFederationNavigationController() {
+        return new WsFederationNavigationController(wsFederationCookieManager(),
+            wsFederationHelper(),
             wsFederationConfigurations,
-            centralAuthenticationService,
-            authenticationSystemSupport,
-            servicesManager);
+            authenticationRequestServiceSelectionStrategies,
+            webApplicationServiceFactory,
+            casProperties.getServer().getLoginUrl());
     }
 }

@@ -6,6 +6,8 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.extractcert.RequestHeaderX509CertificateExtractor;
 import org.apereo.cas.web.extractcert.X509CertificateExtractor;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.X509CertificateCredentialsNonInteractiveAction;
 import org.apereo.cas.web.flow.X509CertificateCredentialsRequestHeaderAction;
 import org.apereo.cas.web.flow.X509WebflowConfigurer;
@@ -33,7 +35,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("x509AuthenticationWebflowConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
-public class X509AuthenticationWebflowConfiguration {
+public class X509AuthenticationWebflowConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -69,9 +71,7 @@ public class X509AuthenticationWebflowConfiguration {
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer x509WebflowConfigurer() {
-        final CasWebflowConfigurer w = new X509WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
-        w.initialize();
-        return w;
+        return new X509WebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
     }
 
     @Bean
@@ -93,5 +93,10 @@ public class X509AuthenticationWebflowConfiguration {
     public X509CertificateExtractor x509ExtractSSLCertificate() {
         final String sslHeaderName = casProperties.getAuthn().getX509().getSslHeaderName();
         return new RequestHeaderX509CertificateExtractor(sslHeaderName);
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(x509WebflowConfigurer());
     }
 }

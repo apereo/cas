@@ -10,6 +10,7 @@
 </head>
 <body>
 <main role="main" class="container mt-3 mb-3">
+
     <div th:fragment="loginProviders" th:remove="tag">
         <div th:if="${pac4jUrls}" id="list-providers" class="card d-sm-none d-md-block bg-light">
             <div class="card-body">
@@ -21,6 +22,7 @@
                             <a class="btn btn-block btn-social"
                                th:classappend="'btn-' + ${entry.type}"
                                th:href="@{${entry.redirectUrl}}"
+                               th:attr="autoredirect=${entry.autoRedirect}"
                                th:inline="text"
                                th:title="${entry.name}">
 
@@ -55,8 +57,10 @@
                         <li th:each="entry: ${wsfedUrls}">
                             <a class="btn btn-block btn-social"
                                th:classappend="btn-sm"
-                               th:href="${entry.redirectUrl}"
+                               th:href="@{${entry.redirectUrl}}"
                                th:inline="text"
+                               onload=""
+                               th:attr="autoredirect=${entry.autoRedirect}"
                                th:title="${entry.name}">
 
                                 <span class="fab fa-windows"></span>
@@ -68,7 +72,16 @@
                 </div>
             </div>
         </div>
+
+        <script>
+            var redirectTo = $( "a[autoRedirect=true]" ).attr("href");
+            if (redirectTo != null && redirectTo != undefined) {
+                window.location.href = redirectTo;
+            }
+        </script>
+
     </div>
+    
 </main>
 </body>
 </html>

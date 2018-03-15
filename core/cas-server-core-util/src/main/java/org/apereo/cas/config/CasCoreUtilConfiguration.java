@@ -7,6 +7,7 @@ import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
@@ -27,7 +28,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringValueResolver;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
 
-import javax.annotation.PostConstruct;
 import javax.validation.MessageInterpolator;
 import java.time.ZonedDateTime;
 
@@ -41,7 +41,7 @@ import java.time.ZonedDateTime;
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @EnableScheduling
 @Slf4j
-public class CasCoreUtilConfiguration {
+public class CasCoreUtilConfiguration implements InitializingBean {
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -79,8 +79,8 @@ public class CasCoreUtilConfiguration {
         return new BeanValidationPostProcessor();
     }
 
-    @PostConstruct
-    public void init() {
+    @Override
+    public void afterPropertiesSet() {
         final ConfigurableApplicationContext ctx = applicationContextProvider().getConfigurableApplicationContext();
         final DefaultFormattingConversionService conversionService = new DefaultFormattingConversionService(true);
         conversionService.setEmbeddedValueResolver(new CasEmbeddedValueResolver(ctx));
