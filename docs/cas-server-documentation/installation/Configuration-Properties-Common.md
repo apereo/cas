@@ -835,14 +835,16 @@ The parameters passed are as follows:
 
 ## Delegated Authentication Settings
 
-The following  options are shared and apply when CAS is configured to delegate authentication to an external provider such as Yahoo, given the provider's *configuration key*:
+The following  options are shared and apply when CAS is configured to delegate authentication 
+to an external provider such as Yahoo, given the provider's *configuration key*:
 
 ```properties
-#${configurationKey}.id=
-#${configurationKey}.secret=
-# (Optional) Friendly name, e.g. "This Organization" or "That Organization"
-#${configurationKey}.clientName=My Provider
+# ${configurationKey}.id=
+# ${configurationKey}.secret=
+# ${configurationKey}.clientName=My Provider
+# ${configurationKey}.autoRedirect=false
 ```
+
 
 ## LDAP Connection Settings
 
@@ -903,7 +905,7 @@ The following options can be used to passivate objects when they are checked bac
 
 You may receive unexpected LDAP failures, when CAS is configured to authenticate using `DIRECT` or `AUTHENTICATED` types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it's no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request.
 
-Furthermore if you are seeing errors in the logs that resemble a *<Operation exception encountered, reopening connection>* type of message, this usually is an indication that the connection pool's validation timeout established and created by CAS is greater than the timeout configured in the LDAP server, or more likely, in the load balancer in front of the LDAP servers. You can adjust the LDAP server session's timeout for connections, or you can teach CAS to use a validatity period that is equal or less than the LDAP server session's timeout.
+Furthermore if you are seeing errors in the logs that resemble a *<Operation exception encountered, reopening connection>* type of message, this usually is an indication that the connection pool's validation timeout established and created by CAS is greater than the timeout configured in the LDAP server, or more likely, in the load balancer in front of the LDAP servers. You can adjust the LDAP server session's timeout for connections, or you can teach CAS to use a validity period that is equal or less than the LDAP server session's timeout.
 
 ### Connection Strategies
 

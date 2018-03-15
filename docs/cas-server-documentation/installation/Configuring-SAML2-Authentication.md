@@ -45,9 +45,12 @@ SAML2 IdP `Unsolicited/SSO` profile supports the following parameters:
 In order to allow CAS to support and respond to attribute queries, you need to make sure the generated metadata has
 the `AttributeAuthorityDescriptor` element enabled, with protocol support enabled for `urn:oasis:names:tc:SAML:2.0:protocol`
 and relevant binding that corresponds to the CAS endpoint(s). You also must ensure the `AttributeAuthorityDescriptor` tag lists all
-`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
+`KeyDescriptor` elements and certificates that are used for signing as well as authentication, specially if the SOAP client of the service provider 
+needs to cross-compare the certificate behind the CAS endpoint with what is defined for the `AttributeAuthorityDescriptor`. CAS by default 
+will always use its own signing certificate for signing of the responses generated as a result of an attribute query.
 
-Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
+Also note that support for attribute queries need to be explicitly enabled and the behavior is off by default, given it imposes a burden on 
+CAS and the underlying ticket registry to keep track of attributes and responses as tickets and have them be later used and looked up.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.md#saml-idp).
 
@@ -102,7 +105,9 @@ Here is a generated metadata file as an example:
 
 ### Server Configuration
 
-If you have deployed CAS in an external application server/servlet container (i.e. Apache Tomcat) you will need to make sure that the server is adjusted to handle large-enough `HttpHeaderSize` and `HttpPostSize` values (i.e. `2097152`). The embedded container that ships with CAS handles this automatically.
+If you have deployed CAS in an external application server/servlet container (i.e. Apache Tomcat) you will 
+need to make sure that the server is adjusted to handle large-enough `HttpHeaderSize` and `HttpPostSize` values (i.e. `2097152`). 
+The embedded container that ships with CAS handles this automatically.
 
 ### Mapping Endpoints
 
@@ -180,8 +185,9 @@ The following fields are available for SAML services:
 | `attributeNameFormats` | Map that defines attribute name formats for a given attribute name to be encoded in the SAML response.
 | `attributeFriendlyNames` | Map that defines attribute friendly names for a given attribute name to be encoded in the SAML response.
 | `nameIdQualifier` | If defined, will overwrite the `NameQualifier` attribute of the produced subject's name id.
+| `assertionAudiences` | Comma-separated list of audience urls to include in the assertion, in the addition to the entity id.
 | `serviceProviderNameIdQualifier` | If defined, will overwrite the `SPNameQualifier` attribute of the produced subject's name id.
-| `skipGeneratingAssertionNameId` | Whether generation of a name identifer should be skipped for assertions. Default is `false`.
+| `skipGeneratingAssertionNameId` | Whether generation of a name identifier should be skipped for assertions. Default is `false`.
 | `skipGeneratingSubjectConfirmationInResponseTo` | Whether generation of the `InResponseTo` element should be skipped for subject confirmations. Default is `false`.
 | `skipGeneratingSubjectConfirmationNotOnOrAfter` | Whether generation of the `NotOnOrBefore` element should be skipped for subject confirmations. Default is `false`.
 | `skipGeneratingSubjectConfirmationRecipient` | Whether generation of the `Recipient` element should be skipped for subject confirmations. Default is `false`.

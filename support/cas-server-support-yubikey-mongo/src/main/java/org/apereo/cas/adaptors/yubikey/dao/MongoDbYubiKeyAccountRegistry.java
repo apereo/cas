@@ -1,6 +1,5 @@
 package org.apereo.cas.adaptors.yubikey.dao;
 
-import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccount;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -10,6 +9,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
 import java.util.Collection;
+import java.util.Optional;
 
 import static java.util.stream.Collectors.toList;
 
@@ -23,7 +23,6 @@ import static java.util.stream.Collectors.toList;
 public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
 
     private final String collectionName;
-
     private final MongoOperations mongoTemplate;
 
     public MongoDbYubiKeyAccountRegistry(final YubiKeyAccountValidator accountValidator,
@@ -32,29 +31,14 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
         this.mongoTemplate = mongoTemplate;
         this.collectionName = collectionName;
     }
-
-    @Override
-    public boolean isYubiKeyRegisteredFor(final String uid) {
-        final Query query = new Query();
-        query.addCriteria(Criteria.where("username").is(uid));
-        return this.mongoTemplate.count(query, YubiKeyAccount.class, this.collectionName) > 0;
-    }
-
-    @Override
-    public boolean isYubiKeyRegisteredFor(final String uid, final String yubikeyPublicId) {
-        final Query query = new Query();
-        query.addCriteria(Criteria.where("username").is(uid).and("publicId").is(getCipherExecutor().encode(yubikeyPublicId)));
-        return this.mongoTemplate.count(query, YubiKeyAccount.class, this.collectionName) > 0;
-    }
-
+    
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
-        if (accountValidator.isValid(uid, token)) {
-            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+        if (getAccountValidator().isValid(uid, token)) {
+            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
             final YubiKeyAccount account = new YubiKeyAccount();
             account.setPublicId(getCipherExecutor().encode(yubikeyPublicId));
             account.setUsername(uid);
-
             this.mongoTemplate.save(account, this.collectionName);
             return true;
         }
@@ -64,11 +48,22 @@ public class MongoDbYubiKeyAccountRegistry extends BaseYubiKeyAccountRegistry {
     @Override
     public Collection<YubiKeyAccount> getAccounts() {
         return this.mongoTemplate.findAll(YubiKeyAccount.class, this.collectionName)
-                .stream()
-                .map(it -> {
-                    it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
-                    return it;
-                })
-                .collect(toList());
+            .stream()
+            .map(it -> {
+                it.setPublicId(getCipherExecutor().decode(it.getPublicId()));
+                return it;
+            })
+            .collect(toList());
+    }
+
+    @Override
+    public Optional<YubiKeyAccount> getAccount(final String uid) {
+        final Query query = new Query();
+        query.addCriteria(Criteria.where("username").is(uid));
+        final YubiKeyAccount account = this.mongoTemplate.findOne(query, YubiKeyAccount.class, this.collectionName);
+        if (account != null) {
+            return Optional.of(new YubiKeyAccount(account.getId(), getCipherExecutor().decode(account.getPublicId()), account.getUsername()));
+        }
+        return Optional.empty();
     }
 }

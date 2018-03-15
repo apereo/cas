@@ -3,6 +3,7 @@ package org.apereo.cas.config.support.authentication;
 import com.yubico.client.v2.YubicoClient;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.DefaultYubiKeyAccountValidator;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountRegistry;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -48,7 +49,9 @@ import org.springframework.webflow.execution.Action;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
-
+    @Autowired
+    @Qualifier("yubikeyAccountCipherExecutor")
+    private CipherExecutor yubikeyAccountCipherExecutor;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -141,18 +144,24 @@ public class YubiKeyAuthenticationEventExecutionPlanConfiguration {
 
         if (yubi.getJsonFile() != null) {
             LOGGER.debug("Using JSON resource [{}] as the YubiKey account registry", yubi.getJsonFile());
-            return new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
+            final JsonYubiKeyAccountRegistry registry = new JsonYubiKeyAccountRegistry(yubi.getJsonFile(), yubiKeyAccountValidator());
+            registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+            return registry;
         }
         if (yubi.getAllowedDevices() != null) {
             LOGGER.debug("Using statically-defined devices for [{}] as the YubiKey account registry",
                 yubi.getAllowedDevices().keySet());
-            return new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
+            final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(yubi.getAllowedDevices(), yubiKeyAccountValidator());
+            registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+            return registry;
         }
 
         LOGGER.warn("All credentials are considered eligible for YubiKey authentication. "
                 + "Consider providing an account registry implementation via [{}]",
             YubiKeyAccountRegistry.class.getName());
-        return new OpenYubiKeyAccountRegistry();
+        final OpenYubiKeyAccountRegistry registry = new OpenYubiKeyAccountRegistry(new DefaultYubiKeyAccountValidator(yubicoClient()));
+        registry.setCipherExecutor(this.yubikeyAccountCipherExecutor);
+        return registry;
     }
 
     @Bean

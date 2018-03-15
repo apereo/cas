@@ -1,7 +1,6 @@
 package org.apereo.cas.adaptors.yubikey.registry;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.yubico.client.v2.YubicoClient;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.yubikey.YubiKeyAccountValidator;
@@ -32,10 +31,10 @@ public class JsonYubiKeyAccountRegistry extends WhitelistYubiKeyAccountRegistry 
     @SneakyThrows
     @Override
     public boolean registerAccountFor(final String uid, final String token) {
-        if (accountValidator.isValid(uid, token)) {
-            final String yubikeyPublicId = YubicoClient.getPublicId(token);
+        if (getAccountValidator().isValid(uid, token)) {
+            final String yubikeyPublicId = getAccountValidator().getTokenPublicId(token);
             final File file = jsonResource.getFile();
-            this.devices.put(uid, yubikeyPublicId);
+            this.devices.put(uid, getCipherExecutor().encode(yubikeyPublicId));
             MAPPER.writer().withDefaultPrettyPrinter().writeValue(file, this.devices);
             return true;
         }

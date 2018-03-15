@@ -16,7 +16,7 @@ import org.apereo.cas.consent.DefaultConsentEngine;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
+
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,7 +67,7 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
             return new AttributeReleaseConsentCipherExecutor(crypto.getEncryption().getKey(), crypto.getSigning().getKey(), crypto.getAlg());
         }
         LOGGER.debug("Consent attributes stored by CAS are not signed/encrypted.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "consentDecisionBuilder")

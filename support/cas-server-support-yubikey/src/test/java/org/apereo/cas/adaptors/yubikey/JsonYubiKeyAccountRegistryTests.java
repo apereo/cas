@@ -76,7 +76,6 @@ import static org.junit.Assert.*;
 @Slf4j
 @TestPropertySource(locations = {"classpath:/yubikey-json.properties"})
 public class JsonYubiKeyAccountRegistryTests {
-
     private static final String BAD_TOKEN = "123456";
 
     @Autowired
@@ -90,8 +89,8 @@ public class JsonYubiKeyAccountRegistryTests {
 
     @Test
     public void verifyAccountNotRegisteredWithBadToken() {
-        assertFalse(yubiKeyAccountRegistry.registerAccountFor("casuser", BAD_TOKEN));
-        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("casuser"));
+        assertFalse(yubiKeyAccountRegistry.registerAccountFor("baduser", BAD_TOKEN));
+        assertFalse(yubiKeyAccountRegistry.isYubiKeyRegisteredFor("baduser"));
     }
 
     @Test
