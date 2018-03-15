@@ -6,11 +6,14 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.CasFlowHandlerAdapter;
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
+import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.apereo.cas.web.flow.actions.CasDefaultFlowUrlHandler;
 import org.apereo.cas.web.flow.actions.LogoutConversionService;
 import org.apereo.cas.web.flow.configurer.DefaultLoginWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.DefaultLogoutWebflowConfigurer;
 import org.apereo.cas.web.flow.configurer.GroovyWebflowConfigurer;
+import org.apereo.cas.web.flow.configurer.plan.DefaultCasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.executor.WebflowExecutorFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -59,7 +62,7 @@ import java.util.List;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
 @Slf4j
-public class CasWebflowContextConfiguration {
+public class CasWebflowContextConfiguration implements CasWebflowExecutionPlanConfigurer {
 
     private static final int LOGOUT_FLOW_HANDLER_ORDER = 3;
 
@@ -212,6 +215,7 @@ public class CasWebflowContextConfiguration {
     public CasWebflowConfigurer defaultWebflowConfigurer() {
         final DefaultLoginWebflowConfigurer c = new DefaultLoginWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
+        c.setOrder(Ordered.HIGHEST_PRECEDENCE);
         c.initialize();
         return c;
     }
@@ -222,7 +226,7 @@ public class CasWebflowContextConfiguration {
         final DefaultLogoutWebflowConfigurer c = new DefaultLogoutWebflowConfigurer(builder(), loginFlowRegistry(),
             applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
-        c.initialize();
+        c.setOrder(Ordered.HIGHEST_PRECEDENCE);
         return c;
     }
 
@@ -232,8 +236,24 @@ public class CasWebflowContextConfiguration {
     public CasWebflowConfigurer groovyWebflowConfigurer() {
         final GroovyWebflowConfigurer c = new GroovyWebflowConfigurer(builder(), loginFlowRegistry(), applicationContext, casProperties);
         c.setLogoutFlowDefinitionRegistry(logoutFlowRegistry());
-        c.initialize();
         return c;
+    }
+
+
+    @Autowired
+    @Bean
+    public CasWebflowExecutionPlan casWebflowExecutionPlan(final List<CasWebflowExecutionPlanConfigurer> configurers) {
+        final DefaultCasWebflowExecutionPlan plan = new DefaultCasWebflowExecutionPlan();
+        configurers.forEach(c -> c.configureWebflowExecutionPlan(plan));
+        plan.execute();
+        return plan;
+    }
+
+    @Override
+    public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
+        plan.registerWebflowConfigurer(defaultWebflowConfigurer());
+        plan.registerWebflowConfigurer(defaultLogoutWebflowConfigurer());
+        plan.registerWebflowConfigurer(groovyWebflowConfigurer());
     }
 }
 

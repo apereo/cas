@@ -18,7 +18,7 @@ import lombok.Setter;
 @Slf4j
 @Getter
 @Setter
-public class Pac4jOidcProperties extends Pac4jGenericClientProperties {
+public class Pac4jOidcProperties extends Pac4jIdentifiableClientProperties {
 
     private static final long serialVersionUID = 3359382317533639638L;
 

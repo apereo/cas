@@ -32,7 +32,7 @@ public class CacheCredentialsMetaDataPopulator extends BaseAuthenticationMetaDat
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        transaction.getCredential().ifPresent(credential -> {
+        transaction.getPrimaryCredential().ifPresent(credential -> {
             LOGGER.debug("Processing request to capture the credential for [{}]", credential.getId());
             final UsernamePasswordCredential c = (UsernamePasswordCredential) credential;
             final String psw = this.cipherExecutor == null ? c.getPassword() : this.cipherExecutor.encode(c.getPassword());

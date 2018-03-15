@@ -337,7 +337,7 @@ Enable AJP connections for the embedded Tomcat container,
 
 The Tomcat SSLValve is a way to get a client certificate from an SSL proxy (e.g. HAProxy or BigIP F5)
 running in front of Tomcat via an HTTP header. If you enable this, make sure your proxy is ensuring
-that this header doesn't originate with the client (e.g. the browser).
+that this header does not originate with the client (e.g. the browser).
 
 ```properties
 # cas.server.sslValve.enabled=false
@@ -347,8 +347,8 @@ that this header doesn't originate with the client (e.g. the browser).
 # cas.server.sslValve.sslCipherUserKeySizeHeader=ssl_cipher_usekeysize
 ```
 
-Example HAProxy Configuration (snippet)
-Configure SSL frontend with cert optional, redirect to cas, if cert provided, put it on header
+Example HAProxy Configuration (snippet): Configure SSL frontend with cert optional, redirect to cas, if cert provided, put it on header.
+
 ```
 frontend web-vip
   bind 192.168.2.10:443 ssl crt /var/lib/haproxy/certs/www.example.com.pem ca-file /var/lib/haproxy/certs/ca.pem verify optional
@@ -399,6 +399,34 @@ Enable basic authentication for the embedded Apache Tomcat.
 # cas.server.basicAuthn.securityRoles[0]=admin
 # cas.server.basicAuthn.authRoles[0]=admin
 # cas.server.basicAuthn.patterns[0]=/*
+```
+
+#### Session Clustering & Replication
+
+Enable session replication to replicate web application session deltas.
+
+```properties
+# cas.server.clustering.enabled=false
+# cas.server.clustering.clusterMembers=ip-address:port:index
+
+# cas.server.clustering.expireSessionsOnShutdown=false
+# cas.server.clustering.channelSendOptions=8
+
+# cas.server.clustering.receiverPort=4000
+# cas.server.clustering.receiverTimeout=5000
+# cas.server.clustering.receiverMaxThreads=6
+# cas.server.clustering.receiverAddress=auto
+# cas.server.clustering.receiverAutoBind=100
+
+# cas.server.clustering.membershipPort=45564
+# cas.server.clustering.membershipAddress=228.0.0.4
+# cas.server.clustering.membershipFrequency=500
+# cas.server.clustering.membershipDropTime=3000
+# cas.server.clustering.membershipRecoveryEnabled=true
+# cas.server.clustering.membershipLocalLoopbackDisabled=false
+# cas.server.clustering.membershipRecoveryCounter=10
+
+# cas.server.clustering.managerType=DELTA|BACKUP
 ```
 
 ## CAS Server
@@ -1256,6 +1284,7 @@ To learn more about this topic, [please review this guide](Cassandra-Authenticat
 # cas.authn.cassandra.tableName=
 # cas.authn.cassandra.username=
 # cas.authn.cassandra.password=
+# cas.authn.cassandra.query=SELECT * FROM %s WHERE %s = ? ALLOW FILTERING
 
 # cas.authn.cassandra.protocolVersion=V1|V2|V3|V4
 # cas.authn.cassandra.keyspace=
@@ -1893,6 +1922,11 @@ strategies when collecting principal attributes:
 # cas.authn.wsfed[0].encryptionPrivateKeyPassword=NONE
 ```
 
+### Signing & Encryption
+
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `cas.authn.wsfed[0].cookie`.
+
 ## Multifactor Authentication
 
 To learn more about this topic, [please review this guide](Configuring-Multifactor-Authentication.html).
@@ -2428,7 +2462,6 @@ To learn more about this topic, [please review this guide](../integration/Delega
 
 ```properties
 # cas.authn.pac4j.typedIdUsed=false
-# cas.authn.pac4j.autoRedirect=false
 # cas.authn.pac4j.name=
 ```
 
@@ -2436,18 +2469,24 @@ The following external identity providers share [common blocks of settings](Conf
 
 | Identity Provider                       | Configuration Key
 |---------------------------|----------------------------------------------------------
-| Twitter               | `cas.authn.pac4j.twitter`
-| Paypal               | `cas.authn.pac4j.paypal`
-| Wordpress               | `cas.authn.pac4j.wordpress`
-| Yahoo               | `cas.authn.pac4j.yahoo`
-| Orcid               | `cas.authn.pac4j.orcid`
-| Dropbox               | `cas.authn.pac4j.dropbox`
-| GitHub               | `cas.authn.pac4j.github`
-| Foursquare               | `cas.authn.pac4j.foursquare`
+| Twitter                   | `cas.authn.pac4j.twitter`
+| Paypal                    | `cas.authn.pac4j.paypal`
+| Wordpress                 | `cas.authn.pac4j.wordpress`
+| Yahoo                     | `cas.authn.pac4j.yahoo`
+| Orcid                     | `cas.authn.pac4j.orcid`
+| Dropbox                   | `cas.authn.pac4j.dropbox`
+| GitHub                    | `cas.authn.pac4j.github`
+| Foursquare                | `cas.authn.pac4j.foursquare`
 | WindowsLive               | `cas.authn.pac4j.windowsLive`
-|  Google               | `cas.authn.pac4j.google`
+| Google                   | `cas.authn.pac4j.google`
 
 See below for other identity providers such as CAS, SAML2 and more.
+
+### Signing & Encryption
+
+The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under `${configurationKey}.cookie`.
+
 
 ### Google
 
@@ -2464,8 +2503,6 @@ Delegate authentication to an external CAS server.
 ```properties
 # cas.authn.pac4j.cas[0].loginUrl=
 # cas.authn.pac4j.cas[0].protocol=
-# (Optional) Friendly name for CAS, e.g. "This Organization" or "That Organization"
-# cas.authn.pac4j.cas[0].clientName=
 ```
 
 ### OAuth20
@@ -2502,19 +2539,12 @@ Delegate authentication to an external SAML2 IdP (do not use the `resource:` or 
 prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 
 ```properties
-# Settings required for CAS SP metadata generation process
-# The keystore will be automatically generated by CAS with
-# keys required for the metadata generation and/or exchange.
-#
 # cas.authn.pac4j.saml[0].keystorePassword=
 # cas.authn.pac4j.saml[0].privateKeyPassword=
 # cas.authn.pac4j.saml[0].keystorePath=
 # cas.authn.pac4j.saml[0].keystoreAlias=
 
-# The entityID assigned to CAS acting as the SP
 # cas.authn.pac4j.saml[0].serviceProviderEntityId=
-
-# Path to the auto-generated CAS SP metadata
 # cas.authn.pac4j.saml[0].serviceProviderMetadataPath=
 
 # cas.authn.pac4j.saml[0].maximumAuthenticationLifetime=
@@ -2523,24 +2553,15 @@ prefixes for the `keystorePath` or `identityProviderMetadataPath` property).
 # Path/URL to delegated IdP metadata
 # cas.authn.pac4j.saml[0].identityProviderMetadataPath=
 
-# (Optional) Friendly name for IdP, e.g. "This Organization" or "That Organization"
-# This name, with 'nonword' characters converted to '-' (e.g. This Org (New) become This-Org--New- ),
-# is added to the "class" attribute of the redirect link on the login page, to allow for
-# custom styling of individual IdPs (e.g. for an organization logo).
-# cas.authn.pac4j.saml[0].clientName=
-
-# Control aspects of the authentication request sent to IdP
 # cas.authn.pac4j.saml[0].authnContextClassRef=
 # cas.authn.pac4j.saml[0].authnContextComparisonType=
 # cas.authn.pac4j.saml[0].nameIdPolicyFormat=
 # cas.authn.pac4j.saml[0].forceAuth=false
 # cas.authn.pac4j.saml[0].passive=false
 
-# Define whether metadata requires assertions signed
 # cas.authn.pac4j.saml[0].wantsAssertionsSigned=
-
-# Specifies the AttributeConsumingServiceIndex attribute (positive values to enable)
 # cas.authn.pac4j.saml[0].attributeConsumingServiceIndex=
+# cas.authn.pac4j.saml[0].assertionConsumerServiceIndex=-1
 ```
 
 Examine the generated metadata after accessing the CAS login screen to ensure all ports and endpoints are correctly adjusted.  Finally, share the CAS SP metadata with the delegated IdP and register CAS as an authorized relying party.
@@ -3297,8 +3318,7 @@ The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encrypt
 
 ## Service Tickets Behavior
 
-Controls the expiration policy of service tickets, as well as other properties
-applicable to STs.
+Controls the expiration policy of service tickets, as well as other properties applicable to STs.
 
 ```properties
 # cas.ticket.st.maxLength=20
@@ -3318,6 +3338,13 @@ applicable to STs.
 ```properties
 # cas.ticket.pt.timeToKillInSeconds=10
 # cas.ticket.pt.numberOfUses=1
+```
+
+
+## Transient Session Tickets Behavior
+
+```properties
+# cas.ticket.tst.timeToKillInSeconds=300
 ```
 
 ## Ticket Granting Tickets Behavior
@@ -3722,6 +3749,14 @@ To learn more about this topic, [please review this guide](../integration/Config
 
 ```properties
 # cas.authn.fortress.rbaccontext=HOME
+```
+
+## CAS Client
+
+Configure settings relevant to the Java CAS client configured to handle inbound ticket validation operations, etc.
+
+```properties
+# cas.client.prefix=https://sso.example.org/cas
 ```
 
 ## Password Management

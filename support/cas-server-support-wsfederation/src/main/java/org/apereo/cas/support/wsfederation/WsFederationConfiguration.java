@@ -1,22 +1,25 @@
 package org.apereo.cas.support.wsfederation;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.io.FileWatcherService;
+import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.jooq.lambda.Unchecked;
 import org.opensaml.security.credential.Credential;
 import org.opensaml.security.x509.BasicX509Credential;
 import org.springframework.core.io.Resource;
+
 import java.io.InputStream;
 import java.io.Serializable;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This class gathers configuration information for the WS Federation Identity Provider.
@@ -31,6 +34,8 @@ import lombok.Setter;
 public class WsFederationConfiguration implements Serializable {
 
     private static final long serialVersionUID = 2310859477512242659L;
+
+    private static final String QUERYSTRING = "?wa=wsignin1.0&wtrealm=%s&wctx=%s";
 
     /**
      * Describes how the WS-FED principal resolution machinery
@@ -77,7 +82,10 @@ public class WsFederationConfiguration implements Serializable {
     private List<Credential> signingWallet;
 
     private String name;
+    private String id = UUID.randomUUID().toString();
 
+    private CookieRetrievingCookieGenerator cookieGenerator;
+    
     public String getName() {
         return StringUtils.isBlank(this.name) ? getClass().getSimpleName() : this.name;
     }
@@ -138,4 +146,16 @@ public class WsFederationConfiguration implements Serializable {
         }
         return null;
     }
+
+    /**
+     * Gets authorization url.
+     *
+     * @param relyingPartyIdentifier the relying party identifier
+     * @param wctx                   the wctx
+     * @return the authorization url
+     */
+    public String getAuthorizationUrl(final String relyingPartyIdentifier, final String wctx) {
+        return String.format(getIdentityProviderUrl() + QUERYSTRING, relyingPartyIdentifier, wctx);
+    }
+
 }

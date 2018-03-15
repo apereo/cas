@@ -17,6 +17,9 @@ import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
@@ -55,7 +58,9 @@ public class ClientAuthenticationHandlerTests {
 
         final Credentials credentials = new OAuth20Credentials(null);
         this.clientCredential = new ClientCredential(credentials, fbClient.getName());
-        ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
+        final ServletExternalContext mock = new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
+        ExternalContextHolder.setExternalContext(mock);
     }
 
     @Test

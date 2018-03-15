@@ -16,6 +16,10 @@ public interface CasWebflowConstants {
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+    /**
+     * Transition id 'redirect' .
+     */
+    String TRANSITION_ID_REDIRECT = "redirect";
 
     /**
      * Propagate transition id.
@@ -64,7 +68,7 @@ public interface CasWebflowConstants {
      * The state id 'clientAction'.
      */
     String STATE_ID_CLIENT_ACTION = "clientAction";
-    
+
     /**
      * The state id 'verifyTrustedDevice'.
      */
@@ -74,7 +78,6 @@ public interface CasWebflowConstants {
      * The view id 'registerDeviceView'.
      */
     String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
-
 
 
     /**
@@ -92,6 +95,11 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
 
+    /**
+     * The view state 'casWsFedStopWebflow'.
+     */
+    String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+    
     /**
      * The transition state 'successWithWarnings'.
      */
@@ -150,6 +158,11 @@ public interface CasWebflowConstants {
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
+    /**
+     * 'finishMfaTrustedAuth' state id.
+     */
+    String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
+
 
     /**
      * The transition state 'warn'.
@@ -398,6 +411,17 @@ public interface CasWebflowConstants {
      */
     String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
 
+
+    /**
+     * Action id 'remoteAuthenticate'.
+     */
+    String ACTION_ID_REMOTE_TRUSTED_AUTHENTICATION = "remoteAuthenticate";
+
+    /**
+     * Action id 'clearWebflowCredentialsAction'.
+     */
+    String ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS = "clearWebflowCredentialsAction";
+
     /**
      * Action id 'generateServiceTicketAction'.
      */
@@ -417,7 +441,7 @@ public interface CasWebflowConstants {
      * Action id 'logoutViewSetupAction'.
      */
     String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
-    
+
     /**
      * Action id 'authenticationExceptionHandler'.
      */
@@ -427,7 +451,7 @@ public interface CasWebflowConstants {
      * Action id 'sendTicketGrantingTicketAction'.
      */
     String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
-    
+
     /**
      * State id 'proceedFromAuthenticationWarningView'.
      */

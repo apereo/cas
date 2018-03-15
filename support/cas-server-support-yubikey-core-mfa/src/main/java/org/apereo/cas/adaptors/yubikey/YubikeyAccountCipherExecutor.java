@@ -14,6 +14,10 @@ public class YubikeyAccountCipherExecutor extends BaseStringCipherExecutor {
         super(secretKeyEncryption, secretKeySigning, alg);
     }
 
+    public YubikeyAccountCipherExecutor(final String secretKeyEncryption, final String secretKeySigning) {
+        super(secretKeyEncryption, secretKeySigning);
+    }
+
     @Override
     public String getName() {
         return "YubiKey Authentication";

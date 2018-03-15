@@ -95,6 +95,11 @@ public class EncodedTicket implements Ticket {
     }
 
     @Override
+    @JsonIgnore
+    public void markTicketExpired() {
+    }
+
+    @Override
     public int compareTo(final Ticket o) {
         return getId().compareTo(o.getId());
     }

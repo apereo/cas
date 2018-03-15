@@ -171,7 +171,7 @@ public class RegisteredServiceThemeResolver extends AbstractThemeResolver {
     }
 
     private String rememberThemeName(final HttpServletRequest request, final String themeName) {
-        request.getSession().setAttribute(casProperties.getTheme().getParamName(), themeName);
+        request.setAttribute(casProperties.getTheme().getParamName(), themeName);
         return themeName;
     }
 

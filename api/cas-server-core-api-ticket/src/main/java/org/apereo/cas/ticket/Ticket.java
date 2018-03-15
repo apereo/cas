@@ -64,4 +64,9 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * @return the prefix
      */
     String getPrefix();
+
+    /**
+     * Mark a ticket as expired.
+     */
+    void markTicketExpired();
 }

@@ -12,7 +12,6 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  */
 @Slf4j
 public class CasConfigurationServerServletInitializer extends SpringBootServletInitializer {
-
     @Override
     protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
         return builder

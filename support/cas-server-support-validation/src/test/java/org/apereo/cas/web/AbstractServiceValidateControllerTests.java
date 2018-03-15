@@ -7,6 +7,7 @@ import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.mock.MockValidationSpecification;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
@@ -40,7 +41,7 @@ import static org.junit.Assert.*;
 @Slf4j
 public abstract class AbstractServiceValidateControllerTests extends AbstractCentralAuthenticationServiceTests {
     protected static final String SUCCESS = "Success";
-    protected static final Service SERVICE = CoreAuthenticationTestUtils.getService();
+    protected static final Service SERVICE = RegisteredServiceTestUtils.getService();
 
     private static final String GITHUB_URL = "https://www.github.com";
 
@@ -159,7 +160,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndPgtUrlMismatch() throws Exception {
-        final Service svc = CoreAuthenticationTestUtils.getService("proxyService");
+        final Service svc = RegisteredServiceTestUtils.getService("proxyService");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -178,7 +179,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndFormatAsJson() throws Exception {
-        final Service svc = CoreAuthenticationTestUtils.getService("proxyService");
+        final Service svc = RegisteredServiceTestUtils.getService("proxyService");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
 
@@ -195,7 +196,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
     @Test
     public void verifyValidServiceTicketAndBadFormat() throws Exception {
-        final Service svc = CoreAuthenticationTestUtils.getService("proxyService");
+        final Service svc = RegisteredServiceTestUtils.getService("proxyService");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -224,7 +225,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
      */
     @Test
     public void verifyValidServiceTicketWithDifferentEncoding() throws Exception {
-        final Service svc = CoreAuthenticationTestUtils.getService("http://www.jasig.org?param=hello+world");
+        final Service svc = RegisteredServiceTestUtils.getService("http://www.jasig.org?param=hello+world");
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -232,7 +233,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
 
         final String reqSvc = "http://www.jasig.org?param=hello%20world";
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, CoreAuthenticationTestUtils.getService(reqSvc).getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(reqSvc).getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
 
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
@@ -267,7 +268,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
     @Test
     public void verifyValidServiceTicketWithDifferentEncodingAndIgnoringCase() throws Exception {
         final String origSvc = "http://www.jasig.org?param=hello+world";
-        final Service svc = CoreAuthenticationTestUtils.getService(origSvc);
+        final Service svc = RegisteredServiceTestUtils.getService(origSvc);
         final AuthenticationResult ctx = CoreAuthenticationTestUtils.getAuthenticationResult(getAuthenticationSystemSupport(), svc);
 
         final TicketGrantingTicket tId = getCentralAuthenticationService().createTicketGrantingTicket(ctx);
@@ -277,7 +278,7 @@ public abstract class AbstractServiceValidateControllerTests extends AbstractCen
         final String reqSvc = "http://WWW.JASIG.ORG?PARAM=hello%20world";
 
         final MockHttpServletRequest request = new MockHttpServletRequest();
-        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, CoreAuthenticationTestUtils.getService(reqSvc).getId());
+        request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, RegisteredServiceTestUtils.getService(reqSvc).getId());
         request.addParameter(CasProtocolConstants.PARAMETER_TICKET, sId.getId());
         this.serviceValidateController.setProxyHandler(new Cas10ProxyHandler());
         assertTrue(this.serviceValidateController.handleRequestInternal(request, new MockHttpServletResponse()).getView().toString().contains(SUCCESS));

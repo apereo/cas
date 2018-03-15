@@ -6,7 +6,6 @@ import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationResult;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
@@ -34,6 +33,7 @@ import org.apereo.cas.config.CasPersonDirectoryTestConfiguration;
 import org.apereo.cas.config.CasRegisteredServicesTestConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.UnsatisfiedAuthenticationPolicyException;
@@ -186,7 +186,7 @@ public class MultifactorAuthenticationTests {
     }
 
     private static Service newService(final String id) {
-        return CoreAuthenticationTestUtils.getService(id);
+        return RegisteredServiceTestUtils.getService(id);
     }
 
     private AuthenticationResult processAuthenticationAttempt(final Service service, final Credential... credential) throws AuthenticationException {

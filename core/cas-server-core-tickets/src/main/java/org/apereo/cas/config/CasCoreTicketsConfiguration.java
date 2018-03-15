@@ -11,19 +11,26 @@ import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCrypt
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.DefaultTicketCatalog;
 import org.apereo.cas.ticket.ExpirationPolicy;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.ServiceTicketFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketCatalogConfigurer;
 import org.apereo.cas.ticket.TicketFactory;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketFactory;
+import org.apereo.cas.ticket.TransientSessionTicket;
+import org.apereo.cas.ticket.TransientSessionTicketFactory;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.factory.DefaultProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultProxyTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultServiceTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketFactory;
 import org.apereo.cas.ticket.factory.DefaultTicketGrantingTicketFactory;
+import org.apereo.cas.ticket.factory.DefaultTransientSessionTicketFactory;
+import org.apereo.cas.ticket.proxy.ProxyGrantingTicket;
 import org.apereo.cas.ticket.proxy.ProxyGrantingTicketFactory;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.ticket.proxy.ProxyTicket;
 import org.apereo.cas.ticket.proxy.ProxyTicketFactory;
 import org.apereo.cas.ticket.proxy.support.Cas10ProxyHandler;
 import org.apereo.cas.ticket.proxy.support.Cas20ProxyHandler;
@@ -44,7 +51,6 @@ import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.ticket.support.TimeoutExpirationPolicy;
 import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.HostNameBasedUniqueTicketIdGenerator;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.apereo.cas.util.cipher.ProtocolTicketCipherExecutor;
 import org.apereo.cas.util.http.HttpClient;
 import org.jasig.cas.client.ssl.HttpURLConnectionFactory;
@@ -91,10 +97,9 @@ import java.util.Map;
 public class CasCoreTicketsConfiguration implements TransactionManagementConfigurer {
 
 
-
     @Autowired
     private ApplicationContext applicationContext;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -122,7 +127,8 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @ConditionalOnMissingBean(name = "casClientTicketValidator")
     @Bean
     public AbstractUrlBasedTicketValidator casClientTicketValidator() {
-        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(casProperties.getServer().getPrefix());
+        final String prefix = StringUtils.defaultString(casProperties.getClient().getPrefix(), casProperties.getServer().getPrefix());
+        final Cas30ServiceTicketValidator validator = new Cas30ServiceTicketValidator(prefix);
         final HttpURLConnectionFactory factory = new HttpURLConnectionFactory() {
             private static final long serialVersionUID = 3692658214483917813L;
 
@@ -144,9 +150,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public ProxyGrantingTicketFactory defaultProxyGrantingTicketFactory() {
         return new DefaultProxyGrantingTicketFactory(
-                ticketGrantingTicketUniqueIdGenerator(),
-                grantingTicketExpirationPolicy(),
-                protocolTicketCipherExecutor());
+            ticketGrantingTicketUniqueIdGenerator(),
+            grantingTicketExpirationPolicy(),
+            protocolTicketCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "defaultProxyTicketFactory")
@@ -156,9 +162,9 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ProxyTicketFactory defaultProxyTicketFactory() {
         final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultProxyTicketFactory(proxyTicketExpirationPolicy(),
-                uniqueIdGeneratorsMap,
-                protocolTicketCipherExecutor(),
-                onlyTrackMostRecentSession);
+            uniqueIdGeneratorsMap,
+            protocolTicketCipherExecutor(),
+            onlyTrackMostRecentSession);
     }
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketUniqueIdGenerator")
@@ -166,16 +172,30 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @RefreshScope
     public UniqueTicketIdGenerator ticketGrantingTicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.TicketGrantingTicketIdGenerator(
-                casProperties.getTicket().getTgt().getMaxLength(),
-                casProperties.getHost().getName());
+            casProperties.getTicket().getTgt().getMaxLength(),
+            casProperties.getHost().getName());
     }
 
     @ConditionalOnMissingBean(name = "proxy20TicketUniqueIdGenerator")
     @Bean
     public UniqueTicketIdGenerator proxy20TicketUniqueIdGenerator() {
         return new HostNameBasedUniqueTicketIdGenerator.ProxyTicketIdGenerator(
-                casProperties.getTicket().getPgt().getMaxLength(),
-                casProperties.getHost().getName());
+            casProperties.getTicket().getPgt().getMaxLength(),
+            casProperties.getHost().getName());
+    }
+
+
+    @ConditionalOnMissingBean(name = "defaultTransientSessionTicketFactory")
+    @Bean
+    public TransientSessionTicketFactory defaultTransientSessionTicketFactory() {
+        return new DefaultTransientSessionTicketFactory(transientSessionTicketExpirationPolicy());
+    }
+
+
+    @ConditionalOnMissingBean(name = "transientSessionTicketExpirationPolicy")
+    @Bean
+    public ExpirationPolicy transientSessionTicketExpirationPolicy() {
+        return new HardTimeoutExpirationPolicy(casProperties.getTicket().getTst().getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "defaultServiceTicketFactory")
@@ -184,26 +204,29 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     public ServiceTicketFactory defaultServiceTicketFactory() {
         final boolean onlyTrackMostRecentSession = casProperties.getTicket().getTgt().isOnlyTrackMostRecentSession();
         return new DefaultServiceTicketFactory(serviceTicketExpirationPolicy(),
-                uniqueIdGeneratorsMap,
-                onlyTrackMostRecentSession,
-                protocolTicketCipherExecutor());
+            uniqueIdGeneratorsMap,
+            onlyTrackMostRecentSession,
+            protocolTicketCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketGrantingTicketFactory")
     @Bean
     public TicketGrantingTicketFactory defaultTicketGrantingTicketFactory() {
         return new DefaultTicketGrantingTicketFactory(ticketGrantingTicketUniqueIdGenerator(),
-                grantingTicketExpirationPolicy(),
-                protocolTicketCipherExecutor());
+            grantingTicketExpirationPolicy(),
+            protocolTicketCipherExecutor());
     }
 
     @ConditionalOnMissingBean(name = "defaultTicketFactory")
     @Bean
     public TicketFactory defaultTicketFactory() {
-        return new DefaultTicketFactory(defaultProxyGrantingTicketFactory(),
-                defaultTicketGrantingTicketFactory(),
-                defaultServiceTicketFactory(),
-                defaultProxyTicketFactory());
+        final DefaultTicketFactory factory = new DefaultTicketFactory();
+        factory.addTicketFactory(TransientSessionTicket.class, defaultTransientSessionTicketFactory())
+            .addTicketFactory(ProxyGrantingTicket.class, defaultProxyGrantingTicketFactory())
+            .addTicketFactory(TicketGrantingTicket.class, defaultTicketGrantingTicketFactory())
+            .addTicketFactory(ServiceTicket.class, defaultServiceTicketFactory())
+            .addTicketFactory(ProxyTicket.class, defaultProxyTicketFactory());
+        return factory;
     }
 
     @ConditionalOnMissingBean(name = "proxy10Handler")
@@ -224,7 +247,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public TicketRegistry ticketRegistry() {
         LOGGER.warn("Runtime memory is used as the persistence storage for retrieving and managing tickets. "
-                + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
+            + "Tickets that are issued during runtime will be LOST when the web server is restarted. This MAY impact SSO functionality.");
         final TicketRegistryProperties.InMemory mem = casProperties.getTicket().getRegistry().getInMemory();
         final CipherExecutor cipher = CoreTicketUtils.newTicketRegistryCipherExecutor(mem.getCrypto(), "inMemory");
 
@@ -266,16 +289,16 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
     @Bean
     public ExpirationPolicy serviceTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ServiceTicketExpirationPolicy(
-                casProperties.getTicket().getSt().getNumberOfUses(),
-                casProperties.getTicket().getSt().getTimeToKillInSeconds());
+            casProperties.getTicket().getSt().getNumberOfUses(),
+            casProperties.getTicket().getSt().getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "proxyTicketExpirationPolicy")
     @Bean
     public ExpirationPolicy proxyTicketExpirationPolicy() {
         return new MultiTimeUseOrTimeoutExpirationPolicy.ProxyTicketExpirationPolicy(
-                casProperties.getTicket().getPt().getNumberOfUses(),
-                casProperties.getTicket().getPt().getTimeToKillInSeconds());
+            casProperties.getTicket().getPt().getNumberOfUses(),
+            casProperties.getTicket().getPt().getTimeToKillInSeconds());
     }
 
     @ConditionalOnMissingBean(name = "lockingStrategy")
@@ -297,12 +320,12 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getTicket().getCrypto();
         if (crypto.isEnabled()) {
             return new ProtocolTicketCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
         }
         LOGGER.debug("Protocol tickets generated by CAS are not signed/encrypted.");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "ticketGrantingTicketExpirationPolicy")
@@ -316,18 +339,18 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
         if (tgt.getTimeout().getMaxTimeToLiveInSeconds() > 0) {
             LOGGER.debug("Ticket-granting ticket expiration policy is based on a timeout of [{}] seconds",
-                    tgt.getTimeout().getMaxTimeToLiveInSeconds());
+                tgt.getTimeout().getMaxTimeToLiveInSeconds());
             return new TimeoutExpirationPolicy(tgt.getTimeout().getMaxTimeToLiveInSeconds());
         }
 
         if (tgt.getMaxTimeToLiveInSeconds() > 0 && tgt.getTimeToKillInSeconds() > 0) {
             LOGGER.debug("Ticket-granting ticket expiration policy is based on hard/idle timeouts of [{}]/[{}] seconds",
-                    tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
+                tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
             return new TicketGrantingTicketExpirationPolicy(tgt.getMaxTimeToLiveInSeconds(), tgt.getTimeToKillInSeconds());
         }
 
         if (tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds() > 0
-                && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
+            && tgt.getThrottledTimeout().getTimeToKillInSeconds() > 0) {
             final ThrottledUseAndTimeoutExpirationPolicy p = new ThrottledUseAndTimeoutExpirationPolicy();
             p.setTimeToKillInSeconds(tgt.getThrottledTimeout().getTimeToKillInSeconds());
             p.setTimeInBetweenUsesInSeconds(tgt.getThrottledTimeout().getTimeInBetweenUsesInSeconds());
@@ -337,7 +360,7 @@ public class CasCoreTicketsConfiguration implements TransactionManagementConfigu
 
         if (tgt.getHardTimeout().getTimeToKillInSeconds() > 0) {
             LOGGER.debug("Ticket-granting ticket expiration policy is based on a hard timeout of [{}] seconds",
-                    tgt.getHardTimeout().getTimeToKillInSeconds());
+                tgt.getHardTimeout().getTimeToKillInSeconds());
             return new HardTimeoutExpirationPolicy(tgt.getHardTimeout().getTimeToKillInSeconds());
         }
         LOGGER.warn("Ticket-granting ticket expiration policy is set to ALWAYS expire tickets.");
