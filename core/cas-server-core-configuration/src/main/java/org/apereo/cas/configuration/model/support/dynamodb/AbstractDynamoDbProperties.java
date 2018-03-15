@@ -61,7 +61,7 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
     /**
      * Flag that indicates whether to prevent CAS from creating tables.
      */
-    private boolean preventTableCreationOnStartup = false;
+    private boolean preventTableCreationOnStartup;
 
     /**
      * Time offset.
