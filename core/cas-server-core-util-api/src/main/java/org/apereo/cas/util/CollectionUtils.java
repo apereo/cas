@@ -111,7 +111,7 @@ public class CollectionUtils {
      *
      * @param <K>    the key type
      * @param <V>    the value type
-     * @param source map to wrap.
+     * @param source map to of.
      * @return the map
      */
     public static <K, V> Map<K, V> wrap(final Map<K, V> source) {
@@ -262,7 +262,7 @@ public class CollectionUtils {
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param source list to wrap.
+     * @param source list to of.
      * @return the list
      */
     public static <T> List<T> wrap(final T source) {
@@ -287,7 +287,7 @@ public class CollectionUtils {
      * Wraps a possibly null list in an immutable wrapper.
      *
      * @param <T>    the type parameter
-     * @param source Nullable list to wrap.
+     * @param source Nullable list to of.
      * @return the list
      */
     public static <T> List<T> wrap(final List<T> source) {

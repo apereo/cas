@@ -62,7 +62,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     public void checkAuthenticationHandlerResolutionDefault() {
         final RegisteredServiceAuthenticationHandlerResolver resolver =
             new RegisteredServiceAuthenticationHandlerResolver(this.defaultServicesManager);
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid1"),
+        final AuthenticationTransaction transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid1"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
 
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
@@ -73,7 +73,7 @@ public class RegisteredServiceAuthenticationHandlerResolverTests {
     public void checkAuthenticationHandlerResolution() {
         final DefaultAuthenticationHandlerResolver resolver =
             new DefaultAuthenticationHandlerResolver();
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(RegisteredServiceTestUtils.getService("serviceid2"),
+        final AuthenticationTransaction transaction = AuthenticationTransaction.of(RegisteredServiceTestUtils.getService("serviceid2"),
             RegisteredServiceTestUtils.getCredentialsWithSameUsernameAndPassword("casuser"));
         final Set<AuthenticationHandler> handlers = resolver.resolve(this.handlers, transaction);
         assertEquals(handlers.size(), this.handlers.size());
