@@ -9,7 +9,7 @@ export class FormData {
     serviceTypes: String[];
     samlRoles: String[];
     samlDirections: String[];
-    attributeNameFormats: String[];
+    samlAttributeNameFormats: String[];
     samlCredentialTypes: String[];
     wsFederationClaims: String[];
     mfaProviders: PropertyEnum[];
