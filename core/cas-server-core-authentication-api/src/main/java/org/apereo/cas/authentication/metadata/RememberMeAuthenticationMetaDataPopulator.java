@@ -20,7 +20,7 @@ public class RememberMeAuthenticationMetaDataPopulator extends BaseAuthenticatio
 
     @Override
     public void populateAttributes(final AuthenticationBuilder builder, final AuthenticationTransaction transaction) {
-        transaction.getCredential().ifPresent(r -> {
+        transaction.getPrimaryCredential().ifPresent(r -> {
             if (RememberMeCredential.class.cast(r).isRememberMe()) {
                 LOGGER.debug("Credential is configured to be remembered. Captured this as [{}] attribute",
                     RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
