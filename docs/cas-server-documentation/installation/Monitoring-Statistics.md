@@ -33,8 +33,10 @@ exposed over the endpoing `/actuator`. The following endpoints are secured and a
 | `logfile`                 | Returns the contents of the log file if `logging.file` or `logging.path` properties are set with support for HTTP `Range` header.
 | `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
 | `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
+| `discovery-profile`       | Provides a JSON representation of the [CAS configuration and capabilities](Configuration-Discovery.html).
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
+| `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
