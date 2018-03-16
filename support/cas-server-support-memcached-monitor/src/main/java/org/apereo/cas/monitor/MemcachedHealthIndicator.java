@@ -3,7 +3,6 @@ package org.apereo.cas.monitor;
 import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.boot.actuate.health.Health;
 
 import java.net.InetSocketAddress;
@@ -20,18 +19,16 @@ import java.util.List;
  */
 @Slf4j
 public class MemcachedHealthIndicator extends AbstractCacheHealthIndicator {
-
-
     private final ObjectPool<MemcachedClientIF> connectionPool;
 
     public MemcachedHealthIndicator(final ObjectPool<MemcachedClientIF> client,
-                                    final CasConfigurationProperties casProperties) {
-        super(casProperties);
+                                    final long evictionThreshold, final long threshold) {
+        super(evictionThreshold, threshold);
         this.connectionPool = client;
     }
 
     @Override
-    protected void doHealthCheck(final Health.Builder builder) throws Exception {
+    protected void doHealthCheck(final Health.Builder builder) {
         try {
             final MemcachedClientIF client = getClientFromPool();
             if (client.getAvailableServers().isEmpty()) {

@@ -6,8 +6,6 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.monitor.LocalMapStats;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,21 +19,25 @@ import java.util.List;
 @Slf4j
 @ToString
 public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
+    private final String instanceName;
+    private final long clusterSize;
 
-    public HazelcastHealthIndicator(final CasConfigurationProperties casProperties) {
-        super(casProperties);
+    public HazelcastHealthIndicator(final long evictionThreshold, final long threshold,
+                                    final String instanceName, final long clusterSize) {
+        super(evictionThreshold, threshold);
+        this.instanceName = instanceName;
+        this.clusterSize = clusterSize;
     }
 
     @Override
     protected CacheStatistics[] getStatistics() {
         final List<CacheStatistics> statsList = new ArrayList<>();
-        final HazelcastTicketRegistryProperties hz = casProperties.getTicket().getRegistry().getHazelcast();
-        LOGGER.debug("Locating hazelcast instance [{}]...", hz.getCluster().getInstanceName());
-        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(hz.getCluster().getInstanceName());
+        LOGGER.debug("Locating hazelcast instance [{}]...", instanceName);
+        final HazelcastInstance instance = Hazelcast.getHazelcastInstanceByName(instanceName);
         instance.getConfig().getMapConfigs().keySet().forEach(key -> {
             final IMap map = instance.getMap(key);
             LOGGER.debug("Starting to collect hazelcast statistics for map [{}] identified by key [{}]...", map, key);
-            statsList.add(new HazelcastStatistics(map, hz.getCluster().getMembers().size()));
+            statsList.add(new HazelcastStatistics(map, clusterSize));
         });
         return statsList.toArray(new CacheStatistics[statsList.size()]);
     }
@@ -48,10 +50,9 @@ public class HazelcastHealthIndicator extends AbstractCacheHealthIndicator {
         private static final int PERCENTAGE_VALUE = 100;
 
         private final IMap map;
+        private final long clusterSize;
 
-        private final int clusterSize;
-
-        protected HazelcastStatistics(final IMap map, final int clusterSize) {
+        protected HazelcastStatistics(final IMap map, final long clusterSize) {
             this.map = map;
             this.clusterSize = clusterSize;
         }

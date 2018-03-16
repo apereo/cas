@@ -27,6 +27,11 @@ public class HazelcastMonitorConfiguration {
     @Bean
     @RefreshScope
     public HealthIndicator hazelcastHealthIndicator() {
-        return new HazelcastHealthIndicator(casProperties);
+        return new HazelcastHealthIndicator(
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold(),
+            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getInstanceName(),
+            casProperties.getTicket().getRegistry().getHazelcast().getCluster().getMembers().size()
+        );
     }
 }

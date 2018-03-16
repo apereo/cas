@@ -31,6 +31,8 @@ public class MongoDbMonitoringConfiguration {
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
         final MonitorProperties.MongoDb mongoProps = casProperties.getMonitor().getMongo();
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongoProps);
-        return new MongoDbHealthIndicator(mongoTemplate, casProperties);
+        return new MongoDbHealthIndicator(mongoTemplate,
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold());
     }
 }

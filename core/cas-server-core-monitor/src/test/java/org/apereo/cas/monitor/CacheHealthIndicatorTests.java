@@ -30,10 +30,12 @@ public class CacheHealthIndicatorTests {
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Test
     public void verifyObserveOk() {
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(casProperties) {
+        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold()) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 200, 0));
@@ -45,7 +47,10 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveWarn() {
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(casProperties) {
+        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold()
+        ) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(199, 200, 100));
@@ -57,7 +62,9 @@ public class CacheHealthIndicatorTests {
 
     @Test
     public void verifyObserveError() {
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(casProperties) {
+        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold()) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(100, 110, 0));
@@ -66,11 +73,13 @@ public class CacheHealthIndicatorTests {
         final Status status = monitor.health().getStatus();
         assertEquals(Status.OUT_OF_SERVICE, status);
     }
-    
+
     @Test
     public void verifyObserveError2() {
         // When cache has exceeded both thresholds, should report ERROR status
-        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(casProperties) {
+        final AbstractCacheHealthIndicator monitor = new AbstractCacheHealthIndicator(
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold()) {
             @Override
             protected SimpleCacheStatistics[] getStatistics() {
                 return statsArray(new SimpleCacheStatistics(199, 200, 1));
