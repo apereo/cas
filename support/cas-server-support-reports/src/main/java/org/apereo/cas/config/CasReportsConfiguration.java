@@ -2,8 +2,15 @@ package org.apereo.cas.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.principal.PrincipalFactory;
+import org.apereo.cas.authentication.principal.PrincipalResolver;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.discovery.CasServerProfileRegistrar;
+import org.apereo.cas.reports.CasReleaseAttributesReportEndpoint;
+import org.apereo.cas.reports.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.reports.CasStatisticsReportEndpoint;
 import org.apereo.cas.reports.ConfigurationDiscoveryProfileReportEndpoint;
 import org.apereo.cas.reports.RegisteredServicesReportEndpoint;
@@ -16,6 +23,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.View;
 
 /**
  * This this {@link CasReportsConfiguration}.
@@ -30,6 +38,34 @@ import org.springframework.context.annotation.Configuration;
 public class CasReportsConfiguration {
 
     @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private AuthenticationSystemSupport authenticationSystemSupport;
+
+    @Autowired
+    @Qualifier("webApplicationServiceFactory")
+    private ServiceFactory<WebApplicationService> webApplicationServiceFactory;
+
+    @Autowired
+    @Qualifier("cas3ServiceSuccessView")
+    private View cas3ServiceSuccessView;
+
+    @Autowired
+    @Qualifier("cas3ServiceJsonView")
+    private View cas3ServiceJsonView;
+
+    @Autowired
+    @Qualifier("cas2ServiceSuccessView")
+    private View cas2ServiceSuccessView;
+
+    @Autowired
+    @Qualifier("cas1ServiceSuccessView")
+    private View cas1ServiceSuccessView;
+
+    @Autowired
+    @Qualifier("personDirectoryPrincipalResolver")
+    private PrincipalResolver personDirectoryPrincipalResolver;
+
+    @Autowired
     @Qualifier("centralAuthenticationService")
     private CentralAuthenticationService centralAuthenticationService;
 
@@ -39,6 +75,10 @@ public class CasReportsConfiguration {
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
+
+    @Autowired
+    @Qualifier("principalFactory")
+    private PrincipalFactory principalFactory;
 
     @Bean
     @ConditionalOnEnabledEndpoint
@@ -61,8 +101,8 @@ public class CasReportsConfiguration {
         @Autowired
         @Bean
         @ConditionalOnEnabledEndpoint
-        public ConfigurationDiscoveryProfileReportEndpoint configurationDiscoveryProfileReportEndpoint(@Qualifier("casServerProfileRegistrar")
-                                                                                                       final CasServerProfileRegistrar casServerProfileRegistrar) {
+        public ConfigurationDiscoveryProfileReportEndpoint configurationDiscoveryProfileReportEndpoint(
+            @Qualifier("casServerProfileRegistrar") final CasServerProfileRegistrar casServerProfileRegistrar) {
             return new ConfigurationDiscoveryProfileReportEndpoint(casServerProfileRegistrar);
         }
     }
@@ -71,6 +111,25 @@ public class CasReportsConfiguration {
     @ConditionalOnEnabledEndpoint
     public CasStatisticsReportEndpoint statisticsReportEndpoint() {
         return new CasStatisticsReportEndpoint(centralAuthenticationService, casProperties.getHost().getName());
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
+        return new CasResolveAttributesReportEndpoint(personDirectoryPrincipalResolver);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public CasReleaseAttributesReportEndpoint releaseAttributesReportEndpoint() {
+        return new CasReleaseAttributesReportEndpoint(servicesManager, authenticationSystemSupport,
+            webApplicationServiceFactory,
+            principalFactory,
+            cas3ServiceSuccessView,
+            cas3ServiceJsonView,
+            cas2ServiceSuccessView,
+            cas1ServiceSuccessView,
+            casProperties.getView().getCas2().isV3ForwardCompatible());
     }
 
 }
