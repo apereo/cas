@@ -1,11 +1,10 @@
 package org.apereo.cas.util.io;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.util.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
@@ -18,16 +17,11 @@ import javax.mail.internet.MimeMessage;
  * @since 5.1.0
  */
 @Slf4j
+@RequiredArgsConstructor
 public class CommunicationsManager {
 
-
-    @Autowired(required = false)
-    @Qualifier("smsSender")
-    private SmsSender smsSender;
-
-    @Autowired(required = false)
-    @Qualifier("mailSender")
-    private JavaMailSender mailSender;
+    private final SmsSender smsSender;
+    private final JavaMailSender mailSender;
 
     public boolean isMailSenderDefined() {
         return this.mailSender != null;
@@ -91,7 +85,7 @@ public class CommunicationsManager {
                          final String cc, final String bcc) {
         try {
             if (!isMailSenderDefined() || StringUtils.isBlank(text) || StringUtils.isBlank(from)
-                    || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
+                || StringUtils.isBlank(subject) || StringUtils.isBlank(to)) {
                 LOGGER.warn("Could not send email to [{}] because either no address/subject/text is found or email settings are not configured.", to);
                 return false;
             }

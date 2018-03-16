@@ -168,12 +168,6 @@ public class MultifactorAuthenticationProperties implements Serializable {
     private U2FMultifactorProperties u2f = new U2FMultifactorProperties();
 
     /**
-     * Activate and configure a multifactor authentication provider via Microsoft Azure.
-     */
-    @NestedConfigurationProperty
-    private AzureMultifactorProperties azure = new AzureMultifactorProperties();
-
-    /**
      * Activate and configure a multifactor authentication with the capability to trust and remember devices.
      */
     @NestedConfigurationProperty

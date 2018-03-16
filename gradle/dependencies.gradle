@@ -21,12 +21,6 @@ ext.libraries = [
                     force = true
                 }
         ],
-        azuread                 : [
-                dependencies.create("com.microsoft.azure:adal4j:$azureActiveDirectoryVersion") {
-                    exclude(group: "org.slf4j", module: "slf4j-api")
-                    force = true
-                }
-        ],
         apachesyncope           : [
                 dependencies.create("org.apache.syncope.common:syncope-common-lib:$apacheSyncopeVersion") {
                     exclude(group: "org.slf4j", module: "slf4j-api")

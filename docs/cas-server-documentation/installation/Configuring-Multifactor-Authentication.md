@@ -27,7 +27,6 @@ The following multifactor providers are supported by CAS.
 | RSA/RADIUS            | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | WiKID                 | `mfa-radius`    | [See this guide](RADIUS-Authentication.html).
 | Google Authenticator  | `mfa-gauth`     | [See this guide](GoogleAuthenticator-Authentication.html).
-| Microsoft Azure       | `mfa-azure`     | [See this guide](MicrosoftAzure-Authentication.html).
 | FIDO U2F              | `mfa-u2f`       | [See this guide](FIDO-U2F-Authentication.html).
 | Swivel Secure         | `mfa-swivel`    | [See this guide](SwivelSecure-Authentication.html).
 | Custom                | Custom          | [See this guide](Custom-MFA-Authentication.html).
