@@ -19,7 +19,6 @@ dependencies {
     implementation project(":support:cas-server-support-ws-idp-api")
 
     implementation project(":support:cas-server-support-authy-core")
-    implementation project(":support:cas-server-support-azure-core")
     implementation project(":support:cas-server-support-u2f-core")
     implementation project(":support:cas-server-support-swivel-core")
     implementation project(":support:cas-server-support-gauth-core-mfa")

@@ -87,6 +87,7 @@ import org.jose4j.jwk.RsaJsonWebKey;
 import org.pac4j.cas.client.CasClient;
 import org.pac4j.core.config.Config;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -155,10 +156,9 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
     @Qualifier("requiresAuthenticationAccessTokenInterceptor")
     private SecurityInterceptor requiresAuthenticationAccessTokenInterceptor;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("multifactorAuthenticationProviderSelector")
-    private MultifactorAuthenticationProviderSelector multifactorAuthenticationProviderSelector =
-        new RankedMultifactorAuthenticationProviderSelector();
+    private ObjectProvider<MultifactorAuthenticationProviderSelector> multifactorAuthenticationProviderSelector;
 
     @Autowired
     @Qualifier("oauthCasAuthenticationBuilder")
@@ -424,7 +424,7 @@ public class OidcConfiguration extends WebMvcConfigurerAdapter implements CasWeb
         final CasWebflowEventResolver r = new OidcAuthenticationContextWebflowEventEventResolver(authenticationSystemSupport,
             centralAuthenticationService, servicesManager,
             ticketRegistrySupport, warnCookieGenerator, authenticationRequestServiceSelectionStrategies,
-            multifactorAuthenticationProviderSelector);
+            multifactorAuthenticationProviderSelector.getIfAvailable(RankedMultifactorAuthenticationProviderSelector::new));
         this.initialAuthenticationAttemptWebflowEventResolver.addDelegate(r);
         return r;
     }
