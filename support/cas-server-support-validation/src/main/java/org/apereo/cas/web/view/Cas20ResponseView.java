@@ -23,8 +23,6 @@ import java.util.Map;
  */
 @Slf4j
 public class Cas20ResponseView extends AbstractDelegatingCasView {
-
-
     /**
      * The Service selection strategy.
      */

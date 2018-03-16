@@ -6,7 +6,7 @@ title: CAS - Monitoring & Statistics
 # Monitoring / Statistics
 
 Actuator endpoints used to monitor and diagnose the internal configuration of the CAS server are typically
-exposed over the endpoing `/actuator`. The following endpoints are secured and available by 
+exposed over the endpoint `/actuator`. The following endpoints are secured and available by 
 [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
 | URL                       | Description
@@ -37,6 +37,8 @@ exposed over the endpoing `/actuator`. The following endpoints are secured and a
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
+| `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../Attribute-Resolution.html) engine to locate attributes for `{name}`.
+| `release-attributes`    | Invoke the CAS [attribute release](../Attribute-Release.html) engine to authenticate using query parameters `username` and `password` and release attributes to the provided `service` parameter.
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
