@@ -14,6 +14,7 @@ import org.apereo.cas.reports.CasResolveAttributesReportEndpoint;
 import org.apereo.cas.reports.CasStatisticsReportEndpoint;
 import org.apereo.cas.reports.ConfigurationDiscoveryProfileReportEndpoint;
 import org.apereo.cas.reports.RegisteredServicesReportEndpoint;
+import org.apereo.cas.reports.SingleSignOnSessionsReportEndpoint;
 import org.apereo.cas.reports.SpringWebflowReportEndpoint;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,6 +118,12 @@ public class CasReportsConfiguration {
     @ConditionalOnEnabledEndpoint
     public CasResolveAttributesReportEndpoint resolveAttributesReportEndpoint() {
         return new CasResolveAttributesReportEndpoint(personDirectoryPrincipalResolver);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public SingleSignOnSessionsReportEndpoint singleSignOnSessionsReportEndpoint() {
+        return new SingleSignOnSessionsReportEndpoint(centralAuthenticationService);
     }
 
     @Bean
