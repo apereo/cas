@@ -38,6 +38,7 @@ dependencies {
     implementation project(":support:cas-server-support-geolocation")
     implementation project(":support:cas-server-support-actions")
     implementation project(":support:cas-server-support-themes")
+    implementation project(":support:cas-server-support-reports")
     implementation project(":support:cas-server-support-validation")
     implementation project(":support:cas-server-support-pm-webflow")
 

@@ -9,8 +9,8 @@ Actuator endpoints used to monitor and diagnose the internal configuration of th
 exposed over the endpoing `/actuator`. The following endpoints are secured and available by 
 [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):
 
-| URL                               | Description
-|-----------------------------------|-------------------------------------------------------------------------------------
+| URL                       | Description
+|---------------------------|-------------------------------------------------------------------------------------
 | `autoconfig`              | Describes how the CAS application context is auto-configured. 
 | `beans`                   | Displays all CAS application context **internal** Spring beans.
 | `conditions`              | Shows the conditions that were evaluated on configuration and auto-configuration classes and the reasons why they did or did not match.
@@ -32,10 +32,12 @@ exposed over the endpoing `/actuator`. The following endpoints are secured and a
 | `jolokia`                 | Exposes JMX beans over HTTP when Jolokia is configured and included in CAS.
 | `logfile`                 | Returns the contents of the log file if `logging.file` or `logging.path` properties are set with support for HTTP `Range` header.
 | `prometheus`              | Exposes metrics in a format that can be scraped by a Prometheus server.
+| `spring-webflow`          | Provides a JSON representation of the CAS authentication webflows.
+| `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
-Note that by default the only endpoints exposed over the web are <code>health</code>, <code>health</code> and <code>configuration-metadata</code>.
+Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
 Other endpoints need to be explicitly enabled and then exposed over the web in CAS settings in order to allow access.
 </p></div>
 
