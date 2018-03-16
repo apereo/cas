@@ -41,7 +41,7 @@ public class AuthenticationTransaction implements Serializable {
      * @param credentials the credentials
      * @return the authentication transaction
      */
-    public static AuthenticationTransaction wrap(final Service service, final Credential... credentials) {
+    public static AuthenticationTransaction of(final Service service, final Credential... credentials) {
         return new AuthenticationTransaction(service, sanitizeCredentials(credentials));
     }
 
@@ -52,8 +52,8 @@ public class AuthenticationTransaction implements Serializable {
      * @param credentials the credentials
      * @return the authentication transaction
      */
-    public static AuthenticationTransaction wrap(final Credential... credentials) {
-        return wrap(null, credentials);
+    public static AuthenticationTransaction of(final Credential... credentials) {
+        return of(null, credentials);
     }
 
     /**

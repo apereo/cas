@@ -65,7 +65,7 @@ public class RememberMeAuthenticationMetaDataPopulatorTests {
                 .addSuccess("test", new DefaultAuthenticationHandlerExecutionResult(handler, meta));
 
         if (this.p.supports(credential)) {
-            this.p.populateAttributes(builder, AuthenticationTransaction.wrap(credential));
+            this.p.populateAttributes(builder, AuthenticationTransaction.of(credential));
         }
         return builder;
     }
