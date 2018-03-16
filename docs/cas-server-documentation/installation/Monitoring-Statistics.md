@@ -37,8 +37,9 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `registered-services`     | Provides a JSON representation of the [CAS service registry](Service-Management.html).
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
+| `sso-sessions`            | Review the current single signon sessions establishes with CAS and manage each session remotely.
 | `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../Attribute-Resolution.html) engine to locate attributes for `{name}`.
-| `release-attributes`    | Invoke the CAS [attribute release](../Attribute-Release.html) engine to authenticate using query parameters `username` and `password` and release attributes to the provided `service` parameter.
+| `release-attributes`          | Invoke the CAS [attribute release](../Attribute-Release.html) engine to release attributes to an application.
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
@@ -47,6 +48,23 @@ Other endpoints need to be explicitly enabled and then exposed over the web in C
 
 Actuator endpoints provided by Spring Boot can also be visually managed and monitored
  via the [Spring Boot Administration Server](Configuring-Monitoring-Administration.html).
+ 
+### Attribute Release Endpoint
+
+Supported parameters are the following:
+
+| Query Parameter           | Description
+|---------------------------|--------------------------------------------
+| `username`                | The username to use for authentication.
+| `password`                | The password to use for authentication.
+| `service`                | Service to which attributes should be released.
+
+### Single SignOn Sessions Endpoint
+
+A `GET` operation produces a list of current SSO sessions. A `DELETE` operation without 
+specifying a ticket id will attempt to destroy all SSO sessions.
+Specifying a ticket-granting ticket identifier in the URL as a placeholder/selector will 
+attempt to destroy the session controlled by that ticket. (i.e. `sso-sessions/{ticket}`)
 
 ## Security
 
