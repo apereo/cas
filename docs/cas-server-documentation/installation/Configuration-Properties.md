@@ -241,7 +241,7 @@ via [Kafka](http://docs.spring.io/spring-cloud-stream/docs/current/reference/htm
 The following properties are related to the embedded containers that ship with CAS.
 
 ```properties
-server.contextPath=/cas
+server.servlet.context-path=/cas
 
 # By default and if you remove this setting, CAS runs on port 8080
 server.port=8443
@@ -293,13 +293,13 @@ In the event that you decide to run CAS without any SSL configuration in the emb
 yet wish to customize the connector configuration that is linked to the running port (i.e. `8080`), the following settings may apply:
 
 ```properties
-# cas.server.httpProxy.enabled=true
-# cas.server.httpProxy.secure=true
-# cas.server.httpProxy.protocol=AJP/1.3
-# cas.server.httpProxy.scheme=https
-# cas.server.httpProxy.redirectPort=
-# cas.server.httpProxy.proxyPort=
-# cas.server.httpProxy.attributes.attributeName=attributeValue
+# cas.server.tomcat.httpProxy.enabled=true
+# cas.server.tomcat.httpProxy.secure=true
+# cas.server.tomcat.httpProxy.protocol=AJP/1.3
+# cas.server.tomcat.httpProxy.scheme=https
+# cas.server.tomcat.httpProxy.redirectPort=
+# cas.server.tomcat.httpProxy.proxyPort=
+# cas.server.tomcat.httpProxy.attributes.attributeName=attributeValue
 ```
 
 #### HTTP
@@ -308,10 +308,10 @@ Enable HTTP connections for the embedded Tomcat container, in addition to the co
 linked to the `server.port` setting.
 
 ```properties
-# cas.server.http.port=8080
-# cas.server.http.protocol=org.apache.coyote.http11.Http11NioProtocol
-# cas.server.http.enabled=true
-# cas.server.http.attributes.attributeName=attributeValue
+# cas.server.tomcat.http.port=8080
+# cas.server.tomcat.http.protocol=org.apache.coyote.http11.Http11NioProtocol
+# cas.server.tomcat.http.enabled=true
+# cas.server.tomcat.http.attributes.attributeName=attributeValue
 ```
 
 #### AJP
@@ -319,18 +319,18 @@ linked to the `server.port` setting.
 Enable AJP connections for the embedded Tomcat container,
 
 ```properties
-# cas.server.ajp.secure=false
-# cas.server.ajp.enabled=false
-# cas.server.ajp.proxyPort=-1
-# cas.server.ajp.protocol=AJP/1.3
-# cas.server.ajp.asyncTimeout=5000
-# cas.server.ajp.scheme=http
-# cas.server.ajp.maxPostSize=20971520
-# cas.server.ajp.port=8009
-# cas.server.ajp.enableLookups=false
-# cas.server.ajp.redirectPort=-1
-# cas.server.ajp.allowTrace=false
-# cas.server.ajp.attributes.attributeName=attributeValue
+# cas.server.tomcat.ajp.secure=false
+# cas.server.tomcat.ajp.enabled=false
+# cas.server.tomcat.ajp.proxyPort=-1
+# cas.server.tomcat.ajp.protocol=AJP/1.3
+# cas.server.tomcat.ajp.asyncTimeout=5000
+# cas.server.tomcat.ajp.scheme=http
+# cas.server.tomcat.ajp.maxPostSize=20971520
+# cas.server.tomcat.ajp.port=8009
+# cas.server.tomcat.ajp.enableLookups=false
+# cas.server.tomcat.ajp.redirectPort=-1
+# cas.server.tomcat.ajp.allowTrace=false
+# cas.server.tomcat.ajp.attributes.attributeName=attributeValue
 ```
 
 #### SSL Valve
@@ -340,11 +340,11 @@ running in front of Tomcat via an HTTP header. If you enable this, make sure you
 that this header does not originate with the client (e.g. the browser).
 
 ```properties
-# cas.server.sslValve.enabled=false
-# cas.server.sslValve.sslClientCertHeader=ssl_client_cert
-# cas.server.sslValve.sslCipherHeader=ssl_cipher
-# cas.server.sslValve.sslSessionIdHeader=ssl_session_id
-# cas.server.sslValve.sslCipherUserKeySizeHeader=ssl_cipher_usekeysize
+# cas.server.tomcat.sslValve.enabled=false
+# cas.server.tomcat.sslValve.sslClientCertHeader=ssl_client_cert
+# cas.server.tomcat.sslValve.sslCipherHeader=ssl_cipher
+# cas.server.tomcat.sslValve.sslSessionIdHeader=ssl_session_id
+# cas.server.tomcat.sslValve.sslCipherUserKeySizeHeader=ssl_cipher_usekeysize
 ```
 
 Example HAProxy Configuration (snippet): Configure SSL frontend with cert optional, redirect to cas, if cert provided, put it on header.
@@ -375,11 +375,11 @@ Enable the [extended access log](http://tomcat.apache.org/tomcat-8.0-doc/config/
 for the embedded Tomcat container.
 
 ```properties
-# cas.server.extAccessLog.enabled=false
-# cas.server.extAccessLog.pattern=c-ip s-ip cs-uri sc-status time x-threadname x-H(secure) x-H(remoteUser)
-# cas.server.extAccessLog.suffix=.log
-# cas.server.extAccessLog.prefix=localhost_access_extended
-# cas.server.extAccessLog.directory=
+# cas.server.tomcat.extAccessLog.enabled=false
+# cas.server.tomcat.extAccessLog.pattern=c-ip s-ip cs-uri sc-status time x-threadname x-H(secure) x-H(remoteUser)
+# cas.server.tomcat.extAccessLog.suffix=.log
+# cas.server.tomcat.extAccessLog.prefix=localhost_access_extended
+# cas.server.tomcat.extAccessLog.directory=
 ```
 
 #### Rewrite Valve
@@ -387,7 +387,7 @@ for the embedded Tomcat container.
 Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html) for the embedded Tomcat container.
 
 ```properties
-# cas.server.rewriteValve.location=classpath://container/tomcat/rewrite.config
+# cas.server.tomcat.rewriteValve.location=classpath://container/tomcat/rewrite.config
 ```
 
 #### Basic Authentication
@@ -395,10 +395,10 @@ Enable the [rewrite valve](https://tomcat.apache.org/tomcat-8.0-doc/rewrite.html
 Enable basic authentication for the embedded Apache Tomcat.
 
 ```properties
-# cas.server.basicAuthn.enabled=true
-# cas.server.basicAuthn.securityRoles[0]=admin
-# cas.server.basicAuthn.authRoles[0]=admin
-# cas.server.basicAuthn.patterns[0]=/*
+# cas.server.tomcat.basicAuthn.enabled=true
+# cas.server.tomcat.basicAuthn.securityRoles[0]=admin
+# cas.server.tomcat.basicAuthn.authRoles[0]=admin
+# cas.server.tomcat.basicAuthn.patterns[0]=/*
 ```
 
 #### Session Clustering & Replication
@@ -406,27 +406,27 @@ Enable basic authentication for the embedded Apache Tomcat.
 Enable session replication to replicate web application session deltas.
 
 ```properties
-# cas.server.clustering.enabled=false
-# cas.server.clustering.clusterMembers=ip-address:port:index
+# cas.server.tomcat.clustering.enabled=false
+# cas.server.tomcat.clustering.clusterMembers=ip-address:port:index
 
-# cas.server.clustering.expireSessionsOnShutdown=false
-# cas.server.clustering.channelSendOptions=8
+# cas.server.tomcat.clustering.expireSessionsOnShutdown=false
+# cas.server.tomcat.clustering.channelSendOptions=8
 
-# cas.server.clustering.receiverPort=4000
-# cas.server.clustering.receiverTimeout=5000
-# cas.server.clustering.receiverMaxThreads=6
-# cas.server.clustering.receiverAddress=auto
-# cas.server.clustering.receiverAutoBind=100
+# cas.server.tomcat.clustering.receiverPort=4000
+# cas.server.tomcat.clustering.receiverTimeout=5000
+# cas.server.tomcat.clustering.receiverMaxThreads=6
+# cas.server.tomcat.clustering.receiverAddress=auto
+# cas.server.tomcat.clustering.receiverAutoBind=100
 
-# cas.server.clustering.membershipPort=45564
-# cas.server.clustering.membershipAddress=228.0.0.4
-# cas.server.clustering.membershipFrequency=500
-# cas.server.clustering.membershipDropTime=3000
-# cas.server.clustering.membershipRecoveryEnabled=true
-# cas.server.clustering.membershipLocalLoopbackDisabled=false
-# cas.server.clustering.membershipRecoveryCounter=10
+# cas.server.tomcat.clustering.membershipPort=45564
+# cas.server.tomcat.clustering.membershipAddress=228.0.0.4
+# cas.server.tomcat.clustering.membershipFrequency=500
+# cas.server.tomcat.clustering.membershipDropTime=3000
+# cas.server.tomcat.clustering.membershipRecoveryEnabled=true
+# cas.server.tomcat.clustering.membershipLocalLoopbackDisabled=false
+# cas.server.tomcat.clustering.membershipRecoveryCounter=10
 
-# cas.server.clustering.managerType=DELTA|BACKUP
+# cas.server.tomcat.clustering.managerType=DELTA|BACKUP
 ```
 
 ## CAS Server

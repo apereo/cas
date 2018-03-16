@@ -48,7 +48,7 @@ public class CasEmbeddedContainerTomcatFiltersConfiguration {
     @Bean
     public FilterRegistrationBean tomcatRemoteAddressFilter() {
         final FilterRegistrationBean bean = new FilterRegistrationBean();
-        final CasEmbeddedApacheTomcatRemoteAddressProperties addr = casProperties.getServer().getRemoteAddr();
+        final CasEmbeddedApacheTomcatRemoteAddressProperties addr = casProperties.getServer().getTomcat().getRemoteAddr();
         final RemoteAddrFilter filter = new RemoteAddrFilter();
         filter.setAllow(addr.getAllowedClientIpAddressRegex());
         filter.setDeny(addr.getDeniedClientIpAddressRegex());
