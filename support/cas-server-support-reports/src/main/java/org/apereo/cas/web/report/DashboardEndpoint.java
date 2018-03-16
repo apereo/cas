@@ -1,6 +1,5 @@
 package org.apereo.cas.web.report;
 
-import lombok.Data;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
@@ -18,7 +17,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -126,14 +124,4 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
     */
     }
 
-
-    /**
-     * The Endpoint bean that holds info about each available endpoint.
-     */
-    @Data
-    public static class EndpointBean implements Serializable {
-        private static final long serialVersionUID = -3446962071459197099L;
-        private String name;
-        private String title;
-    }
 }
