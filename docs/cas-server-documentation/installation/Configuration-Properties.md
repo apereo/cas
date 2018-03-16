@@ -454,9 +454,9 @@ In order to skip this step and summarize, set the system property `-DCAS_BANNER_
 CAS may also be conditionally configured to report, as part of the banner, whether a newer CAS release is available for an upgrade.
 This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
 
-## Actuator Endpoints
+## Actuator Management Endpoints
 
-The following properties describe access controls and settings for the `/status`
+The following properties describe access controls and settings for the `/actuator`
 endpoint of CAS which provides administrative functionality and oversight into the CAS software. 
 These endpoints are specific to Spring Boot.
 
@@ -465,10 +465,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 ```properties
 # management.endpoints.enabled-by-default=false
 # management.endpoints.web.base-path=/actuator
-# management.server.servlet.context-path=/status
 ```
 
-While most if not all endpoints are disabled by default, they may all be globally enabled via the following setting:
+While most if not all endpoints are disabled by default, they may all be globally controlled via the following setting:
 
 ```properties
 # management.endpoints.enabled-by-default=true
@@ -479,6 +478,25 @@ The calculation order for all endpoints is as follows:
 1. The `enabled` setting of the individual endpoint is consulted in CAS settings.
 2. If undefined, the global setting noted above is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted which is `false` by default.
+
+Endpoints may also be mapped to custom arbitrary endpoints. For example, to remap the `health` endpoint to `healthcheck`, 
+specify the following settings:
+
+```properties
+# management.endpoints.web.path-mapping.health=healthcheck
+```
+
+The `health` endpoint may also be configured to show details using `management.endpoint.health.show-details` via the following conditions:
+
+| URL                  | Description
+|----------------------|----------------------------------------------------------
+| `never`              | Never display details of health monitors.
+| `always`             | Always display details of health monitors.
+| `when-authorized`   | Details are only shown to authorized users. Authorized roles can be configured using `management.endpoint.health.roles`.
+
+```properties
+# management.endpoint.health.show-details=never
+```
 
 ### Spring Boot Admin Server
 
