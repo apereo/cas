@@ -1,5 +1,6 @@
 package org.apereo.cas.util.spring;
 
+import com.google.common.base.Predicates;
 import lombok.experimental.UtilityClass;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -22,6 +23,18 @@ import java.util.function.Predicate;
 @Slf4j
 @UtilityClass
 public class AnnotationUtils {
+
+    /**
+     * Gets beans with annotation.
+     *
+     * @param applicationContext the application context
+     * @param type               the type
+     * @return the beans with annotation
+     */
+    public static List<String> getBeansWithAnnotation(final ConfigurableApplicationContext applicationContext,
+                                                      final Class<? extends Annotation> type) {
+        return getBeansWithAnnotation(applicationContext, type, Predicates.alwaysTrue());
+    }
 
     /**
      * Gets beans with annotation.
