@@ -41,7 +41,7 @@ public class PolicyBasedAuthenticationManagerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
+    private final AuthenticationTransaction transaction = AuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
         mock(Credential.class), mock(Credential.class));
 
     @Test

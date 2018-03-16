@@ -44,7 +44,7 @@ public class DefaultAuthenticationSystemSupport implements AuthenticationSystemS
                                                                        final AuthenticationResultBuilder authenticationResultBuilder,
                                                                        final Credential... credential) throws AuthenticationException {
 
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(service, credential);
+        final AuthenticationTransaction transaction = AuthenticationTransaction.of(service, credential);
         this.authenticationTransactionManager.handle(transaction, authenticationResultBuilder);
         return authenticationResultBuilder;
     }

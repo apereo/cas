@@ -10,7 +10,7 @@ import org.junit.Test;
 public class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeSingle() {
-        final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(new TestCredentialType1());
+        final AuthenticationTransaction transaction = AuthenticationTransaction.of(new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertFalse(transaction.hasCredentialOfType(TestCredentialType2.class));
@@ -19,7 +19,7 @@ public class AuthenticationTransactionTests {
     @Test
     public void verifyHasCredentialOfTypeMultiple() {
         final AuthenticationTransaction transaction = AuthenticationTransaction
-                .wrap(new TestCredentialType2(), new TestCredentialType1());
+                .of(new TestCredentialType2(), new TestCredentialType1());
         assertTrue(transaction.hasCredentialOfType(BaseTestCredential.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType1.class));
         assertTrue(transaction.hasCredentialOfType(TestCredentialType2.class));
