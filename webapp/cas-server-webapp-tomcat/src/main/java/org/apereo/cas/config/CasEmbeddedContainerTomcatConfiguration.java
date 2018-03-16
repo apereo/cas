@@ -144,7 +144,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private ClusterManagerBase getClusteringManagerInstance() {
-        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getClustering();
+        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getTomcat().getClustering();
         switch (props.getManagerType().toUpperCase()) {
             case "DELTA":
                 final DeltaManager manager = new DeltaManager();
@@ -160,7 +160,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureBasicAuthn(final TomcatServletWebServerFactory tomcat) {
-        final CasEmbeddedApacheTomcatBasicAuthenticationProperties basic = casProperties.getServer().getBasicAuthn();
+        final CasEmbeddedApacheTomcatBasicAuthenticationProperties basic = casProperties.getServer().getTomcat().getBasicAuthn();
         if (basic.isEnabled()) {
             tomcat.addContextCustomizers(ctx -> {
                 final LoginConfig config = new LoginConfig();
@@ -183,7 +183,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureRewriteValve(final TomcatServletWebServerFactory tomcat) {
-        final Resource res = casProperties.getServer().getRewriteValve().getLocation();
+        final Resource res = casProperties.getServer().getTomcat().getRewriteValve().getLocation();
         if (ResourceUtils.doesResourceExist(res)) {
             LOGGER.debug("Configuring rewrite valve at [{}]", res);
 
@@ -208,7 +208,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureExtendedAccessLogValve(final TomcatServletWebServerFactory tomcat) {
-        final CasEmbeddedApacheTomcatExtendedAccessLogProperties ext = casProperties.getServer().getExtAccessLog();
+        final CasEmbeddedApacheTomcatExtendedAccessLogProperties ext = casProperties.getServer().getTomcat().getExtAccessLog();
 
         if (ext.isEnabled() && StringUtils.isNotBlank(ext.getPattern())) {
             LOGGER.debug("Creating extended access log valve configuration for the embedded tomcat container...");
@@ -232,7 +232,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureHttp(final TomcatServletWebServerFactory tomcat) {
-        final CasEmbeddedApacheTomcatHttpProperties http = casProperties.getServer().getHttp();
+        final CasEmbeddedApacheTomcatHttpProperties http = casProperties.getServer().getTomcat().getHttp();
         if (http.isEnabled()) {
             LOGGER.debug("Creating HTTP configuration for the embedded tomcat container...");
             final Connector connector = new Connector(http.getProtocol());
@@ -253,7 +253,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureHttpProxy(final TomcatServletWebServerFactory tomcat) {
-        final CasEmbeddedApacheTomcatHttpProxyProperties proxy = casProperties.getServer().getHttpProxy();
+        final CasEmbeddedApacheTomcatHttpProxyProperties proxy = casProperties.getServer().getTomcat().getHttpProxy();
         if (proxy.isEnabled()) {
             LOGGER.debug("Customizing HTTP proxying for connector listening on port [{}]", tomcat.getPort());
             tomcat.getTomcatConnectorCustomizers().add(connector -> {
@@ -283,7 +283,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureAjp(final TomcatServletWebServerFactory tomcat) {
-        final CasEmbeddedApacheTomcatAjpProperties ajp = casProperties.getServer().getAjp();
+        final CasEmbeddedApacheTomcatAjpProperties ajp = casProperties.getServer().getTomcat().getAjp();
         if (ajp.isEnabled() && ajp.getPort() > 0) {
             LOGGER.debug("Creating AJP configuration for the embedded tomcat container...");
             final Connector ajpConnector = new Connector(ajp.getProtocol());
@@ -313,7 +313,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private void configureSSLValve(final TomcatServletWebServerFactory tomcat) {
-        final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getSslValve();
+        final CasEmbeddedApacheTomcatSslValveProperties valveConfig = casProperties.getServer().getTomcat().getSslValve();
 
         if (valveConfig.isEnabled()) {
             LOGGER.debug("Adding SSLValve to context of the embedded tomcat container...");
@@ -332,7 +332,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
             return;
         }
 
-        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getClustering();
+        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getTomcat().getClustering();
         final SimpleTcpCluster cluster = new SimpleTcpCluster();
         cluster.setChannelSendOptions(props.getChannelSendOptions());
 
@@ -416,7 +416,7 @@ public class CasEmbeddedContainerTomcatConfiguration {
     }
 
     private boolean isSessionClusteringEnabled() {
-        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getClustering();
+        final CasEmbeddedApacheTomcatClusteringProperties props = casProperties.getServer().getTomcat().getClustering();
         return props.isEnabled() && StringUtils.isNotBlank(props.getClusterMembers());
     }
 

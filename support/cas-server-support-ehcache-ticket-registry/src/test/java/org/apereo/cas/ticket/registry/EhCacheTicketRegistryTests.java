@@ -141,8 +141,8 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
             }
 
             @Override
-            public Object clone() {
-                return null;
+            public Object clone() throws CloneNotSupportedException {
+                return super.clone();
             }
         }
     }
