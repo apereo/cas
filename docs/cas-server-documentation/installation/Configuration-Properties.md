@@ -3333,6 +3333,13 @@ Signing & encryption settings for this registry are available [here](Configurati
 
 To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html). Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#dynamodb-configuration) under the configuration key `cas.ticket.registry.dynamoDb`. Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.dynamoDb`.
 
+```properties
+# cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
+# cas.ticket.registry.dynamoDb.proxyTicketsTableName=proxyTicketsTable
+# cas.ticket.registry.dynamoDb.ticketGrantingTicketsTableName=ticketGrantingTicketsTable
+# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable```
+# cas.ticket.registry.dynamoDb.transientSessionTicketsTableName=transientSessionTicketsTable```
+
 ### MongoDb Ticket Registry
 
 To learn more about this topic, [please review this guide](MongoDb-Ticket-Registry.html). Signing & encryption settings for this registry are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.ticket.registry.mongo`.  Common configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.ticket.registry`.

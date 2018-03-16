@@ -68,7 +68,9 @@ public class DynamoDbServiceRegistryFacilitator {
                                               final AmazonDynamoDB amazonDynamoDBClient) {
         this.dynamoDbProperties = dynamoDbProperties;
         this.amazonDynamoDBClient = amazonDynamoDBClient;
-        createServicesTable(dynamoDbProperties.isDropTablesOnStartup());
+        if (!dynamoDbProperties.isPreventTableCreationOnStartup()) {
+            createServicesTable(dynamoDbProperties.isDropTablesOnStartup());
+        }
     }
 
     /**
