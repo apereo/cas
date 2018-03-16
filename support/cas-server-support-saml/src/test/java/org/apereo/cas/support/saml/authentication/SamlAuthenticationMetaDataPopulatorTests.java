@@ -33,7 +33,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
         final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
+        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
         final Authentication auth = builder.build();
 
         assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
@@ -44,7 +44,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
     public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
         final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
+        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
@@ -60,7 +60,7 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         this.populator.setUserDefinedMappings(added);
 
         final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
-        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
+        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
         final Authentication auth = builder.build();
 
         assertEquals(
