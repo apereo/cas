@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.duo.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.adaptors.duo.DuoSecurityHealthIndicator;
 import org.apereo.cas.adaptors.duo.authn.BasicDuoSecurityAuthenticationService;
 import org.apereo.cas.adaptors.duo.authn.DefaultDuoMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.duo.authn.DuoAuthenticationHandler;
@@ -30,6 +31,7 @@ import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -166,5 +168,10 @@ public class DuoSecurityAuthenticationEventExecutionPlanConfiguration implements
     @Override
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
         plan.registerWebflowConfigurer(duoMultifactorWebflowConfigurer());
+    }
+
+    @Bean
+    public HealthIndicator duoSecurityHealthIndicator() {
+        return new DuoSecurityHealthIndicator(duoMultifactorAuthenticationProvider());
     }
 }
