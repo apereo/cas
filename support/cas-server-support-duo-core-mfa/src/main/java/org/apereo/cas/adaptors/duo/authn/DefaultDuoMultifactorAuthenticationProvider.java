@@ -41,7 +41,6 @@ public class DefaultDuoMultifactorAuthenticationProvider extends AbstractMultifa
 
     @Override
     protected boolean isAvailable() {
-        Assert.notNull(this.duoAuthenticationService, "duoAuthenticationService cannot be null");
         return this.duoAuthenticationService.ping();
     }
 

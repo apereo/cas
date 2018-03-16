@@ -4,11 +4,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedValueResolver;
 import org.apereo.cas.util.SchedulingUtils;
 import org.apereo.cas.util.io.CommunicationsManager;
+import org.apereo.cas.util.io.SmsSender;
 import org.apereo.cas.util.spring.ApplicationContextProvider;
 import org.apereo.cas.util.spring.Converters;
 import org.apereo.cas.util.spring.SpringAwareMessageMessageInterpolator;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigureOrder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -24,6 +27,7 @@ import org.springframework.core.convert.converter.ConverterRegistry;
 import org.springframework.core.convert.support.DefaultConversionService;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.format.support.DefaultFormattingConversionService;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.util.StringValueResolver;
 import org.springframework.validation.beanvalidation.BeanValidationPostProcessor;
@@ -46,6 +50,14 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     @Autowired
     private ApplicationContext applicationContext;
 
+    @Autowired
+    @Qualifier("smsSender")
+    private ObjectProvider<SmsSender> smsSenderObjectProvider;
+
+    @Autowired
+    @Qualifier("mailSender")
+    private ObjectProvider<JavaMailSender> emailSenderObjectProvider;
+    
     @Bean
     public ApplicationContextProvider applicationContextProvider() {
         return new ApplicationContextProvider();
@@ -55,10 +67,11 @@ public class CasCoreUtilConfiguration implements InitializingBean {
     public MessageInterpolator messageInterpolator() {
         return new SpringAwareMessageMessageInterpolator();
     }
-
+    
     @Bean
     public CommunicationsManager communicationsManager() {
-        return new CommunicationsManager();
+        return new CommunicationsManager(smsSenderObjectProvider.getIfAvailable(),
+            emailSenderObjectProvider.getIfAvailable());
     }
 
     @Bean
