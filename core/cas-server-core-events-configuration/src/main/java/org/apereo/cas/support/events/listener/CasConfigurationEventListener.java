@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
@@ -26,8 +27,8 @@ public class CasConfigurationEventListener {
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
 
-    @Autowired(required = false)
-    private ContextRefresher contextRefresher;
+    @Autowired
+    private ObjectProvider<ContextRefresher> contextRefresher;
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -65,8 +66,11 @@ public class CasConfigurationEventListener {
             LOGGER.info("Received event [{}]. Refreshing CAS configuration...", event);
             Collection<String> keys = null;
             try {
-                keys = this.contextRefresher.refresh();
-                LOGGER.debug("Refreshed the following settings: [{}].", keys);
+                final ContextRefresher refresher = this.contextRefresher.getIfAvailable();
+                if (refresher != null) {
+                    keys = refresher.refresh();
+                    LOGGER.debug("Refreshed the following settings: [{}].", keys);
+                }
             } catch (final Exception e) {
                 LOGGER.trace(e.getMessage(), e);
             } finally {
