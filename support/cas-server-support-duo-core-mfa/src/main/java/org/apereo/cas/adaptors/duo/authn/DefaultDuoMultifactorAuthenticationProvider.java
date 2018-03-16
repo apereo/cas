@@ -15,7 +15,6 @@ import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.configuration.model.support.mfa.DuoSecurityMultifactorProperties;
 import org.apereo.cas.services.RegisteredService;
-import org.springframework.util.Assert;
 import org.springframework.webflow.execution.Event;
 
 /**

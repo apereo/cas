@@ -39,8 +39,7 @@ public class TokenAuthenticationConfiguration {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
-
-
+    
     @ConditionalOnMissingBean(name = "tokenPrincipalFactory")
     @Bean
     public PrincipalFactory tokenPrincipalFactory() {
