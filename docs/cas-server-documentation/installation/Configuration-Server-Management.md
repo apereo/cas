@@ -97,7 +97,7 @@ The following endpoints are secured and exposed by the configuration server:
 | `/encrypt`                        | Accepts a `POST` to encrypt CAS configuration settings.
 | `/decrypt`                        | Accepts a `POST` to decrypt CAS configuration settings.
 | `/refresh`                        | Accepts a `POST` and attempts to refresh the internal state of configuration server.
-| `/env`                            | Accepts a `GET` and describes all configuration sources of the configuration server.
+| `/actuator/env`                   | Accepts a `GET` and describes all configuration sources of the configuration server.
 | `/cas/default`                    | Describes what the configuration server knows about the `default` settings profile.
 | `/cas/native`                     | Describes what the configuration server knows about the `native` settings profile.
 | `/bus/refresh`                    | Reload the configuration of all CAS nodes in the cluster if the cloud bus is turned on.
@@ -109,11 +109,16 @@ Once you have the configuration server deployed, you can observe the collection 
 curl -u casuser:Mellon http://config.server.url:8888/casconfigserver/cas/native
 ```
 
-You can also observe the collection of property sources that provide settings to the configuration server:
+Assuming actuator endpoints are enabled in the configuration, 
+you can also observe the collection of property sources that provide settings to the configuration server:
 
 ```bash
-curl -u casuser:Mellon http://localhost:8888/casconfigserver/env
+curl -u casuser:Mellon http://localhost:8888/casconfigserver/actuator/env
 ```
+
+<div class="alert alert-info"><strong>Actuator Endpoints</strong><p>
+Remember that actuator endpoints typically are prefixed with <code>/actuator</code>.
+</p></div>
 
 #### Clients and Consumers
 
