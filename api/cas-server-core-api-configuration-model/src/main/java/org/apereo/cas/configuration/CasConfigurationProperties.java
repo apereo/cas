@@ -20,7 +20,6 @@ import org.apereo.cas.configuration.model.core.sso.SsoProperties;
 import org.apereo.cas.configuration.model.core.standalone.StandaloneConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.TicketProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
-import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
 import org.apereo.cas.configuration.model.core.web.security.HttpRequestProperties;
 import org.apereo.cas.configuration.model.core.web.view.ViewProperties;
 import org.apereo.cas.configuration.model.support.analytics.GoogleAnalyticsProperties;
@@ -184,13 +183,7 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private MessageBundleProperties messageBundle = new MessageBundleProperties();
-
-    /**
-     * Admin pages and their security, controling endpoints, etc.
-     */
-    @NestedConfigurationProperty
-    private AdminPagesSecurityProperties adminPagesSecurity = new AdminPagesSecurityProperties();
-
+    
     /**
      * Settings that control filtering of the incoming http requests.
      */

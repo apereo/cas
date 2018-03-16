@@ -454,10 +454,11 @@ In order to skip this step and summarize, set the system property `-DCAS_BANNER_
 CAS may also be conditionally configured to report, as part of the banner, whether a newer CAS release is available for an upgrade.
 This check is off by default and may be enabled with a system property of `-DCAS_UPDATE_CHECK_ENABLED=true`.
 
-## Spring Boot Endpoints
+## Actuator Endpoints
 
 The following properties describe access controls and settings for the `/status`
-endpoint of CAS which provides administrative functionality and oversight into the CAS software. These endpoints are specific to Spring Boot.
+endpoint of CAS which provides administrative functionality and oversight into the CAS software. 
+These endpoints are specific to Spring Boot.
 
 To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
 
@@ -465,74 +466,9 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 # management.endpoints.enabled-by-default=false
 # management.endpoints.web.base-path=/actuator
 # management.server.servlet.context-path=/status
-
-# IP address may be enough to protect all endpoints.
-# It's set to always protect the /status endpoint.
-# cas.adminPagesSecurity.ip=127\.0\.0\.1
-# cas.adminPagesSecurity.alternateIpHeaderName=X-Forwarded-For
-
-# If you wish to protect the admin pages via CAS itself, configure the rest.
-# cas.adminPagesSecurity.loginUrl=https://sso.example.org/cas/login
-# cas.adminPagesSecurity.service=https://sso.example.org/cas/status/dashboard
-# cas.adminPagesSecurity.users=file:/etc/cas/config/adminusers.properties
-# cas.adminPagesSecurity.adminRoles[0]=ROLE_ADMIN
 ```
 
-The format of the `adminusers.properties` file which houses a list of authorized users to access the admin pages via CAS is:
-
-```properties
-# casuser=notused,ROLE_ADMIN
-```
-
-The format of the file is as such:
-
-- `casuser`: This is the authenticated user id received from CAS
-- `notused`: This is the password field that isn't used by CAS. You could literally put any value you want in its place.
-- `ROLE_ADMIN`: Role assigned to the authorized user as an attribute, which is then cross checked against CAS configuration.
-
-### Spring Boot Admin Server
-
-To learn more about this topic, [please review this guide](Configuring-Monitoring-Administration.html).
-
-```properties
-# spring.boot.admin.url=https://bootadmin.example.org:8444
-# spring.boot.admin.client.managementUrl=${cas.server.prefix}/status
-# spring.boot.admin.client.name=Apereo CAS
-# spring.boot.admin.client.metadata.user.name=
-# spring.boot.admin.client.metadata.user.password=
-```
-
-## CAS Endpoints
-
-These are the collection of endpoints that are specific to CAS. To learn more about this topic, [please review this guide](Monitoring-Statistics.html).
-
-The following configuration keys are available and mapped to CAS endpoints:
-
-- `management.endpoint.dashboard`
-- `management.endpoint.auditEvents`
-- `management.endpoint.discoveryProfile`
-- `management.endpoint.authenticationEvents`
-- `management.endpoint.configurationState`
-- `management.endpoint.healthCheck`
-- `management.endpoint.loggingConfig`
-- `management.endpoint.metrics`
-- `management.endpoint.attributeResolution`
-- `management.endpoint.singleSignOnReport`
-- `management.endpoint.statistics`
-- `management.endpoint.trustedDevices`
-- `management.endpoint.status`
-- `management.endpoint.singleSignOnStatus`
-- `management.endpoint.springWebflowReport`
-- `management.endpoint.registeredServicesReport`
-- `management.endpoint.configurationMetadata`
-
-The following settings equally apply to all CAS endpoints:
-
-```properties
-# ${configurationKey}.enabled=false
-```
-
-While all endpoints are disabled by default, they may all be globally enabled via the following setting:
+While most if not all endpoints are disabled by default, they may all be globally enabled via the following setting:
 
 ```properties
 # management.endpoints.enabled-by-default=true
@@ -544,59 +480,16 @@ The calculation order for all endpoints is as follows:
 2. If undefined, the global setting noted above is consulted from CAS settings.
 3. If undefined, the default built-in setting for the endpoint in CAS is consulted which is `false` by default.
 
-### Securing Endpoints With Spring Security
+### Spring Boot Admin Server
 
-Monitoring endpoints may also be secured by Spring Security. You can define the authentication scheme/paths via the below settings.
-
-```properties
-# security.ignored[0]=/**
-# security.filterOrder=0
-# security.requireSsl=true
-# security.sessions=if_required
-# security.user.name=<predefined-userid>
-# security.user.password=<predefined-password>
-# security.user.role=ACTUATOR
-```
-
-#### Basic Authentication
-
-Enable basic authentication for Spring Security to secure endpoints.
+To learn more about this topic, [please review this guide](Configuring-Monitoring-Administration.html).
 
 ```properties
-# security.basic.authorizeMode=none|role|authenticated
-# security.basic.enabled=true
-# security.basic.path=/cas/status/**
-# security.basic.realm=CAS
-```
-
-#### JAAS Authentication
-
-Enable JAAS authentication for Spring Security to secure endpoints.
-
-```properties
-# cas.adminPagesSecurity.jaas.loginConfig=file:/path/to/config
-# cas.adminPagesSecurity.jaas.refreshConfigurationOnStartup=true
-# cas.adminPagesSecurity.jaas.loginContextName=
-```
-
-#### JDBC Authentication
-
-Enable JDBC authentication for Spring Security to secure endpoints. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.adminPagesSecurity.jdbc`.
-
-```properties
-# cas.adminPagesSecurity.jdbc.query=SELECT username,password,enabled FROM users WHERE username=?
-```
-
-#### LDAP Authentication
-
-Enable LDAP authentication for Spring Security to secure endpoints. LDAP settings for this feature are available [here](Configuration-Properties-Common.html#ldap-connection-settings) under the configuration key `cas.adminPagesSecurity.ldap`.
-
-```properties
-# cas.adminPagesSecurity.ldap.ldapAuthz.groupAttribute=
-# cas.adminPagesSecurity.ldap.ldapAuthz.groupPrefix=
-# cas.adminPagesSecurity.ldap.ldapAuthz.groupFilter=
-# cas.adminPagesSecurity.ldap.ldapAuthz.rolePrefix=ROLE_
-# cas.adminPagesSecurity.ldap.ldapAuthz.roleAttribute=uugid
+# spring.boot.admin.url=https://bootadmin.example.org:8444
+# spring.boot.admin.client.managementUrl=${cas.server.prefix}/status
+# spring.boot.admin.client.name=Apereo CAS
+# spring.boot.admin.client.metadata.user.name=
+# spring.boot.admin.client.metadata.user.password=
 ```
 
 ## Web Application Session
