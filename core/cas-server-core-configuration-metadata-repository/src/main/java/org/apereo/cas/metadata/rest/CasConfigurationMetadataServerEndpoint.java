@@ -8,7 +8,6 @@ import org.apereo.cas.util.RegexUtils;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.endpoint.annotation.Selector;
-import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
 
 import java.util.ArrayList;
@@ -34,39 +33,8 @@ public class CasConfigurationMetadataServerEndpoint {
     public CasConfigurationMetadataServerEndpoint(final CasConfigurationMetadataRepository repository) {
         this.repository = repository;
     }
-
-    /**
-     * Find cas configuration property by name.
-     *
-     * @param name the property name
-     * @return the response entity
-     */
-    @ReadOperation
-    public ConfigurationMetadataProperty property(@Selector final String name) {
-        return repository.getRepository().getAllProperties().get(name);
-    }
-
-    /**
-     * Find cas configuration group by group name.
-     *
-     * @param name the property name
-     * @return the response entity
-     */
-    @ReadOperation
-    public ConfigurationMetadataGroup group(@Selector final String name) {
-        return repository.getRepository().getAllGroups().get(name);
-    }
-
-    /**
-     * Find all groups.
-     *
-     * @return the response entity
-     */
-    @ReadOperation
-    public Map<String, ConfigurationMetadataGroup> groups() {
-        return repository.getRepository().getAllGroups();
-    }
-
+    
+    
     /**
      * Find all properties.
      *

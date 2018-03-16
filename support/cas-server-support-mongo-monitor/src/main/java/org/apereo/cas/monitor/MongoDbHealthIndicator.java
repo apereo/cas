@@ -2,7 +2,6 @@ package org.apereo.cas.monitor;
 
 import com.mongodb.DBCollection;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
 import java.util.List;
@@ -20,8 +19,8 @@ public class MongoDbHealthIndicator extends AbstractCacheHealthIndicator {
     private final MongoTemplate mongoTemplate;
 
     public MongoDbHealthIndicator(final MongoTemplate mongoTemplate,
-                                  final CasConfigurationProperties casProperties) {
-        super(casProperties);
+                                  final long evictionThreshold, final long threshold) {
+        super(evictionThreshold, threshold);
         this.mongoTemplate = mongoTemplate;
     }
 

@@ -2004,7 +2004,6 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
                     exclude(group: "org.slf4j", module: "slf4j-api")
-
                     force = true
                 }
         ],
@@ -2575,7 +2574,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.springframework.cloud:spring-cloud-context:$springCloudContextVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
-                    exclude(group: "org.springframework.security", module: "spring-security-crypto")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
                     exclude(group: "org.springframework", module: "spring-context")
@@ -2777,6 +2775,9 @@ ext.libraries = [
                     exclude(group: "net.sf.ehcache", module: "ehcache")
                     exclude(group: "org.aspectj", module: "aspectjrt")
                     exclude(group: "org.slf4j", module: "slf4j-api")
+                    force = true
+                },
+                dependencies.create("org.springframework.security:spring-security-rsa:$springSecurityRsaVersion") {
                     force = true
                 }
         ],

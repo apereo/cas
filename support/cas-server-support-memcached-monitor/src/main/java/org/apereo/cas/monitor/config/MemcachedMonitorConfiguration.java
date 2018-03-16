@@ -47,6 +47,8 @@ public class MemcachedMonitorConfiguration {
         final MonitorProperties.Memcached memcached = casProperties.getMonitor().getMemcached();
         final MemcachedPooledClientConnectionFactory factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedMonitorTranscoder());
         final ObjectPool<MemcachedClientIF> pool = new GenericObjectPool<>(factory);
-        return new MemcachedHealthIndicator(pool, casProperties);
+        return new MemcachedHealthIndicator(pool,
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold());
     }
 }

@@ -1,9 +1,8 @@
 package org.apereo.cas.monitor;
 
-import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.core.monitor.MonitorWarningProperties;
 import org.springframework.boot.actuate.health.AbstractHealthIndicator;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.Status;
@@ -19,16 +18,17 @@ import java.util.stream.Collectors;
  * @since 3.5.1
  */
 @Slf4j
-@AllArgsConstructor
+@RequiredArgsConstructor
+@Getter
 public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicator {
     /**
      * CAS settings.
      */
-    protected final CasConfigurationProperties casProperties;
+    private final long evictionThreshold;
+    private final long threshold;
 
     @Override
     protected void doHealthCheck(final Health.Builder builder) throws Exception {
-
         try {
             final CacheStatistics[] statistics = getStatistics();
             if (statistics == null || statistics.length == 0) {
@@ -74,11 +74,10 @@ public abstract class AbstractCacheHealthIndicator extends AbstractHealthIndicat
      * @return WARN or OUT_OF_SERVICE OR UP.
      */
     protected Status status(final CacheStatistics statistics) {
-        final MonitorWarningProperties warn = casProperties.getMonitor().getWarn();
-        if (statistics.getEvictions() > 0 && statistics.getEvictions() > warn.getEvictionThreshold()) {
-            return new Status("WARN");
+        if (statistics.getEvictions() > 0 && statistics.getEvictions() > evictionThreshold) {
+            return Status.DOWN;
         }
-        if (statistics.getPercentFree() > 0 && statistics.getPercentFree() < warn.getThreshold()) {
+        if (statistics.getPercentFree() > 0 && statistics.getPercentFree() < threshold) {
             return Status.OUT_OF_SERVICE;
         }
         return Status.UP;
