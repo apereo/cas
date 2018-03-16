@@ -6,11 +6,12 @@ import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.monitor.MonitorProperties;
+import org.apereo.cas.util.spring.AnnotationUtils;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
 import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
-import org.springframework.context.ApplicationContext;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -34,7 +35,7 @@ import java.util.stream.Collectors;
 public class DashboardEndpoint extends BaseCasMvcEndpoint {
 
     @Autowired
-    private ApplicationContext applicationContext;
+    private ConfigurableApplicationContext applicationContext;
 
     public DashboardEndpoint(final CasConfigurationProperties casProperties) {
         super(casProperties.getMonitor().getEndpoints().getDashboard(), casProperties);
@@ -108,6 +109,8 @@ public class DashboardEndpoint extends BaseCasMvcEndpoint {
     }
 
     private void processSpringBootEndpoints(final Map<String, Object> model) {
+        AnnotationUtils.getBeansWithAnnotation(this.applicationContext, Endpoint.class);
+        
         /*
         model.put("restartEndpointEnabled", isSpringBootEndpointEnabled(restartEndpoint));
         model.put("shutdownEndpointEnabled", isSpringBootEndpointEnabled(shutdownEndpoint));

@@ -1,5 +1,4 @@
 apply plugin: "org.springframework.boot"
-apply plugin: "io.spring.dependency-management"
 
 import org.apache.tools.ant.taskdefs.condition.Os
 
@@ -23,6 +22,12 @@ springBoot {
 }
 
 if (plugins.hasPlugin("war")) {
+    javadoc {
+        enabled false
+    }
+    war {
+        enabled = !rootProject.publishingRelease
+    }
     bootWar {
         mainClassName = project.ext.mainClassName
         enabled = !rootProject.publishingRelease
@@ -43,7 +48,6 @@ if (plugins.hasPlugin("war")) {
     }
 } else {
     bootJar {
-
         mainClassName = project.ext.mainClassName
         enabled = !rootProject.publishingRelease
         from "${buildDir}/resources/main", { into "WEB-INF/classes" }

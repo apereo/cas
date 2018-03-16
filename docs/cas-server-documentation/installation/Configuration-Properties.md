@@ -463,6 +463,7 @@ To learn more about this topic, [please review this guide](Monitoring-Statistics
 
 ```properties
 # management.endpoints.enabled-by-default=false
+# management.endpoints.web.base-path=/actuator
 # management.server.servlet.context-path=/status
 
 # IP address may be enough to protect all endpoints.
@@ -507,31 +508,41 @@ These are the collection of endpoints that are specific to CAS. To learn more ab
 
 The following configuration keys are available and mapped to CAS endpoints:
 
-- `cas.monitor.endpoints`
-- `cas.monitor.endpoints.dashboard`
-- `cas.monitor.endpoints.discovery`
-- `cas.monitor.endpoints.auditEvents`
-- `cas.monitor.endpoints.authenticationEvents`
-- `cas.monitor.endpoints.configurationState`
-- `cas.monitor.endpoints.healthCheck`
-- `cas.monitor.endpoints.loggingConfig`
-- `cas.monitor.endpoints.metrics`
-- `cas.monitor.endpoints.attributeResolution`
-- `cas.monitor.endpoints.singleSignOnReport`
-- `cas.monitor.endpoints.statistics`
-- `cas.monitor.endpoints.trustedDevices`
-- `cas.monitor.endpoints.status`
-- `cas.monitor.endpoints.singleSignOnStatus`
-- `cas.monitor.endpoints.springWebflowReport`
-- `cas.monitor.endpoints.registeredServicesReport`
-- `cas.monitor.endpoints.configurationMetadata`
+- `management.endpoint.dashboard`
+- `management.endpoint.auditEvents`
+- `management.endpoint.discoveryProfile`
+- `management.endpoint.authenticationEvents`
+- `management.endpoint.configurationState`
+- `management.endpoint.healthCheck`
+- `management.endpoint.loggingConfig`
+- `management.endpoint.metrics`
+- `management.endpoint.attributeResolution`
+- `management.endpoint.singleSignOnReport`
+- `management.endpoint.statistics`
+- `management.endpoint.trustedDevices`
+- `management.endpoint.status`
+- `management.endpoint.singleSignOnStatus`
+- `management.endpoint.springWebflowReport`
+- `management.endpoint.registeredServicesReport`
+- `management.endpoint.configurationMetadata`
 
 The following settings equally apply to all CAS endpoints:
 
 ```properties
 # ${configurationKey}.enabled=false
-# ${configurationKey}.sensitive=true
 ```
+
+While all endpoints are disabled by default, they may all be globally enabled via the following setting:
+
+```properties
+# management.endpoints.enabled-by-default=true
+```
+
+The calculation order for all endpoints is as follows:
+
+1. The `enabled` setting of the individual endpoint is consulted in CAS settings.
+2. If undefined, the global setting noted above is consulted from CAS settings.
+3. If undefined, the default built-in setting for the endpoint in CAS is consulted which is `false` by default.
 
 ### Securing Endpoints With Spring Security
 

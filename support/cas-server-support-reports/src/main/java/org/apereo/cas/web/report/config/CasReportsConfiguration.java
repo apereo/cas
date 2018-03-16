@@ -35,6 +35,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.actuate.autoconfigure.health.ConditionalOnEnabledHealthIndicator;
+import org.springframework.boot.actuate.endpoint.annotation.Endpoint;
+import org.springframework.boot.actuate.endpoint.annotation.ReadOperation;
 import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoContributor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -131,6 +133,19 @@ public class CasReportsConfiguration extends AbstractWebSocketMessageBrokerConfi
     @ConditionalOnEnabledEndpoint
     public DashboardEndpoint dashboardEndpoint() {
         return new DashboardEndpoint(casProperties);
+    }
+
+    @Bean
+    public Misagh misagh() {
+        return new Misagh();
+    }
+
+    @Endpoint(id = "misagh", enableByDefault = true)
+    public class Misagh {
+        @ReadOperation
+        public void getMe() {
+            System.out.println();
+        }
     }
 
     @Bean
