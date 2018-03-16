@@ -28,6 +28,8 @@ public class EhCacheMonitorConfiguration {
     @Autowired
     @Bean
     public HealthIndicator ehcacheHealthIndicator(@Qualifier("ehcacheTicketCacheManager") final CacheManager ehcacheTicketCacheManager) {
-        return new EhCacheHealthIndicator(ehcacheTicketCacheManager, casProperties);
+        return new EhCacheHealthIndicator(ehcacheTicketCacheManager,
+            casProperties.getMonitor().getWarn().getEvictionThreshold(),
+            casProperties.getMonitor().getWarn().getThreshold());
     }
 }

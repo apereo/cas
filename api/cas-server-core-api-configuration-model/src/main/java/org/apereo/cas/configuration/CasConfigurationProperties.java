@@ -119,6 +119,12 @@ public class CasConfigurationProperties implements Serializable {
     private EventsProperties events = new EventsProperties();
 
     /**
+     * Monitoring functionality.
+     */
+    @NestedConfigurationProperty
+    private MonitorProperties monitor = new MonitorProperties();
+
+    /**
      * Settings that define this CAS host.
      */
     @NestedConfigurationProperty
@@ -129,12 +135,6 @@ public class CasConfigurationProperties implements Serializable {
      */
     @NestedConfigurationProperty
     private LogoutProperties logout = new LogoutProperties();
-
-    /**
-     * Monitoring functionality.
-     */
-    @NestedConfigurationProperty
-    private MonitorProperties monitor = new MonitorProperties();
 
     /**
      * REST API functionality.
