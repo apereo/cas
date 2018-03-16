@@ -60,7 +60,8 @@ Load settings from external properties/yaml configuration files.
 
 ### Git Repository
 
-Load settings from an internal/external Git repository.
+Allow the CAS Spring Cloud configuration server to load settings from an internal/external Git repository.
+This then allows CAS to become a client of the configuration server, consuming settings over HTTP where needed.
 
 ```properties
 # spring.profiles.active=default
@@ -82,7 +83,7 @@ The above configuration also applies to online git-based repositories such as Gi
 
 ### Consul
 
-Load settings from [HashiCorp's Consul](Service-Discovery-Guide-Consul.html).
+Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp's Consul](Service-Discovery-Guide-Consul.html).
 
 ```properties
 # spring.cloud.consul.config.enabled=true
@@ -96,7 +97,7 @@ Load settings from [HashiCorp's Consul](Service-Discovery-Guide-Consul.html).
 
 ### Vault
 
-Load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
+Allow the CAS Spring Cloud configuration server to load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
 
 ```properties
 # spring.cloud.vault.host=127.0.0.1
@@ -113,7 +114,7 @@ Load settings from [HashiCorp's Vault](Configuration-Properties-Security.html).
 
 ### MongoDb
 
-Load settings from a MongoDb instance.
+Allow the CAS Spring Cloud configuration server to load settings from a MongoDb instance.
 
 ```properties
 # cas.spring.cloud.mongo.uri=mongodb://casuser:Mellon@ds135522.mlab.com:35522/jasigcas
@@ -121,7 +122,7 @@ Load settings from a MongoDb instance.
 
 ### Azure KeyVault Secrets
 
-Load settings from Microsoft Azure's KeyVault instance.
+Allow the CAS Spring Cloud configuration server to load settings from Microsoft Azure's KeyVault instance.
 
 ```properties
 # azure.keyvault.enabled=true
@@ -133,7 +134,7 @@ Load settings from Microsoft Azure's KeyVault instance.
 
 ### ZooKeeper
 
-Load settings from an Apache ZooKeeper instance.
+Allow the CAS Spring Cloud configuration server to load settings from an Apache ZooKeeper instance.
 
 ```properties
 # spring.cloud.zookeeper.connectString=localhost:2181
@@ -145,7 +146,7 @@ Load settings from an Apache ZooKeeper instance.
 
 ### DynamoDb
 
-Load settings from a DynamoDb instance.
+Allow the CAS Spring Cloud configuration server to load settings from a DynamoDb instance.
 
 ```properties
 # cas.spring.cloud.dynamodb.credentialAccessKey=
@@ -159,7 +160,8 @@ Load settings from a DynamoDb instance.
 
 ### JDBC
 
-Load settings from a RDBMS instance. Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.spring.cloud.jdbc`.
+Allow the CAS Spring Cloud configuration server to load settings from a RDBMS instance. Database settings for this feature 
+are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.spring.cloud.jdbc`.
 
 ```properties
 # cas.spring.cloud.jdbc.sql=SELECT id, name, value FROM CAS_SETTINGS_TABLE
