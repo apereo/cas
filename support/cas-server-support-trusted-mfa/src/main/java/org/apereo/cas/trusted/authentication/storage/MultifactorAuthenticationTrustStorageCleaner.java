@@ -33,21 +33,19 @@ public class MultifactorAuthenticationTrustStorageCleaner {
      * Clean up expired records.
      */
     @Scheduled(initialDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.startDelay:PT10S}",
-               fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeatInterval:PT60S}")
+        fixedDelayString = "${cas.authn.mfa.trusted.cleaner.schedule.repeatInterval:PT60S}")
     public void clean() {
 
         if (!trustedProperties.getCleaner().getSchedule().isEnabled()) {
-            LOGGER.debug("[{}] is disabled. Expired trusted authentication records will not automatically be cleaned up by CAS",
-                    getClass().getName());
+            LOGGER.debug("[{}] is disabled. Expired trusted authentication records will not automatically be cleaned up by CAS", getClass().getName());
             return;
         }
 
         try {
             LOGGER.debug("Proceeding to clean up expired trusted authentication records...");
-            
             SpringBeanAutowiringSupport.processInjectionBasedOnCurrentContext(this);
             final LocalDate validDate = LocalDate.now().minus(trustedProperties.getExpiration(),
-                    DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
+                DateTimeUtils.toChronoUnit(trustedProperties.getTimeUnit()));
             LOGGER.info("Expiring records that are on/before [{}]", validDate);
             this.storage.expire(validDate);
         } catch (final Exception e) {

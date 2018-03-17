@@ -40,6 +40,7 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `sso-sessions`            | Review the current single signon sessions establishes with CAS and manage each session remotely.
 | `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../Attribute-Resolution.html) engine to locate attributes for `{name}`.
 | `release-attributes`          | Invoke the CAS [attribute release](../Attribute-Release.html) engine to release attributes to an application.
+| `multifactor-trusted-devices`   | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
@@ -62,9 +63,13 @@ Supported parameters are the following:
 ### Single SignOn Sessions Endpoint
 
 A `GET` operation produces a list of current SSO sessions. A `DELETE` operation without 
-specifying a ticket id will attempt to destroy all SSO sessions.
-Specifying a ticket-granting ticket identifier in the URL as a placeholder/selector will 
-attempt to destroy the session controlled by that ticket. (i.e. `sso-sessions/{ticket}`)
+specifying a ticket id will attempt to destroy all SSO sessions. Specifying a ticket-granting ticket identifier 
+in the URL as a placeholder/selector will attempt to destroy the session controlled by that ticket. (i.e. `sso-sessions/{ticket}`)
+
+### Multifactor Trusted Devices
+
+A `GET` operation produces a list of all trusted devices. A `DELETE` operation with a 
+a record key id will attempt to remove and revoke the registered device (i.e. `multifactor-trusted-devices/{key}`).
 
 ## Security
 
