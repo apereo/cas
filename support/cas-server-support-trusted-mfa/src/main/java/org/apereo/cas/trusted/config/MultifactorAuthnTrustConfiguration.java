@@ -18,6 +18,7 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
+import org.apereo.cas.trusted.web.MultifactorTrustedDevicesReportEndpoint;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.GeographyDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
@@ -26,6 +27,7 @@ import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -53,7 +55,7 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Autowired
     @Qualifier("ticketCreationActionResolver")
     private AuditActionResolver ticketCreationActionResolver;
-    
+
     @Autowired
     @Qualifier("returnValueResourceResolver")
     private AuditResourceResolver returnValueResourceResolver;
@@ -71,14 +73,14 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @RefreshScope
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy(),
-                casProperties.getAuthn().getMfa().getTrusted());
+            casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy(),
-                casProperties.getAuthn().getMfa().getTrusted());
+            casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
@@ -87,13 +89,13 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     public MultifactorAuthenticationTrustStorage mfaTrustEngine() {
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
         final LoadingCache<String, MultifactorAuthenticationTrustRecord> storage = Caffeine.newBuilder()
-                .initialCapacity(INITIAL_CACHE_SIZE)
-                .maximumSize(MAX_CACHE_SIZE)
-                .expireAfterWrite(trusted.getExpiration(), trusted.getTimeUnit())
-                .build(s -> {
-                    LOGGER.error("Load operation of the cache is not supported.");
-                    return null;
-                });
+            .initialCapacity(INITIAL_CACHE_SIZE)
+            .maximumSize(MAX_CACHE_SIZE)
+            .expireAfterWrite(trusted.getExpiration(), trusted.getTimeUnit())
+            .build(s -> {
+                LOGGER.error("Load operation of the cache is not supported.");
+                return null;
+            });
 
         storage.asMap();
         final BaseMultifactorAuthenticationTrustStorage m;
@@ -120,23 +122,22 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
-                    crypto.getEncryption().getKey(),
-                    crypto.getSigning().getKey(),
-                    crypto.getAlg());
+                crypto.getEncryption().getKey(),
+                crypto.getSigning().getKey(),
+                crypto.getAlg());
         }
         LOGGER.info("Multifactor trusted authentication record encryption/signing is turned off and "
-                + "MAY NOT be safe in a production environment. "
-                + "Consider using other choices to handle encryption, signing and verification of "
-                + "trusted authentication records for MFA");
+            + "MAY NOT be safe in a production environment. "
+            + "Consider using other choices to handle encryption, signing and verification of "
+            + "trusted authentication records for MFA");
         return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
     @Lazy
-    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
-            @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), storage);
+    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
+        return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), mfaTrustEngine());
     }
 
     @Override
@@ -144,4 +145,12 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
         plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", this.returnValueResourceResolver);
         plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", this.ticketCreationActionResolver);
     }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public MultifactorTrustedDevicesReportEndpoint mfaTrustedDevicesReportEndpoint() {
+        return new MultifactorTrustedDevicesReportEndpoint(mfaTrustEngine(),
+            casProperties.getAuthn().getMfa().getTrusted());
+    }
+
 }
