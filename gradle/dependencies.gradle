@@ -1218,12 +1218,6 @@ ext.libraries = [
                 }
         ],
         tests                   : [
-                dependencies.create("org.jetbrains.kotlin:kotlin-test:$kotlinVersion") {
-                    force = true
-                },
-                dependencies.create("org.jetbrains.kotlin:kotlin-test-junit:$kotlinVersion") {
-                    force = true
-                },
                 dependencies.create("com.github.kstyrc:embedded-redis:$embeddedRedisVersion") {
                     exclude(module: "commons-io")
                     force = true
@@ -1232,12 +1226,28 @@ ext.libraries = [
                     exclude(group: "org.hamcrest", module: "hamcrest-core")
                     exclude(group: "org.objenesis", module: "objenesis")
                     exclude(group: "net.bytebuddy", module: "byte-buddy")
+                    exclude(group: "junit", module: "junit")
                     force = true
                 },
                 dependencies.create("org.objenesis:objenesis:$objenesisVersion") {
                     force = true
                 },
-                dependencies.create("junit:junit:$junitVersion") {
+                dependencies.create("org.junit.jupiter:junit-jupiter-api:$junitVersion") {
+                    force = true
+                },
+                dependencies.create("org.junit.jupiter:junit-jupiter-engine:$junitVersion") {
+                    force = true
+                },
+                dependencies.create("org.junit.jupiter:junit-jupiter-params:$junitVersion") {
+                    force = true
+                },
+                dependencies.create("org.junit.vintage:junit-vintage-engine:$junitVersion") {
+                    force = true
+                },
+                dependencies.create("org.junit.platform:junit-platform-engine:$junitPlatformVersion") {
+                    force = true
+                },
+                dependencies.create("org.junit.platform:junit-platform-launcher:$junitPlatformVersion") {
                     force = true
                 },
                 dependencies.create("com.github.fakemongo:fongo:$fongoVersion") {
@@ -1269,6 +1279,7 @@ ext.libraries = [
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.skyscreamer", module: "jsonassert")
                     exclude(group: "org.ow2.asm", module: "asm")
+                    exclude(group: "junit", module: "junit")
                     force = true
                 },
                 dependencies.create("org.hsqldb:hsqldb:$hsqlVersion"),
@@ -1277,9 +1288,18 @@ ext.libraries = [
                     exclude(group: "com.vaadin.external.google", module: "android-json")
                     force = true
                 },
-                dependencies.create("org.springframework:spring-test:$springVersion"),
-                dependencies.create("org.spockframework:spock-core:$spockVersion"),
-                dependencies.create("org.spockframework:spock-spring:$spockVersion"),
+                dependencies.create("org.springframework:spring-test:$springVersion") {
+                    exclude(group: "junit", module: "junit")
+                    force = true
+                },
+                dependencies.create("org.spockframework:spock-core:$spockVersion") {
+                    exclude(group: "junit", module: "junit")
+                    force = true
+                },
+                dependencies.create("org.spockframework:spock-spring:$spockVersion") {
+                    exclude(group: "junit", module: "junit")
+                    force = true
+                },
                 dependencies.create("org.json:json:$jsonVersion") {
                     force = true
                 }
