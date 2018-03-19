@@ -2,7 +2,9 @@ package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
+import org.springframework.boot.context.properties.NestedConfigurationProperty;
 
 import java.io.Serializable;
 
@@ -29,6 +31,11 @@ public class DeviceFingerprintProperties implements Serializable {
     private ClientIp clientIp = new ClientIp();
 
     /**
+     * Configure usage of a device cookie within trusted device fingerprints.
+     */
+    private Cookie cookie = new Cookie();
+
+    /**
      * Configure usage of User-Agent header within trusted device fingerprints.
      */
     private UserAgent userAgent = new UserAgent();
@@ -38,6 +45,22 @@ public class DeviceFingerprintProperties implements Serializable {
 
         public ClientIp() {
             super(true, 0);
+        }
+    }
+
+    @Getter
+    @Setter
+    public static class Cookie extends BaseDeviceFingerprintComponentProperties {
+        private static final long serialVersionUID = -9022498833437602657L;
+
+        /**
+         * Crypto settings that sign/encrypt the cookie value stored on the client machine.
+         */
+        @NestedConfigurationProperty
+        private EncryptionJwtSigningJwtCryptographyProperties crypto = new EncryptionJwtSigningJwtCryptographyProperties();
+
+        public Cookie() {
+            super(false, 0);
         }
     }
 
