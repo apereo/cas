@@ -101,7 +101,7 @@ public class MultifactorAuthenticationTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 

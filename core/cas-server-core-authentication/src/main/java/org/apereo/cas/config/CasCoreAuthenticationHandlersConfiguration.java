@@ -54,14 +54,6 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @Qualifier("supportsTrustStoreSslSocketFactoryHttpClient")
     private HttpClient supportsTrustStoreSslSocketFactoryHttpClient;
 
-    @Autowired(required = false)
-    @Qualifier("acceptPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration acceptPasswordPolicyConfiguration;
-
-    @Autowired(required = false)
-    @Qualifier("jaasPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration jaasPasswordPolicyConfiguration;
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
@@ -99,9 +91,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
         final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
             acceptUsersPrincipalFactory(), null, getParsedUsers());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
-        if (acceptPasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
         return h;
@@ -132,6 +122,18 @@ public class CasCoreAuthenticationHandlersConfiguration {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler(), proxyPrincipalResolver());
     }
 
+    @ConditionalOnMissingBean(name = "acceptPasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration acceptPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
+    @ConditionalOnMissingBean(name = "jaasPasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration jaasPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
+
     /**
      * The Jaas authentication configuration.
      */
@@ -157,10 +159,7 @@ public class CasCoreAuthenticationHandlersConfiguration {
                     h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
                     h.setRealm(jaas.getRealm());
                     h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
-
-                    if (jaasPasswordPolicyConfiguration != null) {
-                        h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
-                    }
+                    h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration());
                     h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
                     h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
                     return h;

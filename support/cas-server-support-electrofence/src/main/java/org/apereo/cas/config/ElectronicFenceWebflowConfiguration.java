@@ -17,6 +17,7 @@ import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowConfigurer;
 import org.apereo.cas.web.flow.RiskAwareAuthenticationWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -71,12 +72,12 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
-    @Autowired(required = false)
-    private FlowBuilderServices flowBuilderServices;
+    @Autowired
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -113,7 +114,10 @@ public class ElectronicFenceWebflowConfiguration implements CasWebflowExecutionP
     @RefreshScope
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer riskAwareAuthenticationWebflowConfigurer() {
-        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices, loginFlowDefinitionRegistry, applicationContext, casProperties);
+        return new RiskAwareAuthenticationWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(),
+            applicationContext,
+            casProperties);
     }
 
     @Override
