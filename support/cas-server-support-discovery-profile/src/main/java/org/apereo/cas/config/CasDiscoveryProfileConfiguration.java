@@ -9,10 +9,10 @@ import org.apereo.cas.discovery.CasServerProfileRegistrar;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.pac4j.core.client.Clients;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -39,11 +39,8 @@ public class CasDiscoveryProfileConfiguration {
     private CasConfigurationProperties casProperties;
 
     @Autowired
-    private ApplicationContext applicationContext;
-
-    @Autowired(required = false)
     @Qualifier("builtClients")
-    private Clients builtClients;
+    private ObjectProvider<Clients> builtClients;
 
     @Autowired
     @Qualifier("attributeRepository")
@@ -51,7 +48,9 @@ public class CasDiscoveryProfileConfiguration {
 
     @Bean
     public CasServerProfileRegistrar casServerProfileRegistrar() {
-        return new CasServerProfileRegistrar(this.servicesManager, casProperties, this.builtClients, availableAttributes());
+        return new CasServerProfileRegistrar(this.servicesManager, casProperties,
+            this.builtClients.getIfAvailable(),
+            availableAttributes());
     }
 
     @Bean

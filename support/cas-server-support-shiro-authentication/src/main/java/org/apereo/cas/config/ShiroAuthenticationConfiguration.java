@@ -32,9 +32,6 @@ import org.springframework.core.io.Resource;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @Slf4j
 public class ShiroAuthenticationConfiguration {
-    @Autowired(required = false)
-    @Qualifier("shiroPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration shiroPasswordPolicyConfiguration;
 
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
@@ -62,9 +59,7 @@ public class ShiroAuthenticationConfiguration {
 
         h.loadShiroConfiguration(shiro.getLocation());
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(shiro.getPasswordEncoder()));
-        if (shiroPasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(shiroPasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(shiro.getPrincipalTransformation()));
         return h;
     }
@@ -79,5 +74,11 @@ public class ShiroAuthenticationConfiguration {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(shiroAuthenticationHandler(), personDirectoryPrincipalResolver);
             }
         };
+    }
+
+    @ConditionalOnMissingBean(name = "shiroPasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration shiroPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
     }
 }

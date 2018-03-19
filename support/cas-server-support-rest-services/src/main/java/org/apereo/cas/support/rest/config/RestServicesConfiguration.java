@@ -35,7 +35,7 @@ public class RestServicesConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("defaultAuthenticationSystemSupport")
     private AuthenticationSystemSupport authenticationSystemSupport;
 
@@ -54,7 +54,7 @@ public class RestServicesConfiguration {
         final RestProperties rest = casProperties.getRest();
         if (StringUtils.isBlank(rest.getAttributeName())) {
             throw new BeanCreationException("No attribute name is defined to enforce authorization when adding services via CAS REST APIs. "
-            + "This is likely due to misconfiguration in CAS settings where the attribute name definition is absent");
+                + "This is likely due to misconfiguration in CAS settings where the attribute name definition is absent");
         }
         if (StringUtils.isBlank(rest.getAttributeValue())) {
             throw new BeanCreationException("No attribute value is defined to enforce authorization when adding services via CAS REST APIs. "

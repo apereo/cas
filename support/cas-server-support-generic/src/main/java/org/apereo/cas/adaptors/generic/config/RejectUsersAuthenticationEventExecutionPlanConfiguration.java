@@ -37,18 +37,13 @@ import java.util.Set;
 public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
 
 
-    @Autowired(required = false)
-    @Qualifier("rejectPasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration rejectPasswordPolicyConfiguration;
-
-    
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
 
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -65,11 +60,9 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
         final RejectAuthenticationProperties rejectProperties = casProperties.getAuthn().getReject();
         final Set<String> users = org.springframework.util.StringUtils.commaDelimitedListToSet(rejectProperties.getUsers());
         final RejectUsersAuthenticationHandler h = new RejectUsersAuthenticationHandler(rejectProperties.getName(), servicesManager,
-                rejectUsersPrincipalFactory(), users);
+            rejectUsersPrincipalFactory(), users);
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(rejectProperties.getPasswordEncoder()));
-        if (rejectPasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(rejectPasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(rejectProperties.getPrincipalTransformation()));
         return h;
     }
@@ -84,5 +77,11 @@ public class RejectUsersAuthenticationEventExecutionPlanConfiguration {
                 LOGGER.debug("Added rejecting authentication handler with the following users [{}]", users);
             }
         };
+    }
+
+    @ConditionalOnMissingBean(name = "rejectPasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration rejectPasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
     }
 }

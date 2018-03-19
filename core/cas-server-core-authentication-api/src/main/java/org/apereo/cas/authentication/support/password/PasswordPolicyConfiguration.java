@@ -22,10 +22,8 @@ import lombok.NoArgsConstructor;
 public class PasswordPolicyConfiguration {
 
     private boolean alwaysDisplayPasswordExpirationWarning;
-
-    private int passwordWarningNumberOfDays;
-
-    private int loginFailures;
+    private int passwordWarningNumberOfDays = 30;
+    private int loginFailures = 5;
 
     public PasswordPolicyConfiguration(final int passwordWarningNumberOfDays) {
         this.passwordWarningNumberOfDays = passwordWarningNumberOfDays;

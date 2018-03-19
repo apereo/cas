@@ -13,6 +13,7 @@ import org.apereo.cas.support.saml.mdui.web.flow.SamlMetadataUIWebflowConfigurer
 import org.apereo.cas.web.flow.CasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlan;
 import org.apereo.cas.web.flow.CasWebflowExecutionPlanConfigurer;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
@@ -40,12 +41,12 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("loginFlowRegistry")
-    private FlowDefinitionRegistry loginFlowDefinitionRegistry;
+    private ObjectProvider<FlowDefinitionRegistry> loginFlowDefinitionRegistry;
 
-    @Autowired(required = false)
-    private FlowBuilderServices flowBuilderServices;
+    @Autowired
+    private ObjectProvider<FlowBuilderServices> flowBuilderServices;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -67,8 +68,9 @@ public class SamlMetadataUIWebflowConfiguration implements CasWebflowExecutionPl
     @Bean
     @DependsOn("defaultWebflowConfigurer")
     public CasWebflowConfigurer samlMetadataUIWebConfigurer() {
-        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices,
-                loginFlowDefinitionRegistry, samlMetadataUIParserAction(), applicationContext, casProperties);
+        return new SamlMetadataUIWebflowConfigurer(flowBuilderServices.getIfAvailable(),
+            loginFlowDefinitionRegistry.getIfAvailable(), samlMetadataUIParserAction(),
+            applicationContext, casProperties);
     }
 
     @ConditionalOnMissingBean(name = "samlMetadataUIParserAction")
