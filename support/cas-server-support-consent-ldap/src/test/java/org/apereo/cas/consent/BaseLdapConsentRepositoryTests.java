@@ -183,11 +183,15 @@ public abstract class BaseLdapConsentRepositoryTests {
         final Modification mod3 = new Modification(ModificationType.ADD, ATTR_NAME, MAPPER.writeValueAsString(decision3));
         assertEquals(ResultCode.SUCCESS, getConnection().modify(USER2_DN, mod3).getResultCode());
 
-        assertTrue(this.repository.deleteConsentDecision(decision2.getId(), USER_CN));
+        assertTrue(this.repository.deleteConsentDecision(decision2.getId()));
 
-        final SearchResult r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        SearchResult r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
         assertTrue(r.getEntryCount() > 0);
         assertEquals(1, r.getSearchEntry(USER_DN).getAttributeValues(ATTR_NAME).length);
+
+        this.repository.deleteConsentDecisions(USER_CN);
+        r = getConnection().search(USER_DN, SearchScope.SUB, DEF_FILTER, ATTR_NAME);
+        assertEquals(0, r.getSearchEntry(USER_DN).getAttributes().size());
     }
 
     public abstract LDAPConnection getConnection();

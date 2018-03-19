@@ -56,7 +56,7 @@ public class JpaConsentRepositoryTests {
         assertNotNull(d);
         assertEquals("casuser", d.getPrincipal());
         
-        final boolean res = this.repository.deleteConsentDecision(d.getId(), d.getPrincipal());
+        final boolean res = this.repository.deleteConsentDecision(d.getId());
         assertTrue(res);
         assertTrue(this.repository.findConsentDecisions().isEmpty());
         d = this.repository.findConsentDecision(SVC, REG_SVC, CoreAuthenticationTestUtils.getAuthentication("casuser"));

@@ -51,8 +51,15 @@ public class MongoDbConsentRepository implements ConsentRepository {
     }
     
     @Override
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+    public boolean deleteConsentDecision(final long decisionId) {
         final Query query = new Query(Criteria.where("id").is(decisionId));
+        this.mongoTemplate.remove(query, this.collectionName);
+        return true;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        final Query query = new Query(Criteria.where("principal").is(principal));
         this.mongoTemplate.remove(query, this.collectionName);
         return true;
     }

@@ -1,17 +1,19 @@
 package org.apereo.cas.consent;
 
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
+
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.Collection;
-import lombok.ToString;
 
 /**
  * This is {@link JpaConsentRepository}.
@@ -28,6 +30,7 @@ public class JpaConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 6599902742493270206L;
 
     private static final String SELECT_QUERY = "SELECT r from ConsentDecision r ";
+    private static final String DELETE_QUERY = "DELETE r from ConsentDecision r ";
 
     @PersistenceContext(unitName = "consentEntityManagerFactory")
     private EntityManager entityManager;
@@ -89,12 +92,25 @@ public class JpaConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+    public boolean deleteConsentDecision(final long decisionId) {
         try {
             final ConsentDecision decision = this.entityManager.createQuery(SELECT_QUERY.concat("where r.id = :id"), ConsentDecision.class)
                 .setParameter("id", decisionId).getSingleResult();
             this.entityManager.remove(decision);
             return true;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        try {
+            final TypedQuery<ConsentDecision> query = this.entityManager.createQuery(
+                DELETE_QUERY.concat("where r.principal = :principal"), ConsentDecision.class)
+                .setParameter(principal, principal);
+            return query.executeUpdate() > 0;
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
