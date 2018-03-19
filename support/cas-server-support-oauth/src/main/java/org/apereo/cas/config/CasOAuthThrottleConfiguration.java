@@ -5,6 +5,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.util.RegexUtils;
 import org.apereo.cas.web.support.ThrottledSubmissionHandlerInterceptor;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -33,9 +34,9 @@ import static org.apereo.cas.support.oauth.OAuth20Constants.BASE_OAUTH20_URL;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("authenticationThrottle")
-    private ThrottledSubmissionHandlerInterceptor authenticationThrottle;
+    private ObjectProvider<ThrottledSubmissionHandlerInterceptor> authenticationThrottle;
 
     @Autowired
     @Qualifier("oauthHandlerInterceptorAdapter")
@@ -44,7 +45,7 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
     @ConditionalOnMissingBean(name = "oauthInterceptor")
     @Bean
     public HandlerInterceptorAdapter oauthInterceptor() {
-        if (authenticationThrottle == null) {
+        if (getAuthenticationThrottle() == null) {
             return oauthHandlerInterceptorAdapter;
         }
         return new OAuth20ThrottledHandlerInterceptorAdapter();
@@ -53,6 +54,10 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
     @Override
     public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(oauthInterceptor()).addPathPatterns(BASE_OAUTH20_URL.concat("/").concat("*"));
+    }
+
+    private ThrottledSubmissionHandlerInterceptor getAuthenticationThrottle() {
+        return this.authenticationThrottle.getIfAvailable();
     }
 
     /**
@@ -73,7 +78,7 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
 
         @Override
         public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) throws Exception {
-            if (RegexUtils.matches(pattern, request.getServletPath()) && !authenticationThrottle.preHandle(request, response, handler)) {
+            if (RegexUtils.matches(pattern, request.getServletPath()) && !getAuthenticationThrottle().preHandle(request, response, handler)) {
                 LOGGER.trace("OAuth authentication throttler prevented the request at [{}]", request.getServletPath());
                 return false;
             }
@@ -85,7 +90,7 @@ public class CasOAuthThrottleConfiguration extends WebMvcConfigurerAdapter {
                                final ModelAndView modelAndView) {
             if (RegexUtils.matches(this.pattern, request.getServletPath())) {
                 LOGGER.trace("OAuth authentication throttler post-processing the request at [{}]", request.getServletPath());
-                authenticationThrottle.postHandle(request, response, handler, modelAndView);
+                getAuthenticationThrottle().postHandle(request, response, handler, modelAndView);
             }
         }
     }
