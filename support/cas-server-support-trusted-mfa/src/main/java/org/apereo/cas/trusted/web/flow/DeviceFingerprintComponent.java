@@ -29,4 +29,14 @@ public interface DeviceFingerprintComponent extends Ordered {
      */
     @Nonnull
     Optional<String> determineComponent(@Nonnull String principal, @Nonnull RequestContext context, boolean isNew);
+
+    /**
+     * Return a no-op DeviceFingerprintComponent.
+     *
+     * @return
+     */
+    @Nonnull
+    static DeviceFingerprintComponent noOp() {
+        return (principal, context, isNew) -> Optional.empty();
+    }
 }

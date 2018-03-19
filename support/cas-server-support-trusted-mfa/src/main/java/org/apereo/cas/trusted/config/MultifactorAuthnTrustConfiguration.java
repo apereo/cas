@@ -13,6 +13,8 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.BaseDeviceFingerprintComponentProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -72,23 +74,37 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Bean(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     @RefreshScope
     public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponent> strategies) {
-        return new DefaultDeviceFingerprintStrategy(strategies, "@");
+        final DeviceFingerprintProperties properties =
+                casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
+        return new DefaultDeviceFingerprintStrategy(strategies, properties.getComponentSeparator());
     }
 
     @Bean
     @RefreshScope
     public DeviceFingerprintComponent clientIpDeviceFingerprintComponent() {
-        final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
-        component.setOrder(0);
-        return  component;
+        final BaseDeviceFingerprintComponentProperties properties =
+                casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
+        if (properties.isEnabled()) {
+            final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
+            component.setOrder(properties.getOrder());
+            return component;
+        } else {
+            return DeviceFingerprintComponent.noOp();
+        }
     }
 
     @Bean
     @RefreshScope
     public DeviceFingerprintComponent userAgentDeviceFingerprintComponent() {
-        final UserAgentDeviceFingerprintComponent component = new UserAgentDeviceFingerprintComponent();
-        component.setOrder(1);
-        return  component;
+        final BaseDeviceFingerprintComponentProperties properties =
+                casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
+        if (properties.isEnabled()) {
+            final UserAgentDeviceFingerprintComponent component = new UserAgentDeviceFingerprintComponent();
+            component.setOrder(1);
+            return component;
+        } else {
+            return DeviceFingerprintComponent.noOp();
+        }
     }
 
     @Bean
