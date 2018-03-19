@@ -15,6 +15,7 @@ import java.io.Serializable;
 @Setter
 public abstract class BaseDeviceFingerprintComponentProperties implements Serializable {
     private static final long serialVersionUID = 46126170193036440L;
+
     /**
      * Is this component enabled or not.
      */
