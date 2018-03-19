@@ -2,6 +2,7 @@ package org.apereo.cas.adaptors.generic.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.generic.FileAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -9,7 +10,6 @@ import org.apereo.cas.authentication.principal.PrincipalNameTransformerUtils;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
 import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.FileAuthenticationProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -34,18 +34,13 @@ import org.springframework.core.io.Resource;
 @Slf4j
 public class FileAuthenticationEventExecutionPlanConfiguration {
 
-
-    @Autowired(required = false)
-    @Qualifier("filePasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration filePasswordPolicyConfiguration;
-
     @Autowired
     @Qualifier("servicesManager")
     private ServicesManager servicesManager;
-    
+
     @Autowired
     private CasConfigurationProperties casProperties;
-    
+
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")
     private PrincipalResolver personDirectoryPrincipalResolver;
@@ -56,18 +51,16 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
         return new DefaultPrincipalFactory();
     }
 
-    
+
     @RefreshScope
     @Bean
     public AuthenticationHandler fileAuthenticationHandler() {
         final FileAuthenticationProperties fileProperties = casProperties.getAuthn().getFile();
         final FileAuthenticationHandler h = new FileAuthenticationHandler(fileProperties.getName(), servicesManager, filePrincipalFactory(),
-                fileProperties.getFilename(), fileProperties.getSeparator());
+            fileProperties.getFilename(), fileProperties.getSeparator());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(fileProperties.getPasswordEncoder()));
-        if (filePasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(filePasswordPolicyConfiguration());
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(fileProperties.getPrincipalTransformation()));
 
         return h;
@@ -83,5 +76,11 @@ public class FileAuthenticationEventExecutionPlanConfiguration {
                 plan.registerAuthenticationHandlerWithPrincipalResolver(fileAuthenticationHandler(), personDirectoryPrincipalResolver);
             }
         };
+    }
+
+    @ConditionalOnMissingBean(name = "filePasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration filePasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
     }
 }

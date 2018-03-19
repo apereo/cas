@@ -34,9 +34,6 @@ public class SyncopeAuthenticationConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @Autowired(required = false)
-    @Qualifier("syncopePasswordPolicyConfiguration")
-    private PasswordPolicyConfiguration syncopePasswordPolicyConfiguration;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -61,12 +58,10 @@ public class SyncopeAuthenticationConfiguration {
             syncopePrincipalFactory(), syncope.getUrl(), syncope.getDomain());
 
         h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(syncope.getPasswordEncoder()));
-        if (syncopePasswordPolicyConfiguration != null) {
-            h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration);
-        }
+        h.setPasswordPolicyConfiguration(syncopePasswordPolicyConfiguration());
         h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(syncope.getCredentialCriteria()));
         h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(syncope.getPrincipalTransformation()));
-        
+
         return h;
     }
 
@@ -76,4 +71,9 @@ public class SyncopeAuthenticationConfiguration {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(syncopeAuthenticationHandler(), personDirectoryPrincipalResolver);
     }
 
+    @ConditionalOnMissingBean(name = "syncopePasswordPolicyConfiguration")
+    @Bean
+    public PasswordPolicyConfiguration syncopePasswordPolicyConfiguration() {
+        return new PasswordPolicyConfiguration();
+    }
 }

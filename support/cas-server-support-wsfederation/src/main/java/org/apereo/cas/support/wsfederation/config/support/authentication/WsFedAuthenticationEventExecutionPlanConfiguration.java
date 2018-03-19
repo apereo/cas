@@ -21,6 +21,7 @@ import org.apereo.cas.support.wsfederation.web.WsFederationCookieCipherExecutor;
 import org.apereo.cas.support.wsfederation.web.WsFederationCookieGenerator;
 import org.apereo.cas.web.support.DefaultCasCookieValueManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -49,9 +50,9 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
     @Qualifier("attributeRepository")
     private IPersonAttributeDao attributeRepository;
 
-    @Autowired(required = false)
+    @Autowired
     @Qualifier("wsfedAttributeMutator")
-    private WsFederationAttributeMutator attributeMutator;
+    private ObjectProvider<WsFederationAttributeMutator> attributeMutator;
 
     @Autowired
     @Qualifier("servicesManager")
@@ -82,7 +83,7 @@ public class WsFedAuthenticationEventExecutionPlanConfiguration {
             .forEach(s -> config.setEncryptionCertificate(this.resourceLoader.getResource(s)));
 
         config.setEncryptionPrivateKeyPassword(wsfed.getEncryptionPrivateKeyPassword());
-        config.setAttributeMutator(this.attributeMutator);
+        config.setAttributeMutator(this.attributeMutator.getIfAvailable());
         config.setAutoRedirect(wsfed.isAutoRedirect());
         config.setName(wsfed.getName());
 
