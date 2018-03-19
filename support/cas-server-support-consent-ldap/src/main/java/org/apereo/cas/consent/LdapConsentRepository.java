@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Predicates;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.Authentication;
@@ -25,6 +26,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -38,7 +40,6 @@ public class LdapConsentRepository implements ConsentRepository {
     private static final long serialVersionUID = 8561763114482490L;
 
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
-
 
     private final ConnectionFactory connectionFactory;
     private final Ldap ldap;
@@ -119,11 +120,23 @@ public class LdapConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean deleteConsentDecision(final long id, final String principal) {
-        LOGGER.debug("Deleting consent decision [{}] for principal [{}]", id, principal);
+    public boolean deleteConsentDecision(final long id) {
+        LOGGER.debug("Deleting consent decision [{}]", id);
+        final Collection<LdapEntry> entries = readConsentEntries();
+        entries.forEach(entry -> {
+            final Set<String> newConsent = removeDecisionById(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
+            executeModifyOperation(newConsent, entry);
+        });
+        return !entries.isEmpty();
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        LOGGER.debug("Deleting consent decisions for principal [{}]", principal);
         final LdapEntry entry = readConsentEntry(principal);
         if (entry != null) {
-            final Set<String> newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()), id);
+            final Set<String> newConsent = removeDecision(entry.getAttribute(this.ldap.getConsentAttributeName()),
+                Predicates.alwaysFalse());
             return executeModifyOperation(newConsent, entry);
         }
         return false;
@@ -158,7 +171,7 @@ public class LdapConsentRepository implements ConsentRepository {
         }
 
         if (ldapConsent != null) {
-            final Set<String> result = removeDecision(ldapConsent, decision.getId());
+            final Set<String> result = removeDecisionById(ldapConsent, decision.getId());
             final String json = mapToJson(decision);
             if (StringUtils.isBlank(json)) {
                 throw new IllegalArgumentException("Could not map consent decision to JSON");
@@ -176,6 +189,10 @@ public class LdapConsentRepository implements ConsentRepository {
         return result;
     }
 
+    private Set<String> removeDecisionById(final LdapAttribute ldapConsent, final long decisionId) {
+        return removeDecision(ldapConsent, d -> d.getId() != decisionId);
+    }
+
     /**
      * Removes decision from ldap attribute set.
      *
@@ -183,13 +200,13 @@ public class LdapConsentRepository implements ConsentRepository {
      * @param decisionId  the decision Id
      * @return the new decision set
      */
-    private Set<String> removeDecision(final LdapAttribute ldapConsent, final long decisionId) {
+    private Set<String> removeDecision(final LdapAttribute ldapConsent, final Predicate<ConsentDecision> filter) {
         final Set<String> result = new HashSet<>();
         if (ldapConsent.size() != 0) {
             ldapConsent.getStringValues()
                 .stream()
                 .map(LdapConsentRepository::mapFromJson)
-                .filter(d -> d.getId() != decisionId)
+                .filter(filter)
                 .map(LdapConsentRepository::mapToJson)
                 .filter(Objects::nonNull)
                 .forEach(result::add);

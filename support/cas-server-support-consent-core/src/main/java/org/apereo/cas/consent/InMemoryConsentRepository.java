@@ -11,5 +11,4 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class InMemoryConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = 2701737592960770840L;
-    
 }
