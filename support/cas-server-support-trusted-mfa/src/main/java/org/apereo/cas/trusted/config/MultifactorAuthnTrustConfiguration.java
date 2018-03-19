@@ -13,8 +13,6 @@ import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
-import org.apereo.cas.configuration.model.support.mfa.trusteddevice.BaseDeviceFingerprintComponentProperties;
-import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.trusted.authentication.MultifactorAuthenticationTrustCipherExecutor;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustStorage;
@@ -22,13 +20,9 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.web.flow.ClientIpDeviceFingerprintComponent;
-import org.apereo.cas.trusted.web.flow.DefaultDeviceFingerprintStrategy;
-import org.apereo.cas.trusted.web.flow.DeviceFingerprintComponent;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
-import org.apereo.cas.trusted.web.flow.UserAgentDeviceFingerprintComponent;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,8 +36,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
-
-import java.util.List;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -69,43 +61,6 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @Autowired
     private CasConfigurationProperties casProperties;
-
-    @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_STRATEGY)
-    @Bean(BEAN_DEVICE_FINGERPRINT_STRATEGY)
-    @RefreshScope
-    public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponent> strategies) {
-        final DeviceFingerprintProperties properties =
-                casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
-        return new DefaultDeviceFingerprintStrategy(strategies, properties.getComponentSeparator());
-    }
-
-    @Bean
-    @RefreshScope
-    public DeviceFingerprintComponent clientIpDeviceFingerprintComponent() {
-        final BaseDeviceFingerprintComponentProperties properties =
-                casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
-        if (properties.isEnabled()) {
-            final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
-            component.setOrder(properties.getOrder());
-            return component;
-        } else {
-            return DeviceFingerprintComponent.noOp();
-        }
-    }
-
-    @Bean
-    @RefreshScope
-    public DeviceFingerprintComponent userAgentDeviceFingerprintComponent() {
-        final BaseDeviceFingerprintComponentProperties properties =
-                casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
-        if (properties.isEnabled()) {
-            final UserAgentDeviceFingerprintComponent component = new UserAgentDeviceFingerprintComponent();
-            component.setOrder(1);
-            return component;
-        } else {
-            return DeviceFingerprintComponent.noOp();
-        }
-    }
 
     @Bean
     @RefreshScope
