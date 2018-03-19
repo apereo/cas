@@ -1372,6 +1372,7 @@ ext.libraries = [
                 dependencies.create("org.apache.logging.log4j:log4j-web:$log4jVersion"),
                 dependencies.create("org.slf4j:slf4j-api:$slf4jVersion"),
                 dependencies.create("org.slf4j:jul-to-slf4j:$slf4jVersion"),
+                dependencies.create("org.slf4j:jcl-over-slf4j:$slf4jVersion"),
                 dependencies.create("com.lmax:disruptor:$disruptorVersion")
         ],
         metrics                 : [
@@ -1986,6 +1987,15 @@ ext.libraries = [
                     exclude(group: "org.hibernate", module: "hibernate-validator")
                     exclude(group: "org.hibernate", module: "hibernate-core")
                     exclude(group: "org.hibernate", module: "hibernate-entitymanager")
+                    exclude(group: "org.springframework", module: "spring-web")
+                    exclude(group: "org.springframework", module: "spring-webmvc")
+                    exclude(group: "org.springframework", module: "spring-core")
+                    exclude(group: "org.springframework", module: "spring-context")
+                    exclude(group: "org.slf4j", module: "slf4j-api")
+                    exclude(group: "org.slf4j", module: "jul-to-slf4j")
+                    force = true
+                },
+                dependencies.create("org.springframework.boot:spring-boot-starter-log4j2:$springBootVersion") {
                     exclude(group: "org.springframework", module: "spring-web")
                     exclude(group: "org.springframework", module: "spring-webmvc")
                     exclude(group: "org.springframework", module: "spring-core")
