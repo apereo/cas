@@ -39,9 +39,10 @@ exposed over the endpoint `/actuator`. The following endpoints are secured and a
 | `configuration-metadata`  | Exposes [CAS configuration metadata](Configuration-Metadata-Repository.html) that can be used to query settings.
 | `statistics`              | Exposes statistics data on tickets, memory, server availability and uptime, etc.
 | `sso-sessions`            | Review the current single signon sessions establishes with CAS and manage each session remotely.
-| `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../Attribute-Resolution.html) engine to locate attributes for `{name}`.
-| `release-attributes`           | Invoke the CAS [attribute release](../Attribute-Release.html) engine to release attributes to an application.
+| `resolve-attributes/{name}`    | Invoke the CAS [attribute resolution](../integration/Attribute-Resolution.html) engine to locate attributes for `{name}`.
+| `release-attributes`           | Invoke the CAS [attribute release](../integration/Attribute-Release.html) engine to release attributes to an application.
 | `multifactor-trusted-devices`  | Expose devices currently [registered and trusted](Multifactor-TrustedDevice-Authentication.html) by the CAS multifactor authentication engine.
+| `attribute-consent`  | Manage and control [attribute consent decisions](../integration/Attribute-Release-Consent.html).
 
 <div class="alert alert-info"><strong>Exposed Endpoints</strong><p>
 Note that by default the only endpoints exposed over the web are <code>info</code>, <code>health</code> and <code>configuration-metadata</code>.
@@ -70,7 +71,14 @@ in the URL as a placeholder/selector will attempt to destroy the session control
 ### Multifactor Trusted Devices
 
 A `GET` operation produces a list of all trusted devices. A `DELETE` operation with a 
+a decision id will attempt to remove the consent decision (i.e. `attribute-consent/{/{id}`).
+Specifying the `principal`  in the same manner will revoke all consent decisions for the user.
+
+### Attribute Release Consent
+
+A `GET` operation produces a list of all consent decisions. A `DELETE` operation with a 
 a record key id will attempt to remove and revoke the registered device (i.e. `multifactor-trusted-devices/{key}`).
+
 
 ## Security
 

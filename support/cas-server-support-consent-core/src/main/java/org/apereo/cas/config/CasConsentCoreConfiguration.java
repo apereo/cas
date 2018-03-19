@@ -7,6 +7,7 @@ import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.consent.ConsentProperties;
+import org.apereo.cas.consent.AttributeConsentReportEndpoint;
 import org.apereo.cas.consent.AttributeReleaseConsentCipherExecutor;
 import org.apereo.cas.consent.ConsentDecisionBuilder;
 import org.apereo.cas.consent.ConsentEngine;
@@ -16,11 +17,11 @@ import org.apereo.cas.consent.DefaultConsentEngine;
 import org.apereo.cas.consent.GroovyConsentRepository;
 import org.apereo.cas.consent.InMemoryConsentRepository;
 import org.apereo.cas.consent.JsonConsentRepository;
-
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.actuate.autoconfigure.endpoint.condition.ConditionalOnEnabledEndpoint;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -53,8 +54,8 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     @ConditionalOnMissingBean(name = "consentEngine")
     @Bean
     @RefreshScope
-    public ConsentEngine consentEngine(@Qualifier("consentRepository") final ConsentRepository consentRepository) {
-        return new DefaultConsentEngine(consentRepository, consentDecisionBuilder());
+    public ConsentEngine consentEngine() {
+        return new DefaultConsentEngine(consentRepository(), consentDecisionBuilder());
     }
 
     @ConditionalOnMissingBean(name = "consentCipherExecutor")
@@ -101,5 +102,11 @@ public class CasConsentCoreConfiguration implements AuditTrailRecordResolutionPl
     public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
         plan.registerAuditActionResolver("SAVE_CONSENT_ACTION_RESOLVER", this.authenticationActionResolver);
         plan.registerAuditResourceResolver("SAVE_CONSENT_RESOURCE_RESOLVER", this.returnValueResourceResolver);
+    }
+
+    @Bean
+    @ConditionalOnEnabledEndpoint
+    public AttributeConsentReportEndpoint attributeConsentReportEndpoint() {
+        return new AttributeConsentReportEndpoint(consentRepository(), consentEngine());
     }
 }

@@ -81,7 +81,7 @@ public class RestConsentRepositoryTests {
                 .andRespond(withSuccess());
         
         final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
-        final boolean b = repo.deleteConsentDecision(1, "CasUser");
+        final boolean b = repo.deleteConsentDecision(1);
         assertTrue(b);
         server.verify();
     }

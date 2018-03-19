@@ -87,4 +87,5 @@ public class CasConsentWebflowConfiguration implements CasWebflowExecutionPlanCo
     public void configureWebflowExecutionPlan(final CasWebflowExecutionPlan plan) {
         plan.registerWebflowConfigurer(consentWebflowConfigurer());
     }
+
 }

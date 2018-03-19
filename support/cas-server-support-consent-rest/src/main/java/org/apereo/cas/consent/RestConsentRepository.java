@@ -1,6 +1,7 @@
 package org.apereo.cas.consent;
 
 import lombok.AllArgsConstructor;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
@@ -13,11 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import lombok.ToString;
 
 /**
  * This is {@link RestConsentRepository}.
@@ -102,13 +103,29 @@ public class RestConsentRepository implements ConsentRepository {
     }
 
     @Override
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
+    public boolean deleteConsentDecision(final long decisionId) {
         try {
             final HttpHeaders headers = new HttpHeaders();
             headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
             final HttpEntity<Map> entity = new HttpEntity<>(headers);
             final String deleteEndpoint = this.endpoint.concat("/" + Long.toString(decisionId));
-            final ResponseEntity<Boolean> result = restTemplate.exchange(deleteEndpoint, HttpMethod.DELETE, entity, Boolean.class);
+            final ResponseEntity<Boolean> result = restTemplate.exchange(deleteEndpoint,
+                HttpMethod.DELETE, entity, Boolean.class);
+            return result.getStatusCodeValue() == HttpStatus.OK.value();
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return false;
+    }
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        try {
+            final HttpHeaders headers = new HttpHeaders();
+            headers.add("principal", principal);
+            headers.setAccept(CollectionUtils.wrap(MediaType.APPLICATION_JSON));
+            final HttpEntity<Map> entity = new HttpEntity<>(headers);
+            final ResponseEntity<Boolean> result = restTemplate.exchange(this.endpoint, HttpMethod.DELETE, entity, Boolean.class);
             return result.getStatusCodeValue() == HttpStatus.OK.value();
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);

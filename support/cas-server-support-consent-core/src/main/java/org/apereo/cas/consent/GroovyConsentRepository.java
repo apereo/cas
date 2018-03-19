@@ -15,27 +15,30 @@ import java.util.Set;
 @Slf4j
 public class GroovyConsentRepository extends BaseConsentRepository {
     private static final long serialVersionUID = 3482998768083902246L;
-
-    
     private final Resource groovyResource;
 
     public GroovyConsentRepository(final Resource groovyResource) {
         this.groovyResource = groovyResource;
         setConsentDecisions(readDecisionsFromGroovyResource());
     }
-    
+
     @Override
     public boolean storeConsentDecision(final ConsentDecision decision) {
         final boolean result = super.storeConsentDecision(decision);
         writeAccountToGroovyResource(decision);
         return result;
     }
-    
+
     @Override
-    public boolean deleteConsentDecision(final long decisionId, final String principal) {
-        return ScriptingUtils.executeGroovyScript(groovyResource, "delete", Boolean.class, decisionId, principal, LOGGER);
+    public boolean deleteConsentDecision(final long decisionId) {
+        return ScriptingUtils.executeGroovyScript(groovyResource, "delete", Boolean.class, decisionId, LOGGER);
     }
-    
+
+    @Override
+    public boolean deleteConsentDecisions(final String principal) {
+        return ScriptingUtils.executeGroovyScript(groovyResource, "deleteAll", Boolean.class, principal, LOGGER);
+    }
+
     private void writeAccountToGroovyResource(final ConsentDecision decision) {
         ScriptingUtils.executeGroovyScript(groovyResource, "write", Boolean.class, decision, LOGGER);
     }
