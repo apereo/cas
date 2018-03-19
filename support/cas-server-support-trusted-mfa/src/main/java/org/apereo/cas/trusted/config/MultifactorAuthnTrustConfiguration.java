@@ -60,20 +60,22 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     private AuditResourceResolver returnValueResourceResolver;
 
     @Autowired
+    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    private DeviceFingerprintStrategy deviceFingerprintStrategy;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
     @RefreshScope
-    public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage,
-                                    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY) final DeviceFingerprintStrategy deviceFingerprintStrategy) {
+    public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy,
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
-    public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage,
-                                       @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY) final DeviceFingerprintStrategy deviceFingerprintStrategy) {
+    public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy,
                 casProperties.getAuthn().getMfa().getTrusted());
     }
