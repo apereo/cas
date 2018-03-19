@@ -1,5 +1,7 @@
 package org.apereo.cas.trusted.config;
 
+import static org.apereo.cas.trusted.BeanNames.BEAN_DEVICE_FINGERPRINT_STRATEGY;
+
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +20,9 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
+import org.apereo.cas.trusted.web.flow.DefaultDeviceFingerprintStrategy;
+import org.apereo.cas.trusted.web.flow.DeviceFingerprintComponent;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
-import org.apereo.cas.trusted.web.flow.GeographyDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
@@ -35,6 +38,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
+
+import java.util.List;
 
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
@@ -61,23 +66,26 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @Autowired
     private CasConfigurationProperties casProperties;
 
-    @ConditionalOnMissingBean(name = "deviceFingerprintStrategy")
-    @Bean
-    public DeviceFingerprintStrategy deviceFingerprintStrategy() {
-        return new GeographyDeviceFingerprintStrategy();
+    @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    @Bean(BEAN_DEVICE_FINGERPRINT_STRATEGY)
+    @RefreshScope
+    public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponent> strategies) {
+        return new DefaultDeviceFingerprintStrategy(strategies, "@");
     }
 
     @Bean
     @RefreshScope
-    public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy(),
+    public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage,
+                                    @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY) final DeviceFingerprintStrategy deviceFingerprintStrategy) {
+        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy,
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
-    public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy(),
+    public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage,
+                                       @Qualifier(BEAN_DEVICE_FINGERPRINT_STRATEGY) final DeviceFingerprintStrategy deviceFingerprintStrategy) {
+        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy,
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 
