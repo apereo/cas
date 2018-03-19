@@ -150,6 +150,7 @@ subprojects {
         maven { url "https://jitpack.io" }
         maven { url "https://raw.github.com/tduehr/hibernate-ogm-cassandra/mvn-repo/" }
         maven { url "https://raw.github.com/tduehr/hibernate-ogm/mvn-repo/" }
+        maven { url "https://raw.github.com/tduehr/hibernate-ogm-couchdb/mvn-repo/" }
         jcenter()
     }
 
