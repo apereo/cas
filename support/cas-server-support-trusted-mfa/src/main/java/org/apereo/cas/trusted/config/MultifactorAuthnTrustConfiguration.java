@@ -20,11 +20,13 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
+import org.apereo.cas.trusted.web.flow.ClientIpDeviceFingerprintComponent;
 import org.apereo.cas.trusted.web.flow.DefaultDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintComponent;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
+import org.apereo.cas.trusted.web.flow.UserAgentDeviceFingerprintComponent;
 import org.apereo.inspektr.audit.spi.AuditActionResolver;
 import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,6 +73,22 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @RefreshScope
     public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponent> strategies) {
         return new DefaultDeviceFingerprintStrategy(strategies, "@");
+    }
+
+    @Bean
+    @RefreshScope
+    public DeviceFingerprintComponent clientIpDeviceFingerprintComponent() {
+        final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
+        component.setOrder(0);
+        return  component;
+    }
+
+    @Bean
+    @RefreshScope
+    public DeviceFingerprintComponent userAgentDeviceFingerprintComponent() {
+        final UserAgentDeviceFingerprintComponent component = new UserAgentDeviceFingerprintComponent();
+        component.setOrder(1);
+        return  component;
     }
 
     @Bean
