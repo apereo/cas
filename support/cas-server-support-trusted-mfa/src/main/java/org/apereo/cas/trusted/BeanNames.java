@@ -20,7 +20,7 @@ public class BeanNames {
     public static final String BEAN_DEVICE_FINGERPRINT_STRATEGY = "deviceFingerprintStrategy";
 
     /**
-     * The {@link CipherExecutor} used to sign & encrypt a MFA trusted device fingerprint cookie component.
+     * The {@link CipherExecutor} used to sign &amp; encrypt a MFA trusted device fingerprint cookie component.
      */
     public static final String BEAN_DEVICE_FINGERPRINT_COOKIE_CIPHER_EXECUTOR = "deviceFingerprintCookieCipherExecutor";
 
