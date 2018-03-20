@@ -2022,32 +2022,53 @@ To learn more about this topic, [please review this guide](Multifactor-TrustedDe
 # cas.authn.mfa.trusted.timeUnit=SECONDS|MINUTES|HOURS|DAYS
 ```
 
-### Signing & Encryption
+#### Signing & Encryption
 
 The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted`.
 
-### JSON Storage
+#### JSON Storage
 
 ```properties
 # cas.authn.mfa.trusted.json.location=file:/etc/cas/config/trusted-dev.json
 ```
 
-### JDBC Storage
+#### JDBC Storage
 
 Database settings for this feature are available [here](Configuration-Properties-Common.html#database-settings) under the configuration key `cas.authn.mfa.trusted.jpa`.
 
-### MongoDb Storage
+#### MongoDb Storage
 
  Configuration settings for this feature are available [here](Configuration-Properties-Common.html#mongodb-configuration) under the configuration key `cas.authn.mfa.trusted`.
 
-### REST Storage
+#### REST Storage
 
 ```properties
 # cas.authn.mfa.trusted.rest.endpoint=https://api.example.org/trustedBrowser
 ```
 
-### Cleaner
+#### Trusted Device Fingerprint
+
+```properties
+# cas.authn.mfa.trusted.deviceFingerprint.componentSeparator=@
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.enabled=true
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.order=1
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.path=
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.maxAge=2592000
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.domain=
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.name=MFATRUSTED
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.secure=true
+# cas.authn.mfa.trusted.deviceFingerprint.cookie.httpOnly=true
+# cas.authn.mfa.trusted.deviceFingerprint.clientIp.enabled=true
+# cas.authn.mfa.trusted.deviceFingerprint.clientIp.order=2
+# cas.authn.mfa.trusted.deviceFingerprint.userAgent.enabled=false
+# cas.authn.mfa.trusted.deviceFingerprint.userAgent.order=3
+```
+
+The device fingerprint cookie component supports signing & encryption. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
+The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
+
+#### Cleaner
 
 A cleaner process is scheduled to run in the background to clean up expired and stale tickets.
 This section controls how that process should behave.

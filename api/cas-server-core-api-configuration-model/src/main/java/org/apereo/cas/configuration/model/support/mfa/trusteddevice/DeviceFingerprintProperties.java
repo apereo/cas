@@ -46,7 +46,7 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final long serialVersionUID = 785014133279201757L;
 
         public ClientIp() {
-            super(true, 1);
+            super(true, 2);
         }
     }
 
@@ -58,12 +58,12 @@ public class DeviceFingerprintProperties implements Serializable {
         /**
          * Is this component enabled or not.
          */
-        private boolean enabled = false;
+        private boolean enabled = true;
 
         /**
          * Indicates the order of components when generating a device fingerprint.
          */
-        private int order = 0;
+        private int order = 1;
 
         /**
          * Crypto settings that sign/encrypt the cookie value stored on the client machine.
@@ -81,7 +81,7 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final long serialVersionUID = -5325531035180836136L;
 
         public UserAgent() {
-            super(true, 2);
+            super(false, 3);
         }
     }
 }
