@@ -25,7 +25,7 @@ public class EncryptedCookieValueManager implements CookieValueManager {
 
     @Override
     public final String buildCookieValue(final String givenCookieValue, final HttpServletRequest request) {
-        final String res = buildValue(givenCookieValue, request);
+        final String res = buildCompoundCookieValue(givenCookieValue, request);
         LOGGER.debug("Encoding cookie value [{}]", res);
         return cipherExecutor.encode(res).toString();
     }
@@ -39,14 +39,28 @@ public class EncryptedCookieValueManager implements CookieValueManager {
             return null;
         }
 
-        return obtainValue(cookieValue, request);
+        return obtainValueFromCompoundCookie(cookieValue, request);
     }
 
-    protected String buildValue(final String givenCookieValue, final HttpServletRequest request) {
-        return givenCookieValue;
-    }
-
-    protected String obtainValue(final String cookieValue, final HttpServletRequest request) {
+    /**
+     * Build the compound cookie value.
+     *
+     * @param cookieValue the raw cookie value that is being stored
+     * @param request the current web request
+     * @return a compound cookie value that may contain additional data beyond the raw cookieValue
+     */
+    protected String buildCompoundCookieValue(final String cookieValue, final HttpServletRequest request) {
         return cookieValue;
+    }
+
+    /**
+     * Obtain the cookie value from the compound cookie value.
+     *
+     * @param compoundValue The compound cookie value
+     * @param request the current web request
+     * @return the original cookie value that was stored in the provided compound value.
+     */
+    protected String obtainValueFromCompoundCookie(final String compoundValue, final HttpServletRequest request) {
+        return compoundValue;
     }
 }

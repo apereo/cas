@@ -29,7 +29,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     }
 
     @Override
-    protected String buildValue(final String givenCookieValue, final HttpServletRequest request) {
+    protected String buildCompoundCookieValue(final String givenCookieValue, final HttpServletRequest request) {
         final ClientInfo clientInfo = ClientInfoHolder.getClientInfo();
         final StringBuilder builder = new StringBuilder(givenCookieValue)
             .append(COOKIE_FIELD_SEPARATOR)
@@ -45,7 +45,7 @@ public class DefaultCasCookieValueManager extends EncryptedCookieValueManager {
     }
 
     @Override
-    protected String obtainValue(final String cookieValue, final HttpServletRequest request) {
+    protected String obtainValueFromCompoundCookie(final String cookieValue, final HttpServletRequest request) {
         final List<String> cookieParts = Splitter.on(String.valueOf(COOKIE_FIELD_SEPARATOR)).splitToList(cookieValue);
         if (cookieParts.size() != COOKIE_FIELDS_LENGTH) {
             throw new IllegalStateException("Invalid cookie. Required fields are missing");
