@@ -20,9 +20,9 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
     @NonNull
-    final List<DeviceFingerprintComponent> componentStrategies;
+    private final List<DeviceFingerprintComponent> componentStrategies;
     @NonNull
-    final String componentSeparator;
+    private final String componentSeparator;
 
     @Override
     public String determineFingerprint(@Nonnull final String principal, @Nonnull final RequestContext context,

@@ -33,7 +33,7 @@ public interface DeviceFingerprintComponent extends Ordered {
     /**
      * Return a no-op DeviceFingerprintComponent.
      *
-     * @return
+     * @return a no-op DeviceFingerprintComponent.
      */
     @Nonnull
     static DeviceFingerprintComponent noOp() {

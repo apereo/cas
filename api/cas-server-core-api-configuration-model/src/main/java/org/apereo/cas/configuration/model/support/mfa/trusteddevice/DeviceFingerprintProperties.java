@@ -56,6 +56,11 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final long serialVersionUID = -9022498833437602657L;
 
         /**
+         * The default max age for the cookie component.
+         */
+        private static final int DEFAULT_MAX_AGE_DAYS = 30;
+
+        /**
          * Is this component enabled or not.
          */
         private boolean enabled = true;
@@ -73,15 +78,21 @@ public class DeviceFingerprintProperties implements Serializable {
 
         public Cookie() {
             setName("MFATRUSTED");
-            setMaxAge((int) Duration.ofDays(30).getSeconds());
+            setMaxAge((int) Duration.ofDays(DEFAULT_MAX_AGE_DAYS).getSeconds());
+            crypto.setEnabled(false);
         }
     }
 
     public static class UserAgent extends BaseDeviceFingerprintComponentProperties {
         private static final long serialVersionUID = -5325531035180836136L;
 
+        /**
+         * Default Order for UserAgent component.
+         */
+        private static final int DEFAULT_ORDER = 3;
+
         public UserAgent() {
-            super(false, 3);
+            super(false, DEFAULT_ORDER);
         }
     }
 }
