@@ -2876,9 +2876,6 @@ ext.libraries = [
                 },
                 dependencies.create("org.webjars.bower:bootstrap-select:$bootstrapSelectVersion") {
                     force = true
-                },
-                dependencies.create("org.webjars:lodash:$lodashVersion") {
-                    force = true
-                },
+                }
         ]
 ]
