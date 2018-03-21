@@ -25,9 +25,9 @@ import org.apereo.cas.web.v3.V3ProxyValidateController;
 import org.apereo.cas.web.v3.V3ServiceValidateController;
 import org.apereo.cas.web.view.Cas10ResponseView;
 import org.apereo.cas.web.view.Cas20ResponseView;
-import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.apereo.cas.web.view.Cas30ResponseView;
 import org.apereo.cas.web.view.attributes.Cas30ProtocolAttributesRenderer;
+import org.apereo.cas.web.view.json.Cas30JsonResponseView;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -136,6 +136,15 @@ public class CasValidationConfiguration {
     @Qualifier("authenticationServiceSelectionPlan")
     private AuthenticationServiceSelectionPlan selectionStrategies;
 
+    @Autowired
+    @Qualifier("argumentExtractor")
+    private ObjectProvider<ArgumentExtractor> argumentExtractor;
+
+    @Autowired
+    @Qualifier("defaultAuthenticationSystemSupport")
+    private ObjectProvider<AuthenticationSystemSupport> authenticationSystemSupport;
+
+
     @Bean
     @ConditionalOnMissingBean(name = "cas1ServiceSuccessView")
     public View cas1ServiceSuccessView() {
@@ -204,17 +213,15 @@ public class CasValidationConfiguration {
             centralAuthenticationService, webApplicationServiceFactory, applicationContext);
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "v3ServiceValidateController")
-    public V3ServiceValidateController v3ServiceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                                   @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+    public V3ServiceValidateController v3ServiceValidateController() {
         return new V3ServiceValidateController(
             cas20WithoutProxyProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager, centralAuthenticationService,
             proxy20Handler.getIfAvailable(),
-            argumentExtractor,
+            argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
             authenticationContextValidator,
             cas3ServiceJsonView(),
@@ -226,19 +233,17 @@ public class CasValidationConfiguration {
         );
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "v3ProxyValidateController")
     @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
-    public V3ProxyValidateController v3ProxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                               @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+    public V3ProxyValidateController v3ProxyValidateController() {
         return new V3ProxyValidateController(
             cas20ProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager,
             centralAuthenticationService,
             proxy20Handler.getIfAvailable(),
-            argumentExtractor,
+            argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
             authenticationContextValidator,
             cas3ServiceJsonView(),
@@ -250,19 +255,17 @@ public class CasValidationConfiguration {
         );
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "proxyValidateController")
-    public ProxyValidateController proxyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                           @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+    public ProxyValidateController proxyValidateController() {
         if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
             return new ProxyValidateController(
                 cas20ProtocolValidationSpecification,
-                authenticationSystemSupport,
+                authenticationSystemSupport.getIfAvailable(),
                 servicesManager,
                 centralAuthenticationService,
                 proxy20Handler.getIfAvailable(),
-                argumentExtractor,
+                argumentExtractor.getIfAvailable(),
                 multifactorTriggerSelectionStrategy,
                 authenticationContextValidator,
                 cas3ServiceJsonView(),
@@ -276,11 +279,11 @@ public class CasValidationConfiguration {
 
         return new ProxyValidateController(
             cas20ProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager,
             centralAuthenticationService,
             proxy20Handler.getIfAvailable(),
-            argumentExtractor,
+            argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
             authenticationContextValidator,
             cas3ServiceJsonView(),
@@ -292,18 +295,16 @@ public class CasValidationConfiguration {
         );
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "legacyValidateController")
-    public LegacyValidateController legacyValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                             @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+    public LegacyValidateController legacyValidateController() {
         return new LegacyValidateController(
             cas10ProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager,
             centralAuthenticationService,
             proxy10Handler.getIfAvailable(),
-            argumentExtractor,
+            argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
             authenticationContextValidator,
             cas3ServiceJsonView(),
@@ -315,19 +316,17 @@ public class CasValidationConfiguration {
         );
     }
 
-    @Autowired
     @Bean
     @ConditionalOnMissingBean(name = "serviceValidateController")
-    public ServiceValidateController serviceValidateController(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor,
-                                                               @Qualifier("defaultAuthenticationSystemSupport") final AuthenticationSystemSupport authenticationSystemSupport) {
+    public ServiceValidateController serviceValidateController() {
         if (casProperties.getView().getCas2().isV3ForwardCompatible()) {
             return new ServiceValidateController(
                 cas20WithoutProxyProtocolValidationSpecification,
-                authenticationSystemSupport,
+                authenticationSystemSupport.getIfAvailable(),
                 servicesManager,
                 centralAuthenticationService,
                 proxy10Handler.getIfAvailable(),
-                argumentExtractor,
+                argumentExtractor.getIfAvailable(),
                 multifactorTriggerSelectionStrategy,
                 authenticationContextValidator,
                 cas3ServiceJsonView(),
@@ -341,11 +340,11 @@ public class CasValidationConfiguration {
 
         return new ServiceValidateController(
             cas20WithoutProxyProtocolValidationSpecification,
-            authenticationSystemSupport,
+            authenticationSystemSupport.getIfAvailable(),
             servicesManager,
             centralAuthenticationService,
             proxy10Handler.getIfAvailable(),
-            argumentExtractor,
+            argumentExtractor.getIfAvailable(),
             multifactorTriggerSelectionStrategy,
             authenticationContextValidator,
             cas3ServiceJsonView(),

@@ -154,11 +154,6 @@ subprojects {
         maven { url "https://jitpack.io" }
         jcenter()
     }
-
-    tasks.withType(JavaCompile) {
-        // The last argument to disable parameter names is a workaround for: https://github.com/google/error-prone/issues/780
-        options.compilerArgs += ['-Xep:MissingOverride:OFF', '-Xep:ParameterName:OFF']
-    }
     
     test {
         enabled = !Boolean.getBoolean("skipTests")
