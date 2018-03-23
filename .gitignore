@@ -38,6 +38,7 @@ reports
 webapp/resources/static/css/*
 *.asc
 /.nb-gradle/
+**/.sts4-cache/**
 etc/loadtests/loadtests/**
 etc/loadtests/locustfiles/**
 etc/loadtests/__pycache__/**
