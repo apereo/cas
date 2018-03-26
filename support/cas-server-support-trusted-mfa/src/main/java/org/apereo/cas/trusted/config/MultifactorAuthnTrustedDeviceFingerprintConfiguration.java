@@ -57,9 +57,10 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
             component.setOrder(properties.getOrder());
             return component;
-        } else {
-            return DeviceFingerprintComponent.noOp();
         }
+
+        LOGGER.info("The client ip is not being included when creating MFA Trusted Device Fingerprints");
+        return DeviceFingerprintComponent.noOp();
     }
 
     @Bean
@@ -71,9 +72,10 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
                     deviceFingerprintCookieGenerator(), deviceFingerprintCookieRandomStringGenerator());
             component.setOrder(properties.getOrder());
             return component;
-        } else {
-            return DeviceFingerprintComponent.noOp();
         }
+
+        LOGGER.info("A persistent cookie is not being generated/included when creating MFA Trusted Device Fingerprints");
+        return DeviceFingerprintComponent.noOp();
     }
 
     @Bean
@@ -85,9 +87,10 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
             final UserAgentDeviceFingerprintComponent component = new UserAgentDeviceFingerprintComponent();
             component.setOrder(properties.getOrder());
             return component;
-        } else {
-            return DeviceFingerprintComponent.noOp();
         }
+
+        LOGGER.info("User-Agent is not being included when creating MFA Trusted Device Fingerprints");
+        return DeviceFingerprintComponent.noOp();
     }
 
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_STRATEGY)
