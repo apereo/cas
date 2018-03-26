@@ -182,7 +182,6 @@ public abstract class AbstractServiceValidateController extends AbstractDelegate
         }
         try {
             prepareForTicketValidation(request, service, serviceTicketId);
-            prepareForTicketValidation(request, service, serviceTicketId);
             return handleTicketValidation(request, service, serviceTicketId);
         } catch (final AbstractTicketValidationException e) {
             final String code = e.getCode();
