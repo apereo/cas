@@ -4,12 +4,13 @@ branchName="master"
 
 gradle="sudo ./gradlew $@"
 gradleBuild=""
-gradleBuildOptions="--stacktrace --build-cache --configure-on-demand -DskipNestedConfigMetadataGen=true "
+gradleBuildOptions="--stacktrace --build-cache --configure-on-demand "
 
 isActiveBranchCommit=[ "$TRAVIS_PULL_REQUEST" == "false" ] && [ "$TRAVIS_BRANCH" == "$branchName" ]
 
 if [ "$MATRIX_JOB_TYPE" == "BUILD" ]; then
-    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel -DenableIncremental=true "
+    gradleBuild="$gradleBuild build -x test -x javadoc -x check -DskipNpmLint=true --parallel \
+    -DenableIncremental=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
     if [ isActiveBranchCommit ]; then
         if [[ "${TRAVIS_COMMIT_MESSAGE}" == *"[skip snapshots]"* ]]; then
@@ -18,7 +19,7 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         else
             echo -e "The build will deploy SNAPSHOT artifacts to Sonatype under Travis job ${TRAVIS_JOB_NUMBER}"
             gradleBuild="$gradleBuild assemble uploadArchives -x test -x javadoc -x check \
-                -DenableIncremental=true -DskipNpmLint=true 
+                -DenableIncremental=true -DskipNpmLint=true -DskipNestedConfigMetadataGen=true  
                 -DpublishSnapshots=true -DsonatypeUsername=${SONATYPE_USER} \
                 -DsonatypePassword=${SONATYPE_PWD}"
         fi
@@ -27,9 +28,14 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         echo -e "Publishing SNAPSHOTs to Sonatype will be skipped. The change-set is either a pull request, or not targeted at branch $branchName.\n"
         echo -e "*******************************************************************************************************"
     fi
+elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
+     gradleBuild="cd api/cas-server-core-api-configuration-model; \
+     $gradleBuild build -x check -x test -x javadoc \
+     -DskipGradleLint=true -DskipSass=true \
+     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
-     -DskipGradleLint=true -DskipSass=true \
+     -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
      gradleBuild="$gradleBuild javadoc -x test -x check -DskipNpmLint=true \
@@ -38,10 +44,10 @@ elif [ "$MATRIX_JOB_TYPE" == "JAVADOC" ]; then
 elif [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
     gradleBuild="$gradleBuild test coveralls -x javadoc -x check  \
     -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNpmLint=true \
-    -DskipNodeModulesCleanUp=true -DskipNpmCache=true "
+    -DskipNodeModulesCleanUp=true -DskipNpmCache=true -DskipNestedConfigMetadataGen=true "
 elif [ "$MATRIX_JOB_TYPE" == "DEPUPDATE" ] && [ isActiveBranchCommit ]; then
     gradleBuild="$gradleBuild dependencyUpdates -Drevision=release -x javadoc -x check  \
-    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true \
+    -DskipNpmLint=true -DskipGradleLint=true -DskipSass=true -DskipNestedConfigMetadataGen=true \
     -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 fi
 
@@ -53,9 +59,9 @@ if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
-     echo -e "***************************************************************************************"
+    echo -e "***************************************************************************************"
     echo $tasks
-     echo -e "***************************************************************************************"
+    echo -e "***************************************************************************************"
 
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
