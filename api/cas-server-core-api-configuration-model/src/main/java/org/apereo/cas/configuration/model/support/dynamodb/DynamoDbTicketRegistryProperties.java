@@ -22,8 +22,33 @@ public class DynamoDbTicketRegistryProperties extends AbstractDynamoDbProperties
     private static final long serialVersionUID = 699497009058965681L;
 
     /**
-     * Crypto settings for the registry.
-     */
+    * The table name used and created by CAS to hold service tickets in DynamoDb.
+    */
+    private String serviceTicketsTableName = "serviceTicketsTable";
+
+    /**
+    * The table name used and created by CAS to hold proxy tickets in DynamoDb.
+    */
+    private String proxyTicketsTableName = "proxyTicketsTable";
+
+    /**
+    * The table name used and created by CAS to hold ticket granting tickets in DynamoDb.
+    */
+    private String ticketGrantingTicketsTableName = "ticketGrantingTicketsTable";
+
+    /**
+    * The table name used and created by CAS to hold proxy ticket granting tickets in DynamoDb.
+    */
+    private String proxyGrantingTicketsTableName = "proxyGrantingTicketsTable";
+
+    /**
+    * The table name used and created by CAS to hold transient session ticket tickets in DynamoDb.
+    */
+    private String transientSessionTicketsTableName = "transientSessionTicketsTable";
+
+    /**
+    * Crypto settings for the registry.
+    */
     @NestedConfigurationProperty
     private EncryptionRandomizedSigningJwtCryptographyProperties crypto = new EncryptionRandomizedSigningJwtCryptographyProperties();
 
