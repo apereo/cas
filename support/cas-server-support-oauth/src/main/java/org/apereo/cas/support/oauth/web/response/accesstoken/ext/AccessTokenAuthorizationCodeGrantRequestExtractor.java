@@ -28,8 +28,6 @@ import java.util.Set;
  */
 @Slf4j
 public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-
-
     /**
      * Service factory instance.
      */
@@ -60,6 +58,7 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         if (token == null) {
             throw new InvalidTicketException(getOAuthParameter(request));
         }
+        
         final Service service = this.webApplicationServiceServiceFactory.createService(redirectUri);
         scopes.addAll(token.getScopes());
 

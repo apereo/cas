@@ -45,8 +45,6 @@ import java.util.Set;
  */
 @Slf4j
 public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileScopeToAttributesFilter {
-
-
     private final Map<String, BaseOidcScopeAttributeReleasePolicy> filters;
     private final Collection<BaseOidcScopeAttributeReleasePolicy> userScopes;
 
@@ -211,8 +209,8 @@ public class OidcProfileScopeToAttributesFilter extends DefaultOAuth20ProfileSco
         }
 
         if (policy.getPolicies().isEmpty()) {
-            LOGGER.warn("No attribute release policy could be determined based on given scopes. "
-                + "No claims/attributes will be released to [{}]", service.getId());
+            LOGGER.debug("No attribute release policy could be determined based on given scopes. "
+                + "No claims/attributes will be released to [{}]", service.getServiceId());
             oidc.setAttributeReleasePolicy(new DenyAllAttributeReleasePolicy());
         } else {
             oidc.setAttributeReleasePolicy(policy);
