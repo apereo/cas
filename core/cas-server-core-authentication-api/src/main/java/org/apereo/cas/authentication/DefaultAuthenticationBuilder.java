@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
@@ -12,8 +13,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
-
-import lombok.Getter;
 
 /**
  * Constructs immutable {@link Authentication} objects using the builder pattern.
@@ -158,7 +157,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
         if (this.attributes.containsKey(name)) {
             final Object value = this.attributes.get(name);
             final Collection valueCol = CollectionUtils.toCollection(value);
-            return valueCol.stream().filter(predicate).count() > 0;
+            return valueCol.stream().anyMatch(predicate);
         }
         return false;
     }
