@@ -28,10 +28,6 @@ There is an implicit security policy that requires at least one handler to succe
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#authentication-policy).
 
-### Authentication Sequence
-
-At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the collection and controlling its execution sequence.
-
 ## Authentication Handlers
 
 There are a variety of authentication handlers and schemes supported by CAS. Use the menu to navigate around the site and choose.
@@ -42,6 +38,25 @@ configured via the static authencation handler, and <strong>MUST</strong> be rem
 prior to production rollouts.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#accept-users-authentication).
+
+### Authentication Sequence
+
+At runtime, CAS maintains a collection of authentication handlers/strategies that typically execute one after another. 
+Each CAS module that presents a form of authentication strategy will simply insert itself into this collection at 
+bootstrap time. At the end of this process, the result of all authentication transactions is collected and optionally processed by 
+an authentication policy where success/failure of certain strategies/sources may be taken into account to fully satisfy the 
+authentication requirements. The collection of authentication handlers tries to preserve order in a rather more deterministic way. 
+The idea is that adopters can assign an `order` value to an authentication handler thereby explicitly positioning it in the 
+collection and controlling its execution sequence.
+
+### Naming Strategy
+
+Each authentication handler in CAS can be named via CAS settings and if left undefined, the short name of 
+the handler component itself is used (i.e. `LdapAuthenticationHandler`). The name itself can be any arbitrary string and typically is used
+to identify and refer to the handler components in areas such as [required authentication for a service](Configuring-Service-Required-AuthN.html), etc.
+In the event that multiple authentication handlers *of the same type* are defined, it is **RECOMMENDED** that each be given a unique name so as to avoid conflicts.
+Authentication failures are typically collected in CAS by the name of each authentication handler. Leaving the name undefined will likely result in subsequent components
+in the authentication chain overriding previous results.
 
 ## Authentication Policy
 

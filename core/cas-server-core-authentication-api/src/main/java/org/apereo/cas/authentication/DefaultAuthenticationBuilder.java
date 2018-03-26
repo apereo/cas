@@ -239,9 +239,12 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
     public AuthenticationBuilder addFailure(final String key, final Throwable value) {
         LOGGER.debug("Recording authentication handler failure under key [{}]", key);
         if (this.successes.containsKey(key)) {
-            LOGGER.debug("Key mapped to authentication handler failure [{}] is already recorded in the list of failed attempts. Overriding...", key);
+            final String newKey = key + System.currentTimeMillis();
+            LOGGER.debug("Key mapped to authentication handler failure [{}] is recorded in the list of failed attempts. Overriding with [{}]", key, newKey);
+            this.failures.put(newKey, value);
+        } else {
+            this.failures.put(key, value);
         }
-        this.failures.put(key, value);
         return this;
     }
 
