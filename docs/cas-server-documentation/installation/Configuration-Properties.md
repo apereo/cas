@@ -3337,8 +3337,9 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
 # cas.ticket.registry.dynamoDb.proxyTicketsTableName=proxyTicketsTable
 # cas.ticket.registry.dynamoDb.ticketGrantingTicketsTableName=ticketGrantingTicketsTable
-# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable```
-# cas.ticket.registry.dynamoDb.transientSessionTicketsTableName=transientSessionTicketsTable```
+# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable
+# cas.ticket.registry.dynamoDb.transientSessionTicketsTableName=transientSessionTicketsTable
+```
 
 ### MongoDb Ticket Registry
 
