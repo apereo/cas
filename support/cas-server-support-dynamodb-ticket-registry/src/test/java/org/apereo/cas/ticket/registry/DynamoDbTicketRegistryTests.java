@@ -21,9 +21,8 @@ import org.apereo.cas.config.DynamoDbTicketRegistryConfiguration;
 import org.apereo.cas.config.DynamoDbTicketRegistryTicketCatalogConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
-import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalParameterizedRunner;
-import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +41,8 @@ import java.util.Collection;
  * @since 5.1.0
  */
 @RunWith(ConditionalParameterizedRunner.class)
-@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
+@Ignore
 @SpringBootTest(classes = {DynamoDbTicketRegistryConfiguration.class,
     DynamoDbTicketRegistryTicketCatalogConfiguration.class,
     CasCoreTicketsConfiguration.class,
@@ -75,7 +75,7 @@ public class DynamoDbTicketRegistryTests extends AbstractTicketRegistryTests {
         System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
         System.setProperty("aws.secretKey", "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");
     }
-    
+
     public DynamoDbTicketRegistryTests(final boolean useEncryption) {
         super(useEncryption);
     }
