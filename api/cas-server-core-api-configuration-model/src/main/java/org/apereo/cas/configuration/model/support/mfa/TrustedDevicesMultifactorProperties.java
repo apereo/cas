@@ -72,6 +72,7 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
     /**
      * Configure how device fingerprints are generated.
      */
+    @NestedConfigurationProperty
     private DeviceFingerprintProperties deviceFingerprint = new DeviceFingerprintProperties();
 
     /**

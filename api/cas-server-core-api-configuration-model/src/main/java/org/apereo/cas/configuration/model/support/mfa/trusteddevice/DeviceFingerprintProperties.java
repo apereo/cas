@@ -46,7 +46,8 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final long serialVersionUID = 785014133279201757L;
 
         public ClientIp() {
-            super(true, 2);
+            setEnabled(true);
+            setOrder(2);
         }
     }
 
@@ -92,7 +93,8 @@ public class DeviceFingerprintProperties implements Serializable {
         private static final int DEFAULT_ORDER = 3;
 
         public UserAgent() {
-            super(false, DEFAULT_ORDER);
+            setEnabled(false);
+            setOrder(DEFAULT_ORDER);
         }
     }
 }

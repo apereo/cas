@@ -1,6 +1,7 @@
 package org.apereo.cas.configuration.model.support.mfa.trusteddevice;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.io.Serializable;
@@ -13,6 +14,7 @@ import java.io.Serializable;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public abstract class BaseDeviceFingerprintComponentProperties implements Serializable {
     private static final long serialVersionUID = 46126170193036440L;
 
@@ -25,9 +27,4 @@ public abstract class BaseDeviceFingerprintComponentProperties implements Serial
      * Indicates the order of components when generating a device fingerprint.
      */
     private int order;
-
-    public BaseDeviceFingerprintComponentProperties(final boolean enabled, final int order) {
-        this.enabled = enabled;
-        this.order = order;
-    }
 }
