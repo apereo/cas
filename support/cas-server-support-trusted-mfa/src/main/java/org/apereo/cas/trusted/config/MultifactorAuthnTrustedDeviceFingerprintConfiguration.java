@@ -51,7 +51,7 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponent deviceFingerprintClientIdComponent() {
+    public DeviceFingerprintComponent deviceFingerprintClientIpComponent() {
         final ClientIp properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
         if (properties.isEnabled()) {
             final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
