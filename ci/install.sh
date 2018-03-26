@@ -23,9 +23,9 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
                 -DsonatypePassword=${SONATYPE_PWD}"
         fi
     else
-        echo -e "*************************************************************"
+        echo -e "*******************************************************************************************************"
         echo -e "Publishing SNAPSHOTs to Sonatype will be skipped. The change-set is either a pull request, or not targeted at branch $branchName.\n"
-        echo -e "*************************************************************"
+        echo -e "*******************************************************************************************************"
     fi
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
      gradleBuild="$gradleBuild checkstyleMain checkstyleTest -x test -x javadoc \
@@ -53,9 +53,9 @@ if [ -z "$gradleBuild" ]; then
     echo "Gradle build will be ignored since no commands are specified to run."
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
-     echo -e "******************************************************************"
+     echo -e "***************************************************************************************"
     echo $tasks
-     echo -e "******************************************************************"
+     echo -e "***************************************************************************************"
 
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
@@ -64,9 +64,9 @@ else
     eval $tasks
     retVal=$?
 
-    echo -e "******************************************************************"
+    echo -e "***************************************************************************************"
     echo -e "Gradle build finished at `date` with exit code $retVal"
-    echo -e "******************************************************************"
+    echo -e "***************************************************************************************"
 
     if [ $retVal == 0 ]; then
         echo "Gradle build finished successfully."
