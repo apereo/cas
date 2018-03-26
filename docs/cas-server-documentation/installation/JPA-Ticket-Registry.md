@@ -23,6 +23,54 @@ Support is enabled by adding the following module into the overlay:
 </dependency>
 ```
 
+Multiple JPA backends are available allowing both JDBC and NoSQL databases.
+
+## JDBC
+
+This is the default behavior and is enabled with the above dependency.
+
+## NoSQL
+
+NoSQL databases are supported via Hibernate OGM. In addition to the two below, any supported Hibernate OGM database provider may be used by including the
+ correct provider dependencies in addition to the following:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-jpa-nosql</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+### Casandra
+
+Support is enabled by adding the following module into the overlay in addition to the above:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-jpa-cassandra</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+### CouchDB
+
+Support is enabled by adding the following module into the overlay in addition to the above:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-jpa-couchdb</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+Multiple JPA backends may be mixed by specifying different providers to Hibernate OGM.
+
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-service-registry).
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jpa-ticket-registry).

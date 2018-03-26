@@ -37,6 +37,7 @@ buildscript {
         maven { url "https://maven.eveoh.nl/content/repositories/releases" }
         maven { url "https://plugins.gradle.org/m2/" }
         maven { url "https://repo.spring.io/plugins-release" }
+        maven { url "https://snapshots.jboss.org/maven2"}
     }
 
     dependencies {
@@ -147,6 +148,9 @@ subprojects {
         maven { url "https://repo.spring.io/plugins-release/" }
         maven { url "https://dl.bintray.com/uniconiam/maven" }
         maven { url "https://jitpack.io" }
+        maven { url "https://raw.github.com/tduehr/hibernate-ogm-cassandra/mvn-repo/" }
+        maven { url "https://raw.github.com/tduehr/hibernate-ogm/mvn-repo/" }
+        maven { url "https://raw.github.com/tduehr/hibernate-ogm-couchdb/mvn-repo/" }
         jcenter()
     }
 
@@ -319,6 +323,7 @@ subprojects {
         api libraries.hibernate
         api libraries.springcloud
         api libraries.springboot
+        api libraries.hibernate_ogm
 
         provided libraries.javax
 
