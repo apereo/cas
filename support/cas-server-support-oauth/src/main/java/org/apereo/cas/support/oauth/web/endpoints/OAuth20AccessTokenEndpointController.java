@@ -98,8 +98,12 @@ public class OAuth20AccessTokenEndpointController extends BaseOAuth20Controller 
     public void handleRequest(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
         response.setContentType(MediaType.TEXT_PLAIN_VALUE);
 
-        if (!verifyAccessTokenRequest(request, response)) {
-            LOGGER.error("Access token request verification failed");
+        try {
+            if (!verifyAccessTokenRequest(request, response)) {
+                throw new IllegalArgumentException("Access token validation failed");
+            }
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage(), e);
             OAuth20Utils.writeTextError(response, OAuth20Constants.INVALID_REQUEST);
             return;
         }
