@@ -5,7 +5,9 @@ import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
 import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -40,8 +42,7 @@ import static org.junit.Assert.*;
 @TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
 @Slf4j
 @RunWith(ConditionalSpringRunner.class)
-//@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
-@Ignore
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests {
     @Autowired
     @Qualifier("serviceRegistry")

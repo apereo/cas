@@ -2,6 +2,7 @@
 
 branchName="master"
 
+prepCommand="echo 'Running command'..."
 gradle="sudo ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand "
@@ -29,8 +30,8 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         echo -e "*******************************************************************************************************"
     fi
 elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
-     gradleBuild="cd api/cas-server-core-api-configuration-model; \
-     $gradleBuild build -x check -x test -x javadoc \
+     prepCommand="$prepCommand; cd api/cas-server-core-api-configuration-model; "
+     gradleBuild="$gradleBuild build -x check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
@@ -60,13 +61,15 @@ if [ -z "$gradleBuild" ]; then
 else
     tasks="$gradle $gradleBuildOptions $gradleBuild"
     echo -e "***************************************************************************************"
+    echo $prepCommand
     echo $tasks
     echo -e "***************************************************************************************"
 
     waitloop="while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &"
     eval $waitloop
     waitRetVal=$?
-    
+
+    eval $prepCommand
     eval $tasks
     retVal=$?
 
