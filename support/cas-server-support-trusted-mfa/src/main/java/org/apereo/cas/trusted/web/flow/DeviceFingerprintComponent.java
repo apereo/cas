@@ -3,7 +3,6 @@ package org.apereo.cas.trusted.web.flow;
 import org.springframework.core.Ordered;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -27,15 +26,13 @@ public interface DeviceFingerprintComponent extends Ordered {
      * @param isNew     a boolean indicating if we are currently recording a new trusted device
      * @return The fingerprint component
      */
-    @Nonnull
-    Optional<String> determineComponent(@Nonnull String principal, @Nonnull RequestContext context, boolean isNew);
+    Optional<String> determineComponent(String principal, RequestContext context, boolean isNew);
 
     /**
      * Return a no-op DeviceFingerprintComponent.
      *
      * @return a no-op DeviceFingerprintComponent.
      */
-    @Nonnull
     static DeviceFingerprintComponent noOp() {
         return (principal, context, isNew) -> Optional.empty();
     }

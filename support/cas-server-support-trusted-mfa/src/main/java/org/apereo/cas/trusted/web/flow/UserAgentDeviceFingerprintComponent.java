@@ -6,7 +6,6 @@ import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.WebUtils;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
 import java.util.Optional;
 
 /**
@@ -20,9 +19,8 @@ import java.util.Optional;
 public class UserAgentDeviceFingerprintComponent implements DeviceFingerprintComponent {
     private int order = LOWEST_PRECEDENCE;
 
-    @Nonnull
     @Override
-    public Optional<String> determineComponent(@Nonnull final String principal, @Nonnull final RequestContext context,
+    public Optional<String> determineComponent(final String principal, final RequestContext context,
                                                final boolean isNew) {
         return Optional.ofNullable(WebUtils.getHttpServletRequestFromExternalWebflowContext(context))
                 .map(HttpRequestUtils::getHttpServletRequestUserAgent);

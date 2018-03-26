@@ -5,7 +5,6 @@ import lombok.NonNull;
 import org.springframework.core.OrderComparator;
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -25,8 +24,7 @@ public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrate
     private final String componentSeparator;
 
     @Override
-    public String determineFingerprint(@Nonnull final String principal, @Nonnull final RequestContext context,
-                                       final boolean isNew) {
+    public String determineFingerprint(final String principal, final RequestContext context, final boolean isNew) {
         return componentStrategies.stream()
                 .sorted(OrderComparator.INSTANCE)
                 .map(component -> component.determineComponent(principal, context, isNew))
