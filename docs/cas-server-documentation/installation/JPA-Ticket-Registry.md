@@ -23,6 +23,27 @@ Support is enabled by adding the following module into the overlay:
 </dependency>
 ```
 
+Multiple JPA backends are available allowing both JDBC and NoSQL databases.
+
+## JDBC
+
+This is the default behavior and is enabled with the above dependency.
+
+## NoSQL - Casandra
+
+Support is enabled by adding the following module into the overlay in addition to the above:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-jpa-cassandra</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+To learn how to configure database drivers, [please see this guide](JDBC-Drivers.html).
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#database-service-registry).
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#jpa-ticket-registry).

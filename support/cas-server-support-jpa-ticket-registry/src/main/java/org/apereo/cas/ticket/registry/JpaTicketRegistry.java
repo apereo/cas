@@ -1,12 +1,12 @@
 package org.apereo.cas.ticket.registry;
 
 import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.support.jpa.JpaStreamer;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.hibernate.LockOptions;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,18 +34,18 @@ import java.util.stream.Stream;
 @Slf4j
 public class JpaTicketRegistry extends AbstractTicketRegistry {
 
-
-    private static final int STREAM_BATCH_SIZE = 100;
-
     private final TicketCatalog ticketCatalog;
     private final LockModeType lockType;
+
+    private JpaStreamer jpaStreamer;
 
     @PersistenceContext(unitName = "ticketEntityManagerFactory")
     private EntityManager entityManager;
 
-    public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog) {
+    public JpaTicketRegistry(final LockModeType lockType, final TicketCatalog ticketCatalog, final JpaStreamer jpaStreamer) {
         this.lockType = lockType;
         this.ticketCatalog = ticketCatalog;
+        this.jpaStreamer = jpaStreamer;
     }
 
     @Override
@@ -114,14 +114,7 @@ public class JpaTicketRegistry extends AbstractTicketRegistry {
     public Stream<Ticket> getTicketsStream() {
         return this.ticketCatalog.findAll().stream()
             .map(t -> this.entityManager.createQuery("select t from " + getTicketEntityName(t) + " t", t.getImplementationClass()))
-            // Unwrap to Hibernate Query, which supports streams
-            .map(q -> {
-                final org.hibernate.query.Query<Ticket> hq = (org.hibernate.query.Query<Ticket>) q.unwrap(org.hibernate.query.Query.class);
-                hq.setFetchSize(STREAM_BATCH_SIZE);
-                hq.setLockOptions(LockOptions.NONE);
-                return hq;
-            })
-            .flatMap(org.hibernate.query.Query::stream);
+            .flatMap(q -> jpaStreamer.getStream(q));
     }
 
     @Override

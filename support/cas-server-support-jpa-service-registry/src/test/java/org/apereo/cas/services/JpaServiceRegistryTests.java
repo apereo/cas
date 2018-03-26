@@ -3,6 +3,8 @@ package org.apereo.cas.services;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
+import org.apereo.cas.config.JpaCoreConfiguration;
+import org.apereo.cas.config.JpaJdbcConfiguration;
 import org.apereo.cas.config.JpaServiceRegistryConfiguration;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
@@ -43,6 +45,8 @@ import static org.junit.Assert.*;
     RefreshAutoConfiguration.class,
     AopAutoConfiguration.class,
     CasCoreUtilConfiguration.class,
+    JpaJdbcConfiguration.class,
+    JpaCoreConfiguration.class,
     JpaServiceRegistryConfiguration.class,
     JpaServiceRegistryTests.TimeAwareServicesManagerConfiguration.class,
     CasCoreServicesConfiguration.class})
@@ -167,7 +171,6 @@ public class JpaServiceRegistryTests {
         final List contacts = new ArrayList<>();
         final DefaultRegisteredServiceContact contact = new DefaultRegisteredServiceContact();
         contact.setDepartment("department");
-        contact.setId(1234);
         contact.setName("ContactName");
         contact.setPhone("123-456-789");
         contacts.add(contact);

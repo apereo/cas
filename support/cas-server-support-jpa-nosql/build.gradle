@@ -1,0 +1,7 @@
+description = "Apereo CAS JPA Support via Hibernate OGM"
+dependencies {
+    api libraries.hibernate_ogm
+    implementation project(":support:cas-server-support-jpa-core")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+}

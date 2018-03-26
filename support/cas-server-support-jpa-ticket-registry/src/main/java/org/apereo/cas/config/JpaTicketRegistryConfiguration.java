@@ -9,6 +9,7 @@ import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.model.support.jpa.ticketregistry.JpaTicketRegistryProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.support.jpa.DefaultJpaStreamerFactory;
 import org.apereo.cas.ticket.AbstractTicket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.registry.JpaTicketRegistry;
@@ -23,6 +24,7 @@ import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -50,29 +52,31 @@ import java.util.stream.Collectors;
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
 @Slf4j
+@AutoConfigureAfter(JpaCoreConfiguration.class)
 public class JpaTicketRegistryConfiguration {
 
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Bean
+    @ConditionalOnMissingBean(name = "ticketPackagesToScan")
     public List<String> ticketPackagesToScan() {
         final Reflections reflections =
             new Reflections(new ConfigurationBuilder()
                 .setUrls(ClasspathHelper.forPackage(CentralAuthenticationService.NAMESPACE))
                 .setScanners(new SubTypesScanner(false)));
-        final Set<Class<?>> subTypes = (Set) reflections.getSubTypesOf(AbstractTicket.class);
-        final List<String> packages = subTypes
+        return ((Set<Class<?>>) (Set) reflections.getSubTypesOf(AbstractTicket.class))
             .stream()
             .map(t -> t.getPackage().getName())
             .collect(Collectors.toList());
-        return packages;
     }
 
     @Lazy
     @Bean
-    public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory() {
-        return JpaBeans.newHibernateEntityManagerFactoryBean(
+    @ConditionalOnMissingBean(name = "ticketEntityManagerFactory")
+    @RefreshScope
+    public LocalContainerEntityManagerFactoryBean ticketEntityManagerFactory(@Qualifier("jpaEntityManagerFactoryBeanFactory") final DefaultJpaEntityManagerFactoryBeanFactory factory) {
+        return JpaBeans.newHibernateEntityManagerFactoryBean(factory,
             new JpaConfigDataHolder(
                 JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc()),
                 "jpaTicketRegistryContext",
@@ -96,14 +100,16 @@ public class JpaTicketRegistryConfiguration {
 
     @Bean
     @RefreshScope
-    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
+    public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog, @Qualifier("jpaStreamerFactory")
+        final DefaultJpaStreamerFactory streamerFactory) {
         final JpaTicketRegistryProperties jpa = casProperties.getTicket().getRegistry().getJpa();
-        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog);
+        final JpaTicketRegistry bean = new JpaTicketRegistry(jpa.getTicketLockType(), ticketCatalog, streamerFactory.getStreamerForType(jpa.getType()));
         bean.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(jpa.getCrypto(), "jpa"));
         return bean;
     }
 
     @Bean
+    @RefreshScope
     public LockingStrategy lockingStrategy() {
         final TicketRegistryProperties registry = casProperties.getTicket().getRegistry();
         final String uniqueId = StringUtils.defaultIfEmpty(casProperties.getHost().getName(), InetAddressUtils.getCasServerHostName());
