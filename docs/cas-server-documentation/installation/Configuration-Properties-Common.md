@@ -580,6 +580,7 @@ The following options related to DynamoDb support in CAS apply equally to a numb
 # ${configurationKey}.dynamoDb.serviceNameIntern=
 
 # ${configurationKey}.dynamoDb.dropTablesOnStartup=false
+# ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
 # ${configurationKey}.dynamoDb.timeOffset=0
 
 # ${configurationKey}.dynamoDb.localInstance=false
