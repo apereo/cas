@@ -4561,6 +4561,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Service-Mana
 # cas.serviceRegistry.dynamoDb.serviceNameIntern=
 
 # cas.serviceRegistry.dynamoDb.dropTablesOnStartup=false
+# cas.serviceRegistry.dynamoDb.preventTableCreationOnStartup=false
 # cas.serviceRegistry.dynamoDb.timeOffset=0
 
 # cas.serviceRegistry.dynamoDb.readCapacity=10
@@ -5022,6 +5023,11 @@ To learn more about this topic, [please review this guide](Memcached-Ticket-Regi
 To learn more about this topic, [please review this guide](DynamoDb-Ticket-Registry.html).
 
 ```properties
+# cas.ticket.registry.dynamoDb.serviceTicketsTableName=serviceTicketsTable
+# cas.ticket.registry.dynamoDb.proxyTicketsTableName=proxyTicketsTable
+# cas.ticket.registry.dynamoDb.ticketGrantingTicketsTableName=ticketGrantingTicketsTable
+# cas.ticket.registry.dynamoDb.proxyGrantingTicketsTableName=proxyGrantingTicketsTable
+
 # Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
 # cas.ticket.registry.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
 
@@ -5035,6 +5041,7 @@ To learn more about this topic, [please review this guide](DynamoDb-Ticket-Regis
 # cas.ticket.registry.dynamoDb.serviceNameIntern=
 
 # cas.ticket.registry.dynamoDb.dropTablesOnStartup=false
+# cas.ticket.registry.dynamoDb.preventTableCreationOnStartup=false
 # cas.ticket.registry.dynamoDb.timeOffset=0
 
 # cas.ticket.registry.dynamoDb.readCapacity=10
