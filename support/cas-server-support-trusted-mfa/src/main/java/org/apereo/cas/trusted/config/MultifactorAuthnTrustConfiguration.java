@@ -68,15 +68,15 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
 
     @Bean
     @RefreshScope
-    public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy,
+    public Action mfaSetTrustAction() {
+        return new MultifactorAuthenticationSetTrustAction(mfaTrustEngine(), deviceFingerprintStrategy,
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
-    public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy,
+    public Action mfaVerifyTrustAction() {
+        return new MultifactorAuthenticationVerifyTrustAction(mfaTrustEngine(), deviceFingerprintStrategy,
                 casProperties.getAuthn().getMfa().getTrusted());
     }
 
@@ -133,9 +133,10 @@ public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResol
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
     @Bean
     @Lazy
-    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
-            @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), storage);
+    public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner() {
+        return new MultifactorAuthenticationTrustStorageCleaner(
+                casProperties.getAuthn().getMfa().getTrusted(),
+                mfaTrustEngine());
     }
 
     @Override
