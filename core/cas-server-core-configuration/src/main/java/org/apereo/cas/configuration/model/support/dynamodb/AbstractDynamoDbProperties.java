@@ -59,6 +59,11 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
     private boolean dropTablesOnStartup;
 
     /**
+     * Flag that indicates whether to prevent CAS from creating tables.
+     */
+    private boolean preventTableCreationOnStartup;
+
+    /**
      * Time offset.
      */
     private int timeOffset;
@@ -155,6 +160,14 @@ public abstract class AbstractDynamoDbProperties implements Serializable {
 
     public void setDropTablesOnStartup(final boolean dropTablesOnStartup) {
         this.dropTablesOnStartup = dropTablesOnStartup;
+    }
+
+    public boolean isPreventTableCreationOnStartup() {
+        return preventTableCreationOnStartup;
+    }
+
+    public void setPreventTableCreationOnStartup(final boolean preventTableCreationOnStartup) {
+        this.preventTableCreationOnStartup = preventTableCreationOnStartup;
     }
 
     public String getEndpoint() {
