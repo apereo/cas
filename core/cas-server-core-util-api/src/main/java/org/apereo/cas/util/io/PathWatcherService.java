@@ -87,7 +87,7 @@ public class PathWatcherService implements Runnable, Closeable {
      */
     private void handleEvent(final WatchKey key) {
         try {
-            key.pollEvents().stream().forEach(event -> {
+            key.pollEvents().forEach(event -> {
                 final String eventName = event.kind().name();
 
                 // The filename is the context of the event.
@@ -119,8 +119,7 @@ public class PathWatcherService implements Runnable, Closeable {
             thread.interrupt();
         }
     }
-
-
+    
     /**
      * Start thread.
      *

@@ -128,7 +128,7 @@ public class PersonDirectoryPrincipalResolver implements PrincipalResolver {
                                                                                    final Map<String, List<Object>> attributes) {
         final String[] principalId = {extractedPrincipalId};
         final Map<String, Object> convertedAttributes = new HashMap<>();
-        attributes.entrySet().stream().forEach(entry -> {
+        attributes.entrySet().forEach(entry -> {
             final String key = entry.getKey();
             LOGGER.debug("Found attribute [{}]", key);
             final List<Object> values = entry.getValue();

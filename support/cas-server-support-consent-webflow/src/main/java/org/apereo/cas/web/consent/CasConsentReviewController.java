@@ -84,7 +84,7 @@ public class CasConsentReviewController {
                 final Collection<ConsentDecision> consentDecisions = this.consentRepository.findConsentDecisions(principal);
                 LOGGER.debug("Resolved consent decisions for principal [{}]: {}", principal, consentDecisions);
                 final Collection<Map<String, Object>> result = new HashSet<>();
-                consentDecisions.stream().forEach(d -> {
+                consentDecisions.forEach(d -> {
                     final Map<String, Object> map = new HashMap<>();
                     map.put("decision", d);
                     map.put("attributes", this.consentEngine.resolveConsentableAttributesFrom(d));

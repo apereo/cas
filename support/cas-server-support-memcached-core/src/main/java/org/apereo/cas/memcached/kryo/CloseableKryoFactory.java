@@ -142,7 +142,7 @@ public class CloseableKryoFactory implements KryoFactory {
         registerNativeJdkComponentsWithKryo(kryo);
         registerCasServicesWithKryo(kryo);
         registerImmutableOrEmptyCollectionsWithKryo(kryo);
-        classesToRegister.stream().forEach(c -> {
+        classesToRegister.forEach(c -> {
             LOGGER.debug("Registering serializable class [{}] with Kryo", c.getName());
             kryo.register(c);
         });
