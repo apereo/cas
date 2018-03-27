@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * Default {@link DeviceFingerprintStrategy} implementation that uses {@link DeviceFingerprintComponent} to generate
+ * Default {@link DeviceFingerprintStrategy} implementation that uses {@link DeviceFingerprintComponentExtractor} to generate
  * a fingerprint.
  *
  * @author Daniel Frett
@@ -19,15 +19,15 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class DefaultDeviceFingerprintStrategy implements DeviceFingerprintStrategy {
     @NonNull
-    private final List<DeviceFingerprintComponent> componentStrategies;
+    private final List<DeviceFingerprintComponentExtractor> componentExtractors;
     @NonNull
     private final String componentSeparator;
 
     @Override
     public String determineFingerprint(final String principal, final RequestContext context, final boolean isNew) {
-        return componentStrategies.stream()
+        return componentExtractors.stream()
                 .sorted(OrderComparator.INSTANCE)
-                .map(component -> component.determineComponent(principal, context, isNew))
+                .map(component -> component.extractComponent(principal, context, isNew))
                 .filter(Optional::isPresent)
                 .map(Optional::get)
                 .collect(Collectors.joining(componentSeparator));

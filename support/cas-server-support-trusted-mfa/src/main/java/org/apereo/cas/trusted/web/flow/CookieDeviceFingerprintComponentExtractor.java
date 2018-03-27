@@ -13,7 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.util.Optional;
 
 /**
- * {@link DeviceFingerprintComponent} that sets/retrieves a cookie from the request to track trusted devices.
+ * {@link DeviceFingerprintComponentExtractor} that sets/retrieves a cookie from the request to track trusted devices.
  *
  * @author Daniel Frett
  * @since 5.3.0
@@ -21,15 +21,15 @@ import java.util.Optional;
 @Getter
 @Setter
 @RequiredArgsConstructor
-public class CookieDeviceFingerprintComponent implements DeviceFingerprintComponent {
+public class CookieDeviceFingerprintComponentExtractor implements DeviceFingerprintComponentExtractor {
     private final CookieRetrievingCookieGenerator cookieGenerator;
     private final RandomStringGenerator randomStringGenerator;
 
     private int order = LOWEST_PRECEDENCE;
 
     @Override
-    public Optional<String> determineComponent(final String principal, final RequestContext context,
-                                               final boolean isNew) {
+    public Optional<String> extractComponent(final String principal, final RequestContext context,
+                                             final boolean isNew) {
         final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
         final String cookieValue = Optional.ofNullable(cookieGenerator.retrieveCookieValue(request))
                 .orElseGet(randomStringGenerator::getNewString);

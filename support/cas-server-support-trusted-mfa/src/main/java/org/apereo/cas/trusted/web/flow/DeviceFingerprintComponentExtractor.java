@@ -6,13 +6,13 @@ import org.springframework.webflow.execution.RequestContext;
 import java.util.Optional;
 
 /**
- * Interface for determining a device fingerprint component for usage within MFA trusted device records.
+ * Interface for extracting a device fingerprint component for usage within MFA trusted device records.
  *
  * @author Daniel Frett
  * @since 5.3.0
  */
 @FunctionalInterface
-public interface DeviceFingerprintComponent extends Ordered {
+public interface DeviceFingerprintComponentExtractor extends Ordered {
     @Override
     default int getOrder() {
         return LOWEST_PRECEDENCE;
@@ -26,14 +26,14 @@ public interface DeviceFingerprintComponent extends Ordered {
      * @param isNew     a boolean indicating if we are currently recording a new trusted device
      * @return The fingerprint component
      */
-    Optional<String> determineComponent(String principal, RequestContext context, boolean isNew);
+    Optional<String> extractComponent(String principal, RequestContext context, boolean isNew);
 
     /**
      * Return a no-op DeviceFingerprintComponent.
      *
      * @return a no-op DeviceFingerprintComponent.
      */
-    static DeviceFingerprintComponent noOp() {
+    static DeviceFingerprintComponentExtractor noOp() {
         return (principal, context, isNew) -> Optional.empty();
     }
 }

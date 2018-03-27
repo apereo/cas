@@ -15,12 +15,12 @@ import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFinger
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties.Cookie;
 import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties.UserAgent;
 import org.apereo.cas.trusted.util.cipher.CookieDeviceFingerprintComponentCipherExecutor;
-import org.apereo.cas.trusted.web.flow.ClientIpDeviceFingerprintComponent;
-import org.apereo.cas.trusted.web.flow.CookieDeviceFingerprintComponent;
+import org.apereo.cas.trusted.web.flow.ClientIpDeviceFingerprintComponentExtractor;
+import org.apereo.cas.trusted.web.flow.CookieDeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.DefaultDeviceFingerprintStrategy;
-import org.apereo.cas.trusted.web.flow.DeviceFingerprintComponent;
+import org.apereo.cas.trusted.web.flow.DeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
-import org.apereo.cas.trusted.web.flow.UserAgentDeviceFingerprintComponent;
+import org.apereo.cas.trusted.web.flow.UserAgentDeviceFingerprintComponentExtractor;
 import org.apereo.cas.trusted.web.support.TrustedDeviceCookieRetrievingCookieGenerator;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
@@ -51,55 +51,58 @@ public class MultifactorAuthnTrustedDeviceFingerprintConfiguration {
 
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponent deviceFingerprintClientIpComponent() {
+    public DeviceFingerprintComponentExtractor deviceFingerprintClientIpComponent() {
         final ClientIp properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getClientIp();
         if (properties.isEnabled()) {
-            final ClientIpDeviceFingerprintComponent component = new ClientIpDeviceFingerprintComponent();
+            final ClientIpDeviceFingerprintComponentExtractor component =
+                    new ClientIpDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
         }
 
         LOGGER.info("The client ip is not being included when creating MFA Trusted Device Fingerprints");
-        return DeviceFingerprintComponent.noOp();
+        return DeviceFingerprintComponentExtractor.noOp();
     }
 
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponent deviceFingerprintCookieComponent() {
+    public DeviceFingerprintComponentExtractor deviceFingerprintCookieComponent() {
         final Cookie properties = casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getCookie();
         if (properties.isEnabled()) {
-            final CookieDeviceFingerprintComponent component = new CookieDeviceFingerprintComponent(
+            final CookieDeviceFingerprintComponentExtractor component = new CookieDeviceFingerprintComponentExtractor(
                     deviceFingerprintCookieGenerator(), deviceFingerprintCookieRandomStringGenerator());
             component.setOrder(properties.getOrder());
             return component;
         }
 
-        LOGGER.info("A persistent cookie is not being generated/included when creating MFA Trusted Device Fingerprints");
-        return DeviceFingerprintComponent.noOp();
+        LOGGER.info("A persistent cookie is not being generated when creating MFA Trusted Device Fingerprints");
+        return DeviceFingerprintComponentExtractor.noOp();
     }
 
     @Bean
     @RefreshScope
-    public DeviceFingerprintComponent deviceFingerprintUserAgentComponent() {
+    public DeviceFingerprintComponentExtractor deviceFingerprintUserAgentComponent() {
         final UserAgent properties =
                 casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint().getUserAgent();
         if (properties.isEnabled()) {
-            final UserAgentDeviceFingerprintComponent component = new UserAgentDeviceFingerprintComponent();
+            final UserAgentDeviceFingerprintComponentExtractor component =
+                    new UserAgentDeviceFingerprintComponentExtractor();
             component.setOrder(properties.getOrder());
             return component;
         }
 
         LOGGER.info("User-Agent is not being included when creating MFA Trusted Device Fingerprints");
-        return DeviceFingerprintComponent.noOp();
+        return DeviceFingerprintComponentExtractor.noOp();
     }
 
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_STRATEGY)
     @Bean(BEAN_DEVICE_FINGERPRINT_STRATEGY)
     @RefreshScope
-    public DeviceFingerprintStrategy deviceFingerprintStrategy(final List<DeviceFingerprintComponent> strategies) {
+    public DeviceFingerprintStrategy deviceFingerprintStrategy(
+            final List<DeviceFingerprintComponentExtractor> extractors) {
         final DeviceFingerprintProperties properties =
                 casProperties.getAuthn().getMfa().getTrusted().getDeviceFingerprint();
-        return new DefaultDeviceFingerprintStrategy(strategies, properties.getComponentSeparator());
+        return new DefaultDeviceFingerprintStrategy(extractors, properties.getComponentSeparator());
     }
 
     @ConditionalOnMissingBean(name = BEAN_DEVICE_FINGERPRINT_COOKIE_GENERATOR)
