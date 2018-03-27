@@ -2,8 +2,6 @@ package org.apereo.cas.trusted.web.flow;
 
 import org.springframework.webflow.execution.RequestContext;
 
-import javax.annotation.Nonnull;
-
 /**
  * Interface for determining a device fingerprint for usage within MFA trusted device records.
  *
@@ -17,7 +15,8 @@ public interface DeviceFingerprintStrategy {
      *
      * @param principal The principal uid we are generating a fingerprint for.
      * @param context   the request to generate the device fingerprint from.
+     * @param isNew     a boolean indicating if we are currently recording a new trusted device
      * @return The generated fingerprint
      */
-    String determineFingerprint(@Nonnull String principal, @Nonnull RequestContext context);
+    String determineFingerprint(String principal, RequestContext context, boolean isNew);
 }
