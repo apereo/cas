@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
-    while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
+    # while sleep 9m; do echo -e '\n=====[ Gradle build is still running ]====='; done &
 
     echo "Running Couchbase docker image..."
     docker run -d --name couchbase -p 8091-8094:8091-8094 -p 11210:11210 couchbase/server:5.1.0
@@ -14,8 +14,9 @@ if [ "$MATRIX_JOB_TYPE" == "TEST" ]; then
         echo "Couchbase docker image failed to start."
         exit $retVal
     fi
-
+    
     echo "Waiting for Couchbase server to come online..."
+    sleep 30
     until $(curl --output /dev/null --silent --head --fail http://localhost:8091); do
         printf '.'
         sleep 1
