@@ -44,7 +44,7 @@ public class MultifactorAuthenticationSetTrustAction extends AbstractAction {
             LOGGER.debug("Attempt to store trusted authentication record for [{}]", principal);
             final MultifactorAuthenticationTrustRecord record = MultifactorAuthenticationTrustRecord.newInstance(principal,
                     MultifactorAuthenticationTrustUtils.generateGeography(),
-                    deviceFingerprintStrategy.determineFingerprint(principal, requestContext));
+                    deviceFingerprintStrategy.determineFingerprint(principal, requestContext, true));
 
             if (requestContext.getRequestParameters().contains(PARAM_NAME_DEVICE_NAME)) {
                 final String deviceName = requestContext.getRequestParameters().get(PARAM_NAME_DEVICE_NAME);
