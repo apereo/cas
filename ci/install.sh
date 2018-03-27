@@ -2,7 +2,7 @@
 
 branchName="master"
 
-prepCommand="echo 'Running command'..."
+prepCommand="echo 'Running command...'; "
 gradle="sudo ./gradlew $@"
 gradleBuild=""
 gradleBuildOptions="--stacktrace --build-cache --configure-on-demand "
@@ -30,8 +30,7 @@ elif [ "$MATRIX_JOB_TYPE" == "SNAPSHOT" ]; then
         echo -e "*******************************************************************************************************"
     fi
 elif [ "$MATRIX_JOB_TYPE" == "CFGMETADATA" ]; then
-     prepCommand="$prepCommand; cd api/cas-server-core-api-configuration-model; "
-     gradleBuild="$gradleBuild build -x check -x test -x javadoc \
+     gradleBuild="$gradleBuild :api:cas-server-core-api-configuration-model:build -x check -x test -x javadoc \
      -DskipGradleLint=true -DskipSass=true \
      -DskipNodeModulesCleanUp=true -DskipNpmCache=true --parallel "
 elif [ "$MATRIX_JOB_TYPE" == "STYLE" ]; then
