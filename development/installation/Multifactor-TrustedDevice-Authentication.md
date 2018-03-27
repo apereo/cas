@@ -46,6 +46,15 @@ If an MFA request is bypassed due to a trusted authentication decision, applicat
 the validation payload that indicates this behavior. Applications must further account for the scenario where they ask for an MFA
 mode and yet don't receive confirmation of it in the response given the authentication session was trusted and MFA bypassed.
 
+## Device Fingerprint
+
+In order to distinguish trusted devices from each other we need to calculate a device fingerprint that uniquely
+identifies individual devices. Calculation of this device fingerprint can utilize a combination of multiple components
+from the request. The default behavior is to use a combination of a randomly generated cookie and the client ip to
+calculate the device fingerprint.
+
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#trusted-device-fingerprint).
+
 ## Storage
 
 User decisions must be remembered and processed later on subsequent requests.  A background *cleaner* process is also automatically scheduled to scan the chosen repository/database/registry periodically and remove expired records based on configured threshold parameters.
