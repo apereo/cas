@@ -68,3 +68,10 @@ CAS development is powered by the following tools, projects and services.
     <td><a href="http://projects.spring.io/spring-boot/"><img width="180" height="50" src="https://user-images.githubusercontent.com/1205228/32322526-0b58ac44-bfda-11e7-822e-ad763eb80faf.png"></a></td>
   </tr>
 </table>
+<table width="100%" style="overflow:hidden; white-space: nowrap" border="0">
+  <tr>
+    <td><a href="https://www.yourkit.com/.net/profiler/"><img width="180" height="50" src="https://www.yourkit.com/images/yklogo.png"></a>
+      <div><p>YourKit supports open source projects with its full-featured Java Profiler. <br>YourKit, LLC is the creator of <a href="https://www.yourkit.com/java/profiler/">YourKit Java Profiler</a> and <a href="https://www.yourkit.com/.net/profiler/">YourKit .NET Profiler</a>,<br> innovative and intelligent tools for profiling Java and .NET applications.</div>
+    </td>
+  </tr>
+</table>
