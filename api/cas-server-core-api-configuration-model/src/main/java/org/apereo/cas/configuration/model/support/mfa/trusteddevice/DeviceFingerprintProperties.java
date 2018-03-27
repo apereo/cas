@@ -80,7 +80,6 @@ public class DeviceFingerprintProperties implements Serializable {
         public Cookie() {
             setName("MFATRUSTED");
             setMaxAge((int) Duration.ofDays(DEFAULT_MAX_AGE_DAYS).getSeconds());
-            crypto.setEnabled(false);
         }
     }
 
