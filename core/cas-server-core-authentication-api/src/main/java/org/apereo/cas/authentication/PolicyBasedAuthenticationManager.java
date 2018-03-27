@@ -289,7 +289,7 @@ public class PolicyBasedAuthenticationManager implements AuthenticationManager {
         }
 
         final AuthenticationBuilder builder = new DefaultAuthenticationBuilder(NullPrincipal.getInstance());
-        credentials.stream().forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
+        credentials.forEach(cred -> builder.addCredential(new BasicCredentialMetaData(cred)));
 
         @NonNull
         final Set<AuthenticationHandler> handlerSet = getAuthenticationHandlersForThisTransaction(transaction);

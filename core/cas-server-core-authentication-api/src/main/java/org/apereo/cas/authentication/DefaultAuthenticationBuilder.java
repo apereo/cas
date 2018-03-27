@@ -189,7 +189,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addSuccesses(final Map<String, AuthenticationHandlerExecutionResult> successes) {
-        successes.entrySet().stream().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
+        successes.entrySet().forEach(entry -> addSuccess(entry.getKey(), entry.getValue()));
         return this;
     }
 
@@ -224,7 +224,7 @@ public class DefaultAuthenticationBuilder implements AuthenticationBuilder {
 
     @Override
     public AuthenticationBuilder addFailures(final Map<String, Throwable> failures) {
-        failures.entrySet().stream().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
+        failures.entrySet().forEach(entry -> addFailure(entry.getKey(), entry.getValue()));
         return this;
     }
 

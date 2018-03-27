@@ -164,7 +164,7 @@ public abstract class BaseSamlRegisteredServiceMetadataResolver implements SamlR
         if (StringUtils.isNotBlank(service.getMetadataCriteriaRoles())) {
             final List<QName> roles = new ArrayList<>();
             final Set<String> rolesSet = org.springframework.util.StringUtils.commaDelimitedListToSet(service.getMetadataCriteriaRoles());
-            rolesSet.stream().forEach(s -> {
+            rolesSet.forEach(s -> {
                 if (s.equalsIgnoreCase(SPSSODescriptor.DEFAULT_ELEMENT_NAME.getLocalPart())) {
                     LOGGER.debug("Added entity role filter [{}]", SPSSODescriptor.DEFAULT_ELEMENT_NAME);
                     roles.add(SPSSODescriptor.DEFAULT_ELEMENT_NAME);
