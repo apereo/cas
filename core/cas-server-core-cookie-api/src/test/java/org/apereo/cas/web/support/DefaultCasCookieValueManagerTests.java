@@ -1,8 +1,8 @@
 package org.apereo.cas.web.support;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.matches;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 import org.apereo.cas.CipherExecutor;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -18,6 +18,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.regex.Pattern;
 
+/**
+ * @author Daniel Frett
+ * @since 5.3.0
+ */
 public class DefaultCasCookieValueManagerTests {
     private static final String CLIENT_IP = "127.0.0.1";
     private static final String USER_AGENT = "Test-Client/1.0.0";
