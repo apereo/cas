@@ -2,6 +2,7 @@ description = "Apereo CAS Trusted MFA Browser/Device Support"
 dependencies {
     api project(":api:cas-server-core-api-audit")
 
+    implementation project(":core:cas-server-core-cookie-api")
     implementation project(":core:cas-server-core-web-api")
     implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-util")
@@ -9,6 +10,6 @@ dependencies {
     implementation project(":core:cas-server-core-webflow-api")
     implementation project(":core:cas-server-core-authentication-api")
     implementation project(":core:cas-server-core-configuration-api")
-    
+
     implementation libraries.caffein
 }
