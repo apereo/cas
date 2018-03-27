@@ -119,7 +119,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
                                                    final AuthenticationBuilder authenticationBuilder) {
 
         LOGGER.debug("Collecting authentication history based on [{}] authentication events", authentications.size());
-        authentications.stream().forEach(authn -> {
+        authentications.forEach(authn -> {
             final Principal authenticatedPrincipal = authn.getPrincipal();
             LOGGER.debug("Evaluating authentication principal [{}] for inclusion in result", authenticatedPrincipal);
 
@@ -127,7 +127,7 @@ public class DefaultAuthenticationResultBuilder implements AuthenticationResultB
             LOGGER.debug("Collected principal attributes [{}] for inclusion in this result for principal [{}]",
                 principalAttributes, authenticatedPrincipal.getId());
 
-            authn.getAttributes().keySet().stream().forEach(attrName -> {
+            authn.getAttributes().keySet().forEach(attrName -> {
                 if (authenticationAttributes.containsKey(attrName)) {
                     LOGGER.debug("Collecting multi-valued authentication attribute [{}]", attrName);
                     final Object oldValue = authenticationAttributes.remove(attrName);
