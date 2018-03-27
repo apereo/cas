@@ -69,4 +69,4 @@ ENV JAVA_HOME /opt/jre-home
 ENV PATH $PATH:$JAVA_HOME/bin:.
 RUN ./mvnw clean package -T 10 -Dcas.version=$CASVERSION
 
-CMD ["cas-overlay/bin/run-cas.sh"]
+CMD ["bin/run-cas.sh"]
