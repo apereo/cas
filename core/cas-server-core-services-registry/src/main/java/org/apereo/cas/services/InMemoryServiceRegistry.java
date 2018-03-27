@@ -43,7 +43,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     @Override
     public List<RegisteredService> load() {
-        this.registeredServices.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        this.registeredServices.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return this.registeredServices;
     }
 
