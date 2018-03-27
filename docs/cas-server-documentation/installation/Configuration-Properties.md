@@ -2053,17 +2053,14 @@ Database settings for this feature are available [here](Configuration-Properties
 # cas.authn.mfa.trusted.deviceFingerprint.componentSeparator=@
 # cas.authn.mfa.trusted.deviceFingerprint.cookie.enabled=true
 # cas.authn.mfa.trusted.deviceFingerprint.cookie.order=1
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.path=
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.maxAge=2592000
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.domain=
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.name=MFATRUSTED
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.secure=true
-# cas.authn.mfa.trusted.deviceFingerprint.cookie.httpOnly=true
 # cas.authn.mfa.trusted.deviceFingerprint.clientIp.enabled=true
 # cas.authn.mfa.trusted.deviceFingerprint.clientIp.order=2
 # cas.authn.mfa.trusted.deviceFingerprint.userAgent.enabled=false
 # cas.authn.mfa.trusted.deviceFingerprint.userAgent.order=3
 ```
+
+The device fingerprint cookie component can be configured with the common cookie properties found [here](Configuration-Properties-Common.html#cookie-properties) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
+The default cookie name is set to `MFATRUSTED` and the default maxAge is set to `2592000`.
 
 The device fingerprint cookie component supports signing & encryption. The signing and encryption keys [are both JWKs](Configuration-Properties-Common.html#signing--encryption) of size `512` and `256`.
 The encryption algorithm is set to `AES_128_CBC_HMAC_SHA_256`. Signing & encryption settings for this feature are available [here](Configuration-Properties-Common.html#signing--encryption) under the configuration key `cas.authn.mfa.trusted.deviceFingerprint.cookie`.
