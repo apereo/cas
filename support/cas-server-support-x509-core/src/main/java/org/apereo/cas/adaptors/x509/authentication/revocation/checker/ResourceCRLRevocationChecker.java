@@ -1,12 +1,12 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.CRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.ResourceCRLFetcher;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.X509CredentialsAuthenticationHandler;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.RevocationPolicy;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 
 import javax.annotation.PostConstruct;
@@ -32,11 +32,12 @@ import java.util.concurrent.TimeUnit;
  * @author Marvin S. Addison
  * @since 3.4.7
  */
+@Slf4j
 public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
 
     private static final int DEFAULT_REFRESH_INTERVAL = 3600;
-    private static final Logger LOGGER = LoggerFactory.getLogger(ResourceCRLRevocationChecker.class);
-    
+
+
     /**
      * Executor responsible for refreshing CRL data.
      */
@@ -68,21 +69,21 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
         this.resources = resources;
     }
 
-    public ResourceCRLRevocationChecker(final Resource crl, 
+    public ResourceCRLRevocationChecker(final Resource crl,
                                         final RevocationPolicy<Void> unavailableCRLPolicy,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this(false, unavailableCRLPolicy, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
-                new ResourceCRLFetcher(), CollectionUtils.wrap(crl));
+            new ResourceCRLFetcher(), CollectionUtils.wrap(crl));
 
     }
 
     public ResourceCRLRevocationChecker(final Resource[] crl,
                                         final RevocationPolicy<X509CRL> expiredCRLPolicy) {
         this(false, null, expiredCRLPolicy, DEFAULT_REFRESH_INTERVAL,
-                new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
+            new ResourceCRLFetcher(), CollectionUtils.wrapList(crl));
 
     }
-    
+
     /**
      * Creates a new instance using the specified resource for CRL data.
      *
@@ -105,7 +106,7 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
     public ResourceCRLRevocationChecker(final Resource... crls) {
         this(new ResourceCRLFetcher(), CollectionUtils.wrapList(crls), DEFAULT_REFRESH_INTERVAL);
     }
-    
+
     /**
      * Instantiates a new Resource cRL revocation checker.
      *
@@ -122,44 +123,40 @@ public class ResourceCRLRevocationChecker extends AbstractCRLRevocationChecker {
      * Initializes the process that periodically fetches CRL data.
      */
     @PostConstruct
+    @SneakyThrows
+    @SuppressWarnings("FutureReturnValueIgnored")
     public void init() {
         if (!validateConfiguration()) {
             return;
         }
-
-        try {
-            // Fetch CRL data synchronously and throw exception to abort if any fail
-            final Collection<X509CRL> results = this.fetcher.fetch(getResources());
-            ResourceCRLRevocationChecker.this.addCrls(results);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        
+        // Fetch CRL data synchronously and throw exception to abort if any fail
+        final Collection<X509CRL> results = this.fetcher.fetch(getResources());
+        ResourceCRLRevocationChecker.this.addCrls(results);
 
         // Set up the scheduler to fetch periodically to implement refresh
         final Runnable scheduledFetcher = () -> {
             try {
                 final Collection<Resource> resources = getResources();
-                final Collection<X509CRL> results = getFetcher().fetch(resources);
-                ResourceCRLRevocationChecker.this.addCrls(results);
+                final Collection<X509CRL> fetchedResults = getFetcher().fetch(resources);
+                ResourceCRLRevocationChecker.this.addCrls(fetchedResults);
             } catch (final Exception e) {
                 LOGGER.debug(e.getMessage(), e);
             }
         };
-        try {
-            this.scheduler.scheduleAtFixedRate(
-                    scheduledFetcher,
-                    this.refreshInterval,
-                    this.refreshInterval,
-                    TimeUnit.SECONDS);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+
+        this.scheduler.scheduleAtFixedRate(
+            scheduledFetcher,
+            this.refreshInterval,
+            this.refreshInterval,
+            TimeUnit.SECONDS);
+
     }
 
     private boolean validateConfiguration() {
         if (this.resources == null || this.resources.isEmpty()) {
             LOGGER.debug("[{}] is not configured with resources. Skipping configuration...",
-                    this.getClass().getSimpleName());
+                this.getClass().getSimpleName());
             return false;
         }
         if (this.fetcher == null) {

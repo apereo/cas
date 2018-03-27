@@ -1,18 +1,22 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.DynamoDbServiceRegistryConfiguration;
+import org.apereo.cas.util.junit.ConditionalIgnore;
+import org.apereo.cas.util.junit.ConditionalSpringRunner;
+import org.apereo.cas.util.junit.RunningContinuousIntegrationCondition;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
-import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -30,25 +34,29 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@IfProfileValue(name = "dynamoDbEnabled", value = "true")
-@RunWith(SpringRunner.class)
 @SpringBootTest(classes = {DynamoDbServiceRegistryConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        RefreshAutoConfiguration.class})
-@TestPropertySource(properties = {"cas.serviceRegistry.dynamoDb.endpoint=http://localhost:8000",
-        "cas.serviceRegistry.dynamoDb.credentialAccessKey=AKIALUS4ZCYABQ",
-        "cas.serviceRegistry.dynamoDb.dropTablesOnStartup=true",
-        "cas.serviceRegistry.dynamoDb.credentialSecretKey=obZx92Un8zu+D1zTkJOFfZ"})
+    CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    RefreshAutoConfiguration.class})
+@TestPropertySource(locations = "classpath:/dynamodb-serviceregistry.properties")
+@Slf4j
+@RunWith(ConditionalSpringRunner.class)
+@ConditionalIgnore(condition = RunningContinuousIntegrationCondition.class)
 public class DynamoDbServiceRegistryTests {
     @Autowired
-    @Qualifier("serviceRegistryDao")
-    private ServiceRegistryDao serviceRegistryDao;
+    @Qualifier("serviceRegistry")
+    private ServiceRegistry serviceRegistry;
+
+    static {
+        System.setProperty("aws.accessKeyId", "AKIAIPPIGGUNIO74C63Z");
+        System.setProperty("aws.secretKey", "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");
+    }
 
     @Before
     public void setUp() {
-        final List<RegisteredService> services = this.serviceRegistryDao.load();
-        services.forEach(service -> this.serviceRegistryDao.delete(service));
+        final List<RegisteredService> services = this.serviceRegistry.load();
+        services.forEach(service -> this.serviceRegistry.delete(service));
     }
 
     @Test
@@ -56,13 +64,13 @@ public class DynamoDbServiceRegistryTests {
         final List<RegisteredService> list = new ArrayList<>();
         IntStream.range(0, 10).forEach(i -> {
             list.add(buildService(i));
-            this.serviceRegistryDao.save(list.get(i));
+            this.serviceRegistry.save(list.get(i));
         });
-        final List<RegisteredService> results = this.serviceRegistryDao.load();
+        final List<RegisteredService> results = this.serviceRegistry.load();
         assertEquals(results.size(), list.size());
         IntStream.range(0, 10).forEach(i -> list.contains(results.get(i)));
-        IntStream.range(0, 10).forEach(i -> this.serviceRegistryDao.delete(results.get(i)));
-        assertTrue(this.serviceRegistryDao.load().isEmpty());
+        IntStream.range(0, 10).forEach(i -> this.serviceRegistry.delete(results.get(i)));
+        assertTrue(this.serviceRegistry.load().isEmpty());
     }
 
     private static RegisteredService buildService(final int i) {
@@ -78,5 +86,4 @@ public class DynamoDbServiceRegistryTests {
         rs.setProperties(propertyMap);
         return rs;
     }
-
 }

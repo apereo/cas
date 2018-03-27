@@ -13,7 +13,7 @@ bootRun {
 }
 
 war {
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease
 }
 
 springBoot  {
@@ -22,11 +22,11 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.CasSpringBootAdminServerWebApplication"
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 }
 
 dependencies {
     providedRuntime libraries.springboottomcat
     implementation libraries.springbootadminserver
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
 }

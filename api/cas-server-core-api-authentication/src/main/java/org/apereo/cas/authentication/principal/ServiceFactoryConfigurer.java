@@ -10,8 +10,7 @@ import java.util.Collection;
  */
 @FunctionalInterface
 public interface ServiceFactoryConfigurer {
-
-
+    
     /**
      * Build service factories collection.
      *

@@ -1,13 +1,11 @@
 package org.apereo.cas.support.realm;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.ext.WSPasswordCallback;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.security.auth.callback.Callback;
 import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.UnsupportedCallbackException;
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -16,16 +14,14 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class RealmPasswordVerificationCallbackHandler implements CallbackHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RealmPasswordVerificationCallbackHandler.class);
+
     private final String psw;
 
-    public RealmPasswordVerificationCallbackHandler(final String psw) {
-        this.psw = psw;
-    }
-
     @Override
-    public void handle(final Callback[] callbacks) throws IOException, UnsupportedCallbackException {
+    public void handle(final Callback[] callbacks) {
         Arrays.stream(callbacks)
                 .filter(WSPasswordCallback.class::isInstance)
                 .map(WSPasswordCallback.class::cast)

@@ -1,6 +1,7 @@
 package org.apereo.cas.support.pac4j.authentication.handler.support;
 
-import org.apereo.cas.authentication.HandlerResult;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.ClientCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -16,6 +17,9 @@ import org.pac4j.oauth.credentials.OAuth20Credentials;
 import org.pac4j.oauth.profile.facebook.FacebookProfile;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.mock.web.MockServletContext;
 import org.springframework.webflow.context.ExternalContextHolder;
 import org.springframework.webflow.context.servlet.ServletExternalContext;
 
@@ -30,9 +34,9 @@ import static org.mockito.Mockito.*;
  *
  * @author Jerome Leleu
  * @since 4.1.0
- *
  */
 @SpringBootTest(classes = {RefreshAutoConfiguration.class})
+@Slf4j
 public class ClientAuthenticationHandlerTests {
 
     private static final String CALLBACK_URL = "http://localhost:8080/callback";
@@ -52,9 +56,11 @@ public class ClientAuthenticationHandlerTests {
         this.handler = new ClientAuthenticationHandler("", mock(ServicesManager.class), null, clients);
         this.handler.setTypedIdUsed(true);
 
-        final Credentials credentials = new OAuth20Credentials(null, fbClient.getName());
-        this.clientCredential = new ClientCredential(credentials);
-        ExternalContextHolder.setExternalContext(mock(ServletExternalContext.class));
+        final Credentials credentials = new OAuth20Credentials(null);
+        this.clientCredential = new ClientCredential(credentials, fbClient.getName());
+        final ServletExternalContext mock = new ServletExternalContext(new MockServletContext(),
+            new MockHttpServletRequest(), new MockHttpServletResponse());
+        ExternalContextHolder.setExternalContext(mock);
     }
 
     @Test
@@ -62,7 +68,7 @@ public class ClientAuthenticationHandlerTests {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final HandlerResult result = this.handler.authenticate(this.clientCredential);
+        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(FacebookProfile.class.getName() + '#' + ID, principal.getId());
     }
@@ -74,7 +80,7 @@ public class ClientAuthenticationHandlerTests {
         final FacebookProfile facebookProfile = new FacebookProfile();
         facebookProfile.setId(ID);
         this.fbClient.setProfileCreator((oAuth20Credentials, webContext) -> facebookProfile);
-        final HandlerResult result = this.handler.authenticate(this.clientCredential);
+        final AuthenticationHandlerExecutionResult result = this.handler.authenticate(this.clientCredential);
         final Principal principal = result.getPrincipal();
         assertEquals(ID, principal.getId());
     }

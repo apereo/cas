@@ -1,6 +1,7 @@
 package org.apereo.cas.gua.impl;
 
 import com.google.common.io.ByteSource;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.gua.GraphicalUserAuthenticationProperties;
 
@@ -14,8 +15,6 @@ import org.ldaptive.Response;
 import org.ldaptive.ReturnAttributes;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 /**
@@ -24,9 +23,10 @@ import org.springframework.beans.factory.annotation.Autowired;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalAuthenticationRepository {
     private static final long serialVersionUID = 421732017215881244L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUserGraphicalAuthenticationRepository.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -51,7 +51,7 @@ public class LdapUserGraphicalAuthenticationRepository implements UserGraphicalA
 
     private Response<SearchResult> searchForId(final String id) throws LdapException {
         final GraphicalUserAuthenticationProperties gua = casProperties.getAuthn().getGua();
-        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getUserFilter(),
+        final SearchFilter filter = LdapUtils.newLdaptiveSearchFilter(gua.getLdap().getSearchFilter(),
                 LdapUtils.LDAP_SEARCH_FILTER_DEFAULT_PARAM_NAME,
                 CollectionUtils.wrap(id));
         return LdapUtils.executeSearchOperation(

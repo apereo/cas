@@ -1,13 +1,12 @@
 package org.apereo.cas.pm.web.flow.actions;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.pm.PasswordManagementProperties;
 import org.apereo.cas.pm.PasswordManagementService;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.webflow.action.AbstractAction;
 import org.springframework.webflow.execution.Event;
@@ -23,11 +22,12 @@ import static org.apereo.cas.pm.web.flow.PasswordManagementWebflowConfigurer.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SendPasswordResetInstructionsAction extends AbstractAction {
     /** Param name for the token. */
-    public static final String PARAMETER_NAME_TOKEN = "t";
+    public static final String PARAMETER_NAME_TOKEN = "pswdrst";
     
-    private static final Logger LOGGER = LoggerFactory.getLogger(SendPasswordResetInstructionsAction.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -43,13 +43,13 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
     }
 
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         if (!communicationsManager.isMailSenderDefined()) {
             LOGGER.warn("CAS is unable to send password-reset emails given no settings are defined to account for email servers");
             return error();
         }
         final PasswordManagementProperties pm = casProperties.getAuthn().getPm();
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
         final String username = request.getParameter("username");
         if (StringUtils.isBlank(username)) {
             LOGGER.warn("No username is provided");
@@ -62,9 +62,7 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
             return error();
         }
         
-        final String token = passwordManagementService.createToken(username);
-        final String url = casProperties.getServer().getPrefix()
-                .concat('/' + FLOW_ID_PASSWORD_RESET + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
+        final String url = buildPasswordResetUrl(username, passwordManagementService, casProperties);
         
         LOGGER.debug("Generated password reset URL [{}]; Link is only active for the next [{}] minute(s)", url,
                 pm.getReset().getExpirationMinutes());
@@ -73,6 +71,21 @@ public class SendPasswordResetInstructionsAction extends AbstractAction {
         }
         LOGGER.error("Failed to notify account [{}]", to);
         return error();
+    }
+
+    /**
+     * Utility method to generate a password reset URL.
+     *
+     * @param username username
+     * @param passwordManagementService passwordManagementService
+     * @param casProperties casProperties
+     * @return URL a user can use to start the password reset process
+     */
+    public static String buildPasswordResetUrl(final String username,
+            final PasswordManagementService passwordManagementService, final CasConfigurationProperties casProperties) {
+        final String token = passwordManagementService.createToken(username);
+        return casProperties.getServer().getPrefix()
+                .concat('/' + FLOW_ID_LOGIN + '?' + PARAMETER_NAME_TOKEN + '=').concat(token);
     }
 
     /**

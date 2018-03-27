@@ -34,14 +34,28 @@ function showGeoPosition(position) {
         + position.coords.longitude + ',' + position.coords.accuracy + ',' + position.timestamp);
 }
 
+
 function preserveAnchorTagOnForm() {
     $('#fm1').submit(function () {
-        var hash = decodeURIComponent(self.document.location.hash);
-        if (hash && hash.indexOf('#') === -1) {
+        var location = self.document.location;
+        var hash = decodeURIComponent(location.hash);
+        
+        if (hash != undefined && hash != '' && hash.indexOf('#') === -1) {
             hash = '#' + hash;
         }
-        var action = $('#fm1').attr('action') + hash;
+
+        var action = $('#fm1').attr('action');
+        if (action == undefined) {
+            action = location.href;
+        }
+        var qidx = location.href.indexOf('?');
+        if (qidx != -1) {
+            var queryParams = location.href.substring(qidx);
+            action += queryParams;
+        }
+        action += hash;
         $('#fm1').attr('action', action);
+        
     });
 }
 
@@ -55,17 +69,6 @@ function areCookiesEnabled() {
     $.removeCookie('cookiesEnabled');
     return value != undefined;
 
-}
-
-function animateCasMessageBoxes() {
-    //flash error box
-    $('#msg.errors').animate({backgroundColor: 'rgb(187,0,0)'}, 30).animate({backgroundColor: 'rgb(255,238,221)'}, 500);
-
-    //flash success box
-    $('#msg.success').animate({backgroundColor: 'rgb(51,204,0)'}, 30).animate({backgroundColor: 'rgb(221,255,170)'}, 500);
-
-    //flash confirm box
-    $('#msg.question').animate({backgroundColor: 'rgb(51,204,0)'}, 30).animate({backgroundColor: 'rgb(221,255,170)'}, 500);
 }
 
 function disableEmptyInputFormSubmission() {
@@ -116,10 +119,8 @@ function resourceLoadedSuccessfully() {
             $('#cookiesDisabled').hide();
         } else {
             $('#cookiesDisabled').show();
-            $('#cookiesDisabled').animate({backgroundColor: 'rgb(187,0,0)'}, 30).animate({backgroundColor: 'rgb(255,238,221)'}, 500);
         }
 
-        animateCasMessageBoxes();
         disableEmptyInputFormSubmission();
         preserveAnchorTagOnForm();
 

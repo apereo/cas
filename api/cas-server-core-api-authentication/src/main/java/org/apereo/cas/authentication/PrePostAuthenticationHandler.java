@@ -6,6 +6,7 @@ package org.apereo.cas.authentication;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@FunctionalInterface
 public interface PrePostAuthenticationHandler extends AuthenticationHandler {
 
     /**
@@ -25,7 +26,7 @@ public interface PrePostAuthenticationHandler extends AuthenticationHandler {
      * @param result     the result of the authentication attempt.
      * @return An authentication handler result that MAY be different or modified from that provided.
      */
-    default HandlerResult postAuthenticate(final Credential credential, final HandlerResult result) {
+    default AuthenticationHandlerExecutionResult postAuthenticate(final Credential credential, final AuthenticationHandlerExecutionResult result) {
         return result;
     }
 }

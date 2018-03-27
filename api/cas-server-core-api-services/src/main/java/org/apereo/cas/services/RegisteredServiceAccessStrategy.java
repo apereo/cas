@@ -1,18 +1,21 @@
 package org.apereo.cas.services;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.springframework.core.Ordered;
 
 import java.io.Serializable;
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * This is {@link RegisteredServiceAccessStrategy}
  * that can decide if a service is recognized and authorized to participate
  * in the CAS protocol flow during authentication/validation events.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
@@ -23,14 +26,20 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      *
      * @return true /false if service is enabled
      */
-    boolean isServiceAccessAllowed();
+    @JsonIgnore
+    default boolean isServiceAccessAllowed() {
+        return true;
+    }
 
     /**
      * Assert that the service can participate in sso.
      *
      * @return true /false if service can participate in sso
      */
-    boolean isServiceAccessAllowedForSso();
+    @JsonIgnore
+    default boolean isServiceAccessAllowedForSso() {
+        return true;
+    }
 
     /**
      * Verify authorization policy by checking the pre-configured rules
@@ -56,7 +65,10 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      *                   given they may be coming from a source external to the principal itself. (Cached principal attributes, etc)
      * @return true /false if service access can be granted to principal
      */
-    boolean doPrincipalAttributesAllowServiceAccess(String principal, Map<String, Object> attributes);
+    @JsonIgnore
+    default boolean doPrincipalAttributesAllowServiceAccess(final String principal, final Map<String, Object> attributes) {
+        return true;
+    }
 
     /**
      * Redirect the request to a separate and possibly external URL
@@ -67,10 +79,38 @@ public interface RegisteredServiceAccessStrategy extends Serializable, Ordered {
      * @return the redirect url
      * @since 4.2
      */
-    URI getUnauthorizedRedirectUrl();
+    default URI getUnauthorizedRedirectUrl() {
+        return null;
+    }
 
     @Override
     default int getOrder() {
         return Integer.MAX_VALUE;
+    }
+
+    /**
+     * Sets service access allowed.
+     *
+     * @param enabled the value
+     */
+    @JsonIgnore
+    default void setServiceAccessAllowed(final boolean enabled) {
+    }
+
+    /**
+     * Return the delegated authentication policy for this service.
+     * @return authn policy
+     */
+    default RegisteredServiceDelegatedAuthenticationPolicy getDelegatedAuthenticationPolicy() {
+        return null;
+    }
+
+    /**
+     * Expose underlying attributes for auditing purposes.
+     *
+     * @return required attributes
+     */
+    default Map<String, Set<String>> getRequiredAttributes() {
+        return new HashMap<>();
     }
 }

@@ -1,9 +1,8 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -22,9 +21,10 @@ import java.nio.charset.StandardCharsets;
  * @since 5.1.0
  */
 @Controller("yadisController")
+@Slf4j
 public class YadisController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(YadisController.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

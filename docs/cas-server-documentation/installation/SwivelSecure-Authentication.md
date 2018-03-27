@@ -37,3 +37,27 @@ To enable additional logging, configure the log4j configuration file to add the 
 </AsyncLogger>
 ...
 ```
+
+## Swivel SDK
+
+Note that Swivel SDK artifacts are not published to a Maven repository. This means that you will need to download the necessary JAR files and include the in your build configuration. The SDK may be downloaded from [the CAS codebase](https://github.com/apereo/cas/blob/master/support/cas-server-support-swivel/lib/pinsafe.client.jar). Then, assuming the SDK is placed inside a `lib` directory of the [WAR overlay](Maven-Overlay-Installation.html) directory, it can be referenced in the Maven build configuration as such:
+
+```xml
+...
+<dependencies>
+    <dependency>
+      <groupId>com.swiveltechnoligies</groupId>
+      <artifactId>pinsafe</artifactId>
+      <version>1.0</version>
+      <scope>system</scope>
+      <systemPath>${basedir}/lib/pinsafe.client.jar</systemPath>
+    </dependency>
+</dependencies>
+...
+```
+
+For Gradle, you would do something similar:
+
+```gradle
+compile files("${projectDir}/lib/pinsafe.client.jar")
+```

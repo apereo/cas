@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.AbstractCRLRevocationChecker;
 import org.apereo.cas.adaptors.x509.authentication.revocation.checker.RevocationChecker;
 import org.apereo.cas.util.crypto.CertUtils;
@@ -17,6 +18,7 @@ import java.security.cert.X509Certificate;
  * @since 3.4.6
  *
  */
+@Slf4j
 public abstract class AbstractCRLRevocationCheckerTests {
 
     /** Certificate to be tested. */

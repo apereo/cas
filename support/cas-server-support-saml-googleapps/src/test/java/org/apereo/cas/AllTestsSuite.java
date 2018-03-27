@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.saml.authentication.GoogleAppsSamlAuthenticationRequestTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceFactoryTests;
 import org.apereo.cas.support.saml.authentication.principal.GoogleAccountsServiceTests;
@@ -17,5 +18,6 @@ import org.junit.runners.Suite;
         GoogleAccountsServiceTests.class,
         GoogleAccountsServiceFactoryTests.class
 })
+@Slf4j
 public class AllTestsSuite {
 }

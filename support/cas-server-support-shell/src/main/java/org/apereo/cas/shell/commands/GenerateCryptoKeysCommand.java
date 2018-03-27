@@ -1,5 +1,6 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
@@ -8,8 +9,6 @@ import org.apereo.cas.metadata.CasConfigurationMetadataRepository;
 import org.apereo.cas.util.EncodingUtils;
 import org.apereo.cas.util.gen.Base64RandomStringGenerator;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataGroup;
 import org.springframework.shell.core.CommandMarker;
 import org.springframework.shell.core.annotation.CliCommand;
@@ -23,8 +22,9 @@ import org.springframework.stereotype.Service;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class GenerateCryptoKeysCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateCryptoKeysCommand.class);
+
 
     /**
      * Generate key.
@@ -58,7 +58,7 @@ public class GenerateCryptoKeysCommand implements CommandMarker {
                 .forEach(e -> {
                     final ConfigurationMetadataGroup grp = e.getValue();
                     grp.getSources().forEach(Unchecked.biConsumer((k, v) -> {
-                        final Object obj = ClassUtils.getClass(k, true).newInstance();
+                        final Object obj = ClassUtils.getClass(k, true).getDeclaredConstructor().newInstance();
                         if (obj instanceof EncryptionJwtSigningJwtCryptographyProperties) {
                             final EncryptionJwtSigningJwtCryptographyProperties crypto = (EncryptionJwtSigningJwtCryptographyProperties) obj;
                             LOGGER.info(cryptoGroup.concat(".encryption.key="+EncodingUtils.generateJsonWebKey(crypto.getEncryption().getKeySize())));

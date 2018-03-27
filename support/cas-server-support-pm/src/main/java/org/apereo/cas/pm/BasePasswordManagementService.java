@@ -1,5 +1,7 @@
 package org.apereo.cas.pm;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
@@ -9,10 +11,11 @@ import org.apereo.inspektr.common.web.ClientInfo;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
 import org.jose4j.jwt.JwtClaims;
 import org.jose4j.jwt.NumericDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 /**
@@ -21,25 +24,19 @@ import java.util.UUID;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class BasePasswordManagementService implements PasswordManagementService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BasePasswordManagementService.class);
 
     /**
      * Password management settings.
      */
     protected final PasswordManagementProperties properties;
-
+    
     private final CipherExecutor<Serializable, String> cipherExecutor;
+
     private final String issuer;
     
-    public BasePasswordManagementService(final CipherExecutor<Serializable, String> cipherExecutor,
-                                         final String issuer,
-                                         final PasswordManagementProperties properties) {
-        this.cipherExecutor = cipherExecutor;
-        this.issuer = issuer;
-        this.properties = properties;
-    }
-
     @Override
     public String parseToken(final String token) {
         try {
@@ -123,5 +120,17 @@ public class BasePasswordManagementService implements PasswordManagementService 
      */
     public boolean changeInternal(final Credential c, final PasswordChangeBean bean) throws InvalidPasswordException {
         return false;
+    }
+
+    /**
+     * Orders security questions consistently.
+     *
+     * @param questionMap A map of question/answer key/value pairs
+     * @return A list of questions in a consistent order
+     */
+    public static List<String> canonicalizeSecurityQuestions(final Map<String, String> questionMap) {
+        final List<String> keys = new ArrayList<>(questionMap.keySet());
+        keys.sort(String.CASE_INSENSITIVE_ORDER);
+        return keys;
     }
 }

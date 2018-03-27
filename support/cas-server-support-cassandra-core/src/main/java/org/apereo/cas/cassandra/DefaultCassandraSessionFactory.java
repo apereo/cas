@@ -13,14 +13,12 @@ import com.datastax.driver.core.policies.DCAwareRoundRobinPolicy;
 import com.datastax.driver.core.policies.LoggingRetryPolicy;
 import com.datastax.driver.core.policies.RetryPolicy;
 import com.datastax.driver.core.policies.TokenAwarePolicy;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.cassandra.authentication.BaseCassandraProperties;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.io.Closeable;
-import java.io.IOException;
 import java.util.Arrays;
 
 /**
@@ -29,15 +27,16 @@ import java.util.Arrays;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultCassandraSessionFactory implements CassandraSessionFactory, Closeable {
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultCassandraSessionFactory.class);
+
 
     private final Cluster cluster;
     private final Session session;
 
     public DefaultCassandraSessionFactory(final BaseCassandraProperties cassandra) {
         this.cluster = initializeCassandraCluster(cassandra);
-        this.session = cluster.connect(cassandra.getKeyspace());
+        this.session = StringUtils.isBlank(cassandra.getKeyspace()) ? cluster.connect() : cluster.connect(cassandra.getKeyspace());
     }
 
     private static Cluster initializeCassandraCluster(final BaseCassandraProperties cassandra) {
@@ -113,7 +112,7 @@ public class DefaultCassandraSessionFactory implements CassandraSessionFactory, 
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() {
         destroy();
     }
 }

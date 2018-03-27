@@ -1,15 +1,16 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.NullPrincipal;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.TicketGrantingTicket;
-import org.apereo.cas.CentralAuthenticationService;
-import org.apereo.cas.authentication.principal.Principal;
-import org.apereo.cas.ticket.Ticket;
+import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
@@ -20,6 +21,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class GenericSuccessViewActionTests {
 
     @Test
@@ -34,11 +36,11 @@ public class GenericSuccessViewActionTests {
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);
         when(tgt.getAuthentication()).thenReturn(authn);
         
-        when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenReturn(tgt);
+        when(cas.getTicket(any(String.class), any())).thenReturn(tgt);
         final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory, "");
         final Principal p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);
-        assertEquals(p.getId(), "cas");
+        assertEquals("cas", p.getId());
     }
 
     @Test
@@ -46,7 +48,7 @@ public class GenericSuccessViewActionTests {
         final CentralAuthenticationService cas = mock(CentralAuthenticationService.class);
         final ServicesManager mgr = mock(ServicesManager.class);
         final ServiceFactory factory = mock(ServiceFactory.class);
-        when(cas.getTicket(any(String.class), any(Ticket.class.getClass()))).thenThrow(new InvalidTicketException("TGT-1"));
+        when(cas.getTicket(any(String.class), any())).thenThrow(new InvalidTicketException("TGT-1"));
         final GenericSuccessViewAction action = new GenericSuccessViewAction(cas, mgr, factory, "");
         final Principal p = action.getAuthenticationPrincipal("TGT-1");
         assertNotNull(p);

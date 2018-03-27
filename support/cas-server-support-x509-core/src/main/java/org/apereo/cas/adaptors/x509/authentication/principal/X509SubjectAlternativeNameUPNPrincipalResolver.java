@@ -1,6 +1,8 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.services.persondir.IPersonAttributeDao;
 import org.bouncycastle.asn1.ASN1InputStream;
@@ -10,9 +12,6 @@ import org.bouncycastle.asn1.ASN1Primitive;
 import org.bouncycastle.asn1.ASN1Sequence;
 import org.bouncycastle.asn1.ASN1String;
 import org.bouncycastle.asn1.ASN1TaggedObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -28,21 +27,18 @@ import java.util.List;
  * @author Dmitriy Kopylenko
  * @since 4.1.0
  */
+@Slf4j
+@ToString(callSuper = true)
+@NoArgsConstructor
 public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509PrincipalResolver {
+
     /**
      * ObjectID for upn altName for windows smart card logon.
      */
     public static final String UPN_OBJECTID = "1.3.6.1.4.1.311.20.2.3";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(X509SubjectAlternativeNameUPNPrincipalResolver.class);
-
-    public X509SubjectAlternativeNameUPNPrincipalResolver() {
-        super();
-    }
-
     public X509SubjectAlternativeNameUPNPrincipalResolver(final IPersonAttributeDao attributeRepository,
-                                                          final PrincipalFactory principalFactory,
-                                                          final boolean returnNullIfNoAttributes,
+                                                          final PrincipalFactory principalFactory, final boolean returnNullIfNoAttributes,
                                                           final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalAttributeName);
     }
@@ -91,12 +87,10 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             if (id != null && UPN_OBJECTID.equals(id.getId())) {
                 final ASN1TaggedObject obj = (ASN1TaggedObject) seq.getObjectAt(1);
                 ASN1Primitive prim = obj.getObject();
-
                 // Due to bug in java cert.getSubjectAltName, it can be tagged an extra time
                 if (prim instanceof ASN1TaggedObject) {
                     prim = ASN1TaggedObject.getInstance(prim).getObject();
                 }
-
                 if (prim instanceof ASN1OctetString) {
                     return new String(((ASN1OctetString) prim).getOctets(), StandardCharsets.UTF_8);
                 }
@@ -154,13 +148,5 @@ public class X509SubjectAlternativeNameUPNPrincipalResolver extends AbstractX509
             LOGGER.error("An error has occurred while reading the subject alternative name value", e);
         }
         return null;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
     }
 }

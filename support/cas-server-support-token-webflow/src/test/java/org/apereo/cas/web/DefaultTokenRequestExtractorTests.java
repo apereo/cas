@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.token.TokenConstants;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -12,6 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class DefaultTokenRequestExtractorTests {
 
     @Test
@@ -20,7 +22,7 @@ public class DefaultTokenRequestExtractorTests {
         request.addParameter(TokenConstants.PARAMETER_NAME_TOKEN, "test");
         final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
         final String token = e.extract(request);
-        assertEquals(token, "test");
+        assertEquals("test", token);
     }
 
     @Test
@@ -29,7 +31,7 @@ public class DefaultTokenRequestExtractorTests {
         request.addHeader(TokenConstants.PARAMETER_NAME_TOKEN, "test");
         final DefaultTokenRequestExtractor e = new DefaultTokenRequestExtractor();
         final String token = e.extract(request);
-        assertEquals(token, "test");
+        assertEquals("test", token);
     }
 
     @Test

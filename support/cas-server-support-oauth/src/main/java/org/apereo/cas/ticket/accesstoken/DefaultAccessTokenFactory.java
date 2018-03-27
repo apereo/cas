@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.accesstoken;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -17,6 +19,8 @@ import java.util.Collection;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     /** Default instance for the ticket id generator. */
@@ -27,11 +31,6 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
 
     public DefaultAccessTokenFactory(final ExpirationPolicy expirationPolicy) {
         this(new DefaultUniqueTicketIdGenerator(), expirationPolicy);
-    }
-
-    public DefaultAccessTokenFactory(final UniqueTicketIdGenerator refreshTokenIdGenerator, final ExpirationPolicy expirationPolicy) {
-        this.accessTokenIdGenerator = refreshTokenIdGenerator;
-        this.expirationPolicy = expirationPolicy;
     }
 
     @Override
@@ -47,7 +46,7 @@ public class DefaultAccessTokenFactory implements AccessTokenFactory {
     }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return this;
     }
 }

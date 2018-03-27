@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.authentication.adaptive;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.support.events.AbstractCasEvent;
@@ -10,6 +11,7 @@ import org.apereo.cas.support.events.AbstractCasEvent;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasRiskyAuthenticationMitigatedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 291198069766263578L;

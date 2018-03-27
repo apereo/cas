@@ -1,5 +1,6 @@
 package org.apereo.cas.web.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -12,20 +13,21 @@ import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.FlowExecutionExceptionResolver;
 import org.apereo.cas.web.flow.SingleSignOnParticipationStrategy;
-import org.apereo.cas.web.flow.FrontChannelLogoutAction;
+import org.apereo.cas.web.flow.logout.FrontChannelLogoutAction;
 import org.apereo.cas.web.flow.GatewayServicesManagementCheck;
 import org.apereo.cas.web.flow.GenerateServiceTicketAction;
-import org.apereo.cas.web.flow.GenericSuccessViewAction;
+import org.apereo.cas.web.flow.login.GenericSuccessViewAction;
 import org.apereo.cas.web.flow.actions.InitialAuthenticationAction;
-import org.apereo.cas.web.flow.InitialAuthenticationRequestValidationAction;
-import org.apereo.cas.web.flow.InitialFlowSetupAction;
-import org.apereo.cas.web.flow.InitializeLoginAction;
-import org.apereo.cas.web.flow.LogoutAction;
-import org.apereo.cas.web.flow.SendTicketGrantingTicketAction;
+import org.apereo.cas.web.flow.login.InitialAuthenticationRequestValidationAction;
+import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
+import org.apereo.cas.web.flow.login.InitializeLoginAction;
+import org.apereo.cas.web.flow.logout.LogoutAction;
+import org.apereo.cas.web.flow.login.SendTicketGrantingTicketAction;
 import org.apereo.cas.web.flow.ServiceAuthorizationCheck;
-import org.apereo.cas.web.flow.ServiceWarningAction;
-import org.apereo.cas.web.flow.TerminateSessionAction;
-import org.apereo.cas.web.flow.TicketGrantingTicketCheckAction;
+import org.apereo.cas.web.flow.login.ServiceWarningAction;
+import org.apereo.cas.web.flow.logout.LogoutViewSetupAction;
+import org.apereo.cas.web.flow.logout.TerminateSessionAction;
+import org.apereo.cas.web.flow.login.TicketGrantingTicketCheckAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
@@ -50,6 +52,7 @@ import org.springframework.webflow.execution.Action;
 @Configuration("casSupportActionsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class CasSupportActionsConfiguration {
 
     @Autowired
@@ -122,8 +125,8 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action authenticationViaFormAction() {
         return new InitialAuthenticationAction(initialAuthenticationAttemptWebflowEventResolver,
-                serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy);
+            serviceTicketRequestWebflowEventResolver,
+            adaptiveAuthenticationPolicy);
     }
 
     @RefreshScope
@@ -138,7 +141,7 @@ public class CasSupportActionsConfiguration {
     @Bean
     public Action sendTicketGrantingTicketAction() {
         return new SendTicketGrantingTicketAction(centralAuthenticationService,
-                ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
+            ticketGrantingTicketCookieGenerator, webflowSingleSignOnParticipationStrategy);
     }
 
     @RefreshScope
@@ -161,9 +164,10 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "initialFlowSetupAction")
     public Action initialFlowSetupAction(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         return new InitialFlowSetupAction(CollectionUtils.wrap(argumentExtractor),
-                servicesManager,
-                ticketGrantingTicketCookieGenerator,
-                warnCookieGenerator, casProperties);
+            servicesManager,
+            authenticationRequestServiceSelectionStrategies,
+            ticketGrantingTicketCookieGenerator,
+            warnCookieGenerator, casProperties);
     }
 
     @RefreshScope
@@ -178,14 +182,18 @@ public class CasSupportActionsConfiguration {
     @ConditionalOnMissingBean(name = "genericSuccessViewAction")
     public Action genericSuccessViewAction() {
         return new GenericSuccessViewAction(centralAuthenticationService, servicesManager, webApplicationServiceFactory,
-                casProperties.getView().getDefaultRedirectUrl());
+            casProperties.getView().getDefaultRedirectUrl());
     }
 
     @Bean
     @RefreshScope
     @ConditionalOnMissingBean(name = "generateServiceTicketAction")
     public Action generateServiceTicketAction() {
-        return new GenerateServiceTicketAction(authenticationSystemSupport, centralAuthenticationService, ticketRegistrySupport, servicesManager);
+        return new GenerateServiceTicketAction(authenticationSystemSupport,
+            centralAuthenticationService,
+            ticketRegistrySupport,
+            authenticationRequestServiceSelectionStrategies,
+            servicesManager);
     }
 
     @Bean
@@ -211,7 +219,12 @@ public class CasSupportActionsConfiguration {
     @RefreshScope
     public Action terminateSessionAction() {
         return new TerminateSessionAction(centralAuthenticationService, ticketGrantingTicketCookieGenerator,
-                warnCookieGenerator, casProperties.getLogout());
+            warnCookieGenerator, casProperties.getLogout());
+    }
+
+    @Bean
+    public Action logoutViewSetupAction() {
+        return new LogoutViewSetupAction(casProperties);
     }
 
     @Bean

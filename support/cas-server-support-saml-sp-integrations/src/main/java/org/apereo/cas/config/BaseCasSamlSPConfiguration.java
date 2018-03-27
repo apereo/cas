@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.saml.sps.AbstractSamlSPProperties;
 import org.apereo.cas.services.ServicesManager;
@@ -17,8 +18,11 @@ import javax.annotation.PostConstruct;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public abstract class BaseCasSamlSPConfiguration {
-    /** CAS properties. */
+    /**
+     * CAS properties.
+     */
     @Autowired
     protected CasConfigurationProperties casProperties;
 
@@ -32,15 +36,14 @@ public abstract class BaseCasSamlSPConfiguration {
 
     @PostConstruct
     public void init() {
-        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(
-                getServiceProvider(),
-                samlRegisteredServiceCachingMetadataResolver);
+        final SamlRegisteredService service = SamlSPUtils.newSamlServiceProviderService(getServiceProvider(),
+            samlRegisteredServiceCachingMetadataResolver);
         if (service != null) {
             finalizeRegisteredService(service);
             SamlSPUtils.saveService(service, this.servicesManager);
         }
     }
-    
+
     protected abstract AbstractSamlSPProperties getServiceProvider();
 
     /**
@@ -51,5 +54,5 @@ public abstract class BaseCasSamlSPConfiguration {
      * @param service the service
      */
     protected void finalizeRegisteredService(final SamlRegisteredService service) {
-    } 
+    }
 }

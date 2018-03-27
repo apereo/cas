@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
@@ -22,6 +23,7 @@ import java.util.Map;
  */
 @Configuration("casCoreTicketIdGeneratorsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreTicketIdGeneratorsConfiguration {
 
     @Bean

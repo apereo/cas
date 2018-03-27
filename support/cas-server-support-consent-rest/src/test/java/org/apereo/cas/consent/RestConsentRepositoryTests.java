@@ -1,12 +1,13 @@
 package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.util.CollectionUtils;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.http.HttpMethod;
@@ -27,6 +28,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RestConsentRepositoryTests {
     private RestTemplate restTemplate;
     private MockRestServiceServer server;
@@ -38,7 +40,7 @@ public class RestConsentRepositoryTests {
     }
 
     @Test
-    public void verifyConsentDecisionIsNotFound() throws Exception {
+    public void verifyConsentDecisionIsNotFound() {
         server.expect(manyTimes(), requestTo("/consent"))
                 .andExpect(method(HttpMethod.GET))
                 .andRespond(withServerError());
@@ -54,7 +56,7 @@ public class RestConsentRepositoryTests {
     @Test
     public void verifyConsentDecisionIsFound() throws Exception {
         final ObjectMapper mapper = new ObjectMapper().findAndRegisterModules();
-        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(NoOpCipherExecutor.getInstance());
+        final DefaultConsentDecisionBuilder builder = new DefaultConsentDecisionBuilder(CipherExecutor.noOpOfSerializableToString());
         final AbstractRegisteredService regSvc = RegisteredServiceTestUtils.getRegisteredService("test");
         final Service svc = RegisteredServiceTestUtils.getService();
         final ConsentDecision decision = builder.build(svc,
@@ -68,7 +70,19 @@ public class RestConsentRepositoryTests {
         final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
         final ConsentDecision d = repo.findConsentDecision(svc, regSvc, CoreAuthenticationTestUtils.getAuthentication());
         assertNotNull(d);
-        assertEquals(d.getPrincipal(), "casuser");
+        assertEquals("casuser", d.getPrincipal());
+        server.verify();
+    }
+    
+    @Test
+    public void verifyConsentDecisionIsDeleted() {
+        server.expect(manyTimes(), requestTo("/consent/1"))
+                .andExpect(method(HttpMethod.DELETE))
+                .andRespond(withSuccess());
+        
+        final RestConsentRepository repo = new RestConsentRepository(this.restTemplate, "/consent");
+        final boolean b = repo.deleteConsentDecision(1, "CasUser");
+        assertTrue(b);
         server.verify();
     }
 }

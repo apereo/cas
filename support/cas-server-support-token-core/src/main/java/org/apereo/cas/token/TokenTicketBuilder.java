@@ -1,6 +1,7 @@
 package org.apereo.cas.token;
 
 import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.ticket.TicketGrantingTicket;
 
 /**
  * This is {@link TokenTicketBuilder}.
@@ -8,14 +9,21 @@ import org.apereo.cas.authentication.principal.Service;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-@FunctionalInterface
 public interface TokenTicketBuilder {
     /**
-     * Build token.
+     * Build token for a service ticket.
      *
-     * @param ticketId the ticket id
-     * @param service  the service
+     * @param serviceTicketId the ticket id
+     * @param service         the service
      * @return the token identifier
      */
-    String build(String ticketId, Service service);
+    String build(String serviceTicketId, Service service);
+
+    /**
+     * Build token for a ticket-granting ticket.
+     *
+     * @param ticketGrantingTicket the ticket granting ticket
+     * @return the string
+     */
+    String build(TicketGrantingTicket ticketGrantingTicket);
 }

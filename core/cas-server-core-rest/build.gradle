@@ -1,0 +1,7 @@
+description = "Apereo CAS REST API"
+dependencies {
+    api project(":api:cas-server-core-api")
+    provided project(":core:cas-server-core-services")
+    provided project(":core:cas-server-core-authentication")
+    provided project(":core:cas-server-core-tickets")
+}

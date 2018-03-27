@@ -32,12 +32,10 @@ Uses a memory map to prevent successive failed login attempts from the same IP a
 Uses a memory map to prevent successive failed login attempts for
 a particular username from the same IP address.
 
-## Inspektr + JDBC
+## JDBC
 
-Queries the data source used by the CAS audit facility to prevent successive failed login attempts for a particular
-username from the same IP address. This component requires that the
-[inspektr library](https://github.com/apereo/inspektr) used for CAS auditing be configured with
-`JdbcAuditTrailManager`, which writes audit data to a database.
+Queries a database data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing
+functionality](Audits.html) via databases.
 
 Enable the following module in your configuration overlay:
 
@@ -49,8 +47,25 @@ Enable the following module in your configuration overlay:
 </dependency>
 ```
 
-For additional instructions on how to configure auditing via Inspektr,
-please [review the following guide](Logging.html).
+For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
+
+## MongoDb
+
+Queries a MongoDb data source used by the CAS audit facility to prevent successive failed login attempts for a particular username from the same IP address. This component requires and depends on the [CAS auditing
+functionality](Audits.html) via MongoDb.
+
+Enable the following module in your configuration overlay:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-throttle-mongo</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+For additional instructions on how to configure auditing, please [review the following guide](Audits.html).
+
 
 ## Configuration
 

@@ -1,10 +1,11 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.MemcachedClientIF;
 import org.apache.commons.pool2.ObjectPool;
 import org.apereo.cas.ticket.Ticket;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
@@ -17,22 +18,15 @@ import java.util.Collection;
  * @author Marvin S. Addison
  * @since 3.3
  */
+@SuppressWarnings("FutureReturnValueIgnored")
+@Slf4j
+@AllArgsConstructor
 public class MemcachedTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedTicketRegistry.class);
+
     /**
      * Memcached client.
      */
     private final ObjectPool<MemcachedClientIF> connectionPool;
-
-    /**
-     * Creates a new instance using the given memcached client instance, which is presumably configured via
-     * {@code net.spy.memcached.spring.MemcachedClientFactoryBean}.
-     *
-     * @param client Memcached client.
-     */
-    public MemcachedTicketRegistry(final ObjectPool<MemcachedClientIF> client) {
-        this.connectionPool = client;
-    }
 
     @Override
     public Ticket updateTicket(final Ticket ticketToUpdate) {
@@ -134,12 +128,9 @@ public class MemcachedTicketRegistry extends AbstractTicketRegistry {
         return ttl;
     }
 
+    @SneakyThrows
     private MemcachedClientIF getClientFromPool() {
-        try {
-            return this.connectionPool.borrowObject();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return this.connectionPool.borrowObject();
     }
 
     private void returnClientToPool(final MemcachedClientIF clientFromPool) {

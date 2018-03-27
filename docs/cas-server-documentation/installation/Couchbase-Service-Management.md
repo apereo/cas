@@ -18,6 +18,8 @@ Couchbase integration is enabled by including the following dependency in the WA
 [Erlang/OTP](http://www.erlang.org) and its mnesia database. The intention of this registry is to leverage the capability of Couchbase
 server to provide high availability to CAS.
 
+<div class="alert alert-info"><strong>Compatibility</strong><p>Couchbase support in CAS at the moment is limited to Couchbase v4.</p></div>
+
 ## Configuration
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#couchbase-service-registry).
@@ -32,11 +34,8 @@ so in reality the bucket property must also be set.
 
 ## Auto Initialization
 
-Upon startup and configuration permitting,
-the registry is able to auto initialize itself from default
-JSON service definitions available to CAS.
+Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.
 
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
 
 ## Troubleshooting
 

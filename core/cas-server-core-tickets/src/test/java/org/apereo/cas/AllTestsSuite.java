@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.InvalidTicketExceptionTests;
 import org.apereo.cas.ticket.ServiceTicketImplTests;
 import org.apereo.cas.ticket.TicketGrantingTicketImplTests;
@@ -30,5 +31,6 @@ import org.junit.runners.Suite;
         TimeoutExpirationPolicyTests.class, DefaultTicketRegistryTests.class,
         DistributedTicketRegistryTests.class, Cas10ProxyHandlerTests.class,
         Cas20ProxyHandlerTests.class})
+@Slf4j
 public class AllTestsSuite {
 }

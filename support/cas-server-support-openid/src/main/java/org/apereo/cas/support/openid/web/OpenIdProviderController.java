@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -19,6 +20,7 @@ import java.util.Map;
  * @since 3.1
  */
 @Controller("openIdProviderController")
+@Slf4j
 public class OpenIdProviderController {
 
     @Autowired
@@ -30,11 +32,10 @@ public class OpenIdProviderController {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping("/openid/*")
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         final Map model = new HashMap<>();
         model.put("openid_server", casProperties.getServer().getPrefix());
         return new ModelAndView("openIdProviderView", model);

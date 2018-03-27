@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -21,7 +22,7 @@ import org.apereo.cas.ticket.proxy.ProxyHandler;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractDelegateController;
 import org.apereo.cas.web.DelegatingController;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
@@ -29,8 +30,6 @@ import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.openid4java.server.InMemoryServerAssociationStore;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -42,7 +41,6 @@ import org.springframework.web.servlet.View;
 import org.springframework.webflow.execution.Action;
 
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * This is {@link OpenIdConfiguration}.
@@ -52,8 +50,9 @@ import java.util.Set;
  */
 @Configuration("openidConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class OpenIdConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdConfiguration.class);
+
 
     @Autowired
     @Qualifier("adaptiveAuthenticationPolicy")
@@ -121,8 +120,8 @@ public class OpenIdConfiguration {
 
     @Autowired
     @Qualifier("serviceValidationAuthorizers")
-    private Set<ValidationAuthorizer> validationAuthorizers;
-    
+    private ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers;
+
     @Bean
     public AbstractDelegateController smartOpenIdAssociationController() {
         return new SmartOpenIdController(serverManager(), casOpenIdAssociationSuccessView);
@@ -142,7 +141,8 @@ public class OpenIdConfiguration {
     @ConditionalOnMissingBean(name = "openIdServiceResponseBuilder")
     @Bean
     public ResponseBuilder openIdServiceResponseBuilder() {
-        return new OpenIdServiceResponseBuilder(casProperties.getServer().getPrefix().concat("/openid"), serverManager(), centralAuthenticationService);
+        final String openIdPrefixUrl = casProperties.getServer().getPrefix().concat("/openid");
+        return new OpenIdServiceResponseBuilder(openIdPrefixUrl, serverManager(), centralAuthenticationService, servicesManager);
     }
 
 
@@ -162,7 +162,7 @@ public class OpenIdConfiguration {
     @Bean
     public Action openIdSingleSignOnAction() {
         return new OpenIdSingleSignOnAction(initialAuthenticationAttemptWebflowEventResolver, serviceTicketRequestWebflowEventResolver,
-                adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
+            adaptiveAuthenticationPolicy, defaultOpenIdUserNameExtractor(), ticketRegistrySupport);
     }
 
     @Bean
@@ -174,14 +174,14 @@ public class OpenIdConfiguration {
     @Bean
     public OpenIdPostUrlHandlerMapping openIdPostUrlHandlerMapping(@Qualifier("argumentExtractor") final ArgumentExtractor argumentExtractor) {
         final OpenIdValidateController c = new OpenIdValidateController(cas20WithoutProxyProtocolValidationSpecification,
-                authenticationSystemSupport, servicesManager,
-                centralAuthenticationService, proxy20Handler,
-                argumentExtractor, multifactorTriggerSelectionStrategy,
-                authenticationContextValidator, cas3ServiceJsonView,
-                casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
-                casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
-                serverManager(), validationAuthorizers);
-        
+            authenticationSystemSupport, servicesManager,
+            centralAuthenticationService, proxy20Handler,
+            argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, cas3ServiceJsonView,
+            casOpenIdServiceSuccessView, casOpenIdServiceFailureView,
+            casProperties.getAuthn().getMfa().getAuthenticationContextAttribute(),
+            serverManager(), validationAuthorizers, casProperties.getSso().isRenewAuthnEnabled());
+
         final DelegatingController controller = new DelegatingController();
         controller.setDelegates(CollectionUtils.wrapList(smartOpenIdAssociationController(), c));
 

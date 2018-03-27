@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.handler.support;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.ExpiredCRLException;
 import org.apereo.cas.adaptors.x509.authentication.revocation.policy.ThresholdExpiredCRLRevocationPolicy;
 import org.apereo.cas.util.DateTimeUtils;
@@ -19,7 +21,6 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
-
 /**
  * Unit test for {@link ThresholdExpiredCRLRevocationPolicy} class.
  *
@@ -28,6 +29,8 @@ import java.util.Collection;
  *
  */
 @RunWith(Parameterized.class)
+@Slf4j
+@AllArgsConstructor
 public class ThresholdExpiredCRLRevocationPolicyTests {
     /** Policy instance under test. */
     private final ThresholdExpiredCRLRevocationPolicy policy;
@@ -40,30 +43,12 @@ public class ThresholdExpiredCRLRevocationPolicyTests {
 
 
     /**
-     * Creates a new test instance with given parameters.
-     *
-     * @param policy Policy to test.
-     * @param crl CRL instance to apply policy to.
-     * @param expected Expected result of policy application; null to indicate expected success.
-     */
-    public ThresholdExpiredCRLRevocationPolicyTests(
-            final ThresholdExpiredCRLRevocationPolicy policy,
-            final X509CRL crl,
-            final GeneralSecurityException expected) {
-
-        this.policy = policy;
-        this.expected = expected;
-        this.crl = crl;
-    }
-
-    /**
      * Gets the unit test parameters.
      *
      * @return  Test parameter data.
-     * @throws Exception if there is an exception getting the test parameters.
      */
     @Parameters
-    public static Collection<Object[]> getTestParameters() throws Exception {
+    public static Collection<Object[]> getTestParameters() {
         final Collection<Object[]> params = new ArrayList<>();
 
         final ZonedDateTime now = ZonedDateTime.now(ZoneOffset.UTC);

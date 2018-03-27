@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.junit.Rule;
 import org.junit.Test;
@@ -19,6 +20,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class AcceptUsersAuthenticationHandlerTests {
 
     private static final String SCOTT = "scott";
@@ -29,7 +31,7 @@ public class AcceptUsersAuthenticationHandlerTests {
 
     private final AcceptUsersAuthenticationHandler authenticationHandler;
 
-    public AcceptUsersAuthenticationHandlerTests() throws Exception {
+    public AcceptUsersAuthenticationHandlerTests() {
         final Map<String, String> users = new HashMap<>();
         users.put(SCOTT, RUTGERS);
         users.put("dima", "javarules");
@@ -48,7 +50,7 @@ public class AcceptUsersAuthenticationHandlerTests {
     }
 
     @Test
-    public void verifySupportsProperUserCredentials() throws Exception {
+    public void verifySupportsProperUserCredentials() {
         final UsernamePasswordCredential c = new UsernamePasswordCredential();
 
         c.setUsername(SCOTT);
@@ -63,7 +65,7 @@ public class AcceptUsersAuthenticationHandlerTests {
                     .supports(new HttpBasedServiceCredential(new URL(
                             "http://www.rutgers.edu"), CoreAuthenticationTestUtils.getRegisteredService("https://some.app.edu"))));
         } catch (final MalformedURLException e) {
-            fail("Could not resolve URL.");
+            throw new AssertionError("Could not resolve URL.", e);
         }
     }
 
@@ -77,7 +79,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         try {
             assertEquals(SCOTT, this.authenticationHandler.authenticate(c).getPrincipal().getId());
         } catch (final GeneralSecurityException e) {
-            fail("Authentication exception caught but it should not have been thrown.");
+            throw new AssertionError("Authentication exception caught but it should not have been thrown.", e);
         }
     }
 
@@ -89,7 +91,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(RUTGERS);
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("fds not found in backing map.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -102,8 +104,6 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword("user");
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
-
         this.authenticationHandler.authenticate(c);
     }
 
@@ -115,7 +115,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(null);
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("Username is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }
@@ -128,7 +128,7 @@ public class AcceptUsersAuthenticationHandlerTests {
         c.setPassword(null);
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Password is null.");
+
 
         this.authenticationHandler.authenticate(c);
     }

@@ -1,26 +1,24 @@
 package org.apereo.cas.web.view;
 
-import org.apache.commons.lang3.StringEscapeUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.cas.validation.CasProtocolAttributesRenderer;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Renders and prepares CAS3 views. This view is responsible
@@ -30,9 +28,10 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class Cas30ResponseView extends Cas20ResponseView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas30ResponseView.class);
-    
+
+    private final CasProtocolAttributesRenderer attributesRenderer;
     private final boolean releaseProtocolAttributes;
 
     public Cas30ResponseView(final boolean successResponse,
@@ -41,9 +40,13 @@ public class Cas30ResponseView extends Cas20ResponseView {
                              final String authenticationContextAttribute,
                              final View view,
                              final boolean releaseProtocolAttributes,
-                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view, serviceSelectionStrategy);
+                             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
+                             final AuthenticationServiceSelectionPlan serviceSelectionStrategy,
+                             final CasProtocolAttributesRenderer attributesRenderer) {
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
+            authenticationAttributeReleasePolicy, serviceSelectionStrategy);
         this.releaseProtocolAttributes = releaseProtocolAttributes;
+        this.attributesRenderer = attributesRenderer;
     }
 
     @Override
@@ -59,12 +62,12 @@ public class Cas30ResponseView extends Cas20ResponseView {
         final Map<String, Object> principalAttributes = getCasPrincipalAttributes(model, registeredService);
         attributes.putAll(principalAttributes);
 
-        LOGGER.debug("Processed response principal attributes from the output model to be [{}]", principalAttributes.keySet());
+        LOGGER.debug("Processed principal attributes from the output model to be [{}]", principalAttributes.keySet());
         if (this.releaseProtocolAttributes) {
             LOGGER.debug("CAS is configured to release protocol-level attributes. Processing...");
             final Map<String, Object> protocolAttributes = getCasProtocolAuthenticationAttributes(model, registeredService);
             attributes.putAll(protocolAttributes);
-            LOGGER.debug("Processed response protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
+            LOGGER.debug("Processed protocol/authentication attributes from the output model to be [{}]", protocolAttributes.keySet());
         }
 
         decideIfCredentialPasswordShouldBeReleasedAsAttribute(attributes, model, registeredService);
@@ -86,22 +89,29 @@ public class Cas30ResponseView extends Cas20ResponseView {
 
         if (!registeredService.getAttributeReleasePolicy().isAuthorizedToReleaseAuthenticationAttributes()) {
             LOGGER.debug("Attribute release policy for service [{}] is configured to never release any attributes", registeredService);
-            return new LinkedHashMap<>();
+            return new LinkedHashMap<>(0);
         }
-        
-        final Map<String, Object> filteredAuthenticationAttributes = new HashMap<>(getAuthenticationAttributes(model));
-        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
-                CollectionUtils.wrap(getAuthenticationDate(model)));
-        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
-                CollectionUtils.wrap(isAssertionBackedByNewLogin(model)));
-        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
-                CollectionUtils.wrap(isRememberMeAuthentication(model)));
+
+        final Map<String, Object> filteredAuthenticationAttributes = authenticationAttributeReleasePolicy
+            .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
+
+        filterCasProtocolAttributes(model, filteredAuthenticationAttributes);
 
         final String contextProvider = getSatisfiedMultifactorAuthenticationProviderId(model);
         if (StringUtils.isNotBlank(contextProvider) && StringUtils.isNotBlank(authenticationContextAttribute)) {
             filteredAuthenticationAttributes.put(this.authenticationContextAttribute, CollectionUtils.wrap(contextProvider));
-        }        
+        }
+
         return filteredAuthenticationAttributes;
+    }
+
+    private void filterCasProtocolAttributes(final Map<String, Object> model, final Map<String, Object> filteredAuthenticationAttributes) {
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_AUTHENTICATION_DATE,
+            CollectionUtils.wrap(getAuthenticationDate(model)));
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FROM_NEW_LOGIN,
+            CollectionUtils.wrap(isAssertionBackedByNewLogin(model)));
+        filteredAuthenticationAttributes.put(CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME,
+            CollectionUtils.wrap(isRememberMeAuthentication(model)));
     }
 
     /**
@@ -132,21 +142,7 @@ public class Cas30ResponseView extends Cas20ResponseView {
         LOGGER.debug("Encoded attributes for the response are [{}]", encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_ATTRIBUTES, encodedAttributes);
 
-        final List<String> formattedAttributes = new ArrayList<>(encodedAttributes.size());
-
-        LOGGER.debug("Beginning to format/render attributes for the response");
-        encodedAttributes.forEach((k, v) -> {
-            final Set<Object> values = CollectionUtils.toCollection(v);
-            values.forEach(value -> {
-                final String fmt = new StringBuilder()
-                        .append("<cas:".concat(k).concat(">"))
-                        .append(StringEscapeUtils.escapeXml10(value.toString().trim()))
-                        .append("</cas:".concat(k).concat(">"))
-                        .toString();
-                LOGGER.debug("Formatted attribute for the response: [{}]", fmt);
-                formattedAttributes.add(fmt);
-            });
-        });
+        final Collection<String> formattedAttributes = this.attributesRenderer.render(encodedAttributes);
         super.putIntoModel(model, CasProtocolConstants.VALIDATION_CAS_MODEL_ATTRIBUTE_NAME_FORMATTED_ATTRIBUTES, formattedAttributes);
     }
 }

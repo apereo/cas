@@ -9,7 +9,7 @@ Hazelcast Ticket Registry is a distributed ticket registry implementation
 based on [Hazelcast distributed grid library](http://hazelcast.org/). The registry implementation is
 cluster-aware and is able to auto-join a cluster of all the CAS nodes that expose this registry.
 Hazelcast will use port auto-increment feature to assign a TCP port to each member of a cluster starting
-from initially provided arbitrary port (`5701` by default).
+from initially provided arbitrary port, which is typically `5701` by default.
 
 Hazelcast will evenly distribute the ticket data among all the members of a cluster in a very
 efficient manner. Also, by default, the data collection on each node is configured with 1 backup copy,
@@ -27,12 +27,9 @@ Support is enabled by the following module:
 </dependency>
 ```
 
-
 ## Configuration
 
-This module has a configuration strategy which by default auto-configures a hazelcast instance used by the ticket registry
-implementation to build and retrieve Hazelcast's maps for its distributed tickets storage. Some aspects of hazelcast
-configuration in this auto-configuration mode are controlled by CAS properties.
+This module has a configuration strategy which by default auto-configures a hazelcast instance used by the ticket registry implementation to build and retrieve Hazelcast's maps for its distributed tickets storage. Some aspects of hazelcast configuration in this auto-configuration mode are controlled by CAS properties.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#hazelcast-ticket-registry).
 
@@ -40,7 +37,45 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 </p></div>
 
 For more information on the Hazelcast configuration options available,
-refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.7/manual/html-single/index.html#hazelcast-configuration)
+refer to [the Hazelcast configuration documentation](http://docs.hazelcast.org/docs/3.9.1/manual/html-single/index.html#hazelcast-configuration)
+
+## AWS EC2 Auto Discovery
+
+Hazelcast support in CAS may handle EC2 auto-discovery automatically. It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. You optionally also have the ability to specify partitioning group that would be zone aware. When using the zone-aware configuration, backups are created in the other AZs. Each zone will be accepted as one partition group. Using the AWS Discovery capability requires that you turn off and disable multicast and TCP/IP config in the CAS settings, which should be done automatically by CAS at runtime.
+
+Support is enabled by the following module:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-discovery-aws</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+## Apache jclouds Auto Discovery
+
+Hazelcast support in CAS may handle auto-discovery automatically via [Apache jclouds®](https://jclouds.apache.org/). It is useful when you do not want to provide or you cannot provide the list of possible IP addresses for the members of the cluster. Apache jclouds® is an open source multi-cloud toolkit for the Java platform that gives you the freedom to create applications that are portable across clouds while giving you full control to use cloud-specific features. To see the full list of supported cloud environments, [please see this link](https://jclouds.apache.org/reference/providers/#compute).
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-discovery-jclouds</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+## Microsoft Azure Auto Discovery
+
+Hazelcast support in CAS may handle auto-discovery automatically via Microsoft Azure. The discovery strategy will provide all Hazelcast instances by returning VMs within your Azure resource group that are tagged with a specified value. You will need to setup [Azure Active Directory Service Principal credentials](https://azure.microsoft.com/en-us/documentation/articles/resource-group-create-service-principal-portal/) for your Azure Subscription for this plugin to work. With every Hazelcast Virtual Machine you deploy in your resource group, you need to ensure that each VM is tagged with the value of `clusterId` defined in the CAS Hazelcast configuration. The only requirement is that every VM can access each other either by private or public IP address.
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-hazelcast-discovery-azure</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
 
 ## Multicast Auto Discovery
 

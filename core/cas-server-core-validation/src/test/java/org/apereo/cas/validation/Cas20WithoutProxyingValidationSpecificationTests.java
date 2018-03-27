@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -10,12 +11,13 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class Cas20WithoutProxyingValidationSpecificationTests {
 
     private Cas20WithoutProxyingValidationSpecification validationSpecification;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.validationSpecification = new Cas20WithoutProxyingValidationSpecification();
     }
 

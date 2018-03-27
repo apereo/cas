@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.azure.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +13,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AzureAuthenticatorMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
     /** Webflow event id. */
@@ -29,7 +31,7 @@ public class AzureAuthenticatorMultifactorWebflowConfigurer extends AbstractCasM
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_AZURE_EVENT_ID, this.flowDefinitionRegistry);
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
@@ -31,6 +32,7 @@ import java.util.Collection;
  */
 @Configuration("samlGoogleAppsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SamlGoogleAppsConfiguration implements ServiceFactoryConfigurer {
 
     @Autowired

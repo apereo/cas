@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.callback;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
@@ -9,8 +11,6 @@ import org.apereo.cas.ticket.code.OAuthCodeFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.util.CommonHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
 
@@ -20,8 +20,10 @@ import org.springframework.web.servlet.view.RedirectView;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAuth20AuthorizationResponseBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20AuthorizationCodeAuthorizationResponseBuilder.class);
+
 
     /**
      * The Ticket registry.
@@ -30,15 +32,10 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
     private final OAuthCodeFactory oAuthCodeFactory;
 
-    public OAuth20AuthorizationCodeAuthorizationResponseBuilder(final TicketRegistry ticketRegistry, final OAuthCodeFactory oAuthCodeFactory) {
-        this.ticketRegistry = ticketRegistry;
-        this.oAuthCodeFactory = oAuthCodeFactory;
-    }
-
     @Override
-    public View build(final J2EContext context, final String clientId,
-                      final AccessTokenRequestDataHolder holder) {
-        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(), holder.getTicketGrantingTicket());
+    public View build(final J2EContext context, final String clientId, final AccessTokenRequestDataHolder holder) {
+        final OAuthCode code = oAuthCodeFactory.create(holder.getService(), holder.getAuthentication(),
+            holder.getTicketGrantingTicket(), holder.getScopes());
         LOGGER.debug("Generated OAuth code: [{}]", code);
         this.ticketRegistry.addTicket(code);
 
@@ -47,7 +44,7 @@ public class OAuth20AuthorizationCodeAuthorizationResponseBuilder implements OAu
 
         final String redirectUri = context.getRequestParameter(OAuth20Constants.REDIRECT_URI);
         LOGGER.debug("Authorize request verification successful for client [{}] with redirect uri [{}]", clientId, redirectUri);
-        
+
         String callbackUrl = redirectUri;
         callbackUrl = CommonHelper.addParameter(callbackUrl, OAuth20Constants.CODE, code.getId());
         if (StringUtils.isNotBlank(state)) {

@@ -1,24 +1,28 @@
 package org.apereo.cas.ticket.registry;
 
+import com.couchbase.client.java.document.JsonDocument;
 import com.couchbase.client.java.document.SerializableDocument;
 import com.couchbase.client.java.view.DefaultView;
 import com.couchbase.client.java.view.View;
 import com.couchbase.client.java.view.ViewQuery;
 import com.couchbase.client.java.view.ViewResult;
 import com.couchbase.client.java.view.ViewRow;
+import lombok.AllArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.util.CollectionUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.annotation.PreDestroy;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -32,6 +36,8 @@ import java.util.function.Consumer;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     /**
      * The all tickets view name.
@@ -42,9 +48,9 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      * All tickets view.
      */
     public static final View ALL_TICKETS_VIEW = DefaultView.create(
-            VIEW_NAME_ALL_TICKETS,
-            "function(d,m) {emit(m.id);}",
-            "_count");
+        VIEW_NAME_ALL_TICKETS,
+        "function(d,m) {emit(m.id);}",
+        "_count");
 
     /**
      * Views available.
@@ -56,33 +62,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      */
     public static final String UTIL_DOCUMENT = "statistics";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CouchbaseTicketRegistry.class);
-
     private static final long MAX_EXP_TIME_IN_DAYS = 30;
     private static final String END_TOKEN = "\u02ad";
 
     private final TicketCatalog ticketCatalog;
     private final CouchbaseClientFactory couchbase;
 
-    public CouchbaseTicketRegistry(final CouchbaseClientFactory couchbase,
-                                   final TicketCatalog ticketCatalog) {
-        this.couchbase = couchbase;
-        this.ticketCatalog = ticketCatalog;
-
-        LOGGER.info("Setting up Couchbase Ticket Registry instance with bucket [{}]", this.couchbase.getBucket().name());
-    }
-
     @Override
     public Ticket updateTicket(final Ticket ticket) {
-        LOGGER.debug("Updating ticket [{}]", ticket);
-        try {
-            final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticket), ticket);
-
-            LOGGER.debug("Upserting document [{}] into couchbase getBucket [{}]", document.id(), this.couchbase.getBucket().name());
-            this.couchbase.getBucket().upsert(document);
-        } catch (final Exception e) {
-            LOGGER.error("Failed updating [{}]: [{}]", ticket, e);
-        }
+        addTicket(ticket);
         return ticket;
     }
 
@@ -92,7 +80,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         try {
             final Ticket ticket = encodeTicket(ticketToAdd);
             final SerializableDocument document = SerializableDocument.create(ticket.getId(), getTimeToLive(ticketToAdd), ticket);
-            LOGGER.debug("Created document for ticket [{}]. Upserting into getBucket [{}]", ticketToAdd, this.couchbase.getBucket().name());
+            LOGGER.debug("Created document for ticket [{}]. Upserting into bucket [{}]", ticketToAdd, this.couchbase.getBucket().name());
             this.couchbase.getBucket().upsert(document);
         } catch (final Exception e) {
             LOGGER.error("Failed adding [{}]: [{}]", ticketToAdd, e);
@@ -113,7 +101,13 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
             if (document != null) {
                 final Ticket t = (Ticket) document.content();
                 LOGGER.debug("Got ticket [{}] from the registry.", t);
-                return t;
+
+                final Ticket decoded = decodeTicket(t);
+                if (decoded == null || decoded.isExpired()) {
+                    LOGGER.warn("The expiration policy for ticket id [{}] has expired the ticket", ticketId);
+                    return null;
+                }
+                return decoded;
             }
             LOGGER.debug("Ticket [{}] not found in the registry.", encTicketId);
             return null;
@@ -127,19 +121,34 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
      * Stops the couchbase client.
      */
     @PreDestroy
+    @SneakyThrows
     public void destroy() {
-        try {
-            LOGGER.debug("Shutting down Couchbase");
-            this.couchbase.shutdown();
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        LOGGER.debug("Shutting down Couchbase");
+        this.couchbase.shutdown();
     }
 
     @Override
     public Collection<Ticket> getTickets() {
-        LOGGER.debug("getTickets() isn't supported. Returning empty list");
-        return new ArrayList<>(0);
+        final List<Ticket> tickets = new ArrayList<>();
+        this.ticketCatalog.findAll().forEach(t -> {
+            final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+            while (it.hasNext()) {
+                final ViewRow row = it.next();
+                if (StringUtils.isNotBlank(row.id())) {
+                    final JsonDocument document = row.document();
+                    final Ticket ticket = (Ticket) document.content();
+                    LOGGER.debug("Got ticket [{}] from the registry.", ticket);
+
+                    final Ticket decoded = decodeTicket(ticket);
+                    if (decoded == null || decoded.isExpired()) {
+                        LOGGER.warn("Ticket has expired or cannot be decoded");
+                    } else {
+                        tickets.add(decoded);
+                    }
+                }
+            }
+        });
+        return tickets;
     }
 
     @Override
@@ -167,12 +176,15 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
     @Override
     public long deleteAll() {
         final Consumer<? super ViewRow> remove = t -> this.couchbase.getBucket().remove(t.document());
-        return this.ticketCatalog.findAll().stream().mapToLong(t -> {
-            final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
-            final int count = getViewRowCountFromViewResultIterator(it);
-            it.forEachRemaining(remove);
-            return count;
-        }).sum();
+        return this.ticketCatalog.findAll()
+            .stream()
+            .mapToLong(t -> {
+                final Iterator<ViewRow> it = getViewResultIteratorForPrefixedTickets(t.getPrefix() + '-').iterator();
+                final int count = getViewRowCountFromViewResultIterator(it);
+                it.forEachRemaining(remove);
+                return count;
+            })
+            .sum();
     }
 
     private int runQuery(final String prefix) {
@@ -193,12 +205,12 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
 
     private ViewResult getViewResultIteratorForPrefixedTickets(final String prefix) {
         LOGGER.debug("Running query on document [{}] and view [{}] with prefix [{}]",
-                UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
+            UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS, prefix);
         return this.couchbase.getBucket().query(
-                ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
-                        .startKey(prefix)
-                        .endKey(prefix + END_TOKEN)
-                        .reduce());
+            ViewQuery.from(UTIL_DOCUMENT, VIEW_NAME_ALL_TICKETS)
+                .startKey(prefix)
+                .endKey(prefix + END_TOKEN)
+                .reduce());
     }
 
     /**
@@ -212,7 +224,7 @@ public class CouchbaseTicketRegistry extends AbstractTicketRegistry {
         final int expTime = ticket.getExpirationPolicy().getTimeToLive().intValue();
         if (TimeUnit.SECONDS.toDays(expTime) >= MAX_EXP_TIME_IN_DAYS) {
             LOGGER.warn("Any expiration time larger than [{}] days in seconds is considered absolute (as in a Unix time stamp) "
-                    + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
+                + "anything smaller is considered relative in seconds.", MAX_EXP_TIME_IN_DAYS);
 
         }
         return expTime;

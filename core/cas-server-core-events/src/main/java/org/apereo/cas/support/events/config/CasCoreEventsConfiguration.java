@@ -1,5 +1,6 @@
 package org.apereo.cas.support.events.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.support.events.dao.NoOpCasEventRepository;
@@ -19,6 +20,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casCoreEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreEventsConfiguration {
 
     @Autowired

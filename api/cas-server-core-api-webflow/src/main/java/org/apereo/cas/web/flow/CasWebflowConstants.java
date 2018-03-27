@@ -8,23 +8,66 @@ package org.apereo.cas.web.flow;
  */
 public interface CasWebflowConstants {
     /**
+     * The transition state 'stop'.
+     */
+    String TRANSITION_ID_STOP = "stop";
+
+    /**
      * The transition state 'success'.
      */
     String TRANSITION_ID_SUCCESS = "success";
+    /**
+     * Transition id 'redirect' .
+     */
+    String TRANSITION_ID_REDIRECT = "redirect";
 
-    /** Proceed transition id. */
+    /**
+     * Propagate transition id.
+     */
+    String TRANSITION_ID_PROPAGATE = "propagate";
+
+    /**
+     * Finish transition id.
+     */
+    String TRANSITION_ID_FINISH = "finish";
+
+    /**
+     * Front transition id.
+     */
+    String TRANSITION_ID_FRONT = "front";
+    /**
+     * Proceed transition id.
+     */
     String TRANSITION_ID_PROCEED = "proceed";
 
-    /** Confirm transition id. */
+    /**
+     * Confirm transition id.
+     */
     String TRANSITION_ID_CONFIRM = "confirm";
 
-    /** Cancel transition id. */
+    /**
+     * Cancel transition id.
+     */
     String TRANSITION_ID_CANCEL = "cancel";
+
+    /**
+     * Enroll transition id.
+     */
+    String TRANSITION_ID_ENROLL = "enroll";
 
     /**
      * The state id 'success'.
      */
     String STATE_ID_SUCCESS = "success";
+
+    /**
+     * The state id 'stopWebflow'.
+     */
+    String STATE_ID_STOP_WEBFLOW = "stopWebflow";
+    /**
+     * The state id 'clientAction'.
+     */
+    String STATE_ID_CLIENT_ACTION = "clientAction";
 
     /**
      * The state id 'verifyTrustedDevice'.
@@ -36,6 +79,7 @@ public interface CasWebflowConstants {
      */
     String VIEW_ID_REGISTER_DEVICE = "registerDeviceView";
 
+
     /**
      * The state id 'registerTrustedDevice'.
      */
@@ -45,8 +89,17 @@ public interface CasWebflowConstants {
      * The state 'realSubmit'.
      */
     String STATE_ID_REAL_SUBMIT = "realSubmit";
-    
 
+    /**
+     * The view state 'casPac4jStopWebflow'.
+     */
+    String VIEW_ID_PAC4J_STOP_WEBFLOW = "casPac4jStopWebflow";
+
+    /**
+     * The view state 'casWsFedStopWebflow'.
+     */
+    String VIEW_ID_WSFED_STOP_WEBFLOW = "casWsFedStopWebflow";
+    
     /**
      * The transition state 'successWithWarnings'.
      */
@@ -56,6 +109,11 @@ public interface CasWebflowConstants {
      * The decision state 'checkRegistrationRequired'.
      */
     String DECISION_STATE_REQUIRE_REGISTRATION = "checkRegistrationRequired";
+
+    /**
+     * The decision state 'finishLogout'.
+     */
+    String DECISION_STATE_FINISH_LOGOUT = "finishLogout";
 
     /**
      * The transition state 'yes'.
@@ -80,7 +138,7 @@ public interface CasWebflowConstants {
      * The transition state 'gateway'.
      */
     String TRANSITION_ID_GATEWAY = "gateway";
-    
+
     /**
      * The view state 'error'.
      */
@@ -100,6 +158,11 @@ public interface CasWebflowConstants {
      * 'gateway' state id.
      */
     String STATE_ID_GATEWAY = "gateway";
+    /**
+     * 'finishMfaTrustedAuth' state id.
+     */
+    String STATE_ID_FINISH_MFA_TRUSTED_AUTH = "finishMfaTrustedAuth";
+
 
     /**
      * The transition state 'warn'.
@@ -110,11 +173,6 @@ public interface CasWebflowConstants {
      * The transition state 'initialAuthenticationRequestValidationCheck'.
      */
     String STATE_ID_INITIAL_AUTHN_REQUEST_VALIDATION_CHECK = "initialAuthenticationRequestValidationCheck";
-
-    /**
-     * The transition state 'sendTicketGrantingTicket'.
-     */
-    String TRANSITION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicket";
 
     /**
      * The state id 'sendTicketGrantingTicket'.
@@ -297,7 +355,7 @@ public interface CasWebflowConstants {
      * View id 'casExpiredPassView'.
      */
     String VIEW_ID_EXPIRED_PASSWORD = "casExpiredPassView";
-    
+
     /**
      * View id 'casResetPasswordSentInstructions'.
      */
@@ -314,9 +372,29 @@ public interface CasWebflowConstants {
     String STATE_ID_DO_LOGOUT = "doLogout";
 
     /**
+     * State id 'propagateLogoutRequests'.
+     */
+    String STATE_ID_PROPAGATE_LOGOUT_REQUESTS = "propagateLogoutRequests";
+
+    /**
+     * State id 'logoutView'.
+     */
+    String STATE_ID_LOGOUT_VIEW = "logoutView";
+
+    /**
      * State id 'finishLogout'.
      */
     String STATE_ID_FINISH_LOGOUT = "finishLogout";
+
+    /**
+     * State id 'frontLogout'.
+     */
+    String STATE_ID_FRONT_LOGOUT = "frontLogout";
+
+    /**
+     * State id 'confirmLogoutView'.
+     */
+    String STATE_ID_CONFIRM_LOGOUT_VIEW = "confirmLogoutView";
 
     /**
      * State id 'casPasswordUpdateSuccess'.
@@ -329,7 +407,83 @@ public interface CasWebflowConstants {
     String STATE_ID_HANDLE_AUTHN_FAILURE = "handleAuthenticationFailure";
 
     /**
-     * State id 'initialFlowSetupAction'.
+     * Action id 'initialFlowSetupAction'.
      */
-    String STATE_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+    String ACTION_ID_INIT_FLOW_SETUP = "initialFlowSetupAction";
+
+
+    /**
+     * Action id 'remoteAuthenticate'.
+     */
+    String ACTION_ID_REMOTE_TRUSTED_AUTHENTICATION = "remoteAuthenticate";
+
+    /**
+     * Action id 'clearWebflowCredentialsAction'.
+     */
+    String ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS = "clearWebflowCredentialsAction";
+
+    /**
+     * Action id 'generateServiceTicketAction'.
+     */
+    String ACTION_ID_GENERATE_SERVICE_TICKET = "generateServiceTicketAction";
+
+    /**
+     * Action id 'redirectToServiceAction'.
+     */
+    String ACTION_ID_REDIRECT_TO_SERVICE = "redirectToServiceAction";
+
+    /**
+     * Action id 'redirectToServiceAction'.
+     */
+    String ACTION_ID_TERMINATE_SESSION = "terminateSessionAction";
+
+    /**
+     * Action id 'logoutViewSetupAction'.
+     */
+    String ACTION_ID_LOGOUT_VIEW_SETUP = "logoutViewSetupAction";
+
+    /**
+     * Action id 'authenticationExceptionHandler'.
+     */
+    String ACTION_ID_AUTHENTICATION_EXCEPTION_HANDLER = "authenticationExceptionHandler";
+
+    /**
+     * Action id 'sendTicketGrantingTicketAction'.
+     */
+    String ACTION_ID_SEND_TICKET_GRANTING_TICKET = "sendTicketGrantingTicketAction";
+
+    /**
+     * State id 'proceedFromAuthenticationWarningView'.
+     */
+    String STATE_ID_PROCEED_FROM_AUTHENTICATION_WARNINGS_VIEW = "proceedFromAuthenticationWarningView";
+
+    /**
+     * Action to check if login should redirect to password reset subflow.
+     */
+    String CHECK_FOR_PASSWORD_RESET_TOKEN_ACTION = "checkForPswdResetToken";
+
+    /**
+     * State for password reset subflow "pswdResetSubflow".
+     */
+    String STATE_ID_PASSWORD_RESET_SUBFLOW = "pswdResetSubflow";
+
+    /**
+     * Login flow state indicating the password reset subflow is complete "pswdResetComplete".
+     */
+    String STATE_ID_PASSWORD_RESET_FLOW_COMPLETE = "pswdResetComplete";
+
+    /**
+     * State to restart the login flow fresh "redirectToLogin".
+     */
+    String STATE_ID_REDIRECT_TO_LOGIN = "redirectToLogin";
+
+    /**
+     * State to check where the password change should go after completion (post or pre-login) "postLoginPswdChangeCheck".
+     */
+    String STATE_ID_POST_LOGIN_PASSWORD_CHANGE_CHECK = "postLoginPswdChangeCheck";
+
+    /**
+     * State id to check for do change password manual flag "checkDoChangePassword".
+     */
+    String STATE_ID_CHECK_DO_CHANGE_PASSWORD = "checkDoChangePassword";
 }

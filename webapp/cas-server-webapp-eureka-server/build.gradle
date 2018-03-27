@@ -13,7 +13,7 @@ bootRun {
 }
 
 war {
-    enabled = !rootProject.publishReleases && !rootProject.publishSnapshots
+    enabled = !rootProject.publishingRelease
 }
 
 springBoot  {
@@ -22,7 +22,7 @@ springBoot  {
 
 bootRepackage {
     mainClass = "org.apereo.cas.CasEurekaServerWebApplication"
-    enabled = !rootProject.publishReleases
+    enabled = !rootProject.publishingRelease
 }
 
 dependencies {
@@ -31,5 +31,5 @@ dependencies {
     implementation libraries.eurekaclient
     implementation libraries.ribbon
     implementation libraries.springintegration
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
 }

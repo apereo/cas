@@ -48,7 +48,7 @@ To see the relevant list of CAS properties, please [review this guide](Configura
 
 ### Never
 
-The never expires policy allows tickets to exist indefinitely.
+The never expires policy allows tickets to exist indefinitely. 
 
 <div class="alert alert-warning"><strong>Usage Warning!</strong><p>Use of this policy has significant consequences to overall
 security policy and should be enabled only after thorough review by a qualified security team. There are also implications to

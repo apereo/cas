@@ -1,9 +1,11 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfo;
@@ -33,7 +35,8 @@ import static org.mockito.Mockito.*;
  */
 @DirtiesContext
 @Import(CasSupportActionsConfiguration.class)
-@TestPropertySource(properties = "cas.sso.renewedAuthn=false")
+@TestPropertySource(properties = "cas.sso.createSsoCookieOnRenewAuthn=false")
+@Slf4j
 public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String LOCALHOST_IP = "127.0.0.1";
@@ -47,7 +50,7 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
     private MockRequestContext context;
 
     @Before
-    public void onSetUp() throws Exception {
+    public void onSetUp() {
         this.context = new MockRequestContext();
     }
 
@@ -59,7 +62,7 @@ public class SendTicketGrantingTicketActionSsoTests extends AbstractCentralAuthe
         request.addParameter(CasProtocolConstants.PARAMETER_RENEW, "true");
         request.setRemoteAddr(LOCALHOST_IP);
         request.setLocalAddr(LOCALHOST_IP);
-        request.addHeader(WebUtils.USER_AGENT_HEADER, "test");
+        request.addHeader(HttpRequestUtils.USER_AGENT_HEADER, "test");
         ClientInfoHolder.setClientInfo(new ClientInfo(request));
         
         final TicketGrantingTicket tgt = mock(TicketGrantingTicket.class);

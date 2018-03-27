@@ -1,7 +1,9 @@
 package org.apereo.cas.authentication.handler.support;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.RememberMeUsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -17,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class SimpleTestUsernamePasswordHandlerTests {
 
     @Rule
@@ -25,7 +28,7 @@ public class SimpleTestUsernamePasswordHandlerTests {
     private SimpleTestUsernamePasswordAuthenticationHandler authenticationHandler;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.authenticationHandler = new SimpleTestUsernamePasswordAuthenticationHandler();
     }
 
@@ -35,13 +38,19 @@ public class SimpleTestUsernamePasswordHandlerTests {
     }
 
     @Test
+    public void verifySupportsRememberMeUserCredentials() {
+        assertTrue(this.authenticationHandler.supports(new RememberMeUsernamePasswordCredential()));
+    }
+
+    @Test
     public void verifyDoesntSupportBadUserCredentials() {
         assertFalse(this.authenticationHandler.supports(CoreAuthenticationTestUtils.getHttpBasedServiceCredentials()));
     }
 
     @Test
     public void verifyValidUsernamePassword() throws Exception {
-        final HandlerResult result = authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
+        final AuthenticationHandlerExecutionResult result =
+            authenticationHandler.authenticate(CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
         assertEquals("SimpleTestUsernamePasswordAuthenticationHandler", result.getHandlerName());
     }
 

@@ -1,10 +1,12 @@
 package org.apereo.cas.digest.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.adaptive.AdaptiveAuthenticationPolicy;
 import org.apereo.cas.digest.DigestCredential;
 import org.apereo.cas.digest.DigestHashedCredentialRetriever;
 import org.apereo.cas.digest.util.DigestAuthenticationUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.apereo.cas.web.flow.actions.AbstractNonInteractiveCredentialsAction;
 import org.apereo.cas.web.flow.resolver.CasDelegatingWebflowEventResolver;
 import org.apereo.cas.web.flow.resolver.CasWebflowEventResolver;
@@ -13,8 +15,6 @@ import org.pac4j.core.context.HttpConstants;
 import org.pac4j.core.context.WebContext;
 import org.pac4j.http.credentials.DigestCredentials;
 import org.pac4j.http.credentials.extractor.DigestAuthExtractor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.webflow.execution.RequestContext;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,9 +26,10 @@ import javax.servlet.http.HttpServletResponse;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class DigestAuthenticationAction extends AbstractNonInteractiveCredentialsAction {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DigestAuthenticationAction.class);
+
 
     private final String nonce = DigestAuthenticationUtils.createNonce();
 
@@ -51,11 +52,11 @@ public class DigestAuthenticationAction extends AbstractNonInteractiveCredential
     @Override
     protected Credential constructCredentialsFromRequest(final RequestContext requestContext) {
         try {
-            final HttpServletRequest request = WebUtils.getHttpServletRequest(requestContext);
-            final HttpServletResponse response = WebUtils.getHttpServletResponse(requestContext);
+            final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(requestContext);
+            final HttpServletResponse response = WebUtils.getHttpServletResponseFromExternalWebflowContext(requestContext);
 
-            final DigestAuthExtractor extractor = new DigestAuthExtractor(this.getClass().getSimpleName());
-            final WebContext webContext = WebUtils.getPac4jJ2EContext(request, response);
+            final DigestAuthExtractor extractor = new DigestAuthExtractor();
+            final WebContext webContext = Pac4jUtils.getPac4jJ2EContext(request, response);
 
             final DigestCredentials credentials = extractor.extract(webContext);
             if (credentials == null) {

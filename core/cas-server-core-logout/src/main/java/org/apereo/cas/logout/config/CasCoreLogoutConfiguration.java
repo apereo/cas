@@ -1,5 +1,6 @@
 package org.apereo.cas.logout.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -18,8 +19,6 @@ import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.UrlValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -38,8 +37,9 @@ import java.util.List;
  */
 @Configuration("casCoreLogoutConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreLogoutConfiguration implements LogoutExecutionPlanConfigurer {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreLogoutConfiguration.class);
+
 
     @Autowired
     @Qualifier("ticketRegistry")

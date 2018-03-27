@@ -19,4 +19,10 @@ Trusted authentication handler support is enabled by including the following dep
 </dependency>
 ```
 
+Trusted authentication is able to extract the remote authenticated user via the following ways:
+
+1. Username may be extracted from `HttpServletRequest#getRemoteUser()`
+2. Username may be extracted from `HttpServletRequest#getUserPrincipal()`
+3. Username may be extracted from a request header whose name is defined in CAS settings.
+
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#trusted-authentication).

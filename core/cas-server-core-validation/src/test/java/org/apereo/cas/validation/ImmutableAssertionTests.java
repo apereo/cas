@@ -1,5 +1,6 @@
 package org.apereo.cas.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.Authentication;
@@ -17,6 +18,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class ImmutableAssertionTests {
 
     @Test
@@ -28,7 +30,7 @@ public class ImmutableAssertionTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication("test2"));
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
 
         assertEquals(list.toArray(new Authentication[0]).length, assertion.getChainedAuthentications().size());
     }
@@ -40,7 +42,7 @@ public class ImmutableAssertionTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), false);
+                CoreAuthenticationTestUtils.getAuthentication(), list, false, RegisteredServiceTestUtils.getService());
 
         assertFalse(assertion.isFromNewLogin());
     }
@@ -52,7 +54,7 @@ public class ImmutableAssertionTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
 
         assertTrue(assertion.isFromNewLogin());
     }
@@ -63,7 +65,7 @@ public class ImmutableAssertionTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
 
         assertNotEquals(assertion, null);
     }
@@ -74,7 +76,7 @@ public class ImmutableAssertionTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final ImmutableAssertion assertion = new ImmutableAssertion(
-                CoreAuthenticationTestUtils.getAuthentication(), list, RegisteredServiceTestUtils.getService(), true);
+                CoreAuthenticationTestUtils.getAuthentication(), list, true, RegisteredServiceTestUtils.getService());
 
         assertFalse("test".equals(assertion));
     }
@@ -88,8 +90,8 @@ public class ImmutableAssertionTests {
         list1.add(auth);
         list2.add(auth);
 
-        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, RegisteredServiceTestUtils.getService(), true);
-        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, RegisteredServiceTestUtils.getService(), true);
+        final ImmutableAssertion assertion1 = new ImmutableAssertion(auth, list1, true, RegisteredServiceTestUtils.getService());
+        final ImmutableAssertion assertion2 = new ImmutableAssertion(auth, list2, true, RegisteredServiceTestUtils.getService());
 
         assertTrue(assertion1.equals(assertion2));
     }
@@ -102,7 +104,7 @@ public class ImmutableAssertionTests {
         list.add(CoreAuthenticationTestUtils.getAuthentication());
 
         final Assertion assertion = new ImmutableAssertion(
-                CoreAuthenticationTestUtils.getAuthentication(), list, service, false);
+                CoreAuthenticationTestUtils.getAuthentication(), list, false, service);
 
         assertEquals(service, assertion.getService());
     }

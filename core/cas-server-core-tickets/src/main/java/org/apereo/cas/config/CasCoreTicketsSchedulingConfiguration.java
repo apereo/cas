@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logout.LogoutManager;
 import org.apereo.cas.ticket.registry.DefaultTicketRegistryCleaner;
@@ -7,8 +8,6 @@ import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.support.LockingStrategy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -35,9 +34,10 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableAsync
 @EnableTransactionManagement(proxyTargetClass = true)
 @AutoConfigureAfter(CasCoreTicketsConfiguration.class)
+@Slf4j
 public class CasCoreTicketsSchedulingConfiguration {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasCoreTicketsSchedulingConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;

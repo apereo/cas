@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.surrogate;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.configuration.model.support.surrogate.SurrogateAuthenticationProperties;
@@ -14,8 +15,6 @@ import org.ldaptive.LdapEntry;
 import org.ldaptive.Response;
 import org.ldaptive.SearchFilter;
 import org.ldaptive.SearchResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -29,8 +28,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SurrogateLdapAuthenticationService extends BaseSurrogateAuthenticationService {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateLdapAuthenticationService.class);
+
     private final ConnectionFactory connectionFactory;
     private final SurrogateAuthenticationProperties.Ldap ldapProperties;
 

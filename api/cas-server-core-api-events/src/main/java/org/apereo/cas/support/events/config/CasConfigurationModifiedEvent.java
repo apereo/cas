@@ -1,9 +1,9 @@
 package org.apereo.cas.support.events.config;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
-
 import java.io.File;
 import java.nio.file.Path;
 import java.util.regex.Pattern;
@@ -14,11 +14,17 @@ import java.util.regex.Pattern;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@ToString(callSuper = true)
+@Getter
 public class CasConfigurationModifiedEvent extends AbstractCasEvent {
+
     private static final long serialVersionUID = -5738763037210896455L;
+
     private static final Pattern CONFIG_FILE_PATTERN = Pattern.compile("\\.(properties|yml)", Pattern.CASE_INSENSITIVE);
 
     private final transient Path file;
+
     private final boolean override;
 
     /**
@@ -53,15 +59,7 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         this.file = file;
         this.override = override;
     }
-
-    private Path getFile() {
-        return file;
-    }
-
-    public boolean isOverride() {
-        return override;
-    }
-
+    
     /**
      * Is eligible for context refresh ?
      *
@@ -71,21 +69,10 @@ public class CasConfigurationModifiedEvent extends AbstractCasEvent {
         if (this.override) {
             return true;
         }
-
         if (getFile() != null) {
             final File file = getFile().toFile();
             return CONFIG_FILE_PATTERN.matcher(file.getName()).find();
         }
         return false;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.SIMPLE_STYLE)
-                .appendSuper(super.toString())
-                .append("file", file)
-                .append("override", override)
-                .toString();
     }
 }

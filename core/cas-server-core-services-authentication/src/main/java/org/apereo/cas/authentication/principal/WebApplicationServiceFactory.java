@@ -1,11 +1,10 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.validation.ValidationResponseType;
-import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -16,8 +15,9 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class WebApplicationServiceFactory extends AbstractServiceFactory<WebApplicationService> {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WebApplicationServiceFactory.class);
+
 
 
     /**
@@ -100,6 +100,6 @@ public class WebApplicationServiceFactory extends AbstractServiceFactory<WebAppl
 
     @Override
     public WebApplicationService createService(final String id) {
-        return newWebApplicationService(WebUtils.getHttpServletRequestFromRequestAttributes(), id);
+        return newWebApplicationService(HttpRequestUtils.getHttpServletRequestFromRequestAttributes(), id);
     }
 }

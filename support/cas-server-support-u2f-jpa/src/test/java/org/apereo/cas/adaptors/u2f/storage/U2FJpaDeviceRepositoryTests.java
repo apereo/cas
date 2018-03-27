@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.u2f.storage;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.config.U2FConfiguration;
 import org.apereo.cas.config.U2FJpaConfiguration;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,11 +20,13 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  * @since 5.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = {U2FJpaConfiguration.class,
+@SpringBootTest(classes = {U2FConfiguration.class,
+        U2FJpaConfiguration.class,
         AopAutoConfiguration.class,
         RefreshAutoConfiguration.class})
 @EnableTransactionManagement(proxyTargetClass = true)
 @EnableAspectJAutoProxy(proxyTargetClass = true)
+@Slf4j
 public class U2FJpaDeviceRepositoryTests extends AbstractU2FDeviceRepositoryTests {
 
     @Autowired

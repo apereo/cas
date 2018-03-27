@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -33,7 +35,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.sql.DataSource;
-
 import java.util.Map;
 
 import static org.junit.Assert.*;
@@ -46,25 +47,27 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        JdbcPasswordManagementConfiguration.class,
-        PasswordManagementConfiguration.class})
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    JdbcPasswordManagementConfiguration.class,
+    PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})
+@Slf4j
 public class JdbcPasswordManagementServiceTests {
     @Autowired
     @Qualifier("passwordChangeService")
@@ -79,34 +82,40 @@ public class JdbcPasswordManagementServiceTests {
     @Before
     public void before() {
         jdbcTemplate = new JdbcTemplate(this.jdbcPasswordManagementDataSource);
-        
+
         jdbcTemplate.execute("drop table pm_table_accounts if exists;");
         jdbcTemplate.execute("create table pm_table_accounts (id int, userid varchar(255),"
-                + "password varchar(255), email varchar(255));");
+            + "password varchar(255), email varchar(255));");
         jdbcTemplate.execute("insert into pm_table_accounts values (100, 'casuser', 'password', 'casuser@example.org');");
 
         jdbcTemplate.execute("drop table pm_table_questions if exists;");
         jdbcTemplate.execute("create table pm_table_questions (id int, userid varchar(255),"
-                + " question varchar(255), answer varchar(255));");
+            + " question varchar(255), answer varchar(255));");
         jdbcTemplate.execute("insert into pm_table_questions values (100, 'casuser', 'question1', 'answer1');");
         jdbcTemplate.execute("insert into pm_table_questions values (200, 'casuser', 'question2', 'answer2');");
-        
+
     }
 
     @Test
     public void verifyUserEmailCanBeFound() {
         final String email = passwordChangeService.findEmail("casuser");
-        assertEquals(email, "casuser@example.org");
+        assertEquals("casuser@example.org", email);
+    }
+
+    @Test
+    public void verifyNullReturnedIfUserEmailCannotBeFound() {
+        final String email = passwordChangeService.findEmail("unknown");
+        assertNull(email);
     }
 
     @Test
     public void verifyUserQuestionsCanBeFound() {
         final Map questions = passwordChangeService.getSecurityQuestions("casuser");
-        assertEquals(questions.size(), 2);
+        assertEquals(2, questions.size());
         assertTrue(questions.containsKey("question1"));
         assertTrue(questions.containsKey("question2"));
     }
-    
+
     @Test
     public void verifyUserPasswordChange() {
         final Credential c = new UsernamePasswordCredential("casuser", "password");
@@ -116,6 +125,6 @@ public class JdbcPasswordManagementServiceTests {
         final boolean res = passwordChangeService.change(c, bean);
         assertTrue(res);
     }
-    
+
 
 }

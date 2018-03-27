@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.web.mvc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationContextValidator;
@@ -8,15 +9,14 @@ import org.apereo.cas.authentication.MultifactorTriggerSelectionStrategy;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.apereo.cas.ticket.proxy.ProxyHandler;
+import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.validation.CasProtocolValidationSpecification;
-import org.apereo.cas.validation.ValidationAuthorizer;
+import org.apereo.cas.validation.ServiceTicketValidationAuthorizersExecutionPlan;
 import org.apereo.cas.web.AbstractServiceValidateController;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.openid4java.message.ParameterList;
 import org.openid4java.message.VerifyResponse;
 import org.openid4java.server.ServerManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
@@ -24,7 +24,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * An Openid controller that delegates to its own views on service validates.
@@ -33,10 +32,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class OpenIdValidateController extends AbstractServiceValidateController {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(OpenIdValidateController.class);
-
+    
     private final ServerManager serverManager;
 
     public OpenIdValidateController(final CasProtocolValidationSpecification validationSpecification, 
@@ -48,12 +46,12 @@ public class OpenIdValidateController extends AbstractServiceValidateController 
                                     final View jsonView, final View successView, 
                                     final View failureView, final String authnContextAttribute, 
                                     final ServerManager serverManager,
-                                    final Set<ValidationAuthorizer> validationAuthorizers) {
-        super(validationSpecification, authenticationSystemSupport, servicesManager, 
-                centralAuthenticationService, proxyHandler, 
-                argumentExtractor, multifactorTriggerSelectionStrategy, 
-                authenticationContextValidator, jsonView, successView, 
-                failureView, authnContextAttribute, validationAuthorizers);
+                                    final ServiceTicketValidationAuthorizersExecutionPlan validationAuthorizers,
+                                    final boolean renewEnabled) {
+        super(CollectionUtils.wrapSet(validationSpecification), validationAuthorizers,
+            authenticationSystemSupport, servicesManager, centralAuthenticationService, proxyHandler,
+            successView, failureView, argumentExtractor, multifactorTriggerSelectionStrategy,
+            authenticationContextValidator, jsonView, authnContextAttribute, renewEnabled);
         this.serverManager = serverManager;
     }
 

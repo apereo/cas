@@ -3,8 +3,9 @@ package org.apereo.cas.token.authentication;
 import com.nimbusds.jose.EncryptionMethod;
 import com.nimbusds.jose.JWEAlgorithm;
 import com.nimbusds.jose.JWSAlgorithm;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -16,15 +17,16 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.TokenAuthenticationConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.services.AbstractRegisteredService;
 import org.apereo.cas.services.DefaultRegisteredServiceProperty;
+import org.apereo.cas.services.RegisteredServiceProperty;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ReturnAllAttributeReleasePolicy;
-import org.apereo.cas.token.TokenConstants;
 import org.apereo.cas.util.gen.DefaultRandomStringGenerator;
 import org.apereo.cas.util.gen.RandomStringGenerator;
 import org.junit.Test;
@@ -61,6 +63,7 @@ import static org.junit.Assert.*;
         CasCoreAuthenticationHandlersConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class,
         CasCoreHttpConfiguration.class,
+        CasCoreUtilConfiguration.class,
         CasCoreTicketCatalogConfiguration.class,
         CasCoreTicketsConfiguration.class,
         CasCoreWebConfiguration.class,
@@ -71,6 +74,7 @@ import static org.junit.Assert.*;
         CasCoreServicesAuthenticationConfiguration.class,
         CasCoreServicesConfiguration.class,
         TokenAuthenticationConfiguration.class})
+@Slf4j
 public class TokenAuthenticationHandlerTests {
 
     private static final RandomStringGenerator RANDOM_STRING_GENERATOR = new DefaultRandomStringGenerator();
@@ -92,7 +96,7 @@ public class TokenAuthenticationHandlerTests {
         profile.setId("casuser");
         final String token = g.generate(profile);
         final TokenCredential c = new TokenCredential(token, RegisteredServiceTestUtils.getService());
-        final HandlerResult result = this.tokenAuthenticationHandler.authenticate(c);
+        final AuthenticationHandlerExecutionResult result = this.tokenAuthenticationHandler.authenticate(c);
         assertNotNull(result);
         assertEquals(result.getPrincipal().getId(), profile.getId());
     }
@@ -106,11 +110,11 @@ public class TokenAuthenticationHandlerTests {
 
             DefaultRegisteredServiceProperty p = new DefaultRegisteredServiceProperty();
             p.addValue(SIGNING_SECRET);
-            svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_SIGNING, p);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_SIGNING.getPropertyName(), p);
 
             p = new DefaultRegisteredServiceProperty();
             p.addValue(ENCRYPTION_SECRET);
-            svc.getProperties().put(TokenConstants.PROPERTY_NAME_TOKEN_SECRET_ENCRYPTION, p);
+            svc.getProperties().put(RegisteredServiceProperty.RegisteredServiceProperties.TOKEN_SECRET_ENCRYPTION.getPropertyName(), p);
 
             final List l = new ArrayList();
             l.add(svc);

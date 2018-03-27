@@ -1,6 +1,6 @@
 package org.apereo.cas.interrupt.webflow.actions;
 
-import org.apereo.cas.authentication.Authentication;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.interrupt.InterruptResponse;
 import org.apereo.cas.interrupt.webflow.InterruptUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -16,10 +16,10 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class FinalizeInterruptFlowAction extends AbstractAction {
     @Override
     protected Event doExecute(final RequestContext requestContext) throws Exception {
-        final Authentication authentication = WebUtils.getAuthentication(requestContext);
         final RegisteredService registeredService = WebUtils.getRegisteredService(requestContext);
         final InterruptResponse response = InterruptUtils.getInterruptFrom(requestContext);
         

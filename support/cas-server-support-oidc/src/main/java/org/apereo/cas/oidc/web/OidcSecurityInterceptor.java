@@ -1,13 +1,15 @@
 package org.apereo.cas.oidc.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.oidc.OidcConstants;
 import org.apereo.cas.oidc.util.OidcAuthorizationRequestSupport;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.util.Pac4jUtils;
 import org.pac4j.core.config.Config;
 import org.pac4j.core.context.J2EContext;
 import org.pac4j.core.profile.ProfileManager;
 import org.pac4j.core.profile.UserProfile;
 import org.pac4j.springframework.web.SecurityInterceptor;
+import org.apereo.cas.authentication.Authentication;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -20,6 +22,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class OidcSecurityInterceptor extends SecurityInterceptor {
 
     private final OidcAuthorizationRequestSupport authorizationRequestSupport;
@@ -33,11 +36,16 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
     public boolean preHandle(final HttpServletRequest request,
                              final HttpServletResponse response,
                              final Object handler) throws Exception {
-        final J2EContext ctx = WebUtils.getPac4jJ2EContext(request, response);
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+        final J2EContext ctx = Pac4jUtils.getPac4jJ2EContext(request, response);
+        final ProfileManager manager = Pac4jUtils.getPac4jProfileManager(request, response);
 
 
         boolean clearCreds = false;
+        final Optional<Authentication> authentication = authorizationRequestSupport.isCasAuthenticationAvailable(ctx);
+        if (!authentication.isPresent()) {
+            clearCreds = true;
+        }
+
         final Optional<UserProfile> auth = authorizationRequestSupport.isAuthenticationProfileAvailable(ctx);
 
         if (auth.isPresent()) {
@@ -48,6 +56,7 @@ public class OidcSecurityInterceptor extends SecurityInterceptor {
         }
 
         final Set<String> prompts = authorizationRequestSupport.getOidcPromptFromAuthorizationRequest(ctx);
+
         if (!clearCreds) {
             clearCreds = prompts.contains(OidcConstants.PROMPT_LOGIN);
         }

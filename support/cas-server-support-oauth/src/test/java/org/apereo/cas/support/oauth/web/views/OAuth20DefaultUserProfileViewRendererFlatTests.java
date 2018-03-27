@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web.views;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.oauth.web.AbstractOAuth20Tests;
 import org.apereo.cas.ticket.accesstoken.AccessToken;
 import org.apereo.cas.util.CollectionUtils;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.*;
  * @since 5.2.0
  */
 @TestPropertySource(properties = "cas.authn.oauth.userProfileViewType=FLAT")
+@Slf4j
 public class OAuth20DefaultUserProfileViewRendererFlatTests extends AbstractOAuth20Tests {
 
     @Autowired

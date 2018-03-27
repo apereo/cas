@@ -1,11 +1,14 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * Exception thrown when a service attempts to proxy when it is not allowed to.
  *
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class UnauthorizedProxyingException extends UnauthorizedServiceException {
     /** The code description. */
     public static final String CODE = "UNAUTHORIZED_SERVICE_PROXY";

@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.util.http.SimpleHttpClientFactoryBean;
@@ -10,6 +11,8 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.security.KeyStore;
 
 import static org.junit.Assert.*;
@@ -21,6 +24,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class FileTrustStoreSslSocketFactoryTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("truststore.jks");
@@ -37,7 +41,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     }
 
     @Test
-    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWithCertAvailable2() {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
@@ -45,19 +49,19 @@ public class FileTrustStoreSslSocketFactoryTests {
     }
 
     @Test
-    public void verifyTrustStoreNotFound() throws Exception {
-        this.thrown.expect(RuntimeException.class);
+    public void verifyTrustStoreNotFound() {
+        this.thrown.expect(FileNotFoundException.class);
         sslFactory(new FileSystemResource("test.jks"), "changeit");
     }
 
     @Test
-    public void verifyTrustStoreBadPassword() throws Exception {
-        this.thrown.expect(RuntimeException.class);
+    public void verifyTrustStoreBadPassword() {
+        this.thrown.expect(IOException.class);
         sslFactory(RESOURCE, "invalid");
     }
 
     @Test
-    public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyForValidEndpointWithNoCert() {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();
@@ -65,7 +69,7 @@ public class FileTrustStoreSslSocketFactoryTests {
     }
 
     @Test
-    public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() throws Exception {
+    public void verifyTrustStoreLoadingSuccessfullyWihInsecureEndpoint() {
         final SimpleHttpClientFactoryBean clientFactory = new SimpleHttpClientFactoryBean();
         clientFactory.setSslSocketFactory(sslFactory());
         final HttpClient client = clientFactory.getObject();

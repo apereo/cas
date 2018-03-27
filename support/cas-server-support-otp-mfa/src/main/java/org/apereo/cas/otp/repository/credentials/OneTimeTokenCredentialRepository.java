@@ -34,4 +34,12 @@ public interface OneTimeTokenCredentialRepository {
      * @return the one time token account
      */
     OneTimeTokenAccount create(String username);
+
+    /**
+     * Update an existing account.
+     *
+     * @param account the registration record
+     * @return the one time token account
+     */
+    OneTimeTokenAccount update(OneTimeTokenAccount account);
 }

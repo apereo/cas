@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.support.AbstractCasExpirationPolicy;
 
@@ -20,23 +21,17 @@ import java.time.temporal.ChronoUnit;
  * @since 5.0.0
  */
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPolicy {
 
-    /**
-     * Serialization support.
-     */
     private static final long serialVersionUID = -7144233906843566234L;
 
     /**
      * The time to kill in milliseconds.
      */
     private long timeToKillInSeconds;
-
-    /**
-     * No-arg constructor for serialization support.
-     */
-    public OAuthRefreshTokenExpirationPolicy() {
-    }
 
     /**
      * Instantiates a new OAuth refresh token expiration policy.
@@ -50,8 +45,11 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
 
     @Override
     public boolean isExpired(final TicketState ticketState) {
-        return ticketState == null || ticketState.getCreationTime()
-                .plus(this.timeToKillInSeconds, ChronoUnit.SECONDS).isBefore(ZonedDateTime.now(ZoneOffset.UTC));
+        final boolean expired = isRefreshTokenExpired(ticketState);
+        if (!expired) {
+            return super.isExpired(ticketState);
+        }
+        return expired;
     }
 
     @Override
@@ -65,28 +63,39 @@ public class OAuthRefreshTokenExpirationPolicy extends AbstractCasExpirationPoli
         return 0L;
     }
 
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final OAuthRefreshTokenExpirationPolicy rhs = (OAuthRefreshTokenExpirationPolicy) obj;
-        return new EqualsBuilder()
-                .append(this.timeToKillInSeconds, rhs.timeToKillInSeconds)
-                .isEquals();
+    /**
+     * Is refresh token expired ?
+     *
+     * @param ticketState the ticket state
+     * @return the boolean
+     */
+    @JsonIgnore
+    protected boolean isRefreshTokenExpired(final TicketState ticketState) {
+        final ZonedDateTime expiringTime = ticketState.getCreationTime().plus(this.timeToKillInSeconds, ChronoUnit.SECONDS);
+        return ticketState == null || expiringTime.isBefore(ZonedDateTime.now(ZoneOffset.UTC));
     }
 
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(timeToKillInSeconds)
-                .toHashCode();
+    /**
+     * An expiration policy that is independent from the parent ticket-granting ticket.
+     * Activated when refresh tokens are expected to live beyond the normal expiration policy
+     * of the TGT that lent a hand in issuing them. If the refresh token is considered expired
+     * by this policy, the parent ticket's expiration policy is not consulted, making the RT independent.
+     */
+    @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+    @Slf4j
+    @NoArgsConstructor
+    @EqualsAndHashCode(callSuper = true)
+    public static class OAuthRefreshTokenSovereignExpirationPolicy extends OAuthRefreshTokenExpirationPolicy {
+        private static final long serialVersionUID = -7768661082888351104L;
+
+        @JsonCreator
+        public OAuthRefreshTokenSovereignExpirationPolicy(@JsonProperty("timeToLive") final long timeToKillInSeconds) {
+            super(timeToKillInSeconds);
+        }
+
+        @Override
+        public boolean isExpired(final TicketState ticketState) {
+            return isRefreshTokenExpired(ticketState);
+        }
     }
 }

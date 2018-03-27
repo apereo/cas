@@ -1,5 +1,6 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.TrustedDevicesMultifactorProperties;
 import org.apereo.cas.trusted.authentication.api.MultifactorAuthenticationTrustRecord;
@@ -26,16 +27,15 @@ import java.util.Set;
  * @since 5.0.0
  */
 @ConditionalOnClass(value = MultifactorAuthenticationTrustStorage.class)
+@Slf4j
 public class TrustedDevicesController extends BaseCasMvcEndpoint {
 
     private final MultifactorAuthenticationTrustStorage mfaTrustEngine;
-    private final CasConfigurationProperties casProperties;
 
     public TrustedDevicesController(final MultifactorAuthenticationTrustStorage mfaTrustEngine,
                                     final CasConfigurationProperties casProperties) {
         super("trustedDevs", "/trustedDevs", casProperties.getMonitor().getEndpoints().getTrustedDevices(), casProperties);
         this.mfaTrustEngine = mfaTrustEngine;
-        this.casProperties = casProperties;
     }
 
     /**
@@ -44,11 +44,10 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the model and view
-     * @throws Exception the exception
      */
     @GetMapping
     protected ModelAndView handleRequestInternal(final HttpServletRequest request,
-                                                 final HttpServletResponse response) throws Exception {
+                                                 final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         return new ModelAndView("monitoring/viewTrustedDevices");
@@ -60,12 +59,11 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the records
-     * @throws Exception the exception
      */
     @GetMapping(value = "/getRecords")
     @ResponseBody
     public Set<MultifactorAuthenticationTrustRecord> getRecords(final HttpServletRequest request,
-                                                                final HttpServletResponse response) throws Exception {
+                                                                final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         final TrustedDevicesMultifactorProperties trusted = casProperties.getAuthn().getMfa().getTrusted();
@@ -82,12 +80,11 @@ public class TrustedDevicesController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the integer
-     * @throws Exception the exception
      */
     @PostMapping(value = "/revokeRecord")
     @ResponseBody
     public Integer revokeRecord(@RequestParam final String key, final HttpServletRequest request,
-                                final HttpServletResponse response) throws Exception {
+                                final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
 
         this.mfaTrustEngine.expire(key);

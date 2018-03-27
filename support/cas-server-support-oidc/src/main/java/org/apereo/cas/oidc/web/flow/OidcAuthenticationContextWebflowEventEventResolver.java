@@ -1,11 +1,13 @@
 package org.apereo.cas.oidc.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.AuthenticationException;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
 import org.apereo.cas.services.MultifactorAuthenticationProviderSelector;
 import org.apereo.cas.services.RegisteredService;
@@ -16,8 +18,6 @@ import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.web.flow.authentication.BaseMultifactorAuthenticationProviderEventResolver;
 import org.apereo.cas.web.support.WebUtils;
 import org.jasig.cas.client.util.URIBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.CookieGenerator;
 import org.springframework.webflow.execution.Event;
 import org.springframework.webflow.execution.RequestContext;
@@ -34,8 +34,9 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMultifactorAuthenticationProviderEventResolver {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OidcAuthenticationContextWebflowEventEventResolver.class);
+
     
     public OidcAuthenticationContextWebflowEventEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,
                                                               final CentralAuthenticationService centralAuthenticationService,
@@ -53,7 +54,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
     public Set<Event> resolveInternal(final RequestContext context) {
         final RegisteredService service = resolveRegisteredServiceInRequestContext(context);
         final Authentication authentication = WebUtils.getAuthentication(context);
-        final HttpServletRequest request = WebUtils.getHttpServletRequest(context);
+        final HttpServletRequest request = WebUtils.getHttpServletRequestFromExternalWebflowContext(context);
 
         if (service == null || authentication == null) {
             LOGGER.debug("No service or authentication is available to determine event for principal");
@@ -81,7 +82,7 @@ public class OidcAuthenticationContextWebflowEventEventResolver extends BaseMult
         }
 
         final Map<String, MultifactorAuthenticationProvider> providerMap =
-                WebUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
+                MultifactorAuthenticationUtils.getAvailableMultifactorAuthenticationProviders(this.applicationContext);
         if (providerMap == null || providerMap.isEmpty()) {
             LOGGER.error("No multifactor authentication providers are available in the application context to handle [{}]", values);
             throw new AuthenticationException();

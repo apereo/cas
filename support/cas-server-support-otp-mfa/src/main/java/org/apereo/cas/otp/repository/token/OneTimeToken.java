@@ -1,9 +1,11 @@
 package org.apereo.cas.otp.repository.token;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.builder.CompareToBuilder;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -23,7 +25,13 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
+@Slf4j
+@ToString
+@Getter
+@Setter
+@EqualsAndHashCode
 public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
+
     private static final long serialVersionUID = -1329938047176583075L;
 
     @org.springframework.data.annotation.Id
@@ -50,85 +58,9 @@ public class OneTimeToken implements Serializable, Comparable<OneTimeToken> {
         this.userId = userId;
     }
 
-    public Integer getToken() {
-        return token;
-    }
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public LocalDateTime getIssuedDateTime() {
-        return issuedDateTime;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public void setToken(final Integer token) {
-        this.token = token;
-    }
-
-    public void setUserId(final String userId) {
-        this.userId = userId;
-    }
-
-    public void setIssuedDateTime(final LocalDateTime issuedDateTime) {
-        this.issuedDateTime = issuedDateTime;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("token", token)
-                .append("userId", userId)
-                .append("id", id)
-                .append("issuedDateTime", issuedDateTime)
-                .toString();
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final OneTimeToken rhs = (OneTimeToken) obj;
-        return new EqualsBuilder()
-                .append(this.token, rhs.token)
-                .append(this.userId, rhs.userId)
-                .append(this.id, rhs.id)
-                .append(this.issuedDateTime, rhs.issuedDateTime)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .append(token)
-                .append(userId)
-                .append(issuedDateTime)
-                .append(id)
-                .toHashCode();
-    }
-
     @Override
     public int compareTo(final OneTimeToken o) {
-        return new CompareToBuilder()
-                .append(token, o.getToken())
-                .append(userId, o.getUserId())
-                .append(issuedDateTime, o.getIssuedDateTime())
-                .append(id, o.id)
-                .build();
+        return new CompareToBuilder().append(token, o.getToken()).append(userId, o.getUserId())
+            .append(issuedDateTime, o.getIssuedDateTime()).append(id, o.id).build();
     }
 }

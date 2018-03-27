@@ -1,12 +1,17 @@
 package org.apereo.cas.support.openid;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * OpenID constants.
  *
  * @author Jerome Leleu
  * @since 4.1.0
  */
-public final class OpenIdProtocolConstants {
+@Slf4j
+@UtilityClass
+public class OpenIdProtocolConstants {
     /**
      * The application callback url.
      */
@@ -54,10 +59,5 @@ public final class OpenIdProtocolConstants {
 
     /** Check authentication constant. */
     public static final String CHECK_AUTHENTICATION = "check_authentication";
-    /**
-     * Private constructor.
-     */
-    private OpenIdProtocolConstants() {}
-
 
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.otp.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -20,6 +21,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OneTimeTokenAuthenticationWebflowEventResolver extends AbstractCasWebflowEventResolver {
 
     public OneTimeTokenAuthenticationWebflowEventResolver(final AuthenticationSystemSupport authenticationSystemSupport,

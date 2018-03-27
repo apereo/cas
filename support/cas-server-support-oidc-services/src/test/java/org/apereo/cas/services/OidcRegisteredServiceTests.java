@@ -1,7 +1,9 @@
 package org.apereo.cas.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.ApplicationEventPublisher;
@@ -17,6 +19,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "oidcRegisteredService.json");
@@ -24,10 +27,11 @@ public class OidcRegisteredServiceTests {
 
     private static final ClassPathResource RESOURCE = new ClassPathResource("services");
 
-    private final ServiceRegistryDao dao;
+    private final ServiceRegistry dao;
 
     public OidcRegisteredServiceTests() throws Exception {
-        this.dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        this.dao = new JsonServiceRegistry(RESOURCE, false,
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
     }
 
     @BeforeClass

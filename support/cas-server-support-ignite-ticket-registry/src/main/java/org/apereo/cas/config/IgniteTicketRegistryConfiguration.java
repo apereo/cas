@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.ignite.cache.CacheAtomicityMode;
 import org.apache.ignite.cache.CacheMode;
 import org.apache.ignite.cache.CacheWriteSynchronizationMode;
@@ -14,6 +15,7 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.IgniteTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -36,6 +38,7 @@ import javax.cache.expiry.Duration;
  */
 @Configuration("igniteTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class IgniteTicketRegistryConfiguration {
 
     @Autowired
@@ -61,10 +64,10 @@ public class IgniteTicketRegistryConfiguration {
         if (ignite.getLocalPort() != -1) {
             spi.setLocalPort(ignite.getLocalPort());
         }
-        spi.setJoinTimeout(ignite.getJoinTimeout());
-        spi.setAckTimeout(ignite.getAckTimeout());
-        spi.setNetworkTimeout(ignite.getNetworkTimeout());
-        spi.setSocketTimeout(ignite.getSocketTimeout());
+        spi.setJoinTimeout(Beans.newDuration(ignite.getJoinTimeout()).toMillis());
+        spi.setAckTimeout(Beans.newDuration(ignite.getAckTimeout()).toMillis());
+        spi.setNetworkTimeout(Beans.newDuration(ignite.getNetworkTimeout()).toMillis());
+        spi.setSocketTimeout(Beans.newDuration(ignite.getSocketTimeout()).toMillis());
         spi.setThreadPriority(ignite.getThreadPriority());
         spi.setForceServerMode(ignite.isForceServerMode());
 
@@ -104,7 +107,7 @@ public class IgniteTicketRegistryConfiguration {
     public TicketRegistry ticketRegistry(@Qualifier("ticketCatalog") final TicketCatalog ticketCatalog) {
         final IgniteProperties igniteProperties = casProperties.getTicket().getRegistry().getIgnite();
         final IgniteTicketRegistry r = new IgniteTicketRegistry(ticketCatalog, igniteConfiguration(ticketCatalog), igniteProperties);
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
+        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(igniteProperties.getCrypto(), "ignite"));
         return r;
     }
 }

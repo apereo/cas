@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}">
+
+<head>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+
+    <title th:text="#{screen.logout.header}">Consent Logout View</title>
+    <link href="../../static/css/cas.css" rel="stylesheet" th:href="@{${#themes.code('cas.standard.css.file')}}"/>
+</head>
+
+<body id="cas">
+<main role="main" class="container mt-3 mb-3">
+    <div layout:fragment="content">
+        <div class="alert alert-success">
+            <h2 th:utext="#{screen.logout.header}">Logout successful</h2>
+            <p th:utext="#{screen.consent.review.logout.success}">You have successfully logged out of the Consent Review
+                page. You may completely <a href="../logout">log out</a> of the Central Authentication Service and end
+                your single sign-on session.</p>
+            <p th:utext="#{screen.logout.security}">For security reasons, exit your web browser.</p>
+        </div>
+    </div>
+</main>
+</body>
+</html>

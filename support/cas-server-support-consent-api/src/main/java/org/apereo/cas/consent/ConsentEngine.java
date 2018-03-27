@@ -6,8 +6,8 @@ import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 
 import java.io.Serializable;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link ConsentEngine}.
@@ -32,7 +32,7 @@ public interface ConsentEngine extends Serializable {
                                  RegisteredService registeredService,
                                  Authentication authentication,
                                  long reminder,
-                                 TimeUnit reminderTimeUnit,
+                                 ChronoUnit reminderTimeUnit,
                                  ConsentOptions options);
 
     /**

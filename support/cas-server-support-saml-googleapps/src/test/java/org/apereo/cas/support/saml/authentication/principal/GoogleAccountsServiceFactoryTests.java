@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.Response;
 import org.apereo.cas.authentication.principal.ResponseBuilder;
@@ -17,8 +18,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.context.TestPropertySource;
 
-import java.io.IOException;
-
 import static org.junit.Assert.*;
 
 /**
@@ -29,6 +28,7 @@ import static org.junit.Assert.*;
  */
 @Import(SamlGoogleAppsConfiguration.class)
 @TestPropertySource(locations = "classpath:/gapps.properties")
+@Slf4j
 public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
     @Autowired
     @Qualifier("googleAccountsServiceFactory")
@@ -69,7 +69,7 @@ public class GoogleAccountsServiceFactoryTests extends AbstractOpenSamlTests {
         assertNotNull(response);
     }
 
-    private static String encodeMessage(final String xmlString) throws IOException {
+    private static String encodeMessage(final String xmlString) {
         return CompressionUtils.deflate(xmlString);
     }
 }

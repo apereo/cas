@@ -34,6 +34,7 @@ public interface CassandraSessionFactory {
         /**
          * The Retry policy.
          */
+        @SuppressWarnings("ImmutableEnumChecker")
         private final RetryPolicy retryPolicy;
 
         /**

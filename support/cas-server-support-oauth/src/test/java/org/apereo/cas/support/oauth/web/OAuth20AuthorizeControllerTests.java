@@ -1,5 +1,6 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.services.RegisteredService;
@@ -38,6 +39,7 @@ import static org.junit.Assert.*;
  * @author Jerome Leleu
  * @since 3.5.2
  */
+@Slf4j
 public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
 
     private static final String ID = "id";
@@ -467,7 +469,7 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         assertEquals(SERVICE_NAME, model.get("serviceName"));
     }
 
-    private static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
+    protected static OAuthRegisteredService getRegisteredService(final String serviceId, final String name) {
         final OAuthRegisteredService registeredServiceImpl = new OAuthRegisteredService();
         registeredServiceImpl.setName(name);
         registeredServiceImpl.setServiceId(serviceId);
@@ -477,9 +479,9 @@ public class OAuth20AuthorizeControllerTests extends AbstractOAuth20Tests {
         return registeredServiceImpl;
     }
 
-    private void clearAllServices() {
+    @Override
+    protected void clearAllServices() {
         final Collection<RegisteredService> col = this.servicesManager.getAllServices();
-
         col.forEach(r -> this.servicesManager.delete(r.getId()));
     }
 }

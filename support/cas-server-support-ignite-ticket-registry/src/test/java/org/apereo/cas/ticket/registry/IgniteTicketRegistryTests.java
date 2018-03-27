@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -40,28 +41,30 @@ import java.util.Collection;
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {IgniteTicketRegistryConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        IgniteTicketRegistryTicketCatalogConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    IgniteTicketRegistryTicketCatalogConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(locations = {"classpath:/igniteregistry.properties"})
+@Slf4j
 public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired
@@ -73,12 +76,12 @@ public class IgniteTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(true, false);
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
     }
 }

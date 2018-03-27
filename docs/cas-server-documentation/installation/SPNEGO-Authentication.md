@@ -86,7 +86,8 @@ keysize 69 HTTP/cas.example.com@REALM ptype 1 (KRB5_NT_PRINCIPAL) vno 3 etype 0x
 (0x00112233445566778899aabbccddeeff)
 ```
 
-Using `ktpass` requires Active Directory admin permissions. If that is not an option, you may be able to use `ktab.exe` from `%JAVA_HOME%\bin\ktab.exe` that is provied by the JDK:
+Using `ktpass` requires Active Directory admin permissions. If that is not an option, you may be able to use `ktab.exe` from `%JAVA_HOME%\bin\ktab.exe` that 
+is provided by the JDK:
 
 ```bash
 %JAVA_HOME%\bin\ktab.exe -a service_xxx -n 0 -k cas.keytab
@@ -242,6 +243,6 @@ It's very likely that you have the wrong path to `.keytab` file. The KVNO in the
 
 Other possible causes include:
 
-1. The service prinicpal in the in the CAS configuration is not identical with that from the keytab. (param `/princ` from ktpass)
+1. The service principal in the in the CAS configuration is not identical with that from the keytab. (param `/princ` from ktpass)
 2. There is no key for the `enctype` sent with the ticket by Active Directory. (param `/crypto` from `ktpass` and set in the `krb5.conf/permitted_enctypes+default_tkt_enctypes`).
 3. The KVNO from the ticket is different than the KVNO in the keytab (param `/kvno` from `ktpass`).

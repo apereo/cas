@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Principal;
@@ -17,6 +19,7 @@ import org.apereo.cas.config.CasCoreServicesAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreServicesConfiguration;
 import org.apereo.cas.config.CasCoreTicketCatalogConfiguration;
 import org.apereo.cas.config.CasCoreTicketsConfiguration;
+import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.JpaTicketRegistryConfiguration;
@@ -25,7 +28,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.config.support.EnvironmentConversionServiceInitializer;
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
-import org.apereo.cas.ticket.AbstractTicketException;
 import org.apereo.cas.ticket.ExpirationPolicy;
 import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.Ticket;
@@ -40,10 +42,9 @@ import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
 import org.apereo.cas.util.SchedulingUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
@@ -74,28 +75,31 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        JpaTicketRegistryTests.JpaTestConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreLogoutConfiguration.class,
-        CasCoreConfiguration.class,
-        CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        JpaTicketRegistryTicketCatalogConfiguration.class,
-        JpaTicketRegistryConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class})
+    JpaTicketRegistryTests.JpaTestConfiguration.class,
+    RefreshAutoConfiguration.class,
+    AopAutoConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreLogoutConfiguration.class,
+    CasCoreConfiguration.class,
+    CasCoreAuthenticationServiceSelectionStrategyConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    JpaTicketRegistryTicketCatalogConfiguration.class,
+    JpaTicketRegistryConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class JpaTicketRegistryTests {
     /**
      * Number of clients contending for operations in concurrent test.
@@ -112,7 +116,6 @@ public class JpaTicketRegistryTests {
 
     private static final ExpirationPolicy EXP_POLICY_PT = new MultiTimeUseOrTimeoutExpirationPolicy(1, 2000);
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(JpaTicketRegistryTests.class);
 
     @Autowired
     @Qualifier("ticketTransactionManager")
@@ -132,7 +135,7 @@ public class JpaTicketRegistryTests {
             SchedulingUtils.prepScheduledAnnotationBeanPostProcessor(applicationContext);
         }
     }
-    
+
     @Test
     public void verifyTicketDeletionInBulk() {
         final TicketGrantingTicket newTgt = newTGT();
@@ -150,7 +153,7 @@ public class JpaTicketRegistryTests {
 
 
     @Test
-    public void verifyTicketCreationAndDeletion() throws Exception {
+    public void verifyTicketCreationAndDeletion() {
         // TGT
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
@@ -166,7 +169,7 @@ public class JpaTicketRegistryTests {
 
         // PGT
         final ProxyGrantingTicket newPgt = grantProxyGrantingTicketInTransaction(stFromDb);
-        updateTicketInTransaction(stFromDb.getGrantingTicket());
+        updateTicketInTransaction(stFromDb.getTicketGrantingTicket());
         final ProxyGrantingTicket pgtFromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt.getId());
         assertNotNull(pgtFromDb);
         assertEquals(newPgt.getId(), pgtFromDb.getId());
@@ -189,7 +192,7 @@ public class JpaTicketRegistryTests {
 
         // PGT 2
         final ProxyGrantingTicket newPgt2 = grantProxyGrantingTicketInTransaction(st2FromDb);
-        updateTicketInTransaction(st2FromDb.getGrantingTicket());
+        updateTicketInTransaction(st2FromDb.getTicketGrantingTicket());
         final ProxyGrantingTicket pgt2FromDb = (ProxyGrantingTicket) getTicketInTransaction(newPgt2.getId());
         assertNotNull(pgt2FromDb);
         assertEquals(newPgt2.getId(), pgt2FromDb.getId());
@@ -216,7 +219,7 @@ public class JpaTicketRegistryTests {
     }
 
     @Test
-    public void verifyConcurrentServiceTicketGeneration() throws Exception {
+    public void verifyConcurrentServiceTicketGeneration() {
         final TicketGrantingTicket newTgt = newTGT();
         addTicketInTransaction(newTgt);
         final ExecutorService executor = Executors.newFixedThreadPool(CONCURRENT_SIZE);
@@ -231,51 +234,48 @@ public class JpaTicketRegistryTests {
             }
         } catch (final Exception e) {
             LOGGER.error("testConcurrentServiceTicketGeneration produced an error", e);
-            fail("testConcurrentServiceTicketGeneration failed.");
+            throw new AssertionError("testConcurrentServiceTicketGeneration failed.");
         } finally {
             executor.shutdownNow();
         }
 
         assertEquals(CONCURRENT_SIZE, this.ticketRegistry.getTickets().size() - 1);
     }
-    
+
     static TicketGrantingTicket newTGT() {
         final Principal principal = new DefaultPrincipalFactory().createPrincipal(
-                "bob", Collections.singletonMap("displayName", "Bob"));
+            "bob", Collections.singletonMap("displayName", "Bob"));
         return new TicketGrantingTicketImpl(
-                ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
-                CoreAuthenticationTestUtils.getAuthentication(principal),
-                EXP_POLICY_TGT);
+            ID_GENERATOR.getNewTicketId(TicketGrantingTicket.PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(principal),
+            EXP_POLICY_TGT);
     }
 
     static ServiceTicket newST(final TicketGrantingTicket parent) {
         final Service testService = RegisteredServiceTestUtils.getService("https://service.example.com");
         return parent.grantServiceTicket(
-                ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
-                testService,
-                EXP_POLICY_ST,
-                false,
-                true);
+            ID_GENERATOR.getNewTicketId(ServiceTicket.PREFIX),
+            testService,
+            EXP_POLICY_ST,
+            false,
+            true);
     }
 
+    @SneakyThrows
     static ProxyGrantingTicket newPGT(final ServiceTicket parent) {
-        try {
-            return parent.grantProxyGrantingTicket(
-                    ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
-                    CoreAuthenticationTestUtils.getAuthentication(),
-                    EXP_POLICY_PGT);
-        } catch (final AbstractTicketException e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return parent.grantProxyGrantingTicket(
+            ID_GENERATOR.getNewTicketId(ProxyGrantingTicket.PROXY_GRANTING_TICKET_PREFIX),
+            CoreAuthenticationTestUtils.getAuthentication(),
+            EXP_POLICY_PGT);
     }
 
     static ProxyTicket newPT(final ProxyGrantingTicket parent) {
         final Service testService = RegisteredServiceTestUtils.getService("https://proxy-service.example.com");
         return parent.grantProxyTicket(
-                ID_GENERATOR.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX),
-                testService,
-                EXP_POLICY_PT,
-                false);
+            ID_GENERATOR.getNewTicketId(ProxyTicket.PROXY_TICKET_PREFIX),
+            testService,
+            EXP_POLICY_PT,
+            false);
     }
 
     private void addTicketInTransaction(final Ticket ticket) {
@@ -347,7 +347,7 @@ public class JpaTicketRegistryTests {
         }
 
         @Override
-        public String call() throws Exception {
+        public String call() {
             return new TransactionTemplate(txManager).execute(status -> {
                 final ServiceTicket st = newST((TicketGrantingTicket) jpaTicketRegistry.getTicket(parentTgtId));
                 jpaTicketRegistry.addTicket(st);

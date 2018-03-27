@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -27,6 +28,7 @@ import org.springframework.web.util.CookieGenerator;
  */
 @Configuration("SurrogateWebflowEventResolutionConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SurrogateWebflowEventResolutionConfiguration {
 
     @Autowired

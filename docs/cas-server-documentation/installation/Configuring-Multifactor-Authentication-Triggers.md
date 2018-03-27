@@ -12,7 +12,7 @@ The execution order of multifactor authentication triggers is outlined below:
 
 1. Adaptive
 2. Global
-3. Opt-In Request Parameter
+3. Opt-In Request Parameter/Header
 4. REST Endpoint
 5. Groovy Script
 6. Principal Attribute Per Application
@@ -52,6 +52,57 @@ MFA can be triggered for a specific application registered inside the CAS servic
 }
 ```
 
+Additionally, you may determine the multifactor authentication policy for a registered service using a Groovy script:
+
+```json
+{
+  "@class" : "org.apereo.cas.services.RegexRegisteredService",
+  "serviceId" : "^(https|imaps)://.*",
+  "id" : 100,
+  "name": "test",
+  "multifactorPolicy" : {
+    "@class" : "org.apereo.cas.services.GroovyRegisteredServiceMultifactorPolicy",
+    "groovyScript" : "file:///etc/cas/config/mfa-policy.groovy"
+  }
+}
+```
+
+The script itself may be designed as such by overriding the needed operations where necessary:
+
+```groovy
+import org.apereo.cas.services.*
+import java.util.*
+
+class GroovyMultifactorPolicy extends DefaultRegisteredServiceMultifactorPolicy {
+    @Override
+    Set<String> getMultifactorAuthenticationProviders() {
+        ...
+    }
+
+    @Override
+    RegisteredServiceMultifactorPolicy.FailureModes getFailureMode() {
+        ...
+    }
+
+    @Override
+    String getPrincipalAttributeNameTrigger() {
+        ...
+    }
+
+    @Override
+    String getPrincipalAttributeValueToMatch() {
+        ...
+    }
+
+    @Override
+    boolean isBypassEnabled() {
+        ...
+    }
+}
+```
+
+Refer to the CAS API documentation to learn more about operations and expected behaviors.
+
 ## Global Principal Attribute
 
 MFA can be triggered for all users/subjects carrying a specific attribute that matches one of the conditions below.
@@ -69,7 +120,7 @@ Needless to say, the attributes need to have been resolved for the principal pri
 
 This is a more generic variant of the above trigger. It may be useful in cases where there is more than one provider configured and available in the application runtime and you need to design a strategy to dynamically decide on the provider that should be activated for the request.
 
-The decision is handed off to a `Predicate` implementation that define in a Groovy script whose location is taught to CAS. The responsibility of the `test` function is to determine eligibility of the provider to be triggered. If the predicate determines multiple providers as eligible by returning `true` more than one, the first provider in the sorted result set ranked by the provider's order will be chosen to respond.
+The decision is handed off to a `Predicate` implementation defined in a Groovy script whose location is taught to CAS. The responsibility of the `test` function in the script is to determine eligibility of the provider to be triggered. If the predicate determines multiple providers as eligible by returning `true` more than one, the first provider in the sorted result set ranked by the provider's order will be chosen to respond.
 
 The Groovy script predicate may be designed as such:
 
@@ -268,17 +319,21 @@ CAS shall issue a `POST`, providing the principal and the service url.
 
 The body of the response in the event of a successful `200` status code is expected to be the MFA provider id which CAS should activate.
 
-## Opt-In Request Parameter
+## Opt-In Request Parameter/Header
 
 MFA can be triggered for a specific authentication request, provided
-the initial request to the CAS `/login` endpoint contains a parameter
-that indicates the required MFA authentication flow. The parameter name
+the initial request to the CAS `/login` endpoint contains a parameter/header
+that indicates the required MFA authentication flow. The parameter/header name
 is configurable, but its value must match the authentication provider id
 of an available MFA provider described above.
+
+An example request that triggers an authentication flow based on a request parameter would be:
 
 ```bash
 https://.../cas/login?service=...&<PARAMETER_NAME>=<MFA_PROVIDER_ID>
 ```
+
+The same strategy also applied to triggers that are based on request/session attributes, which tend to get used for internal communications between APIs and CAS components specially when designing addons and extensions.
 
 ## Principal Attribute Per Application
 

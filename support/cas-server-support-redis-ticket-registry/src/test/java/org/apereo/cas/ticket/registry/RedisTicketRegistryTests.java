@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import java.util.Arrays;
 import java.util.Collection;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreWebConfiguration;
 import org.apereo.cas.config.RedisTicketRegistryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
@@ -12,9 +13,12 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import redis.embedded.RedisServer;
 
 /**
@@ -25,10 +29,14 @@ import redis.embedded.RedisServer;
  */
 @RunWith(Parameterized.class)
 @SpringBootTest(classes = {RedisTicketRegistryConfiguration.class,
-                           RefreshAutoConfiguration.class,
-                           CasCoreWebConfiguration.class,
-                           CasWebApplicationServiceFactoryConfiguration.class})
-@TestPropertySource(locations={"classpath:/redis.properties"})
+    RefreshAutoConfiguration.class,
+    CasCoreWebConfiguration.class,
+    AopAutoConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class})
+@TestPropertySource(locations = {"classpath:/redis.properties"})
+@EnableTransactionManagement(proxyTargetClass = true)
+@EnableAspectJAutoProxy(proxyTargetClass = true)
+@Slf4j
 public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
 
     private static RedisServer REDIS_SERVER;
@@ -42,11 +50,11 @@ public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
     }
 
-    
+
     @BeforeClass
     public static void startRedis() throws Exception {
         REDIS_SERVER = new RedisServer(6379);
@@ -59,7 +67,7 @@ public class RedisTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return this.ticketRegistry;
     }
 }

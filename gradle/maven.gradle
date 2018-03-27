@@ -31,6 +31,10 @@ def generatePom() {
                     name "Jérôme Leleu"
                 }
                 developer {
+                    id "mindblender"
+                    name "Jeff Sittler"
+                }
+                developer {
                     id "apetro"
                     name "Andrew Petro"
                 }
@@ -61,6 +65,10 @@ def generatePom() {
                 developer {
                     id "dima767"
                     name "Dmitriy Kopylenko"
+                }
+                developer {
+                    id "tsschmidt"
+                    name "Travis Schmidt"
                 }
             }
 
@@ -117,10 +125,6 @@ def generatePom() {
                     name "Fredrik Jönsson"
                     email "fjo@kth.se"
                 }
-                contributor {
-                    name "Jeff Sittler"
-                    email "jsittler@unicon.net"
-                }
             }
 
 
@@ -147,33 +151,18 @@ def generatePom() {
                     archive "https://groups.google.com/a/apereo.org/forum/#!forum/cas-announce"
                 }
             }
-
             repositories {
+                repository {
+                    id "jcenter"
+                    url "https://jcenter.bintray.com"
+                    releases {
+                        enabled true
+                    }
+                }
                 repository {
                     id "shib-release"
                     url "https://build.shibboleth.net/nexus/content/repositories/releases"
                     releases {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "spring-milestones"
-                    url "https://repo.spring.io/milestone"
-                    releases {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "spring-snapshots"
-                    url "https://repo.spring.io/snapshot"
-                    snapshots {
-                        enabled true
-                    }
-                }
-                repository {
-                    id "spring-libs-snapshots"
-                    url "https://repo.spring.io/libs-snapshot"
-                    snapshots {
                         enabled true
                     }
                 }
@@ -185,15 +174,22 @@ def generatePom() {
                     }
                 }
                 repository {
+                    id "spring-plugins"
+                    url "https://repo.spring.io/plugins-release/"
+                    releases {
+                        enabled true
+                    }
+                }
+                repository {
                     id "jasig-legacy"
-                    url "http://developer.jasig.org/repo/content/groups/m2-legacy"
+                    url "https://developer.jasig.org/repo/content/groups/m2-legacy"
                     releases {
                         enabled true
                     }
                 }
                 repository {
                     id "couchbase"
-                    url "http://files.couchbase.com/maven2/"
+                    url "https://files.couchbase.com/maven2/"
                     releases {
                         enabled true
                     }
@@ -202,17 +198,6 @@ def generatePom() {
                     id "uniconiam"
                     url "https://dl.bintray.com/uniconiam/maven"
                     releases {
-                        enabled true
-                    }
-                }
-
-                repository {
-                    id "ldaptive"
-                    url "https://raw.github.com/vt-middleware/maven-repo/master"
-                    releases {
-                        enabled true
-                    }
-                    snapshots {
                         enabled true
                     }
                 }
@@ -233,7 +218,7 @@ uploadArchives {
         configuration = configurations.archives
         beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
 
-        if (publishReleases) {
+        if (publishingRelease) {
             repository(url: "$sonatypeRepositoryUrl") {
                 authentication(userName: sonatypeUsername, password: sonatypePassword);
             }

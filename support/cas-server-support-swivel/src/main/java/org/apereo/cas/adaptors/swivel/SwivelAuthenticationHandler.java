@@ -1,26 +1,21 @@
 package org.apereo.cas.adaptors.swivel;
 
 import com.swiveltechnologies.pinsafe.client.agent.AgentXmlRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.HttpStatus;
 import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.configuration.model.support.mfa.SwivelMultifactorProperties;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpMethod;
 import org.springframework.webflow.execution.RequestContext;
 import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.security.GeneralSecurityException;
 import java.util.HashMap;
 import java.util.Map;
@@ -31,8 +26,9 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SwivelAuthenticationHandler.class);
+
     private static final String SWIVEL_ERR_CODE_AUTHN_FAIL = "swivel.server.error";
     private static final Map<String, String> ERROR_MAP = createErrorCodeMap();
 
@@ -46,8 +42,8 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
-        final SwivelCredential swivelCredential = (SwivelCredential) credential;
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
+        final SwivelTokenCredential swivelCredential = (SwivelTokenCredential) credential;
         if (swivelCredential == null || StringUtils.isBlank(swivelCredential.getToken())) {
             throw new IllegalArgumentException("No credential could be found or credential token is blank");
         }
@@ -55,17 +51,18 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         if (context == null) {
             throw new IllegalArgumentException("No request context could be found to locate an authentication event");
         }
-        final Authentication authentication = WebUtils.getAuthentication(context);
+        final Authentication authentication = WebUtils.getInProgressAuthentication();
         if (authentication == null) {
-            throw new IllegalArgumentException("Request context has no reference to an authentication event to locate a principal");
+            throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
         }
-        final String uid = authentication.getPrincipal().getId();
+        final Principal principal = authentication.getPrincipal();
+        final String uid = principal.getId();
         LOGGER.debug("Received principal id [{}]", uid);
         return sendAuthenticationRequestToSwivel(swivelCredential, uid);
     }
 
-    private HandlerResult sendAuthenticationRequestToSwivel(final SwivelCredential swivelCredential,
-                                                            final String uid) throws FailedLoginException {
+    private AuthenticationHandlerExecutionResult sendAuthenticationRequestToSwivel(final SwivelTokenCredential swivelCredential,
+                                                                                   final String uid) throws FailedLoginException {
         if (StringUtils.isBlank(swivelProperties.getSwivelUrl()) || StringUtils.isBlank(swivelProperties.getSharedSecret())) {
             throw new FailedLoginException("Swivel url/shared secret is not specified and cannot be blank.");
         }
@@ -101,7 +98,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
         if (req.actionSucceeded()) {
             LOGGER.debug("Successful Swivel authentication for [{}]", uid);
-            return createHandlerResult(swivelCredential, this.principalFactory.createPrincipal(uid), null);
+            return createHandlerResult(swivelCredential, this.principalFactory.createPrincipal(uid));
         }
 
         /*
@@ -116,7 +113,7 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
 
     @Override
     public boolean supports(final Credential credential) {
-        return SwivelCredential.class.isAssignableFrom(credential.getClass());
+        return SwivelTokenCredential.class.isAssignableFrom(credential.getClass());
     }
 
     private static Map<String, String> createErrorCodeMap() {
@@ -139,22 +136,5 @@ public class SwivelAuthenticationHandler extends AbstractPreAndPostProcessingAut
         errorMap.put("AGENT_ERROR_GENERAL", SWIVEL_ERR_CODE_AUTHN_FAIL);
 
         return errorMap;
-    }
-
-    /**
-     * Can ping provider?
-     *
-     * @return the boolean
-     */
-    public boolean canPing() {
-        try {
-            final HttpURLConnection connection = (HttpURLConnection) new URL(swivelProperties.getSwivelUrl()).openConnection();
-            connection.setRequestMethod(HttpMethod.GET.name());
-            connection.connect();
-            return connection.getResponseCode() == HttpStatus.SC_OK;
-        } catch (final Exception e) {
-            LOGGER.warn(e.getMessage(), e);
-        }
-        return false;
     }
 }

@@ -1,5 +1,7 @@
 package org.apereo.cas.util;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ClassUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -22,6 +24,7 @@ import org.ldaptive.DefaultConnectionFactory;
 import org.ldaptive.DefaultConnectionStrategy;
 import org.ldaptive.DeleteOperation;
 import org.ldaptive.DeleteRequest;
+import org.ldaptive.DerefAliases;
 import org.ldaptive.DnsSrvConnectionStrategy;
 import org.ldaptive.LdapAttribute;
 import org.ldaptive.LdapEntry;
@@ -84,8 +87,6 @@ import org.ldaptive.sasl.SecurityStrength;
 import org.ldaptive.ssl.KeyStoreCredentialConfig;
 import org.ldaptive.ssl.SslConfig;
 import org.ldaptive.ssl.X509CredentialConfig;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.URI;
 import java.net.URL;
@@ -106,7 +107,9 @@ import java.util.stream.IntStream;
  * @author Misagh Moayyed
  * @since 3.0.0
  */
-public final class LdapUtils {
+@Slf4j
+@UtilityClass
+public class LdapUtils {
     /**
      * Default parameter name in search filters for ldap.
      */
@@ -117,16 +120,7 @@ public final class LdapUtils {
      */
     public static final String OBJECT_CLASS_ATTRIBUTE = "objectClass";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LdapUtils.class);
-
     private static final String LDAP_PREFIX = "ldap";
-
-    /**
-     * Instantiates a new ldap utils.
-     */
-    private LdapUtils() {
-        // private constructor so that no one can instantiate.
-    }
 
     /**
      * Reads a Boolean value from the LdapEntry.
@@ -284,8 +278,11 @@ public final class LdapUtils {
      * @return true, if successful
      */
     public static boolean containsResultEntry(final Response<SearchResult> response) {
-        final SearchResult result = response.getResult();
-        return result != null && result.getEntry() != null;
+        if (response != null) {
+            final SearchResult result = response.getResult();
+            return result != null && result.getEntry() != null;
+        }
+        return false;
     }
 
     /**
@@ -396,9 +393,8 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param entry             the entry
      * @return true/false
-     * @throws LdapException the ldap exception
      */
-    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
+    public static boolean executeAddOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try (Connection connection = createConnection(connectionFactory)) {
             final AddOperation operation = new AddOperation(connection);
             operation.execute(new AddRequest(entry.getDn(), entry.getAttributes()));
@@ -415,9 +411,8 @@ public final class LdapUtils {
      * @param connectionFactory the connection factory
      * @param entry             the entry
      * @return true/false
-     * @throws LdapException the ldap exception
      */
-    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) throws LdapException {
+    public static boolean executeDeleteOperation(final ConnectionFactory connectionFactory, final LdapEntry entry) {
         try (Connection connection = createConnection(connectionFactory)) {
             final DeleteOperation delete = new DeleteOperation(connection);
             final DeleteRequest request = new DeleteRequest(entry.getDn());
@@ -626,7 +621,7 @@ public final class LdapUtils {
         if (StringUtils.isBlank(l.getBaseDn())) {
             throw new IllegalArgumentException("Base dn cannot be empty/blank for authenticated/anonymous authentication");
         }
-        if (StringUtils.isBlank(l.getUserFilter())) {
+        if (StringUtils.isBlank(l.getSearchFilter())) {
             throw new IllegalArgumentException("User filter cannot be empty/blank for authenticated/anonymous authentication");
         }
         final PooledConnectionFactory connectionFactoryForSearch = newLdaptivePooledConnectionFactory(l);
@@ -635,8 +630,13 @@ public final class LdapUtils {
         resolver.setSubtreeSearch(l.isSubtreeSearch());
         resolver.setAllowMultipleDns(l.isAllowMultipleDns());
         resolver.setConnectionFactory(connectionFactoryForSearch);
-        resolver.setUserFilter(l.getUserFilter());
+        resolver.setUserFilter(l.getSearchFilter());
+        resolver.setReferralHandler(new SearchReferralHandler());
 
+        if (StringUtils.isNotBlank(l.getDerefAliases())) {
+            resolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+        }
+        
         final Authenticator auth;
         if (StringUtils.isBlank(l.getPrincipalAttributePassword())) {
             auth = new Authenticator(resolver, getPooledBindAuthenticationHandler(l, newLdaptivePooledConnectionFactory(l)));
@@ -841,7 +841,7 @@ public final class LdapUtils {
         if (l.getProviderClass() != null) {
             try {
                 final Class clazz = ClassUtils.getClass(l.getProviderClass());
-                bindCf.setProvider(Provider.class.cast(clazz.newInstance()));
+                bindCf.setProvider(Provider.class.cast(clazz.getDeclaredConstructor().newInstance()));
             } catch (final Exception e) {
                 LOGGER.error(e.getMessage(), e);
             }
@@ -912,8 +912,13 @@ public final class LdapUtils {
                         cp.setPassivator(new BindPassivator(bindRequest));
                         LOGGER.debug("Created [{}] passivator for [{}]", l.getPoolPassivator(), l.getLdapUrl());
                     } else {
-                        LOGGER.warn("No [{}] passivator could be created for [{}] given bind credentials are not specified",
-                                l.getPoolPassivator(), l.getLdapUrl());
+                        final List values = Arrays.stream(AbstractLdapProperties.LdapConnectionPoolPassivator.values())
+                                .filter(v -> v != AbstractLdapProperties.LdapConnectionPoolPassivator.BIND)
+                                .collect(Collectors.toList());
+                        LOGGER.warn("[{}] pool passivator could not be created for [{}] given bind credentials are not specified. "
+                                + "If you are dealing with LDAP in such a way that does not require bind credentials, you may need to "
+                                + "set the pool passivator setting to one of [{}]",
+                                l.getPoolPassivator(), l.getLdapUrl(), values);
                     }
                     break;
                 default:
@@ -939,15 +944,18 @@ public final class LdapUtils {
         if (StringUtils.isBlank(l.getBaseDn())) {
             throw new IllegalArgumentException("To create a search entry resolver, base dn cannot be empty/blank ");
         }
-        if (StringUtils.isBlank(l.getUserFilter())) {
+        if (StringUtils.isBlank(l.getSearchFilter())) {
             throw new IllegalArgumentException("To create a search entry resolver, user filter cannot be empty/blank");
         }
 
         final PooledSearchEntryResolver entryResolver = new PooledSearchEntryResolver();
         entryResolver.setBaseDn(l.getBaseDn());
-        entryResolver.setUserFilter(l.getUserFilter());
+        entryResolver.setUserFilter(l.getSearchFilter());
         entryResolver.setSubtreeSearch(l.isSubtreeSearch());
         entryResolver.setConnectionFactory(factory);
+        if (StringUtils.isNotBlank(l.getDerefAliases())) {
+            entryResolver.setDerefAliases(DerefAliases.valueOf(l.getDerefAliases()));
+        }
 
         final List<SearchEntryHandler> handlers = new ArrayList<>();
         l.getSearchEntryHandlers().forEach(h -> {
@@ -1000,6 +1008,7 @@ public final class LdapUtils {
             LOGGER.debug("Search entry handlers defined for the entry resolver of [{}] are [{}]", l.getLdapUrl(), handlers);
             entryResolver.setSearchEntryHandlers(handlers.toArray(new SearchEntryHandler[]{}));
         }
+        entryResolver.setReferralHandler(new SearchReferralHandler());
         return entryResolver;
     }
 

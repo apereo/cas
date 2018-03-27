@@ -1,5 +1,6 @@
 package org.apereo.cas.config.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.pm.PasswordManagementService;
@@ -12,8 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.Serializable;
-
 /**
  * This is {@link RestPasswordManagementConfiguration}.
  *
@@ -22,13 +21,14 @@ import java.io.Serializable;
  */
 @Configuration("restPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RestPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor<Serializable, String> passwordManagementCipherExecutor;
+    private CipherExecutor passwordManagementCipherExecutor;
 
     @RefreshScope
     @Bean

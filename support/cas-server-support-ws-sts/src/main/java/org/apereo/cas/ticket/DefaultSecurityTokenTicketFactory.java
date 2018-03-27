@@ -1,5 +1,7 @@
 package org.apereo.cas.ticket;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.util.EncodingUtils;
@@ -10,20 +12,17 @@ import org.apereo.cas.util.EncodingUtils;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultSecurityTokenTicketFactory implements SecurityTokenTicketFactory {
-
-    private final ExpirationPolicy expirationPolicy;
+    
     private final UniqueTicketIdGenerator ticketUniqueTicketIdGenerator;
+    private final ExpirationPolicy expirationPolicy;
 
-    public DefaultSecurityTokenTicketFactory(final UniqueTicketIdGenerator ticketGrantingTicketUniqueTicketIdGenerator,
-                                             final ExpirationPolicy expirationPolicy) {
-        this.expirationPolicy = expirationPolicy;
-        this.ticketUniqueTicketIdGenerator = ticketGrantingTicketUniqueTicketIdGenerator;
-    }
 
     @Override
-    public <T extends TicketFactory> T get(final Class<? extends Ticket> clazz) {
-        return (T) this;
+    public TicketFactory get(final Class<? extends Ticket> clazz) {
+        return this;
     }
 
     @Override

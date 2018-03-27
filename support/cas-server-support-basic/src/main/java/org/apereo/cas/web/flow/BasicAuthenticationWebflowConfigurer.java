@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -14,6 +15,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
 public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     public BasicAuthenticationWebflowConfigurer(final FlowBuilderServices flowBuilderServices, 
@@ -24,16 +26,16 @@ public class BasicAuthenticationWebflowConfigurer extends AbstractCasWebflowConf
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
             final ActionState actionState = createActionState(flow, "basicAuthenticationCheck",
                     createEvaluateAction("basicAuthenticationAction"));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_SUCCESS,
-                    CasWebflowConstants.TRANSITION_ID_SEND_TICKET_GRANTING_TICKET));
+                    CasWebflowConstants.STATE_ID_SEND_TICKET_GRANTING_TICKET));
             actionState.getTransitionSet().add(createTransition(CasWebflowConstants.TRANSITION_ID_WARN,
                     CasWebflowConstants.TRANSITION_ID_WARN));
-            actionState.getExitActionList().add(createEvaluateAction("clearWebflowCredentialsAction"));
+            actionState.getExitActionList().add(createEvaluateAction(CasWebflowConstants.ACTION_ID_CLEAR_WEBFLOW_CREDENTIALS));
             registerMultifactorProvidersStateTransitionsIntoWebflow(actionState);
 
             createStateDefaultTransition(actionState, getStartState(flow).getId());

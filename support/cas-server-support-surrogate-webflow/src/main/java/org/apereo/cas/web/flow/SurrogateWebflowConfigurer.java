@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -16,6 +17,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     /**
      * The view id 'surrogateListView'.
@@ -44,12 +46,12 @@ public class SurrogateWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     private void createSurrogateAuthorizationActionState(final Flow flow) {
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET);
+        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_GENERATE_SERVICE_TICKET, ActionState.class);
         actionState.getEntryActionList().add(createEvaluateAction("surrogateAuthorizationCheck"));
     }
 
     private void createTransitionToInjectSurrogateIntoFlow(final Flow flow) {
-        final ActionState actionState = (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        final ActionState actionState = getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
         createTransitionForState(actionState, VIEW_ID_SURROGATE_VIEW, VIEW_ID_SURROGATE_VIEW, true);
     }
 

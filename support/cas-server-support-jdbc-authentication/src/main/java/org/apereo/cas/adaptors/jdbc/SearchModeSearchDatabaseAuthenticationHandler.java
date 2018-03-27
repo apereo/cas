@@ -1,18 +1,18 @@
 package org.apereo.cas.adaptors.jdbc;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 
 import javax.security.auth.login.FailedLoginException;
 import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
+import java.util.ArrayList;
 
 /**
  * Class that given a table, username field and password field will query a
@@ -25,9 +25,8 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchModeSearchDatabaseAuthenticationHandler.class);
     
     private final String fieldUser;
     private final String fieldPassword;
@@ -43,7 +42,8 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
             throws GeneralSecurityException, PreventedException {
 
         String sql = null;
@@ -65,7 +65,7 @@ public class SearchModeSearchDatabaseAuthenticationHandler extends AbstractJdbcU
             if (count == 0) {
                 throw new FailedLoginException(username + " not found with SQL query.");
             }
-            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
         } catch (final DataAccessException e) {
             throw new PreventedException("SQL exception while executing query for " + username, e);
         }

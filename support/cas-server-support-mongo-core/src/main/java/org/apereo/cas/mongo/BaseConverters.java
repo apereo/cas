@@ -4,6 +4,8 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.mongodb.DBObject;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.logging.Log;
 import org.apereo.services.persondir.IPersonAttributes;
 import org.slf4j.Logger;
@@ -11,25 +13,29 @@ import org.springframework.core.convert.converter.Converter;
 
 import java.lang.ref.ReferenceQueue;
 import java.security.cert.CertPath;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /**
  * Collection of mongo converters that map objects to
  * DB objects. Able to exclude types.
+ *
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
+@NoArgsConstructor
 public abstract class BaseConverters {
-    /**
-     * Instantiates a new BaseConverters.
-     */
-    private BaseConverters() {}
 
     /**
      * The type Null converter.
-     * @param <I>  the type parameter
-     * @param <O>  the type parameter
+     *
+     * @param <I> the type parameter
+     * @param <O> the type parameter
      */
     public static class NullConverter<I, O> implements Converter<I, O> {
+
         @Override
         public O convert(final I i) {
             return null;
@@ -44,6 +50,7 @@ public abstract class BaseConverters {
 
     /**
      * The type Class converter.
+     *
      * @since 4.1
      */
     public static class ClassConverter extends NullConverter<Class, DBObject> {
@@ -51,6 +58,7 @@ public abstract class BaseConverters {
 
     /**
      * The type Commons log converter.
+     *
      * @since 4.1
      */
     public static class CommonsLogConverter extends NullConverter<Log, DBObject> {
@@ -58,6 +66,7 @@ public abstract class BaseConverters {
 
     /**
      * The type Person attributes converter.
+     *
      * @since 4.1
      */
     public static class PersonAttributesConverter extends NullConverter<IPersonAttributes, DBObject> {
@@ -65,71 +74,109 @@ public abstract class BaseConverters {
 
     /**
      * The type Cache loader converter.
+     *
      * @since 4.1
      */
-    public static class CacheLoaderConverter
-            extends NullConverter<CacheLoader, DBObject> {
+    public static class CacheLoaderConverter extends NullConverter<CacheLoader, DBObject> {
     }
 
     /**
      * The type Cache converter.
+     *
      * @since 4.1
      */
-    public static class CacheConverter
-            extends NullConverter<Cache, DBObject> {
+    public static class CacheConverter extends NullConverter<Cache, DBObject> {
     }
 
     /**
      * The type Caffein cache converter.
      */
-    public static class CaffeinCacheConverter extends NullConverter<com.github.benmanes.caffeine.cache.Cache, DBObject> {}
+    public static class CaffeinCacheConverter extends NullConverter<com.github.benmanes.caffeine.cache.Cache, DBObject> {
+    }
 
     /**
      * The type Caffein cache loader converter.
      */
-    public static class CaffeinCacheLoaderConverter extends NullConverter<com.github.benmanes.caffeine.cache.CacheLoader, DBObject> {}
-    
-    /**
-     * The type Cache builder converter.
-     * @since 4.1
-     */
-    public static class CacheBuilderConverter
-            extends NullConverter<CacheBuilder, DBObject> {
+    public static class CaffeinCacheLoaderConverter extends NullConverter<com.github.benmanes.caffeine.cache.CacheLoader, DBObject> {
     }
 
+    /**
+     * The type Cache builder converter.
+     *
+     * @since 4.1
+     */
+    public static class CacheBuilderConverter extends NullConverter<CacheBuilder, DBObject> {
+    }
 
     /**
      * The type Runnable converter.
+     *
      * @since 4.1
      */
-    public static class RunnableConverter
-            extends NullConverter<Runnable, DBObject> {
+    public static class RunnableConverter extends NullConverter<Runnable, DBObject> {
     }
 
     /**
      * The type Reference queue converter.
+     *
      * @since 4.1
      */
-    public static class ReferenceQueueConverter
-            extends NullConverter<ReferenceQueue, DBObject> {
+    public static class ReferenceQueueConverter extends NullConverter<ReferenceQueue, DBObject> {
     }
 
     /**
      * The type Thread local converter.
+     *
      * @since 4.1
      */
-    public static class ThreadLocalConverter
-            extends NullConverter<ThreadLocal, DBObject> {
+    public static class ThreadLocalConverter extends NullConverter<ThreadLocal, DBObject> {
     }
 
     /**
      * The type Cert path converter.
+     *
      * @since 4.1
      */
-    public static class CertPathConverter
-            extends NullConverter<CertPath, DBObject> {
+    public static class CertPathConverter extends NullConverter<CertPath, DBObject> {
     }
-    
-    
-    
+
+    /**
+     * The type Date to zoned date time converter.
+     */
+    public static class DateToZonedDateTimeConverter implements Converter<Date, ZonedDateTime> {
+        @Override
+        public ZonedDateTime convert(final Date source) {
+            return source == null ? null : ZonedDateTime.ofInstant(source.toInstant(), ZoneId.systemDefault());
+        }
+    }
+
+    /**
+     * The type String to zoned date time converter.
+     */
+    public static class StringToZonedDateTimeConverter implements Converter<String, ZonedDateTime> {
+        @Override
+        public ZonedDateTime convert(final String source) {
+            return source == null ? null : ZonedDateTime.parse(source);
+        }
+    }
+
+    /**
+     * The type Zoned date time to date converter.
+     */
+    public static class ZonedDateTimeToDateConverter implements Converter<ZonedDateTime, Date> {
+        @Override
+        public Date convert(final ZonedDateTime source) {
+            return source == null ? null : Date.from(source.toInstant());
+        }
+    }
+
+    /**
+     * The type Zoned date time to string converter.
+     */
+    public static class ZonedDateTimeToStringConverter implements Converter<ZonedDateTime, String> {
+        @Override
+        public String convert(final ZonedDateTime source) {
+            return source == null ? null : source.toString();
+        }
+    }
 }

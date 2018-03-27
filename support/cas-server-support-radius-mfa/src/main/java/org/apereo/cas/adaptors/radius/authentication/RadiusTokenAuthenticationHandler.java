@@ -1,23 +1,19 @@
 package org.apereo.cas.adaptors.radius.authentication;
 
-import net.jradius.exception.TimeoutException;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.RadiusUtils;
+import org.apereo.cas.authentication.Authentication;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.handler.support.AbstractPreAndPostProcessingAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.support.WebUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.webflow.execution.RequestContext;
-import org.springframework.webflow.execution.RequestContextHolder;
 
 import javax.security.auth.login.FailedLoginException;
-import java.net.SocketTimeoutException;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,8 +26,9 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessingAuthenticationHandler {
-    private static final Logger LOGGER = LoggerFactory.getLogger(RadiusTokenAuthenticationHandler.class);
+
     
     private final List<RadiusServer> servers;
     private final boolean failoverOnException;
@@ -56,13 +53,17 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
     }
 
     @Override
-    protected HandlerResult doAuthentication(final Credential credential) throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult doAuthentication(final Credential credential) throws GeneralSecurityException {
         try {
             final RadiusTokenCredential radiusCredential = (RadiusTokenCredential) credential;
             final String password = radiusCredential.getToken();
 
-            final RequestContext context = RequestContextHolder.getRequestContext();
-            final String username = WebUtils.getAuthentication(context).getPrincipal().getId();
+            final Authentication authentication = WebUtils.getInProgressAuthentication();
+            if (authentication == null) {
+                throw new IllegalArgumentException("CAS has no reference to an authentication event to locate a principal");
+            }
+            final Principal principal = authentication.getPrincipal();
+            final String username = principal.getId();
 
             final Pair<Boolean, Optional<Map<String, Object>>> result =
                     RadiusUtils.authenticate(username, password, this.servers,
@@ -76,28 +77,5 @@ public class RadiusTokenAuthenticationHandler extends AbstractPreAndPostProcessi
         } catch (final Exception e) {
             throw new FailedLoginException("Radius authentication failed " + e.getMessage());
         }
-    }
-
-    /**
-     * Can ping boolean.
-     *
-     * @return true/false
-     */
-    public boolean canPing() {
-        final String uidPsw = getClass().getSimpleName();
-        for (final RadiusServer server : this.servers) {
-            LOGGER.debug("Attempting to ping RADIUS server [{}] via simulating an authentication request. If the server responds "
-                    + "successfully, mock authentication will fail correctly.", server);
-            try {
-                server.authenticate(uidPsw, uidPsw);
-            } catch (final TimeoutException | SocketTimeoutException e) {
-                LOGGER.debug("Server [{}] is not available", server);
-                continue;
-            } catch (final Exception e) {
-                LOGGER.debug("Pinging RADIUS server was successful. Response [{}]", e.getMessage());
-            }
-            return true;
-        }
-        return false;
     }
 }

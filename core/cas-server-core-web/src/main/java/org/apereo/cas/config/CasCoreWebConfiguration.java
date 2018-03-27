@@ -1,13 +1,11 @@
 package org.apereo.cas.config;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
-
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.ServiceFactoryConfigurer;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.model.core.authentication.HttpClientProperties;
 import org.apereo.cas.configuration.model.core.web.MessageBundleProperties;
 import org.apereo.cas.web.SimpleUrlValidatorFactoryBean;
 import org.apereo.cas.web.UrlValidator;
@@ -26,6 +24,10 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Properties;
+
 /**
  * This is {@link CasCoreWebConfiguration}.
  *
@@ -34,6 +36,7 @@ import org.springframework.core.io.Resource;
  */
 @Configuration("casCoreWebConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreWebConfiguration {
 
     @Autowired
@@ -43,8 +46,9 @@ public class CasCoreWebConfiguration {
      * Load property files containing non-i18n fallback values
      * that should be exposed to Thyme templates.
      * keys in properties files added last will take precedence over the
-     * internal cas_common_messages.properties. 
+     * internal cas_common_messages.properties.
      * Keys in regular messages bundles will override any of the common messages.
+     *
      * @return PropertiesFactoryBean containing all common (non-i18n) messages
      */
     @Bean
@@ -73,7 +77,7 @@ public class CasCoreWebConfiguration {
         bean.setCacheSeconds(mb.getCacheSeconds());
         bean.setFallbackToSystemLocale(mb.isFallbackSystemLocale());
         bean.setUseCodeAsDefaultMessage(mb.isUseCodeMessage());
-        bean.setBasenames(mb.getBaseNames().toArray(new String[] {}));
+        bean.setBasenames(mb.getBaseNames().toArray(new String[]{}));
         bean.setCommonMessages(casCommonMessages);
         return bean;
     }
@@ -88,8 +92,10 @@ public class CasCoreWebConfiguration {
 
     @Bean
     public FactoryBean<UrlValidator> urlValidator() {
-        final boolean allowLocalLogoutUrls = this.casProperties.getHttpClient().isAllowLocalLogoutUrls();
-        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls);
+        final HttpClientProperties httpClient = this.casProperties.getHttpClient();
+        final boolean allowLocalLogoutUrls = httpClient.isAllowLocalLogoutUrls();
+        final String authorityValidationRegEx = httpClient.getAuthorityValidationRegEx();
+        final boolean authorityValidationRegExCaseSensitive = httpClient.isAuthorityValidationRegExCaseSensitive();
+        return new SimpleUrlValidatorFactoryBean(allowLocalLogoutUrls, authorityValidationRegEx, authorityValidationRegExCaseSensitive);
     }
-
 }

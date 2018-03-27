@@ -21,6 +21,7 @@ The following endpoints are available and secured by CAS:
 | `/status/trustedDevs`             | Reports on the [registered trusted devices/browsers](Multifactor-TrustedDevice-Authentication.html).
 | `/status/authnEvents`             | When enabled, reports on the [events captured by CAS](Configuring-Authentication-Events.html).
 | `/status/attrresolution`          | Examine resolution of user attributes via [CAS attribute resolution](../integration/Attribute-Resolution.html).
+| `/status/discovery`               | Advertises the CAS server's profile, features and capabilities for auto-configuration of client applications.
 
 The following endpoints are secured and available 
 by [Spring Boot actuators](http://docs.spring.io/spring-boot/docs/current/reference/html/production-ready-endpoints.html):

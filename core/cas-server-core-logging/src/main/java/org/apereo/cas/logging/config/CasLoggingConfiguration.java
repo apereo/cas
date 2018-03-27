@@ -1,5 +1,6 @@
 package org.apereo.cas.logging.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.logging.web.ThreadContextMDCServletFilter;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -24,6 +25,7 @@ import java.util.Map;
  */
 @Configuration("casLoggingConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasLoggingConfiguration {
 
     @Autowired

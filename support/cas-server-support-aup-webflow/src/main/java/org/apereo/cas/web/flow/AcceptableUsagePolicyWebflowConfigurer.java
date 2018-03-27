@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -17,6 +18,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private static final String ACCEPTABLE_USAGE_POLICY_VIEW = "acceptableUsagePolicyView";
@@ -31,7 +33,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
 
         if (flow != null) {
@@ -48,7 +50,7 @@ public class AcceptableUsagePolicyWebflowConfigurer extends AbstractCasWebflowCo
     }
 
     private ActionState getRealSubmissionState(final Flow flow) {
-        return (ActionState) flow.getState(CasWebflowConstants.STATE_ID_REAL_SUBMIT);
+        return getState(flow, CasWebflowConstants.STATE_ID_REAL_SUBMIT, ActionState.class);
     }
 
     private EvaluateAction createAcceptableUsagePolicyAction(final String actionId) {

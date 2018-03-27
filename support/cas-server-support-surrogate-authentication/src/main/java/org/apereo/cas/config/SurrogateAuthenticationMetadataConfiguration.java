@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
 import org.apereo.cas.authentication.SurrogateAuthenticationMetaDataPopulator;
@@ -15,6 +16,7 @@ import org.springframework.context.annotation.Configuration;
  * @since 5.1.0
  */
 @Configuration("SurrogateAuthenticationMetadataConfiguration")
+@Slf4j
 public class SurrogateAuthenticationMetadataConfiguration {
 
     @ConditionalOnMissingBean(name = "surrogateAuthenticationMetadataPopulator")

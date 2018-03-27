@@ -1,14 +1,16 @@
 package org.apereo.cas.support.saml;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.services.ChainingAttributeReleasePolicy;
 import org.apereo.cas.services.DefaultServicesManager;
 import org.apereo.cas.services.DenyAllAttributeReleasePolicy;
 import org.apereo.cas.services.InMemoryServiceRegistry;
-import org.apereo.cas.services.JsonServiceRegistryDao;
+import org.apereo.cas.services.JsonServiceRegistry;
 import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.replication.NoOpRegisteredServiceReplicationStrategy;
 import org.apereo.cas.support.saml.services.InCommonRSAttributeReleasePolicy;
 import org.apereo.cas.support.saml.services.SamlRegisteredService;
 import org.junit.BeforeClass;
@@ -30,6 +32,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SamlRegisteredServiceTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "samlRegisteredService.json");
@@ -51,7 +54,8 @@ public class SamlRegisteredServiceTests {
         service.setServiceId("http://mmoayyed.unicon.net");
         service.setMetadataLocation(METADATA_LOCATION);
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        final JsonServiceRegistry dao = new JsonServiceRegistry(RESOURCE, false,
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
     }
@@ -67,7 +71,8 @@ public class SamlRegisteredServiceTests {
         chain.setPolicies(Arrays.asList(policy, new DenyAllAttributeReleasePolicy()));
         service.setAttributeReleasePolicy(chain);
 
-        final JsonServiceRegistryDao dao = new JsonServiceRegistryDao(RESOURCE, false, mock(ApplicationEventPublisher.class));
+        final JsonServiceRegistry dao = new JsonServiceRegistry(RESOURCE, false,
+                mock(ApplicationEventPublisher.class), new NoOpRegisteredServiceReplicationStrategy());
         dao.save(service);
         dao.load();
     }
@@ -81,7 +86,7 @@ public class SamlRegisteredServiceTests {
 
         final InMemoryServiceRegistry dao = new InMemoryServiceRegistry();
         dao.setRegisteredServices(Collections.singletonList(service));
-        final DefaultServicesManager impl = new DefaultServicesManager(dao);
+        final DefaultServicesManager impl = new DefaultServicesManager(dao, mock(ApplicationEventPublisher.class));
         impl.load();
 
         final RegisteredService s = impl.findServiceBy(new WebApplicationServiceFactory()

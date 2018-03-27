@@ -1,12 +1,14 @@
 package org.apereo.cas.mock;
 
+import lombok.EqualsAndHashCode;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.CredentialMetaData;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.Service;
@@ -18,13 +20,13 @@ import org.apereo.cas.ticket.TicketState;
 import org.apereo.cas.ticket.UniqueTicketIdGenerator;
 import org.apereo.cas.ticket.support.TicketGrantingTicketExpirationPolicy;
 import org.apereo.cas.util.DefaultUniqueTicketIdGenerator;
-
 import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 
 /**
  * Mock ticket-granting ticket.
@@ -32,7 +34,11 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
+@Getter
+@EqualsAndHashCode(of ={"id"})
 public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketState {
+
     public static final UniqueTicketIdGenerator ID_GENERATOR = new DefaultUniqueTicketIdGenerator();
 
     private static final long serialVersionUID = 6546995681334670659L;
@@ -54,23 +60,17 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     public MockTicketGrantingTicket(final String principal, final Credential c, final Map attributes) {
         id = ID_GENERATOR.getNewTicketId("TGT");
         final CredentialMetaData metaData = new BasicCredentialMetaData(c);
-        authentication = new DefaultAuthenticationBuilder(
-                new DefaultPrincipalFactory().createPrincipal(principal, attributes))
-                .addCredential(metaData)
-                .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
-                        new DefaultHandlerResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData))
-                .build();
-
+        authentication = new DefaultAuthenticationBuilder(new DefaultPrincipalFactory()
+            .createPrincipal(principal, attributes)).addCredential(metaData)
+            .addSuccess(SimpleTestUsernamePasswordAuthenticationHandler.class.getName(),
+                new DefaultAuthenticationHandlerExecutionResult(new SimpleTestUsernamePasswordAuthenticationHandler(), metaData)).build();
         created = ZonedDateTime.now(ZoneOffset.UTC);
     }
 
     public MockTicketGrantingTicket(final String principal) {
-        this(principal, CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"), new HashMap());
-    }
-
-    @Override
-    public Authentication getAuthentication() {
-        return authentication;
+        this(principal,
+            CoreAuthenticationTestUtils.getCredentialsWithDifferentUsernameAndPassword("uid", "password"),
+            new HashMap());
     }
 
     @Override
@@ -79,16 +79,13 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     public ServiceTicket grantServiceTicket(final Service service) {
-        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null, false, true);
+        return grantServiceTicket(ID_GENERATOR.getNewTicketId("ST"), service, null,
+            false, true);
     }
 
     @Override
-    public ServiceTicket grantServiceTicket(
-            final String id,
-            final Service service,
-            final ExpirationPolicy expirationPolicy,
-            final boolean credentialProvided,
-            final boolean onlyTrackMostRecentSession) {
+    public ServiceTicket grantServiceTicket(final String id, final Service service, final ExpirationPolicy expirationPolicy,
+                                            final boolean credentialProvided, final boolean onlyTrackMostRecentSession) {
         update();
         return new MockServiceTicket(id, service, this);
     }
@@ -114,17 +111,7 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public boolean isExpired() {
-        return expired;
-    }
-
-    @Override
-    public TicketGrantingTicket getGrantingTicket() {
+    public TicketGrantingTicket getTicketGrantingTicket() {
         return this;
     }
 
@@ -154,16 +141,6 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
     }
 
     @Override
-    public Map<String, Service> getServices() {
-        return this.services;
-    }
-
-    @Override
-    public Map<String, Service> getProxyGrantingTickets() {
-        return this.proxyGrantingTickets;
-    }
-
-    @Override
     public void removeAllServices() {
     }
 
@@ -172,26 +149,14 @@ public class MockTicketGrantingTicket implements TicketGrantingTicket, TicketSta
         expired = true;
     }
 
-
     @Override
     public int compareTo(final Ticket o) {
         return this.id.compareTo(o.getId());
     }
-
-    @Override
-    public boolean equals(final Object obj) {
-        return compareTo((Ticket) obj) == 0;
-    }
-
-    @Override
-    public int hashCode() {
-        return this.id.hashCode();
-    }
+    
 
     @Override
     public String getPrefix() {
         return TicketGrantingTicket.PREFIX;
     }
-
-
 }

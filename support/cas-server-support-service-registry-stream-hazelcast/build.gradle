@@ -3,12 +3,16 @@ description = "Apereo CAS Service Registry Streaming Support with Hazelcast"
 dependencies {
     implementation libraries.hazelcast
     implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-services-registry")
+    implementation project(":core:cas-server-core-services-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-hazelcast-core")
     implementation project(":support:cas-server-support-service-registry-stream")
-    
+
+    testImplementation project(":core:cas-server-core-configuration")
     testImplementation project(path: ":core:cas-server-core-authentication", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
     testImplementation project(path: ":core:cas-server-core-services", configuration: "tests")
 }

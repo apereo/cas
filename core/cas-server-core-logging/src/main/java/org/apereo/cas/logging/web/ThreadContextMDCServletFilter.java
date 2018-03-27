@@ -1,5 +1,7 @@
 package org.apereo.cas.logging.web;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
@@ -18,6 +20,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Enumeration;
 
 /**
  * This is {@link ThreadContextMDCServletFilter}.
@@ -25,25 +28,20 @@ import java.util.TimeZone;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class ThreadContextMDCServletFilter implements Filter {
 
-    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
     private final TicketRegistrySupport ticketRegistrySupport;
-
-    public ThreadContextMDCServletFilter(final TicketRegistrySupport ticketRegistrySupport,
-                                         final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator) {
-        this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
-        this.ticketRegistrySupport = ticketRegistrySupport;
-    }
+    private final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator;
 
     /**
      * Does nothing.
      *
      * @param filterConfig filter initial configuration. Ignored.
-     * @throws ServletException never thrown in this case.
      */
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
     }
 
     @Override
@@ -76,9 +74,12 @@ public class ThreadContextMDCServletFilter implements Filter {
                 final String[] values = params.get(k);
                 addContextAttribute(k, Arrays.toString(values));
             });
-
-            Collections.list(request.getAttributeNames())
-                    .forEach(a -> addContextAttribute(a, request.getAttribute(a)));
+            
+            Collections.list(request.getAttributeNames()).forEach(a -> addContextAttribute(a, request.getAttribute(a)));
+            final Enumeration<String> requestHeaderNames = request.getHeaderNames();
+            if (requestHeaderNames != null) {
+                Collections.list(requestHeaderNames).forEach(h -> addContextAttribute(h, request.getHeader(h)));
+            }
 
             final String cookieValue = this.ticketGrantingTicketCookieGenerator.retrieveCookieValue(request);
             if (StringUtils.isNotBlank(cookieValue)) {

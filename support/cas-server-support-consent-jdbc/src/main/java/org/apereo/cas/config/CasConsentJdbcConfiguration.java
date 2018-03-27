@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -33,6 +34,7 @@ import java.util.List;
 @Configuration("casConsentJdbcConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class CasConsentJdbcConfiguration {
 
     @Autowired
@@ -48,8 +50,7 @@ public class CasConsentJdbcConfiguration {
     public HibernateJpaVendorAdapter jpaConsentVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-
-    @RefreshScope
+    
     @Bean
     public DataSource dataSourceConsent() {
         return JpaBeans.newDataSource(casProperties.getConsent().getJpa());

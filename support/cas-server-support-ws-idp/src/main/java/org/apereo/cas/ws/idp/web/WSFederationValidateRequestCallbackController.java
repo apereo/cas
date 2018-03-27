@@ -1,11 +1,13 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.SerializationUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -25,10 +27,8 @@ import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
 import org.apereo.cas.ws.idp.services.WSFederationRelyingPartyTokenProducer;
 import org.jasig.cas.client.authentication.AttributePrincipal;
 import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.AbstractUrlBasedTicketValidator;
 import org.jasig.cas.client.validation.Assertion;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.jasig.cas.client.validation.TicketValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -44,10 +44,11 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WSFederationValidateRequestCallbackController extends BaseWSFederationRequestController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationValidateRequestCallbackController.class);
+
     private final WSFederationRelyingPartyTokenProducer relyingPartyTokenProducer;
-    private final AbstractUrlBasedTicketValidator ticketValidator;
+    private final TicketValidator ticketValidator;
 
     public WSFederationValidateRequestCallbackController(final ServicesManager servicesManager,
                                                          final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -59,12 +60,13 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
                                                          final TicketRegistry ticketRegistry,
                                                          final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
                                                          final TicketRegistrySupport ticketRegistrySupport,
-                                                         final AbstractUrlBasedTicketValidator ticketValidator) {
+                                                         final TicketValidator ticketValidator,
+                                                         final Service callbackService) {
         super(servicesManager,
                 webApplicationServiceFactory, casProperties,
                 serviceSelectionStrategy, httpClient, securityTokenTicketFactory,
                 ticketRegistry, ticketGrantingTicketCookieGenerator,
-                ticketRegistrySupport);
+                ticketRegistrySupport, callbackService);
         this.relyingPartyTokenProducer = relyingPartyTokenProducer;
         this.ticketValidator = ticketValidator;
     }
@@ -109,7 +111,7 @@ public class WSFederationValidateRequestCallbackController extends BaseWSFederat
     }
 
     private static ModelAndView postResponseBackToRelyingParty(final String rpToken,
-                                                               final WSFederationRequest fedRequest) throws Exception {
+                                                               final WSFederationRequest fedRequest) {
         final String postUrl = StringUtils.isNotBlank(fedRequest.getWreply()) ? fedRequest.getWreply() : fedRequest.getWtrealm();
 
         final Map model = new HashMap<>();

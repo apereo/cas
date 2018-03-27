@@ -1,7 +1,7 @@
 description = "Apereo CAS Core Configuration - JDBC"
 
 dependencies {
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":support:cas-server-support-jpa-util")
     provided project(":core:cas-server-core-configuration")
     runtimeOnly project(":support:cas-server-support-jdbc-drivers")

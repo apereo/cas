@@ -23,31 +23,26 @@ There are is a wide range of ticket registries on the menu. The selection criter
 - Choose a technology that you are most familiar with and have the skills and patience to troubleshoot, tune and scale for the win. 
 - Choose a technology that does not force your CAS configuration to be tied to any individual servers/nodes in the cluster, as this will present auto-scaling issues and manual effort.
 - Choose a technology that works well with your network and firewall configuration and is performant and reliable enough based on your network topology.
-- Choose a technology that shows promisig results under *your expected load*, having run performance and stress tests.
+- Choose a technology that shows promising results under *your expected load*, having run performance and stress tests.
 - Choose a technology that does not depend on outside processes and systems as much as possible, is self-reliant and self contained.
 
 The above simply outlines suggestions and guidelines you may wish to consider. Any option and decision presents various pros and cons and in the end, you must decide which drawbacks or advantages provide you with the best experience.
-
-### Default Ticket Registry
-
-The default registry uses a memory-backed internal conurrent map for ticket storage and retrieval, though there is also the option
-to use an implementation that is backed by a caching engine to gain slightly better performance when it comes to eviciting expired tickets.
-
-This component does not preserve ticket state across restarts and is not a suitable solution
-for clustered CAS environments that are deployed in active/active mode.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#inmemory-ticket-registry).
 
 ### Cache-Based Ticket Registries
 
 Cached-based ticket registries provide a high-performance solution for ticket storage in high availability
 deployments. Components for the following caching technologies are provided:
 
+* [Default](Default-Ticket-Registry.html)
 * [Hazelcast](Hazelcast-Ticket-Registry.html)
 * [Ehcache](Ehcache-Ticket-Registry.html)
 * [Ignite](Ignite-Ticket-Registry.html)
 * [Memcached](Memcached-Ticket-Registry.html)
 * [Infinispan](Infinispan-Ticket-Registry.html)
+
+### Message-based Ticket Registries
+
+* [JMS](Messaging-JMS-Ticket-Registry.html)
 
 ### RDBMS Ticket Registries
 

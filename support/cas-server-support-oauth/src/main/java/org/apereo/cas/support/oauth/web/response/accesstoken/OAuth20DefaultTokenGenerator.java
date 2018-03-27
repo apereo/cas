@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
@@ -14,8 +16,6 @@ import org.apereo.cas.ticket.code.OAuthCode;
 import org.apereo.cas.ticket.refreshtoken.RefreshToken;
 import org.apereo.cas.ticket.refreshtoken.RefreshTokenFactory;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is {@link OAuth20DefaultTokenGenerator}.
@@ -23,8 +23,10 @@ import org.slf4j.LoggerFactory;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20DefaultTokenGenerator.class);
+
 
     /**
      * The Access token factory.
@@ -41,25 +43,19 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
      */
     protected final TicketRegistry ticketRegistry;
 
-    public OAuth20DefaultTokenGenerator(final AccessTokenFactory accessTokenFactory, final TicketRegistry ticketRegistry,
-                                        final RefreshTokenFactory refreshTokenFactory) {
-        this.accessTokenFactory = accessTokenFactory;
-        this.ticketRegistry = ticketRegistry;
-        this.refreshTokenFactory = refreshTokenFactory;
-    }
-
     @Override
     public Pair<AccessToken, RefreshToken> generate(final AccessTokenRequestDataHolder holder) {
         LOGGER.debug("Creating refresh token for [{}]", holder.getService());
         final Authentication authn = DefaultAuthenticationBuilder
-                .newInstance(holder.getAuthentication())
-                .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
-                .build();
+            .newInstance(holder.getAuthentication())
+            .addAttribute(OAuth20Constants.GRANT_TYPE, holder.getGrantType().toString())
+            .build();
 
+        LOGGER.debug("Creating access token for [{}]", holder);
         final AccessToken accessToken = this.accessTokenFactory.create(holder.getService(),
-                authn, holder.getTicketGrantingTicket(), holder.getScopes());
+            authn, holder.getTicketGrantingTicket(), holder.getScopes());
 
-        LOGGER.debug("Creating access token [{}]", accessToken);
+        LOGGER.debug("Created access token [{}]", accessToken);
         addTicketToRegistry(accessToken, holder.getTicketGrantingTicket());
         LOGGER.debug("Added access token [{}] to registry", accessToken);
 
@@ -105,7 +101,7 @@ public class OAuth20DefaultTokenGenerator implements OAuth20TokenGenerator {
     private RefreshToken generateRefreshToken(final AccessTokenRequestDataHolder responseHolder) {
         LOGGER.debug("Creating refresh token for [{}]", responseHolder.getService());
         final RefreshToken refreshToken = this.refreshTokenFactory.create(responseHolder.getService(),
-                responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket());
+            responseHolder.getAuthentication(), responseHolder.getTicketGrantingTicket(), responseHolder.getScopes());
         LOGGER.debug("Adding refresh token [{}] to the registry", refreshToken);
         addTicketToRegistry(refreshToken, responseHolder.getTicketGrantingTicket());
         return refreshToken;

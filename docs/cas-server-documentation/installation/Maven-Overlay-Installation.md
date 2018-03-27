@@ -11,13 +11,17 @@ customizations such as component configuration and UI design.
 The output of a WAR overlay build is a `cas.war` file that can be deployed to a servlet container like
 [Apache Tomcat](Configuring-Servlet-Container.html).
 
+## Requirements
+
+[See this guide](../planning/Installation-Requirements.html) to learn more.
+
 ## What is a WAR Overlay?
 
 Overlays are a strategy to combat repetitive code and/or resources. Rather than downloading the CAS codebase and building from source,
 overlays allow you to download a pre-built vanilla CAS web application server provided by the project itself and override/insert specific behavior into it.
 At build time, the Maven/Gradle installation process will attempt to download the provided binary artifact first. Then the tool will locate your configuration files and settings made available inside the same project directory and will merge those into the downloaded artifact in order to produce
 one wholesome archive (i.e. `cas.war`) . Overridden artifacts may include resources, java classes, images, CSS and javascript files. In order for the merge
-process is successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
+process to successfully execute, the location and names of the overridden artifacts locally must **EXACTLY** match that of those provided by the project
 inside the originally downloaded archive.
 
 It goes without saying that while up-front ramp-up time could be slightly complicated, there are significant advantages to this approach:
@@ -38,9 +42,9 @@ The process of working with an overlay, whether Maven or Gradle, can be summariz
 
 - Start with and build the provided basic vanilla build/deployment.
 - Identify the artifacts from the produced build that need changes. These artifacts are generally produced by the build in the `target` or `build` directory for Maven or Gradle, respectively.
-- Copy the identified artifiacts from the identified above directories over to the `src` directory.
+- Copy the identified artifacts from the identified above directories over to the `src` directory.
 1. Create the `src` directory and all of its children, if they don't already exist.
-2. Copied paths and filenames **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
+2. Copied paths and file names **MUST EXACTLY MATCH** their build counterparts, or the change won't take effect. See the table below to understand how to map folders and files from the build to `src`.
 - After changes, rebuild and repeat the process as many times as possible.
 - Double check your changes inside the built binary artifact to make sure the overlay process is working.
 
@@ -57,10 +61,10 @@ use <code>git branch -a</code> to see available branches, and then <code>git che
 
 | Project                                                               | Build Directory                               | Source Directory
 |-----------------------------------------------------------------------|-----------------------------------------------|-----------------------
-| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
+| [CAS Maven WAR Overlay](https://github.com/apereo/cas-overlay-template)   | `target/cas.war!WEB-INF/classes/`     | `src/main/resources`
 | [CAS Gradle WAR Overlay](https://github.com/apereo/cas-gradle-overlay-template) | `cas/build/libs/cas.war!WEB-INF/classes/`     | `src/main/resources`
 
-To construct the overlay project, you neeed to copy directories and files *that you need to customize* in the build directory over to the source directory.
+To construct the overlay project, you need to copy directories and files *that you need to customize* in the build directory over to the source directory.
 
 The Gradle overlay also provides additional tasks to explode the binary artifact first before re-assembling it again.
 You may need to do that step manually yourself to learn what files/directories need to be copied over to the source directory.
@@ -195,4 +199,4 @@ by using a `scope=import` dependency:
 To take advantage of the CAS BOM via Gradle, please [use this guide](https://plugins.gradle.org/plugin/io.spring.dependency-management)
 and configure the Gradle build accordingly.
 
-*(1) [WAR Overlays](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)*
+<sub>(1) [WAR Overlays](http://maven.apache.org/plugins/maven-war-plugin/overlays.html)</sub>

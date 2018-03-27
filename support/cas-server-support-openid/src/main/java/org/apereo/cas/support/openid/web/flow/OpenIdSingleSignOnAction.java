@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Credential;
@@ -27,6 +28,7 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdSingleSignOnAction extends AbstractNonInteractiveCredentialsAction {
 
     private OpenIdUserNameExtractor extractor = new DefaultOpenIdUserNameExtractor();

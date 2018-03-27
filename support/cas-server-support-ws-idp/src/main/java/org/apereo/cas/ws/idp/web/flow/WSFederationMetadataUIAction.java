@@ -1,5 +1,7 @@
 package org.apereo.cas.ws.idp.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
@@ -20,21 +22,16 @@ import java.io.Serializable;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class WSFederationMetadataUIAction extends AbstractAction implements Serializable {
-
     private static final long serialVersionUID = -8016284160122109307L;
-    private final transient ServicesManager servicesManager;
 
+    private final transient ServicesManager servicesManager;
     private final transient AuthenticationServiceSelectionStrategy serviceSelectionStrategy;
 
-    public WSFederationMetadataUIAction(final ServicesManager servicesManager,
-                                               final AuthenticationServiceSelectionStrategy serviceSelectionStrategy) {
-        this.servicesManager = servicesManager;
-        this.serviceSelectionStrategy = serviceSelectionStrategy;
-    }
-
     @Override
-    protected Event doExecute(final RequestContext requestContext) throws Exception {
+    protected Event doExecute(final RequestContext requestContext) {
         Service service = WebUtils.getService(requestContext);
         if (service != null) {
             service = serviceSelectionStrategy.resolveServiceFrom(service);

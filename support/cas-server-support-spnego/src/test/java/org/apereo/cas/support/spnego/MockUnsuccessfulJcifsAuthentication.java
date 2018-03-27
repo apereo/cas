@@ -4,6 +4,8 @@ import java.security.Principal;
 
 import jcifs.spnego.Authentication;
 import jcifs.spnego.AuthenticationException;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Marc-Antoine Garrigue
@@ -11,13 +13,11 @@ import jcifs.spnego.AuthenticationException;
  * @author Sven Rieckhoff
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class MockUnsuccessfulJcifsAuthentication extends Authentication {
 
     private boolean throwExceptionOnProcess;
-
-    public MockUnsuccessfulJcifsAuthentication(final boolean throwExceptionOnProcess) {
-        this.throwExceptionOnProcess = throwExceptionOnProcess;
-    }
 
     @Override
     public byte[] getNextToken() {

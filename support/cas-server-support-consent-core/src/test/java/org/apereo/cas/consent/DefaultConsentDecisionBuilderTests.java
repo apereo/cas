@@ -1,5 +1,7 @@
 package org.apereo.cas.consent;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasConsentApiConfiguration;
 import org.apereo.cas.config.CasConsentCoreConfiguration;
 import org.apereo.cas.config.CasCoreHttpConfiguration;
@@ -26,11 +28,13 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {
-        CasConsentApiConfiguration.class,
-        CasConsentCoreConfiguration.class,
-        RefreshAutoConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreUtilConfiguration.class})
+    CasConsentApiConfiguration.class,
+    CasConsentCoreConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    RefreshAutoConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreUtilConfiguration.class})
+@Slf4j
 public class DefaultConsentDecisionBuilderTests {
 
     @Autowired
@@ -41,8 +45,8 @@ public class DefaultConsentDecisionBuilderTests {
     public void verifyNewConsentDecision() {
         final ConsentDecision consentDecision = getConsentDecision();
         assertNotNull(consentDecision);
-        assertEquals(consentDecision.getPrincipal(), "casuser");
-        assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());    
+        assertEquals("casuser", consentDecision.getPrincipal());
+        assertEquals(consentDecision.getService(), RegisteredServiceTestUtils.getService().getId());
     }
 
     @Test
@@ -64,13 +68,13 @@ public class DefaultConsentDecisionBuilderTests {
         final ConsentDecision consentDecision = getConsentDecision();
         final Map<String, Object> attrs = consentDecisionBuilder.getConsentableAttributesFrom(consentDecision);
         assertTrue(attrs.containsKey("attr1"));
-        assertEquals(attrs.get("attr1"), "value1");
+        assertEquals("value1", attrs.get("attr1"));
     }
-    
+
     private ConsentDecision getConsentDecision() {
         return consentDecisionBuilder.build(RegisteredServiceTestUtils.getService(),
-                RegisteredServiceTestUtils.getRegisteredService("test"),
-                "casuser", CollectionUtils.wrap("attr1", "value1"));
+            RegisteredServiceTestUtils.getRegisteredService("test"),
+            "casuser", CollectionUtils.wrap("attr1", "value1"));
     }
 
 }

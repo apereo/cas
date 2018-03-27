@@ -1,8 +1,8 @@
 package org.apereo.cas.ticket.proxy;
 
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.AbstractTicketException;
+import org.apereo.cas.ticket.ServiceTicket;
 import org.apereo.cas.ticket.TicketFactory;
 
 /**
@@ -20,9 +20,10 @@ public interface ProxyGrantingTicketFactory extends TicketFactory {
      * @param <T>            the type parameter
      * @param ticket         the ticket
      * @param authentication the authentication
+     * @param clazz          the clazz
      * @return the ticket instance
      * @throws AbstractTicketException the abstract ticket exception
      */
-    <T extends ProxyGrantingTicket> T create(ServiceTicket ticket, Authentication authentication)
+    <T extends ProxyGrantingTicket> T create(ServiceTicket ticket, Authentication authentication, Class<T> clazz)
             throws AbstractTicketException;
 }

@@ -36,9 +36,9 @@ The cookie has the following properties:
 If keys are left undefined, on startup CAS will notice that no keys are defined and it will appropriately generate keys for you automatically. Your CAS logs will then show the following snippet:
 
 ```bash
-WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for encryption is not defined. CAS will attempt to auto-generate the encryption key>
+WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for encryption is not defined. CAS will auto-generate the encryption key>
 WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated encryption key ABC of size ... . The generated key MUST be added to CAS settings.>
-WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for signing is not defined. CAS will attempt to auto-generate the signing key>
+WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Secret key for signing is not defined. CAS will auto-generate the signing key>
 WARN [org.apereo.cas.util.BaseStringCipherExecutor] - <Generated signing key XYZ of size ... . The generated key MUST be added to CAS settings.>
 ```
 

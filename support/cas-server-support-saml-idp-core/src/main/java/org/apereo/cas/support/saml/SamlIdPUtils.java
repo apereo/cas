@@ -1,5 +1,8 @@
 package org.apereo.cas.support.saml;
 
+import lombok.SneakyThrows;
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.utilities.java.support.resolver.CriteriaSet;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.RegisteredService;
@@ -26,8 +29,6 @@ import org.opensaml.saml.saml2.metadata.Endpoint;
 import org.opensaml.saml.saml2.metadata.EntityDescriptor;
 import org.opensaml.saml.saml2.metadata.SPSSODescriptor;
 import org.opensaml.saml.saml2.metadata.impl.AssertionConsumerServiceBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.List;
@@ -40,11 +41,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class SamlIdPUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlIdPUtils.class);
-
-    private SamlIdPUtils() {
-    }
+@Slf4j
+@UtilityClass
+public class SamlIdPUtils {
 
     /**
      * Prepare peer entity saml endpoint.
@@ -66,7 +65,7 @@ public final class SamlIdPUtils {
             throw new SamlException("SAMLPeerEntityContext could not be defined for entity " + adaptor.getEntityId());
         }
         peerEntityContext.setEntityId(adaptor.getEntityId());
-        
+
         final SAMLEndpointContext endpointContext = peerEntityContext.getSubcontext(SAMLEndpointContext.class, true);
         if (endpointContext == null) {
             throw new SamlException("SAMLEndpointContext could not be defined for entity " + adaptor.getEntityId());
@@ -87,31 +86,30 @@ public final class SamlIdPUtils {
      * @param resolver        the resolver
      * @return the chaining metadata resolver for all saml services
      */
+    @SneakyThrows
     public static MetadataResolver getMetadataResolverForAllSamlServices(final ServicesManager servicesManager,
                                                                          final String entityID,
                                                                          final SamlRegisteredServiceCachingMetadataResolver resolver) {
-        try {
-            final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
-            final List<MetadataResolver> resolvers;
-            final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-            resolvers = registeredServices.stream()
-                    .filter(SamlRegisteredService.class::isInstance)
-                    .map(SamlRegisteredService.class::cast)
-                    .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
-                    .collect(Collectors.toList());
+        final Collection<RegisteredService> registeredServices = servicesManager.findServiceBy(SamlRegisteredService.class::isInstance);
+        final List<MetadataResolver> resolvers;
+        final ChainingMetadataResolver chainingMetadataResolver = new ChainingMetadataResolver();
 
-            LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
-            chainingMetadataResolver.setResolvers(resolvers);
-            chainingMetadataResolver.setId(entityID);
-            chainingMetadataResolver.initialize();
-            return chainingMetadataResolver;
-        } catch (final Exception e) {
-            throw new IllegalArgumentException(new SamlException(e.getMessage(), e));
-        }
+        resolvers = registeredServices.stream()
+            .filter(SamlRegisteredService.class::isInstance)
+            .map(SamlRegisteredService.class::cast)
+            .map(s -> SamlRegisteredServiceServiceProviderMetadataFacade.get(resolver, s, entityID))
+            .filter(Optional::isPresent)
+            .map(Optional::get)
+            .map(SamlRegisteredServiceServiceProviderMetadataFacade::getMetadataResolver)
+            .collect(Collectors.toList());
+
+        LOGGER.debug("Located [{}] metadata resolvers to match against [{}]", resolvers, entityID);
+        chainingMetadataResolver.setResolvers(resolvers);
+        chainingMetadataResolver.setId(entityID);
+        chainingMetadataResolver.initialize();
+        return chainingMetadataResolver;
+
     }
 
     /**
@@ -145,7 +143,7 @@ public final class SamlIdPUtils {
                     final int acsIndex = authnRequest.getAssertionConsumerServiceIndex();
                     if (acsIndex + 1 > acsEndpoints.size()) {
                         throw new IllegalArgumentException("AssertionConsumerService index specified in the request " + acsIndex + " is invalid "
-                                + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
+                            + "since the total endpoints available to " + issuer + " is " + acsEndpoints.size());
                     }
                     final AssertionConsumerService foundAcs = acsEndpoints.get(acsIndex);
                     acs.setBinding(foundAcs.getBinding());

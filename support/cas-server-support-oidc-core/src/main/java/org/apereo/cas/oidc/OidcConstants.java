@@ -1,5 +1,8 @@
 package org.apereo.cas.oidc;
 
+import org.apache.commons.text.WordUtils;
+import lombok.Getter;
+
 /**
  * This is {@link OidcConstants}.
  *
@@ -9,60 +12,28 @@ package org.apereo.cas.oidc;
 public interface OidcConstants {
 
     /**
-     * Dnamic client registration mode.
+     * Dynamic client registration mode.
      */
     enum DynamicClientRegistrationMode {
+
         /**
          * Registration is open to all.
          */
-        OPEN,
-
-        /**
+        OPEN, /**
          * registration is protected for all.
          */
         PROTECTED
     }
 
-    /** The token. */
+    /**
+     * The token.
+     */
     String TOKEN = "token";
-    
-    /** Token type hint. */
-    String TOKEN_TYPE_HINT = "token_type_hint";
-    
+
     /**
      * ACR passed in the id token.
      */
     String ACR = "acr";
-
-    /**
-     * The `openid` scope.
-     */
-    String OPENID = "openid";
-
-    /**
-     * The `email` scope.
-     */
-    String EMAIL = "email";
-
-    /**
-     * The `address` scope.
-     */
-    String ADDRESS = "address";
-
-    /**
-     * The `profile` scope.
-     */
-    String PROFILE = "profile";
-
-    /**
-     * The `phone` scope.
-     */
-    String PHONE = "phone";
-
-    /**
-     * The `offline_accessw` scope.
-     */
-    String OFFLINE_ACCESS = "offline_access";
 
     /**
      * Authentication method reference passed in the id token.
@@ -70,12 +41,52 @@ public interface OidcConstants {
     String AMR = "amr";
 
     /**
+     * Standard openid connect scopes.
+     */
+    @Getter
+    enum StandardScopes {
+
+        /**
+         * OpenId scope.
+         */
+        OPENID("openid"), /**
+         * Custom scope.
+         */
+        CUSTOM("custom"), /**
+         * address scope.
+         */
+        ADDRESS("address"), /**
+         * email scope.
+         */
+        EMAIL("email"), /**
+         * profile scope.
+         */
+        PROFILE("profile"), /**
+         * phone scope.
+         */
+        PHONE("phone"), /**
+         * offline_access scope.
+         */
+        OFFLINE_ACCESS("offline_access");
+
+        private final String scope;
+
+        StandardScopes(final String scope) {
+            this.scope = scope;
+        }
+
+        public String getFriendlyName() {
+            return WordUtils.capitalize(this.scope.replace('_', ' '));
+        }
+    }
+
+    /**
      * The Authorization Server MUST NOT display any authentication or consent user interface pages.
      */
     String PROMPT_NONE = "none";
 
     /**
-     * The Authorization Server SHOULD prompt the End-User for reauthentication.
+     * The Authorization Server SHOULD prompt the End-User for re-authentication.
      */
     String PROMPT_LOGIN = "login";
 
@@ -133,13 +144,15 @@ public interface OidcConstants {
      * Revocation Endpoint url.
      */
     String REVOCATION_URL = "revoke";
-    
+
     /**
      * Registration endpoint URL.
      */
     String REGISTRATION_URL = "register";
 
-    /** The introspection url. */
+    /**
+     * The introspection url.
+     */
     String INTROSPECTION_URL = "introspect";
 
     /**

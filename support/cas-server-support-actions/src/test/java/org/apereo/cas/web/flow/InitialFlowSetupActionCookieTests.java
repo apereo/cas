@@ -1,13 +1,16 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
+import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.config.CasSupportActionsConfiguration;
+import org.apereo.cas.web.flow.login.InitialFlowSetupAction;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
@@ -36,6 +39,7 @@ import static org.mockito.Mockito.*;
  */
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
 @Import(CasSupportActionsConfiguration.class)
+@Slf4j
 public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String CONST_CONTEXT_PATH = "/test";
@@ -43,6 +47,9 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
 
     private InitialFlowSetupAction action;
     private CookieRetrievingCookieGenerator warnCookieGenerator;
@@ -56,17 +63,18 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
         this.tgtCookieGenerator = new CookieRetrievingCookieGenerator("tgt", "", 2, 
                 false, null, false);
         this.tgtCookieGenerator.setCookiePath(StringUtils.EMPTY);
-        
+
         final List<ArgumentExtractor> argExtractors = Collections.singletonList(new DefaultArgumentExtractor(new WebApplicationServiceFactory()));
         final ServicesManager servicesManager = mock(ServicesManager.class);
         when(servicesManager.findServiceBy(any(Service.class))).thenReturn(RegisteredServiceTestUtils.getRegisteredService("test"));
-        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, tgtCookieGenerator, warnCookieGenerator, casProperties);
+        this.action = new InitialFlowSetupAction(argExtractors, servicesManager, authenticationRequestServiceSelectionStrategies, tgtCookieGenerator,
+                warnCookieGenerator, casProperties);
 
         this.action.afterPropertiesSet();
     }
 
     @Test
-    public void verifySettingContextPath() throws Exception {
+    public void verifySettingContextPath() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath(CONST_CONTEXT_PATH);
         final MockRequestContext context = new MockRequestContext();
@@ -79,7 +87,7 @@ public class InitialFlowSetupActionCookieTests extends AbstractCentralAuthentica
     }
 
     @Test
-    public void verifyResettingContextPath() throws Exception {
+    public void verifyResettingContextPath() {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setContextPath(CONST_CONTEXT_PATH);
         final MockRequestContext context = new MockRequestContext();

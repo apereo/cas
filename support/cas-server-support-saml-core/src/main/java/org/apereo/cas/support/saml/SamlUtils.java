@@ -1,5 +1,7 @@
 package org.apereo.cas.support.saml;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.shibboleth.idp.profile.spring.factory.BasicResourceCredentialFactoryBean;
 import net.shibboleth.idp.profile.spring.factory.BasicX509CredentialFactoryBean;
 import org.apache.commons.lang3.StringUtils;
@@ -18,8 +20,6 @@ import org.opensaml.xmlsec.keyinfo.impl.provider.DSAKeyValueProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.InlineX509DataProvider;
 import org.opensaml.xmlsec.keyinfo.impl.provider.RSAKeyValueProvider;
 import org.opensaml.xmlsec.signature.support.impl.ExplicitKeySignatureTrustEngine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.io.AbstractResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -45,14 +45,11 @@ import java.util.List;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public final class SamlUtils {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(SamlUtils.class);
+@Slf4j
+@UtilityClass
+public class SamlUtils {
     private static final int SAML_OBJECT_LOG_ASTERIXLINE_LENGTH = 80;
     private static final String NAMESPACE_URI = "http://www.w3.org/2000/xmlns/";
-
-    private SamlUtils() {
-    }
 
     /**
      * Read certificate x 509 certificate.
@@ -83,19 +80,27 @@ public final class SamlUtils {
     /**
      * Transform saml object t.
      *
-     * @param <T>         the type parameter
-     * @param configBean  the config bean
-     * @param xml         the xml
+     * @param <T>        the type parameter
+     * @param configBean the config bean
+     * @param xml        the xml
+     * @param clazz      the clazz
      * @return the t
      */
-    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml) {
+    public static <T extends XMLObject> T transformSamlObject(final OpenSamlConfigBean configBean, final String xml,
+                                                              final Class<T> clazz) {
         try (InputStream in = new ByteArrayInputStream(xml.getBytes(StandardCharsets.UTF_8))) {
             final Document document = configBean.getParserPool().parse(in);
             final Element root = document.getDocumentElement();
 
             final Unmarshaller marshaller = configBean.getUnmarshallerFactory().getUnmarshaller(root);
             if (marshaller != null) {
-                return (T) marshaller.unmarshall(root);
+                final Object result = marshaller.unmarshall(root);
+                if (!clazz.isAssignableFrom(result.getClass())) {
+                    throw new ClassCastException("Result [" + result
+                        + " is of type " + result.getClass()
+                        + " when we were expecting " + clazz);
+                }
+                return (T) result;
             }
         } catch (final Exception e) {
             throw new SamlException(e.getMessage(), e);
@@ -155,10 +160,9 @@ public final class SamlUtils {
      * @param resourceLoader            the resource loader
      * @param signatureResourceLocation the signature resource location
      * @return the metadata filter
-     * @throws Exception the exception
      */
     public static SignatureValidationFilter buildSignatureValidationFilter(final ResourceLoader resourceLoader,
-                                                                           final String signatureResourceLocation) throws Exception {
+                                                                           final String signatureResourceLocation) {
         try {
             final Resource resource = resourceLoader.getResource(signatureResourceLocation);
             return buildSignatureValidationFilter(resource);

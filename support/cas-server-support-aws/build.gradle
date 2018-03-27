@@ -1,0 +1,10 @@
+description = 'Apereo CAS Amazon Web Services Support'
+dependencies {
+    api project(":api:cas-server-core-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-webflow-api")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation libraries.aws
+}

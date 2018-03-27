@@ -1,5 +1,6 @@
 package org.apereo.cas.support.validation;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**
@@ -8,6 +9,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SecurityTokenServiceCredentialCipherExecutor extends BaseStringCipherExecutor {
     public SecurityTokenServiceCredentialCipherExecutor(final String secretKeyEncryption,
                                                         final String secretKeySigning,

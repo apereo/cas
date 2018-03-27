@@ -1,8 +1,0 @@
-description = "Apereo CAS Management Web Application LDAP Support"
-dependencies {
-    implementation project(":support:cas-server-support-ldap-core")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
-    implementation libraries.pac4j
-}

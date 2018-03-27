@@ -2,7 +2,9 @@ package org.apereo.cas.config;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import com.github.benmanes.caffeine.cache.Caffeine;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.resolvers.InternalGroovyScriptDao;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -10,6 +12,9 @@ import org.apereo.cas.configuration.model.core.authentication.GrouperPrincipalAt
 import org.apereo.cas.configuration.model.core.authentication.PrincipalAttributesProperties;
 import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.configuration.support.JpaBeans;
+import org.apereo.cas.persondir.DefaultPersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlan;
+import org.apereo.cas.persondir.PersonDirectoryAttributeRepositoryPlanConfigurer;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.LdapUtils;
 import org.apereo.services.persondir.IPersonAttributeDao;
@@ -29,8 +34,7 @@ import org.apereo.services.persondir.support.merger.MultivaluedAttributeMerger;
 import org.apereo.services.persondir.support.merger.NoncollidingAttributeAdder;
 import org.apereo.services.persondir.support.merger.ReplacingAttributeAdder;
 import org.jooq.lambda.Unchecked;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -57,14 +61,16 @@ import java.util.concurrent.TimeUnit;
  */
 @Configuration("casPersonDirectoryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CasPersonDirectoryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasPersonDirectoryConfiguration.class);
-
+@Slf4j
+public class CasPersonDirectoryConfiguration implements PersonDirectoryAttributeRepositoryPlanConfigurer {
     @Autowired
     private ApplicationContext applicationContext;
 
     @Autowired
     private CasConfigurationProperties casProperties;
+
+    @Autowired
+    private ObjectProvider<List<PersonDirectoryAttributeRepositoryPlanConfigurer>> attributeRepositoryConfigurers;
 
     @ConditionalOnMissingBean(name = "attributeRepositories")
     @Bean
@@ -81,8 +87,13 @@ public class CasPersonDirectoryConfiguration {
         list.addAll(scriptedAttributeRepositories());
         list.addAll(stubAttributeRepositories());
 
-        OrderComparator.sort(list);
+        final List<PersonDirectoryAttributeRepositoryPlanConfigurer> configurers =
+            ObjectUtils.defaultIfNull(attributeRepositoryConfigurers.getIfAvailable(), new ArrayList<>());
+        final PersonDirectoryAttributeRepositoryPlan plan = new DefaultPersonDirectoryAttributeRepositoryPlan();
+        configurers.forEach(c -> c.configureAttributeRepositoryPlan(plan));
+        list.addAll(plan.getAttributeRepositories());
 
+        OrderComparator.sort(list);
         LOGGER.debug("Final list of attribute repositories is [{}]", list);
         return list;
     }
@@ -172,14 +183,14 @@ public class CasPersonDirectoryConfiguration {
                 if (jdbc.isSingleRow()) {
                     LOGGER.debug("Configured single-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new SingleRowJdbcPersonAttributeDao(
-                            JpaBeans.newDataSource(jdbc),
-                            jdbc.getSql()
+                        JpaBeans.newDataSource(jdbc),
+                        jdbc.getSql()
                     );
                 } else {
                     LOGGER.debug("Configured multi-row JDBC attribute repository for [{}]", jdbc.getUrl());
                     jdbcDao = new MultiRowJdbcPersonAttributeDao(
-                            JpaBeans.newDataSource(jdbc),
-                            jdbc.getSql()
+                        JpaBeans.newDataSource(jdbc),
+                        jdbc.getSql()
                     );
                     LOGGER.debug("Configured multi-row JDBC column mappings for [{}] are [{}]", jdbc.getUrl(), jdbc.getColumnMappings());
                     ((MultiRowJdbcPersonAttributeDao) jdbcDao).setNameValueColumnMappings(jdbc.getColumnMappings());
@@ -216,8 +227,8 @@ public class CasPersonDirectoryConfiguration {
                 ldapDao.setConnectionFactory(LdapUtils.newLdaptivePooledConnectionFactory(ldap));
                 ldapDao.setBaseDN(ldap.getBaseDn());
 
-                LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getUserFilter());
-                ldapDao.setSearchFilter(ldap.getUserFilter());
+                LOGGER.debug("LDAP attributes are fetched from [{}] via filter [{}]", ldap.getLdapUrl(), ldap.getSearchFilter());
+                ldapDao.setSearchFilter(ldap.getSearchFilter());
 
                 final SearchControls constraints = new SearchControls();
                 if (ldap.getAttributes() != null && !ldap.getAttributes().isEmpty()) {
@@ -255,15 +266,15 @@ public class CasPersonDirectoryConfiguration {
     public List<IPersonAttributeDao> scriptedAttributeRepositories() {
         final List<IPersonAttributeDao> list = new ArrayList<>();
         casProperties.getAuthn().getAttributeRepository().getScript()
-                .forEach(Unchecked.consumer(script -> {
-                    final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
-                    final String scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
-                    dao.setScriptFile(scriptFile);
-                    dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
-                    dao.setOrder(script.getOrder());
-                    LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
-                    list.add(dao);
-                }));
+            .forEach(Unchecked.consumer(script -> {
+                final ScriptEnginePersonAttributeDao dao = new ScriptEnginePersonAttributeDao();
+                final String scriptFile = IOUtils.toString(script.getLocation().getInputStream(), StandardCharsets.UTF_8);
+                dao.setScriptFile(scriptFile);
+                dao.setCaseInsensitiveUsername(script.isCaseInsensitive());
+                dao.setOrder(script.getOrder());
+                LOGGER.debug("Configured scripted attribute sources from [{}]", script.getLocation());
+                list.add(dao);
+            }));
         return list;
     }
 
@@ -303,16 +314,16 @@ public class CasPersonDirectoryConfiguration {
         final CachingPersonAttributeDaoImpl impl = new CachingPersonAttributeDaoImpl();
         impl.setCacheNullResults(false);
 
+        final PrincipalAttributesProperties props = casProperties.getAuthn().getAttributeRepository();
         final Cache graphs = Caffeine.newBuilder()
-                .weakKeys()
-                .maximumSize(casProperties.getAuthn().getAttributeRepository().getMaximumCacheSize())
-                .expireAfterWrite(casProperties.getAuthn().getAttributeRepository().getExpireInMinutes(), TimeUnit.MINUTES)
-                .build();
+            .maximumSize(props.getMaximumCacheSize())
+            .expireAfterWrite(props.getExpirationTime(), TimeUnit.valueOf(props.getExpirationTimeUnit().toUpperCase()))
+            .build();
         impl.setUserInfoCache(graphs.asMap());
         impl.setCachedPersonAttributesDao(aggregatingAttributeRepository());
 
         LOGGER.debug("Configured cache expiration policy for merging attribute sources to be [{}] minute(s)",
-                casProperties.getAuthn().getAttributeRepository().getExpireInMinutes());
+            props.getExpirationTime());
         return impl;
     }
 

@@ -1,0 +1,109 @@
+package org.apereo.cas.support.saml.idp.metadata.writer;
+
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.util.RandomUtils;
+import org.bouncycastle.asn1.ASN1Encodable;
+import org.bouncycastle.asn1.DERSequence;
+import org.bouncycastle.asn1.x500.X500Name;
+import org.bouncycastle.asn1.x509.Extension;
+import org.bouncycastle.asn1.x509.GeneralName;
+import org.bouncycastle.asn1.x509.GeneralNames;
+import org.bouncycastle.cert.X509CertificateHolder;
+import org.bouncycastle.cert.X509v3CertificateBuilder;
+import org.bouncycastle.cert.jcajce.JcaX509CertificateConverter;
+import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
+import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
+import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
+import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
+
+import java.io.Writer;
+import java.math.BigInteger;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.List;
+
+/**
+ * This is {@link DefaultSamlIdPCertificateAndKeyWriter}.
+ *
+ * @author Misagh Moayyed
+ * @since 5.3.0
+ */
+@Slf4j
+@NoArgsConstructor
+@Setter
+public class DefaultSamlIdPCertificateAndKeyWriter implements SamlIdPCertificateAndKeyWriter {
+    private int keySize = 2048;
+    private String hostname;
+    private String keyType = "RSA";
+    private String certificateAlgorithm = "SHA256withRSA";
+    private int certificateLifetimeInYears = 20;
+    private List<String> uriSubjectAltNames;
+
+    @SneakyThrows
+    @Override
+    public void writeCertificateAndKey(final Writer privateKeyWriter, final Writer certificateWriter) {
+        final KeyPair keypair = generateKeyPair();
+        final X509Certificate certificate = generateCertificate(keypair);
+
+        try (JcaPEMWriter keyOut = new JcaPEMWriter(privateKeyWriter)) {
+            keyOut.writeObject(keypair.getPrivate());
+            keyOut.flush();
+        }
+
+        try (JcaPEMWriter certOut = new JcaPEMWriter(certificateWriter)) {
+            certOut.writeObject(certificate);
+            certOut.flush();
+        }
+    }
+
+    @SneakyThrows
+    private KeyPair generateKeyPair() {
+        final KeyPairGenerator generator = KeyPairGenerator.getInstance(keyType);
+        generator.initialize(keySize);
+        return generator.generateKeyPair();
+    }
+
+    private X509Certificate generateCertificate(final KeyPair keypair) throws Exception {
+        final X500Name dn = new X500Name("CN=" + hostname);
+        final GregorianCalendar notBefore = new GregorianCalendar();
+        final GregorianCalendar notOnOrAfter = new GregorianCalendar();
+        notOnOrAfter.set(GregorianCalendar.YEAR, notOnOrAfter.get(GregorianCalendar.YEAR) + certificateLifetimeInYears);
+
+        final X509v3CertificateBuilder builder = new JcaX509v3CertificateBuilder(
+            dn,
+            new BigInteger(160, RandomUtils.getNativeInstance()),
+            notBefore.getTime(),
+            notOnOrAfter.getTime(),
+            dn,
+            keypair.getPublic()
+        );
+
+        final JcaX509ExtensionUtils extUtils = new JcaX509ExtensionUtils();
+        builder.addExtension(Extension.subjectKeyIdentifier, false, extUtils.createSubjectKeyIdentifier(keypair.getPublic()));
+        builder.addExtension(Extension.subjectAlternativeName, false, GeneralNames.getInstance(new DERSequence(buildSubjectAltNames())));
+
+        final X509CertificateHolder certHldr = builder.build(new JcaContentSignerBuilder(certificateAlgorithm).build(keypair.getPrivate()));
+        final X509Certificate cert = new JcaX509CertificateConverter().getCertificate(certHldr);
+        cert.checkValidity(new Date());
+        cert.verify(keypair.getPublic());
+
+        return cert;
+    }
+
+    private ASN1Encodable[] buildSubjectAltNames() {
+        final ArrayList<ASN1Encodable> subjectAltNames = new ArrayList<>();
+        subjectAltNames.add(new GeneralName(GeneralName.dNSName, hostname));
+
+        if (uriSubjectAltNames != null) {
+            uriSubjectAltNames.forEach(subjectAltName -> subjectAltNames.add(new GeneralName(GeneralName.uniformResourceIdentifier, subjectAltName)));
+        }
+        return subjectAltNames.toArray(new ASN1Encodable[0]);
+    }
+}

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.web.ProxyControllerTests;
 import org.apereo.cas.web.view.Cas10ResponseViewTests;
 import org.apereo.cas.web.view.Cas20ResponseViewTests;
@@ -17,6 +18,7 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({Cas10ResponseViewTests.class, Cas20ResponseViewTests.class, Cas30ResponseViewTests.class,
         ProxyControllerTests.class})
+@Slf4j
 public class AllTestsSuite {
 }
 

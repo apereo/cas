@@ -4,6 +4,7 @@ dependencies {
     api libraries.bouncycastle
     api libraries.jdom
     api libraries.xmlapis
+    api libraries.apachevelocity
     
     implementation libraries.shibidp
 
@@ -14,4 +15,11 @@ dependencies {
 
     testImplementation project(":support:cas-server-support-person-directory")
     testImplementation project(":core:cas-server-core-web")
+    testImplementation project(":core:cas-server-core-web-api")
+    testImplementation project(":core:cas-server-core-tickets")
+    testImplementation project(":core:cas-server-core-tickets-api")
+    testImplementation project(":core:cas-server-core-util")
+    testImplementation project(":core:cas-server-core-configuration")
+    testImplementation project(path: ":core:cas-server-core-authentication-api", configuration: "tests")
+    testImplementation project(path: ":core:cas-server-core-util", configuration: "tests")
 }

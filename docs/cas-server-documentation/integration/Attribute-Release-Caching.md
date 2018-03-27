@@ -9,6 +9,10 @@ length of the SSO session. If there are any attribute value changes since the
 commencement of SSO session, the changes are not reflected and returned back
 to the service upon release time.
 
+Note: Remember that while the below policies are typically applied at release time on a per-service level, 
+CAS automatically does create attribute release caching policies at a more global with configurable timeouts
+and durations. See [the relevant settings](../installation/Configuration-Properties.html#authentication-attributes) for more info.
+
 ## Default
 
 The default relationship between a CAS `Principal` and the underlying attribute

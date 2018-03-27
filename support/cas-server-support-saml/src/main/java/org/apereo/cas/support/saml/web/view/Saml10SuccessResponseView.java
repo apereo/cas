@@ -1,17 +1,18 @@
 package org.apereo.cas.support.saml.web.view;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Principal;
+import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
+import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.support.saml.util.Saml10ObjectBuilder;
 import org.apereo.cas.util.CollectionUtils;
 import org.apereo.cas.util.DateTimeUtils;
-import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.RememberMeCredential;
-import org.apereo.cas.authentication.principal.Service;
-import org.apereo.cas.support.saml.authentication.SamlAuthenticationMetaDataPopulator;
 import org.apereo.cas.web.support.ArgumentExtractor;
 import org.opensaml.saml.saml1.core.Assertion;
 import org.opensaml.saml.saml1.core.AuthenticationStatement;
@@ -19,8 +20,6 @@ import org.opensaml.saml.saml1.core.Conditions;
 import org.opensaml.saml.saml1.core.Response;
 import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.Subject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.ZonedDateTime;
 import java.util.Collection;
@@ -42,8 +41,9 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 3.1
  */
+@Slf4j
 public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Saml10SuccessResponseView.class);
+
     
     private final String issuer;
     private final String rememberMeAttributeName;
@@ -58,9 +58,10 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
                                      final int skewAllowance,
                                      final int issueLength,
                                      final String issuer,
-                                     final String defaultAttributeNamespace) {
-        super(true, protocolAttributeEncoder, servicesManager, authenticationContextAttribute,
-                samlObjectBuilder, samlArgumentExtractor, encoding, skewAllowance, issueLength);
+                                     final String defaultAttributeNamespace,
+                                     final AuthenticationAttributeReleasePolicy authAttrReleasePolicy) {
+        super(true, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, samlObjectBuilder,
+                samlArgumentExtractor, encoding, skewAllowance, issueLength, authAttrReleasePolicy);
         this.issuer = issuer;
         this.rememberMeAttributeName = CasProtocolConstants.VALIDATION_REMEMBER_ME_ATTRIBUTE_NAME;
         this.defaultAttributeNamespace = defaultAttributeNamespace;
@@ -119,9 +120,9 @@ public class Saml10SuccessResponseView extends AbstractSaml10ResponseView {
      * @since 4.1.0
      */
     private Map<String, Object> prepareSamlAttributes(final Map<String, Object> model, final Service service) {
-        final Map<String, Object> authnAttributes = new HashMap<>(getAuthenticationAttributesAsMultiValuedAttributes(model));        
+        final Map<String, Object> authnAttributes = authenticationAttributeReleasePolicy
+                .getAuthenticationAttributesForRelease(getPrimaryAuthenticationFrom(model));
         if (isRememberMeAuthentication(model)) {
-            authnAttributes.remove(RememberMeCredential.AUTHENTICATION_ATTRIBUTE_REMEMBER_ME);
             authnAttributes.put(this.rememberMeAttributeName, Boolean.TRUE.toString());
         }
         LOGGER.debug("Retrieved authentication attributes [{}] from the model", authnAttributes);

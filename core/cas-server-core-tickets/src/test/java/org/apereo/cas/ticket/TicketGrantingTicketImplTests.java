@@ -3,6 +3,7 @@ package org.apereo.cas.ticket;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
@@ -30,6 +31,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class TicketGrantingTicketImplTests {
 
     private static final File TGT_JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "tgt.json");
@@ -42,7 +44,7 @@ public class TicketGrantingTicketImplTests {
     private ObjectMapper mapper;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         // needed in order to serialize ZonedDateTime class
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)

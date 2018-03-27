@@ -1,0 +1,7 @@
+description = "Apereo CAS Spring Cloud Consul Client"
+dependencies {
+    implementation libraries.ribbon
+    implementation libraries.springcloudconsul
+    provided project(":core:cas-server-core-util")
+    provided project(":core:cas-server-core-configuration")
+}

@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.principal.SimpleWebApplicationServiceImpl;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,6 +23,7 @@ import java.util.Collection;
  */
 @Configuration("casDefaultServiceTicketIdGeneratorsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasDefaultServiceTicketIdGeneratorsConfiguration implements UniqueTicketIdGeneratorConfigurer {
 
     @Autowired

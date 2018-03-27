@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.x509.authentication.revocation.checker;
 
-import java.security.GeneralSecurityException;
+import lombok.extern.slf4j.Slf4j;
+
 import java.security.cert.X509Certificate;
 
 /**
@@ -9,6 +10,7 @@ import java.security.cert.X509Certificate;
  * @author Marvin S. Addison
  * @since 3.4.6
  */
+@Slf4j
 public class NoOpRevocationChecker implements RevocationChecker {
 
     /**
@@ -16,11 +18,10 @@ public class NoOpRevocationChecker implements RevocationChecker {
      *
      * @param certificate Certificate to check.
      *
-     * @throws GeneralSecurityException Never thrown.
      *
      */
     @Override
-    public void check(final X509Certificate certificate) throws GeneralSecurityException {
+    public void check(final X509Certificate certificate) {
         // NO-OP
     }
 }

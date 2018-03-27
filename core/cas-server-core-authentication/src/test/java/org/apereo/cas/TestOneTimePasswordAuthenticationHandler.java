@@ -1,12 +1,12 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AbstractAuthenticationHandler;
 import org.apereo.cas.authentication.BasicCredentialMetaData;
 import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.HandlerResult;
+import org.apereo.cas.authentication.DefaultAuthenticationHandlerExecutionResult;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.OneTimePasswordCredential;
-import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 
 import javax.security.auth.login.FailedLoginException;
@@ -19,6 +19,7 @@ import java.util.Map;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@Slf4j
 public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthenticationHandler {
 
     private final Map<String, String> credentialMap;
@@ -34,12 +35,12 @@ public class TestOneTimePasswordAuthenticationHandler extends AbstractAuthentica
     }
 
     @Override
-    public HandlerResult authenticate(final Credential credential)
-            throws GeneralSecurityException, PreventedException {
+    public AuthenticationHandlerExecutionResult authenticate(final Credential credential)
+            throws GeneralSecurityException {
         final OneTimePasswordCredential otp = (OneTimePasswordCredential) credential;
         final String valueOnRecord = credentialMap.get(otp.getId());
         if (otp.getPassword().equals(valueOnRecord)) {
-            return new DefaultHandlerResult(this, new BasicCredentialMetaData(otp),
+            return new DefaultAuthenticationHandlerExecutionResult(this, new BasicCredentialMetaData(otp),
                     new DefaultPrincipalFactory().createPrincipal(otp.getId()));
         }
         throw new FailedLoginException();

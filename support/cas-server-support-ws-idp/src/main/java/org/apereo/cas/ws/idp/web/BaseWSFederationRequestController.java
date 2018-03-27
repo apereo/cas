@@ -1,5 +1,6 @@
 package org.apereo.cas.ws.idp.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.cxf.ws.security.tokenstore.SecurityToken;
@@ -11,7 +12,6 @@ import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.wsfed.WsFederationProperties;
-import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredServiceAccessStrategyUtils;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.services.UnauthorizedServiceException;
@@ -21,22 +21,20 @@ import org.apereo.cas.ticket.SecurityTokenTicketFactory;
 import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistrySupport;
-import org.apereo.cas.util.RandomUtils;
 import org.apereo.cas.util.http.HttpClient;
 import org.apereo.cas.web.support.CookieRetrievingCookieGenerator;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.cas.ws.idp.WSFederationConstants;
 import org.apereo.cas.ws.idp.services.WSFederationRegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.net.URI;
-import java.util.Date;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URI;
+import java.time.Instant;
+import java.util.Date;
 
 /**
  * This is {@link BaseWSFederationRequestController}.
@@ -45,8 +43,9 @@ import javax.servlet.http.HttpServletResponse;
  * @since 5.1.0
  */
 @Controller
+@Slf4j
 public abstract class BaseWSFederationRequestController {
-    private static final Logger LOGGER = LoggerFactory.getLogger(BaseWSFederationRequestController.class);
+
 
     /**
      * The Services manager.
@@ -98,19 +97,6 @@ public abstract class BaseWSFederationRequestController {
      */
     protected final TicketRegistrySupport ticketRegistrySupport;
 
-    /**
-     * Instantiates a new Base ws federation request controller.
-     *
-     * @param servicesManager                     the services manager
-     * @param webApplicationServiceFactory        the web application service factory
-     * @param casProperties                       the cas properties
-     * @param serviceSelectionStrategy            the service selection strategy
-     * @param httpClient                          the http client
-     * @param securityTokenTicketFactory          the security token ticket factory
-     * @param ticketRegistry                      the ticket registry
-     * @param ticketGrantingTicketCookieGenerator the ticket granting ticket cookie generator
-     * @param ticketRegistrySupport               the ticket registry support
-     */
     public BaseWSFederationRequestController(
             final ServicesManager servicesManager,
             final ServiceFactory<WebApplicationService> webApplicationServiceFactory,
@@ -120,7 +106,8 @@ public abstract class BaseWSFederationRequestController {
             final SecurityTokenTicketFactory securityTokenTicketFactory,
             final TicketRegistry ticketRegistry,
             final CookieRetrievingCookieGenerator ticketGrantingTicketCookieGenerator,
-            final TicketRegistrySupport ticketRegistrySupport) {
+            final TicketRegistrySupport ticketRegistrySupport,
+            final Service callbackService) {
         this.servicesManager = servicesManager;
         this.webApplicationServiceFactory = webApplicationServiceFactory;
         this.casProperties = casProperties;
@@ -130,34 +117,9 @@ public abstract class BaseWSFederationRequestController {
         this.ticketRegistry = ticketRegistry;
         this.ticketGrantingTicketCookieGenerator = ticketGrantingTicketCookieGenerator;
         this.ticketRegistrySupport = ticketRegistrySupport;
-        this.callbackService = registerCallback(WSFederationConstants.ENDPOINT_FEDERATION_REQUEST_CALLBACK);
+        this.callbackService = callbackService;
     }
-
-    /**
-     * Register callback service.
-     *
-     * @param callbackUrl the callback url
-     * @return the service
-     */
-    private Service registerCallback(final String callbackUrl) {
-        final Service callbackService = this.webApplicationServiceFactory.createService(callbackUrl);
-        if (!this.servicesManager.matchesExistingService(callbackService)) {
-            LOGGER.debug("Initializing callback service [{}]", callbackService);
-
-            final RegexRegisteredService service = new RegexRegisteredService();
-            service.setId(Math.abs(RandomUtils.getInstanceNative().nextLong()));
-            service.setEvaluationOrder(0);
-            service.setName(service.getClass().getSimpleName());
-            service.setDescription("WS-Federation Authentication Request");
-            service.setServiceId(callbackService.getId().concat(".+"));
-
-            LOGGER.debug("Saving callback service [{}] into the registry", service);
-            this.servicesManager.save(service);
-            this.servicesManager.load();
-        }
-        return callbackService;
-    }
-
+    
     /**
      * Construct service url string.
      *
@@ -257,10 +219,10 @@ public abstract class BaseWSFederationRequestController {
 
         final long ttlMs = ttl * 60L * 1000L;
         if (ttlMs > 0) {
-            final Date createdDate = idpToken.getCreated();
+            final Instant createdDate = idpToken.getCreated();
             if (createdDate != null) {
                 final Date expiryDate = new Date();
-                expiryDate.setTime(createdDate.getTime() + ttlMs);
+                expiryDate.setTime(createdDate.toEpochMilli() + ttlMs);
                 if (expiryDate.before(new Date())) {
                     return true;
                 }

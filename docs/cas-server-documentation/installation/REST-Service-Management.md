@@ -29,6 +29,4 @@ All operations are expected to return a `200` status code. All other response st
 
 ## Auto Initialization
 
-Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS.
-
-To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#service-registry).
+Upon startup and configuration permitting, the registry is able to auto initialize itself from default JSON service definitions available to CAS. See [this guide](AutoInitialization-Service-Management.html) for more info.

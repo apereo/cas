@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import java.util.Arrays;
 import java.util.Collection;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -62,6 +63,7 @@ import org.springframework.test.context.TestPropertySource;
         CasWebApplicationServiceFactoryConfiguration.class
 })
 @TestPropertySource(properties = {"cas.ticket.registry.hazelcast.cluster.instanceName=testlocalhostinstance"})
+@Slf4j
 public class HazelcastTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired
@@ -73,12 +75,12 @@ public class HazelcastTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return ticketRegistry;
     }
 }

@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.controllers;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -24,6 +25,7 @@ import org.springframework.web.bind.annotation.GetMapping;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
 
     private final OidcServerDiscoverySettings discovery;
@@ -48,10 +50,9 @@ public class OidcWellKnownEndpointController extends BaseOAuth20Controller {
      * Gets well known discovery configuration.
      *
      * @return the well known discovery configuration
-     * @throws Exception the exception
      */
     @GetMapping(value = '/' + OidcConstants.BASE_OIDC_URL + "/.well-known", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() throws Exception {
+    public ResponseEntity<OidcServerDiscoverySettings> getWellKnownDiscoveryConfiguration() {
         return new ResponseEntity(this.discovery, HttpStatus.OK);
     }
 

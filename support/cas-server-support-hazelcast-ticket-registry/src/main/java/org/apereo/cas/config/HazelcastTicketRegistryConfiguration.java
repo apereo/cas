@@ -4,9 +4,9 @@ import com.hazelcast.config.Config;
 import com.hazelcast.config.MapConfig;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.hazelcast.HazelcastTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.hz.HazelcastConfigurationFactory;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
@@ -14,8 +14,7 @@ import org.apereo.cas.ticket.registry.HazelcastTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,8 +40,9 @@ import java.util.Map;
  */
 @Configuration("hazelcastTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class HazelcastTicketRegistryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(HazelcastTicketRegistryConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -54,7 +54,7 @@ public class HazelcastTicketRegistryConfiguration {
         final HazelcastTicketRegistry r = new HazelcastTicketRegistry(hazelcast(ticketCatalog),
                 ticketCatalog,
                 hz.getPageSize());
-        r.setCipherExecutor(Beans.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
+        r.setCipherExecutor(CoreTicketUtils.newTicketRegistryCipherExecutor(hz.getCrypto(), "hazelcast"));
         return r;
     }
 

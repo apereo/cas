@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.config.CasApplicationContextConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -31,6 +32,7 @@ import org.apereo.cas.services.web.config.CasThemesConfiguration;
 import org.apereo.cas.validation.config.CasCoreValidationConfiguration;
 import org.apereo.cas.web.config.CasCookieConfiguration;
 import org.apereo.cas.web.flow.config.CasCoreWebflowConfiguration;
+import org.apereo.cas.web.flow.config.CasWebflowContextConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +64,7 @@ import static org.junit.Assert.*;
                 CasSecurityContextConfiguration.class,
                 CasWebAppConfiguration.class,
                 CasCoreWebflowConfiguration.class,
+                CasWebflowContextConfiguration.class,
                 CasCoreAuthenticationConfiguration.class, 
                 CasCoreServicesAuthenticationConfiguration.class,
                 CasCoreAuthenticationPrincipalConfiguration.class,
@@ -93,6 +96,7 @@ import static org.junit.Assert.*;
 @WebAppConfiguration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @TestPropertySource(properties = "spring.aop.proxy-target-class=true")
+@Slf4j
 public class WiringConfigurationTests {
     @Autowired
     private ApplicationContext applicationContext;

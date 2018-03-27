@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.aup.AcceptableUsagePolicyRepository;
 import org.apereo.cas.aup.LdapAcceptableUsagePolicyRepository;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -22,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("casAcceptableUsagePolicyLdapConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasAcceptableUsagePolicyLdapConfiguration {
 
     @Autowired
@@ -38,6 +40,6 @@ public class CasAcceptableUsagePolicyLdapConfiguration {
         final ConnectionFactory connectionFactory = LdapUtils.newLdaptivePooledConnectionFactory(ldap);
         return new LdapAcceptableUsagePolicyRepository(ticketRegistrySupport,
                 casProperties.getAcceptableUsagePolicy().getAupAttributeName(),
-                connectionFactory, ldap.getUserFilter(), ldap.getBaseDn());
+                connectionFactory, ldap.getSearchFilter(), ldap.getBaseDn());
     }
 }

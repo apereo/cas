@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.gauth;
 
-import org.apereo.cas.adaptors.gauth.repository.token.GoogleAuthenticatorToken;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.adaptors.gauth.token.GoogleAuthenticatorToken;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationHandlersConfiguration;
 import org.apereo.cas.config.CasCoreAuthenticationMetadataConfiguration;
@@ -73,6 +74,7 @@ import static org.junit.Assert.*;
 @EnableAspectJAutoProxy(proxyTargetClass = true)
 @EnableScheduling
 @ContextConfiguration(initializers = EnvironmentConversionServiceInitializer.class)
+@Slf4j
 public class GoogleAuthenticatorJpaTokenRepositoryTests {
 
     @Autowired

@@ -1,7 +1,6 @@
 package org.apereo.cas.services.support;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Set;
@@ -17,11 +16,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RegisteredServiceReverseMappedRegexAttributeFilter extends RegisteredServiceMappedRegexAttributeFilter {
 
     private static final long serialVersionUID = 852145306984610128L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RegisteredServiceReverseMappedRegexAttributeFilter.class);
+
 
     @Override
     protected List<Object> filterAttributeValuesByPattern(final Set<Object> attributeValues, final Pattern pattern) {

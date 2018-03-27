@@ -1,0 +1,49 @@
+/**
+ * Consent Review Styles
+ */
+
+@media only screen and (max-width: 855px) {
+    #consentDecisions .consent-attributes td, #consentDecisions .consent-attributes th {
+        padding: 4px;
+    }
+}
+
+#consent-decisions, #no-consent-decisions {
+    display: none;
+}
+
+#no-consent-decisions div {
+    margin-top: 2em;
+}
+
+#consentDecisions > tbody > tr:not(.info) {
+    cursor: pointer;
+}
+
+#consentDecisions .created-date .label {
+  font-size: 85%;
+}
+
+#consentDecisions .service-id {
+  word-wrap: break-word;
+  word-break: break-all;
+}
+
+#consentDecisions .consent-attributes {
+    margin-bottom: 0;
+}
+
+#consentDecisions tr.info .btn-danger {
+    float: right;
+    padding: .5em;
+    margin: 0 .2em 1em 0;
+}
+
+#alertWrapper .btn {
+  margin: 1em 1em 0 0;
+}
+
+#logout {
+    float: right;
+    margin: 1em;
+}

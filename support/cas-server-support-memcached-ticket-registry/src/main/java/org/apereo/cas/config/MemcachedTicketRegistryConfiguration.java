@@ -1,17 +1,18 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.Transcoder;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.ComponentSerializationPlan;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.memcached.MemcachedTicketRegistryProperties;
-import org.apereo.cas.configuration.support.Beans;
-import org.apereo.cas.memcached.MemcachedPooledConnectionFactory;
+import org.apereo.cas.memcached.MemcachedPooledClientConnectionFactory;
 import org.apereo.cas.memcached.MemcachedUtils;
 import org.apereo.cas.ticket.registry.MemcachedTicketRegistry;
 import org.apereo.cas.ticket.registry.NoOpTicketRegistryCleaner;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistryCleaner;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("memcachedConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class MemcachedTicketRegistryConfiguration {
 
     @Autowired
@@ -44,9 +46,9 @@ public class MemcachedTicketRegistryConfiguration {
     @Bean
     public TicketRegistry ticketRegistry() {
         final MemcachedTicketRegistryProperties memcached = casProperties.getTicket().getRegistry().getMemcached();
-        final MemcachedPooledConnectionFactory factory = new MemcachedPooledConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
+        final MemcachedPooledClientConnectionFactory factory = new MemcachedPooledClientConnectionFactory(memcached, memcachedTicketRegistryTranscoder());
         final MemcachedTicketRegistry registry = new MemcachedTicketRegistry(factory.getObjectPool());
-        final CipherExecutor cipherExecutor = Beans.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
+        final CipherExecutor cipherExecutor = CoreTicketUtils.newTicketRegistryCipherExecutor(memcached.getCrypto(), "memcached");
         registry.setCipherExecutor(cipherExecutor);
         return registry;
     }

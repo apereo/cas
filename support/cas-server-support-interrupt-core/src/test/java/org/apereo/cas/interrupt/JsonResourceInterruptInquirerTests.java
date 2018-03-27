@@ -1,6 +1,7 @@
 package org.apereo.cas.interrupt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.util.CollectionUtils;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class JsonResourceInterruptInquirerTests {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
     
@@ -38,6 +40,6 @@ public class JsonResourceInterruptInquirerTests {
         assertNotNull(response);
         assertFalse(response.isBlock());
         assertTrue(response.isSsoEnabled());
-        assertEquals(response.getLinks().size(), 2);
+        assertEquals(2, response.getLinks().size());
     }
 }

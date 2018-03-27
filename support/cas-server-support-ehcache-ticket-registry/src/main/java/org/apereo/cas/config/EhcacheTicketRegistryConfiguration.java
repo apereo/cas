@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.bootstrap.BootstrapCacheLoader;
@@ -18,9 +19,8 @@ import org.apereo.cas.ticket.TicketDefinition;
 import org.apereo.cas.ticket.registry.EhCacheTicketRegistry;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.util.CollectionUtils;
+import org.apereo.cas.util.CoreTicketUtils;
 import org.apereo.cas.util.ResourceUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -41,8 +41,9 @@ import java.util.Collection;
  */
 @Configuration("ehcacheTicketRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class EhcacheTicketRegistryConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(EhcacheTicketRegistryConfiguration.class);
+
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -53,11 +54,11 @@ public class EhcacheTicketRegistryConfiguration {
     public CacheReplicator ticketRMISynchronousCacheReplicator() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMISynchronousCacheReplicator(
-                cache.isReplicatePuts(),
-                cache.isReplicatePutsViaCopy(),
-                cache.isReplicateUpdates(),
-                cache.isReplicateUpdatesViaCopy(),
-                cache.isReplicateRemovals());
+            cache.isReplicatePuts(),
+            cache.isReplicatePutsViaCopy(),
+            cache.isReplicateUpdates(),
+            cache.isReplicateUpdatesViaCopy(),
+            cache.isReplicateRemovals());
     }
 
     @RefreshScope
@@ -66,13 +67,13 @@ public class EhcacheTicketRegistryConfiguration {
     public CacheReplicator ticketRMIAsynchronousCacheReplicator() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIAsynchronousCacheReplicator(
-                cache.isReplicatePuts(),
-                cache.isReplicatePutsViaCopy(),
-                cache.isReplicateUpdates(),
-                cache.isReplicateUpdatesViaCopy(),
-                cache.isReplicateRemovals(),
-                (int) cache.getReplicationInterval(),
-                cache.getMaximumBatchSize());
+            cache.isReplicatePuts(),
+            cache.isReplicatePutsViaCopy(),
+            cache.isReplicateUpdates(),
+            cache.isReplicateUpdatesViaCopy(),
+            cache.isReplicateRemovals(),
+            (int) Beans.newDuration(cache.getReplicationInterval()).toMillis(),
+            cache.getMaximumBatchSize());
     }
 
     @RefreshScope
@@ -82,7 +83,7 @@ public class EhcacheTicketRegistryConfiguration {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
         return new RMIBootstrapCacheLoader(cache.isLoaderAsync(), cache.getMaxChunkSize());
     }
-    
+
     @Bean
     public EhCacheManagerFactoryBean ehcacheTicketCacheManager() {
         final EhcacheProperties cache = casProperties.getTicket().getRegistry().getEhcache();
@@ -114,11 +115,11 @@ public class EhcacheTicketRegistryConfiguration {
             bean.setCacheEventListeners(CollectionUtils.wrapSet(ticketRMISynchronousCacheReplicator()));
             bean.setBootstrapCacheLoader(ticketCacheBootstrapCacheLoader());
         } else {
-            LOGGER.warn("Ehcache configuration file [{}] cannot be found so no cache event listeners will be configured to bootstrap. "
-                            + "The ticket registry will operate in standalone mode",
-                    cache.getConfigLocation());
+            LOGGER.warn("In registering ticket definition [{}], Ehcache configuration file [{}] cannot be found "
+                + "so no cache event listeners will be configured to bootstrap. "
+                + "The ticket registry will operate in standalone mode", ticketDefinition.getPrefix(), cache.getConfigLocation());
         }
-
+                              
         bean.setTimeToIdle((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setTimeToLive((int) ticketDefinition.getProperties().getStorageTimeout());
         bean.setDiskExpiryThreadIntervalSeconds(ehcacheProperties.getDiskExpiryThreadIntervalSeconds());
@@ -149,7 +150,7 @@ public class EhcacheTicketRegistryConfiguration {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("Created Ehcache cache [{}] for [{}]", ehcache.getName(), t);
 
-                
+
                 final CacheConfiguration config = ehcache.getCacheConfiguration();
                 LOGGER.debug("TicketCache.maxEntriesLocalHeap=[{}]", config.getMaxEntriesLocalHeap());
                 LOGGER.debug("TicketCache.maxEntriesLocalDisk=[{}]", config.getMaxEntriesLocalDisk());
@@ -166,6 +167,6 @@ public class EhcacheTicketRegistryConfiguration {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("The following caches are available: [{}]", (Object[]) manager.getCacheNames());
         }
-        return new EhCacheTicketRegistry(ticketCatalog, manager, Beans.newTicketRegistryCipherExecutor(crypto, "ehcache"));
+        return new EhCacheTicketRegistry(ticketCatalog, manager, CoreTicketUtils.newTicketRegistryCipherExecutor(crypto, "ehcache"));
     }
 }

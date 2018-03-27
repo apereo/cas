@@ -1,18 +1,12 @@
 package org.apereo.cas.support.saml.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
-import org.apereo.cas.authentication.AuthenticationHandler;
-import org.apereo.cas.authentication.AuthenticationTransaction;
-import org.apereo.cas.authentication.BasicCredentialMetaData;
-import org.apereo.cas.authentication.Credential;
-import org.apereo.cas.authentication.CredentialMetaData;
-import org.apereo.cas.authentication.DefaultAuthenticationBuilder;
-import org.apereo.cas.authentication.DefaultHandlerResult;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
-import org.apereo.cas.authentication.UsernamePasswordCredential;
-import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.AuthenticationBuilder;
-import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.AuthenticationTransaction;
+import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.authentication.Credential;
+import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,36 +18,33 @@ import static org.junit.Assert.*;
 /**
  * @author Scott Battaglia
  * @since 3.1
- *
  */
+@Slf4j
 public class SamlAuthenticationMetaDataPopulatorTests {
 
     private SamlAuthenticationMetaDataPopulator populator;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.populator = new SamlAuthenticationMetaDataPopulator();
     }
 
     @Test
     public void verifyAuthenticationTypeFound() {
         final UsernamePasswordCredential credentials = new UsernamePasswordCredential();
-        final AuthenticationBuilder builder = newAuthenticationBuilder(
-                CoreAuthenticationTestUtils.getPrincipal());
-        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
+        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
         final Authentication auth = builder.build();
 
-        assertEquals(
-                auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD),
-                SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD);
+        assertEquals(SamlAuthenticationMetaDataPopulator.AUTHN_METHOD_PASSWORD,
+            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     @Test
     public void verifyAuthenticationTypeNotFound() {
         final CustomCredential credentials = new CustomCredential();
-        final AuthenticationBuilder builder = newAuthenticationBuilder(
-                CoreAuthenticationTestUtils.getPrincipal());
-        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
+        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
         final Authentication auth = builder.build();
 
         assertNull(auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
@@ -68,14 +59,13 @@ public class SamlAuthenticationMetaDataPopulatorTests {
 
         this.populator.setUserDefinedMappings(added);
 
-        final AuthenticationBuilder builder = newAuthenticationBuilder(
-                CoreAuthenticationTestUtils.getPrincipal());
-        this.populator.populateAttributes(builder, AuthenticationTransaction.wrap(credentials));
+        final AuthenticationBuilder builder = CoreAuthenticationTestUtils.getAuthenticationBuilder();
+        this.populator.populateAttributes(builder, AuthenticationTransaction.of(credentials));
         final Authentication auth = builder.build();
 
         assertEquals(
-                "FF",
-                auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
+            "FF",
+            auth.getAttributes().get(SamlAuthenticationMetaDataPopulator.ATTRIBUTE_AUTHENTICATION_METHOD));
     }
 
     private static class CustomCredential implements Credential {
@@ -88,11 +78,4 @@ public class SamlAuthenticationMetaDataPopulatorTests {
         }
     }
 
-    private static AuthenticationBuilder newAuthenticationBuilder(final Principal principal) {
-        final CredentialMetaData meta = new BasicCredentialMetaData(new UsernamePasswordCredential());
-        final AuthenticationHandler handler = new SimpleTestUsernamePasswordAuthenticationHandler();
-        return new DefaultAuthenticationBuilder(principal)
-                .addCredential(meta)
-                .addSuccess("test", new DefaultHandlerResult(handler, meta));
-    }
 }

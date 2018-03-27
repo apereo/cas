@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.jpa.JpaConfigDataHolder;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -34,6 +35,7 @@ import java.util.List;
 @Configuration("jpaEventsConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @EnableTransactionManagement(proxyTargetClass = true)
+@Slf4j
 public class JpaEventsConfiguration {
 
     @Autowired
@@ -44,8 +46,7 @@ public class JpaEventsConfiguration {
     public HibernateJpaVendorAdapter jpaEventVendorAdapter() {
         return JpaBeans.newHibernateJpaVendorAdapter(casProperties.getJdbc());
     }
-    
-    @RefreshScope
+
     @Bean
     public DataSource dataSourceEvent() {
         return JpaBeans.newDataSource(casProperties.getEvents().getJpa());

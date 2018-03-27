@@ -1,6 +1,7 @@
 package org.apereo.cas.adaptors.jdbc;
 
-import org.apereo.cas.authentication.HandlerResult;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.PreventedException;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -12,6 +13,7 @@ import javax.sql.DataSource;
 import java.security.GeneralSecurityException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 /**
  * This class attempts to authenticate the user by opening a connection to the
@@ -24,6 +26,7 @@ import java.sql.SQLException;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
 public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUsernamePasswordAuthenticationHandler {
 
     public BindModeSearchDatabaseAuthenticationHandler(final String name, final ServicesManager servicesManager, final PrincipalFactory principalFactory,
@@ -32,8 +35,9 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential credential,
+                                                                                        final String originalPassword)
+        throws GeneralSecurityException, PreventedException {
 
         if (getDataSource() == null) {
             throw new GeneralSecurityException("Authentication handler is not configured correctly");
@@ -44,7 +48,7 @@ public class BindModeSearchDatabaseAuthenticationHandler extends AbstractJdbcUse
             final String username = credential.getUsername();
             final String password = credential.getPassword();
             connection = this.getDataSource().getConnection(username, password);
-            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), null);
+            return createHandlerResult(credential, this.principalFactory.createPrincipal(username), new ArrayList<>(0));
         } catch (final SQLException e) {
             throw new FailedLoginException(e.getMessage());
         } catch (final Exception e) {

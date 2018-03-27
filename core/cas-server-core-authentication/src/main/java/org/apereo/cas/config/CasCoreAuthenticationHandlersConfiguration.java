@@ -1,9 +1,11 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.AcceptUsersAuthenticationHandler;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
+import org.apereo.cas.authentication.CoreAuthenticationUtils;
 import org.apereo.cas.authentication.handler.support.HttpBasedServiceCredentialsAuthenticationHandler;
 import org.apereo.cas.authentication.handler.support.JaasAuthenticationHandler;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -15,12 +17,12 @@ import org.apereo.cas.authentication.support.password.PasswordEncoderUtils;
 import org.apereo.cas.authentication.support.password.PasswordPolicyConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.generic.AcceptAuthenticationProperties;
-import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.util.http.HttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.context.annotation.Bean;
@@ -42,6 +44,7 @@ import java.util.stream.Stream;
  */
 @Configuration("casCoreAuthenticationHandlersConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasCoreAuthenticationHandlersConfiguration {
 
     @Autowired
@@ -69,11 +72,12 @@ public class CasCoreAuthenticationHandlersConfiguration {
         return new DefaultPrincipalFactory();
     }
 
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     @Bean
     public AuthenticationHandler proxyAuthenticationHandler() {
         return new HttpBasedServiceCredentialsAuthenticationHandler(null, servicesManager,
-                proxyPrincipalFactory(), Integer.MIN_VALUE,
-                supportsTrustStoreSslSocketFactoryHttpClient);
+            proxyPrincipalFactory(), Integer.MIN_VALUE,
+            supportsTrustStoreSslSocketFactoryHttpClient);
     }
 
     @ConditionalOnMissingBean(name = "proxyPrincipalFactory")
@@ -91,14 +95,15 @@ public class CasCoreAuthenticationHandlersConfiguration {
     @RefreshScope
     @Bean
     public AuthenticationHandler acceptUsersAuthenticationHandler() {
-        final AcceptAuthenticationProperties acceptAuthenticationProperties = casProperties.getAuthn().getAccept();
-        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(acceptAuthenticationProperties.getName(), servicesManager,
-                acceptUsersPrincipalFactory(), null, getParsedUsers());
-        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(acceptAuthenticationProperties.getPasswordEncoder()));
+        final AcceptAuthenticationProperties props = casProperties.getAuthn().getAccept();
+        final AcceptUsersAuthenticationHandler h = new AcceptUsersAuthenticationHandler(props.getName(), servicesManager,
+            acceptUsersPrincipalFactory(), null, getParsedUsers());
+        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(props.getPasswordEncoder()));
         if (acceptPasswordPolicyConfiguration != null) {
             h.setPasswordPolicyConfiguration(acceptPasswordPolicyConfiguration);
         }
-        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(acceptAuthenticationProperties.getPrincipalTransformation()));
+        h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(props.getCredentialCriteria()));
+        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(props.getPrincipalTransformation()));
         return h;
     }
 
@@ -110,19 +115,19 @@ public class CasCoreAuthenticationHandlersConfiguration {
 
     private Map<String, String> getParsedUsers() {
         final Pattern pattern = Pattern.compile("::");
-
         final String usersProperty = casProperties.getAuthn().getAccept().getUsers();
 
         if (StringUtils.isNotBlank(usersProperty) && usersProperty.contains(pattern.pattern())) {
             return Stream.of(usersProperty.split(","))
-                    .map(pattern::split)
-                    .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
+                .map(pattern::split)
+                .collect(Collectors.toMap(userAndPassword -> userAndPassword[0], userAndPassword -> userAndPassword[1]));
         }
         return new HashMap<>(0);
     }
 
     @ConditionalOnMissingBean(name = "proxyAuthenticationEventExecutionPlanConfigurer")
     @Bean
+    @ConditionalOnProperty(prefix = "cas.sso", name = "proxyAuthnEnabled", havingValue = "true", matchIfMissing = true)
     public AuthenticationEventExecutionPlanConfigurer proxyAuthenticationEventExecutionPlanConfigurer() {
         return plan -> plan.registerAuthenticationHandlerWithPrincipalResolver(proxyAuthenticationHandler(), proxyPrincipalResolver());
     }
@@ -142,25 +147,25 @@ public class CasCoreAuthenticationHandlersConfiguration {
         @Bean
         public List<AuthenticationHandler> jaasAuthenticationHandlers() {
             return casProperties.getAuthn().getJaas()
-                    .stream()
-                    .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
-                    .map(jaas -> {
-                        final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),
-                                servicesManager, jaasPrincipalFactory(), null);
+                .stream()
+                .filter(jaas -> StringUtils.isNotBlank(jaas.getRealm()))
+                .map(jaas -> {
+                    final JaasAuthenticationHandler h = new JaasAuthenticationHandler(jaas.getName(),
+                        servicesManager, jaasPrincipalFactory(), null);
 
-                        h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
-                        h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
-                        h.setRealm(jaas.getRealm());
-                        h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
+                    h.setKerberosKdcSystemProperty(jaas.getKerberosKdcSystemProperty());
+                    h.setKerberosRealmSystemProperty(jaas.getKerberosRealmSystemProperty());
+                    h.setRealm(jaas.getRealm());
+                    h.setPasswordEncoder(PasswordEncoderUtils.newPasswordEncoder(jaas.getPasswordEncoder()));
 
-                        if (jaasPasswordPolicyConfiguration != null) {
-                            h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
-                        }
-                        h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
-                        h.setCredentialSelectionPredicate(Beans.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
-                        return h;
-                    })
-                    .collect(Collectors.toList());
+                    if (jaasPasswordPolicyConfiguration != null) {
+                        h.setPasswordPolicyConfiguration(jaasPasswordPolicyConfiguration);
+                    }
+                    h.setPrincipalNameTransformer(PrincipalNameTransformerUtils.newPrincipalNameTransformer(jaas.getPrincipalTransformation()));
+                    h.setCredentialSelectionPredicate(CoreAuthenticationUtils.newCredentialSelectionPredicate(jaas.getCredentialCriteria()));
+                    return h;
+                })
+                .collect(Collectors.toList());
         }
 
         @ConditionalOnMissingBean(name = "jaasAuthenticationEventExecutionPlanConfigurer")

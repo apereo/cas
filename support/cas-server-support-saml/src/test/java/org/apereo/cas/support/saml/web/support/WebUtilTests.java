@@ -1,11 +1,12 @@
 package org.apereo.cas.support.saml.web.support;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationServiceFactory;
 import org.apereo.cas.support.saml.authentication.principal.SamlServiceFactory;
+import org.apereo.cas.util.HttpRequestUtils;
 import org.apereo.cas.web.support.DefaultArgumentExtractor;
-import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class WebUtilTests {
 
     @Test
@@ -27,7 +29,7 @@ public class WebUtilTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
 
-        final Service service = WebUtils.getService(Arrays.asList(casArgumentExtractor), request);
+        final Service service = HttpRequestUtils.getService(Arrays.asList(casArgumentExtractor), request);
 
         assertNotNull(service);
         assertEquals("test", service.getId());
@@ -38,7 +40,7 @@ public class WebUtilTests {
         final DefaultArgumentExtractor casArgumentExtractor = new DefaultArgumentExtractor(new SamlServiceFactory());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "test");
-        final Service service = WebUtils.getService(Collections.singletonList(casArgumentExtractor), request);
+        final Service service = HttpRequestUtils.getService(Collections.singletonList(casArgumentExtractor), request);
         assertNull(service);
     }
 }

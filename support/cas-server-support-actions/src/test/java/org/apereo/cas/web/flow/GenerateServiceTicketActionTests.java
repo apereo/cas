@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.CasProtocolConstants;
 import org.apereo.cas.authentication.AuthenticationResult;
@@ -30,9 +31,11 @@ import static org.mockito.Mockito.*;
  * @since 3.0.0
  */
 @Import(CasSupportActionsConfiguration.class)
+@Slf4j
 public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticationServiceTests {
 
     private static final String SERVICE_PARAM = "service";
+
     @Autowired
     @Qualifier("generateServiceTicketAction")
     private Action action;
@@ -40,7 +43,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     private TicketGrantingTicket ticketGrantingTicket;
 
     @Before
-    public void onSetUp() throws Exception {
+    public void onSetUp() {
         final AuthenticationResult authnResult = getAuthenticationSystemSupport()
                         .handleAndFinalizeSingleAuthenticationTransaction(CoreAuthenticationTestUtils.getService(),
                                 CoreAuthenticationTestUtils.getCredentialsWithSameUsernameAndPassword());
@@ -53,7 +56,7 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
     public void verifyServiceTicketFromCookie() throws Exception {
         final MockRequestContext context = new MockRequestContext();
         context.getFlowScope().put(SERVICE_PARAM, RegisteredServiceTestUtils.getService());
-        context.getFlowScope().put("ticketGrantingTicketId", this.ticketGrantingTicket.getId());
+        context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, this.ticketGrantingTicket.getId());
         final MockHttpServletRequest request = new MockHttpServletRequest();
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request, new MockHttpServletResponse()));
@@ -103,8 +106,8 @@ public class GenerateServiceTicketActionTests extends AbstractCentralAuthenticat
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         request.addParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE_PARAM);
         WebUtils.putTicketGrantingTicketInScopes(context, this.ticketGrantingTicket);
-
         this.ticketGrantingTicket.markTicketExpired();
+        getTicketRegistry().updateTicket(this.ticketGrantingTicket);
         assertEquals(CasWebflowConstants.TRANSITION_ID_AUTHENTICATION_FAILURE, this.action.execute(context).getId());
     }
     

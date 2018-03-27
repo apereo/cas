@@ -1,8 +1,9 @@
 package org.apereo.cas.authentication.principal;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.servlet.http.HttpServletRequest;
+import lombok.ToString;
 
 /**
  * The {@link AbstractServiceFactory} is the parent class providing
@@ -11,30 +12,27 @@ import javax.servlet.http.HttpServletRequest;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@SuppressWarnings("TypeParameterShadowing")
+@Slf4j
+@ToString
 public abstract class AbstractServiceFactory<T extends Service> implements ServiceFactory<T> {
 
     @Override
-    public <T1 extends Service> T1 createService(final String id, final Class<? extends Service> clazz) {
+    public <T extends Service> T createService(final String id, final Class<T> clazz) {
         final Service service = createService(id);
-
         if (!clazz.isAssignableFrom(service.getClass())) {
-            throw new ClassCastException("Service [" + service.getId()
-                    + " is of type " + service.getClass()
-                    + " when we were expecting " + clazz);
+            throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }
-        return (T1) service;
+        return (T) service;
     }
 
     @Override
-    public <T1 extends Service> T1 createService(final HttpServletRequest request, final Class<? extends Service> clazz) {
+    public <T extends Service> T createService(final HttpServletRequest request, final Class<T> clazz) {
         final Service service = createService(request);
-
         if (!clazz.isAssignableFrom(service.getClass())) {
-            throw new ClassCastException("Service [" + service.getId()
-                    + " is of type " + service.getClass()
-                    + " when we were expecting " + clazz);
+            throw new ClassCastException("Service [" + service.getId() + " is of type " + service.getClass() + " when we were expecting " + clazz);
         }
-        return (T1) service;
+        return (T) service;
     }
 
     /**
@@ -47,27 +45,14 @@ public abstract class AbstractServiceFactory<T extends Service> implements Servi
         if (url == null) {
             return null;
         }
-
         final int jsessionPosition = url.indexOf(";jsession");
-
         if (jsessionPosition == -1) {
             return url;
         }
-
         final int questionMarkPosition = url.indexOf('?');
-
         if (questionMarkPosition < jsessionPosition) {
             return url.substring(0, url.indexOf(";jsession"));
         }
-
-        return url.substring(0, jsessionPosition)
-                + url.substring(questionMarkPosition);
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this).toString();
+        return url.substring(0, jsessionPosition) + url.substring(questionMarkPosition);
     }
 }
-

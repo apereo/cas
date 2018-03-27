@@ -6,12 +6,14 @@ dependencies {
     api project(":api:cas-server-core-api-logout")
     api project(":api:cas-server-core-api-webflow")
 
-    compileOnly project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-web-api")
     
     implementation libraries.pac4j
     implementation libraries.thymeleaf
+    implementation libraries.springintegration
 }
 
 // Filter properties from gradle.properties into this sub-project's property file resources  

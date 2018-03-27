@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.gauth.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasMultifactorWebflowConfigurer;
 import org.springframework.context.ApplicationContext;
@@ -12,6 +13,7 @@ import org.springframework.webflow.engine.builder.support.FlowBuilderServices;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCasMultifactorWebflowConfigurer {
 
     /** Webflow event id. */
@@ -29,7 +31,7 @@ public class GoogleAuthenticatorMultifactorWebflowConfigurer extends AbstractCas
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         registerMultifactorProviderAuthenticationWebflow(getLoginFlow(), MFA_GAUTH_EVENT_ID, this.flowDefinitionRegistry);
     }
 }

@@ -2,7 +2,10 @@ package org.apereo.cas.trusted.config;
 
 import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.benmanes.caffeine.cache.LoadingCache;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlan;
+import org.apereo.cas.audit.AuditTrailRecordResolutionPlanConfigurer;
 import org.apereo.cas.authentication.PseudoPlatformTransactionManager;
 import org.apereo.cas.config.CasCoreUtilConfiguration;
 import org.apereo.cas.configuration.CasConfigurationProperties;
@@ -15,12 +18,12 @@ import org.apereo.cas.trusted.authentication.storage.BaseMultifactorAuthenticati
 import org.apereo.cas.trusted.authentication.storage.InMemoryMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.JsonMultifactorAuthenticationTrustStorage;
 import org.apereo.cas.trusted.authentication.storage.MultifactorAuthenticationTrustStorageCleaner;
-import org.apereo.cas.trusted.web.MultifactorAuthenticationTrustController;
+import org.apereo.cas.trusted.web.flow.DeviceFingerprintStrategy;
+import org.apereo.cas.trusted.web.flow.GeographyDeviceFingerprintStrategy;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationSetTrustAction;
 import org.apereo.cas.trusted.web.flow.MultifactorAuthenticationVerifyTrustAction;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apereo.inspektr.audit.spi.AuditActionResolver;
+import org.apereo.inspektr.audit.spi.AuditResourceResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
@@ -33,8 +36,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.webflow.execution.Action;
 
-import java.io.Serializable;
-
 /**
  * This is {@link MultifactorAuthnTrustConfiguration}.
  *
@@ -44,31 +45,40 @@ import java.io.Serializable;
 @Configuration("multifactorAuthnTrustConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureAfter(CasCoreUtilConfiguration.class)
-public class MultifactorAuthnTrustConfiguration {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(MultifactorAuthnTrustConfiguration.class);
-
+@Slf4j
+public class MultifactorAuthnTrustConfiguration implements AuditTrailRecordResolutionPlanConfigurer {
     private static final int INITIAL_CACHE_SIZE = 50;
     private static final long MAX_CACHE_SIZE = 1_000_000;
 
     @Autowired
+    @Qualifier("ticketCreationActionResolver")
+    private AuditActionResolver ticketCreationActionResolver;
+    
+    @Autowired
+    @Qualifier("returnValueResourceResolver")
+    private AuditResourceResolver returnValueResourceResolver;
+
+    @Autowired
     private CasConfigurationProperties casProperties;
+
+    @ConditionalOnMissingBean(name = "deviceFingerprintStrategy")
+    @Bean
+    public DeviceFingerprintStrategy deviceFingerprintStrategy() {
+        return new GeographyDeviceFingerprintStrategy();
+    }
 
     @Bean
     @RefreshScope
     public Action mfaSetTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationSetTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
-    }
-
-    @Bean
-    public MultifactorAuthenticationTrustController mfaTrustController(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationTrustController(storage, casProperties.getAuthn().getMfa().getTrusted());
+        return new MultifactorAuthenticationSetTrustAction(storage, deviceFingerprintStrategy(),
+                casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @Bean
     @RefreshScope
     public Action mfaVerifyTrustAction(@Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
-        return new MultifactorAuthenticationVerifyTrustAction(storage, casProperties.getAuthn().getMfa().getTrusted());
+        return new MultifactorAuthenticationVerifyTrustAction(storage, deviceFingerprintStrategy(),
+                casProperties.getAuthn().getMfa().getTrusted());
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustEngine")
@@ -106,7 +116,7 @@ public class MultifactorAuthnTrustConfiguration {
 
     @Bean
     @RefreshScope
-    public CipherExecutor<Serializable, String> mfaTrustCipherExecutor() {
+    public CipherExecutor mfaTrustCipherExecutor() {
         final EncryptionJwtSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getMfa().getTrusted().getCrypto();
         if (crypto.isEnabled()) {
             return new MultifactorAuthenticationTrustCipherExecutor(
@@ -118,7 +128,7 @@ public class MultifactorAuthnTrustConfiguration {
                 + "MAY NOT be safe in a production environment. "
                 + "Consider using other choices to handle encryption, signing and verification of "
                 + "trusted authentication records for MFA");
-        return NoOpCipherExecutor.getInstance();
+        return CipherExecutor.noOp();
     }
 
     @ConditionalOnMissingBean(name = "mfaTrustStorageCleaner")
@@ -127,5 +137,11 @@ public class MultifactorAuthnTrustConfiguration {
     public MultifactorAuthenticationTrustStorageCleaner mfaTrustStorageCleaner(
             @Qualifier("mfaTrustEngine") final MultifactorAuthenticationTrustStorage storage) {
         return new MultifactorAuthenticationTrustStorageCleaner(casProperties.getAuthn().getMfa().getTrusted(), storage);
+    }
+
+    @Override
+    public void configureAuditTrailRecordResolutionPlan(final AuditTrailRecordResolutionPlan plan) {
+        plan.registerAuditResourceResolver("TRUSTED_AUTHENTICATION_RESOURCE_RESOLVER", this.returnValueResourceResolver);
+        plan.registerAuditActionResolver("TRUSTED_AUTHENTICATION_ACTION_RESOLVER", this.ticketCreationActionResolver);
     }
 }

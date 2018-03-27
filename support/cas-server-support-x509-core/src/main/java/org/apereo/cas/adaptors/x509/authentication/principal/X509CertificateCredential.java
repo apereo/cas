@@ -4,13 +4,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonDeserializer;
 import org.apereo.cas.adaptors.x509.util.X509CertificateCredentialJsonSerializer;
 import org.apereo.cas.authentication.AbstractCredential;
-
 import java.security.cert.X509Certificate;
 import java.util.Arrays;
+import lombok.Setter;
 
 /**
  * An X.509 certificate credential.
@@ -23,6 +24,8 @@ import java.util.Arrays;
 @JsonDeserialize(using = X509CertificateCredentialJsonDeserializer.class)
 @JsonIgnoreProperties(ignoreUnknown = true)
 @JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY)
+@Slf4j
+@Setter
 public class X509CertificateCredential extends AbstractCredential {
 
     /**
@@ -53,10 +56,6 @@ public class X509CertificateCredential extends AbstractCredential {
         return Arrays.copyOf(this.certificates, this.certificates.length);
     }
 
-    public void setCertificate(final X509Certificate certificate) {
-        this.certificate = certificate;
-    }
-
     public X509Certificate getCertificate() {
         return this.certificate;
     }
@@ -69,7 +68,6 @@ public class X509CertificateCredential extends AbstractCredential {
         } else if (this.certificates.length > 0) {
             cert = this.certificates[0];
         }
-
         if (cert != null) {
             return CertUtils.toString(cert);
         }

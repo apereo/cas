@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.mdui.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -16,8 +17,8 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigurer {
-
     private final Action samlMetadataUIParserAction;
 
     public SamlMetadataUIWebflowConfigurer(final FlowBuilderServices flowBuilderServices, final FlowDefinitionRegistry loginFlowDefinitionRegistry,
@@ -29,10 +30,10 @@ public class SamlMetadataUIWebflowConfigurer extends AbstractCasWebflowConfigure
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow flow = getLoginFlow();
         if (flow != null) {
-            final ViewState state = (ViewState) flow.getTransitionableState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            final ViewState state = getTransitionableState(flow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(this.samlMetadataUIParserAction);
         }
     }

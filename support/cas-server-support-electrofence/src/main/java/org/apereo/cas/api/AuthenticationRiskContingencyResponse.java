@@ -1,8 +1,10 @@
 package org.apereo.cas.api;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.webflow.execution.Event;
+import lombok.ToString;
 
 /**
  * This is {@link AuthenticationRiskContingencyResponse}.
@@ -10,22 +12,10 @@ import org.springframework.webflow.execution.Event;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@ToString
+@AllArgsConstructor
+@Getter
 public class AuthenticationRiskContingencyResponse {
     private final Event result;
-
-    public AuthenticationRiskContingencyResponse(final Event result) {
-        this.result = result;
-    }
-
-    public Event getResult() {
-        return result;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this, ToStringStyle.NO_CLASS_NAME_STYLE)
-                .append("result", result.getId())
-                .toString();
-    }
 }

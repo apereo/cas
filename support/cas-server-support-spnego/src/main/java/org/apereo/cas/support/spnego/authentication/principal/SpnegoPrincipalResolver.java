@@ -1,12 +1,14 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.handler.PrincipalNameTransformer;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.resolvers.PersonDirectoryPrincipalResolver;
 import org.apereo.services.persondir.IPersonAttributeDao;
+import lombok.NoArgsConstructor;
 
 /**
  * Implementation of a CredentialToPrincipalResolver that takes a
@@ -16,14 +18,13 @@ import org.apereo.services.persondir.IPersonAttributeDao;
  * @author Marc-Antoine Garrigue
  * @since 3.1
  */
+@Slf4j
+@ToString(callSuper = true)
+@NoArgsConstructor
 public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
-    public SpnegoPrincipalResolver() {
-    }
-
     public SpnegoPrincipalResolver(final IPersonAttributeDao attributeRepository, final PrincipalFactory principalFactory,
-                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer,
-                                   final String principalAttributeName) {
+                                   final boolean returnNullIfNoAttributes, final PrincipalNameTransformer principalNameTransformer, final String principalAttributeName) {
         super(attributeRepository, principalFactory, returnNullIfNoAttributes, principalNameTransformer, principalAttributeName);
     }
 
@@ -36,15 +37,6 @@ public class SpnegoPrincipalResolver extends PersonDirectoryPrincipalResolver {
 
     @Override
     public boolean supports(final Credential credential) {
-        return credential != null
-                && SpnegoCredential.class.equals(credential.getClass());
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .toString();
+        return credential != null && SpnegoCredential.class.equals(credential.getClass());
     }
 }

@@ -1,0 +1,7 @@
+description = "Apereo CAS Cosmos DB Support Core"
+
+dependencies {
+    api libraries.cosmosdb
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+}

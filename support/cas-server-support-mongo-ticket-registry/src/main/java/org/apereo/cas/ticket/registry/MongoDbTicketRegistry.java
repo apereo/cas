@@ -3,6 +3,7 @@ package org.apereo.cas.ticket.registry;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.WriteResult;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
 import org.apereo.cas.ticket.BaseTicketSerializers;
@@ -11,8 +12,6 @@ import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
 import org.hjson.JsonValue;
 import org.hjson.Stringify;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -29,9 +28,10 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class MongoDbTicketRegistry extends AbstractTicketRegistry {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MongoDbTicketRegistry.class);
+
     private static final String FIELD_NAME_EXPIRE_AFTER_SECONDS = "expireAfterSeconds";
     private static final Query SELECT_ALL_NAMES_QUERY = new Query(Criteria.where(TicketHolder.FIELD_NAME_ID).regex(".+"));
 
@@ -200,7 +200,7 @@ public class MongoDbTicketRegistry extends AbstractTicketRegistry {
      * Makes the assumption that the CAS server date and the Mongo server date are in sync.
      */
     private static Date getExpireAt(final Ticket ticket) {
-        final int ttl = ticket.getExpirationPolicy().getTimeToLive().intValue();
+        final long ttl = ticket.getExpirationPolicy().getTimeToLive();
 
         // expiration policy can specify not to delete automatically
         if (ttl < 1) {

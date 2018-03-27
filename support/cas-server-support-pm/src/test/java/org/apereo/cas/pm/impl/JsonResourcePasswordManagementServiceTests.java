@@ -1,5 +1,7 @@
 package org.apereo.cas.pm.impl;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.spi.config.CasCoreAuditConfiguration;
 import org.apereo.cas.authentication.Credential;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.config.CasCoreAuthenticationConfiguration;
@@ -19,6 +21,7 @@ import org.apereo.cas.config.CasPersonDirectoryConfiguration;
 import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguration;
 import org.apereo.cas.pm.PasswordChangeBean;
 import org.apereo.cas.pm.PasswordManagementService;
+import org.apereo.cas.pm.PasswordValidationService;
 import org.apereo.cas.pm.config.PasswordManagementConfiguration;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,34 +44,40 @@ import static org.junit.Assert.*;
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = {RefreshAutoConfiguration.class,
-        CasCoreAuthenticationPrincipalConfiguration.class,
-        CasCoreAuthenticationPolicyConfiguration.class,
-        CasCoreAuthenticationMetadataConfiguration.class,
-        CasCoreAuthenticationSupportConfiguration.class,
-        CasCoreAuthenticationHandlersConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreHttpConfiguration.class,
-        CasCoreTicketCatalogConfiguration.class,
-        CasCoreTicketsConfiguration.class,
-        CasPersonDirectoryConfiguration.class,
-        CasCoreAuthenticationConfiguration.class, 
-        CasCoreServicesAuthenticationConfiguration.class,
-        CasCoreServicesConfiguration.class,
-        CasCoreWebConfiguration.class,
-        CasWebApplicationServiceFactoryConfiguration.class,
-        CasCoreUtilConfiguration.class,
-        PasswordManagementConfiguration.class})
+    CasCoreAuthenticationPrincipalConfiguration.class,
+    CasCoreAuthenticationPolicyConfiguration.class,
+    CasCoreAuthenticationMetadataConfiguration.class,
+    CasCoreAuthenticationSupportConfiguration.class,
+    CasCoreAuthenticationHandlersConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreHttpConfiguration.class,
+    CasCoreAuditConfiguration.class,
+    CasCoreTicketCatalogConfiguration.class,
+    CasCoreTicketsConfiguration.class,
+    CasPersonDirectoryConfiguration.class,
+    CasCoreAuthenticationConfiguration.class,
+    CasCoreServicesAuthenticationConfiguration.class,
+    CasCoreServicesConfiguration.class,
+    CasCoreWebConfiguration.class,
+    CasWebApplicationServiceFactoryConfiguration.class,
+    CasCoreUtilConfiguration.class,
+    PasswordManagementConfiguration.class})
 @TestPropertySource(locations = {"classpath:/pm.properties"})
+@Slf4j
 public class JsonResourcePasswordManagementServiceTests {
 
     @Autowired
     @Qualifier("passwordChangeService")
     private PasswordManagementService passwordChangeService;
 
+    @Autowired
+    @Qualifier("passwordValidationService")
+    private PasswordValidationService passwordValidationService;
+
     @Test
     public void verifyUserEmailCanBeFound() {
         final String email = passwordChangeService.findEmail("casuser");
-        assertEquals(email, "casuser@example.org");
+        assertEquals("casuser@example.org", email);
     }
 
     @Test
@@ -80,7 +89,8 @@ public class JsonResourcePasswordManagementServiceTests {
     @Test
     public void verifyUserQuestionsCanBeFound() {
         final Map questions = passwordChangeService.getSecurityQuestions("casuser");
-        assertEquals(questions.size(), 2);
+        assertEquals(2, questions.size());
+
     }
 
     @Test
@@ -91,5 +101,15 @@ public class JsonResourcePasswordManagementServiceTests {
         bean.setPassword("newPassword");
         final boolean res = passwordChangeService.change(c, bean);
         assertTrue(res);
+    }
+
+    @Test
+    public void verifyPasswordValidationService() {
+        final UsernamePasswordCredential c = new UsernamePasswordCredential("casuser", "password");
+        final PasswordChangeBean bean = new PasswordChangeBean();
+        bean.setConfirmedPassword("Test@1234");
+        bean.setPassword("Test@1234");
+        final boolean isValid = passwordValidationService.isValid(c, bean);
+        assertTrue(isValid);
     }
 }

@@ -1,12 +1,18 @@
 package org.apereo.cas.authentication;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Service;
 
 import java.io.Serializable;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,27 +22,16 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 4.2.0
  */
+@Slf4j
+@Getter
+@AllArgsConstructor
+@ToString
 public class AuthenticationTransaction implements Serializable {
 
     private static final long serialVersionUID = 6213904009424725484L;
 
-    private final Collection<Credential> credentials;
     private final Service service;
-
-    /**
-     * Instantiates a new Default authentication transaction.
-     *
-     * @param service     the service
-     * @param credentials the credentials
-     */
-    protected AuthenticationTransaction(final Service service, final Collection<Credential> credentials) {
-        this.credentials = credentials;
-        this.service = service;
-    }
-
-    public Collection<Credential> getCredentials() {
-        return this.credentials;
-    }
+    private final Collection<Credential> credentials;
 
     /**
      * Wrap credentials into an authentication transaction, as a factory method,
@@ -46,7 +41,7 @@ public class AuthenticationTransaction implements Serializable {
      * @param credentials the credentials
      * @return the authentication transaction
      */
-    public static AuthenticationTransaction wrap(final Service service, final Credential... credentials) {
+    public static AuthenticationTransaction of(final Service service, final Credential... credentials) {
         return new AuthenticationTransaction(service, sanitizeCredentials(credentials));
     }
 
@@ -57,12 +52,8 @@ public class AuthenticationTransaction implements Serializable {
      * @param credentials the credentials
      * @return the authentication transaction
      */
-    public static AuthenticationTransaction wrap(final Credential... credentials) {
-        return wrap(null, credentials);
-    }
-
-    public Service getService() {
-        return this.service;
+    public static AuthenticationTransaction of(final Credential... credentials) {
+        return of(null, credentials);
     }
 
     /**
@@ -70,33 +61,33 @@ public class AuthenticationTransaction implements Serializable {
      *
      * @return the credential
      */
-    public Credential getCredential() {
-        if (!credentials.isEmpty()) {
-            return credentials.iterator().next();
-        }
-        return null;
+    public Optional<Credential> getPrimaryCredential() {
+        return credentials.stream().findFirst();
     }
 
     /**
-     * Is credential of given type?
+     * Does this AuthenticationTransaction contain a credential of the given type?
      *
-     * @param clazz the clazz
-     * @return true/false
+     * @param type the credential type to check for
+     * @return true if this AuthenticationTransaction contains a credential of the specified type
      */
-    public boolean isCredentialOfType(final Class clazz) {
-        try {
-            final Object object = clazz.cast(getCredential());
-            return object != null;
-        } catch (final Exception e) {
-            return false;
-        }
+    public boolean hasCredentialOfType(final Class<? extends Credential> type) {
+        return credentials.stream()
+                .anyMatch(type::isInstance);
     }
 
+    /**
+     * Sanitize credentials set. It's important to keep the order of
+     * the credentials in the final set as they were presented.
+     *
+     * @param credentials the credentials
+     * @return the set
+     */
     private static Set<Credential> sanitizeCredentials(final Credential[] credentials) {
         if (credentials != null && credentials.length > 0) {
             return Arrays.stream(credentials)
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toSet());
+                .filter(Objects::nonNull)
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         }
         return new HashSet<>(0);
     }

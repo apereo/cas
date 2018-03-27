@@ -67,11 +67,6 @@ public interface TicketGrantingTicket extends Ticket {
     void removeAllServices();
 
     /**
-     * Mark a ticket as expired.
-     */
-    void markTicketExpired();
-
-    /**
      * Convenience method to determine if the TicketGrantingTicket is the root
      * of the hierarchy of tickets.
      *
@@ -113,6 +108,6 @@ public interface TicketGrantingTicket extends Ticket {
      * @since 5.1
      */
     default Collection<String> getDescendantTickets() {
-        return new HashSet<>();
+        return new HashSet<>(0);
     }
 }

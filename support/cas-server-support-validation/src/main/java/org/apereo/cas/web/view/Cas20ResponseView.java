@@ -1,12 +1,12 @@
 package org.apereo.cas.web.view;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasViewConstants;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.authentication.AuthenticationAttributeReleasePolicy;
 import org.apereo.cas.services.web.view.AbstractDelegatingCasView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,21 +21,24 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class Cas20ResponseView extends AbstractDelegatingCasView {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Cas20ResponseView.class);
+
 
     /**
      * The Service selection strategy.
      */
     protected final AuthenticationServiceSelectionPlan authenticationRequestServiceSelectionStrategies;
-    
-    public Cas20ResponseView(final boolean successResponse, 
+
+    public Cas20ResponseView(final boolean successResponse,
                              final ProtocolAttributeEncoder protocolAttributeEncoder, 
                              final ServicesManager servicesManager, 
                              final String authenticationContextAttribute, 
                              final View view,
+                             final AuthenticationAttributeReleasePolicy authenticationAttributeReleasePolicy,
                              final AuthenticationServiceSelectionPlan serviceSelectionStrategy) {
-        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view);
+        super(successResponse, protocolAttributeEncoder, servicesManager, authenticationContextAttribute, view,
+                authenticationAttributeReleasePolicy);
         this.authenticationRequestServiceSelectionStrategies = serviceSelectionStrategy;
     }
 

@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.actuate.autoconfigure.MetricsDropwizardAutoConfiguration;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,6 +17,7 @@ import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link CasEurekaServerWebApplication}.
@@ -24,23 +26,14 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
  * @since 5.1.0
  */
 @SpringBootApplication
-@EnableAutoConfiguration(
-        exclude = {HibernateJpaAutoConfiguration.class,
-                JerseyAutoConfiguration.class,
-                GroovyTemplateAutoConfiguration.class,
-                JmxAutoConfiguration.class,
-                DataSourceAutoConfiguration.class,
-                RedisAutoConfiguration.class,
-                MongoAutoConfiguration.class,
-                MongoDataAutoConfiguration.class,
-                CassandraAutoConfiguration.class,
-                DataSourceTransactionManagerAutoConfiguration.class,
-                MetricsDropwizardAutoConfiguration.class,
-                RedisRepositoriesAutoConfiguration.class})
+@EnableAutoConfiguration(exclude = { HibernateJpaAutoConfiguration.class, JerseyAutoConfiguration.class,
+    GroovyTemplateAutoConfiguration.class, JmxAutoConfiguration.class, DataSourceAutoConfiguration.class, RedisAutoConfiguration.class,
+    MongoAutoConfiguration.class, MongoDataAutoConfiguration.class, CassandraAutoConfiguration.class,
+    DataSourceTransactionManagerAutoConfiguration.class, MetricsDropwizardAutoConfiguration.class, RedisRepositoriesAutoConfiguration.class })
 @EnableEurekaServer
+@Slf4j
+@NoArgsConstructor
 public class CasEurekaServerWebApplication {
-    protected CasEurekaServerWebApplication() {
-    }
 
     /**
      * Main.
@@ -48,9 +41,6 @@ public class CasEurekaServerWebApplication {
      * @param args the args
      */
     public static void main(final String[] args) {
-        new SpringApplicationBuilder(CasEurekaServerWebApplication.class)
-                .banner(new CasEurekaServerBanner())
-                .logStartupInfo(true)
-                .run(args);
+        new SpringApplicationBuilder(CasEurekaServerWebApplication.class).banner(new CasEurekaServerBanner()).logStartupInfo(true).run(args);
     }
 }

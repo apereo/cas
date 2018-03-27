@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.policy.AllAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.AnyAuthenticationPolicy;
 import org.apereo.cas.authentication.policy.RequiredHandlerAuthenticationPolicy;
@@ -12,6 +13,7 @@ import org.apereo.cas.services.ServicesManager;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.test.annotation.DirtiesContext;
 
 import javax.security.auth.login.FailedLoginException;
@@ -19,6 +21,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -30,6 +33,7 @@ import static org.mockito.Mockito.*;
  * @since 4.0.0
  */
 @DirtiesContext(methodMode = DirtiesContext.MethodMode.AFTER_METHOD)
+@Slf4j
 public class PolicyBasedAuthenticationManagerTests {
 
     private static final String HANDLER_A = "HandlerA";
@@ -37,9 +41,8 @@ public class PolicyBasedAuthenticationManagerTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-    private final AuthenticationTransaction transaction = AuthenticationTransaction.wrap(CoreAuthenticationTestUtils.getService(),
-            mock(Credential.class), mock(Credential.class));
-
+    private final AuthenticationTransaction transaction = AuthenticationTransaction.of(CoreAuthenticationTestUtils.getService(),
+        mock(Credential.class), mock(Credential.class));
 
     @Test
     public void verifyAuthenticateAnySuccess() throws Exception {
@@ -47,7 +50,11 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), mockServicesManager());
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AnyAuthenticationPolicy());
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
+
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(2, auth.getCredentials().size());
@@ -58,9 +65,11 @@ public class PolicyBasedAuthenticationManagerTests {
         final Map<AuthenticationHandler, PrincipalResolver> map = new HashMap<>();
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(false), null);
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(
-                getAuthenticationExecutionPlan(map),
-                mockServicesManager(), new AnyAuthenticationPolicy(true));
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AnyAuthenticationPolicy(true));
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
+
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
         assertEquals(1, auth.getFailures().size());
@@ -81,14 +90,15 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), mockServicesManager());
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AnyAuthenticationPolicy());
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("2 errors, 0 successes");
-
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -97,8 +107,11 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(true), null);
         map.put(newMockHandler(true), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), 
-                mockServicesManager(), new AllAuthenticationPolicy());
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AllAuthenticationPolicy());
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
+
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(2, auth.getSuccesses().size());
         assertEquals(0, auth.getFailures().size());
@@ -111,16 +124,15 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(false), null);
         map.put(newMockHandler(false), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map),
-                mockServicesManager(),
-                new AllAuthenticationPolicy());
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new AllAuthenticationPolicy());
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
 
         this.thrown.expect(AuthenticationException.class);
-        this.thrown.expectMessage("2 errors, 0 successes");
-
         manager.authenticate(transaction);
 
-        fail("Should have thrown authentication exception");
+        throw new AssertionError("Should have thrown authentication exception");
     }
 
     @Test
@@ -129,8 +141,11 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map), 
-                null, new RequiredHandlerAuthenticationPolicy(HANDLER_A));
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_A));
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
+
 
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
@@ -143,12 +158,14 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map),
-                mockServicesManager(), new RequiredHandlerAuthenticationPolicy(HANDLER_B));
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_B));
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan,
+            false, mock(ApplicationEventPublisher.class));
 
         this.thrown.expect(AuthenticationException.class);
         manager.authenticate(transaction);
-        fail("Should have thrown AuthenticationException");
+        throw new AssertionError("Should have thrown AuthenticationException");
     }
 
     @Test
@@ -157,8 +174,10 @@ public class PolicyBasedAuthenticationManagerTests {
         map.put(newMockHandler(HANDLER_A, true), null);
         map.put(newMockHandler(HANDLER_B, false), null);
 
-        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(getAuthenticationExecutionPlan(map),
-                mockServicesManager(), new RequiredHandlerAuthenticationPolicy(HANDLER_A, true));
+        final AuthenticationEventExecutionPlan authenticationExecutionPlan = getAuthenticationExecutionPlan(map);
+        authenticationExecutionPlan.registerAuthenticationPolicy(new RequiredHandlerAuthenticationPolicy(HANDLER_A, true));
+        final PolicyBasedAuthenticationManager manager = new PolicyBasedAuthenticationManager(authenticationExecutionPlan, false,
+            mock(ApplicationEventPublisher.class));
 
         final Authentication auth = manager.authenticate(transaction);
         assertEquals(1, auth.getSuccesses().size());
@@ -175,7 +194,8 @@ public class PolicyBasedAuthenticationManagerTests {
      * @throws Exception On errors.
      */
     private static AuthenticationHandler newMockHandler(final boolean success) throws Exception {
-        return newMockHandler("MockAuthenticationHandler" + System.nanoTime(), success);
+        final String name = "MockAuthenticationHandler" + UUID.randomUUID().toString();
+        return newMockHandler(name, success);
     }
 
     /**
@@ -194,17 +214,19 @@ public class PolicyBasedAuthenticationManagerTests {
         if (success) {
             final Principal p = new DefaultPrincipalFactory().createPrincipal("nobody");
 
-            final HandlerResult result = new DefaultHandlerResult(mock, mock(CredentialMetaData.class), p);
+            final AuthenticationHandlerExecutionResult result = new DefaultAuthenticationHandlerExecutionResult(mock, mock(CredentialMetaData.class), p);
             when(mock.authenticate(any(Credential.class))).thenReturn(result);
         } else {
             when(mock.authenticate(any(Credential.class))).thenThrow(new FailedLoginException());
         }
         return mock;
     }
-    
+
     private AuthenticationEventExecutionPlan getAuthenticationExecutionPlan(final Map<AuthenticationHandler, PrincipalResolver> map) {
         final DefaultAuthenticationEventExecutionPlan plan = new DefaultAuthenticationEventExecutionPlan();
         plan.registerAuthenticationHandlerWithPrincipalResolver(map);
+        plan.registerAuthenticationHandlerResolver(new RegisteredServiceAuthenticationHandlerResolver(mockServicesManager()));
+        plan.registerAuthenticationHandlerResolver(new DefaultAuthenticationHandlerResolver());
         return plan;
     }
 }

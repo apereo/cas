@@ -1,22 +1,28 @@
 package org.apereo.cas.authentication.principal;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import org.apereo.cas.services.DefaultServicesManager;
+import org.apereo.cas.services.RegisteredServiceTestUtils;
+import org.apereo.cas.services.ServiceRegistry;
 import org.junit.Test;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.io.File;
 import java.io.IOException;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 /**
  * @author Scott Battaglia
  * @author Arnaud Lesueur
  * @since 3.1
  */
+@Slf4j
 public class SimpleWebApplicationServiceImplTests {
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "simpleWebApplicationServiceImpl.json");
 
@@ -38,8 +44,9 @@ public class SimpleWebApplicationServiceImplTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
-        final Response response = new WebApplicationServiceResponseBuilder().build(impl, 
-                "ticketId", CoreAuthenticationTestUtils.getAuthentication());
+        final Response response = new WebApplicationServiceResponseBuilder(
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            .build(impl, "ticketId", RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
     }
@@ -67,8 +74,10 @@ public class SimpleWebApplicationServiceImplTests {
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, SERVICE);
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
 
-        final Response response = new WebApplicationServiceResponseBuilder().build(impl, null, 
-                CoreAuthenticationTestUtils.getAuthentication());
+        final Response response = new WebApplicationServiceResponseBuilder(
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            .build(impl, null,
+                RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
@@ -79,8 +88,10 @@ public class SimpleWebApplicationServiceImplTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(SERVICE, "http://foo.com/");
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
-        final Response response = new WebApplicationServiceResponseBuilder().build(impl, null,
-                CoreAuthenticationTestUtils.getAuthentication());
+        final Response response = new WebApplicationServiceResponseBuilder(
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            .build(impl, null,
+                RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertFalse(response.getUrl().contains("ticket="));
@@ -92,8 +103,9 @@ public class SimpleWebApplicationServiceImplTests {
         final MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter(CasProtocolConstants.PARAMETER_SERVICE, "http://foo.com/?param=test");
         final WebApplicationService impl = new WebApplicationServiceFactory().createService(request);
-        final Response response = new WebApplicationServiceResponseBuilder().build(impl, null,
-                CoreAuthenticationTestUtils.getAuthentication());
+        final Response response = new WebApplicationServiceResponseBuilder(
+            new DefaultServicesManager(mock(ServiceRegistry.class), mock(ApplicationEventPublisher.class)))
+            .build(impl, null, RegisteredServiceTestUtils.getAuthentication());
         assertNotNull(response);
         assertEquals(Response.ResponseType.REDIRECT, response.getResponseType());
         assertEquals("http://foo.com/?param=test", response.getUrl());

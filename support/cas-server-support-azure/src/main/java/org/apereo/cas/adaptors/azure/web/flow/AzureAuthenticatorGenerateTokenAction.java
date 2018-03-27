@@ -1,5 +1,7 @@
 package org.apereo.cas.adaptors.azure.web.flow;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.apereo.cas.adaptors.azure.AzureAuthenticatorTokenCredential;
 import org.apereo.cas.configuration.model.support.mfa.AzureMultifactorProperties;
@@ -15,15 +17,13 @@ import org.springframework.webflow.execution.RequestContext;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class AzureAuthenticatorGenerateTokenAction extends AbstractAction {
     private final AzureMultifactorProperties.AuthenticationModes mode;
 
-    public AzureAuthenticatorGenerateTokenAction(final AzureMultifactorProperties.AuthenticationModes mode) {
-        this.mode = mode;
-    }
-
     @Override
-    public Event doExecute(final RequestContext requestContext) throws Exception {
+    public Event doExecute(final RequestContext requestContext) {
         final Integer code = Integer.valueOf(RandomStringUtils.randomNumeric(8));
         final AzureAuthenticatorTokenCredential c = new AzureAuthenticatorTokenCredential();
         c.setToken(code.toString());

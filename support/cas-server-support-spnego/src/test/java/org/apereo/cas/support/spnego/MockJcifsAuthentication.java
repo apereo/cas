@@ -3,7 +3,7 @@ package org.apereo.cas.support.spnego;
 import java.security.Principal;
 
 import jcifs.spnego.Authentication;
-import jcifs.spnego.AuthenticationException;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  *
@@ -11,6 +11,7 @@ import jcifs.spnego.AuthenticationException;
  * @author Arnaud Lesueur
  * @since 4.2.0
  */
+@Slf4j
 public class MockJcifsAuthentication extends Authentication {
 
     private Principal principal;
@@ -31,7 +32,7 @@ public class MockJcifsAuthentication extends Authentication {
     }
 
     @Override
-    public void process(final byte[] arg0) throws AuthenticationException {
+    public void process(final byte[] arg0) {
         // empty
     }
 }

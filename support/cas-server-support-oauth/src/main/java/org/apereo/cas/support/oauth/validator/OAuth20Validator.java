@@ -1,5 +1,7 @@
 package org.apereo.cas.support.oauth.validator;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -10,8 +12,6 @@ import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20ResponseTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
 import org.apereo.cas.support.oauth.util.OAuth20Utils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.stream.Stream;
@@ -22,14 +22,10 @@ import java.util.stream.Stream;
  * @author Jerome Leleu
  * @since 5.0.0
  */
+@Slf4j
+@AllArgsConstructor
 public class OAuth20Validator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(OAuth20Validator.class);
-
     private final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
-
-    public OAuth20Validator(final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
-        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
-    }
 
     /**
      * Check if a parameter exists.
@@ -40,11 +36,11 @@ public class OAuth20Validator {
      */
     public boolean checkParameterExist(final HttpServletRequest request, final String name) {
         final String parameter = request.getParameter(name);
-        LOGGER.debug("[{}]: [{}]", name, parameter);
         if (StringUtils.isBlank(parameter)) {
             LOGGER.error("Missing request parameter: [{}]", name);
             return false;
         }
+        LOGGER.debug("Found provided request parameter [{}]", name);
         return true;
     }
 
@@ -56,6 +52,7 @@ public class OAuth20Validator {
      */
     public boolean checkServiceValid(final RegisteredService registeredService) {
         if (registeredService == null) {
+            LOGGER.warn("Provided registered service cannot be null and must be defined");
             return false;
         }
 
@@ -65,6 +62,7 @@ public class OAuth20Validator {
             RegisteredServiceAccessStrategyUtils.ensureServiceAccessIsAllowed(service, registeredService);
             return true;
         } catch (final UnauthorizedServiceException e) {
+            LOGGER.warn("Registered service access is not allowed for [{}]", registeredService.getServiceId());
             return false;
         }
     }

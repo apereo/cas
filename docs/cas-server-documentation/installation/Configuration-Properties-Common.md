@@ -1,14 +1,11 @@
 ---
 layout: default
-title: CAS Properties Overview
+title: CAS Common Properties Overview
 ---
 
-# CAS Properties Overview
+# CAS Common Properties
 
-This document describes a number of suggestions and configuration options that apply
-to and are common amongst a selection of CAS modules and features.
-
-To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
+This document describes a number of suggestions and configuration options that apply to and are common amongst a selection of CAS modules and features. To see the full list of CAS properties, please [review this guide](Configuration-Properties.html).
 
 ## Naming Convention
 
@@ -48,6 +45,14 @@ should support the duration syntax for full clarity on unit of measure:
 
 The native numeric syntax is still supported though you will have to refer to the docs
 in each case to learn the exact unit of measure.
+
+## Authentication Throttling
+
+Certain functionality in CAS, such as [OAuth](OAuth-OpenId-Authentication.html) 
+or [REST API](../protocol/REST-Protocol.html), allow you to throttle requests to specific endpoints in addition to the more 
+generic authentication throttling functionality applied during the login flow and authentication attempts.
+
+To fully deliver this functionality, it is expected that [authentication throttling](Configuring-Authentication-Throttling.html) is turned on.
 
 ## Authentication Credential Selection
 
@@ -89,9 +94,19 @@ class PredicateExample implements Predicate<Credential> {
 Certain aspects of CAS such as authentication handling support configuration of
 password encoding. Most options are based on Spring Security's [support for password encoding](http://docs.spring.io/spring-security/site/docs/current/apidocs/org/springframework/security/crypto/password/PasswordEncoder.html).
 
+The following options related to password encoding support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.passwordEncoder.type=NONE|DEFAULT|STANDARD|BCRYPT|SCRYPT|PBKDF2
+# ${configurationKey}.passwordEncoder.characterEncoding=
+# ${configurationKey}.passwordEncoder.encodingAlgorithm=
+# ${configurationKey}.passwordEncoder.secret=
+# ${configurationKey}.passwordEncoder.strength=16
+```
+
 The following options are supported:
 
-| Type                    | Description                            
+| Type                    | Description
 |-------------------------|----------------------------------------------------------------------------------------------------
 | `NONE`                  | No password encoding (i.e. plain-text) takes place.     
 | `DEFAULT`               | Use the `DefaultPasswordEncoder` of CAS. For message-digest algorithms via `characterEncoding` and `encodingAlgorithm`.
@@ -100,6 +115,50 @@ The following options are supported:
 | `PBKDF2`                | Use the `Pbkdf2PasswordEncoder` based on the `strength` provided and an optional `secret`.  
 | `STANDARD`              | Use the `StandardPasswordEncoder` based on the `secret` provided.  
 | `org.example.MyEncoder` | An implementation of `PasswordEncoder` of your own choosing.
+| `file:///path/to/script.groovy` | Path to a Groovy script charged with handling password encoding operations.
+
+In cases where you plan to design your own password encoder or write scripts to do so, you may also need to ensure the overlay has the following modules available at runtime:
+
+```xml
+<dependency>
+    <groupId>org.springframework.security</groupId>
+    <artifactId>spring-security-core</artifactId>
+</dependency>
+```
+
+If you need to design your own password encoding scheme where the type is specified as a fully qualified Java class name, the structure of the class would be
+ similar to the following:
+
+```java
+package org.example.cas;
+
+import org.springframework.security.crypto.codec.*;
+import org.springframework.security.crypto.password.*;
+
+public class MyEncoder extends AbstractPasswordEncoder {
+    @Override
+    protected byte[] encode(CharSequence rawPassword, byte[] salt) {
+        return ...
+    }
+}
+```
+
+If you need to design your own password encoding scheme where the type is specified as a path to a Groovy script, the structure of the script would be similar
+ to the following:
+
+```groovy
+import java.util.*
+
+def byte[] run(final Object... args) {
+    def rawPassword = args[0]
+    def generatedSalt = args[1]
+    def logger = args[2]
+    def casApplicationContext = args[3]
+
+    logger.debug("Encoding password...")
+    return ...
+}
+```
 
 ## Authentication Principal Transformation
 
@@ -113,6 +172,26 @@ The following options may be used:
 | `UPPERCASE`             | Convert the username to uppercase.
 | `LOWERCASE`             | Convert the username to lowercase.
 
+Authentication handlers as part of principal transformation may also be provided a path to a Groovy script to transform the provided username. The outline of the script may take on the following form:
+
+```groovy
+def String run(final Object... args) {
+    def providedUsername = args[0]
+    def logger = args[1]
+    return providedUsername.concat("SomethingElse)
+}
+```
+
+The following options related to principal transformation support in CAS apply equally to a number of CAS components (authentication handlers, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.principalTransformation.pattern=(.+)@example.org
+# ${configurationKey}.principalTransformation.groovy.location=file:///etc/cas/config/principal.groovy
+# ${configurationKey}.principalTransformation.suffix=
+# ${configurationKey}.principalTransformation.caseConversion=NONE|UPPERCASE|LOWERCASE
+# ${configurationKey}.principalTransformation.prefix=
+```
+
 ## Hibernate & JDBC
 
 Control global properties that are relevant to Hibernate,
@@ -124,7 +203,46 @@ connections and queries.
 # cas.jdbc.genDdl=true
 ```
 
-## Container-based JDBC Connections
+### Database Settings
+
+The following options related to JPA/JDBC support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.user=sa
+# ${configurationKey}.password=
+# ${configurationKey}.driverClass=org.hsqldb.jdbcDriver
+# ${configurationKey}.url=jdbc:hsqldb:mem:cas-hsql-database
+# ${configurationKey}.dialect=org.hibernate.dialect.HSQLDialect
+
+# ${configurationKey}.failFastTimeout=1
+# ${configurationKey}.isolationLevelName=ISOLATION_READ_COMMITTED
+# ${configurationKey}.healthQuery=
+# ${configurationKey}.isolateInternalQueries=false
+# ${configurationKey}.leakThreshold=10
+# ${configurationKey}.propagationBehaviorName=PROPAGATION_REQUIRED
+# ${configurationKey}.batchSize=1
+# ${configurationKey}.defaultCatalog=
+# ${configurationKey}.defaultSchema=
+# ${configurationKey}.ddlAuto=create-drop
+# ${configurationKey}.maxAgeDays=180
+
+# ${configurationKey}.autocommit=false
+# ${configurationKey}.idleTimeout=5000
+
+# ${configurationKey}.dataSourceName=
+# ${configurationKey}.dataSourceProxy=false
+
+# Hibernate-specific properties (i.e. `hibernate.globally_quoted_identifiers`)
+# ${configurationKey}.properties.propertyName=propertyValue
+
+# ${configurationKey}.pool.suspension=false
+# ${configurationKey}.pool.minSize=6
+# ${configurationKey}.pool.maxSize=18
+# ${configurationKey}.pool.maxWait=2000
+# ${configurationKey}.pool.timeoutMillis=1000
+```
+
+### Container-based JDBC Connections
 
 If you are planning to use a container-managed JDBC connection with CAS (i.e. JPA Ticket/Service Registry, etc)
 then you can set the `dataSourceName` property on any of the configuration items that require a database
@@ -141,11 +259,11 @@ The `dataSourceName` property can be either a JNDI name for the datasource or a 
 CAS overlay. It should contain an entry like this:
 
 ```xml
-    <resource-ref>
-        <res-ref-name>jdbc/casDataSource</res-ref-name>
-        <res-type>javax.sql.DataSource</res-type>
-        <res-auth>Container</res-auth>
-    </resource-ref>
+<resource-ref>
+    <res-ref-name>jdbc/casDataSource</res-ref-name>
+    <res-type>javax.sql.DataSource</res-type>
+    <res-auth>Container</res-auth>
+</resource-ref>
 ```
 
 In Apache Tomcat a container datasource can be defined like this in the `context.xml`:
@@ -206,29 +324,697 @@ In Jetty, a pool can be put in JNDI with a `jetty.xml` or `jetty-env.xml` file l
 
 ## Signing & Encryption
 
-A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to 
-manually and beforehand create the signing and encryption keys.
+A number of components in CAS accept signing and encryption keys. In most scenarios if keys are not provided, CAS will auto-generate them. The following instructions apply if you wish to manually and beforehand create the signing and encryption keys.
 
-Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) 
-of a cerain size for the key, you are to use the following set of commands to generate the token:
+Note that if you are asked to create a [JWK](https://tools.ietf.org/html/rfc7517) of a certain size for the key, you are to use the following set of commands to generate the token:
 
 ```bash
 wget https://raw.githubusercontent.com/apereo/cas/master/etc/jwk-gen.jar
 java -jar jwk-gen.jar -t oct -s [size]
 ```
 
+The outcome would be similar to:
+
+```json
+{
+  "kty": "oct",
+  "kid": "...",
+  "k": "..."
+}
+```
+
+The generated value for `k` needs to be assigned to the relevant CAS settings. Note that keys generated via the above algorithm are processed by CAS using the Advanced Encryption Standard (`AES`) algorithm which is a specification for the encryption of electronic data established by the U.S. National Institute of Standards and Technology.
+
+### Settings
+
+The following crypto options apply equally to relevant CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.crypto.signing.key=
+# ${configurationKey}.crypto.signing.keySize=
+
+# ${configurationKey}.crypto.encryption.key=
+# ${configurationKey}.crypto.encryption.keySize=
+
+# ${configurationKey}.crypto.alg=AES
+# ${configurationKey}.crypto.enabled=false
+```
+
+### RSA Keys
+
+Certain features such as the ability to produce [JWTs as CAS tickets](Configure-ServiceTicket-JWT.html) may allow you to use the `RSA` algorithm with public/private keypairs for signing and encryption. This behavior may prove useful generally in cases where the consumer of the CAS-encoded payload is an outsider and a client application that need not have access to the signing secrets directly and visibly and may only be given a half truth vis-a-vis a public key to verify the payload authenticity and decode it. This particular option makes little sense in situations where CAS itself is both a producer and a consumer of the payload.
+
+<div class="alert alert-info"><strong>Remember</strong><p>Signing and encryption options are not mutually exclusive. While it would be rather nonsensical, it is entirely possible for CAS to use <code>AES</code> keys for signing and <code>RSA</code> keys for encryption, or vice versa.</p></div>
+
+In order to enable RSA functionality for signing payloads, you will need to generate a private/public keypair via the following sample commands:
+
+```bash
+openssl genrsa -out private.key 2048
+openssl rsa -pubout -in private.key -out public.key -inform PEM -outform DER
+```
+
+The private key path (i.e. `file:///path/to/private.key`) needs to be configured for the signing key in CAS properties for the relevant feature. The public key needs to be shared with client applications and consumers of the payload in order to validate the payload signature.
+
+```properties
+# cas.xyz.crypto.signing.key=file:///etc/cas/config/private.key
+```
+
+<div class="alert alert-info"><strong>Key Size</strong><p>Remember that RSA key sizes are required to be at least <code>2048</code> and above. Smaller key sizes are not accepted by CAS and will cause runtime errors. Choose wisely.</p></div>
+
+In order to enable RSA functionality for encrypting payloads, you will need to essentially execute the reverse of the above operations. The client application will provide you with a public key which will be used to encrypt the payload and whose path (i.e. `file:///path/to/public.key`) needs to be configured for the encryption key in CAS properties for the relevant feature. Once the payload is submitted, the client should use its own private key to decode the payload and unpack it.
+
+```properties
+# cas.xyz.crypto.encryption.key=file:///etc/cas/config/public.key
+```
+
+## Person Directory Principal Resolution
+
+The following options related to Person Directory support in CAS when it attempts to resolve and build the authenticated principal, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.principalAttribute=
+# ${configurationKey}.returnNull=false
+# ${configurationKey}.principalResolutionFailureFatal=false
+```
+
+## InfluxDb Configuration
+
+The following options related to InfluxDb support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.url=http://localhost:8086
+# ${configurationKey}.username=root
+# ${configurationKey}.password=root
+# ${configurationKey}.retentionPolicy=autogen
+# ${configurationKey}.dropDatabase=false
+# ${configurationKey}.pointsToFlush=100
+# ${configurationKey}.batchInterval=PT5S
+# ${configurationKey}.consistencyLevel=ALL
+```
+
+## Hazelcast Configuration
+
+The following options related to Hazelcast support in CAS apply equally to a number of CAS components given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.cluster.members=123.456.789.000,123.456.789.001
+# ${configurationKey}.cluster.instanceName=localhost
+# ${configurationKey}.cluster.port=5701
+```
+
+More advanced Hazelcast configuration settings are listed below, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.cluster.tcpipEnabled=true
+
+# ${configurationKey}.cluster.partitionMemberGroupType=HOST_AWARE|CUSTOM|PER_MEMBER|ZONE_AWARE|SPI
+
+# ${configurationKey}.cluster.evictionPolicy=LRU
+# ${configurationKey}.cluster.maxNoHeartbeatSeconds=300
+# ${configurationKey}.cluster.loggingType=slf4j
+# ${configurationKey}.cluster.portAutoIncrement=true
+# ${configurationKey}.cluster.maxHeapSizePercentage=85
+# ${configurationKey}.cluster.backupCount=1
+# ${configurationKey}.cluster.asyncBackupCount=0
+# ${configurationKey}.cluster.maxSizePolicy=USED_HEAP_PERCENTAGE
+# ${configurationKey}.cluster.timeout=5
+```
+
+### Multicast Discovery
+
+```properties
+# ${configurationKey}.cluster.multicastTrustedInterfaces=
+# ${configurationKey}.cluster.multicastEnabled=false
+# ${configurationKey}.cluster.multicastPort=
+# ${configurationKey}.cluster.multicastGroup=
+# ${configurationKey}.cluster.multicastTimeout=2
+# ${configurationKey}.cluster.multicastTimeToLive=32
+```
+
+### AWS EC2 Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.aws.accessKey=
+# ${configurationKey}.cluster.discovery.aws.secretKey=
+
+# ${configurationKey}.cluster.discovery.aws.iamRole=
+
+# ${configurationKey}.cluster.discovery.aws.region=us-east-1
+# ${configurationKey}.cluster.discovery.aws.hostHeader=
+# ${configurationKey}.cluster.discovery.aws.securityGroupName=
+# ${configurationKey}.cluster.discovery.aws.tagKey=
+# ${configurationKey}.cluster.discovery.aws.tagValue=
+# ${configurationKey}.cluster.discovery.aws.port=-1
+# ${configurationKey}.cluster.discovery.aws.connectionTimeoutSeconds=5
+```
+
+### Apache jclouds Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.jclouds.provider=
+# ${configurationKey}.cluster.discovery.jclouds.identity=
+# ${configurationKey}.cluster.discovery.jclouds.credential=
+# ${configurationKey}.cluster.discovery.jclouds.endpoint=
+# ${configurationKey}.cluster.discovery.jclouds.zones=
+# ${configurationKey}.cluster.discovery.jclouds.regions=
+# ${configurationKey}.cluster.discovery.jclouds.tagKeys=
+# ${configurationKey}.cluster.discovery.jclouds.tagValues=
+# ${configurationKey}.cluster.discovery.jclouds.group=
+# ${configurationKey}.cluster.discovery.jclouds.port=-1
+# ${configurationKey}.cluster.discovery.jclouds.roleName=
+# ${configurationKey}.cluster.discovery.jclouds.credentialPath=
+```
+
+### Microsoft Azure Discovery
+
+```properties
+# ${configurationKey}.cluster.discovery.enabled=true
+
+# ${configurationKey}.cluster.discovery.azure.subscriptionId=
+# ${configurationKey}.cluster.discovery.azure.clientId=
+# ${configurationKey}.cluster.discovery.azure.clientSecret=
+# ${configurationKey}.cluster.discovery.azure.tenantId=
+# ${configurationKey}.cluster.discovery.azure.clusterId=
+# ${configurationKey}.cluster.discovery.azure.groupName=
+```
+
+## RADIUS Configuration
+
+The following options related to RADIUS support in CAS apply equally to a number of CAS components (authentication, etc) 
+given the component's *configuration key*.
+
+`server` parameters defines identification values of authenticated service (CAS server), primarily `server.protocol`
+ for communication to RADIUS server identified by `client`.
+
+`client` parameters defines values for connecting RADIUS server. 
+Parameter `client.inetAddress` has possibility to contain more addresses separated by comma to define failover servers 
+when `failoverOnException` is set.   
+
+```properties
+# ${configurationKey}.server.nasPortId=-1
+# ${configurationKey}.server.nasRealPort=-1
+# ${configurationKey}.server.protocol=EAP_MSCHAPv2
+# ${configurationKey}.server.retries=3
+# ${configurationKey}.server.nasPortType=-1
+# ${configurationKey}.server.nasPort=-1
+# ${configurationKey}.server.nasIpAddress=
+# ${configurationKey}.server.nasIpv6Address=
+# ${configurationKey}.server.nasIdentifier=-1
+
+# ${configurationKey}.client.authenticationPort=1812
+# ${configurationKey}.client.sharedSecret=N0Sh@ar3d$ecReT
+# ${configurationKey}.client.socketTimeout=0
+# ${configurationKey}.client.inetAddress=localhost
+# ${configurationKey}.client.accountingPort=1813
+
+# ${configurationKey}.failoverOnException=false
+# ${configurationKey}.failoverOnAuthenticationFailure=false
+```
+
+## MongoDb Configuration
+
+The following options related to MongoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.mongo.host=localhost
+# ${configurationKey}.mongo.clientUri=localhost
+# ${configurationKey}.mongo.idleTimeout=30000
+# ${configurationKey}.mongo.port=27017
+# ${configurationKey}.mongo.dropCollection=false
+# ${configurationKey}.mongo.socketKeepAlive=false
+# ${configurationKey}.mongo.password=
+
+# Depending on the feature at hand, CAS may decide to dynamically create its own collections and ignore this setting.
+# ${configurationKey}.mongo.collection=cas-service-registry
+
+# ${configurationKey}.mongo.databaseName=cas-mongo-database
+# ${configurationKey}.mongo.timeout=5000
+# ${configurationKey}.mongo.userId=
+# ${configurationKey}.mongo.writeConcern=NORMAL
+# ${configurationKey}.mongo.authenticationDatabaseName=
+# ${configurationKey}.mongo.replicaSet=
+# ${configurationKey}.mongo.ssEnabled=false
+# ${configurationKey}.mongo.conns.lifetime=60000
+# ${configurationKey}.mongo.conns.perHost=10
+```
+
+## DynamoDb Configuration
+
+The following options related to DynamoDb support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# Path to an external properties file that contains 'accessKey' and 'secretKey' fields.
+# ${configurationKey}.dynamoDb.credentialsPropertiesFile=file:/path/to/file.properties
+
+# Alternatively, you may directly provide credentials to CAS
+# ${configurationKey}.dynamoDb.credentialAccessKey=
+# ${configurationKey}.dynamoDb.credentialSecretKey=
+
+# ${configurationKey}.dynamoDb.endpoint=http://localhost:8000
+# ${configurationKey}.dynamoDb.region=US_WEST_2|US_EAST_2|EU_WEST_2|<REGION-NAME>
+# ${configurationKey}.dynamoDb.regionOverride=
+# ${configurationKey}.dynamoDb.serviceNameIntern=
+
+# ${configurationKey}.dynamoDb.dropTablesOnStartup=false
+# ${configurationKey}.dynamoDb.preventTableCreationOnStartup=false
+# ${configurationKey}.dynamoDb.timeOffset=0
+
+# ${configurationKey}.dynamoDb.localInstance=false
+
+# ${configurationKey}.dynamoDb.readCapacity=10
+# ${configurationKey}.dynamoDb.writeCapacity=10
+# ${configurationKey}.dynamoDb.connectionTimeout=5000
+# ${configurationKey}.dynamoDb.requestTimeout=5000
+# ${configurationKey}.dynamoDb.socketTimeout=5000
+# ${configurationKey}.dynamoDb.useGzip=false
+# ${configurationKey}.dynamoDb.useReaper=false
+# ${configurationKey}.dynamoDb.useThrottleRetries=false
+# ${configurationKey}.dynamoDb.useTcpKeepAlive=false
+# ${configurationKey}.dynamoDb.protocol=HTTPS
+# ${configurationKey}.dynamoDb.clientExecutionTimeout=10000
+# ${configurationKey}.dynamoDb.cacheResponseMetadata=false
+# ${configurationKey}.dynamoDb.localAddress=
+# ${configurationKey}.dynamoDb.maxConnections=10
+```
+
+## RESTful Integrations
+
+The following options related to features in CAS that provide REST support to fetch and update data. These settings apply equally, given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.method=GET|POST
+# ${configurationKey}.order=0
+# ${configurationKey}.caseInsensitive=false
+# ${configurationKey}.basicAuthUsername=uid
+# ${configurationKey}.basicAuthPassword=password
+# ${configurationKey}.url=https://rest.somewhere.org/attributes
+```
+
+## Redis Configuration
+
+The following options related to Redis support in CAS apply equally to a number of CAS components (ticket registries, etc) given the component's *configuration key*:
+
+```properties
+# ${configurationKey}.redis.host=localhost
+# ${configurationKey}.redis.database=0
+# ${configurationKey}.redis.port=6380
+# ${configurationKey}.redis.password=
+# ${configurationKey}.redis.timeout=2000
+# ${configurationKey}.redis.useSsl=false
+# ${configurationKey}.redis.usePool=true
+
+# ${configurationKey}.redis.pool.max-active=20
+# ${configurationKey}.redis.pool.maxIdle=8
+# ${configurationKey}.redis.pool.minIdle=0
+# ${configurationKey}.redis.pool.maxActive=8
+# ${configurationKey}.redis.pool.maxWait=-1
+# ${configurationKey}.redis.pool.numTestsPerEvictionRun=0
+# ${configurationKey}.redis.pool.softMinEvictableIdleTimeMillis=0
+# ${configurationKey}.redis.pool.minEvictableIdleTimeMillis=0
+# ${configurationKey}.redis.pool.lifo=true
+# ${configurationKey}.redis.pool.fairness=false
+
+# ${configurationKey}.redis.pool.testOnCreate=false
+# ${configurationKey}.redis.pool.testOnBorrow=false
+# ${configurationKey}.redis.pool.testOnReturn=false
+# ${configurationKey}.redis.pool.testWhileIdle=false
+
+# ${configurationKey}.redis.sentinel.master=mymaster
+# ${configurationKey}.redis.sentinel.nodes[0]=localhost:26377
+# ${configurationKey}.redis.sentinel.nodes[1]=localhost:26378
+# ${configurationKey}.redis.sentinel.nodes[2]=localhost:26379
+```
+
 ## DDL Configuration
 
-Note that the default value for Hibernate's DDL setting is `create-drop`
-which may not be appropriate for use in production. Setting the value to
+Note that the default value for Hibernate's DDL setting is `create-drop` which may not be appropriate for use in production. Setting the value to
 `validate` may be more desirable, but any of the following options can be used:
 
-| Type                 | Description                            
+| Type                 | Description
 |----------------------|----------------------------------------------------------
 | `validate`           | Validate the schema, but make no changes to the database.
 | `update`             | Update the schema.
 | `create`             | Create the schema, destroying previous data.
 | `create-drop`        | Drop the schema at the end of the session.
+| `none`        | Do nothing.
+
+Note that during a version migration where any schema has changed `create-drop` will result
+in the loss of all data as soon as CAS is started. For transient data like tickets this is probably
+not an issue, but in cases like the audit table important data could be lost. Using `update`, while safe
+for data, is confirmed to result in invalid database state. `validate` or `none` settings
+are likely the only safe options for production use.
 
 For more information on configuration of transaction levels and propagation behaviors,
 please review [this guide](http://docs.spring.io/spring-framework/docs/current/javadoc-api/).
+
+## SAML2 Service Provider Integrations
+
+The settings defined for each service provider simply attempt to automate the creation of a [SAML service definition](Configuring-SAML2-Authentication.html#saml-services) and nothing more. If you find the applicable settings lack in certain areas, it is best to fall back onto the native configuration strategy for registering SAML service providers with CAS which would depend on your service registry of choice.
+
+Each SAML service provider supports the following settings:
+
+| Name                  |  Description
+|-----------------------|---------------------------------------------------------------------------
+| `metadata`            | Location of metadata for the service provider (i.e URL, path, etc)
+| `name`                | The name of the service provider registered in the service registry.
+| `description`         | The description of the service provider registered in the service registry.
+| `nameIdAttribute`     | Attribute to use when generating name ids for this service provider.
+| `nameIdFormat`        | The name of the service provider registered in the service registry.
+| `attributes`          | Attributes to release to the service provider, which may virtually be mapped and renamed.
+| `signatureLocation`   | Signature location to verify metadata.
+| `entityIds`           | List of entity ids allowed for this service provider.
+| `signResponses`       | Indicate whether responses should be signed. Default is `true`.
+| `signAssertions`      | Indicate whether assertions should be signed. Default is `false`.
+
+
+The only required setting that would activate the automatic configuration for a service provider is the presence and definition of metadata. All other settings are optional. 
+
+The following  options apply equally to SAML2 service provider integrations, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.metadata=/etc/cas/saml/dropbox.xml
+# ${configurationKey}.name=Dropbox
+# ${configurationKey}.description=Dropbox Integration
+# ${configurationKey}.nameIdAttribute=mail
+# ${configurationKey}.nameIdFormat=
+# ${configurationKey}.signatureLocation=
+# ${configurationKey}.attributes=
+# ${configurationKey}.entityIds=
+# ${configurationKey}.signResponses=
+# ${configurationKey}.signAssertions=
+```
+
+## Multifactor Authentication Bypass
+
+The following bypass options apply equally to multifactor authentication providers given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.bypass.type=DEFAULT|GROOVY|REST
+
+# ${configurationKey}.bypass.principalAttributeName=bypass|skip
+# ${configurationKey}.bypass.principalAttributeValue=true|enabled.+
+
+# ${configurationKey}.bypass.authenticationAttributeName=bypass|skip
+# ${configurationKey}.bypass.authenticationAttributeValue=allowed.+|enabled.+
+
+# ${configurationKey}.bypass.authenticationHandlerName=AcceptUsers.+
+# ${configurationKey}.bypass.authenticationMethodName=LdapAuthentication.+
+
+# ${configurationKey}.bypass.credentialClassType=UsernamePassword.+
+
+# ${configurationKey}.bypass.httpRequestRemoteAddress=127.+|example.*
+# ${configurationKey}.bypass.httpRequestHeaders=header-X-.+|header-Y-.+
+```
+
+In multifactor authentication bypass is determined via REST, RESTful settings are available [here](#restful-integrations) under the configuration key `${configurationKey}.bypass.rest`.
+
+## Couchbase Integration Settings
+
+The following  options are shared and apply when CAS is configured to integrate with Couchbase (i.e ticket registry, etc), given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.nodeSet=localhost:8091
+# ${configurationKey}.password=
+# ${configurationKey}.queryEnabled=true
+# ${configurationKey}.bucket=default
+# ${configurationKey}.timeout=PT30S
+```
+
+## Memcached Integration Settings
+
+The following  options are shared and apply when CAS is configured to integrate with memcached (i.e ticket registry, etc), given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.memcached.servers=localhost:11211
+# ${configurationKey}.memcached.locatorType=ARRAY_MOD
+# ${configurationKey}.memcached.failureMode=Redistribute
+# ${configurationKey}.memcached.hashAlgorithm=FNV1_64_HASH
+# ${configurationKey}.memcached.shouldOptimize=false
+# ${configurationKey}.memcached.daemon=true
+# ${configurationKey}.memcached.maxReconnectDelay=-1
+# ${configurationKey}.memcached.useNagleAlgorithm=false
+# ${configurationKey}.memcached.shutdownTimeoutSeconds=-1
+# ${configurationKey}.memcached.opTimeout=-1
+# ${configurationKey}.memcached.timeoutExceptionThreshold=2
+# ${configurationKey}.memcached.maxTotal=20
+# ${configurationKey}.memcached.maxIdle=8
+# ${configurationKey}.memcached.minIdle=0
+
+# ${configurationKey}.memcached.transcoder=KRYO|SERIAL|WHALIN|WHALINV1
+# ${configurationKey}.memcached.transcoderCompressionThreshold=16384
+# ${configurationKey}.memcached.kryoAutoReset=false
+# ${configurationKey}.memcached.kryoObjectsByReference=false
+# ${configurationKey}.memcached.kryoRegistrationRequired=false
+```
+
+## Password Policy Settings
+
+The following  options are shared and apply when CAS is configured to integrate with account sources and authentication strategies that support password policy enforement and detection, given the provider's *configuration key*. Note that certain setting may only be applicable if the underlying account source is LDAP and are only taken into account if the authentication strategy configured in CAS is able to honor and recognize them: 
+
+```properties
+# ${configurationKey}.type=GENERIC|AD|FreeIPA|EDirectory
+
+# ${configurationKey}.enabled=true
+# ${configurationKey}.policyAttributes.accountLocked=javax.security.auth.login.AccountLockedException
+# ${configurationKey}.loginFailures=5
+# ${configurationKey}.warningAttributeValue=
+# ${configurationKey}.warningAttributeName=
+# ${configurationKey}.displayWarningOnMatch=true
+# ${configurationKey}.warnAll=true
+# ${configurationKey}.warningDays=30
+
+# An implementation of `org.ldaptive.auth.AuthenticationResponseHandler`
+# ${configurationKey}.customPolicyClass=com.example.MyAuthenticationResponseHandler
+
+# ${configurationKey}.strategy=DEFAULT|GROOVY|REJECT_RESULT_CODE
+# ${configurationKey}.groovy.location=file:/etc/cas/config/password-policy.groovy
+```
+
+#### Password Policy Strategies
+
+Password policy strategy types are outlined below. The strategy evaluates the authentication response received from LDAP, etc and is allowed to review it upfront in order to further examine whether account state, messages and warnings is eligible for further investigation.
+
+| Option        | Description
+|---------------|-----------------------------------------------------------------------------
+| `DEFAULT`     | Accepts the auhentication response as is, and processes account state, if any.
+| `GROOVY`      | Examine the authentication response as part of a Groovy script dynamically. The responsibility of handling account state changes and warnings is entirely delegated to the script.
+| `REJECT_RESULT_CODE`  | An extension of the `DEFAULT` where account state is processed only if the result code of the authentication response is not blacklisted in the configuration. By default `INVALID_CREDENTIALS(49)` prevents CAS from handling account states.
+
+If the password policy strategy is to be handed off to a Groovy script, the outline of the script may be as follows:
+
+```groovy
+import java.util.*
+import org.ldaptive.auth.*
+import org.apereo.cas.*
+import org.apereo.cas.authentication.*
+import org.apereo.cas.authentication.support.*
+
+def List<MessageDescriptor> run(final Object... args) {
+    def response = args[0]
+    def configuration = args[1];
+    def logger = args[2]
+
+    logger.info("Handling password policy [{}] via ${configuration.getAccountStateHandler()}", response)
+
+    def accountStateHandler = configuration.getAccountStateHandler()
+    return accountStateHandler.handle(response, configuration)
+}
+```
+
+The parameters passed are as follows:
+
+| Parameter             | Description
+|-----------------------|-----------------------------------------------------------------------------------
+| `response`            | The LDAP authentication response of type `org.ldaptive.auth.AuthenticationResponse`
+| `configuration`       | The LDAP password policy configuration carrying the account state handler defined.
+| `logger`              | The object responsible for issuing log messages such as `logger.info(...)`.
+
+
+
+## Delegated Authentication Settings
+
+The following  options are shared and apply when CAS is configured to delegate authentication 
+to an external provider such as Yahoo, given the provider's *configuration key*:
+
+```properties
+# ${configurationKey}.id=
+# ${configurationKey}.secret=
+# ${configurationKey}.clientName=My Provider
+# ${configurationKey}.autoRedirect=false
+```
+
+
+## LDAP Connection Settings
+
+The following  options apply  to features that integrate with an LDAP server (i.e. authentication, attribute resolution, etc) given the provider's *configuration key*:
+
+```properties
+#${configurationKey}.ldapUrl=ldaps://ldap1.example.edu ldaps://ldap2.example.edu
+#${configurationKey}.bindDn=cn=Directory Manager,dc=example,dc=org
+#${configurationKey}.bindCredential=Password
+
+#${configurationKey}.poolPassivator=NONE|CLOSE|BIND
+#${configurationKey}.connectionStrategy=
+#${configurationKey}.providerClass=org.ldaptive.provider.unboundid.UnboundIDProvider
+#${configurationKey}.connectTimeout=PT5S
+#${configurationKey}.trustCertificates=
+#${configurationKey}.keystore=
+#${configurationKey}.keystorePassword=
+#${configurationKey}.keystoreType=JKS|JCEKS|PKCS12
+#${configurationKey}.minPoolSize=3
+#${configurationKey}.maxPoolSize=10
+#${configurationKey}.validateOnCheckout=true
+#${configurationKey}.validatePeriodically=true
+#${configurationKey}.validatePeriod=PT5M
+#${configurationKey}.validateTimeout=PT5S
+#${configurationKey}.failFast=true
+#${configurationKey}.idleTime=PT10M
+#${configurationKey}.prunePeriod=PT2H
+#${configurationKey}.blockWaitTime=PT3S
+#${configurationKey}.useSsl=true
+#${configurationKey}.useStartTls=false
+#${configurationKey}.responseTimeout=PT5S
+#${configurationKey}.allowMultipleDns=false
+#${configurationKey}.name=
+```
+
+### Connection Initialization
+
+LDAP connection configuration injected into the LDAP connection pool can be initialized with the following parameters:
+
+| Behavior                               | Description              
+|----------------------------------------|-------------------------------------------------------------------
+| `bindDn`/`bindCredential` provided     | Use the provided credentials to bind when initializing connections.
+| `bindDn`/`bindCredential` set to `*`   | Use a fast-bind strategy to initialize the pool.   
+| `bindDn`/`bindCredential` set to blank | Skip connection initializing; perform operations anonymously.
+| SASL mechanism provided                | Use the given SASL mechanism to bind when initializing connections.
+
+### Passivators
+
+The following options can be used to passivate objects when they are checked back into the LDAP connection pool:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No passivation takes place.
+| `CLOSE`                 | Passivates a connection by attempting to close it.
+| `BIND`                  | The default behavior which passivates a connection by performing a bind operation on it. This option requires the availability of bind credentials when establishing connections to LDAP.
+
+#### Why Passivators?
+
+You may receive unexpected LDAP failures, when CAS is configured to authenticate using `DIRECT` or `AUTHENTICATED` types and LDAP is locked down to not allow anonymous binds/searches. Every second attempt with a given LDAP connection from the pool would fail if it was on the same connection as a failed login attempt, and the regular connection validator would similarly fail. When a connection is returned back to a pool, it still may contain the principal and credentials from the previous attempt. Before the next bind attempt using that connection, the validator tries to validate the connection again but fails because it's no longer trying with the configured bind credentials but with whatever user DN was used in the previous step. Given the validation failure, the connection is closed and CAS would deny access by default. Passivators attempt to reconnect to LDAP with the configured bind credentials, effectively resetting the connection to what it should be after each bind request.
+
+Furthermore if you are seeing errors in the logs that resemble a *<Operation exception encountered, reopening connection>* type of message, this usually is an indication that the connection pool's validation timeout established and created by CAS is greater than the timeout configured in the LDAP server, or more likely, in the load balancer in front of the LDAP servers. You can adjust the LDAP server session's timeout for connections, or you can teach CAS to use a validity period that is equal or less than the LDAP server session's timeout.
+
+### Connection Strategies
+
+If multiple URLs are provided as the LDAP url, this describes how each URL will be processed.
+
+| Provider              | Description              
+|-----------------------|-----------------------------------------------------------------------------------------------
+| `DEFAULT`             | The default JNDI provider behavior will be used.    
+| `ACTIVE_PASSIVE`      | First LDAP will be used for every request unless it fails and then the next shall be used.    
+| `ROUND_ROBIN`         | For each new connection the next url in the list will be used.      
+| `RANDOM`              | For each new connection a random LDAP url will be selected.
+| `DNS_SRV`             | LDAP urls based on DNS SRV records of the configured/given LDAP url will be used.  
+
+### LDAP SASL Mechanisms
+
+```properties
+#${configurationKey}.saslMechanism=GSSAPI|DIGEST_MD5|CRAM_MD5|EXTERNAL
+#${configurationKey}.saslRealm=EXAMPLE.COM
+#${configurationKey}.saslAuthorizationId=
+#${configurationKey}.saslMutualAuth=
+#${configurationKey}.saslQualityOfProtection=
+#${configurationKey}.saslSecurityStrength=
+```
+
+### LDAP Connection Validators
+
+The following LDAP validators can be used to test connection health status:
+
+| Type                    | Description
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `NONE`                  | No validation takes place.
+| `SEARCH`                | Validates a connection is healthy by performing a search operation. Validation is considered successful if the search result size is greater than zero.
+| `COMPARE`               | Validates a connection is healthy by performing a compare operation.
+
+```properties
+#${configurationKey}.validator.type=NONE|SEARCH|COMPARE
+#${configurationKey}.validator.baseDn=
+#${configurationKey}.validator.searchFilter=(objectClass=*)
+#${configurationKey}.validator.scope=OBJECT|ONELEVEL|SUBTREE
+#${configurationKey}.validator.attributeName=objectClass
+#${configurationKey}.validator.attributeValues=top
+#${configurationKey}.validator.dn=
+```
+
+A number of components/features in CAS allow you to explicitly indicate a `type` for the LDAP server, specially in cases where CAS needs to update an attribute, etc in LDAP (i.e. consent, password management, etc). The relevant setting would be:
+
+```properties
+#${configurationKey}.type=NONE|SEARCH|COMPARE
+```
+
+The following types are supported:
+
+| Type                    | Description
+|-------------------------|--------------------------------------------------
+| `AD`                                                     | Active Directory.
+| `FreeIPA`                                    | FreeIPA Directory Server.
+| `EDirectory`                         | NetIQ eDirectory.
+| `GENERIC`                              | All other directory servers (i.e OpenLDAP, etc).
+
+### LDAP Authentication/Search Settings
+
+In addition to common LDAP connection settings above, there are cases where CAS simply need to execute authenticate against an LDAP server to fetch an account or set of attributes or execute a search query in general. The following  options apply  given the provider's *configuration key*:
+
+**Note:** Failure to specify adequate properties such as `type`, `ldapUrl`, etc will simply deactivate LDAP  altogether silently.
+
+```properties
+# ${configurationKey}.type=AD|AUTHENTICATED|DIRECT|ANONYMOUS
+
+# ${configurationKey}.baseDn=dc=example,dc=org
+# ${configurationKey}.subtreeSearch=true
+
+# ${configurationKey}.enhanceWithEntryResolver=true
+# ${configurationKey}.derefAliases=NEVER|SEARCHING|FINDING|ALWAYS
+# ${configurationKey}.dnFormat=uid=%s,ou=people,dc=example,dc=org
+# ${configurationKey}.principalAttributePassword=password
+```
+
+The following authentication types are supported:
+
+| Type                    | Description                            
+|-------------------------|----------------------------------------------------------------------------------------------------
+| `AD`                    | Acive Directory - Users authenticate with `sAMAccountName` typically using a DN format.     
+| `AUTHENTICATED`         | Manager bind/search type of authentication. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+| `DIRECT`                | Compute user DN from a format string and perform simple bind. This is relevant when no search is required to compute the DN needed for a bind operation. This option is useful when all users are under a single branch in the directory, e.g. `ou=Users,dc=example,dc=org`, or the username provided on the CAS login form is part of the DN, e.g. `uid=%s,ou=Users,dc=exmaple,dc=org`
+| `ANONYMOUS`             | Similar semantics as `AUTHENTICATED` except no `bindDn` and `bindCredential` may be specified to initialize the connection. If `principalAttributePassword` is empty then a user simple bind is done to validate credentials. Otherwise the given attribute is compared with the given `principalAttributePassword` using the `SHA` encrypted value of it.
+
+### LDAP Search Entry Handlers
+
+```properties
+# ${configurationKey}.searchEntryHandlers[0].type=CASE_CHANGE|DN_ATTRIBUTE_ENTRY|MERGE| \
+#                                               OBJECT_GUID|OBJECT_SID|PRIMARY_GROUP| \
+#                                               RANGE_ENTRY|RECURSIVE_ENTRY
+
+# ${configurationKey}.searchEntryHandlers[0].caseChange.dnCaseChange=NONE|LOWER|UPPER
+# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNameCaseChange=NONE|LOWER|UPPER
+# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeValueCaseChange=NONE|LOWER|UPPER
+# ${configurationKey}.searchEntryHandlers[0].caseChange.attributeNames=
+
+# ${configurationKey}.searchEntryHandlers[0].dnAttribute.dnAttributeName=entryDN
+# ${configurationKey}.searchEntryHandlers[0].dnAttribute.addIfExists=false
+
+# ${configurationKey}.searchEntryHandlers[0].primaryGroupId.groupFilter=(&(objectClass=group)(objectSid={0}))
+# ${configurationKey}.searchEntryHandlers[0].primaryGroupId.baseDn=
+
+# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.mergeAttributeName=
+# ${configurationKey}.searchEntryHandlers[0].mergeAttribute.attribueNames=
+
+# ${configurationKey}.searchEntryHandlers[0].recursive.searchAttribute=
+# ${configurationKey}.searchEntryHandlers[0].recursive.mergeAttributes=
+```

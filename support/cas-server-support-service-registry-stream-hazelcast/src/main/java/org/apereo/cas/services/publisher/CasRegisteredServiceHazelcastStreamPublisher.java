@@ -1,11 +1,13 @@
 package org.apereo.cas.services.publisher;
 
-import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.DistributedCacheManager;
+import org.apereo.cas.DistributedCacheObject;
+import org.apereo.cas.StringBean;
 import org.apereo.cas.services.RegisteredService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationEvent;
+
+import java.util.Date;
 
 /**
  * This is {@link CasRegisteredServiceHazelcastStreamPublisher}.
@@ -13,22 +15,35 @@ import org.springframework.context.ApplicationEvent;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class CasRegisteredServiceHazelcastStreamPublisher extends BaseCasRegisteredServiceStreamPublisher {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasRegisteredServiceHazelcastStreamPublisher.class);
-    
-    private final HazelcastInstance instance;
-    private final String mapName;
 
-    public CasRegisteredServiceHazelcastStreamPublisher(final HazelcastInstance instance,
-                                                        final PublisherIdentifier publisherId) {
+
+    private final DistributedCacheManager<RegisteredService, DistributedCacheObject<RegisteredService>> distributedCacheManager;
+
+    public CasRegisteredServiceHazelcastStreamPublisher(final DistributedCacheManager instance,
+                                                        final StringBean publisherId) {
         super(publisherId);
-        this.instance = instance;
-        this.mapName = instance.getConfig().getMapConfigs().keySet().iterator().next();
+        this.distributedCacheManager = instance;
+    }
+    @Override
+    protected void handleCasRegisteredServiceDeletedEvent(final RegisteredService service, final ApplicationEvent event) {
+        final DistributedCacheObject<RegisteredService> item = getCacheObject(service, event);
+        LOGGER.debug("Removing service [{}] from cache [{}] @ [{}]", service, this.distributedCacheManager.getName(), item.getTimestamp());
+        this.distributedCacheManager.update(service, item);
     }
 
     @Override
-    protected void publishInternal(final RegisteredService service, final ApplicationEvent event) {
-        final IMap<String, RegisteredServicesQueuedEvent> inst = instance.getMap(mapName);
-        inst.set(service.getName(), getEventToPublish(service, event));
+    protected void handleCasRegisteredServiceUpdateEvents(final RegisteredService service, final ApplicationEvent event) {
+        final DistributedCacheObject<RegisteredService> item = getCacheObject(service, event);
+        LOGGER.debug("Storing item [{}] to cache [{}] @ [{}]", item, this.distributedCacheManager.getName(), item.getTimestamp());
+        this.distributedCacheManager.set(service, item);
+    }
+
+    private DistributedCacheObject<RegisteredService> getCacheObject(final RegisteredService service, final ApplicationEvent event) {
+        final long time = new Date().getTime();
+        final DistributedCacheObject<RegisteredService> item = new DistributedCacheObject<>(time, service);
+        item.getProperties().put("event", event);
+        return item;
     }
 }

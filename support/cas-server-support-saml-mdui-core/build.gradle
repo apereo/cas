@@ -1,11 +1,12 @@
 description = "Apereo CAS SAML Server MDUI Core"
 dependencies {
     implementation project(":core:cas-server-core-services")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-util-api")
     implementation project(":core:cas-server-core-webflow")
+    implementation project(":core:cas-server-core-webflow-api")
     implementation project(":support:cas-server-support-saml")
     implementation project(":support:cas-server-support-saml-core")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-configuration-api")
     implementation libraries.opensaml
 
 }

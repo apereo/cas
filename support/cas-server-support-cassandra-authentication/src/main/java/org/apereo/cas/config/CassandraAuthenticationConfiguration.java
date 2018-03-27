@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationHandler;
 import org.apereo.cas.authentication.CassandraAuthenticationHandler;
@@ -31,6 +32,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration("cassandraAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CassandraAuthenticationConfiguration {
 
     @Autowired
@@ -59,10 +61,8 @@ public class CassandraAuthenticationConfiguration {
         final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
         return new DefaultCassandraRepository(cassandra, cassandraSessionFactory);
     }
-
-
+    
     @Bean
-    @RefreshScope
     public AuthenticationHandler cassandraAuthenticationHandler() {
         final CassandraAuthenticationProperties cassandra = casProperties.getAuthn().getCassandra();
         final CassandraAuthenticationHandler handler = new CassandraAuthenticationHandler(cassandra.getName(), servicesManager,

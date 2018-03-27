@@ -1,8 +1,9 @@
 package org.apereo.cas.support.events.ticket;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.AbstractCasEvent;
 import org.apereo.cas.ticket.TicketGrantingTicket;
+import lombok.ToString;
 
 /**
  * Concrete subclass of {@code AbstractCasEvent} representing single sign on session
@@ -12,6 +13,8 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
  * @author Dmitriy Kopylenko
  * @since 4.2
  */
+@Slf4j
+@ToString
 public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
 
     private static final long serialVersionUID = 584961303690286494L;
@@ -31,13 +34,5 @@ public class CasTicketGrantingTicketDestroyedEvent extends AbstractCasEvent {
 
     public TicketGrantingTicket getTicketGrantingTicket() {
         return this.ticketGrantingTicket;
-    }
-
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("ticketGrantingTicket", this.ticketGrantingTicket)
-                .toString();
     }
 }

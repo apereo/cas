@@ -1,12 +1,13 @@
 package org.apereo.cas.support.oauth.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlan;
+import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
 import org.apereo.cas.authentication.principal.PrincipalResolver;
-import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.boot.test.context.TestConfiguration;
 
 /**
  * This is {@link CasOAuth20TestAuthenticationEventExecutionPlanConfiguration}.
@@ -14,7 +15,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
-@Configuration("casOAuth20TestAuthenticationEventExecutionPlanConfiguration")
+@TestConfiguration("casOAuth20TestAuthenticationEventExecutionPlanConfiguration")
+@Slf4j
 public class CasOAuth20TestAuthenticationEventExecutionPlanConfiguration implements AuthenticationEventExecutionPlanConfigurer {
     @Autowired
     @Qualifier("personDirectoryPrincipalResolver")

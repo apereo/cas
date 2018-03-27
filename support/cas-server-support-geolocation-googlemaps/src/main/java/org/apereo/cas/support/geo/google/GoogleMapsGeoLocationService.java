@@ -7,12 +7,12 @@ import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 import io.userinfo.client.UserInfo;
 import io.userinfo.client.model.Info;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
 import org.apereo.cas.configuration.model.support.geo.googlemaps.GoogleMapsProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.support.geo.AbstractGeoLocationService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.net.InetAddress;
 import java.util.Arrays;
@@ -24,10 +24,9 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(GoogleMapsGeoLocationService.class);
-
+    
     private final GeoApiContext context;
 
     public GoogleMapsGeoLocationService(final GoogleMapsProperties properties) {
@@ -41,7 +40,7 @@ public class GoogleMapsGeoLocationService extends AbstractGeoLocationService {
             builder.enterpriseCredentials(properties.getClientId(), properties.getClientSecret());
         }
         builder.apiKey(properties.getApiKey())
-                .connectTimeout(properties.getConnectTimeout(), TimeUnit.MILLISECONDS);
+                .connectTimeout(Beans.newDuration(properties.getConnectTimeout()).toMillis(), TimeUnit.MILLISECONDS);
         
         this.context = builder.build();
     }

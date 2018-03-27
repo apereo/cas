@@ -1,5 +1,6 @@
 package org.apereo.cas.support.openid.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.support.openid.OpenIdProtocolConstants;
 import org.junit.Test;
@@ -12,6 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class OpenIdServiceFactoryTests {
 
     @Test

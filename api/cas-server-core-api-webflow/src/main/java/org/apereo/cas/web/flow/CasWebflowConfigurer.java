@@ -1,6 +1,7 @@
 package org.apereo.cas.web.flow;
 
 import org.springframework.binding.expression.Expression;
+import org.springframework.core.Ordered;
 import org.springframework.webflow.action.EvaluateAction;
 import org.springframework.webflow.engine.ActionState;
 import org.springframework.webflow.engine.DecisionState;
@@ -20,7 +21,7 @@ import org.springframework.webflow.execution.ViewFactory;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
-public interface CasWebflowConfigurer {
+public interface CasWebflowConfigurer extends Ordered {
 
     /**
      * Main login flow id.
@@ -257,4 +258,8 @@ public interface CasWebflowConfigurer {
      * @return the flow
      */
     Flow buildFlow(String location, String id);
+
+    default String getName() {
+        return getClass().getSimpleName();
+    }
 }

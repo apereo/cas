@@ -3,6 +3,7 @@ package org.apereo.cas.authentication;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.junit.Before;
 import org.junit.Test;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author David Rodriguez
  * @since 5.0.0
  */
+@Slf4j
 public class DefaultAuthenticationTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "defaultAuthentication.json");
@@ -25,7 +27,7 @@ public class DefaultAuthenticationTests {
     private ObjectMapper mapper;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         mapper = Jackson2ObjectMapperBuilder.json()
                 .featuresToDisable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE)
                 .featuresToDisable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)

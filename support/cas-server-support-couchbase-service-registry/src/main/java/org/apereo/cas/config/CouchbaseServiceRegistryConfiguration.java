@@ -1,11 +1,15 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.couchbase.serviceregistry.CouchbaseServiceRegistryProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.couchbase.core.CouchbaseClientFactory;
-import org.apereo.cas.services.CouchbaseServiceRegistryDao;
-import org.apereo.cas.services.ServiceRegistryDao;
-import org.apereo.cas.services.util.RegisteredServiceJsonSerializer;
+import org.apereo.cas.services.CouchbaseServiceRegistry;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
+import org.apereo.cas.services.util.DefaultRegisteredServiceJsonSerializer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -23,8 +27,9 @@ import java.util.Set;
  */
 @Configuration("couchbaseServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class CouchbaseServiceRegistryConfiguration {
-    
+@Slf4j
+public class CouchbaseServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
+
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -39,15 +44,20 @@ public class CouchbaseServiceRegistryConfiguration {
         final CouchbaseServiceRegistryProperties couchbase = casProperties.getServiceRegistry().getCouchbase();
         final Set<String> nodes = StringUtils.commaDelimitedListToSet(couchbase.getNodeSet());
         return new CouchbaseClientFactory(nodes, couchbase.getBucket(),
-                couchbase.getPassword(), couchbase.getTimeout(),
-                CouchbaseServiceRegistryDao.UTIL_DOCUMENT,
-                CouchbaseServiceRegistryDao.ALL_VIEWS);
+            couchbase.getPassword(),
+            Beans.newDuration(couchbase.getTimeout()).toMillis(),
+            CouchbaseServiceRegistry.UTIL_DOCUMENT,
+            CouchbaseServiceRegistry.ALL_VIEWS);
     }
 
     @Bean
     @RefreshScope
-    public ServiceRegistryDao serviceRegistryDao() {
-        return new CouchbaseServiceRegistryDao(serviceRegistryCouchbaseClientFactory(), new RegisteredServiceJsonSerializer(),
-                casProperties.getServiceRegistry().getCouchbase().isQueryEnabled());
+    public ServiceRegistry couchbaseServiceRegistry() {
+        return new CouchbaseServiceRegistry(serviceRegistryCouchbaseClientFactory(), new DefaultRegisteredServiceJsonSerializer());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(couchbaseServiceRegistry());
     }
 }

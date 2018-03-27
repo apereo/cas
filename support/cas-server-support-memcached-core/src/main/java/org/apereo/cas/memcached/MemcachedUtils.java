@@ -1,14 +1,15 @@
 package org.apereo.cas.memcached;
 
+import lombok.experimental.UtilityClass;
+import lombok.extern.slf4j.Slf4j;
 import net.spy.memcached.transcoders.SerializingTranscoder;
 import net.spy.memcached.transcoders.Transcoder;
 import net.spy.memcached.transcoders.WhalinTranscoder;
 import net.spy.memcached.transcoders.WhalinV1Transcoder;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.model.support.memcached.BaseMemcachedProperties;
+import org.apereo.cas.memcached.kryo.CasKryoPool;
 import org.apereo.cas.memcached.kryo.CasKryoTranscoder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -19,11 +20,9 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
-public final class MemcachedUtils {
-    private static final Logger LOGGER = LoggerFactory.getLogger(MemcachedUtils.class);
-
-    private MemcachedUtils() {
-    }
+@Slf4j
+@UtilityClass
+public class MemcachedUtils {
 
     /**
      * New transcoder transcoder.
@@ -62,10 +61,11 @@ public final class MemcachedUtils {
                 return whalinv1;
             case "kryo":
             default:
-                final CasKryoTranscoder kryo = new CasKryoTranscoder(kryoSerializableClasses);
-                kryo.setAutoReset(memcachedProperties.isKryoAutoReset());
-                kryo.setRegistrationRequired(memcachedProperties.isKryoRegistrationRequired());
-                kryo.setReplaceObjectsByReferences(memcachedProperties.isKryoObjectsByReference());
+                final CasKryoPool kryoPool = new CasKryoPool(kryoSerializableClasses, true,
+                        memcachedProperties.isKryoRegistrationRequired(),
+                        memcachedProperties.isKryoObjectsByReference(),
+                        memcachedProperties.isKryoAutoReset());
+                final CasKryoTranscoder kryo = new CasKryoTranscoder(kryoPool);
                 LOGGER.debug("Creating memcached transcoder [{}]", kryo.getClass().getName());
                 return kryo;
         }

@@ -1,0 +1,13 @@
+description = "Apereo CAS Core Logging Splunk Support"
+
+dependencies {
+    api project(":api:cas-server-core-api-ticket")
+
+    implementation libraries.splunklogging
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
+
+    compileOnly project(":core:cas-server-core-logging-config")
+}
+
+

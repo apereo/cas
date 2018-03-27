@@ -1,5 +1,6 @@
 package org.apereo.cas.web;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasEmbeddedContainerUtils;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
@@ -12,6 +13,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class CasWebApplicationServletInitializer extends SpringBootServletInitializer {
 
     @Override

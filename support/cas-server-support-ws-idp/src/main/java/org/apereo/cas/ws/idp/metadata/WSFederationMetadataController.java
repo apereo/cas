@@ -1,10 +1,10 @@
 package org.apereo.cas.ws.idp.metadata;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.wss4j.common.util.DOM2Writer;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,14 +21,12 @@ import java.io.PrintWriter;
  * @since 5.1.0
  */
 @Controller("WSFederationMetadataController")
+@Slf4j
+@AllArgsConstructor
 public class WSFederationMetadataController {
     private static final long serialVersionUID = -6927484130511112872L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationMetadataController.class);
-    private final CasConfigurationProperties casProperties;
 
-    public WSFederationMetadataController(final CasConfigurationProperties casProperties) {
-        this.casProperties = casProperties;
-    }
+    private final CasConfigurationProperties casProperties;
 
     /**
      * Get Metadata.

@@ -1,6 +1,10 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.lang3.ObjectUtils;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.support.events.service.CasRegisteredServiceLoadedEvent;
 
 import java.util.ArrayList;
@@ -13,25 +17,15 @@ import java.util.List;
  * @author Scott Battaglia
  * @since 3.1
  */
-public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
+@Slf4j
+@ToString
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class InMemoryServiceRegistry extends AbstractServiceRegistry {
 
     private List<RegisteredService> registeredServices = new ArrayList<>();
-
-    /**
-     * Instantiates a new In memory service registry.
-     */
-    public InMemoryServiceRegistry() {
-    }
-
-    /**
-     * Instantiates a new In memory service registry dao.
-     *
-     * @param registeredServices the registered services
-     */
-    public InMemoryServiceRegistry(final List<RegisteredService> registeredServices) {
-        this.registeredServices = registeredServices;
-    }
-
+    
     @Override
     public boolean delete(final RegisteredService registeredService) {
         return this.registeredServices.remove(registeredService);
@@ -56,20 +50,14 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
     @Override
     public RegisteredService save(final RegisteredService registeredService) {
         if (registeredService.getId() == RegisteredService.INITIAL_IDENTIFIER_VALUE) {
-            ((AbstractRegisteredService) registeredService).setId(findHighestId() + 1);
+            registeredService.setId(findHighestId() + 1);
         }
-
         final RegisteredService svc = findServiceById(registeredService.getId());
         if (svc != null) {
             this.registeredServices.remove(svc);
         }
         this.registeredServices.add(registeredService);
-
         return registeredService;
-    }
-
-    public void setRegisteredServices(final List registeredServices) {
-        this.registeredServices = ObjectUtils.defaultIfNull(registeredServices, new ArrayList<>());
     }
 
     /**
@@ -78,12 +66,7 @@ public class InMemoryServiceRegistry extends AbstractServiceRegistryDao {
      * @return the highest service id in the list of registered services
      */
     private long findHighestId() {
-        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse((long) 0);
-    }
-
-    @Override
-    public String toString() {
-        return getClass().getSimpleName();
+        return this.registeredServices.stream().map(RegisteredService::getId).max(Comparator.naturalOrder()).orElse(0L);
     }
 
     @Override

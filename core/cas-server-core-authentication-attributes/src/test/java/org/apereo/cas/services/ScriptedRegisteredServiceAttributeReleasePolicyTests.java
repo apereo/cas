@@ -1,6 +1,7 @@
 package org.apereo.cas.services;
 
-import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.CoreAttributesTestUtils;
 import org.apereo.cas.authentication.principal.Principal;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,17 +19,18 @@ import static org.junit.Assert.*;
  * @since 5.1.0
  */
 @RunWith(JUnit4.class)
+@Slf4j
 public class ScriptedRegisteredServiceAttributeReleasePolicyTests {
 
     @Test
     public void verifyInlineScript() {
         final ScriptedRegisteredServiceAttributeReleasePolicy p = new ScriptedRegisteredServiceAttributeReleasePolicy();
         p.setScriptFile("groovy { return attributes }");
-        final Principal principal = CoreAuthenticationTestUtils.getPrincipal("cas",
+        final Principal principal = CoreAttributesTestUtils.getPrincipal("cas",
                 Collections.singletonMap("attribute", "value"));
         final Map<String, Object> attrs = p.getAttributes(principal,
-                CoreAuthenticationTestUtils.getService(),
-                CoreAuthenticationTestUtils.getRegisteredService());
+            CoreAttributesTestUtils.getService(),
+            CoreAttributesTestUtils.getRegisteredService());
         assertEquals(attrs.size(), principal.getAttributes().size());
     }
 }

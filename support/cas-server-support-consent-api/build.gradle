@@ -1,6 +1,6 @@
 description = "Apereo CAS Consent API"
 dependencies {
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-authentication")
-    implementation project(":core:cas-server-core-configuration")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-authentication-api")
+    implementation project(":core:cas-server-core-configuration-api")
 }

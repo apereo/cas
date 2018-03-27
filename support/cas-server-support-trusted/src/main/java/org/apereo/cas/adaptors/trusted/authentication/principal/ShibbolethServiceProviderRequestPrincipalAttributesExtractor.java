@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.util.CollectionUtils;
 
@@ -15,6 +16,7 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implements RemoteRequestPrincipalAttributesExtractor {
     private static final String PREFIX = "AJP_";
 
@@ -23,8 +25,7 @@ public class ShibbolethServiceProviderRequestPrincipalAttributesExtractor implem
         return Collections.list(request
                 .getHeaderNames())
                 .stream()
-                .filter(t -> t.startsWith(PREFIX))
-                .filter(t -> !t.startsWith(PREFIX + "Shib-"))
+                .filter(t -> t.toUpperCase().startsWith(PREFIX))
                 .filter(t -> StringUtils.isNotBlank(request.getHeader(t)))
                 .map(t -> StringUtils.removeAll(t, PREFIX))
                 .collect(Collectors.toMap(Function.identity(),

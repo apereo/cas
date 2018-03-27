@@ -1,14 +1,16 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
 /**
  * This is test cases for {@link InMemoryServiceRegistry}.
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class InMemoryServiceRegistryTests {
 
     private static final String SERVICE_ID = "service";
@@ -23,7 +25,7 @@ public class InMemoryServiceRegistryTests {
     @Test
     public void verifyLoadEmpty() {
         final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
-        assertEquals(reg.load().size(), 0);
+        assertTrue(reg.load().isEmpty());
     }
 
     @Test
@@ -31,7 +33,7 @@ public class InMemoryServiceRegistryTests {
         final InMemoryServiceRegistry reg = new InMemoryServiceRegistry();
         final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
         assertEquals(reg.save(svc), svc);
-        assertEquals(reg.load().size(), 1);
+        assertEquals(1, reg.load().size());
     }
 
     @Test
@@ -48,6 +50,6 @@ public class InMemoryServiceRegistryTests {
         final RegisteredService svc = RegisteredServiceTestUtils.getRegisteredService(SERVICE_ID);
         assertEquals(reg.save(svc), svc);
         assertTrue(reg.delete(svc));
-        assertEquals(reg.load().size(), 0);
+        assertTrue(reg.load().isEmpty());
     }
 }

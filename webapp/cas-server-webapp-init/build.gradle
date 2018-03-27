@@ -1,6 +1,6 @@
 description = "Apereo CAS Web Application Initializer"
 dependencies {
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-util")
+    implementation project(":core:cas-server-core-web-api")
+    implementation project(":core:cas-server-core-util-api")
     provided project(":webapp:cas-server-webapp-config")
 }

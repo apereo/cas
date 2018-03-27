@@ -1,5 +1,6 @@
 package org.apereo.cas.impl.calcs;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationRequest;
 import org.apereo.cas.authentication.adaptive.geo.GeoLocationResponse;
@@ -9,8 +10,6 @@ import org.apereo.cas.support.events.dao.CasEvent;
 import org.apereo.cas.support.events.CasEventRepository;
 import org.apereo.cas.web.support.WebUtils;
 import org.apereo.inspektr.common.web.ClientInfoHolder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -24,8 +23,8 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenticationRequestRiskCalculator {
-    private static final Logger LOGGER = LoggerFactory.getLogger(GeoLocationAuthenticationRequestRiskCalculator.class);
     
     /**
      * Geolocation service.
@@ -41,9 +40,8 @@ public class GeoLocationAuthenticationRequestRiskCalculator extends BaseAuthenti
     @Override
     protected BigDecimal calculateScore(final HttpServletRequest request, final Authentication authentication,
                                         final RegisteredService service, final Collection<CasEvent> events) {
-
-        final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocation();
-        if (loc.isValid()) {
+        final GeoLocationRequest loc = WebUtils.getHttpServletRequestGeoLocation(request);
+        if (loc != null && loc.isValid()) {
             LOGGER.debug("Filtering authentication events for geolocation [{}]", loc);
             final long count = events.stream().filter(e -> e.getGeoLocation().equals(loc)).count();
             LOGGER.debug("Total authentication events found for [{}]: [{}]", loc, count);

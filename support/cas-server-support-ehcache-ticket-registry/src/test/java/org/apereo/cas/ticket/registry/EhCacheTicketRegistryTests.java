@@ -1,5 +1,6 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.extern.slf4j.Slf4j;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
@@ -66,6 +67,7 @@ import java.util.Collection;
         CasCoreServicesConfiguration.class,
         CasCoreWebConfiguration.class,
         CasWebApplicationServiceFactoryConfiguration.class})
+@Slf4j
 public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
 
     @Autowired
@@ -77,12 +79,12 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
     }
 
     @Parameterized.Parameters
-    public static Collection<Object> getTestParameters() throws Exception {
+    public static Collection<Object> getTestParameters() {
         return Arrays.asList(false, true);
     }
 
     @Override
-    public TicketRegistry getNewTicketRegistry() throws Exception {
+    public TicketRegistry getNewTicketRegistry() {
         return ticketRegistry;
     }
 
@@ -91,10 +93,10 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
     public static class EhcacheTicketRegistryTestConfiguration {
         @Bean
         public CacheReplicator ticketRMISynchronousCacheReplicator() {
-            return new NOPCacheReplicator();
+            return new NoOpCacheReplicator();
         }
 
-        private static class NOPCacheReplicator implements CacheReplicator {
+        private static class NoOpCacheReplicator implements CacheReplicator {
             @Override
             public boolean isReplicateUpdatesViaCopy() {
                 return false;
@@ -139,7 +141,7 @@ public class EhCacheTicketRegistryTests extends AbstractTicketRegistryTests {
             }
 
             @Override
-            public Object clone() throws CloneNotSupportedException {
+            public Object clone() {
                 return null;
             }
         }

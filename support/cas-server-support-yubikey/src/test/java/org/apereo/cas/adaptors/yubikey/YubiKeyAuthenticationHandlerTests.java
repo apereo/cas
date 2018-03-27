@@ -1,7 +1,9 @@
 package org.apereo.cas.adaptors.yubikey;
 
 import com.yubico.client.v2.YubicoClient;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.adaptors.yubikey.registry.WhitelistYubiKeyAccountRegistry;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
@@ -27,6 +29,7 @@ import static org.mockito.Mockito.*;
  * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class YubiKeyAuthenticationHandlerTests {
 
     private static final Integer CLIENT_ID = 18421;
@@ -55,8 +58,6 @@ public class YubiKeyAuthenticationHandlerTests {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(CLIENT_ID, SECRET_KEY));
 
         this.thrown.expect(FailedLoginException.class);
-        this.thrown.expectMessage("Authentication failed with status: REPLAYED_OTP");
-
         handler.authenticate(new YubiKeyCredential(OTP));
     }
 
@@ -65,20 +66,30 @@ public class YubiKeyAuthenticationHandlerTests {
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(YubicoClient.getClient(123456, "123456"));
 
         this.thrown.expect(AccountNotFoundException.class);
-        this.thrown.expectMessage("OTP format is invalid");
-
         handler.authenticate(new YubiKeyCredential("casuser"));
     }
 
     @Test
     public void checkAccountNotFound() throws Exception {
+        final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
+            new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY)));
+        registry.setCipherExecutor(CipherExecutor.noOpOfSerializableToString());
         final YubiKeyAuthenticationHandler handler = new YubiKeyAuthenticationHandler(StringUtils.EMPTY,
-                null, new DefaultPrincipalFactory(),
-                YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
-                new WhitelistYubiKeyAccountRegistry(new HashMap<>(),
-                        new DefaultYubiKeyAccountValidator(YubicoClient.getClient(CLIENT_ID, SECRET_KEY))));
+            null, new DefaultPrincipalFactory(),
+            YubicoClient.getClient(CLIENT_ID, SECRET_KEY),
+            registry);
         this.thrown.expect(AccountNotFoundException.class);
         handler.authenticate(new YubiKeyCredential(OTP));
+    }
+
+    @Test
+    public void checkEncryptedAccount() {
+        final WhitelistYubiKeyAccountRegistry registry = new WhitelistYubiKeyAccountRegistry(new HashMap<>(), (uid, token) -> true);
+        registry.setCipherExecutor(new YubikeyAccountCipherExecutor(
+            "1PbwSbnHeinpkZOSZjuSJ8yYpUrInm5aaV18J2Ar4rM",
+            "szxK-5_eJjs-aUj-64MpUZ-GPPzGLhYPLGl0wrYjYNVAGva2P0lLe6UGKGM7k8dWxsOVGutZWgvmY3l5oVPO3w"));
+        assertTrue(registry.registerAccountFor("encrypteduser", OTP));
+        assertTrue(registry.isYubiKeyRegisteredFor("encrypteduser", registry.getAccountValidator().getTokenPublicId(OTP)));
     }
 }
 

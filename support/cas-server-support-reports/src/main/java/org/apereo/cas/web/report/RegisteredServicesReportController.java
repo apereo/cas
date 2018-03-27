@@ -1,6 +1,8 @@
 package org.apereo.cas.web.report;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.configuration.support.Beans;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.ServicesManager;
 import org.apereo.cas.web.BaseCasMvcEndpoint;
@@ -21,9 +23,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
     private final ServicesManager servicesManager;
-    private final CasConfigurationProperties casProperties;
 
     /**
      * Instantiates a new mvc endpoint.
@@ -37,7 +39,6 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
         super("casservices", "/services",
                 casProperties.getMonitor().getEndpoints().getRegisteredServicesReport(), casProperties);
         this.servicesManager = servicesManager;
-        this.casProperties = casProperties;
     }
 
     /**
@@ -46,15 +47,15 @@ public class RegisteredServicesReportController extends BaseCasMvcEndpoint {
      * @param request  the request
      * @param response the response
      * @return the web async task
-     * @throws Exception the exception
      */
     @GetMapping
     @ResponseBody
-    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) throws Exception {
+    public WebAsyncTask<Map<String, Object>> handle(final HttpServletRequest request, final HttpServletResponse response) {
         ensureEndpointAccessIsAuthorized(request, response);
         final Callable<Map<String, Object>> asyncTask = () -> this.servicesManager.getAllServices()
                 .stream()
                 .collect(Collectors.toMap(RegisteredService::getName, Function.identity()));
-        return new WebAsyncTask<>(casProperties.getHttpClient().getAsyncTimeout(), asyncTask);
+        final long timeout = Beans.newDuration(casProperties.getHttpClient().getAsyncTimeout()).toMillis();
+        return new WebAsyncTask<>(timeout, asyncTask);
     }
 }

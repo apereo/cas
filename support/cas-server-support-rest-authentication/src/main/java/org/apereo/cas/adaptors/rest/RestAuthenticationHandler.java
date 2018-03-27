@@ -1,12 +1,13 @@
 package org.apereo.cas.adaptors.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apereo.cas.authentication.exceptions.AccountDisabledException;
-import org.apereo.cas.authentication.HandlerResult;
-import org.apereo.cas.authentication.PreventedException;
+import org.apereo.cas.authentication.AuthenticationHandlerExecutionResult;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
+import org.apereo.cas.authentication.exceptions.AccountDisabledException;
 import org.apereo.cas.authentication.exceptions.AccountPasswordMustChangeException;
 import org.apereo.cas.authentication.handler.support.AbstractUsernamePasswordAuthenticationHandler;
+import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
 import org.apereo.cas.authentication.principal.SimplePrincipal;
 import org.apereo.cas.services.ServicesManager;
@@ -28,6 +29,7 @@ import java.util.ArrayList;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthenticationHandler {
 
     private final RestAuthenticationApi api;
@@ -39,21 +41,20 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
     }
 
     @Override
-    protected HandlerResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
-            throws GeneralSecurityException, PreventedException {
+    protected AuthenticationHandlerExecutionResult authenticateUsernamePasswordInternal(final UsernamePasswordCredential c, final String originalPassword)
+        throws GeneralSecurityException {
 
         try {
             final UsernamePasswordCredential creds = new UsernamePasswordCredential(c.getUsername(), c.getPassword());
-            
+
             final ResponseEntity<SimplePrincipal> authenticationResponse = api.authenticate(creds);
             if (authenticationResponse.getStatusCode() == HttpStatus.OK) {
                 final SimplePrincipal principalFromRest = authenticationResponse.getBody();
                 if (principalFromRest == null || StringUtils.isBlank(principalFromRest.getId())) {
                     throw new FailedLoginException("Could not determine authentication response from rest endpoint for " + c.getUsername());
                 }
-                return createHandlerResult(c,
-                        this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes()),
-                        new ArrayList<>());
+                final Principal principal = this.principalFactory.createPrincipal(principalFromRest.getId(), principalFromRest.getAttributes());
+                return createHandlerResult(c, principal, new ArrayList<>());
             }
         } catch (final HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.FORBIDDEN) {
@@ -75,7 +76,7 @@ public class RestAuthenticationHandler extends AbstractUsernamePasswordAuthentic
                 throw new AccountPasswordMustChangeException("Account password must change for " + c.getUsername());
             }
             throw new FailedLoginException("Rest endpoint returned an unknown status code "
-                    + e.getStatusCode() + " for " + c.getUsername());
+                + e.getStatusCode() + " for " + c.getUsername());
         }
         throw new FailedLoginException("Rest endpoint returned an unknown response for " + c.getUsername());
     }

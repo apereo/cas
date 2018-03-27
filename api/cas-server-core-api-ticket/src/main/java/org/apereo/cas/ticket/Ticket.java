@@ -35,7 +35,7 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      *
      * @return the ticket or null if it has no parent
      */
-    TicketGrantingTicket getGrantingTicket();
+    TicketGrantingTicket getTicketGrantingTicket();
 
     /**
      * Method to return the time the Ticket was created.
@@ -64,4 +64,9 @@ public interface Ticket extends Serializable, Comparable<Ticket> {
      * @return the prefix
      */
     String getPrefix();
+
+    /**
+     * Mark a ticket as expired.
+     */
+    void markTicketExpired();
 }

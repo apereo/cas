@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.x509.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.principal.AbstractX509CertificateTests;
 import org.apereo.cas.adaptors.x509.config.X509AuthenticationConfiguration;
 import org.apereo.cas.web.flow.config.X509AuthenticationWebflowConfiguration;
@@ -26,6 +27,7 @@ import static org.junit.Assert.*;
  */
 @TestPropertySource(locations = {"classpath:/x509.properties"})
 @Import(value = {X509AuthenticationWebflowConfiguration.class, X509AuthenticationConfiguration.class})
+@Slf4j
 public class X509CertificateCredentialsNonInteractiveActionTests extends AbstractX509CertificateTests {
 
     @Autowired

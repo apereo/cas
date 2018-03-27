@@ -74,11 +74,11 @@ $('.ui.search').search({
                     if (prop.requiredProperty) {
                         html += '<p/><div class=\'alert alert-success\'>';
                         html += '<i class=\'fa fa-check-square\'/>&nbsp;';
-                        html += 'This presence of this property is required.';
+                        html += 'This property is required.';
                         html += '</div>';
                     }
 
-                    html += '<i class=\'fa fa-codepen\' />&nbsp;Type: <code>' + prop.type + '</code><br/>';
+                    html += '<i class=\'fab fa-codepen\' />&nbsp;Type: <code>' + prop.type + '</code><br/>';
                     if (prop.description != null) {
                         html += '<p>' + prop.description + '</p>';
                     }

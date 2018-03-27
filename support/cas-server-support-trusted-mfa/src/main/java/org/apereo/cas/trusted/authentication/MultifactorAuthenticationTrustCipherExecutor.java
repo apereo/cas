@@ -1,5 +1,6 @@
 package org.apereo.cas.trusted.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
 
 /**
@@ -8,6 +9,7 @@ import org.apereo.cas.util.cipher.BaseStringCipherExecutor;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class MultifactorAuthenticationTrustCipherExecutor extends BaseStringCipherExecutor {
     public MultifactorAuthenticationTrustCipherExecutor(final String secretKeyEncryption,
                                                         final String secretKeySigning,
@@ -22,11 +24,11 @@ public class MultifactorAuthenticationTrustCipherExecutor extends BaseStringCiph
 
     @Override
     protected String getEncryptionKeySetting() {
-        return "cas.authn.mfa.trusted.encryption.key";
+        return "cas.authn.mfa.trusted.crypto.encryption.key";
     }
 
     @Override
     protected String getSigningKeySetting() {
-        return "cas.authn.mfa.trusted.signing.key";
+        return "cas.authn.mfa.trusted.crypto.signing.key";
     }
 }

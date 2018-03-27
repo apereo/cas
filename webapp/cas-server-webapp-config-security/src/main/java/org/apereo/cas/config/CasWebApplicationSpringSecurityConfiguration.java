@@ -1,5 +1,6 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.web.security.AdminPagesSecurityProperties;
@@ -21,6 +22,7 @@ import org.springframework.security.config.annotation.authentication.configurers
  */
 @Configuration("casWebApplicationSpringSecurityConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class CasWebApplicationSpringSecurityConfiguration extends GlobalAuthenticationConfigurerAdapter {
 
     @Autowired
@@ -49,7 +51,7 @@ public class CasWebApplicationSpringSecurityConfiguration extends GlobalAuthenti
         final AdminPagesSecurityProperties.Ldap ldap = casProperties.getAdminPagesSecurity().getLdap();
         final LdapAuthorizationProperties authZ = ldap.getLdapAuthz();
         return StringUtils.isNotBlank(ldap.getBaseDn()) && StringUtils.isNotBlank(ldap.getLdapUrl())
-                && StringUtils.isNotBlank(ldap.getUserFilter())
+                && StringUtils.isNotBlank(ldap.getSearchFilter())
                 && (StringUtils.isNotBlank(authZ.getRoleAttribute()) || StringUtils.isNotBlank(authZ.getGroupAttribute()));
     }
 }

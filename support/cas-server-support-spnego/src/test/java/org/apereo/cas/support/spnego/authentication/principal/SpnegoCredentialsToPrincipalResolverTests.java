@@ -1,5 +1,6 @@
 package org.apereo.cas.support.spnego.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -14,13 +15,14 @@ import static org.junit.Assert.*;
  * @author Arnaud Lesueur
  * @since 3.1
  */
+@Slf4j
 public class SpnegoCredentialsToPrincipalResolverTests {
     private SpnegoPrincipalResolver resolver;
 
     private SpnegoCredential spnegoCredentials;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.resolver = new SpnegoPrincipalResolver();
         this.spnegoCredentials = new SpnegoCredential(new byte[]{0, 1, 2});
     }

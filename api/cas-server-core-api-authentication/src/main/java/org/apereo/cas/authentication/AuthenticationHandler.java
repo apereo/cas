@@ -12,6 +12,7 @@ import java.security.GeneralSecurityException;
  * @author Marvin S. Addison
  * @since 4.0.0
  */
+@FunctionalInterface
 public interface AuthenticationHandler extends Ordered {
 
     /** Attribute name containing collection of handler names that successfully authenticated credential. */
@@ -22,7 +23,7 @@ public interface AuthenticationHandler extends Ordered {
      * MUST adhere to the following contract:
      *
      * <ol>
-     *     <li>Success -- return {@link HandlerResult}</li>
+     *     <li>Success -- return {@link AuthenticationHandlerExecutionResult}</li>
      *     <li>Failure -- throw {@link GeneralSecurityException}</li>
      *     <li>Indeterminate -- throw {@link PreventedException}</li>
      * </ol>
@@ -53,9 +54,8 @@ public interface AuthenticationHandler extends Ordered {
      * @throws PreventedException On errors that prevented authentication from occurring. Implementing classes SHOULD
      * take care to populate the cause, where applicable, with the error that prevented authentication.
      */
-    HandlerResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
-
-
+    AuthenticationHandlerExecutionResult authenticate(Credential credential) throws GeneralSecurityException, PreventedException;
+    
     /**
      * Determines whether the handler has the capability to authenticate the given credential. In practical terms,
      * the {@link #authenticate(Credential)} method MUST be capable of processing a given credential if
@@ -65,9 +65,10 @@ public interface AuthenticationHandler extends Ordered {
      *
      * @return True if the handler supports the Credential, false otherwise.
      */
-    boolean supports(Credential credential);
-
-
+    default boolean supports(final Credential credential) {
+        return false;
+    }
+    
     /**
      * Gets a unique name for this authentication handler within the Spring context that contains it.
      * For implementations that allow setting a unique name, deployers MUST take care to ensure that every
@@ -77,5 +78,10 @@ public interface AuthenticationHandler extends Ordered {
      */
     default String getName() {
         return this.getClass().getSimpleName();
+    }
+
+    @Override
+    default int getOrder() {
+        return Integer.MAX_VALUE;
     }
 }

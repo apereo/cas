@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.ProtocolAttributeEncoder;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.support.DefaultCasProtocolAttributeEncoder;
@@ -24,7 +25,6 @@ import org.apereo.cas.config.support.CasWebApplicationServiceFactoryConfiguratio
 import org.apereo.cas.logout.config.CasCoreLogoutConfiguration;
 import org.apereo.cas.services.RegisteredServiceTestUtils;
 import org.apereo.cas.services.ServicesManager;
-import org.apereo.cas.util.cipher.NoOpCipherExecutor;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -72,6 +72,7 @@ import static org.junit.Assert.*;
         CasCoreHttpConfiguration.class,
         CasCoreUtilConfiguration.class})
 @EnableScheduling
+@Slf4j
 public class DefaultCasAttributeEncoderTests {
 
     private Map<String, Object> attributes;
@@ -94,7 +95,7 @@ public class DefaultCasAttributeEncoderTests {
     @Test
     public void checkNoPublicKeyDefined() {
         final Service service = RegisteredServiceTestUtils.getService("testDefault");
-        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, NoOpCipherExecutor.getInstance());
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(this.attributes.size() - 2, encoded.size());
     }
@@ -102,7 +103,7 @@ public class DefaultCasAttributeEncoderTests {
     @Test
     public void checkAttributesEncodedCorrectly() {
         final Service service = RegisteredServiceTestUtils.getService("testencryption");
-        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, NoOpCipherExecutor.getInstance());
+        final ProtocolAttributeEncoder encoder = new DefaultCasProtocolAttributeEncoder(this.servicesManager, CipherExecutor.noOpOfStringToString());
         final Map<String, Object> encoded = encoder.encodeAttributes(this.attributes, this.servicesManager.findServiceBy(service));
         assertEquals(encoded.size(), this.attributes.size());
         checkEncryptedValues(CasViewConstants.MODEL_ATTRIBUTE_NAME_PRINCIPAL_CREDENTIAL, encoded);

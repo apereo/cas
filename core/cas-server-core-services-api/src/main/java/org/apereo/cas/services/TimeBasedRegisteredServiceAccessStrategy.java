@@ -1,14 +1,14 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import lombok.Getter;
 
 /**
  * The {@link TimeBasedRegisteredServiceAccessStrategy} is responsible for
@@ -17,21 +17,19 @@ import java.time.ZonedDateTime;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
+@ToString(callSuper = true)
+@Getter
+@EqualsAndHashCode(callSuper = true)
+@Setter
+@NoArgsConstructor
 public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredServiceAccessStrategy {
 
     private static final long serialVersionUID = -6180748828025837047L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TimeBasedRegisteredServiceAccessStrategy.class);
-
     private String startingDateTime;
 
     private String endingDateTime;
-
-    /**
-     * Initiates the time-based access strategy.
-     */
-    public TimeBasedRegisteredServiceAccessStrategy() {
-    }
 
     /**
      * Initiates the time-based access strategy.
@@ -42,72 +40,15 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     public TimeBasedRegisteredServiceAccessStrategy(final boolean enabled, final boolean ssoEnabled) {
         super(enabled, ssoEnabled);
     }
-
-    public String getStartingDateTime() {
-        return this.startingDateTime;
-    }
-
-    public String getEndingDateTime() {
-        return this.endingDateTime;
-    }
-
-    public void setStartingDateTime(final String startingDateTime) {
-        this.startingDateTime = startingDateTime;
-    }
-
-    public void setEndingDateTime(final String endingDateTime) {
-        this.endingDateTime = endingDateTime;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final TimeBasedRegisteredServiceAccessStrategy rhs = (TimeBasedRegisteredServiceAccessStrategy) obj;
-
-        return new EqualsBuilder()
-                .appendSuper(super.equals(obj))
-                .append(this.startingDateTime, rhs.startingDateTime)
-                .append(this.endingDateTime, rhs.endingDateTime)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(this.startingDateTime)
-                .append(this.endingDateTime)
-                .toHashCode();
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("startingDateTime", this.startingDateTime)
-                .append("endingDateTime", this.endingDateTime)
-                .toString();
-    }
-
+    
     @Override
     public boolean isServiceAccessAllowed() {
-
         if (!doesStartingTimeAllowServiceAccess()) {
             return false;
         }
-
         if (!doesEndingTimeAllowServiceAccess()) {
             return false;
         }
-
         return super.isServiceAccessAllowed();
     }
 
@@ -119,7 +60,6 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
     protected boolean doesEndingTimeAllowServiceAccess() {
         if (this.endingDateTime != null) {
             final ZonedDateTime et = DateTimeUtils.zonedDateTimeOf(this.endingDateTime);
-
             if (et != null) {
                 if (ZonedDateTime.now().isAfter(et)) {
                     LOGGER.warn("Service access not allowed because it ended at [{}]. Now is [{}]", this.endingDateTime, ZonedDateTime.now());
@@ -160,7 +100,6 @@ public class TimeBasedRegisteredServiceAccessStrategy extends DefaultRegisteredS
                     }
                 }
             }
-
         }
         return true;
     }

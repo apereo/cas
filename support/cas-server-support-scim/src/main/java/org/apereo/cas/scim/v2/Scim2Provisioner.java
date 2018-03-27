@@ -2,6 +2,7 @@ package org.apereo.cas.scim.v2;
 
 import com.unboundid.scim2.client.ScimService;
 import com.unboundid.scim2.common.types.UserResource;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.principal.Principal;
@@ -10,8 +11,6 @@ import org.glassfish.jersey.apache.connector.ApacheConnectorProvider;
 import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.authentication.HttpAuthenticationFeature;
 import org.glassfish.jersey.client.oauth2.OAuth2ClientSupport;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -23,8 +22,9 @@ import javax.ws.rs.client.WebTarget;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class Scim2Provisioner implements ScimProvisioner {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Scim2Provisioner.class);
+
     private final ScimService scimService;
     private final Scim2PrincipalAttributeMapper mapper;
 

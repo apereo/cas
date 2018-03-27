@@ -1,13 +1,18 @@
 package org.apereo.cas.config.support.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.radius.JRadiusServerImpl;
 import org.apereo.cas.adaptors.radius.RadiusClientFactory;
 import org.apereo.cas.adaptors.radius.RadiusProtocol;
 import org.apereo.cas.adaptors.radius.RadiusServer;
 import org.apereo.cas.adaptors.radius.authentication.RadiusMultifactorAuthenticationProvider;
 import org.apereo.cas.adaptors.radius.authentication.RadiusTokenAuthenticationHandler;
+import org.apereo.cas.adaptors.radius.authentication.RadiusTokenCredential;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationMetaDataPopulator;
+import org.apereo.cas.authentication.ByCredentialTypeAuthenticationHandlerResolver;
+import org.apereo.cas.authentication.MultifactorAuthenticationProviderBypass;
+import org.apereo.cas.authentication.MultifactorAuthenticationUtils;
 import org.apereo.cas.authentication.metadata.AuthenticationContextAttributeMetaDataPopulator;
 import org.apereo.cas.authentication.principal.DefaultPrincipalFactory;
 import org.apereo.cas.authentication.principal.PrincipalFactory;
@@ -15,9 +20,7 @@ import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.support.mfa.RadiusMultifactorProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusClientProperties;
 import org.apereo.cas.configuration.model.support.radius.RadiusServerProperties;
-import org.apereo.cas.services.DefaultMultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.MultifactorAuthenticationProvider;
-import org.apereo.cas.services.MultifactorAuthenticationProviderBypass;
 import org.apereo.cas.services.ServicesManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -39,6 +42,7 @@ import java.util.List;
  */
 @Configuration("radiusTokenAuthenticationEventExecutionPlanConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
 
     @Autowired
@@ -51,7 +55,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @RefreshScope
     @Bean
     public MultifactorAuthenticationProvider radiusAuthenticationProvider() {
-        final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider(radiusTokenAuthenticationHandler());
+        final RadiusMultifactorAuthenticationProvider p = new RadiusMultifactorAuthenticationProvider(radiusTokenServers());
         p.setBypassEvaluator(radiusBypassEvaluator());
         p.setGlobalFailureMode(casProperties.getAuthn().getMfa().getGlobalFailureMode());
         p.setOrder(casProperties.getAuthn().getMfa().getRadius().getRank());
@@ -62,9 +66,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
     @Bean
     @RefreshScope
     public MultifactorAuthenticationProviderBypass radiusBypassEvaluator() {
-        return new DefaultMultifactorAuthenticationProviderBypass(
-                casProperties.getAuthn().getMfa().getRadius().getBypass()
-        );
+        return MultifactorAuthenticationUtils.newMultifactorAuthenticationProviderBypass(casProperties.getAuthn().getMfa().getRadius().getBypass());
     }
 
     @RefreshScope
@@ -113,6 +115,7 @@ public class RadiusTokenAuthenticationEventExecutionPlanConfiguration {
         return plan -> {
             plan.registerAuthenticationHandler(radiusTokenAuthenticationHandler());
             plan.registerMetadataPopulator(radiusAuthenticationMetaDataPopulator());
+            plan.registerAuthenticationHandlerResolver(new ByCredentialTypeAuthenticationHandlerResolver(RadiusTokenCredential.class));
         };
     }
 }

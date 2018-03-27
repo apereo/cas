@@ -2,9 +2,8 @@ package org.apereo.cas.adaptors.u2f.storage;
 
 import com.github.benmanes.caffeine.cache.LoadingCache;
 import com.yubico.u2f.data.DeviceRegistration;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.DateTimeUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -12,6 +11,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -21,8 +21,9 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
 public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
-    private static final Logger LOGGER = LoggerFactory.getLogger(U2FMongoDbDeviceRepository.class);
+
 
     private final MongoTemplate mongoTemplate;
     private final long expirationTime;
@@ -48,13 +49,21 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
             final Query query = new Query();
             query.addCriteria(Criteria.where("username").is(username).and("createdDate").gte(expirationDate));
             return this.mongoTemplate.find(query, U2FDeviceRegistration.class, this.collectionName)
-                    .stream()
-                    .map(r -> DeviceRegistration.fromJson(r.getRecord()))
-                    .collect(Collectors.toList());
+                .stream()
+                .map(r -> {
+                    try {
+                        return DeviceRegistration.fromJson(getCipherExecutor().decode(r.getRecord()));
+                    } catch (final Exception e) {
+                        LOGGER.error(e.getMessage(), e);
+                    }
+                    return null;
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
         } catch (final Exception e) {
             LOGGER.error(e.getMessage(), e);
         }
-        return new ArrayList<>();
+        return new ArrayList<>(0);
     }
 
     @Override
@@ -66,7 +75,7 @@ public class U2FMongoDbDeviceRepository extends BaseU2FDeviceRepository {
     public void authenticateDevice(final String username, final DeviceRegistration registration) {
         final U2FDeviceRegistration record = new U2FDeviceRegistration();
         record.setUsername(username);
-        record.setRecord(registration.toJson());
+        record.setRecord(getCipherExecutor().encode(registration.toJson()));
         record.setCreatedDate(LocalDate.now());
         this.mongoTemplate.save(record, this.collectionName);
     }

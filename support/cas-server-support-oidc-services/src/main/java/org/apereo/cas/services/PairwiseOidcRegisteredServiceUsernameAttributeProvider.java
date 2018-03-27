@@ -1,16 +1,17 @@
 package org.apereo.cas.services;
 
+import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.authentication.principal.OidcPairwisePersistentIdGenerator;
 import org.apereo.cas.authentication.principal.PersistentIdGenerator;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
+import lombok.NoArgsConstructor;
 
 /**
  * This is {@link PairwiseOidcRegisteredServiceUsernameAttributeProvider}.
@@ -33,15 +34,15 @@ import org.springframework.web.util.UriComponentsBuilder;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@Getter
+@NoArgsConstructor
+@EqualsAndHashCode(callSuper = true)
 public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends BaseRegisteredServiceUsernameAttributeProvider {
+
     private static final long serialVersionUID = 469929103943101717L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PairwiseOidcRegisteredServiceUsernameAttributeProvider.class);
-
     private PersistentIdGenerator persistentIdGenerator = new OidcPairwisePersistentIdGenerator();
-
-    public PairwiseOidcRegisteredServiceUsernameAttributeProvider() {
-    }
 
     @Override
     public String resolveUsernameInternal(final Principal principal, final Service service, final RegisteredService registeredService) {
@@ -49,21 +50,16 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
             LOGGER.warn("Service definition [{}] is undefined or it's not an OpenId Connect relying party", registeredService);
             return principal.getId();
         }
-
         final OidcRegisteredService oidcSvc = OidcRegisteredService.class.cast(registeredService);
-        if (StringUtils.isBlank(oidcSvc.getSubjectType())
-                || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
+        if (StringUtils.isBlank(oidcSvc.getSubjectType()) || StringUtils.equalsIgnoreCase(OidcSubjectTypes.PUBLIC.getType(), oidcSvc.getSubjectType())) {
             LOGGER.warn("Service definition [{}] does not request a pairwise subject type", oidcSvc);
             return principal.getId();
         }
-
-
         final String sectorIdentifier = getSectorIdentifier(oidcSvc);
         if (StringUtils.isBlank(sectorIdentifier)) {
             LOGGER.debug("Service definition [{}] does not provide a sector identifier", oidcSvc);
             return principal.getId();
         }
-
         if (this.persistentIdGenerator == null) {
             throw new IllegalArgumentException("No pairwise persistent id generator is defined");
         }
@@ -71,7 +67,6 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         LOGGER.debug("Resolved username [{}] for pairwise access", id);
         return id;
     }
-
 
     private String getSectorIdentifier(final OidcRegisteredService client) {
         if (!StringUtils.isBlank(client.getSectorIdentifierUri())) {
@@ -82,44 +77,12 @@ public class PairwiseOidcRegisteredServiceUsernameAttributeProvider extends Base
         return uri.getHost();
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        final PairwiseOidcRegisteredServiceUsernameAttributeProvider rhs = (PairwiseOidcRegisteredServiceUsernameAttributeProvider) obj;
-        final EqualsBuilder builder = new EqualsBuilder();
-        return builder
-                .appendSuper(super.equals(obj))
-                .append(this.persistentIdGenerator, rhs.persistentIdGenerator)
-                .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder()
-                .appendSuper(super.hashCode())
-                .append(persistentIdGenerator)
-                .toHashCode();
-    }
-
+    @Getter
+    @AllArgsConstructor
     private static class PairwiseService implements Service {
+
         private static final long serialVersionUID = -6154643329901712381L;
+
         private final String id;
-
-        PairwiseService(final String id) {
-            this.id = id;
-        }
-
-        @Override
-        public String getId() {
-            return this.id;
-        }
     }
 }

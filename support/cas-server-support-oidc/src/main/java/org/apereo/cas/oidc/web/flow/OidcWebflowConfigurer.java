@@ -1,5 +1,6 @@
 package org.apereo.cas.oidc.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.web.flow.configurer.AbstractCasWebflowConfigurer;
 import org.apereo.cas.web.flow.CasWebflowConstants;
@@ -16,6 +17,7 @@ import org.springframework.webflow.execution.Action;
  * @author Misagh Moayyed
  * @since 5.0.0
  */
+@Slf4j
 public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
 
     private final Action oidcRegisteredServiceUIAction;
@@ -28,10 +30,10 @@ public class OidcWebflowConfigurer extends AbstractCasWebflowConfigurer {
     }
 
     @Override
-    protected void doInitialize() throws Exception {
+    protected void doInitialize() {
         final Flow loginFlow = getLoginFlow();
         if (loginFlow != null) {
-            final ViewState state = (ViewState) loginFlow.getTransitionableState(CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM);
+            final ViewState state = getTransitionableState(loginFlow, CasWebflowConstants.STATE_ID_VIEW_LOGIN_FORM, ViewState.class);
             state.getEntryActionList().add(this.oidcRegisteredServiceUIAction);
         }
     }

@@ -1,10 +1,13 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.EqualsBuilder;
-import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apereo.cas.CasProtocolConstants;
-import org.apereo.cas.web.support.WebUtils;
+import org.apereo.cas.services.RegisteredService;
+import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.util.HttpRequestUtils;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
@@ -16,8 +19,18 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
+@Getter
+@RequiredArgsConstructor
 public abstract class AbstractWebApplicationServiceResponseBuilder implements ResponseBuilder<WebApplicationService> {
     private static final long serialVersionUID = -4584738964007702423L;
+
+    /**
+     * Services manager instance.
+     */
+    protected final ServicesManager servicesManager;
+
+    private int order;
 
     /**
      * Build redirect.
@@ -56,11 +69,18 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
     /**
      * Determine response type response.
      *
+     * @param finalService the final service
      * @return the response type
      */
-    protected Response.ResponseType getWebApplicationServiceResponseType() {
-        final HttpServletRequest request = WebUtils.getHttpServletRequestFromRequestAttributes();
-        final String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+    protected Response.ResponseType getWebApplicationServiceResponseType(final WebApplicationService finalService) {
+        final HttpServletRequest request = HttpRequestUtils.getHttpServletRequestFromRequestAttributes();
+        String method = request != null ? request.getParameter(CasProtocolConstants.PARAMETER_METHOD) : null;
+        if (StringUtils.isBlank(method)) {
+            final RegisteredService registeredService = this.servicesManager.findServiceBy(finalService);
+            if (registeredService != null) {
+                method = registeredService.getResponseType();
+            }
+        }
 
         if (StringUtils.isBlank(method)) {
             return Response.ResponseType.REDIRECT;
@@ -74,29 +94,5 @@ public abstract class AbstractWebApplicationServiceResponseBuilder implements Re
         }
 
         return Response.ResponseType.REDIRECT;
-    }
-
-    @Override
-    public boolean equals(final Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        return new EqualsBuilder().isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder().toHashCode();
-    }
-
-    @Override
-    public int getOrder() {
-        return 0;
     }
 }

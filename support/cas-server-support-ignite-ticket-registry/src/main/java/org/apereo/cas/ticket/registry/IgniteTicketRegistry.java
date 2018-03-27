@@ -1,7 +1,8 @@
 package org.apereo.cas.ticket.registry;
 
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.ignite.Ignite;
 import org.apache.ignite.IgniteCache;
 import org.apache.ignite.IgniteState;
@@ -13,9 +14,6 @@ import org.apereo.cas.configuration.model.support.ignite.IgniteProperties;
 import org.apereo.cas.ticket.Ticket;
 import org.apereo.cas.ticket.TicketCatalog;
 import org.apereo.cas.ticket.TicketDefinition;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import javax.annotation.PreDestroy;
 import javax.cache.Cache;
 import javax.cache.expiry.Duration;
@@ -41,13 +39,16 @@ import java.util.stream.Collectors;
  * @author Timur Duehr timur.duehr@nccgroup.trust
  * @since 5.0.0`
  */
+@Slf4j
+@ToString(callSuper = true)
 public class IgniteTicketRegistry extends AbstractTicketRegistry {
-    private static final Logger LOGGER = LoggerFactory.getLogger(IgniteTicketRegistry.class);
 
     private final IgniteConfiguration igniteConfiguration;
+
     private final IgniteProperties properties;
 
     private final TicketCatalog ticketCatalog;
+
     private Ignite ignite;
 
     /**
@@ -57,19 +58,16 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
      * @param igniteConfiguration the ignite configuration
      * @param properties          the properties
      */
-    public IgniteTicketRegistry(final TicketCatalog ticketCatalog,
-                                final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
+    public IgniteTicketRegistry(final TicketCatalog ticketCatalog, final IgniteConfiguration igniteConfiguration, final IgniteProperties properties) {
         this.igniteConfiguration = igniteConfiguration;
         this.properties = properties;
         this.ticketCatalog = ticketCatalog;
-
         initializeIgnite();
     }
 
     @Override
     public void addTicket(final Ticket ticket) {
         final Ticket encodedTicket = encodeTicket(ticket);
-
         final TicketDefinition metadata = this.ticketCatalog.find(ticket);
         final IgniteCache<String, Ticket> cache = getIgniteCacheFromMetadata(metadata);
         LOGGER.debug("Adding ticket [{}] to the cache [{}]", ticket.getId(), cache.getName());
@@ -78,15 +76,11 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public long deleteAll() {
-        return this.ticketCatalog.findAll().stream()
-                .map(this::getIgniteCacheFromMetadata)
-                .filter(Objects::nonNull)
-                .mapToLong(instance -> {
-                    final int size = instance.size();
-                    instance.removeAll();
-                    return size;
-                })
-                .sum();
+        return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata).filter(Objects::nonNull).mapToLong(instance -> {
+            final int size = instance.size();
+            instance.removeAll();
+            return size;
+        }).sum();
     }
 
     @Override
@@ -110,7 +104,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         if (StringUtils.isBlank(ticketId)) {
             return null;
         }
-
         final TicketDefinition metadata = this.ticketCatalog.find(ticketIdToGet);
         if (metadata == null) {
             LOGGER.warn("Ticket [{}] is not registered in the catalog and is unrecognized", ticketIdToGet);
@@ -127,13 +120,9 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     @Override
     public Collection<Ticket> getTickets() {
-        return this.ticketCatalog.findAll().stream()
-                .map(this::getIgniteCacheFromMetadata)
-                .map(cache -> cache.query(new ScanQuery<>()).getAll().stream())
-                .flatMap(Function.identity())
-                .map(Cache.Entry::getValue)
-                .map(object -> decodeTicket((Ticket) object))
-                .collect(Collectors.toSet());
+        return this.ticketCatalog.findAll().stream().map(this::getIgniteCacheFromMetadata)
+            .map(cache -> cache.query(new ScanQuery<>()).getAll().stream()).flatMap(Function.identity())
+            .map(Cache.Entry::getValue).map(object -> decodeTicket((Ticket) object)).collect(Collectors.toSet());
     }
 
     @Override
@@ -144,23 +133,17 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private void configureSecureTransport() {
         final String nullKey = "NULL";
-
-        if (StringUtils.isNotBlank(properties.getKeyStoreFilePath())
-                && StringUtils.isNotBlank(properties.getKeyStorePassword())
-                && StringUtils.isNotBlank(properties.getTrustStoreFilePath())
-                && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
-
+        if (StringUtils.isNotBlank(properties.getKeyStoreFilePath()) && StringUtils.isNotBlank(properties.getKeyStorePassword())
+            && StringUtils.isNotBlank(properties.getTrustStoreFilePath()) && StringUtils.isNotBlank(properties.getTrustStorePassword())) {
             final SslContextFactory sslContextFactory = new SslContextFactory();
             sslContextFactory.setKeyStoreFilePath(properties.getKeyStoreFilePath());
             sslContextFactory.setKeyStorePassword(properties.getKeyStorePassword().toCharArray());
-
             if (nullKey.equals(properties.getTrustStoreFilePath()) && nullKey.equals(properties.getTrustStorePassword())) {
                 sslContextFactory.setTrustManagers(SslContextFactory.getDisabledTrustManager());
             } else {
                 sslContextFactory.setTrustStoreFilePath(properties.getTrustStoreFilePath());
                 sslContextFactory.setTrustStorePassword(properties.getKeyStorePassword().toCharArray());
             }
-
             if (StringUtils.isNotBlank(properties.getKeyAlgorithm())) {
                 sslContextFactory.setKeyAlgorithm(properties.getKeyAlgorithm());
             }
@@ -179,15 +162,12 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
 
     private void initializeIgnite() {
         LOGGER.info("Setting up Ignite Ticket Registry...");
-
         configureSecureTransport();
-
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("igniteConfiguration.cacheConfiguration=[{}]", (Object[]) this.igniteConfiguration.getCacheConfiguration());
             LOGGER.debug("igniteConfiguration.getDiscoverySpi=[{}]", this.igniteConfiguration.getDiscoverySpi());
             LOGGER.debug("igniteConfiguration.getSslContextFactory=[{}]", this.igniteConfiguration.getSslContextFactory());
         }
-
         if (Ignition.state() == IgniteState.STOPPED) {
             this.ignite = Ignition.start(this.igniteConfiguration);
             LOGGER.debug("Starting ignite cache engine");
@@ -205,14 +185,6 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         Ignition.stopAll(true);
     }
 
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .appendSuper(super.toString())
-                .append("igniteConfiguration", properties)
-                .toString();
-    }
-
     private IgniteCache<String, Ticket> getIgniteCacheFromMetadata(final TicketDefinition metadata) {
         final String mapName = metadata.getProperties().getStorageName();
         LOGGER.debug("Locating cache name [{}] for ticket definition [{}]", mapName, metadata);
@@ -225,6 +197,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
     }
 
     private static class IgniteInternalTicketExpiryPolicy implements ExpiryPolicy {
+
         private final Ticket ticket;
 
         /**
@@ -244,8 +217,7 @@ public class IgniteTicketRegistry extends AbstractTicketRegistry {
         @Override
         public Duration getExpiryForAccess() {
             final long idleTime = ticket.getExpirationPolicy().getTimeToIdle() <= 0
-                    ? ticket.getExpirationPolicy().getTimeToLive()
-                    : ticket.getExpirationPolicy().getTimeToIdle();
+                ? ticket.getExpirationPolicy().getTimeToLive() : ticket.getExpirationPolicy().getTimeToIdle();
             return new Duration(TimeUnit.SECONDS, idleTime);
         }
 

@@ -1,20 +1,16 @@
 package org.apereo.cas.adaptors.x509.authentication.principal;
 
+import lombok.ToString;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.AbstractCentralAuthenticationServiceTests;
 import org.apereo.cas.util.crypto.CertUtils;
 import org.springframework.core.io.ClassPathResource;
 
 import java.math.BigInteger;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
 import java.security.Principal;
 import java.security.PublicKey;
-import java.security.SignatureException;
 import java.security.cert.CertificateEncodingException;
-import java.security.cert.CertificateException;
 import java.security.cert.CertificateExpiredException;
-import java.security.cert.CertificateNotYetValidException;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 import java.util.Set;
@@ -23,13 +19,17 @@ import java.util.Set;
  * @author Marvin S. Addison
  * @since 3.0.0
  */
+@Slf4j
+@ToString
 public abstract class AbstractX509CertificateTests extends AbstractCentralAuthenticationServiceTests {
 
     public static final X509Certificate VALID_CERTIFICATE = new CasX509Certificate(true);
 
-    protected static class CasX509Certificate extends X509Certificate {
+    @ToString
+    public static class CasX509Certificate extends X509Certificate {
 
         private static final long serialVersionUID = -4449243195531417769L;
+
         private final X509Certificate x509Certificate = CertUtils.readCertificate(new ClassPathResource("ldap-crl.crt"));
 
         private final boolean valid;
@@ -38,18 +38,15 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
             this.valid = valid;
         }
 
-
         @Override
-        public void checkValidity() throws CertificateExpiredException,
-                CertificateNotYetValidException {
+        public void checkValidity() throws CertificateExpiredException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
         }
 
         @Override
-        public void checkValidity(final Date arg0)
-                throws CertificateExpiredException, CertificateNotYetValidException {
+        public void checkValidity(final Date arg0) throws CertificateExpiredException {
             if (!this.valid) {
                 throw new CertificateExpiredException();
             }
@@ -161,22 +158,11 @@ public abstract class AbstractX509CertificateTests extends AbstractCentralAuthen
         }
 
         @Override
-        public String toString() {
-            return CertUtils.toString(x509Certificate);
+        public void verify(final PublicKey arg0, final String arg1) {
         }
 
         @Override
-        public void verify(final PublicKey arg0, final String arg1)
-                throws CertificateException, NoSuchAlgorithmException,
-                InvalidKeyException, NoSuchProviderException, SignatureException {
-            // nothing to do right now
-        }
-
-        @Override
-        public void verify(final PublicKey arg0) throws CertificateException,
-                NoSuchAlgorithmException, InvalidKeyException,
-                NoSuchProviderException, SignatureException {
-            // nothing to do right now
+        public void verify(final PublicKey arg0) {
         }
     }
 }

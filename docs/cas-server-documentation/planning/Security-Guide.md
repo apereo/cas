@@ -15,7 +15,7 @@ be considered to achieve suitable security.
 
 ## Announcements
 
-- [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/01/moncfgsecvulndisc/)
+- [Mar 6 2017 Vulnerability Disclosure](https://apereo.github.io/2017/03/06/moncfgsecvulndisc/)
 - [Oct 24 2016 Vulnerability Disclosure](https://apereo.github.io/2016/10/24/servlvulndisc/)
 - [Apr 8 2016 Vulnerability Disclosure](https://apereo.github.io/2016/04/08/commonsvulndisc/)
 
@@ -158,9 +158,9 @@ Please [see this guide](../installation/Password-Policy-Enforcement.html) for mo
 
 ### Protocol Ticket Encryption
 
-Protocol tickets that are issued by CAS may optionally go through a signing/encryption process. Even though the
-CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check
-to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
+Protocol tickets that are issued by CAS and shared with other applications such as service tickets may optionally go through a signing/encryption process. Even though the CAS server will always cross check ticket validity and expiration policy, this may be forced as an extra check to ensure tickets in transit to other applications are not tampered with and remain to be authentic. While sample data is provided for initial deployments, these keys **MUST** be regenerated per your specific environment.
+
+<div class="alert alert-warn"><strong>Pay Attention</strong><p>Encrypting and signing a generated ticket will, depending on the encryption method and algorithm used, increase the generated ticket length. Not all CAS clients are equipped to handle lengthy ticket strings and may get upset with you. Evaluate existing integrations before turning this on and consider whether this feature is truly needed for your deployment.</p></div>
 
 To see the relevant list of CAS properties, please [review this guide](../installation/Configuration-Properties.html#protocol-ticket-security).
 
@@ -254,7 +254,7 @@ The CAS project uses Spring Webflow to manage and orchestrate the authentication
 webflow used by CAS is managed by the client which is then passed and tracked throughout various states of the authentication
 process. This state must be secured and encrypted to prevent session hijacking. While CAS provides default encryption
 settings out of the box, it is **STRONGLY** recommended that [all CAS deployments](../installation/Webflow-Customization.html) be
-evaluated prior to production rollouts and regenerate this configuration to prevent attacks.
+evaluated prior to production deployments and regenerate this configuration to prevent attacks.
 
 ### Long Term Authentication
 

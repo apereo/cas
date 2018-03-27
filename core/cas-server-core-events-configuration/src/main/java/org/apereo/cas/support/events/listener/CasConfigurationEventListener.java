@@ -1,14 +1,14 @@
 package org.apereo.cas.support.events.listener;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apereo.cas.configuration.CasConfigurationPropertiesEnvironmentManager;
 import org.apereo.cas.support.events.config.CasConfigurationModifiedEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationPropertiesBindingPostProcessor;
 import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
 import org.springframework.cloud.context.refresh.ContextRefresher;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.event.EventListener;
 
 import java.util.ArrayList;
@@ -20,8 +20,8 @@ import java.util.Collection;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class CasConfigurationEventListener {
-    private static final Logger LOGGER = LoggerFactory.getLogger(CasConfigurationEventListener.class);
 
     @Autowired
     private ConfigurationPropertiesBindingPostProcessor binder;
@@ -29,6 +29,9 @@ public class CasConfigurationEventListener {
     @Autowired(required = false)
     private ContextRefresher contextRefresher;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+    
     private final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager;
 
     public CasConfigurationEventListener(final CasConfigurationPropertiesEnvironmentManager configurationPropertiesEnvironmentManager) {
@@ -77,9 +80,9 @@ public class CasConfigurationEventListener {
     private void rebind() {
         LOGGER.info("Refreshing CAS configuration. Stand by...");
         if (configurationPropertiesEnvironmentManager != null) {
-            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties();
+            configurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.applicationContext);
         } else {
-            CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder);
+            CasConfigurationPropertiesEnvironmentManager.rebindCasConfigurationProperties(this.binder, this.applicationContext);
         }
     }
 }

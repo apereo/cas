@@ -1,6 +1,9 @@
 package org.apereo.cas.config;
 
-import org.apereo.cas.audit.spi.AuditPrincipalIdProvider;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.audit.AuditPrincipalIdProvider;
+import org.apereo.cas.audit.AuditableExecution;
 import org.apereo.cas.authentication.AuthenticationEventExecutionPlanConfigurer;
 import org.apereo.cas.authentication.AuthenticationPostProcessor;
 import org.apereo.cas.authentication.SurrogateAuthenticationPostProcessor;
@@ -21,9 +24,6 @@ import org.apereo.cas.ticket.support.HardTimeoutExpirationPolicy;
 import org.apereo.cas.ticket.support.SurrogateSessionExpirationPolicy;
 import org.apereo.cas.util.io.CommunicationsManager;
 import org.apereo.services.persondir.IPersonAttributeDao;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -48,8 +48,9 @@ import java.util.Set;
  */
 @Configuration("surrogateAuthenticationConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class SurrogateAuthenticationConfiguration {
-    private static final Logger LOGGER = LoggerFactory.getLogger(SurrogateAuthenticationConfiguration.class);
+
 
     @Autowired
     private ApplicationEventPublisher eventPublisher;
@@ -65,9 +66,16 @@ public class SurrogateAuthenticationConfiguration {
     @Qualifier("communicationsManager")
     private CommunicationsManager communicationsManager;
 
+    @Autowired
+    @Qualifier("registeredServiceAccessStrategyEnforcer")
+    private AuditableExecution registeredServiceAccessStrategyEnforcer;
+
+    @Autowired
+    @Qualifier("surrogateEligibilityAuditableExecution")
+    private AuditableExecution surrogateEligibilityAuditableExecution;
+    
     @Bean
-    public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") 
-                                                           final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
+    public ExpirationPolicy grantingTicketExpirationPolicy(@Qualifier("ticketGrantingTicketExpirationPolicy") final ExpirationPolicy ticketGrantingTicketExpirationPolicy) {
         final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
         final HardTimeoutExpirationPolicy surrogatePolicy = new HardTimeoutExpirationPolicy(su.getTgt().getTimeToKillInSeconds());
         final SurrogateSessionExpirationPolicy policy = new SurrogateSessionExpirationPolicy(surrogatePolicy);
@@ -79,21 +87,17 @@ public class SurrogateAuthenticationConfiguration {
     @RefreshScope
     @ConditionalOnMissingBean(name = "surrogateAuthenticationService")
     @Bean
+    @SneakyThrows
     public SurrogateAuthenticationService surrogateAuthenticationService() {
-        try {
-            final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
-            if (su.getJson().getLocation() != null) {
-                LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
-                return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
-            }
-
-            final Map<String, Set> accounts = new LinkedHashMap<>();
-            su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
-            LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
-            return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
-        } catch (final Exception e) {
-            throw new BeanCreationException(e.getMessage(), e);
+        final SurrogateAuthenticationProperties su = casProperties.getAuthn().getSurrogate();
+        if (su.getJson().getLocation() != null) {
+            LOGGER.debug("Using JSON resource [{}] to locate surrogate accounts", su.getJson().getLocation());
+            return new JsonResourceSurrogateAuthenticationService(su.getJson().getLocation(), servicesManager);
         }
+        final Map<String, Set> accounts = new LinkedHashMap<>();
+        su.getSimple().getSurrogates().forEach((k, v) -> accounts.put(k, StringUtils.commaDelimitedListToSet(v)));
+        LOGGER.debug("Using accounts [{}] for surrogate authentication", accounts);
+        return new SimpleSurrogateAuthenticationService(accounts, servicesManager);
     }
 
     @Autowired
@@ -102,17 +106,22 @@ public class SurrogateAuthenticationConfiguration {
     public PrincipalResolver personDirectoryPrincipalResolver(@Qualifier("attributeRepository") final IPersonAttributeDao attributeRepository,
                                                               @Qualifier("principalFactory") final PrincipalFactory principalFactory) {
         return new SurrogatePrincipalResolver(attributeRepository, principalFactory,
-                casProperties.getPersonDirectory().isReturnNull(), casProperties.getPersonDirectory().getPrincipalAttribute());
+            casProperties.getPersonDirectory().isReturnNull(), casProperties.getPersonDirectory().getPrincipalAttribute());
     }
 
     @Bean
     public AuthenticationPostProcessor surrogateAuthenticationPostProcessor() {
-        return new SurrogateAuthenticationPostProcessor(new DefaultPrincipalFactory(), surrogateAuthenticationService(),
-                servicesManager, eventPublisher);
+        return new SurrogateAuthenticationPostProcessor(
+                new DefaultPrincipalFactory(),
+                surrogateAuthenticationService(),
+                servicesManager,
+                eventPublisher,
+                registeredServiceAccessStrategyEnforcer,
+                surrogateEligibilityAuditableExecution);
     }
 
     @Bean
-    public AuditPrincipalIdProvider auditPrincipalIdProvider() {
+    public AuditPrincipalIdProvider surrogateAuditPrincipalIdProvider() {
         return new SurrogateAuditPrincipalIdProvider();
     }
 

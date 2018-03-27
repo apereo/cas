@@ -1,6 +1,7 @@
 package org.apereo.cas.ticket.support;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.ticket.ExpirationPolicy;
@@ -18,6 +19,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class TimeoutExpirationPolicyTests {
 
     private static final File JSON_FILE = new File(FileUtils.getTempDirectoryPath(), "timeoutExpirationPolicy.json");
@@ -29,7 +31,7 @@ public class TimeoutExpirationPolicyTests {
     private Ticket ticket;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.expirationPolicy = new TimeoutExpirationPolicy(TIMEOUT);
 
         this.ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils
@@ -47,7 +49,7 @@ public class TimeoutExpirationPolicyTests {
     }
 
     @Test
-    public void verifyTicketIsExpired() throws InterruptedException {
+    public void verifyTicketIsExpired() {
         ticket = new TicketGrantingTicketImpl("test", CoreAuthenticationTestUtils.getAuthentication(), new TimeoutExpirationPolicy(-100));
         assertTrue(ticket.isExpired());
     }

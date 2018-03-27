@@ -1,5 +1,6 @@
 package org.apereo.cas;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.CRLDistributionPointRevocationCheckerTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ResourceCRLRevocationCheckerTests;
 import org.apereo.cas.adaptors.x509.authentication.handler.support.ThresholdExpiredCRLRevocationPolicyTests;
@@ -30,5 +31,6 @@ import org.junit.runners.Suite;
         ThresholdExpiredCRLRevocationPolicyTests.class,
         X509CredentialsAuthenticationHandlerTests.class,
         CRLDistributionPointRevocationCheckerTests.class})
+@Slf4j
 public class AllTestsSuite {
 }

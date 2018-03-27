@@ -1,5 +1,7 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.model.core.util.EncryptionOptionalSigningJwtCryptographyProperties;
@@ -27,8 +29,10 @@ import org.springframework.core.Ordered;
 @Configuration("tokenCoreConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
 @AutoConfigureOrder(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class TokenCoreConfiguration {
 
+    
     @Autowired
     private CasConfigurationProperties casProperties;
 
@@ -45,9 +49,22 @@ public class TokenCoreConfiguration {
     @ConditionalOnMissingBean(name = "tokenCipherExecutor")
     public CipherExecutor tokenCipherExecutor() {
         final EncryptionOptionalSigningJwtCryptographyProperties crypto = casProperties.getAuthn().getToken().getCrypto();
-        return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(),
-                crypto.getSigning().getKey(),
-                crypto.getAlg(), crypto.isEncryptionEnabled());
+        boolean enabled = crypto.isEnabled();
+        if (!enabled && (StringUtils.isNotBlank(crypto.getEncryption().getKey())) && StringUtils.isNotBlank(crypto.getSigning().getKey())) {
+            LOGGER.warn("Token encryption/signing is not enabled explicitly in the configuration, yet signing/encryption keys "
+                    + "are defined for operations. CAS will proceed to enable the token encryption/signing functionality.");
+            enabled = true;
+        }
+        
+        if (enabled) {
+            return new TokenTicketCipherExecutor(crypto.getEncryption().getKey(),
+                    crypto.getSigning().getKey(),
+                    crypto.getAlg(), crypto.isEncryptionEnabled());
+        }
+        LOGGER.info("Token cookie encryption/signing is turned off. This "
+                + "MAY NOT be safe in a production environment. Consider using other choices to handle encryption, "
+                + "signing and verification of generated tokens.");
+        return CipherExecutor.noOp();
     }
 
     @RefreshScope
@@ -57,6 +74,6 @@ public class TokenCoreConfiguration {
         return new JWTTokenTicketBuilder(casClientTicketValidator,
                 casProperties.getServer().getPrefix(),
                 tokenCipherExecutor(),
-                grantingTicketExpirationPolicy.getTimeToLive());
+                grantingTicketExpirationPolicy);
     }
 }

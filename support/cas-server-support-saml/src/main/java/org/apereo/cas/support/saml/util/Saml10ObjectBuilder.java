@@ -1,5 +1,6 @@
 package org.apereo.cas.support.saml.util;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.WebApplicationService;
@@ -29,8 +30,6 @@ import org.opensaml.saml.saml1.core.StatusCode;
 import org.opensaml.saml.saml1.core.StatusMessage;
 import org.opensaml.saml.saml1.core.Subject;
 import org.opensaml.saml.saml1.core.SubjectConfirmation;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,11 +43,12 @@ import java.util.Map;
 /**
  * This is the response builder for Saml1 Protocol.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
-    private static final Logger LOGGER = LoggerFactory.getLogger(Saml10ObjectBuilder.class);
+
 
     private static final String CONFIRMATION_METHOD = "urn:oasis:names:tc:SAML:1.0:cm:artifact";
     private static final long serialVersionUID = -4711012620700270554L;
@@ -87,7 +87,7 @@ public class Saml10ObjectBuilder extends AbstractSamlObjectBuilder {
     private static void setInResponseToForSamlResponseIfNeeded(final Service service, final Response samlResponse) {
         if (service instanceof SamlService) {
             final SamlService samlService = (SamlService) service;
-            final String requestId = samlService.getRequestID();
+            final String requestId = samlService.getRequestId();
             if (StringUtils.isNotBlank(requestId)) {
                 samlResponse.setInResponseTo(requestId);
             }

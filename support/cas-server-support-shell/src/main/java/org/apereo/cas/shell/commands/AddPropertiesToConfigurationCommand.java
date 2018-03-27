@@ -1,10 +1,9 @@
 package org.apereo.cas.shell.commands;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.config.YamlProcessor;
 import org.springframework.beans.factory.config.YamlPropertiesFactoryBean;
 import org.springframework.boot.configurationmetadata.ConfigurationMetadataProperty;
@@ -17,9 +16,11 @@ import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -34,9 +35,8 @@ import java.util.stream.Collectors;
  * @since 5.2.0
  */
 @Service
+@Slf4j
 public class AddPropertiesToConfigurationCommand implements CommandMarker {
-    private static final Logger LOGGER = LoggerFactory.getLogger(FindPropertiesCommand.class);
-
     /**
      * Add properties to configuration.
      *
@@ -96,7 +96,7 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
         options.setPrettyFlow(true);
         options.setAllowUnicode(true);
         final Yaml yaml = new Yaml(options);
-        try (FileWriter writer = new FileWriter(filePath)) {
+        try (Writer writer = Files.newBufferedWriter(filePath.toPath(), StandardCharsets.UTF_8)) {
             putResultsIntoProperties(results, yamlProps);
             yaml.dump(yamlProps, writer);
         }
@@ -131,14 +131,14 @@ public class AddPropertiesToConfigurationCommand implements CommandMarker {
             } else {
                 value = v.getDefaultValue().toString();
             }
-            LOGGER.info("Adding property [{}={}]", v.getName(), value);
-            p.put("# " + v.getName(), value);
+            LOGGER.info("Adding property [{}={}]", v.getId(), value);
+            p.put("# " + v.getId(), value);
         });
     }
 
     private Properties loadPropertiesFromConfigurationFile(final File filePath) throws IOException {
         final Properties p = new Properties();
-        try (FileReader f = new FileReader(filePath)) {
+        try (Reader f = Files.newBufferedReader(filePath.toPath(), StandardCharsets.UTF_8)) {
             p.load(f);
         }
         return p;

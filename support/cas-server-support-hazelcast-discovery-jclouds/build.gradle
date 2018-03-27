@@ -1,0 +1,8 @@
+description = "Apereo CAS Hazelcast Discovery JClouds Support"
+dependencies {
+    implementation libraries.hazelcast
+    implementation libraries.jclouds
+    implementation project(":support:cas-server-support-hazelcast-core")
+    implementation project(":core:cas-server-core-util-api")
+    implementation project(":core:cas-server-core-configuration-api")
+}

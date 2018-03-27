@@ -4,6 +4,8 @@ import com.esotericsoftware.kryo.Kryo;
 import com.esotericsoftware.kryo.Serializer;
 import com.esotericsoftware.kryo.io.Input;
 import com.esotericsoftware.kryo.io.Output;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.services.AbstractRegisteredService;
@@ -14,7 +16,13 @@ import org.apereo.cas.services.RefuseRegisteredServiceProxyPolicy;
 import org.apereo.cas.services.RegexRegisteredService;
 import org.apereo.cas.services.RegisteredService;
 import org.apereo.cas.services.RegisteredService.LogoutType;
+import org.apereo.cas.services.RegisteredServiceAccessStrategy;
+import org.apereo.cas.services.RegisteredServiceAttributeReleasePolicy;
+import org.apereo.cas.services.RegisteredServiceMultifactorPolicy;
+import org.apereo.cas.services.RegisteredServiceProxyPolicy;
+import org.apereo.cas.services.RegisteredServicePublicKey;
 import org.apereo.cas.services.RegisteredServicePublicKeyImpl;
+import org.apereo.cas.services.RegisteredServiceUsernameAttributeProvider;
 import org.apereo.cas.services.ReturnAllowedAttributeReleasePolicy;
 
 import java.net.URL;
@@ -23,22 +31,22 @@ import java.util.HashSet;
 
 /**
  * Serializer for {@link RegisteredService} instances.
+ *
  * @author Misagh Moayyed
  * @since 4.1.0
  */
+@Slf4j
 public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
 
     /**
      * In case the url object is null in the service,
      * we need to be able to return a default/mock url.
+     *
      * @return mock url
      */
+    @SneakyThrows
     private static URL getEmptyUrl() {
-        try {
-            return new URL("https://");
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
-        }
+        return new URL("https://");
     }
 
     @Override
@@ -56,18 +64,18 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getTheme(), StringUtils.EMPTY));
 
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getPublicKey(),
-                new RegisteredServicePublicKeyImpl()));
+            new RegisteredServicePublicKeyImpl()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getProxyPolicy(),
-                new RefuseRegisteredServiceProxyPolicy()));
+            new RefuseRegisteredServiceProxyPolicy()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getAttributeReleasePolicy(),
-                new ReturnAllowedAttributeReleasePolicy()));
+            new ReturnAllowedAttributeReleasePolicy()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getUsernameAttributeProvider(),
-                new DefaultRegisteredServiceUsernameProvider()));
+            new DefaultRegisteredServiceUsernameProvider()));
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getAccessStrategy(),
-                new DefaultRegisteredServiceAccessStrategy()));
+            new DefaultRegisteredServiceAccessStrategy()));
 
         writeObjectByReflection(kryo, output, ObjectUtils.defaultIfNull(service.getMultifactorPolicy(),
-                new DefaultRegisteredServiceMultifactorPolicy()));
+            new DefaultRegisteredServiceMultifactorPolicy()));
 
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getInformationUrl(), StringUtils.EMPTY));
         kryo.writeObject(output, StringUtils.defaultIfEmpty(service.getPrivacyUrl(), StringUtils.EMPTY));
@@ -87,12 +95,14 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
         svc.setLogoutUrl(kryo.readObject(input, URL.class));
         svc.setRequiredHandlers(kryo.readObject(input, HashSet.class));
         svc.setTheme(kryo.readObject(input, String.class));
-        svc.setPublicKey(readObjectByReflection(kryo, input));
-        svc.setProxyPolicy(readObjectByReflection(kryo, input));
-        svc.setAttributeReleasePolicy(readObjectByReflection(kryo, input));
-        svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input));
-        svc.setAccessStrategy(readObjectByReflection(kryo, input));
-        svc.setMultifactorPolicy(readObjectByReflection(kryo, input));
+
+        svc.setPublicKey(readObjectByReflection(kryo, input, RegisteredServicePublicKey.class));
+        svc.setProxyPolicy(readObjectByReflection(kryo, input, RegisteredServiceProxyPolicy.class));
+        svc.setAttributeReleasePolicy(readObjectByReflection(kryo, input, RegisteredServiceAttributeReleasePolicy.class));
+        svc.setUsernameAttributeProvider(readObjectByReflection(kryo, input, RegisteredServiceUsernameAttributeProvider.class));
+        svc.setAccessStrategy(readObjectByReflection(kryo, input, RegisteredServiceAccessStrategy.class));
+        svc.setMultifactorPolicy(readObjectByReflection(kryo, input, RegisteredServiceMultifactorPolicy.class));
+
         svc.setInformationUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
         svc.setPrivacyUrl(StringUtils.defaultIfBlank(kryo.readObject(input, String.class), null));
         svc.setProperties(kryo.readObject(input, HashMap.class));
@@ -118,15 +128,20 @@ public class RegisteredServiceSerializer extends Serializer<RegisteredService> {
      * @param <T>   the type parameter
      * @param kryo  the kryo
      * @param input the input
+     * @param clazz the clazz
      * @return the t
      */
-    private static <T> T readObjectByReflection(final Kryo kryo, final Input input) {
-        try {
-            final String className = kryo.readObject(input, String.class);
-            final Class<T> clazz = (Class<T>) Class.forName(className);
-            return kryo.readObject(input, clazz);
-        } catch (final Exception e) {
-            throw new RuntimeException(e.getMessage(), e);
+    @SneakyThrows
+    private static <T> T readObjectByReflection(final Kryo kryo, final Input input, final Class<T> clazz) {
+        final String className = kryo.readObject(input, String.class);
+        final Class<T> foundClass = (Class<T>) Class.forName(className);
+        final Object result = kryo.readObject(input, foundClass);
+
+        if (!clazz.isAssignableFrom(result.getClass())) {
+            throw new ClassCastException("Result [" + result
+                + " is of type " + result.getClass()
+                + " when we were expecting " + clazz);
         }
+        return (T) result;
     }
 }

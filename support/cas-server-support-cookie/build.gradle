@@ -1,9 +1,0 @@
-description = "Apereo CAS Web Application Cookie Management"
-dependencies {
-    
-
-    implementation libraries.thymeleaf
-    implementation project(":core:cas-server-core-util")
-    implementation project(":core:cas-server-core-web")
-    implementation project(":core:cas-server-core-configuration")
-}

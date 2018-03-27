@@ -2,6 +2,8 @@ package org.apereo.cas.consent;
 
 import com.fasterxml.jackson.core.util.MinimalPrettyPrinter;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.principal.Service;
@@ -12,6 +14,7 @@ import org.apereo.cas.util.EncodingUtils;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -21,14 +24,12 @@ import java.util.stream.Collectors;
  * @author Misagh Moayyed
  * @since 5.2.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     private static final ObjectMapper MAPPER = new ObjectMapper().findAndRegisterModules();
 
     private final CipherExecutor<Serializable, String> consentCipherExecutor;
-
-    public DefaultConsentDecisionBuilder(final CipherExecutor consentCipherExecutor) {
-        this.consentCipherExecutor = consentCipherExecutor;
-    }
 
     @Override
     public ConsentDecision update(final ConsentDecision consent, final Map<String, Object> attributes) {
@@ -77,6 +78,10 @@ public class DefaultConsentDecisionBuilder implements ConsentDecisionBuilder {
     public Map<String, Object> getConsentableAttributesFrom(final ConsentDecision decision) {
         try {
             final String result = this.consentCipherExecutor.decode(decision.getAttributes());
+            if (StringUtils.isBlank(result)) {
+                LOGGER.warn("Unable to decipher attributes from consent decision [{}]", decision.getId());
+                return new HashMap<>(0);
+            }
             final String names = EncodingUtils.decodeBase64ToString(result);
             final Map<String, Object> attributes = MAPPER.readValue(names, Map.class);
             return attributes;

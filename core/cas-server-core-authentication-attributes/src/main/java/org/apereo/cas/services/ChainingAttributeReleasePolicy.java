@@ -1,13 +1,15 @@
 package org.apereo.cas.services;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.principal.Principal;
 import org.apereo.cas.authentication.principal.Service;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.ToString;
+import lombok.Setter;
 
 /**
  * This is {@link ChainingAttributeReleasePolicy}.
@@ -15,18 +17,15 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@ToString
+@Setter
+@Getter
 public class ChainingAttributeReleasePolicy implements RegisteredServiceAttributeReleasePolicy {
+
     private static final long serialVersionUID = 3795054936775326709L;
 
     private List<RegisteredServiceAttributeReleasePolicy> policies = new ArrayList<>();
-
-    public List<RegisteredServiceAttributeReleasePolicy> getPolicies() {
-        return policies;
-    }
-
-    public void setPolicies(final List<RegisteredServiceAttributeReleasePolicy> policies) {
-        this.policies = policies;
-    }
 
     @Override
     public Map<String, Object> getAttributes(final Principal p, final Service selectedService, final RegisteredService service) {
@@ -42,12 +41,5 @@ public class ChainingAttributeReleasePolicy implements RegisteredServiceAttribut
      */
     public void addPolicy(final RegisteredServiceAttributeReleasePolicy policy) {
         this.policies.add(policy);
-    }
-
-    @Override
-    public String toString() {
-        return new ToStringBuilder(this)
-                .append("policies", policies)
-                .toString();
     }
 }

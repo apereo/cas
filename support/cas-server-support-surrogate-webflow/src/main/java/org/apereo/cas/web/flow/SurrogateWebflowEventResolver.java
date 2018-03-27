@@ -1,5 +1,6 @@
 package org.apereo.cas.web.flow;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionPlan;
 import org.apereo.cas.authentication.AuthenticationSystemSupport;
@@ -25,6 +26,7 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolver {
     /**
      * Internal flag to indicate whether surrogate account selection is requested.
@@ -61,7 +63,7 @@ public class SurrogateWebflowEventResolver extends AbstractCasWebflowEventResolv
         final Credential c = WebUtils.getCredential(requestContext);
         if (c instanceof UsernamePasswordCredential) {
             final String username = c.getId();
-            final Collection surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
+            final Collection<String> surrogates = surrogateService.getEligibleAccountsForSurrogateToProxy(username);
             if (!surrogates.isEmpty()) {
                 surrogates.add(username);
                 requestContext.getFlowScope().put("surrogates", surrogates);

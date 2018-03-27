@@ -1,5 +1,6 @@
 package org.apereo.cas.services;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -8,9 +9,10 @@ import org.apache.commons.lang3.StringUtils;
  * attribute release policy that would otherwise grant access
  * to the service that is requesting authentication.
  *
- * @author Misagh Moayyed mmoayyed@unicon.net
+ * @author Misagh Moayyed
  * @since 4.1
  */
+@Slf4j
 public class UnauthorizedServiceForPrincipalException extends UnauthorizedServiceException {
 
     private static final long serialVersionUID = 8909291297815558561L;

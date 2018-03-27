@@ -1,6 +1,7 @@
 package org.apereo.cas;
 
-import org.apereo.cas.monitor.PooledConnectionFactoryMonitorTests;
+import lombok.extern.slf4j.Slf4j;
+import org.apereo.cas.monitor.PooledConnectionFactoryHealthIndicatorTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -10,6 +11,7 @@ import org.junit.runners.Suite;
  * @since 4.1.0
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses(PooledConnectionFactoryMonitorTests.class)
+@Suite.SuiteClasses(PooledConnectionFactoryHealthIndicatorTests.class)
+@Slf4j
 public class AllTestsSuite {
 }

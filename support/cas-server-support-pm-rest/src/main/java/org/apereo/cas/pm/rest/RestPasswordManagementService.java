@@ -1,5 +1,6 @@
 package org.apereo.cas.pm.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.authentication.Credential;
@@ -25,6 +26,7 @@ import java.util.Map;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class RestPasswordManagementService extends BasePasswordManagementService {
 
     private final RestTemplate restTemplate;
@@ -33,7 +35,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
                                          final String issuer,
                                          final RestTemplate restTemplate,
                                          final PasswordManagementProperties passwordManagementProperties) {
-        super(cipherExecutor, issuer, passwordManagementProperties);
+        super(passwordManagementProperties, cipherExecutor, issuer);
         this.restTemplate = restTemplate;
     }
 
@@ -90,7 +92,7 @@ public class RestPasswordManagementService extends BasePasswordManagementService
         headers.put("username", CollectionUtils.wrap(username));
         final HttpEntity<String> entity = new HttpEntity<>(headers);
         final ResponseEntity<Map> result = restTemplate.exchange(rest.getEndpointUrlSecurityQuestions(),
-                HttpMethod.GET, entity, Map.class);
+            HttpMethod.GET, entity, Map.class);
 
         if (result.getStatusCodeValue() == HttpStatus.OK.value() && result.hasBody()) {
             return result.getBody();

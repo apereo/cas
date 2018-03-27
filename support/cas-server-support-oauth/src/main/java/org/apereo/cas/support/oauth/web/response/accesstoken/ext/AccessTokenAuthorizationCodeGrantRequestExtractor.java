@@ -1,8 +1,13 @@
 package org.apereo.cas.support.oauth.web.response.accesstoken.ext;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CentralAuthenticationService;
+import org.apereo.cas.authentication.principal.Service;
+import org.apereo.cas.authentication.principal.ServiceFactory;
+import org.apereo.cas.authentication.principal.WebApplicationService;
 import org.apereo.cas.configuration.model.support.oauth.OAuthProperties;
 import org.apereo.cas.services.ServicesManager;
+import org.apereo.cas.services.UnauthorizedServiceException;
 import org.apereo.cas.support.oauth.OAuth20Constants;
 import org.apereo.cas.support.oauth.OAuth20GrantTypes;
 import org.apereo.cas.support.oauth.services.OAuthRegisteredService;
@@ -10,15 +15,9 @@ import org.apereo.cas.support.oauth.util.OAuth20Utils;
 import org.apereo.cas.ticket.InvalidTicketException;
 import org.apereo.cas.ticket.OAuthToken;
 import org.apereo.cas.ticket.registry.TicketRegistry;
-import org.apereo.cas.web.support.WebUtils;
-import org.pac4j.core.profile.ProfileManager;
-import org.pac4j.core.profile.UserProfile;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Optional;
 import java.util.Set;
 
 /**
@@ -27,38 +26,57 @@ import java.util.Set;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAccessTokenGrantRequestExtractor {
-    private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenAuthorizationCodeGrantRequestExtractor.class);
+    /**
+     * Service factory instance.
+     */
+    protected final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory;
 
     public AccessTokenAuthorizationCodeGrantRequestExtractor(final ServicesManager servicesManager, final TicketRegistry ticketRegistry,
-                                                             final HttpServletRequest request, final HttpServletResponse response,
                                                              final CentralAuthenticationService centralAuthenticationService,
-                                                             final OAuthProperties oAuthProperties) {
-        super(servicesManager, ticketRegistry, request, response,
-                centralAuthenticationService, oAuthProperties);
+                                                             final OAuthProperties oAuthProperties,
+                                                             final ServiceFactory<WebApplicationService> webApplicationServiceServiceFactory) {
+        super(servicesManager, ticketRegistry, centralAuthenticationService, oAuthProperties);
+        this.webApplicationServiceServiceFactory = webApplicationServiceServiceFactory;
     }
 
     @Override
-    public AccessTokenRequestDataHolder extract() {
-        final ProfileManager manager = WebUtils.getPac4jProfileManager(request, response);
+    public AccessTokenRequestDataHolder extract(final HttpServletRequest request, final HttpServletResponse response) {
         final String grantType = request.getParameter(OAuth20Constants.GRANT_TYPE);
         final Set<String> scopes = OAuth20Utils.parseRequestScopes(request);
-        
+
         LOGGER.debug("OAuth grant type is [{}]", grantType);
 
-        final Optional<UserProfile> profile = manager.get(true);
-        final String clientId = profile.get().getId();
-        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthService(this.servicesManager, clientId);
-        LOGGER.debug("Located OAuth registered service [{}]", registeredService);
-
-        final OAuthToken token = getOAuthTokenFromRequest();
-        if (token == null) {
-            throw new InvalidTicketException(getOAuthParameter());
+        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final OAuthRegisteredService registeredService = getOAuthRegisteredServiceBy(request);
+        if (registeredService == null) {
+            throw new UnauthorizedServiceException("Unable to locate service in registry for redirect URI " + redirectUri);
         }
-        return new AccessTokenRequestDataHolder(token, registeredService, getGrantType(), 
-                isAllowedToGenerateRefreshToken(), scopes);
+
+        final OAuthToken token = getOAuthTokenFromRequest(request);
+        if (token == null) {
+            throw new InvalidTicketException(getOAuthParameter(request));
+        }
+        
+        final Service service = this.webApplicationServiceServiceFactory.createService(redirectUri);
+        scopes.addAll(token.getScopes());
+
+        return new AccessTokenRequestDataHolder(service, token.getAuthentication(), token,
+            registeredService, getGrantType(),
+            isAllowedToGenerateRefreshToken(), scopes);
     }
-    
+
+    /**
+     * Gets registered service identifier from request.
+     *
+     * @param request the request
+     * @return the registered service identifier from request
+     */
+    protected String getRegisteredServiceIdentifierFromRequest(final HttpServletRequest request) {
+        return request.getParameter(OAuth20Constants.REDIRECT_URI);
+    }
+
     /**
      * Is allowed to generate refresh token ?
      *
@@ -72,19 +90,26 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
         return OAuth20Constants.CODE;
     }
 
-    protected String getOAuthParameter() {
+    /**
+     * Gets o auth parameter.
+     *
+     * @param request the request
+     * @return the o auth parameter
+     */
+    protected String getOAuthParameter(final HttpServletRequest request) {
         return request.getParameter(getOAuthParameterName());
     }
 
     /**
      * Return the OAuth token.
      *
+     * @param request the request
      * @return the OAuth token
      */
-    protected OAuthToken getOAuthTokenFromRequest() {
-        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(), OAuthToken.class);
+    protected OAuthToken getOAuthTokenFromRequest(final HttpServletRequest request) {
+        final OAuthToken token = this.ticketRegistry.getTicket(getOAuthParameter(request), OAuthToken.class);
         if (token == null || token.isExpired()) {
-            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(), token);
+            LOGGER.error("OAuth token indicated by parameter [{}] has expired or not found: [{}]", getOAuthParameter(request), token);
             if (token != null) {
                 this.ticketRegistry.deleteTicket(token.getId());
             }
@@ -108,5 +133,20 @@ public class AccessTokenAuthorizationCodeGrantRequestExtractor extends BaseAcces
     @Override
     public OAuth20GrantTypes getGrantType() {
         return OAuth20GrantTypes.AUTHORIZATION_CODE;
+    }
+
+    /**
+     * Gets oauth registered service from the request.
+     * Implementation attempts to locate the redirect uri from request and
+     * check with service registry to find a matching oauth service.
+     *
+     * @param request the request
+     * @return the registered service
+     */
+    protected OAuthRegisteredService getOAuthRegisteredServiceBy(final HttpServletRequest request) {
+        final String redirectUri = getRegisteredServiceIdentifierFromRequest(request);
+        final OAuthRegisteredService registeredService = OAuth20Utils.getRegisteredOAuthServiceByRedirectUri(this.servicesManager, redirectUri);
+        LOGGER.debug("Located registered service [{}]", registeredService);
+        return registeredService;
     }
 }

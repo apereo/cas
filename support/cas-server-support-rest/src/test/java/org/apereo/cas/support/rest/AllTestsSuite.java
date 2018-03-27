@@ -1,5 +1,6 @@
 package org.apereo.cas.support.rest;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,5 +12,6 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({TicketGrantingTicketResourceTests.class, ServiceTicketResourceTests.class})
+@Slf4j
 public class AllTestsSuite {
 }

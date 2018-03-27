@@ -1,6 +1,6 @@
 package org.apereo.cas.support.openid.web.flow;
 
-
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.support.openid.AbstractOpenIdTests;
@@ -11,6 +11,7 @@ import org.apereo.cas.ticket.TicketGrantingTicket;
 import org.apereo.cas.ticket.TicketGrantingTicketImpl;
 import org.apereo.cas.ticket.registry.TicketRegistry;
 import org.apereo.cas.ticket.support.NeverExpiresExpirationPolicy;
+import org.apereo.cas.web.support.WebUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -28,6 +29,7 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.1
  */
+@Slf4j
 public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
     @Autowired
@@ -70,7 +72,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
         final OpenIdServiceFactory factory = new OpenIdServiceFactory("");
         final OpenIdService service = factory.createService(request);
         context.getFlowScope().put("service", service);
-        context.getFlowScope().put("ticketGrantingTicketId", "tgtId");
+        context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, "tgtId");
 
         context.setExternalContext(new ServletExternalContext(
                 new MockServletContext(), request,
@@ -93,7 +95,7 @@ public class OpenIdSingleSignOnActionTests extends AbstractOpenIdTests {
 
         final OpenIdService service = new OpenIdServiceFactory("").createService(request);
         context.getFlowScope().put("service", service);
-        context.getFlowScope().put("ticketGrantingTicketId", t.getId());
+        context.getFlowScope().put(WebUtils.PARAMETER_TICKET_GRANTING_TICKET_ID, t.getId());
         context.setExternalContext(new ServletExternalContext(new MockServletContext(), request, new MockHttpServletResponse()));
         assertEquals("success", this.action.execute(context).getId());
     }

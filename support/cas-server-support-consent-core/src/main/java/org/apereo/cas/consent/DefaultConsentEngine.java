@@ -1,18 +1,16 @@
 package org.apereo.cas.consent;
 
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
 import org.apereo.cas.authentication.Authentication;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.services.RegisteredService;
-import org.apereo.cas.util.DateTimeUtils;
 import org.apereo.inspektr.audit.annotation.Audit;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is {@link DefaultConsentEngine}.
@@ -20,19 +18,14 @@ import java.util.concurrent.TimeUnit;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
+@AllArgsConstructor
 public class DefaultConsentEngine implements ConsentEngine {
     private static final long serialVersionUID = -617809298856160625L;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DefaultConsentEngine.class);
+
     private final ConsentRepository consentRepository;
     private final ConsentDecisionBuilder consentDecisionBuilder;
-
-    public DefaultConsentEngine(final ConsentRepository consentRepository,
-                                final ConsentDecisionBuilder consentDecisionBuilder) {
-        this.consentRepository = consentRepository;
-        this.consentDecisionBuilder = consentDecisionBuilder;
-    }
-
 
     @Override
     public Pair<Boolean, ConsentDecision> isConsentRequiredFor(final Service service,
@@ -49,7 +42,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         final ConsentDecision decision = findConsentDecision(service, registeredService, authentication);
         if (decision == null) {
             LOGGER.debug("No consent decision found; thus attribute consent is required");
-            return Pair.of(true, decision);
+            return Pair.of(true, null);
         }
 
         LOGGER.debug("Located consentable attributes for release [{}]", attributes.keySet());
@@ -60,7 +53,7 @@ public class DefaultConsentEngine implements ConsentEngine {
         }
 
         LOGGER.debug("Consent is not required yet for [{}]; checking for reminder options", service);
-        final ChronoUnit unit = DateTimeUtils.toChronoUnit(decision.getReminderTimeUnit());
+        final ChronoUnit unit = decision.getReminderTimeUnit();
         final LocalDateTime dt = decision.getCreatedDate().plus(decision.getReminder(), unit);
         final LocalDateTime now = LocalDateTime.now();
 
@@ -82,7 +75,7 @@ public class DefaultConsentEngine implements ConsentEngine {
                                                 final RegisteredService registeredService,
                                                 final Authentication authentication,
                                                 final long reminder,
-                                                final TimeUnit reminderTimeUnit,
+                                                final ChronoUnit reminderTimeUnit,
                                                 final ConsentOptions options) {
         final Map<String, Object> attributes = resolveConsentableAttributesFrom(authentication, service, registeredService);
         final String principalId = authentication.getPrincipal().getId();

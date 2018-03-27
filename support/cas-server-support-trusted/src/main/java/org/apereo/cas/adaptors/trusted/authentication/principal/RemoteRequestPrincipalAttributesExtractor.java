@@ -19,6 +19,6 @@ public interface RemoteRequestPrincipalAttributesExtractor {
      * @return the attributes
      */
     default Map<String, Object> getAttributes(final HttpServletRequest request) {
-        return new HashMap<>();
+        return new HashMap<>(0);
     }
 }

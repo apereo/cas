@@ -1,5 +1,6 @@
 package org.apereo.cas.config.pm;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CipherExecutor;
 import org.apereo.cas.configuration.CasConfigurationProperties;
 import org.apereo.cas.configuration.support.JpaBeans;
@@ -13,7 +14,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 import javax.sql.DataSource;
-import java.io.Serializable;
 
 /**
  * This is {@link JdbcPasswordManagementConfiguration}.
@@ -23,13 +23,14 @@ import java.io.Serializable;
  */
 @Configuration("jdbcPasswordManagementConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
+@Slf4j
 public class JdbcPasswordManagementConfiguration {
     @Autowired
     private CasConfigurationProperties casProperties;
 
     @Autowired
     @Qualifier("passwordManagementCipherExecutor")
-    private CipherExecutor<Serializable, String> passwordManagementCipherExecutor;
+    private CipherExecutor passwordManagementCipherExecutor;
 
     @Bean
     public DataSource jdbcPasswordManagementDataSource() {

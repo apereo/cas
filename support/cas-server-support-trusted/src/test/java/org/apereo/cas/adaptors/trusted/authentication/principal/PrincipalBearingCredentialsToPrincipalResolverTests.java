@@ -1,5 +1,6 @@
 package org.apereo.cas.adaptors.trusted.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.authentication.CoreAuthenticationTestUtils;
 import org.apereo.cas.authentication.UsernamePasswordCredential;
 import org.apereo.cas.authentication.handler.support.SimpleTestUsernamePasswordAuthenticationHandler;
@@ -13,11 +14,12 @@ import static org.junit.Assert.*;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class PrincipalBearingCredentialsToPrincipalResolverTests {
     private PrincipalBearingPrincipalResolver resolver;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         this.resolver = new PrincipalBearingPrincipalResolver();
     }
 

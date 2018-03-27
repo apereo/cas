@@ -1,13 +1,12 @@
 package org.apereo.cas.ws.idp.authentication;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.utils.URIBuilder;
 import org.apereo.cas.authentication.AuthenticationServiceSelectionStrategy;
 import org.apereo.cas.authentication.principal.Service;
 import org.apereo.cas.authentication.principal.ServiceFactory;
 import org.apereo.cas.ws.idp.WSFederationConstants;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.Ordered;
 
 import java.util.Optional;
@@ -18,9 +17,10 @@ import java.util.Optional;
  * @author Misagh Moayyed
  * @since 5.1.0
  */
+@Slf4j
 public class WSFederationAuthenticationServiceSelectionStrategy implements AuthenticationServiceSelectionStrategy {
     private static final long serialVersionUID = 8035218407906419228L;
-    private static final Logger LOGGER = LoggerFactory.getLogger(WSFederationAuthenticationServiceSelectionStrategy.class);
+
 
     private final int order = Ordered.HIGHEST_PRECEDENCE;
     private final ServiceFactory webApplicationServiceFactory;

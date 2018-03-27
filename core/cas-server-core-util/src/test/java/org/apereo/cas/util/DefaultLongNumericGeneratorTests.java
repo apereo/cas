@@ -2,6 +2,7 @@ package org.apereo.cas.util;
 
 import static org.junit.Assert.*;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.util.gen.DefaultLongNumericGenerator;
 import org.junit.Test;
 
@@ -9,6 +10,7 @@ import org.junit.Test;
  * @author Scott Battaglia
  * @since 3.0.0
  */
+@Slf4j
 public class DefaultLongNumericGeneratorTests {
 
     @Test

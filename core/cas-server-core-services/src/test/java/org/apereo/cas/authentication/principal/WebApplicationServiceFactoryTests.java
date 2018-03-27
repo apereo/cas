@@ -1,5 +1,6 @@
 package org.apereo.cas.authentication.principal;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.CasProtocolConstants;
 import org.junit.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -12,6 +13,7 @@ import static org.junit.Assert.*;
  * @author Misagh Moayyed
  * @since 4.2
  */
+@Slf4j
 public class WebApplicationServiceFactoryTests {
 
     @Test
@@ -48,7 +50,7 @@ public class WebApplicationServiceFactoryTests {
         final WebApplicationServiceFactory factory = new WebApplicationServiceFactory();
         final WebApplicationService service = factory.createService(request);
         assertNotNull(service);
-        assertEquals(service.getArtifactId(), "ticket");
+        assertEquals("ticket", service.getArtifactId());
     }
 
     @Test

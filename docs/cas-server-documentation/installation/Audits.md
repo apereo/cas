@@ -10,18 +10,9 @@ and statistics. The Inspektr project allows for non-intrusive auditing and loggi
 coarse-grained execution paths e.g. Spring-managed beans method executions by using annotations
 and Spring-managed `@Aspect`-style aspects.
 
-
-CAS server auto-configures all the relevant Inspektr components.
-All the available configuration
-options that are injected to Inspektr classes are available to
-deployers via relevant CAS properties.
+CAS server auto-configures all the relevant Inspektr components.   All the available configuration options that are injected to Inspektr classes are available to deployers via relevant CAS properties. Note that the audit record management functionality of CAS supports handling multiple audit record destinations at the same time. In other words, you may choose to route audit records to both a database and a REST endpoint as well as any number of logger-based destinations all at the same time.
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#audits).
-
-
-## Sentry-based Audits
-
-Audit log data can be automatically routed to and integrated with [Sentry](../integration/Sentry-Integration.html) to track and monitor CAS events and errors.
 
 ## File-based Audits
 
@@ -77,11 +68,26 @@ If you intend to use a MongoDb database for auditing functionality, enable the f
 
 To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#mongodb-audits).
 
+## REST Audits
+
+Audit events may also be `POST`ed to an endpoint of your choosing. To activate this feature, enable the following module in your configuration:
+
+```xml
+<dependency>
+    <groupId>org.apereo.cas</groupId>
+    <artifactId>cas-server-support-audit-rest</artifactId>
+    <version>${cas.version}</version>
+</dependency>
+```
+
+The body of the HTTP request is a JSON representation of the audit record. 
+To see the relevant list of CAS properties, please [review this guide](Configuration-Properties.html#rest-audits).
+
 ## Audit Events
 
 The following events are tracked and recorded in the audit log:
 
-| Event                                 | Action          
+| Event                                 | Action
 |---------------------------------------|--------------------------------------
 | `TICKET_GRANTING_TICKET`              | `CREATED`, `NOT_CREATED`, `DESTROYED`
 | `PROXY_GRANTING_TICKET`               | `CREATED`, `NOT_CREATED`, `DESTROYED`
@@ -95,3 +101,12 @@ The following events are tracked and recorded in the audit log:
 | `SAVE_CONSENT`                        | `SUCCESS`, `FAILURE`
 | `CHANGE_PASSWORD`                     | `SUCCESS`, `FAILURE`
 | `DELETE_SERVICE`                      | `SUCCESS`, `FAILURE`
+| `SAML2_RESPONSE`                      | `CREATED`, `FAILED`
+| `SAML2_REQUEST`                       | `CREATED`, `FAILED`
+| `OAUTH2_USER_PROFILE_DATA`            | `CREATED`, `FAILED`
+| `OAUTH2_ACCESS_TOKEN_REQUEST`         | `CREATED`, `FAILED`
+| `REST_API_TICKET_GRANTING_TICKET`     | `CREATED`, `FAILED`
+| `REST_API_SERVICE_TICKET`             | `CREATED`, `FAILED`
+| `SERVICE_ACCESS_ENFORCEMENT`          | `TRIGGERED`
+| `DELEGATED_CLIENT`                    | `SUCCESS`, `FAILURE`
+| `SURROGATE_AUTHENTICATION_ELIGIBILITY_VERIFICATION`          | `TRIGGERED`

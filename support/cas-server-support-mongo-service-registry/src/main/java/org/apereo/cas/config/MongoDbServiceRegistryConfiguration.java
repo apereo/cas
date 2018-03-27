@@ -1,10 +1,13 @@
 package org.apereo.cas.config;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.CasConfigurationProperties;
-import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoServiceRegistryProperties;
+import org.apereo.cas.configuration.model.support.mongo.serviceregistry.MongoDbServiceRegistryProperties;
 import org.apereo.cas.mongo.MongoDbConnectionFactory;
-import org.apereo.cas.services.MongoServiceRegistryDao;
-import org.apereo.cas.services.ServiceRegistryDao;
+import org.apereo.cas.services.MongoServiceRegistry;
+import org.apereo.cas.services.ServiceRegistry;
+import org.apereo.cas.services.ServiceRegistryExecutionPlan;
+import org.apereo.cas.services.ServiceRegistryExecutionPlanConfigurer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -20,7 +23,8 @@ import org.springframework.data.mongodb.core.MongoTemplate;
  */
 @Configuration("mongoDbServiceRegistryConfiguration")
 @EnableConfigurationProperties(CasConfigurationProperties.class)
-public class MongoDbServiceRegistryConfiguration {
+@Slf4j
+public class MongoDbServiceRegistryConfiguration implements ServiceRegistryExecutionPlanConfigurer {
 
     @Autowired
     private CasConfigurationProperties casProperties;
@@ -28,7 +32,7 @@ public class MongoDbServiceRegistryConfiguration {
     @ConditionalOnMissingBean(name = "mongoDbServiceRegistryTemplate")
     @Bean
     public MongoTemplate mongoDbServiceRegistryTemplate() {
-        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        final MongoDbServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
         final MongoDbConnectionFactory factory = new MongoDbConnectionFactory();
 
         final MongoTemplate mongoTemplate = factory.buildMongoTemplate(mongo);
@@ -37,10 +41,15 @@ public class MongoDbServiceRegistryConfiguration {
     }
     
     @Bean
-    public ServiceRegistryDao serviceRegistryDao() throws Exception {
-        final MongoServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
-        return new MongoServiceRegistryDao(
+    public ServiceRegistry mongoDbServiceRegistry() {
+        final MongoDbServiceRegistryProperties mongo = casProperties.getServiceRegistry().getMongo();
+        return new MongoServiceRegistry(
                 mongoDbServiceRegistryTemplate(),
                 mongo.getCollection());
+    }
+
+    @Override
+    public void configureServiceRegistry(final ServiceRegistryExecutionPlan plan) {
+        plan.registerServiceRegistry(mongoDbServiceRegistry());
     }
 }
