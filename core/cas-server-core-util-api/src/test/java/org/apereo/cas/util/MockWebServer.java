@@ -1,5 +1,8 @@
 package org.apereo.cas.util;
 
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.Resource;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -8,9 +11,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.core.io.Resource;
-
 
 /**
  * Provides a simple HTTP Web server that can serve out a single resource for
@@ -18,22 +18,25 @@ import org.springframework.core.io.Resource;
  *
  * @author Marvin S. Addison
  * @since 3.4.6
- *
  */
 @Slf4j
 public class MockWebServer {
-    /** Request handler. */
+    /**
+     * Request handler.
+     */
     private final Worker worker;
 
-    /** Controls the worker thread. */
+    /**
+     * Controls the worker thread.
+     */
     private Thread workerThread;
 
     /**
      * Creates a new server that listens for requests on the given port and
      * serves the given resource for all requests.
      *
-     * @param port Server listening port.
-     * @param resource Resource to serve.
+     * @param port        Server listening port.
+     * @param resource    Resource to serve.
      * @param contentType MIME content type of resource to serve.
      */
     public MockWebServer(final int port, final Resource resource, final String contentType) {
@@ -44,13 +47,17 @@ public class MockWebServer {
         }
     }
 
-    /** Starts the Web server so it can accept requests on the listening port. */
+    /**
+     * Starts the Web server so it can accept requests on the listening port.
+     */
     public void start() {
         this.workerThread = new Thread(this.worker, "MockWebServer.Worker");
         this.workerThread.start();
     }
 
-    /** Stops the Web server after processing any pending requests. */
+    /**
+     * Stops the Web server after processing any pending requests.
+     */
     public void stop() {
         if (!isRunning()) {
             return;
@@ -77,25 +84,39 @@ public class MockWebServer {
      */
     private static class Worker implements Runnable {
 
-        /** Server always returns HTTP 200 response. */
+        /**
+         * Server always returns HTTP 200 response.
+         */
         private static final String STATUS_LINE = "HTTP/1.1 200 Success\r\n";
 
-        /** Separates HTTP header from body. */
+        /**
+         * Separates HTTP header from body.
+         */
         private static final String SEPARATOR = "\r\n";
 
-        /** Response buffer size. */
+        /**
+         * Response buffer size.
+         */
         private static final int BUFFER_SIZE = 2048;
-        
-        /** Run flag. */
+
+        /**
+         * Run flag.
+         */
         private boolean running;
 
-        /** Server socket. */
+        /**
+         * Server socket.
+         */
         private final ServerSocket serverSocket;
 
-        /** Resource to serve. */
+        /**
+         * Resource to serve.
+         */
         private final Resource resource;
 
-        /** MIME content type of resource to serve. */
+        /**
+         * MIME content type of resource to serve.
+         */
         private final String contentType;
 
 
@@ -103,8 +124,8 @@ public class MockWebServer {
          * Creates a request-handling worker that listens for requests on the
          * given socket and serves the given resource for all requests.
          *
-         * @param sock Server socket.
-         * @param resource Single resource to serve.
+         * @param sock        Server socket.
+         * @param resource    Single resource to serve.
          * @param contentType MIME content type of resource to serve.
          */
         Worker(final ServerSocket sock, final Resource resource, final String contentType) {
@@ -146,15 +167,13 @@ public class MockWebServer {
             out.write(SEPARATOR.getBytes(StandardCharsets.UTF_8));
 
             final byte[] buffer = new byte[BUFFER_SIZE];
-            try(InputStream in = this.resource.getInputStream()) {
-                int count = 0;
+            try (InputStream in = this.resource.getInputStream()) {
+                int count;
                 while ((count = in.read(buffer)) > -1) {
                     out.write(buffer, 0, count);
                 }
             }
-            LOGGER.debug("Wrote response for resource [{}] for [{}]",
-                    resource.getFilename(),
-                    resource.contentLength());
+            LOGGER.debug("Wrote response for resource [{}] for [{}]", resource.getFilename(), resource.contentLength());
 
             socket.shutdownOutput();
         }
