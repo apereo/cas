@@ -53,7 +53,7 @@ public class CasAddonsRegisteredServicesJsonSerializer extends DefaultRegistered
                     + "you convert these definitions into the official syntax to take full advantage of the service capabilities. "
                     + "Future CAS version may decide to entirely ignore the legacy syntax altogether.", 
                     results.size());
-            results.stream().forEach(Unchecked.consumer(s -> {
+            results.forEach(Unchecked.consumer(s -> {
                 final File fileName = new File(FileUtils.getTempDirectory(), s.getName() + "-" + s.getId() + ".json");
                 to(fileName, s);
                 LOGGER.warn("Converted legacy service definition for [{}] may be reviewed at [{}]", s.getServiceId(), fileName);

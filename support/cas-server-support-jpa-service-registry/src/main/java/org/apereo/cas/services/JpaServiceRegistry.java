@@ -39,7 +39,7 @@ public class JpaServiceRegistry extends AbstractServiceRegistry {
     public List<RegisteredService> load() {
         final List<RegisteredService> list = this.entityManager.createQuery("select r from AbstractRegisteredService r",
             RegisteredService.class).getResultList();
-        list.stream().forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
+        list.forEach(s -> publishEvent(new CasRegisteredServiceLoadedEvent(this, s)));
         return list;
     }
 
