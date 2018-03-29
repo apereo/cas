@@ -1,17 +1,19 @@
 package org.apereo.cas.configuration.model.support.mfa;
 
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apereo.cas.configuration.model.core.util.EncryptionJwtSigningJwtCryptographyProperties;
 import org.apereo.cas.configuration.model.support.jpa.AbstractJpaProperties;
+import org.apereo.cas.configuration.model.support.mfa.trusteddevice.DeviceFingerprintProperties;
 import org.apereo.cas.configuration.model.support.mongo.SingleCollectionMongoDbProperties;
 import org.apereo.cas.configuration.model.support.quartz.ScheduledJobProperties;
 import org.apereo.cas.configuration.support.RequiresModule;
 import org.apereo.cas.configuration.support.SpringResourceProperties;
 import org.springframework.boot.context.properties.NestedConfigurationProperty;
+
 import java.io.Serializable;
 import java.util.concurrent.TimeUnit;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  * This is {@link TrustedDevicesMultifactorProperties}.
@@ -66,6 +68,12 @@ public class TrustedDevicesMultifactorProperties implements Serializable {
      * Record trusted devices via a JSON resource.
      */
     private Json json = new Json();
+
+    /**
+     * Configure how device fingerprints are generated.
+     */
+    @NestedConfigurationProperty
+    private DeviceFingerprintProperties deviceFingerprint = new DeviceFingerprintProperties();
 
     /**
      * Settings that control the background cleaner process.
